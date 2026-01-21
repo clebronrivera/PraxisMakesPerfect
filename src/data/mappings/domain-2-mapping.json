@@ -1,0 +1,113 @@
+{
+  "domain": 2,
+  "domainName": "Consultation & Collaboration",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q002",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the specific type of consultation (multicultural) used when working with a cultural broker."
+    },
+    {
+      "questionId": "SP5403_Q012",
+      "skillId": "CC-S03",
+      "confidence": "medium",
+      "reasoning": "Question requires identifying the appropriate collaborative role (assisting with data/tracking) rather than taking over instruction."
+    },
+    {
+      "questionId": "SP5403_Q024",
+      "skillId": "CC-S03",
+      "confidence": "high",
+      "reasoning": "Question tests knowledge of the school psychologist's role as a facilitator rather than a unilateral decision-maker in teams."
+    },
+    {
+      "questionId": "SP5403_Q028",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "medium",
+      "reasoning": "Question asks for the first step in establishing a parent consultation relationship (establishing mutual goals)."
+    },
+    {
+      "questionId": "SP5403_Q033",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question explicitly asks to identify the common steps (Problem Analysis, Identification, Intervention) in a problem-solving model."
+    },
+    {
+      "questionId": "SP5403_Q035",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question describes an activity (school-wide system) and asks to identify it as organizational consultation."
+    },
+    {
+      "questionId": "SP5403_Q037",
+      "skillId": "NEW-2-ProblemSolvingSteps",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in consulting about a behavior problem (collecting detailed data/defining problem) before intervention."
+    },
+    {
+      "questionId": "SP5403_Q049",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the consultation model that emphasizes home-school collaboration (Conjoint Behavioral Consultation)."
+    },
+    {
+      "questionId": "SP5403_Q057",
+      "skillId": "NEW-2-ProblemSolvingSteps",
+      "confidence": "high",
+      "reasoning": "Question asks for the immediate first step in a consultation model for an off-task student (Defining the problem)."
+    },
+    {
+      "questionId": "SP5403_Q058",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to distinguish between conjoint behavioral consultation (home & school) and standard behavioral consultation."
+    },
+    {
+      "questionId": "SP5403_Q063",
+      "skillId": "CC-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the most effective consultation approach for a struggling teacher (Collaborative problem-solving vs. expert model)."
+    },
+    {
+      "questionId": "SP5403_Q104",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for the best strategy to build rapport with a resistant teacher (Listening/acknowledging perspective)."
+    },
+    {
+      "questionId": "SP5403_Q106",
+      "skillId": "NEW-2-ProblemSolvingSteps",
+      "confidence": "medium",
+      "reasoning": "Question requires knowledge of the RIOT assessment process (Observations & Tests) within a consultation framework."
+    },
+    {
+      "questionId": "SP5403_Q116",
+      "skillId": "CC-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks about the relationship type fostered by multimethod assessment interviews (Collaborative)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-2-ConsultationProcess",
+      "name": "Consultation Process Knowledge",
+      "description": "Identify and sequence the stages of the consultation process (Entry/Contracting, Problem ID, Analysis, Intervention, Evaluation).",
+      "questionsTesting": ["SP5403_Q028", "SP5403_Q033"],
+      "decisionRule": "Correct answer identifies the standard stage or sequence in formal consultation models."
+    },
+    {
+      "proposedId": "NEW-2-ProblemSolvingSteps",
+      "name": "Problem-Solving Model Application",
+      "description": "Apply the data-based problem-solving steps (Define, Analyze, Implement, Evaluate) to consultation scenarios.",
+      "questionsTesting": ["SP5403_Q037", "SP5403_Q057", "SP5403_Q106"],
+      "decisionRule": "Correct answer prioritizes defining the problem or collecting baseline data before offering solutions."
+    },
+    {
+      "proposedId": "NEW-2-CommunicationStrategies",
+      "name": "Communication & Resistance Management",
+      "description": "Select appropriate communication strategies to build rapport, manage resistance, or facilitate consensus.",
+      "questionsTesting": ["SP5403_Q104"],
+      "decisionRule": "Correct answer focuses on active listening, empathy, or collaboration rather than directive/expert stances."
+    }
+  ]
+}

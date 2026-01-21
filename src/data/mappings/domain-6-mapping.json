@@ -1,0 +1,76 @@
+{
+  "domain": 6,
+  "domainName": "Preventive & Responsive Services",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q006",
+      "skillId": "PC-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary role of the school psychologist during a crisis event (supporting students/staff and triage, not long-term therapy)."
+    },
+    {
+      "questionId": "SP5403_Q014",
+      "skillId": "NEW-6-BullyingPrevention",
+      "confidence": "high",
+      "reasoning": "Question asks for the most effective school-wide strategy to reduce bullying (improving school climate/supervision vs. zero tolerance policies)."
+    },
+    {
+      "questionId": "SP5403_Q026",
+      "skillId": "PC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to distinguish between a transient threat and a substantive threat in a threat assessment context."
+    },
+    {
+      "questionId": "SP5403_Q046",
+      "skillId": "PC-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary goal of postvention services following a student suicide (preventing contagion/clusters)."
+    },
+    {
+      "questionId": "SP5403_Q059",
+      "skillId": "NEW-6-TraumaInformed",
+      "confidence": "medium",
+      "reasoning": "Question asks to identify common symptoms of trauma in young children (regression, sleep disturbance)."
+    },
+    {
+      "questionId": "SP5403_Q078",
+      "skillId": "PC-S02",
+      "confidence": "high",
+      "reasoning": "Question asks about the re-entry planning process for a student returning from psychiatric hospitalization (safety planning)."
+    },
+    {
+      "questionId": "SP5403_Q088",
+      "skillId": "PC-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for best practices regarding crisis drills (they should be practiced regularly and in a developmentally appropriate way)."
+    },
+    {
+      "questionId": "SP5403_Q102",
+      "skillId": "PC-S03",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the core elements of Psychological First Aid (establish safety, calm, connectedness, self-efficacy, hope)."
+    },
+    {
+      "questionId": "SP5403_Q118",
+      "skillId": "NEW-6-BullyingPrevention",
+      "confidence": "medium",
+      "reasoning": "Question asks specifically about strategies to address cyberbullying (education on digital citizenship)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-6-BullyingPrevention",
+      "name": "Bullying & Harassment Prevention",
+      "description": "Identify evidence-based strategies for bullying prevention (climate improvement, bystander training) and recognize ineffective ones (zero tolerance, peer mediation for bullying).",
+      "questionsTesting": ["SP5403_Q014", "SP5403_Q118"],
+      "decisionRule": "Correct answer prioritizes systemic prevention or bystander intervention; incorrect answers often involve peer mediation (contraindicated) or zero tolerance."
+    },
+    {
+      "proposedId": "NEW-6-TraumaInformed",
+      "name": "Trauma-Informed Care",
+      "description": "Recognize the impact of adverse childhood experiences (ACEs) on learning and behavior, and identify trauma-informed support strategies.",
+      "questionsTesting": ["SP5403_Q059"],
+      "decisionRule": "Correct answer links behavior/symptoms to trauma history or selects interventions that prioritize safety and relationship over punishment."
+    }
+  ]
+}

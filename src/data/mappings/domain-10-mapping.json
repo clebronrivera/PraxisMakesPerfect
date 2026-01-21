@@ -1,0 +1,108 @@
+{
+  "domain": 10,
+  "domainName": "Legal, Ethical & Professional Practice",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q007",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary requirement of FAPE under IDEA (special education and related services provided at public expense)."
+    },
+    {
+      "questionId": "SP5403_Q038",
+      "skillId": "LEG-S04",
+      "confidence": "high",
+      "reasoning": "Question presents a scenario where a child reveals abuse and asks for the psychologist's immediate legal duty (report to CPS, not investigate)."
+    },
+    {
+      "questionId": "SP5403_Q077",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the landmark case that established the duty to warn/protect when a client makes a specific threat (Tarasoff)."
+    },
+    {
+      "questionId": "SP5403_Q089",
+      "skillId": "LEG-S03",
+      "confidence": "high",
+      "reasoning": "Question asks when it is appropriate to breach confidentiality (imminent danger to self or others)."
+    },
+    {
+      "questionId": "SP5403_Q090",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the case that banned the use of IQ tests for placing African American students in special education in CA (Larry P. v. Riles)."
+    },
+    {
+      "questionId": "SP5403_Q097",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question asks for the key difference between Section 504 and IDEA (civil rights/access vs. educational benefit/funding)."
+    },
+    {
+      "questionId": "SP5403_Q103",
+      "skillId": "LEG-S06",
+      "confidence": "medium",
+      "reasoning": "Question involves an ethical dilemma about accepting a gift from a parent (evaluating cultural context vs. conflict of interest)."
+    },
+    {
+      "questionId": "SP5403_Q107",
+      "skillId": "NEW-10-RecordKeeping",
+      "confidence": "medium",
+      "reasoning": "Question asks about the rights of non-custodial parents to access student records under FERPA (they generally have access unless court order states otherwise)."
+    },
+    {
+      "questionId": "SP5403_Q109",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the case defining 'appropriate' education as providing 'some educational benefit' rather than optimal potential (Rowley)."
+    },
+    {
+      "questionId": "SP5403_Q120",
+      "skillId": "NEW-10-Supervision",
+      "confidence": "high",
+      "reasoning": "Question asks for the required supervision conditions for a school psychology intern (e.g., 2 hours per week by a credentialed psychologist)."
+    },
+    {
+      "questionId": "SP5403_Q122",
+      "skillId": "LEG-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the purpose of a Manifestation Determination Review (to decide if conduct was caused by the disability)."
+    },
+    {
+      "questionId": "SP5403_Q125",
+      "skillId": "NEW-10-TestSecurity",
+      "confidence": "high",
+      "reasoning": "Question asks how to handle a parent's request to see test protocols (providing explanation/viewing but not copying/releasing protocols to non-professionals)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-10-EducationLaw",
+      "name": "Section 504 vs. IDEA",
+      "description": "Distinguish between the mandates of Section 504 (Civil Rights/Access) and IDEA (Educational Benefit/Specialized Instruction).",
+      "questionsTesting": ["SP5403_Q097"],
+      "decisionRule": "Correct answer differentiates between 'access' (504) and 'specialized instruction' (IDEA)."
+    },
+    {
+      "proposedId": "NEW-10-RecordKeeping",
+      "name": "FERPA & Record Access",
+      "description": "Apply FERPA regulations regarding parent access to records, amendment of records, and rights of non-custodial parents.",
+      "questionsTesting": ["SP5403_Q107"],
+      "decisionRule": "Correct answer upholds parent rights to access unless specific legal revocation exists."
+    },
+    {
+      "proposedId": "NEW-10-Supervision",
+      "name": "Supervision Standards",
+      "description": "Know NASP standards for professional supervision (internship requirements, hours, qualification of supervisor).",
+      "questionsTesting": ["SP5403_Q120"],
+      "decisionRule": "Correct answer matches specific NASP standards (e.g., 2 hours face-to-face)."
+    },
+    {
+      "proposedId": "NEW-10-TestSecurity",
+      "name": "Test Security & Copyright",
+      "description": "Balance parent rights to inspect records with the duty to maintain test security and copyright laws.",
+      "questionsTesting": ["SP5403_Q125"],
+      "decisionRule": "Correct answer allows viewing/explanation but prohibits copying or releasing raw protocols to unqualified persons."
+    }
+  ]
+}

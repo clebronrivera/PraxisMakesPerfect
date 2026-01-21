@@ -1,0 +1,89 @@
+{
+  "domain": 8,
+  "domainName": "Diversity in Development & Learning",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q004",
+      "skillId": "DIV-S04",
+      "confidence": "high",
+      "reasoning": "Question asks to interpret a risk ratio of 2.5 for a specific racial group in special education (indicating overrepresentation/disproportionality)."
+    },
+    {
+      "questionId": "SP5403_Q009",
+      "skillId": "DIV-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary consideration before assessing an ELL student (determining language dominance/proficiency in both languages)."
+    },
+    {
+      "questionId": "SP5403_Q023",
+      "skillId": "DIV-S07",
+      "confidence": "high",
+      "reasoning": "Question asks for best practice when using an interpreter during a parent meeting (speaking directly to the parent, not the interpreter)."
+    },
+    {
+      "questionId": "SP5403_Q032",
+      "skillId": "DIV-S02",
+      "confidence": "medium",
+      "reasoning": "Question involves selecting a nonverbal assessment to reduce linguistic bias for a student with limited English proficiency."
+    },
+    {
+      "questionId": "SP5403_Q041",
+      "skillId": "DIV-S01",
+      "confidence": "medium",
+      "reasoning": "Question describes a scenario where a psychologist assumes a student's lack of eye contact is defiance rather than cultural, identifying implicit bias."
+    },
+    {
+      "questionId": "SP5403_Q050",
+      "skillId": "DIV-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition/role of a cultural broker (a community liaison who bridges the cultural gap between school and family)."
+    },
+    {
+      "questionId": "SP5403_Q067",
+      "skillId": "NEW-8-Acculturation",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the stage of acculturation where a student adopts new cultural norms while maintaining their original culture (Integration/Biculturalism)."
+    },
+    {
+      "questionId": "SP5403_Q079",
+      "skillId": "NEW-8-SocialJustice",
+      "confidence": "medium",
+      "reasoning": "Question asks for the school psychologist's ethical responsibility when observing systemic barriers affecting marginalized groups (Social justice advocacy)."
+    },
+    {
+      "questionId": "SP5403_Q105",
+      "skillId": "NEW-8-LanguageAcquisition",
+      "confidence": "high",
+      "reasoning": "Question asks to distinguish between BICS (social language) and CALP (academic language) regarding timeline for proficiency."
+    },
+    {
+      "questionId": "SP5403_Q119",
+      "skillId": "DIV-S02",
+      "confidence": "high",
+      "reasoning": "Question asks why translating a standardized test into another language on the fly is poor practice (violates validity/standardization)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-8-Acculturation",
+      "name": "Acculturation Dynamics",
+      "description": "Understand the process of acculturation (assimilation, integration, separation, marginalization) and its impact on student adjustment.",
+      "questionsTesting": ["SP5403_Q067"],
+      "decisionRule": "Correct answer identifies the specific mode of adaptation (e.g., Integration = high original + high new culture)."
+    },
+    {
+      "proposedId": "NEW-8-LanguageAcquisition",
+      "name": "Second Language Acquisition",
+      "description": "Distinguish between social (BICS) and academic (CALP) language proficiency and know the typical timelines (2-3 yrs vs 5-7 yrs).",
+      "questionsTesting": ["SP5403_Q105"],
+      "decisionRule": "Correct answer differentiates 'playground English' from the language needed for cognitive academic tasks."
+    },
+    {
+      "proposedId": "NEW-8-SocialJustice",
+      "name": "Social Justice & Advocacy",
+      "description": "Identify the psychologist's role in challenging systemic inequities and advocating for fair practices for marginalized populations.",
+      "questionsTesting": ["SP5403_Q079"],
+      "decisionRule": "Correct answer prioritizes active advocacy or systemic change over passive acceptance of discriminatory practices."
+    }
+  ]
+}

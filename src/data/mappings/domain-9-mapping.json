@@ -1,0 +1,96 @@
+{
+  "domain": 9,
+  "domainName": "Research & Program Evaluation",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q008",
+      "skillId": "RES-S06",
+      "confidence": "high",
+      "reasoning": "Question asks to interpret a correlation coefficient of -0.85 (Strong negative relationship)."
+    },
+    {
+      "questionId": "SP5403_Q027",
+      "skillId": "RES-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition of Type I error (rejecting the null hypothesis when it is true)."
+    },
+    {
+      "questionId": "SP5403_Q030",
+      "skillId": "NEW-9-Variables",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the independent variable in a described experiment (the intervention being manipulated)."
+    },
+    {
+      "questionId": "SP5403_Q047",
+      "skillId": "NEW-9-ValidityThreats",
+      "confidence": "medium",
+      "reasoning": "Question asks to identify a threat to internal validity where participants drop out of the study (Attrition/Mortality)."
+    },
+    {
+      "questionId": "SP5403_Q051",
+      "skillId": "NEW-9-StatisticalTests",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate statistical test to compare the means of two distinct groups (Independent t-test)."
+    },
+    {
+      "questionId": "SP5403_Q061",
+      "skillId": "RES-S03",
+      "confidence": "high",
+      "reasoning": "Question asks to interpret a Cohen's d value of 0.80 (Large effect size), testing practical significance."
+    },
+    {
+      "questionId": "SP5403_Q075",
+      "skillId": "NEW-9-StatisticalTests",
+      "confidence": "high",
+      "reasoning": "Question asks for the correct test to compare means across three or more groups (ANOVA)."
+    },
+    {
+      "questionId": "SP5403_Q084",
+      "skillId": "RES-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the specific single-subject design being used (A-B-A-B Reversal Design)."
+    },
+    {
+      "questionId": "SP5403_Q092",
+      "skillId": "NEW-9-DescriptiveStats",
+      "confidence": "high",
+      "reasoning": "Question asks for the statistical measure that describes the spread or variability of scores around the mean (Standard Deviation)."
+    },
+    {
+      "questionId": "SP5403_Q114",
+      "skillId": "RES-S01",
+      "confidence": "medium",
+      "reasoning": "Question asks for the primary purpose of random assignment in experimental design (to ensure groups are equivalent/control extraneous variables)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-9-StatisticalTests",
+      "name": "Statistical Test Selection",
+      "description": "Select the appropriate statistical test (t-test, ANOVA, Chi-square, correlation) based on the research question and data type.",
+      "questionsTesting": ["SP5403_Q051", "SP5403_Q075"],
+      "decisionRule": "Correct answer matches 2 groups → t-test, 3+ groups → ANOVA, categorical data → Chi-square."
+    },
+    {
+      "proposedId": "NEW-9-DescriptiveStats",
+      "name": "Descriptive Statistics",
+      "description": "Understand and interpret measures of central tendency (mean, median, mode) and dispersion (range, variance, standard deviation).",
+      "questionsTesting": ["SP5403_Q092"],
+      "decisionRule": "Correct answer identifies the measure that best summarizes the data set's center or spread."
+    },
+    {
+      "proposedId": "NEW-9-Variables",
+      "name": "Variable Identification",
+      "description": "Distinguish between Independent Variables (manipulated) and Dependent Variables (measured outcome) in research scenarios.",
+      "questionsTesting": ["SP5403_Q030"],
+      "decisionRule": "Correct answer identifies the 'cause' (IV) or the 'effect' (DV) correctly."
+    },
+    {
+      "proposedId": "NEW-9-ValidityThreats",
+      "name": "Research Validity Threats",
+      "description": "Identify threats to internal validity (history, maturation, attrition) and external validity (generalizability).",
+      "questionsTesting": ["SP5403_Q047"],
+      "decisionRule": "Correct answer links a specific confounding factor (e.g., dropping out) to the correct validity threat (e.g., attrition)."
+    }
+  ]
+}
