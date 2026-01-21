@@ -1,0 +1,70 @@
+{
+  "domain": 7,
+  "domainName": "Family-School Collaboration Services",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q003",
+      "skillId": "NEW-7-BarriersToEngagement",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the most significant barrier to parental involvement for low-SES families (logistical issues/lack of flexibility vs. lack of interest)."
+    },
+    {
+      "questionId": "SP5403_Q017",
+      "skillId": "FSC-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for an effective strategy to increase parent engagement at the school level (creating a welcoming environment/two-way communication)."
+    },
+    {
+      "questionId": "SP5403_Q043",
+      "skillId": "FSC-S04",
+      "confidence": "medium",
+      "reasoning": "Question involves working with a family from a collectivist culture and respecting the role of extended family members in decision-making."
+    },
+    {
+      "questionId": "SP5403_Q055",
+      "skillId": "NEW-7-FamilySystems",
+      "confidence": "high",
+      "reasoning": "Question asks to identify a core concept of Family Systems Theory (events affecting one member affect the whole system)."
+    },
+    {
+      "questionId": "SP5403_Q069",
+      "skillId": "FSC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary goal of family-school partnerships (shared responsibility for student learning/success)."
+    },
+    {
+      "questionId": "SP5403_Q086",
+      "skillId": "FSC-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks for the best way to present assessment results to parents (using jargon-free language and focusing on strengths/needs)."
+    },
+    {
+      "questionId": "SP5403_Q101",
+      "skillId": "NEW-7-BarriersToEngagement",
+      "confidence": "high",
+      "reasoning": "Question asks how to address a specific barrier (language) to ensure meaningful parent participation (using qualified interpreters)."
+    },
+    {
+      "questionId": "SP5403_Q117",
+      "skillId": "NEW-7-FamilySystems",
+      "confidence": "medium",
+      "reasoning": "Question describes a scenario of reciprocal influence between parent and child behavior, testing understanding of circular causality."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-7-BarriersToEngagement",
+      "name": "Barriers to Engagement",
+      "description": "Identify systemic, practical, and cultural barriers to family involvement (e.g., transportation, language, work schedules) and strategies to overcome them.",
+      "questionsTesting": ["SP5403_Q003", "SP5403_Q101"],
+      "decisionRule": "Correct answer recognizes that 'lack of involvement' is usually due to logistical/systemic barriers, not lack of care."
+    },
+    {
+      "proposedId": "NEW-7-FamilySystems",
+      "name": "Family Systems Theory",
+      "description": "Apply concepts from systems theory (circular causality, homeostasis, boundaries) to understand family dynamics.",
+      "questionsTesting": ["SP5403_Q055", "SP5403_Q117"],
+      "decisionRule": "Correct answer focuses on the interdependence of family members or the function of behavior within the family unit."
+    }
+  ]
+}

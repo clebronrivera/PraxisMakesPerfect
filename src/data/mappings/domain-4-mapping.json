@@ -1,0 +1,94 @@
+{
+  "domain": 4,
+  "domainName": "Mental & Behavioral Health Services",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q005",
+      "skillId": "MBH-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for the priority action when a student expresses suicidal thoughts (assess plan, intent, and means immediately)."
+    },
+    {
+      "questionId": "SP5403_Q011",
+      "skillId": "MBH-S02",
+      "confidence": "high",
+      "reasoning": "Question describes a student's disruptive behavior occurring only during math worksheets to get sent out, asking to identify the function (Escape/Avoidance)."
+    },
+    {
+      "questionId": "SP5403_Q022",
+      "skillId": "MBH-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary component of Cognitive Behavioral Therapy (CBT) for anxiety (identifying and challenging cognitive distortions)."
+    },
+    {
+      "questionId": "SP5403_Q029",
+      "skillId": "MBH-S01",
+      "confidence": "medium",
+      "reasoning": "Question asks for the definition of the 'A-B-C' model in Functional Behavior Assessment (Antecedent-Behavior-Consequence)."
+    },
+    {
+      "questionId": "SP5403_Q044",
+      "skillId": "MBH-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the essential characteristic of a replacement behavior in a BIP (it must serve the same function as the problem behavior)."
+    },
+    {
+      "questionId": "SP5403_Q054",
+      "skillId": "NEW-4-Psychopathology",
+      "confidence": "medium",
+      "reasoning": "Question asks how depression presentation in children often differs from adults (Irritability/Somatic complaints vs. Sadness)."
+    },
+    {
+      "questionId": "SP5403_Q066",
+      "skillId": "NEW-4-Psychopathology",
+      "confidence": "high",
+      "reasoning": "Question asks for the diagnostic criteria for ADHD regarding setting (symptoms must be present in two or more settings)."
+    },
+    {
+      "questionId": "SP5403_Q073",
+      "skillId": "MBH-S05",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the therapy model that uses the 'Miracle Question' (Solution-Focused Brief Therapy)."
+    },
+    {
+      "questionId": "SP5403_Q081",
+      "skillId": "MBH-S06",
+      "confidence": "medium",
+      "reasoning": "Question asks for the most effective method to teach social skills (Modeling, Rehearsal, and Feedback/Role-play)."
+    },
+    {
+      "questionId": "SP5403_Q096",
+      "skillId": "MBH-S04",
+      "confidence": "high",
+      "reasoning": "Question asks how to distinguish Non-Suicidal Self-Injury (NSSI) from suicidal intent (Assessment of intent to die)."
+    },
+    {
+      "questionId": "SP5403_Q108",
+      "skillId": "NEW-4-GroupCounseling",
+      "confidence": "medium",
+      "reasoning": "Question asks which student profile is contraindicated for group counseling (e.g., severe conduct disorder/aggressive behavior)."
+    },
+    {
+      "questionId": "SP5403_Q113",
+      "skillId": "MBH-S06",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the behavioral principle where removing an aversive stimulus increases behavior (Negative Reinforcement)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-4-Psychopathology",
+      "name": "Child & Adolescent Psychopathology",
+      "description": "Identify diagnostic criteria and developmental presentations of common childhood disorders (ADHD, Depression, Anxiety, ASD, ODD).",
+      "questionsTesting": ["SP5403_Q054", "SP5403_Q066"],
+      "decisionRule": "Correct answer requires knowledge of DSM-5 criteria or developmental variations (e.g., irritability in child depression)."
+    },
+    {
+      "proposedId": "NEW-4-GroupCounseling",
+      "name": "Group Counseling Dynamics",
+      "description": "Understand group formation, member selection (screening), and group stages (forming, storming, norming, performing).",
+      "questionsTesting": ["SP5403_Q108"],
+      "decisionRule": "Correct answer identifies appropriate candidates for groups or recognizes group process stages."
+    }
+  ]
+}

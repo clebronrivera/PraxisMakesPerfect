@@ -1,0 +1,251 @@
+{
+  "domain": 1,
+  "domainName": "Data-Based Decision Making & Accountability",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q001",
+      "skillId": "DBDM-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the metric used to establish reliability in single-subject designs (Interobserver agreement), directly testing reliability type selection."
+    },
+    {
+      "questionId": "SP5403_Q010",
+      "skillId": "DBDM-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for a specific example of test sensitivity (identifying true positives), directly testing the distinction between sensitivity and specificity."
+    },
+    {
+      "questionId": "SP5403_Q012",
+      "skillId": "DBDM-S08",
+      "confidence": "medium",
+      "reasoning": "Question involves the school psychologist assisting with data collection and tracking progress, which aligns with progress monitoring protocols."
+    },
+    {
+      "questionId": "SP5403_Q013",
+      "skillId": "DBDM-S10",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in selecting an intervention, which is identifying the skill deficit (reviewing data/assessment) before action."
+    },
+    {
+      "questionId": "SP5403_Q016",
+      "skillId": "DBDM-S08",
+      "confidence": "high",
+      "reasoning": "Question explicitly asks for an example of progress monitoring, with the correct answer being curriculum-based measures."
+    },
+    {
+      "questionId": "SP5403_Q018",
+      "skillId": "DBDM-S07",
+      "confidence": "high",
+      "reasoning": "Question asks for the key difference between formative and summative assessments, directly testing assessment type recognition."
+    },
+    {
+      "questionId": "SP5403_Q019",
+      "skillId": "DBDM-S10",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in addressing behavior referrals, which is reviewing the referral data before implementing solutions."
+    },
+    {
+      "questionId": "SP5403_Q021",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the most important data sources for eligibility determination (cognitive/achievement/progress monitoring), testing assessment-purpose matching."
+    },
+    {
+      "questionId": "SP5403_Q025",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question requires the interpretation of a confidence interval for an IQ score."
+    },
+    {
+      "questionId": "SP5403_Q028",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question asks for the appropriate assessment to determine instructional level (CBM), which is matching assessment to purpose."
+    },
+    {
+      "questionId": "SP5403_Q031",
+      "skillId": "DBDM-S02",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the type of validity involving the relationship between test scores and an external criterion (Criterion-related validity)."
+    },
+    {
+      "questionId": "SP5403_Q032",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question involves selecting an assessment (nonverbal) appropriate for a specific purpose/population (ELL student), aligning with assessment selection."
+    },
+    {
+      "questionId": "SP5403_Q034",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question asks for the appropriate use of IQ scores (identifying discrepancies), which aligns with matching assessment data to its valid purpose."
+    },
+    {
+      "questionId": "SP5403_Q036",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate tool to identify reading risk (screening), matching assessment type to the purpose of risk identification."
+    },
+    {
+      "questionId": "SP5403_Q039",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the interpretation of a reliability coefficient of .95."
+    },
+    {
+      "questionId": "SP5403_Q042",
+      "skillId": "NEW-1-PerformanceAssessment",
+      "confidence": "high",
+      "reasoning": "Question asks to identify an example of a performance-based assessment, which is a distinct assessment type not fully covered by existing S07 description."
+    },
+    {
+      "questionId": "SP5403_Q048",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the statistical concept related to measurement error variability (SEM), testing score/metric interpretation."
+    },
+    {
+      "questionId": "SP5403_Q052",
+      "skillId": "DBDM-S06",
+      "confidence": "high",
+      "reasoning": "Question asks for the key characteristic of norm-referenced tests (comparison to a sample)."
+    },
+    {
+      "questionId": "SP5403_Q053",
+      "skillId": "DBDM-S10",
+      "confidence": "medium",
+      "reasoning": "Question asks for the first step in addressing disproportionality, which is examining the data/referral practices."
+    },
+    {
+      "questionId": "SP5403_Q058",
+      "skillId": "DBDM-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks what a specific cognitive score (processing speed) measures/interprets."
+    },
+    {
+      "questionId": "SP5403_Q060",
+      "skillId": "DBDM-S06",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate use of test norms (comparing to peers), distinguishing it from criterion referencing."
+    },
+    {
+      "questionId": "SP5403_Q062",
+      "skillId": "DBDM-S08",
+      "confidence": "high",
+      "reasoning": "Question asks for a primary advantage of CBM for progress monitoring (frequent administration), aligning with monitoring protocols."
+    },
+    {
+      "questionId": "SP5403_Q064",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate tool to measure executive functioning (rating scales), matching assessment to purpose."
+    },
+    {
+      "questionId": "SP5403_Q065",
+      "skillId": "DBDM-S03",
+      "confidence": "medium",
+      "reasoning": "Question requires interpretation of a significant score difference between VCI and PRI."
+    },
+    {
+      "questionId": "SP5403_Q068",
+      "skillId": "DBDM-S09",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition/purpose of universal screening (identifying risk)."
+    },
+    {
+      "questionId": "SP5403_Q070",
+      "skillId": "NEW-1-DynamicAssessment",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate use of dynamic assessment (measuring learning potential), a specific assessment type."
+    },
+    {
+      "questionId": "SP5403_Q071",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the correct explanation (interpretation) of a percentile rank."
+    },
+    {
+      "questionId": "SP5403_Q076",
+      "skillId": "NEW-1-IQvsAchievement",
+      "confidence": "medium",
+      "reasoning": "Question asks to distinguish between intelligence and achievement testing constructs."
+    },
+    {
+      "questionId": "SP5403_Q080",
+      "skillId": "DBDM-S06",
+      "confidence": "high",
+      "reasoning": "Question asks for the characteristic of criterion-referenced tests (measuring mastery), distinguishing from norm-referenced."
+    },
+    {
+      "questionId": "SP5403_Q082",
+      "skillId": "DBDM-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks what a specific cognitive score (Fluid Reasoning) measures/interprets."
+    },
+    {
+      "questionId": "SP5403_Q091",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question requires interpretation of a standard score of 85 (Average range)."
+    },
+    {
+      "questionId": "SP5403_Q094",
+      "skillId": "DBDM-S08",
+      "confidence": "high",
+      "reasoning": "Question asks for a characteristic of effective progress monitoring (frequent/standardized)."
+    },
+    {
+      "questionId": "SP5403_Q095",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question asks for the most useful metric for evaluating PBIS effectiveness (ODRs), which is selecting the right data source for the purpose."
+    },
+    {
+      "questionId": "SP5403_Q098",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate assessment approach for a preschooler (developmental screening), matching tool to population/purpose."
+    },
+    {
+      "questionId": "SP5403_Q110",
+      "skillId": "DBDM-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the best example of interrater reliability."
+    },
+    {
+      "questionId": "SP5403_Q121",
+      "skillId": "DBDM-S09",
+      "confidence": "high",
+      "reasoning": "Question asks how to use universal screening data to identify Tier 2 needs (comparing to benchmarks)."
+    },
+    {
+      "questionId": "SP5403_Q123",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question requires interpretation of a progress monitoring graph (flat trend line)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-1-PerformanceAssessment",
+      "name": "Performance-Based Assessment Recognition",
+      "description": "Identify assessments that require students to demonstrate skills through authentic tasks (essays, portfolios) rather than selection-based responses.",
+      "questionsTesting": ["SP5403_Q042"],
+      "decisionRule": "Correct answer identifies a task requiring active demonstration of a skill (e.g., essay) vs. passive selection."
+    },
+    {
+      "proposedId": "NEW-1-DynamicAssessment",
+      "name": "Dynamic Assessment Application",
+      "description": "Understand the purpose of dynamic assessment (test-teach-retest) to measure learning potential and responsiveness.",
+      "questionsTesting": ["SP5403_Q070"],
+      "decisionRule": "Correct answer links the assessment type to measuring 'learning potential' or 'responsiveness' rather than static achievement."
+    },
+    {
+      "proposedId": "NEW-1-IQvsAchievement",
+      "name": "Intelligence vs. Achievement Distinction",
+      "description": "Distinguish between what intelligence tests measure (cognitive ability/potential) and what achievement tests measure (learned knowledge/skills).",
+      "questionsTesting": ["SP5403_Q076"],
+      "decisionRule": "Correct answer differentiates 'reasoning/problem-solving' (IQ) from 'learned knowledge' (Achievement)."
+    }
+  ]
+}

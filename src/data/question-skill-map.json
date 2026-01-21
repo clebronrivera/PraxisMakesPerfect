@@ -1,0 +1,810 @@
+{
+  "totalQuestions": 125,
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q001",
+      "skillId": "DBDM-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the metric used to establish reliability in single-subject designs (Interobserver agreement), directly testing reliability type selection."
+    },
+    {
+      "questionId": "SP5403_Q010",
+      "skillId": "DBDM-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for a specific example of test sensitivity (identifying true positives), directly testing the distinction between sensitivity and specificity."
+    },
+    {
+      "questionId": "SP5403_Q012",
+      "skillId": "DBDM-S08",
+      "confidence": "medium",
+      "reasoning": "Question involves the school psychologist assisting with data collection and tracking progress, which aligns with progress monitoring protocols."
+    },
+    {
+      "questionId": "SP5403_Q013",
+      "skillId": "DBDM-S10",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in selecting an intervention, which is identifying the skill deficit (reviewing data/assessment) before action."
+    },
+    {
+      "questionId": "SP5403_Q016",
+      "skillId": "DBDM-S08",
+      "confidence": "high",
+      "reasoning": "Question explicitly asks for an example of progress monitoring, with the correct answer being curriculum-based measures."
+    },
+    {
+      "questionId": "SP5403_Q018",
+      "skillId": "DBDM-S07",
+      "confidence": "high",
+      "reasoning": "Question asks for the key difference between formative and summative assessments, directly testing assessment type recognition."
+    },
+    {
+      "questionId": "SP5403_Q019",
+      "skillId": "DBDM-S10",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in addressing behavior referrals, which is reviewing the referral data before implementing solutions."
+    },
+    {
+      "questionId": "SP5403_Q021",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the most important data sources for eligibility determination (cognitive/achievement/progress monitoring), testing assessment-purpose matching."
+    },
+    {
+      "questionId": "SP5403_Q025",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question requires the interpretation of a confidence interval for an IQ score."
+    },
+    {
+      "questionId": "SP5403_Q028",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question asks for the appropriate assessment to determine instructional level (CBM), which is matching assessment to purpose."
+    },
+    {
+      "questionId": "SP5403_Q031",
+      "skillId": "DBDM-S02",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the type of validity involving the relationship between test scores and an external criterion (Criterion-related validity)."
+    },
+    {
+      "questionId": "SP5403_Q032",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question involves selecting an assessment (nonverbal) appropriate for a specific purpose/population (ELL student), aligning with assessment selection."
+    },
+    {
+      "questionId": "SP5403_Q034",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question asks for the appropriate use of IQ scores (identifying discrepancies), which aligns with matching assessment data to its valid purpose."
+    },
+    {
+      "questionId": "SP5403_Q036",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate tool to identify reading risk (screening), matching assessment type to the purpose of risk identification."
+    },
+    {
+      "questionId": "SP5403_Q039",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the interpretation of a reliability coefficient of .95."
+    },
+    {
+      "questionId": "SP5403_Q042",
+      "skillId": "NEW-1-PerformanceAssessment",
+      "confidence": "high",
+      "reasoning": "Question asks to identify an example of a performance-based assessment, which is a distinct assessment type not fully covered by existing S07 description."
+    },
+    {
+      "questionId": "SP5403_Q048",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the statistical concept related to measurement error variability (SEM), testing score/metric interpretation."
+    },
+    {
+      "questionId": "SP5403_Q052",
+      "skillId": "DBDM-S06",
+      "confidence": "high",
+      "reasoning": "Question asks for the key characteristic of norm-referenced tests (comparison to a sample)."
+    },
+    {
+      "questionId": "SP5403_Q053",
+      "skillId": "DBDM-S10",
+      "confidence": "medium",
+      "reasoning": "Question asks for the first step in addressing disproportionality, which is examining the data/referral practices."
+    },
+    {
+      "questionId": "SP5403_Q058",
+      "skillId": "DBDM-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks what a specific cognitive score (processing speed) measures/interprets."
+    },
+    {
+      "questionId": "SP5403_Q060",
+      "skillId": "DBDM-S06",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate use of test norms (comparing to peers), distinguishing it from criterion referencing."
+    },
+    {
+      "questionId": "SP5403_Q062",
+      "skillId": "DBDM-S08",
+      "confidence": "high",
+      "reasoning": "Question asks for a primary advantage of CBM for progress monitoring (frequent administration), aligning with monitoring protocols."
+    },
+    {
+      "questionId": "SP5403_Q064",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate tool to measure executive functioning (rating scales), matching assessment to purpose."
+    },
+    {
+      "questionId": "SP5403_Q065",
+      "skillId": "DBDM-S03",
+      "confidence": "medium",
+      "reasoning": "Question requires interpretation of a significant score difference between VCI and PRI."
+    },
+    {
+      "questionId": "SP5403_Q068",
+      "skillId": "DBDM-S09",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition/purpose of universal screening (identifying risk)."
+    },
+    {
+      "questionId": "SP5403_Q070",
+      "skillId": "NEW-1-DynamicAssessment",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate use of dynamic assessment (measuring learning potential), a specific assessment type."
+    },
+    {
+      "questionId": "SP5403_Q071",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the correct explanation (interpretation) of a percentile rank."
+    },
+    {
+      "questionId": "SP5403_Q076",
+      "skillId": "NEW-1-IQvsAchievement",
+      "confidence": "medium",
+      "reasoning": "Question asks to distinguish between intelligence and achievement testing constructs."
+    },
+    {
+      "questionId": "SP5403_Q080",
+      "skillId": "DBDM-S06",
+      "confidence": "high",
+      "reasoning": "Question asks for the characteristic of criterion-referenced tests (measuring mastery), distinguishing from norm-referenced."
+    },
+    {
+      "questionId": "SP5403_Q082",
+      "skillId": "DBDM-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks what a specific cognitive score (Fluid Reasoning) measures/interprets."
+    },
+    {
+      "questionId": "SP5403_Q091",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question requires interpretation of a standard score of 85 (Average range)."
+    },
+    {
+      "questionId": "SP5403_Q094",
+      "skillId": "DBDM-S08",
+      "confidence": "high",
+      "reasoning": "Question asks for a characteristic of effective progress monitoring (frequent/standardized)."
+    },
+    {
+      "questionId": "SP5403_Q095",
+      "skillId": "DBDM-S05",
+      "confidence": "medium",
+      "reasoning": "Question asks for the most useful metric for evaluating PBIS effectiveness (ODRs), which is selecting the right data source for the purpose."
+    },
+    {
+      "questionId": "SP5403_Q098",
+      "skillId": "DBDM-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate assessment approach for a preschooler (developmental screening), matching tool to population/purpose."
+    },
+    {
+      "questionId": "SP5403_Q110",
+      "skillId": "DBDM-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the best example of interrater reliability."
+    },
+    {
+      "questionId": "SP5403_Q121",
+      "skillId": "DBDM-S09",
+      "confidence": "high",
+      "reasoning": "Question asks how to use universal screening data to identify Tier 2 needs (comparing to benchmarks)."
+    },
+    {
+      "questionId": "SP5403_Q123",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question requires interpretation of a progress monitoring graph (flat trend line)."
+    },
+    {
+      "questionId": "SP5403_Q002",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the specific type of consultation (multicultural) used when working with a cultural broker."
+    },
+    {
+      "questionId": "SP5403_Q012",
+      "skillId": "CC-S03",
+      "confidence": "medium",
+      "reasoning": "Question requires identifying the appropriate collaborative role (assisting with data/tracking) rather than taking over instruction."
+    },
+    {
+      "questionId": "SP5403_Q024",
+      "skillId": "CC-S03",
+      "confidence": "high",
+      "reasoning": "Question tests knowledge of the school psychologist's role as a facilitator rather than a unilateral decision-maker in teams."
+    },
+    {
+      "questionId": "SP5403_Q028",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "medium",
+      "reasoning": "Question asks for the first step in establishing a parent consultation relationship (establishing mutual goals)."
+    },
+    {
+      "questionId": "SP5403_Q033",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question explicitly asks to identify the common steps (Problem Analysis, Identification, Intervention) in a problem-solving model."
+    },
+    {
+      "questionId": "SP5403_Q035",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question describes an activity (school-wide system) and asks to identify it as organizational consultation."
+    },
+    {
+      "questionId": "SP5403_Q037",
+      "skillId": "NEW-2-ProblemSolvingSteps",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in consulting about a behavior problem (collecting detailed data/defining problem) before intervention."
+    },
+    {
+      "questionId": "SP5403_Q049",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the consultation model that emphasizes home-school collaboration (Conjoint Behavioral Consultation)."
+    },
+    {
+      "questionId": "SP5403_Q057",
+      "skillId": "NEW-2-ProblemSolvingSteps",
+      "confidence": "high",
+      "reasoning": "Question asks for the immediate first step in a consultation model for an off-task student (Defining the problem)."
+    },
+    {
+      "questionId": "SP5403_Q058",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to distinguish between conjoint behavioral consultation (home & school) and standard behavioral consultation."
+    },
+    {
+      "questionId": "SP5403_Q063",
+      "skillId": "CC-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the most effective consultation approach for a struggling teacher (Collaborative problem-solving vs. expert model)."
+    },
+    {
+      "questionId": "SP5403_Q104",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for the best strategy to build rapport with a resistant teacher (Listening/acknowledging perspective)."
+    },
+    {
+      "questionId": "SP5403_Q106",
+      "skillId": "NEW-2-ProblemSolvingSteps",
+      "confidence": "medium",
+      "reasoning": "Question requires knowledge of the RIOT assessment process (Observations & Tests) within a consultation framework."
+    },
+    {
+      "questionId": "SP5403_Q116",
+      "skillId": "CC-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks about the relationship type fostered by multimethod assessment interviews (Collaborative)."
+    },
+    {
+      "questionId": "SP5403_Q015",
+      "skillId": "ACAD-S04",
+      "confidence": "high",
+      "reasoning": "Question describes a student with slow reading speed but high accuracy and asks for the appropriate intervention (Repeated readings for fluency)."
+    },
+    {
+      "questionId": "SP5403_Q020",
+      "skillId": "NEW-3-InstructionalHierarchy",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the stage of learning (Acquisition) when a student is just learning a new skill and needs immediate feedback."
+    },
+    {
+      "questionId": "SP5403_Q040",
+      "skillId": "ACAD-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for an example of an evidence-based intervention for reading comprehension (Reciprocal teaching/Question generation)."
+    },
+    {
+      "questionId": "SP5403_Q045",
+      "skillId": "ACAD-S01",
+      "confidence": "medium",
+      "reasoning": "Question asks to select the appropriate intensity of support (Tier 2) for a student slightly below benchmark."
+    },
+    {
+      "questionId": "SP5403_Q056",
+      "skillId": "ACAD-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for the best strategy to improve math fact fluency (Timed drills/Cover-Copy-Compare) vs. reasoning."
+    },
+    {
+      "questionId": "SP5403_Q072",
+      "skillId": "NEW-3-MetacognitiveStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for a strategy to help students monitor their own learning and thinking processes (Metacognition/Self-monitoring)."
+    },
+    {
+      "questionId": "SP5403_Q085",
+      "skillId": "ACAD-S05",
+      "confidence": "high",
+      "reasoning": "Question asks specifically for the accuracy range that defines the 'Instructional Level' (93-97% or 70-85% depending on text type in question)."
+    },
+    {
+      "questionId": "SP5403_Q093",
+      "skillId": "NEW-3-InstructionalHierarchy",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate instructional focus for a student who has mastered accuracy but lacks speed (Proficiency/Fluency building)."
+    },
+    {
+      "questionId": "SP5403_Q099",
+      "skillId": "ACAD-S03",
+      "confidence": "medium",
+      "reasoning": "Question involves analyzing error patterns to identify the specific skill deficit before planning instruction."
+    },
+    {
+      "questionId": "SP5403_Q112",
+      "skillId": "ACAD-S02",
+      "confidence": "high",
+      "reasoning": "Question asks to identify Direct Instruction characteristics (Scripted, fast-paced, high response rate)."
+    },
+    {
+      "questionId": "SP5403_Q115",
+      "skillId": "NEW-3-MetacognitiveStrategies",
+      "confidence": "medium",
+      "reasoning": "Question asks for strategies to support executive function/organization in academic tasks (Graphic organizers/Planners)."
+    },
+    {
+      "questionId": "SP5403_Q005",
+      "skillId": "MBH-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for the priority action when a student expresses suicidal thoughts (assess plan, intent, and means immediately)."
+    },
+    {
+      "questionId": "SP5403_Q011",
+      "skillId": "MBH-S02",
+      "confidence": "high",
+      "reasoning": "Question describes a student's disruptive behavior occurring only during math worksheets to get sent out, asking to identify the function (Escape/Avoidance)."
+    },
+    {
+      "questionId": "SP5403_Q022",
+      "skillId": "MBH-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary component of Cognitive Behavioral Therapy (CBT) for anxiety (identifying and challenging cognitive distortions)."
+    },
+    {
+      "questionId": "SP5403_Q029",
+      "skillId": "MBH-S01",
+      "confidence": "medium",
+      "reasoning": "Question asks for the definition of the 'A-B-C' model in Functional Behavior Assessment (Antecedent-Behavior-Consequence)."
+    },
+    {
+      "questionId": "SP5403_Q044",
+      "skillId": "MBH-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the essential characteristic of a replacement behavior in a BIP (it must serve the same function as the problem behavior)."
+    },
+    {
+      "questionId": "SP5403_Q054",
+      "skillId": "NEW-4-Psychopathology",
+      "confidence": "medium",
+      "reasoning": "Question asks how depression presentation in children often differs from adults (Irritability/Somatic complaints vs. Sadness)."
+    },
+    {
+      "questionId": "SP5403_Q066",
+      "skillId": "NEW-4-Psychopathology",
+      "confidence": "high",
+      "reasoning": "Question asks for the diagnostic criteria for ADHD regarding setting (symptoms must be present in two or more settings)."
+    },
+    {
+      "questionId": "SP5403_Q073",
+      "skillId": "MBH-S05",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the therapy model that uses the 'Miracle Question' (Solution-Focused Brief Therapy)."
+    },
+    {
+      "questionId": "SP5403_Q081",
+      "skillId": "MBH-S06",
+      "confidence": "medium",
+      "reasoning": "Question asks for the most effective method to teach social skills (Modeling, Rehearsal, and Feedback/Role-play)."
+    },
+    {
+      "questionId": "SP5403_Q096",
+      "skillId": "MBH-S04",
+      "confidence": "high",
+      "reasoning": "Question asks how to distinguish Non-Suicidal Self-Injury (NSSI) from suicidal intent (Assessment of intent to die)."
+    },
+    {
+      "questionId": "SP5403_Q108",
+      "skillId": "NEW-4-GroupCounseling",
+      "confidence": "medium",
+      "reasoning": "Question asks which student profile is contraindicated for group counseling (e.g., severe conduct disorder/aggressive behavior)."
+    },
+    {
+      "questionId": "SP5403_Q113",
+      "skillId": "MBH-S06",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the behavioral principle where removing an aversive stimulus increases behavior (Negative Reinforcement)."
+    },
+    {
+      "questionId": "SP5403_Q022",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify a specific example of a Tier 2 intervention (small-group social skills) within a multi-tiered framework."
+    },
+    {
+      "questionId": "SP5403_Q044",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition of Response to Intervention (RTI) as a multi-tiered system for providing increasingly intensive interventions."
+    },
+    {
+      "questionId": "SP5403_Q074",
+      "skillId": "SWP-S02",
+      "confidence": "high",
+      "reasoning": "Question tests the fundamental principle of positive behavior support (changing the environment and teaching new skills vs. punishment)."
+    },
+    {
+      "questionId": "SP5403_Q080",
+      "skillId": "SWP-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the main goal of the universal (Tier 1) level of PBIS (teaching expectations and acknowledging desired behaviors)."
+    },
+    {
+      "questionId": "SP5403_Q083",
+      "skillId": "SWP-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for a commonly used outcome variable for PBIS effectiveness (Office Discipline Referrals/ODRs)."
+    },
+    {
+      "questionId": "SP5403_Q087",
+      "skillId": "SWP-S03",
+      "confidence": "high",
+      "reasoning": "Question asks to identify a Tier 1 intervention from a list (school-wide assembly vs. individual counseling)."
+    },
+    {
+      "questionId": "SP5403_Q094",
+      "skillId": "NEW-5-SchoolClimate",
+      "confidence": "high",
+      "reasoning": "Question asks for the three main components of school climate according to NASP (Engagement, Safety, Environment)."
+    },
+    {
+      "questionId": "SP5403_Q095",
+      "skillId": "SWP-S02",
+      "confidence": "medium",
+      "reasoning": "Question asks for the most useful metric for evaluating PBIS effectiveness (ODRs and suspensions), similar to Q083 but focused on evaluation."
+    },
+    {
+      "questionId": "SP5403_Q100",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question tests the distinction between Tier 1 (all students) and Tier 2 (targeted group) supports."
+    },
+    {
+      "questionId": "SP5403_Q111",
+      "skillId": "NEW-5-SchoolClimate",
+      "confidence": "high",
+      "reasoning": "Question asks for factors used to assess school climate (Physical, Social, and Emotional environments)."
+    },
+    {
+      "questionId": "SP5403_Q124",
+      "skillId": "SWP-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for the best sign of successful Tier 1 PBIS implementation (consistent teaching strategies and metrics) which relates to fidelity."
+    },
+    {
+      "questionId": "SP5403_Q006",
+      "skillId": "PC-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary role of the school psychologist during a crisis event (supporting students/staff and triage, not long-term therapy)."
+    },
+    {
+      "questionId": "SP5403_Q014",
+      "skillId": "NEW-6-BullyingPrevention",
+      "confidence": "high",
+      "reasoning": "Question asks for the most effective school-wide strategy to reduce bullying (improving school climate/supervision vs. zero tolerance policies)."
+    },
+    {
+      "questionId": "SP5403_Q026",
+      "skillId": "PC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to distinguish between a transient threat and a substantive threat in a threat assessment context."
+    },
+    {
+      "questionId": "SP5403_Q046",
+      "skillId": "PC-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary goal of postvention services following a student suicide (preventing contagion/clusters)."
+    },
+    {
+      "questionId": "SP5403_Q059",
+      "skillId": "NEW-6-TraumaInformed",
+      "confidence": "medium",
+      "reasoning": "Question asks to identify common symptoms of trauma in young children (regression, sleep disturbance)."
+    },
+    {
+      "questionId": "SP5403_Q078",
+      "skillId": "PC-S02",
+      "confidence": "high",
+      "reasoning": "Question asks about the re-entry planning process for a student returning from psychiatric hospitalization (safety planning)."
+    },
+    {
+      "questionId": "SP5403_Q088",
+      "skillId": "PC-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for best practices regarding crisis drills (they should be practiced regularly and in a developmentally appropriate way)."
+    },
+    {
+      "questionId": "SP5403_Q102",
+      "skillId": "PC-S03",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the core elements of Psychological First Aid (establish safety, calm, connectedness, self-efficacy, hope)."
+    },
+    {
+      "questionId": "SP5403_Q118",
+      "skillId": "NEW-6-BullyingPrevention",
+      "confidence": "medium",
+      "reasoning": "Question asks specifically about strategies to address cyberbullying (education on digital citizenship)."
+    },
+    {
+      "questionId": "SP5403_Q003",
+      "skillId": "NEW-7-BarriersToEngagement",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the most significant barrier to parental involvement for low-SES families (logistical issues/lack of flexibility vs. lack of interest)."
+    },
+    {
+      "questionId": "SP5403_Q017",
+      "skillId": "FSC-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for an effective strategy to increase parent engagement at the school level (creating a welcoming environment/two-way communication)."
+    },
+    {
+      "questionId": "SP5403_Q043",
+      "skillId": "FSC-S04",
+      "confidence": "medium",
+      "reasoning": "Question involves working with a family from a collectivist culture and respecting the role of extended family members in decision-making."
+    },
+    {
+      "questionId": "SP5403_Q055",
+      "skillId": "NEW-7-FamilySystems",
+      "confidence": "high",
+      "reasoning": "Question asks to identify a core concept of Family Systems Theory (events affecting one member affect the whole system)."
+    },
+    {
+      "questionId": "SP5403_Q069",
+      "skillId": "FSC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary goal of family-school partnerships (shared responsibility for student learning/success)."
+    },
+    {
+      "questionId": "SP5403_Q086",
+      "skillId": "FSC-S03",
+      "confidence": "medium",
+      "reasoning": "Question asks for the best way to present assessment results to parents (using jargon-free language and focusing on strengths/needs)."
+    },
+    {
+      "questionId": "SP5403_Q101",
+      "skillId": "NEW-7-BarriersToEngagement",
+      "confidence": "high",
+      "reasoning": "Question asks how to address a specific barrier (language) to ensure meaningful parent participation (using qualified interpreters)."
+    },
+    {
+      "questionId": "SP5403_Q117",
+      "skillId": "NEW-7-FamilySystems",
+      "confidence": "medium",
+      "reasoning": "Question describes a scenario of reciprocal influence between parent and child behavior, testing understanding of circular causality."
+    },
+    {
+      "questionId": "SP5403_Q004",
+      "skillId": "DIV-S04",
+      "confidence": "high",
+      "reasoning": "Question asks to interpret a risk ratio of 2.5 for a specific racial group in special education (indicating overrepresentation/disproportionality)."
+    },
+    {
+      "questionId": "SP5403_Q009",
+      "skillId": "DIV-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary consideration before assessing an ELL student (determining language dominance/proficiency in both languages)."
+    },
+    {
+      "questionId": "SP5403_Q023",
+      "skillId": "DIV-S07",
+      "confidence": "high",
+      "reasoning": "Question asks for best practice when using an interpreter during a parent meeting (speaking directly to the parent, not the interpreter)."
+    },
+    {
+      "questionId": "SP5403_Q032",
+      "skillId": "DIV-S02",
+      "confidence": "medium",
+      "reasoning": "Question involves selecting a nonverbal assessment to reduce linguistic bias for a student with limited English proficiency."
+    },
+    {
+      "questionId": "SP5403_Q041",
+      "skillId": "DIV-S01",
+      "confidence": "medium",
+      "reasoning": "Question describes a scenario where a psychologist assumes a student's lack of eye contact is defiance rather than cultural, identifying implicit bias."
+    },
+    {
+      "questionId": "SP5403_Q050",
+      "skillId": "DIV-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition/role of a cultural broker (a community liaison who bridges the cultural gap between school and family)."
+    },
+    {
+      "questionId": "SP5403_Q067",
+      "skillId": "NEW-8-Acculturation",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the stage of acculturation where a student adopts new cultural norms while maintaining their original culture (Integration/Biculturalism)."
+    },
+    {
+      "questionId": "SP5403_Q079",
+      "skillId": "NEW-8-SocialJustice",
+      "confidence": "medium",
+      "reasoning": "Question asks for the school psychologist's ethical responsibility when observing systemic barriers affecting marginalized groups (Social justice advocacy)."
+    },
+    {
+      "questionId": "SP5403_Q105",
+      "skillId": "NEW-8-LanguageAcquisition",
+      "confidence": "high",
+      "reasoning": "Question asks to distinguish between BICS (social language) and CALP (academic language) regarding timeline for proficiency."
+    },
+    {
+      "questionId": "SP5403_Q119",
+      "skillId": "DIV-S02",
+      "confidence": "high",
+      "reasoning": "Question asks why translating a standardized test into another language on the fly is poor practice (violates validity/standardization)."
+    },
+    {
+      "questionId": "SP5403_Q008",
+      "skillId": "RES-S06",
+      "confidence": "high",
+      "reasoning": "Question asks to interpret a correlation coefficient of -0.85 (Strong negative relationship)."
+    },
+    {
+      "questionId": "SP5403_Q027",
+      "skillId": "RES-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition of Type I error (rejecting the null hypothesis when it is true)."
+    },
+    {
+      "questionId": "SP5403_Q030",
+      "skillId": "NEW-9-Variables",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the independent variable in a described experiment (the intervention being manipulated)."
+    },
+    {
+      "questionId": "SP5403_Q047",
+      "skillId": "NEW-9-ValidityThreats",
+      "confidence": "medium",
+      "reasoning": "Question asks to identify a threat to internal validity where participants drop out of the study (Attrition/Mortality)."
+    },
+    {
+      "questionId": "SP5403_Q051",
+      "skillId": "NEW-9-StatisticalTests",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate statistical test to compare the means of two distinct groups (Independent t-test)."
+    },
+    {
+      "questionId": "SP5403_Q061",
+      "skillId": "RES-S03",
+      "confidence": "high",
+      "reasoning": "Question asks to interpret a Cohen's d value of 0.80 (Large effect size), testing practical significance."
+    },
+    {
+      "questionId": "SP5403_Q075",
+      "skillId": "NEW-9-StatisticalTests",
+      "confidence": "high",
+      "reasoning": "Question asks for the correct test to compare means across three or more groups (ANOVA)."
+    },
+    {
+      "questionId": "SP5403_Q084",
+      "skillId": "RES-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the specific single-subject design being used (A-B-A-B Reversal Design)."
+    },
+    {
+      "questionId": "SP5403_Q092",
+      "skillId": "NEW-9-DescriptiveStats",
+      "confidence": "high",
+      "reasoning": "Question asks for the statistical measure that describes the spread or variability of scores around the mean (Standard Deviation)."
+    },
+    {
+      "questionId": "SP5403_Q114",
+      "skillId": "RES-S01",
+      "confidence": "medium",
+      "reasoning": "Question asks for the primary purpose of random assignment in experimental design (to ensure groups are equivalent/control extraneous variables)."
+    },
+    {
+      "questionId": "SP5403_Q007",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for the primary requirement of FAPE under IDEA (special education and related services provided at public expense)."
+    },
+    {
+      "questionId": "SP5403_Q038",
+      "skillId": "LEG-S04",
+      "confidence": "high",
+      "reasoning": "Question presents a scenario where a child reveals abuse and asks for the psychologist's immediate legal duty (report to CPS, not investigate)."
+    },
+    {
+      "questionId": "SP5403_Q077",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the landmark case that established the duty to warn/protect when a client makes a specific threat (Tarasoff)."
+    },
+    {
+      "questionId": "SP5403_Q089",
+      "skillId": "LEG-S03",
+      "confidence": "high",
+      "reasoning": "Question asks when it is appropriate to breach confidentiality (imminent danger to self or others)."
+    },
+    {
+      "questionId": "SP5403_Q090",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the case that banned the use of IQ tests for placing African American students in special education in CA (Larry P. v. Riles)."
+    },
+    {
+      "questionId": "SP5403_Q097",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question asks for the key difference between Section 504 and IDEA (civil rights/access vs. educational benefit/funding)."
+    },
+    {
+      "questionId": "SP5403_Q103",
+      "skillId": "LEG-S06",
+      "confidence": "medium",
+      "reasoning": "Question involves an ethical dilemma about accepting a gift from a parent (evaluating cultural context vs. conflict of interest)."
+    },
+    {
+      "questionId": "SP5403_Q107",
+      "skillId": "NEW-10-RecordKeeping",
+      "confidence": "medium",
+      "reasoning": "Question asks about the rights of non-custodial parents to access student records under FERPA (they generally have access unless court order states otherwise)."
+    },
+    {
+      "questionId": "SP5403_Q109",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the case defining 'appropriate' education as providing 'some educational benefit' rather than optimal potential (Rowley)."
+    },
+    {
+      "questionId": "SP5403_Q120",
+      "skillId": "NEW-10-Supervision",
+      "confidence": "high",
+      "reasoning": "Question asks for the required supervision conditions for a school psychology intern (e.g., 2 hours per week by a credentialed psychologist)."
+    },
+    {
+      "questionId": "SP5403_Q122",
+      "skillId": "LEG-S05",
+      "confidence": "high",
+      "reasoning": "Question asks for the purpose of a Manifestation Determination Review (to decide if conduct was caused by the disability)."
+    },
+    {
+      "questionId": "SP5403_Q125",
+      "skillId": "NEW-10-TestSecurity",
+      "confidence": "high",
+      "reasoning": "Question asks how to handle a parent's request to see test protocols (providing explanation/viewing but not copying/releasing protocols to non-professionals)."
+    }
+  ],
+  "unmappedQuestions": []
+}

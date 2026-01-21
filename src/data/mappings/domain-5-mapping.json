@@ -1,0 +1,81 @@
+{
+  "domain": 5,
+  "domainName": "School-Wide Practices to Promote Learning",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q022",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify a specific example of a Tier 2 intervention (small-group social skills) within a multi-tiered framework."
+    },
+    {
+      "questionId": "SP5403_Q044",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question asks for the definition of Response to Intervention (RTI) as a multi-tiered system for providing increasingly intensive interventions."
+    },
+    {
+      "questionId": "SP5403_Q074",
+      "skillId": "SWP-S02",
+      "confidence": "high",
+      "reasoning": "Question tests the fundamental principle of positive behavior support (changing the environment and teaching new skills vs. punishment)."
+    },
+    {
+      "questionId": "SP5403_Q080",
+      "skillId": "SWP-S03",
+      "confidence": "high",
+      "reasoning": "Question asks for the main goal of the universal (Tier 1) level of PBIS (teaching expectations and acknowledging desired behaviors)."
+    },
+    {
+      "questionId": "SP5403_Q083",
+      "skillId": "SWP-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for a commonly used outcome variable for PBIS effectiveness (Office Discipline Referrals/ODRs)."
+    },
+    {
+      "questionId": "SP5403_Q087",
+      "skillId": "SWP-S03",
+      "confidence": "high",
+      "reasoning": "Question asks to identify a Tier 1 intervention from a list (school-wide assembly vs. individual counseling)."
+    },
+    {
+      "questionId": "SP5403_Q094",
+      "skillId": "NEW-5-SchoolClimate",
+      "confidence": "high",
+      "reasoning": "Question asks for the three main components of school climate according to NASP (Engagement, Safety, Environment)."
+    },
+    {
+      "questionId": "SP5403_Q095",
+      "skillId": "SWP-S02",
+      "confidence": "medium",
+      "reasoning": "Question asks for the most useful metric for evaluating PBIS effectiveness (ODRs and suspensions), similar to Q083 but focused on evaluation."
+    },
+    {
+      "questionId": "SP5403_Q100",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question tests the distinction between Tier 1 (all students) and Tier 2 (targeted group) supports."
+    },
+    {
+      "questionId": "SP5403_Q111",
+      "skillId": "NEW-5-SchoolClimate",
+      "confidence": "high",
+      "reasoning": "Question asks for factors used to assess school climate (Physical, Social, and Emotional environments)."
+    },
+    {
+      "questionId": "SP5403_Q124",
+      "skillId": "SWP-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for the best sign of successful Tier 1 PBIS implementation (consistent teaching strategies and metrics) which relates to fidelity."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-5-SchoolClimate",
+      "name": "School Climate Components",
+      "description": "Identify the core domains of school climate (Engagement, Safety, Environment) and the factors that contribute to them.",
+      "questionsTesting": ["SP5403_Q094", "SP5403_Q111"],
+      "decisionRule": "Correct answer identifies 'Engagement, Safety, Environment' or specific physical/social/emotional factors."
+    }
+  ]
+}

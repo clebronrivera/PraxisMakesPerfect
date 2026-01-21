@@ -1,0 +1,88 @@
+{
+  "domain": 3,
+  "domainName": "Academic Interventions & Instructional Support",
+  "mappedQuestions": [
+    {
+      "questionId": "SP5403_Q015",
+      "skillId": "ACAD-S04",
+      "confidence": "high",
+      "reasoning": "Question describes a student with slow reading speed but high accuracy and asks for the appropriate intervention (Repeated readings for fluency)."
+    },
+    {
+      "questionId": "SP5403_Q020",
+      "skillId": "NEW-3-InstructionalHierarchy",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the stage of learning (Acquisition) when a student is just learning a new skill and needs immediate feedback."
+    },
+    {
+      "questionId": "SP5403_Q040",
+      "skillId": "ACAD-S02",
+      "confidence": "high",
+      "reasoning": "Question asks for an example of an evidence-based intervention for reading comprehension (Reciprocal teaching/Question generation)."
+    },
+    {
+      "questionId": "SP5403_Q045",
+      "skillId": "ACAD-S01",
+      "confidence": "medium",
+      "reasoning": "Question asks to select the appropriate intensity of support (Tier 2) for a student slightly below benchmark."
+    },
+    {
+      "questionId": "SP5403_Q056",
+      "skillId": "ACAD-S04",
+      "confidence": "high",
+      "reasoning": "Question asks for the best strategy to improve math fact fluency (Timed drills/Cover-Copy-Compare) vs. reasoning."
+    },
+    {
+      "questionId": "SP5403_Q072",
+      "skillId": "NEW-3-MetacognitiveStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for a strategy to help students monitor their own learning and thinking processes (Metacognition/Self-monitoring)."
+    },
+    {
+      "questionId": "SP5403_Q085",
+      "skillId": "ACAD-S05",
+      "confidence": "high",
+      "reasoning": "Question asks specifically for the accuracy range that defines the 'Instructional Level' (93-97% or 70-85% depending on text type in question)."
+    },
+    {
+      "questionId": "SP5403_Q093",
+      "skillId": "NEW-3-InstructionalHierarchy",
+      "confidence": "high",
+      "reasoning": "Question asks for the appropriate instructional focus for a student who has mastered accuracy but lacks speed (Proficiency/Fluency building)."
+    },
+    {
+      "questionId": "SP5403_Q099",
+      "skillId": "ACAD-S03",
+      "confidence": "medium",
+      "reasoning": "Question involves analyzing error patterns to identify the specific skill deficit before planning instruction."
+    },
+    {
+      "questionId": "SP5403_Q112",
+      "skillId": "ACAD-S02",
+      "confidence": "high",
+      "reasoning": "Question asks to identify Direct Instruction characteristics (Scripted, fast-paced, high response rate)."
+    },
+    {
+      "questionId": "SP5403_Q115",
+      "skillId": "NEW-3-MetacognitiveStrategies",
+      "confidence": "medium",
+      "reasoning": "Question asks for strategies to support executive function/organization in academic tasks (Graphic organizers/Planners)."
+    }
+  ],
+  "suggestedNewSkills": [
+    {
+      "proposedId": "NEW-3-InstructionalHierarchy",
+      "name": "Instructional Hierarchy Application",
+      "description": "Match instructional strategies to the student's stage of learning (Acquisition, Proficiency/Fluency, Generalization, Adaptation).",
+      "questionsTesting": ["SP5403_Q020", "SP5403_Q093"],
+      "decisionRule": "Correct answer matches: Acquisition → Modeling/Accuracy; Proficiency → Speed/Drill; Generalization → New settings."
+    },
+    {
+      "proposedId": "NEW-3-MetacognitiveStrategies",
+      "name": "Metacognitive & Study Skills",
+      "description": "Identify strategies that teach students 'learning to learn' (self-regulation, organization, mnemonic devices).",
+      "questionsTesting": ["SP5403_Q072", "SP5403_Q115"],
+      "decisionRule": "Correct answer focuses on the student's internal management of learning (thinking about thinking) rather than content mastery."
+    }
+  ]
+}
