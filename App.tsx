@@ -111,17 +111,48 @@ function PraxisStudyAppContent() {
       }
     }
     
-    // Start new assessment
-    // Select 2 questions per domain (20 total)
+    // Start new assessment: Quick Diagnostic (40Q)
+    // Select 4 questions per domain (40 total) with duplicate-proof selection
     const selected: AnalyzedQuestion[] = [];
+    const usedQuestionIds = new Set<string>(); // Global duplicate prevention
+    
     for (let domain = 1; domain <= 10; domain++) {
-      const domainQuestions = analyzedQuestions.filter(q => q.domains.includes(domain));
+      // Get all questions for this domain that haven't been selected yet
+      const domainQuestions = analyzedQuestions.filter(
+        q => q.domains.includes(domain) && !usedQuestionIds.has(q.id)
+      );
+      
+      // Sanity check: ensure we have enough questions
+      if (domainQuestions.length === 0) {
+        console.warn(`No available questions for domain ${domain} after deduplication`);
+        continue;
+      }
+      
+      // Shuffle and take up to 4 questions
       const shuffled = [...domainQuestions].sort(() => Math.random() - 0.5);
-      selected.push(...shuffled.slice(0, 2));
+      const domainSelection = shuffled.slice(0, 4);
+      
+      // Add to selected and mark as used
+      domainSelection.forEach(q => {
+        selected.push(q);
+        usedQuestionIds.add(q.id);
+      });
+      
+      // If we couldn't get 4 questions for this domain, log it
+      if (domainSelection.length < 4) {
+        console.warn(`Only found ${domainSelection.length} questions for domain ${domain} (requested 4)`);
+      }
     }
     
-    // Shuffle final selection
-    const questionIds = selected.sort(() => Math.random() - 0.5).map(q => q.id);
+    // Sanity check: ensure we have questions
+    if (selected.length === 0) {
+      console.error('No questions selected for pre-assessment');
+      return;
+    }
+    
+    // Shuffle final selection to randomize order across domains
+    const shuffledSelected = [...selected].sort(() => Math.random() - 0.5);
+    const questionIds = shuffledSelected.map(q => q.id);
     
     // Create new user session if we have a current user
     if (currentUserName) {
@@ -133,7 +164,7 @@ function PraxisStudyAppContent() {
       }
     }
     
-    setPreAssessmentQuestions(selected);
+    setPreAssessmentQuestions(shuffledSelected);
     setAssessmentStartTime(Date.now());
     setMode('preassessment');
   }, [analyzedQuestions, currentUserName]);
@@ -399,8 +430,8 @@ function PraxisStudyAppContent() {
                         <Target className="w-6 h-6 text-white" />
                       </div>
                       <div className="text-left">
-                        <p className="font-bold text-white text-lg">Start Pre-Assessment</p>
-                        <p className="text-amber-100 text-sm">20 questions • ~15 minutes</p>
+                        <p className="font-bold text-white text-lg">Quick Diagnostic (40Q)</p>
+                        <p className="text-amber-100 text-sm">40 questions • ~30 minutes</p>
                       </div>
                     </div>
                     <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
