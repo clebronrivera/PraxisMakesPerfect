@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "diagnostics": "npx tsx src/scripts/run-all-diagnostics.ts"
+    "diagnostics": "npx tsx src/scripts/run-all-diagnostics.ts",
+    "audit:distractors": "npx tsx scripts/audit-distractor-quality.ts",
+    "test:banned-terms": "npx tsx scripts/banned-terms-check.ts"
   },
   "dependencies": {
     "lucide-react": "^0.263.1",

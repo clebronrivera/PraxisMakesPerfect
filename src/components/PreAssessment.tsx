@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Clock } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { UserResponse } from '../brain/weakness-detector';
 import { saveSession, loadSession, clearSession, AssessmentSession } from '../utils/sessionStorage';
+import { getCurrentUser, getCurrentSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
 import { matchDistractorPattern } from '../brain/distractor-matcher';
 
 interface AnalyzedQuestion {
@@ -24,14 +26,21 @@ interface AnalyzedQuestion {
 interface PreAssessmentProps {
   questions: AnalyzedQuestion[];
   onComplete: (responses: UserResponse[]) => void;
+  showTimer?: boolean;
+  sessionId?: string;
 }
 
 export default function PreAssessment({
   questions,
-  onComplete
+  onComplete,
+  showTimer = true,
+  sessionId
 }: PreAssessmentProps) {
-  // Try to load saved session
-  const savedSession = loadSession();
+  const currentUser = getCurrentUser();
+  const userSession = currentUser && sessionId ? getCurrentSession(currentUser) : null;
+  
+  // Try to load saved session (prefer user session, fallback to old system)
+  const savedSession = userSession || loadSession();
   const isResuming = savedSession?.type === 'pre-assessment' && 
     savedSession.questionIds.length === questions.length &&
     savedSession.questionIds.every((id, idx) => questions[idx]?.id === id);
@@ -43,24 +52,45 @@ export default function PreAssessment({
   const [startTime, setStartTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [showTimerState, setShowTimerState] = useState(showTimer);
 
   const currentQuestion = questions[currentIndex];
 
   // Save session whenever state changes
   useEffect(() => {
-    const session: AssessmentSession = {
-      type: 'pre-assessment',
-      questionIds: questions.map(q => q.id),
-      currentIndex,
-      responses,
-      selectedAnswers,
-      showFeedback,
-      confidence,
-      startTime,
-      lastUpdated: Date.now()
-    };
-    saveSession(session);
-  }, [currentIndex, responses, selectedAnswers, showFeedback, confidence, startTime, questions]);
+    if (currentUser && sessionId) {
+      // Save to user session system
+      const userSession: UserSession = {
+        userName: currentUser,
+        sessionId: sessionId,
+        type: 'pre-assessment',
+        questionIds: questions.map(q => q.id),
+        currentIndex,
+        responses,
+        selectedAnswers,
+        showFeedback,
+        confidence,
+        startTime,
+        lastUpdated: Date.now(),
+        createdAt: Date.now()
+      };
+      saveUserSession(userSession);
+    } else {
+      // Fallback to old session system
+      const session: AssessmentSession = {
+        type: 'pre-assessment',
+        questionIds: questions.map(q => q.id),
+        currentIndex,
+        responses,
+        selectedAnswers,
+        showFeedback,
+        confidence,
+        startTime,
+        lastUpdated: Date.now()
+      };
+      saveSession(session);
+    }
+  }, [currentIndex, responses, selectedAnswers, showFeedback, confidence, startTime, questions, currentUser, sessionId]);
 
   // Clear session when assessment is complete
   useEffect(() => {
@@ -71,13 +101,13 @@ export default function PreAssessment({
 
   // Timer effect
   useEffect(() => {
-    if (!showFeedback && currentQuestion) {
+    if (!showFeedback && currentQuestion && showTimerState) {
       const interval = setInterval(() => {
         setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [showFeedback, startTime, currentQuestion]);
+  }, [showFeedback, startTime, currentQuestion, showTimerState]);
 
   const toggleAnswer = (letter: string) => {
     if (showFeedback) return;
@@ -189,9 +219,20 @@ export default function PreAssessment({
         </div>
       </div>
 
-      {/* Timer */}
-      <div className="text-center">
-        <span className="text-sm text-slate-400">Time: <span className="text-slate-300 font-mono">{formatTime(elapsedTime)}</span></span>
+      {/* Timer Toggle and Display */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setShowTimerState(!showTimerState)}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
+        >
+          <Clock className={`w-4 h-4 ${showTimerState ? 'text-amber-400' : ''}`} />
+          <span>{showTimerState ? 'Hide Timer' : 'Show Timer'}</span>
+        </button>
+        {showTimerState && (
+          <div className="text-sm text-slate-400">
+            Time: <span className="text-slate-300 font-mono">{formatTime(elapsedTime)}</span>
+          </div>
+        )}
       </div>
 
       {/* Question Card */}

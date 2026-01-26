@@ -1,5 +1,5 @@
 {
-  "totalQuestions": 238,
+  "totalQuestions": 304,
   "mappedQuestions": [
     {
       "questionId": "SP5403_Q001",
@@ -1196,31 +1196,7 @@
       "reasoning": "Question tests PBIS/Tier 1 response: examine Tier 1 interventions (SWPBIS, SEL) when schoolwide behavior issues increase."
     },
     {
-      "questionId": "GEN-MBH-T15-67xzh7",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Developmental-Level Interventions. Question tests Understand how to adapt intervention techniques based on developmental level (elementary vs. secondary)."
-    },
-    {
-      "questionId": "GEN-MBH-T03-f3ag1a",
-      "skillId": "MBH-S03",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Replacement Behavior Selection. Question tests Select replacement behaviors that serve the same function as problem behavior."
-    },
-    {
-      "questionId": "GEN-SWP-T10-3nv1dn",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Educational Policies. Question tests Understand educational policies including retention, tracking, and their implications."
-    },
-    {
       "questionId": "GEN-FSC-T08-hhzmm2",
-      "skillId": "NEW-7-InteragencyCollaboration",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
-    },
-    {
-      "questionId": "GEN-FSC-T08-d7kjml",
       "skillId": "NEW-7-InteragencyCollaboration",
       "confidence": "high",
       "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
@@ -1233,12 +1209,6 @@
     },
     {
       "questionId": "GEN-ACAD-T10-5i35q1",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
-    },
-    {
-      "questionId": "GEN-ACAD-T10-ydf1d4",
       "skillId": "NEW-3-AccommodationsModifications",
       "confidence": "high",
       "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
@@ -1320,12 +1290,6 @@
       "skillId": "NEW-9-ProgramEvaluation",
       "confidence": "high",
       "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
-    },
-    {
-      "questionId": "GEN-ACAD-T10-8z1vt8",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
     },
     {
       "questionId": "GEN-ACAD-T10-cuomeq",
@@ -1428,6 +1392,438 @@
       "skillId": "LEG-S01",
       "confidence": "high",
       "reasoning": "FLIP question from distractor conversion. Question tests Landmark Cases: Identify key legal cases and their implications (Tarasoff, Larry P., Rowley)."
+    },
+    {
+      "questionId": "GEN-MBH-T16-mwt51a",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T16-3v5g7",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T16-1yvjp2",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T15-yha9xk",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T15-1dye4",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-y98cke",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-vri4i0",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-wa796g",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-yzifuw",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T10-bbg7ik",
+      "skillId": "NEW-2-CommunityAgencies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T10-dbtzi6",
+      "skillId": "NEW-2-CommunityAgencies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-DBDM-T22-sb7b18",
+      "skillId": "NEW-1-LowIncidenceExceptionalities",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-DBDM-T22-9itema",
+      "skillId": "NEW-1-LowIncidenceExceptionalities",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-f3bgcv",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-wtfngp",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-FSC-T05-5c9ngz",
+      "skillId": "NEW-7-FamilySystems",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-RES-T11-efezcm",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-RES-T11-795f7h",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T16-w6eyil",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T16-icjxve",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T16-3v5g7",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T15-53ofgg",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T15-gvj5ao",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-gccqo6",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-5i35q1",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-cuomeq",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-n1gdr6",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-f15239",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T10-bbg7ik",
+      "skillId": "NEW-2-CommunityAgencies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T10-2pv6ex",
+      "skillId": "NEW-2-CommunityAgencies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-DBDM-T22-9itema",
+      "skillId": "NEW-1-LowIncidenceExceptionalities",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-d6sx3k",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-r7fpak",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-bozhd0",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-RES-T11-u4mi42",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-RES-T11-efezcm",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-FSC-T05-5c9ngz",
+      "skillId": "NEW-7-FamilySystems",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T15-53ofgg",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T15-hmirnm",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T15-yha9xk",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T16-rhfa1a",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-MBH-T16-jbzlqu",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-gccqo6",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-ivu7un",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-kz4bc1",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-xyxrhj",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-b16rnm",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T10-bbg7ik",
+      "skillId": "NEW-2-CommunityAgencies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-DBDM-T22-sb7b18",
+      "skillId": "NEW-1-LowIncidenceExceptionalities",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-DBDM-T22-9itema",
+      "skillId": "NEW-1-LowIncidenceExceptionalities",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-fcbekl",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-r7fpak",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-SWP-T10-8t4pc3",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T11-9xv9oj",
+      "skillId": "NEW-3-AcademicProgressFactors",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-ACAD-T11-lf8txu",
+      "skillId": "NEW-3-AcademicProgressFactors",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-RES-T11-u4mi42",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-RES-T11-efezcm",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-FSC-T05-5c9ngz",
+      "skillId": "NEW-7-FamilySystems",
+      "confidence": "high",
+      "reasoning": "Regenerated question for template"
+    },
+    {
+      "questionId": "GEN-CC-T09-f15239",
+      "skillId": "NEW-2-FamilyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-w89l4s",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-ACAD-T10-oxddo6",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-MBH-T16-uidh0z",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-MBH-T16-3v5g7",
+      "skillId": "NEW-4-MentalHealthImpact",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-MBH-T15-ytf543",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-MBH-T15-gvj5ao",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-MBH-T15-1dye4",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-ACAD-T11-9xv9oj",
+      "skillId": "NEW-3-AcademicProgressFactors",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-PC-T09-rpmeb0",
+      "skillId": "NEW-6-SchoolClimateMeasurement",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-MBH-T15-ozvb5k",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-MBH-T03-f3ag1a",
+      "skillId": "MBH-S03",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-SWP-T10-d6sx3k",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
+    },
+    {
+      "questionId": "GEN-FSC-T08-q8hn0e",
+      "skillId": "NEW-7-InteragencyCollaboration",
+      "confidence": "high",
+      "reasoning": "Regenerated to fix banned term violation"
     }
   ],
   "unmappedQuestions": []

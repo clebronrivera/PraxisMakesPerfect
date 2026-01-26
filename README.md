@@ -98,6 +98,99 @@ To reset your progress, clear your browser's localStorage or use browser develop
 - **Modify Knowledge Base**: Update `knowledge-base.ts` with additional concepts
 - **Change Styling**: Modify Tailwind classes or add custom CSS
 
+## Deployment
+
+This app can be deployed to various platforms. Configuration files are included for easy deployment.
+
+### Option 1: Vercel (Recommended - Easiest)
+
+1. **Push your code to GitHub** (if not already done):
+   ```bash
+   git add .
+   git commit -m "Prepare for deployment"
+   git push origin main
+   ```
+
+2. **Deploy to Vercel**:
+   - Go to [vercel.com](https://vercel.com) and sign in with GitHub
+   - Click "New Project"
+   - Import your GitHub repository
+   - Vercel will auto-detect Vite settings (or use the included `vercel.json`)
+   - Click "Deploy"
+   - Your app will be live at `https://your-project-name.vercel.app`
+
+3. **Automatic deployments**: Every push to `main` will automatically deploy
+
+### Option 2: Netlify
+
+1. **Push your code to GitHub** (if not already done)
+
+2. **Deploy to Netlify**:
+   - Go to [netlify.com](https://netlify.com) and sign in with GitHub
+   - Click "Add new site" → "Import an existing project"
+   - Select your GitHub repository
+   - Netlify will auto-detect settings (or use the included `netlify.toml`)
+   - Click "Deploy site"
+   - Your app will be live at `https://your-project-name.netlify.app`
+
+3. **Automatic deployments**: Every push to `main` will automatically deploy
+
+### Option 3: GitHub Pages
+
+1. **Install gh-pages**:
+   ```bash
+   npm install --save-dev gh-pages
+   ```
+
+2. **Add deploy script to package.json**:
+   ```json
+   "scripts": {
+     "deploy": "npm run build && gh-pages -d dist"
+   }
+   ```
+
+3. **Update vite.config.ts** to set base path:
+   ```typescript
+   export default defineConfig({
+     plugins: [react()],
+     base: '/your-repo-name/'  // Replace with your GitHub repo name
+   })
+   ```
+
+4. **Deploy**:
+   ```bash
+   npm run deploy
+   ```
+
+5. **Enable GitHub Pages**:
+   - Go to your repo → Settings → Pages
+   - Source: `gh-pages` branch
+   - Your app will be at `https://your-username.github.io/your-repo-name/`
+
+### Option 4: Manual Deployment
+
+1. **Build the app**:
+   ```bash
+   npm run build
+   ```
+
+2. **Upload the `dist/` folder** to any static hosting service:
+   - AWS S3 + CloudFront
+   - Google Cloud Storage
+   - Azure Static Web Apps
+   - Any web hosting service that supports static files
+
+### Testing Your Deployment Locally
+
+Before deploying, test the production build locally:
+
+```bash
+npm run build
+npm run preview
+```
+
+This will serve the production build at `http://localhost:4173` (or similar).
+
 ## Requirements
 
 - Node.js 16+ and npm

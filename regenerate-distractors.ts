@@ -607,7 +607,10 @@ function selectNewDistractors(
   return shuffled.slice(0, count);
 }
 
-function regenerateDistractors(questions: Question[]): {
+function regenerateDistractors(
+  questions: Question[], 
+  targetIds?: Set<string>
+): {
   updated: Question[];
   log: string[];
 } {
@@ -617,13 +620,27 @@ function regenerateDistractors(questions: Question[]): {
   log.push('Distractor Regeneration Log');
   log.push('=' .repeat(50));
   log.push(`Started: ${new Date().toISOString()}`);
+  
+  if (targetIds) {
+    log.push(`Targeting ${targetIds.size} specific question IDs`);
+  } else {
+    log.push('Processing all GEN-* questions');
+  }
   log.push('');
   
   for (const question of questions) {
-    // Only process generated questions with issues
-    if (!question.id.startsWith('GEN-')) {
-      updated.push(question);
-      continue;
+    // If targetIds is provided, only process those IDs
+    if (targetIds) {
+      if (!targetIds.has(question.id)) {
+        updated.push(question);
+        continue;
+      }
+    } else {
+      // Fall back to original behavior: only process generated questions
+      if (!question.id.startsWith('GEN-')) {
+        updated.push(question);
+        continue;
+      }
     }
     
     const correctAnswer = question.choices.find(
@@ -642,7 +659,13 @@ function regenerateDistractors(questions: Question[]): {
       const choice = question.choices[i];
       if (choice.letter === question.correctAnswer || choice.isCorrect) continue;
       
-      if (isNonsensicalDistractor(choice.text)) {
+      // If targetIds is provided, regenerate all distractors for targeted questions
+      // Otherwise, only regenerate nonsensical ones
+      const shouldReplace = targetIds 
+        ? true  // Regenerate all distractors for targeted questions
+        : isNonsensicalDistractor(choice.text);  // Only nonsensical ones otherwise
+      
+      if (shouldReplace) {
         needsReplacement.push(i);
       }
     }
@@ -711,15 +734,27 @@ async function main() {
   const questions = loadQuestions(CONFIG.questionsPath);
   console.log(`Loaded ${questions.length} questions\n`);
   
-  console.log('Regenerating distractors for GEN-* questions...\n');
+  // Check for targeted ID list
+  const targetIdsPath = './quality-reports/regenerate-ids.json';
+  let targetIds: Set<string> | undefined;
   
-  const { updated, log } = regenerateDistractors(questions);
+  if (fs.existsSync(targetIdsPath)) {
+    const idsArray: string[] = JSON.parse(fs.readFileSync(targetIdsPath, 'utf-8'));
+    targetIds = new Set(idsArray);
+    console.log(`Found target ID list: ${targetIds.size} questions to regenerate\n`);
+  } else {
+    console.log('No target ID list found. Processing all GEN-* questions...\n');
+  }
+  
+  const { updated, log } = regenerateDistractors(questions, targetIds);
   
   // Count changes
-  const genQuestions = questions.filter(q => q.id.startsWith('GEN-'));
+  const processedQuestions = targetIds 
+    ? questions.filter(q => targetIds!.has(q.id))
+    : questions.filter(q => q.id.startsWith('GEN-'));
   const changedQuestions = log.filter(l => l.startsWith('✓')).length;
   
-  console.log(`\nProcessed ${genQuestions.length} generated questions`);
+  console.log(`\nProcessed ${processedQuestions.length} questions`);
   console.log(`Made ${changedQuestions} distractor replacements\n`);
   
   // Save output
