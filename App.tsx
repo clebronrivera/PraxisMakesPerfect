@@ -26,6 +26,7 @@ import { loadSession, hasActiveSession, clearSession, AssessmentSession } from '
 import { createUserSession, UserSession } from './src/utils/userSessionStorage';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import LoginScreen from './src/components/LoginScreen';
+import { buildFullAssessment } from './src/utils/assessment-selector';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -185,10 +186,20 @@ function PraxisStudyAppContent() {
       }
     }
     
-    // Start new assessment
-    // Use all 125 questions, shuffled
-    const shuffled = [...analyzedQuestions].sort(() => Math.random() - 0.5);
-    const questionIds = shuffled.map(q => q.id);
+    // Start new assessment: Full Test (120Q) with domain-balanced distribution
+    // Use assessment selector to get exactly 120 questions proportionally distributed
+    const selected = buildFullAssessment(analyzedQuestions, {
+      totalQuestions: 120,
+      excludeQuestionIds: new Set(), // Future: exclude questions already in practice pool
+      minPerDomain: 0 // No minimum per domain, pure proportional
+    });
+    
+    if (selected.length === 0) {
+      console.error('Failed to build full assessment - no questions selected');
+      return;
+    }
+    
+    const questionIds = selected.map(q => q.id);
     
     // Create new user session if we have a current user
     if (currentUserName) {
@@ -200,7 +211,7 @@ function PraxisStudyAppContent() {
       }
     }
     
-    setFullAssessmentQuestions(shuffled);
+    setFullAssessmentQuestions(selected);
     setAssessmentStartTime(Date.now());
     setMode('fullassessment');
   }, [analyzedQuestions, currentUserName]);
@@ -447,7 +458,7 @@ function PraxisStudyAppContent() {
                       </div>
                       <div className="text-left">
                         <p className="font-bold text-white text-lg">Start Full Assessment</p>
-                        <p className="text-blue-100 text-sm">125 questions • ~2-3 hours</p>
+                        <p className="text-blue-100 text-sm">120 questions • ~2-3 hours</p>
                       </div>
                     </div>
                     <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
@@ -481,7 +492,7 @@ function PraxisStudyAppContent() {
                       </div>
                       <div className="text-left">
                         <p className="font-bold text-white text-lg">Full Assessment</p>
-                        <p className="text-blue-100 text-sm">125 questions • Complete exam simulation</p>
+                        <p className="text-blue-100 text-sm">120 questions • Complete exam simulation</p>
                       </div>
                     </div>
                     <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />

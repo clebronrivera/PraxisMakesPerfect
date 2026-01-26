@@ -192,7 +192,7 @@ export default function ScoreReport({
         </div>
         <p className="text-slate-400">
           {assessmentType === 'full-assessment' 
-            ? 'You completed all 125 questions'
+            ? 'You completed all 120 questions'
             : 'You completed 40 diagnostic questions'}
         </p>
       </div>
