@@ -73,6 +73,126 @@
       "skillId": "NEW-10-TestSecurity",
       "confidence": "high",
       "reasoning": "Question asks how to handle a parent's request to see test protocols (providing explanation/viewing but not copying/releasing protocols to non-professionals)."
+    },
+    {
+      "questionId": "SP5403_Q141",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in NASP's ethical problem-solving model (identifying ethical principles in conflict)."
+    },
+    {
+      "questionId": "SP5403_Q142",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question tests application of ethical problem-solving model when confidentiality conflicts with duty to protect (duty to protect takes precedence with imminent threat)."
+    },
+    {
+      "questionId": "SP5403_Q143",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question addresses ETS discussion question: how to respond when administrator behaves unethically (address directly first, then escalate if needed)."
+    },
+    {
+      "questionId": "SP5403_Q144",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question tests avoiding dual relationships - psychologist should decline evaluation when personal relationship exists and refer to another professional."
+    },
+    {
+      "questionId": "SP5403_Q145",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question tests scope of competence - psychologist must decline services requiring specialized training they don't have and refer to qualified professional."
+    },
+    {
+      "questionId": "SP5403_Q146",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question tests IDEA vs Section 504 eligibility - student needing accommodations but not specialized instruction is eligible under 504, not IDEA."
+    },
+    {
+      "questionId": "SP5403_Q147",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question tests key difference in services: IDEA provides specialized instruction and related services; Section 504 provides accommodations and modifications for access."
+    },
+    {
+      "questionId": "SP5403_Q148",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question tests evaluation requirements difference: IDEA requires comprehensive evaluation by multidisciplinary team; Section 504 requires evaluation by team of knowledgeable persons."
+    },
+    {
+      "questionId": "SP5403_Q149",
+      "skillId": "NEW-10-RecordKeeping",
+      "confidence": "high",
+      "reasoning": "Question tests FERPA access rights - school officials with legitimate educational interests can access records without parental consent."
+    },
+    {
+      "questionId": "SP5403_Q150",
+      "skillId": "NEW-10-RecordKeeping",
+      "confidence": "high",
+      "reasoning": "Question tests FERPA parent rights to amend records - parents can request amendment and hearing if school refuses."
+    },
+    {
+      "questionId": "SP5403_Q151",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Rowley case standard - IEP must provide 'some educational benefit,' not maximum potential."
+    },
+    {
+      "questionId": "SP5403_Q152",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Endrew F. case - raised standard from Rowley's 'some benefit' to 'meaningful educational benefit' that is appropriately ambitious."
+    },
+    {
+      "questionId": "SP5403_Q153",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Larry P. case - prohibited use of IQ tests for placing African American students in special education for educable mentally retarded in California."
+    },
+    {
+      "questionId": "SP5403_Q154",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Tarasoff case - duty to warn/protect when specific, credible threat of serious harm to identifiable victim."
+    },
+    {
+      "questionId": "SP5403_Q155",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question applies Tarasoff case law to scenario - psychologist must warn intended victim and/or take steps to protect, even if breaching confidentiality."
+    },
+    {
+      "questionId": "SP5403_Q156",
+      "skillId": "LEG-S05",
+      "confidence": "high",
+      "reasoning": "Question tests when manifestation determination is required - before removal of more than 10 consecutive school days."
+    },
+    {
+      "questionId": "SP5403_Q157",
+      "skillId": "LEG-S05",
+      "confidence": "high",
+      "reasoning": "Question addresses ETS discussion question: what questions must be answered in manifestation determination (conduct caused by disability or failure to implement IEP)."
+    },
+    {
+      "questionId": "SP5403_Q158",
+      "skillId": "LEG-S07",
+      "confidence": "high",
+      "reasoning": "Question tests informed consent requirements - must explain purpose, procedures, and that consent can be revoked."
+    },
+    {
+      "questionId": "SP5403_Q159",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests LRE requirement - students with disabilities educated with non-disabled peers to maximum extent appropriate."
+    },
+    {
+      "questionId": "SP5403_Q160",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests when seclusion/restraint allowed - only when imminent danger of serious physical harm, as last resort."
     }
   ],
   "suggestedNewSkills": [

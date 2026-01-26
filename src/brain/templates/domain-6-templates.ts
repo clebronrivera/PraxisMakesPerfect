@@ -28,7 +28,7 @@ export const domain6Templates: QuestionTemplate[] = [
       },
       description: "Maps threat characteristics to threat type"
     },
-    allowedDistractorPatterns: ["threat-confusion"],
+    allowedDistractorPatterns: ["similar-concept"],
     keyPrinciple: "Transient threat = emotional expression, no plan, low risk. Substantive threat = specific plan, means, intent, high risk.",
     exampleSlotValues: {
       threat_characteristic: "an emotional expression with no specific plan"
@@ -48,7 +48,7 @@ export const domain6Templates: QuestionTemplate[] = [
       },
       description: "Crisis role is immediate support"
     },
-    allowedDistractorPatterns: ["therapy-focus"],
+    allowedDistractorPatterns: ["role-confusion"],
     keyPrinciple: "Crisis role = immediate support, psychological first aid, triage, connect to resources. Not long-term therapy during crisis.",
     exampleSlotValues: {}
   },
@@ -66,7 +66,7 @@ export const domain6Templates: QuestionTemplate[] = [
       },
       description: "PFA core elements"
     },
-    allowedDistractorPatterns: ["therapy-elements"],
+    allowedDistractorPatterns: ["similar-concept"],
     keyPrinciple: "PFA elements = establish safety, promote calm, foster connectedness, enhance self-efficacy, instill hope. Not therapy.",
     exampleSlotValues: {}
   },
@@ -84,7 +84,7 @@ export const domain6Templates: QuestionTemplate[] = [
       },
       description: "Crisis drill best practices"
     },
-    allowedDistractorPatterns: ["trauma-inducing"],
+    allowedDistractorPatterns: ["context-mismatch"],
     keyPrinciple: "Crisis drills = practiced regularly, developmentally appropriate, not traumatizing, prepare without causing fear.",
     exampleSlotValues: {}
   },
@@ -102,7 +102,7 @@ export const domain6Templates: QuestionTemplate[] = [
       },
       description: "Postvention primary goal"
     },
-    allowedDistractorPatterns: ["grief-focus"],
+    allowedDistractorPatterns: ["context-mismatch"],
     keyPrinciple: "Postvention primary goal = prevent contagion/cluster suicides. Provide support, avoid glorification, monitor at-risk students.",
     exampleSlotValues: {}
   },
@@ -120,7 +120,7 @@ export const domain6Templates: QuestionTemplate[] = [
       },
       description: "Systemic prevention is most effective"
     },
-    allowedDistractorPatterns: ["zero-tolerance", "peer-mediation"],
+    allowedDistractorPatterns: ["extreme-language", "context-mismatch"],
     keyPrinciple: "Effective bullying prevention = climate improvement, bystander training, supervision. Ineffective = zero tolerance, peer mediation for bullying.",
     exampleSlotValues: {}
   },
@@ -140,6 +140,42 @@ export const domain6Templates: QuestionTemplate[] = [
     },
     allowedDistractorPatterns: ["punishment-focus"],
     keyPrinciple: "Trauma impacts learning and behavior. Trauma-informed care prioritizes safety and relationships over punishment. Recognize ACEs impact.",
+    exampleSlotValues: {}
+  },
+
+  // PC-S04: Prevention vs Response Distinction
+  {
+    templateId: "PC-T08",
+    skillId: "PC-S04",
+    templateType: "definition-recognition",
+    stem: "A school psychologist develops a crisis response plan and conducts regular drills. This activity is best described as:",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Crisis preparedness";
+      },
+      description: "Planning and drills = preparedness (prevention), not response (reactive)"
+    },
+    allowedDistractorPatterns: ["similar-concept", "context-mismatch"],
+    keyPrinciple: "Crisis preparedness = proactive planning, drills, prevention (before crisis). Crisis response = reactive intervention during/after crisis. Distinguish prevention from response.",
+    exampleSlotValues: {}
+  },
+
+  // NEW-6-SchoolClimateMeasurement: School Safety & Climate Measurement
+  {
+    templateId: "PC-T09",
+    skillId: "NEW-6-SchoolClimateMeasurement",
+    templateType: "best-selection",
+    stem: "To measure school climate effectively, a school psychologist should:",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Collect data on multiple dimensions including engagement, safety, and environment using systematic methods";
+      },
+      description: "School climate measurement requires multiple dimensions"
+    },
+    allowedDistractorPatterns: ["similar-concept", "context-mismatch"],
+    keyPrinciple: "School climate components: Engagement (student-teacher relationships, belonging), Safety (physical and emotional safety), Environment (physical space, resources). Measurement methods: surveys, observations, discipline data, attendance. Systematic data collection on multiple dimensions is required.",
     exampleSlotValues: {}
   }
 ];

@@ -1,0 +1,595 @@
+{
+  "source": "ETS Praxis School Psychologist Content Topics",
+  "version": "1.0",
+  "domains": [
+    {
+      "id": 1,
+      "name": "Data-Based Decision Making & Accountability",
+      "shortName": "DBDM",
+      "praxisSection": "I.A",
+      "sections": [
+        {
+          "code": "I.A.1",
+          "name": "Problem identification",
+          "topics": [
+            {
+              "code": "I.A.1.a",
+              "text": "Understands various methods of information gathering (e.g., record review, interview strategies, observations, and testing [RIOT])",
+              "keywords": ["record review", "interview", "observation", "testing", "RIOT", "information gathering", "data collection"]
+            },
+            {
+              "code": "I.A.1.b",
+              "text": "Understands appropriate use of background information (e.g., student records, medical records and reports, reviews of previous interventions, developmental history)",
+              "keywords": ["background information", "student records", "medical records", "developmental history", "previous interventions"]
+            },
+            {
+              "code": "I.A.1.c",
+              "text": "Understands appropriate use and interpretation of screening measures and methods",
+              "keywords": ["screening", "screening measures", "universal screening", "risk identification"]
+            }
+          ]
+        },
+        {
+          "code": "I.A.2",
+          "name": "Assessment and problem analysis",
+          "topics": [
+            {
+              "code": "I.A.2.a",
+              "text": "Understands theories of intelligence and the appropriate use and interpretation of measures of intellectual/cognitive functioning",
+              "keywords": ["intelligence", "intelligence theories", "cognitive functioning", "IQ", "intellectual assessment", "CHC theory"]
+            },
+            {
+              "code": "I.A.2.b",
+              "text": "Understands appropriate use and interpretation of measures of educational achievement",
+              "keywords": ["achievement", "achievement tests", "educational achievement", "academic assessment"]
+            },
+            {
+              "code": "I.A.2.c",
+              "text": "Knows appropriate use and interpretation of diagnostic/processing measures (e.g., memory, executive functioning, phonemic awareness)",
+              "keywords": ["diagnostic measures", "processing measures", "memory", "executive functioning", "phonemic awareness", "processing speed", "working memory"]
+            },
+            {
+              "code": "I.A.2.d",
+              "text": "Understands appropriate use and interpretation of measures of affective/social/emotional functioning and behavior",
+              "keywords": ["affective", "social", "emotional", "behavior", "social-emotional assessment", "behavioral assessment"]
+            },
+            {
+              "code": "I.A.2.e",
+              "text": "Knows appropriate use and interpretation of a functional behavioral assessment",
+              "keywords": ["functional behavioral assessment", "FBA", "ABC analysis", "behavior function"]
+            },
+            {
+              "code": "I.A.2.f",
+              "text": "Understands appropriate use and interpretation of performance-based assessment (e.g., work samples, portfolios)",
+              "keywords": ["performance-based", "work samples", "portfolios", "authentic assessment"]
+            },
+            {
+              "code": "I.A.2.g",
+              "text": "Understands appropriate use and interpretation of curriculum-based assessment/curriculum-based measures",
+              "keywords": ["curriculum-based assessment", "CBA", "curriculum-based measures", "CBM", "progress monitoring"]
+            },
+            {
+              "code": "I.A.2.h",
+              "text": "Knows appropriate use and interpretation of ecological assessment (e.g., classroom, family, community characteristics)",
+              "keywords": ["ecological assessment", "classroom", "family", "community", "environmental factors"]
+            },
+            {
+              "code": "I.A.2.i",
+              "text": "Knows how to use information and technology resources to enhance data collection and decision making",
+              "keywords": ["technology", "information resources", "data collection", "decision making", "digital tools"]
+            },
+            {
+              "code": "I.A.2.j",
+              "text": "Understands the use of ongoing data collection to systematically assess the quality and effectiveness of academic, mental health, and system-level services",
+              "keywords": ["ongoing data collection", "quality assessment", "effectiveness", "service evaluation", "outcomes"]
+            }
+          ]
+        },
+        {
+          "code": "I.A.3",
+          "name": "Knowledge of measurement theory and principles",
+          "topics": [
+            {
+              "code": "I.A.3.a",
+              "text": "Knows how to use a problem-solving framework as the basis for all professional activities (e.g., Multitiered System of Supports, Response to Intervention)",
+              "keywords": ["problem-solving framework", "MTSS", "RTI", "Response to Intervention", "Multitiered System of Supports"]
+            },
+            {
+              "code": "I.A.3.b",
+              "text": "Understands the use and interpretation of different types of test scores and norms (e.g., grade- and age-referenced)",
+              "keywords": ["test scores", "norms", "grade-referenced", "age-referenced", "standard scores", "percentiles", "z-scores"]
+            },
+            {
+              "code": "I.A.3.c",
+              "text": "Knows the strengths and limitations of various types of assessment procedures (e.g., self-report tests and inventories, multiple-choice tests, interviews)",
+              "keywords": ["assessment procedures", "self-report", "multiple-choice", "interviews", "strengths", "limitations"]
+            },
+            {
+              "code": "I.A.3.d",
+              "text": "Knows the principles of reliability and validity",
+              "keywords": ["reliability", "validity", "reliability types", "validity types", "measurement error", "SEM"]
+            },
+            {
+              "code": "I.A.3.e",
+              "text": "Knows personal, social, linguistic, environmental, racial, and cultural factors that may influence assessment procedures",
+              "keywords": ["cultural factors", "linguistic factors", "environmental factors", "racial factors", "bias", "assessment influence"]
+            },
+            {
+              "code": "I.A.3.f",
+              "text": "Knows about test fairness and equity concepts (e.g., implicit bias, explicit bias)",
+              "keywords": ["test fairness", "equity", "implicit bias", "explicit bias", "fair assessment"]
+            }
+          ]
+        },
+        {
+          "code": "I.A.4",
+          "name": "Assessment of special populations",
+          "topics": [
+            {
+              "code": "I.A.4.a",
+              "text": "Understands appropriate use and interpretation of measures of developmental and adaptive functioning across all age groups",
+              "keywords": ["developmental", "adaptive functioning", "adaptive behavior", "developmental assessment"]
+            },
+            {
+              "code": "I.A.4.b",
+              "text": "Knows appropriate use and interpretation of assessment procedures for English as second language/English-language learners (e.g., the appropriate use of translators/interpreters, measurement selection, language of assessment)",
+              "keywords": ["ELL", "ESL", "English language learners", "translators", "interpreters", "language assessment", "bilingual assessment"]
+            },
+            {
+              "code": "I.A.4.c",
+              "text": "Is familiar with the assessment of students with low-incidence exceptionalities (e.g., chronic health impairments, severe physical disabilities, sensory impairments)",
+              "keywords": ["low-incidence", "exceptionalities", "chronic health", "physical disabilities", "sensory impairments", "deaf", "blind"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Consultation & Collaboration",
+      "shortName": "C&C",
+      "praxisSection": "I.B",
+      "sections": [
+        {
+          "code": "I.B.1",
+          "name": "Models and methods of consultation used for planning, implementing, and evaluating academic interventions and mental health services",
+          "topics": [
+            {
+              "code": "I.B.1.a",
+              "text": "Knows strategies for consultation (e.g., goal setting, record keeping, evaluating progress) and how to use a problem-solving framework as the basis for all consultation and collaboration activities when planning, implementing, and evaluating academic and mental health services",
+              "keywords": ["consultation strategies", "goal setting", "record keeping", "evaluating progress", "problem-solving framework"]
+            },
+            {
+              "code": "I.B.1.b",
+              "text": "Knows the principles and strategies associated with varied models of consultation",
+              "keywords": ["consultation models", "behavioral consultation", "organizational consultation", "multicultural consultation", "conjoint consultation"]
+            },
+            {
+              "code": "I.B.1.c",
+              "text": "Knows how to facilitate communication and collaboration among diverse stakeholders (e.g., school personnel, families, community professionals)",
+              "keywords": ["communication", "collaboration", "stakeholders", "facilitation", "teamwork"]
+            }
+          ]
+        },
+        {
+          "code": "I.B.2",
+          "name": "Home/school/community collaboration (student level)",
+          "topics": [
+            {
+              "code": "I.B.2.a",
+              "text": "Knows strategies for working with diverse families (e.g., building relationships, collaborating on intervention plans, promoting positive habits)",
+              "keywords": ["families", "family collaboration", "diverse families", "intervention plans", "relationships"]
+            },
+            {
+              "code": "I.B.2.b",
+              "text": "Knows strategies for working with diverse community agencies/providers to support a student's success",
+              "keywords": ["community agencies", "providers", "interagency collaboration", "community resources"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Academic Interventions & Instructional Support",
+      "shortName": "Academic",
+      "praxisSection": "II.A",
+      "sections": [
+        {
+          "code": "II.A.1",
+          "name": "Effective instruction at the individual and group level",
+          "topics": [
+            {
+              "code": "II.A.1.a",
+              "text": "Is familiar with various instructional strategies (e.g., cooperative learning, differentiated instruction, engagement time, scaffolding, study skills)",
+              "keywords": ["instructional strategies", "cooperative learning", "differentiated instruction", "scaffolding", "study skills", "engagement"]
+            },
+            {
+              "code": "II.A.1.b",
+              "text": "Knows common curricular accommodations and modifications (e.g., information and assistive technology, specially designed instruction, test format)",
+              "keywords": ["accommodations", "modifications", "assistive technology", "specially designed instruction", "test format"]
+            },
+            {
+              "code": "II.A.1.c",
+              "text": "Knows methods for setting and achieving individual instructional goals, assessing outcomes to see whether goals were attained, and helping students become self-regulated learners",
+              "keywords": ["instructional goals", "goal setting", "outcomes", "self-regulated learners", "self-regulation"]
+            }
+          ]
+        },
+        {
+          "code": "II.A.2",
+          "name": "Issues related to academic success/failure",
+          "topics": [
+            {
+              "code": "II.A.2.a",
+              "text": "Knows how to identify and use evidence-based strategies when planning interventions and instructional strategies",
+              "keywords": ["evidence-based", "interventions", "instructional strategies", "research-based"]
+            },
+            {
+              "code": "II.A.2.b",
+              "text": "Knows factors related to academic progress (e.g., school/classroom climate, family involvement, motivation, socioeconomic and environmental factors, language competency, programming for ELLs)",
+              "keywords": ["academic progress", "classroom climate", "family involvement", "motivation", "socioeconomic factors", "language competency", "ELL programming"]
+            },
+            {
+              "code": "II.A.2.c",
+              "text": "Understands the biological, cultural, developmental, and social influences on academic skills",
+              "keywords": ["biological influences", "cultural influences", "developmental influences", "social influences", "academic skills"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Mental & Behavioral Health Services",
+      "shortName": "MBH",
+      "praxisSection": "II.B",
+      "sections": [
+        {
+          "code": "II.B.1",
+          "name": "Primary, secondary, and tertiary preventive strategies",
+          "topics": [
+            {
+              "code": "II.B.1.a",
+              "text": "Is familiar with common classroom organization and management techniques (e.g., time management, classroom rules, physical environment)",
+              "keywords": ["classroom organization", "classroom management", "time management", "classroom rules", "physical environment"]
+            },
+            {
+              "code": "II.B.1.b",
+              "text": "Knows how to conduct individual and small-group interventions and programs (e.g., social skills training, conflict resolution)",
+              "keywords": ["individual interventions", "small-group interventions", "social skills training", "conflict resolution"]
+            },
+            {
+              "code": "II.B.1.c",
+              "text": "Is familiar with risk and protective factors associated with learning and mental and behavioral health issues; designs appropriate intervention plans to address those issues",
+              "keywords": ["risk factors", "protective factors", "mental health", "behavioral health", "intervention plans"]
+            },
+            {
+              "code": "II.B.1.d",
+              "text": "Knows the impact of trauma on social, emotional, behavioral, and academic functioning; practices to reduce the effects of trauma on learning and behavior",
+              "keywords": ["trauma", "trauma-informed", "trauma impact", "adverse childhood experiences", "ACEs"]
+            }
+          ]
+        },
+        {
+          "code": "II.B.2",
+          "name": "School-based intervention skills/techniques",
+          "topics": [
+            {
+              "code": "II.B.2.a",
+              "text": "Understands fundamental counseling methods (e.g., individual, group) and techniques (e.g., active listening, unconditional positive regard, empathy)",
+              "keywords": ["counseling methods", "individual counseling", "group counseling", "active listening", "unconditional positive regard", "empathy"]
+            },
+            {
+              "code": "II.B.2.b",
+              "text": "Knows about appropriate intervention techniques for various developmental levels",
+              "keywords": ["developmental levels", "age-appropriate", "intervention techniques"]
+            },
+            {
+              "code": "II.B.2.c",
+              "text": "Is familiar with various theoretical models and approaches to counseling (e.g., cognitive-behavioral, solution-focused)",
+              "keywords": ["counseling models", "cognitive-behavioral", "CBT", "solution-focused", "SFBT", "DBT", "therapeutic approaches"]
+            },
+            {
+              "code": "II.B.2.d",
+              "text": "Understands applied behavioral analysis and intervention methods",
+              "keywords": ["applied behavioral analysis", "ABA", "behavioral intervention", "reinforcement", "punishment"]
+            },
+            {
+              "code": "II.B.2.e",
+              "text": "Knows culturally responsive and developmentally appropriate assessment techniques to identify emotional and behavioral disabilities",
+              "keywords": ["culturally responsive", "developmentally appropriate", "emotional disabilities", "behavioral disabilities", "assessment"]
+            },
+            {
+              "code": "II.B.2.f",
+              "text": "Knows how to use data to evaluate implementation and outcomes of mental and behavioral health interventions for individuals and groups",
+              "keywords": ["data evaluation", "intervention outcomes", "implementation", "mental health interventions", "behavioral health interventions"]
+            }
+          ]
+        },
+        {
+          "code": "II.B.3",
+          "name": "Child and adolescent psychopathology",
+          "topics": [
+            {
+              "code": "II.B.3.a",
+              "text": "Is familiar with common characteristics of mental health problems and related educational disabilities",
+              "keywords": ["mental health problems", "psychopathology", "educational disabilities", "ADHD", "depression", "anxiety", "ASD"]
+            },
+            {
+              "code": "II.B.3.b",
+              "text": "Understands the impact mental health has on the educational outcomes of children and adolescents",
+              "keywords": ["mental health impact", "educational outcomes", "academic impact"]
+            },
+            {
+              "code": "II.B.3.c",
+              "text": "Understands the biological, cultural, developmental, and social influences on mental and behavioral health",
+              "keywords": ["biological influences", "cultural influences", "developmental influences", "social influences", "mental health", "behavioral health"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "School-Wide Practices to Promote Learning",
+      "shortName": "School-Wide",
+      "praxisSection": "III.A",
+      "sections": [
+        {
+          "code": "III.A.1",
+          "name": "Schoolwide practices",
+          "topics": [
+            {
+              "code": "III.A.1.a",
+              "text": "Is familiar with the importance of using data to inform systems-level decision making, such as needs assessment, universal screening, and resource mapping",
+              "keywords": ["systems-level", "data-driven", "needs assessment", "universal screening", "resource mapping"]
+            },
+            {
+              "code": "III.A.1.b",
+              "text": "Is familiar with the effectiveness of the practices in the context of common educational policies/practices (e.g., social promotion, high-stakes testing, benchmarking, retention, tracking, discipline)",
+              "keywords": ["educational policies", "social promotion", "high-stakes testing", "benchmarking", "retention", "tracking", "discipline"]
+            },
+            {
+              "code": "III.A.1.c",
+              "text": "Recognizes the importance of using evidence-based practices",
+              "keywords": ["evidence-based practices", "research-based"]
+            },
+            {
+              "code": "III.A.1.d",
+              "text": "Understands the application of effective Multitiered Systems of Support",
+              "keywords": ["MTSS", "Multitiered Systems of Support", "RTI", "tiered interventions"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Preventive & Responsive Services",
+      "shortName": "Prevention",
+      "praxisSection": "III.B",
+      "sections": [
+        {
+          "code": "III.B.1",
+          "name": "Services to Promote Safe and Supportive Schools",
+          "topics": [
+            {
+              "code": "III.B.1.a",
+              "text": "Knows common school/system-wide prevention practices (e.g., promoting safe school environments, positive behavioral support, bullying prevention, school climate assessment, policy development, programs promoting good health)",
+              "keywords": ["prevention practices", "safe school environments", "positive behavioral support", "PBIS", "bullying prevention", "school climate", "policy development"]
+            },
+            {
+              "code": "III.B.1.b",
+              "text": "Knows risk and protective factors as they relate to a variety of issues such as school failure, truancy, dropout, bullying, youth suicide, school violence",
+              "keywords": ["risk factors", "protective factors", "school failure", "truancy", "dropout", "bullying", "suicide", "school violence"]
+            },
+            {
+              "code": "III.B.1.c",
+              "text": "Knows interventions appropriate for the various levels of crisis and threat assessment associated with suicide and violence assessment",
+              "keywords": ["crisis", "threat assessment", "suicide assessment", "violence assessment", "risk assessment"]
+            },
+            {
+              "code": "III.B.1.d",
+              "text": "Is familiar with factors and issues that should be addressed in crisis prevention, intervention, response, and recovery at the system level",
+              "keywords": ["crisis prevention", "crisis intervention", "crisis response", "crisis recovery", "system level"]
+            },
+            {
+              "code": "III.B.1.e",
+              "text": "Is familiar with effective methods to measure and evaluate school safety and school climate (e.g., attendance; office discipline referrals; academic growth; universal screening of students, staff, and families; mental health referrals)",
+              "keywords": ["school safety", "school climate", "evaluation", "attendance", "discipline referrals", "academic growth", "mental health referrals"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Family-School Collaboration Services",
+      "shortName": "Family",
+      "praxisSection": "III.C",
+      "sections": [
+        {
+          "code": "III.C.1",
+          "name": "Family-School Collaboration",
+          "topics": [
+            {
+              "code": "III.C.1.a",
+              "text": "Understands principles and research related to family systems, strengths, needs, and cultures",
+              "keywords": ["family systems", "family strengths", "family needs", "family cultures", "family systems theory"]
+            },
+            {
+              "code": "III.C.1.b",
+              "text": "Is familiar with the importance of advocating for the involvement of families in schoolwide activities",
+              "keywords": ["family involvement", "schoolwide activities", "advocacy"]
+            },
+            {
+              "code": "III.C.1.c",
+              "text": "Is familiar with the importance of interagency collaboration in developing effective schoolwide interventions and policies",
+              "keywords": ["interagency collaboration", "schoolwide interventions", "policies"]
+            },
+            {
+              "code": "III.C.1.d",
+              "text": "Is familiar with strategies for safe, nurturing, and dependable parenting and home interventions to facilitate children's healthy development",
+              "keywords": ["parenting", "home interventions", "healthy development"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Diversity in Development & Learning",
+      "shortName": "Diversity",
+      "praxisSection": "IV.A",
+      "sections": [
+        {
+          "code": "IV.A.1",
+          "name": "Equitable Practices for Diverse Student Populations",
+          "topics": [
+            {
+              "code": "IV.A.1.a",
+              "text": "Recognizes the importance and influence of culture, background, and individual learning characteristics (e.g., age, gender identity, cognitive capabilities, social-emotional skills, developmental level, race, ethnicity, national origin, religion, sexual orientation, disability, chronic illness, language, socioeconomic status) when designing and implementing interventions to achieve learning and behavioral outcomes",
+              "keywords": ["culture", "background", "learning characteristics", "gender identity", "race", "ethnicity", "religion", "sexual orientation", "socioeconomic status", "diversity"]
+            },
+            {
+              "code": "IV.A.1.b",
+              "text": "Knows the importance of working with community liaisons to understand the needs of diverse learners",
+              "keywords": ["community liaisons", "cultural brokers", "diverse learners"]
+            },
+            {
+              "code": "IV.A.1.c",
+              "text": "Knows the impact of personal beliefs as well as implicit and explicit bias that influence decision making, instruction, behavior, and long-term outcomes for students",
+              "keywords": ["personal beliefs", "implicit bias", "explicit bias", "decision making", "instruction", "behavior", "outcomes"]
+            },
+            {
+              "code": "IV.A.1.d",
+              "text": "Recognizes the importance of promoting fairness and social justice in educational programs and services",
+              "keywords": ["fairness", "social justice", "educational programs", "services", "equity"]
+            },
+            {
+              "code": "IV.A.1.e",
+              "text": "Knows about special education and related services; knows how to promote specialized instructional and support practices within special education that meet the diverse needs of children with disabilities",
+              "keywords": ["special education", "related services", "specialized instruction", "disabilities", "diverse needs"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Research & Program Evaluation",
+      "shortName": "Research",
+      "praxisSection": "IV.B",
+      "sections": [
+        {
+          "code": "IV.B.1",
+          "name": "Research and Evidence-Based Practice",
+          "topics": [
+            {
+              "code": "IV.B.1.a",
+              "text": "Knows how to evaluate research quality and interpret outcomes",
+              "keywords": ["research quality", "research evaluation", "interpret outcomes", "research methodology"]
+            },
+            {
+              "code": "IV.B.1.b",
+              "text": "Knows how to determine the relevance of research and apply research into practice",
+              "keywords": ["research relevance", "apply research", "research to practice"]
+            },
+            {
+              "code": "IV.B.1.c",
+              "text": "Is familiar with types of research designs and basic statistics",
+              "keywords": ["research designs", "statistics", "experimental design", "single-subject design", "correlational design"]
+            },
+            {
+              "code": "IV.B.1.d",
+              "text": "Is familiar with the process involved in implementing individual- and system-level change, including planning and evaluating activities, monitoring fidelity, and addressing barriers to change",
+              "keywords": ["change implementation", "planning", "evaluating", "fidelity", "barriers to change"]
+            },
+            {
+              "code": "IV.B.1.e",
+              "text": "Knows how to incorporate data collection, measurement, analysis, accountability, and use of technology resources into program evaluation",
+              "keywords": ["program evaluation", "data collection", "measurement", "analysis", "accountability", "technology"]
+            },
+            {
+              "code": "IV.B.1.f",
+              "text": "Knows how to analyze, interpret, and use research-based and evidence-based practices at the individual, group, and/or systems levels",
+              "keywords": ["research-based", "evidence-based", "individual level", "group level", "systems level"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Legal, Ethical & Professional Practice",
+      "shortName": "Legal/Ethics",
+      "praxisSection": "IV.C",
+      "sections": [
+        {
+          "code": "IV.C.1",
+          "name": "Ethical principles related to the practice of school psychology",
+          "topics": [
+            {
+              "code": "IV.C.1.a",
+              "text": "Understands the NASP Principles for Professional Ethics",
+              "keywords": ["NASP", "ethics", "professional ethics", "ethical principles"]
+            },
+            {
+              "code": "IV.C.1.b",
+              "text": "Knows how to apply an ethical problem-solving model to address ethical dilemmas",
+              "keywords": ["ethical problem-solving", "ethical dilemmas", "ethical decision-making"]
+            }
+          ]
+        },
+        {
+          "code": "IV.C.2",
+          "name": "Legal issues related to the practice of school psychology",
+          "topics": [
+            {
+              "code": "IV.C.2.a",
+              "text": "Knows the major federal laws and regulations governing the practice of school psychology (e.g., FERPA, Section 504, ESSA, IDEA and its eligibility categories)",
+              "keywords": ["FERPA", "Section 504", "ESSA", "IDEA", "federal laws", "eligibility categories"]
+            },
+            {
+              "code": "IV.C.2.b",
+              "text": "Knows relevant case law that affects practice (e.g., Larry P. v. Riles, Hendrick Hudson Board of Education v. Rowley, Endrew F. v. Douglas County School District)",
+              "keywords": ["case law", "Larry P", "Rowley", "Endrew F", "legal cases"]
+            },
+            {
+              "code": "IV.C.2.c",
+              "text": "Knows the rights of students (e.g., informed consent, confidentiality, least restrictive environment, manifestation determination, seclusion and restraint)",
+              "keywords": ["student rights", "informed consent", "confidentiality", "LRE", "least restrictive environment", "manifestation determination", "seclusion", "restraint"]
+            },
+            {
+              "code": "IV.C.2.d",
+              "text": "Knows the ethical, professional, and legal liability of school psychologists (e.g., malpractice, negligence, supervision, conflict of interest)",
+              "keywords": ["liability", "malpractice", "negligence", "supervision", "conflict of interest"]
+            }
+          ]
+        },
+        {
+          "code": "IV.C.3",
+          "name": "Professional foundations",
+          "topics": [
+            {
+              "code": "IV.C.3.a",
+              "text": "Understands the ethical and legal responsibilities of advocating for children and their families (i.e., issues such as disproportionality, poverty, access, and equity)",
+              "keywords": ["advocacy", "disproportionality", "poverty", "access", "equity"]
+            },
+            {
+              "code": "IV.C.3.b",
+              "text": "Recognizes the importance of lifelong learning and professional growth",
+              "keywords": ["lifelong learning", "professional growth", "continuing education"]
+            },
+            {
+              "code": "IV.C.3.c",
+              "text": "Is familiar with the importance and value of supervision and mentoring",
+              "keywords": ["supervision", "mentoring", "professional development"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

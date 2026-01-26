@@ -1,0 +1,183 @@
+[
+  {
+    "id": "SP5403_FLIP_001",
+    "skillId": "MBH-S06",
+    "question": "A school psychologist is working with a group of third-grade students who struggle with peer interactions. The students have difficulty taking turns, sharing materials, and initiating conversations. Which of the following interventions would be most appropriate for addressing these social skill deficits?",
+    "choices": {
+      "A": "Providing individual counseling sessions focusing on emotional regulation",
+      "B": "Recommending small-group social skills training",
+      "C": "Using only direct instruction about social rules without practice",
+      "D": "Believing social skills will develop naturally without intervention"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Option (B) is correct. Small-group social skills training provides opportunities for modeling, rehearsal, and feedback, which are essential components of effective social skills instruction. The group setting allows students to practice skills with peers in a structured environment.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q006",
+      "originalDistractor": "Recommending small-group social skills training for Juan"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_002",
+    "skillId": "MBH-S01",
+    "question": "A school psychologist is conducting a Functional Behavior Assessment (FBA) for a student who engages in disruptive behavior. During the observation phase, the psychologist is systematically recording data. Which of the following best describes the primary purpose of documenting behavior during the FBA process?",
+    "choices": {
+      "A": "To document the frequency and severity of a student's problem behaviors",
+      "B": "To identify the function of the behavior through analysis of antecedents and consequences",
+      "C": "To determine whether a student qualifies for special education services",
+      "D": "To identify the consequences that will be applied when a student misbehaves"
+    },
+    "correct_answer": ["A"],
+    "rationale": "Option (A) is correct. During the FBA observation phase, the primary purpose is to document the frequency, severity, and patterns of behavior. This quantitative data collection is essential before analyzing the ABC (Antecedent-Behavior-Consequence) relationships to identify the function of the behavior.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q029",
+      "originalDistractor": "To document the frequency and severity of a student's problem behaviors"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_004",
+    "skillId": "MBH-S02",
+    "question": "A school psychologist observes that a student consistently interrupts the teacher during whole-group instruction. When the student interrupts, the teacher stops the lesson, looks directly at the student, and asks what they need. The student then smiles and appears satisfied. After this interaction, the student continues to interrupt throughout the lesson. Based on this observation, which of the following is the most likely function of this behavior?",
+    "choices": {
+      "A": "Escape or avoidance",
+      "B": "Attention seeking",
+      "C": "Sensory stimulation",
+      "D": "Tangible reinforcement"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Option (B) is correct. The behavior is maintained by attention from the teacher. The student interrupts, receives direct attention (teacher stops, looks, and asks), appears satisfied, and then repeats the behavior. This pattern indicates the behavior functions to obtain attention, as the consequence (teacher attention) is what maintains the behavior.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q047",
+      "originalDistractor": "Attention seeking"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_005",
+    "skillId": "MBH-S02",
+    "question": "A school psychologist is conducting a Functional Behavior Assessment for a student who frequently engages in hand-flapping and finger-flicking behaviors. Observations indicate these behaviors occur consistently throughout the day, regardless of the presence of others, the type of task, or access to preferred items. The behaviors appear to increase when the student appears stressed but also occur during calm, preferred activities. Which of the following is the most likely function of this behavior?",
+    "choices": {
+      "A": "Attention seeking",
+      "B": "Escape or avoidance",
+      "C": "Sensory stimulation",
+      "D": "Tangible reinforcement"
+    },
+    "correct_answer": ["C"],
+    "rationale": "Option (C) is correct. The behavior occurs regardless of social context, task demands, or access to items, and appears to provide internal stimulation. Hand-flapping and finger-flicking are self-stimulatory behaviors that function to provide sensory stimulation, as they occur independently of external consequences and appear to be automatically reinforcing.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q047",
+      "originalDistractor": "Sensory stimulation"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_006",
+    "skillId": "MBH-S05",
+    "question": "A school psychologist is working with a student who experiences test anxiety. The student's teacher approaches the psychologist and requests that the student receive extended time on all assessments, stating that this accommodation has worked well for other students with anxiety. The psychologist has not yet assessed this specific student's needs or reviewed data about how the accommodation might impact this student. In this situation, which of the following would be the most appropriate initial response?",
+    "choices": {
+      "A": "Gather data to determine whether extended time is an appropriate accommodation for this specific student",
+      "B": "Automatically approve the extended time request since the teacher made the request",
+      "C": "Refuse to provide any accommodations until a comprehensive evaluation is completed",
+      "D": "Recommend extended time for all students in the class to ensure fairness"
+    },
+    "correct_answer": ["A"],
+    "rationale": "Option (A) is correct. School psychologists should base accommodation and intervention decisions on data and individual student assessment, not automatically approve requests without evaluation. This aligns with data-based decision making and ensures accommodations are matched to specific student needs rather than applied automatically based on requests alone. While the teacher's input is valuable, the psychologist must gather data to determine the appropriateness of the accommodation for this particular student.",
+    "metadata": {
+      "source": "inspired-by-distractor",
+      "originalQuestion": "SP5403_Q073",
+      "originalDistractor": "Automatically approve the extended time request since the teacher made the request",
+      "note": "Question inspired by distractor but does not flip it to correct answer"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_007",
+    "skillId": "PC-S02",
+    "question": "A school psychologist receives a report that a high school student has made a specific threat of violence toward other students, has access to means, and has expressed clear intent. The student is currently in the building and appears agitated. The school psychologist has assessed the immediate risk and determined the student poses an imminent danger. Which of the following should the school psychologist do first?",
+    "choices": {
+      "A": "Contact the student's parents to discuss the situation",
+      "B": "Provide immediate counseling to help the student calm down",
+      "C": "Immediately contact a crisis center or emergency services",
+      "D": "Wait and monitor the student's behavior throughout the day"
+    },
+    "correct_answer": ["C"],
+    "rationale": "Option (C) is correct. When a student poses an imminent danger with a specific threat, means, and intent, the school psychologist's crisis response role requires immediately contacting external crisis resources or emergency services. This ensures the safety of all students and connects the student to appropriate crisis intervention services. The psychologist's role during crisis is to provide immediate support, triage, and connect to resources, not to provide counseling or delay action.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q017",
+      "originalDistractor": "immediately contact a crisis center"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_008",
+    "skillId": "PC-S04",
+    "question": "A school psychologist is helping plan crisis drills for an elementary school. The school serves students from kindergarten through fifth grade. The psychologist wants to ensure the drills are effective and developmentally appropriate. Which of the following practices would be most important when conducting crisis drills with this age range?",
+    "choices": {
+      "A": "Using the same drill script and procedures for all grade levels",
+      "B": "Including students who are at similar developmental levels in the same drill groups",
+      "C": "Excluding kindergarten and first-grade students from drills entirely",
+      "D": "Mixing all ages together to simulate real emergency conditions"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Option (B) is correct. Crisis drills should be developmentally appropriate, and grouping students at similar developmental levels ensures that instructions, expectations, and procedures can be tailored appropriately. Younger students need simpler, more concrete instructions, while older students can handle more complex procedures. This approach prevents traumatizing younger students while ensuring all students are prepared appropriately for their developmental level.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q075",
+      "originalDistractor": "Including students who are at similar developmental levels"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_009",
+    "skillId": "LEG-S01",
+    "question": "A school district is considering excluding a student with severe disabilities from educational services, citing the high cost of providing appropriate accommodations and the student's significant needs. The district argues that the expense would be too great and the student's disabilities are too severe to benefit from education. Which of the following court cases established that schools cannot exclude students with disabilities from education based on cost or severity of disability?",
+    "choices": {
+      "A": "Mills v. Board of Education of the District of Columbia",
+      "B": "Larry P. v. Riles",
+      "C": "Lau v. Nichols",
+      "D": "Tarasoff v. Regents of the University of California"
+    },
+    "correct_answer": ["A"],
+    "rationale": "Option (A) is correct. Mills v. Board of Education of the District of Columbia (1972) established that all children with disabilities are entitled to a free public education regardless of the cost or severity of their disability. This landmark case, along with PARC v. Commonwealth, helped establish the foundation for what would become the Individuals with Disabilities Education Act (IDEA), ensuring that schools cannot exclude students based on financial constraints or the extent of their disabilities.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q011",
+      "originalDistractor": "Mills v. Board of Education of the District of Columbia"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_010",
+    "skillId": "LEG-S01",
+    "question": "A school psychologist in California is reviewing historical special education placement practices. The psychologist learns that in the past, African American students were disproportionately placed in special education programs for students with intellectual disabilities based primarily on IQ test scores. Which of the following court cases addressed this issue of cultural bias in IQ testing and discriminatory placement practices?",
+    "choices": {
+      "A": "Larry P. v. Riles",
+      "B": "Mills v. Board of Education of the District of Columbia",
+      "C": "Lau v. Nichols",
+      "D": "PARC v. Commonwealth of Pennsylvania"
+    },
+    "correct_answer": ["A"],
+    "rationale": "Option (A) is correct. Larry P. v. Riles (1979) was a California case that banned the use of IQ tests as the sole basis for placing African American students in special education programs for students with intellectual disabilities. The case addressed cultural bias in testing and disproportionate placement based on discriminatory assessment practices. This case is specific to California and focuses on the inappropriate use of IQ tests for placement decisions.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q011",
+      "originalDistractor": "Larry P. v. Riles"
+    }
+  },
+  {
+    "id": "SP5403_FLIP_011",
+    "skillId": "LEG-S01",
+    "question": "A school district has a significant number of students who speak limited English. These students are placed in general education classrooms but receive no additional language support services. The students are struggling academically because they cannot understand instruction delivered only in English. Which of the following court cases established that schools must provide meaningful access to education for students with limited English proficiency?",
+    "choices": {
+      "A": "Lau v. Nichols",
+      "B": "Larry P. v. Riles",
+      "C": "Mills v. Board of Education of the District of Columbia",
+      "D": "Board of Education v. Rowley"
+    },
+    "correct_answer": ["A"],
+    "rationale": "Option (A) is correct. Lau v. Nichols (1974) established that schools must provide meaningful access to education for students with limited English proficiency. The case held that simply providing the same facilities and instruction to all students does not constitute equal educational opportunity when some students cannot understand the language of instruction. This case led to requirements for bilingual education and English language learner (ELL) support services to ensure meaningful access to education.",
+    "metadata": {
+      "source": "distractor-flip",
+      "originalQuestion": "SP5403_Q011",
+      "originalDistractor": "Lau v. Nichols"
+    }
+  }
+]

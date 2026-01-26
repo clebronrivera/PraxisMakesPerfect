@@ -25,7 +25,15 @@ export const domain1Templates: QuestionTemplate[] = [
           "a teacher rating scale",
           "repeated administrations over time",
           "a curriculum-based measurement",
-          "a behavior rating scale"
+          "a behavior rating scale",
+          "multiple raters observing the same student",
+          "a classroom behavior checklist",
+          "a self-report anxiety measure",
+          "a projective personality assessment",
+          "curriculum-based measurement probes",
+          "a structured diagnostic interview",
+          "an adaptive behavior rating scale",
+          "a social skills observation protocol"
         ]
       }
     },
@@ -35,18 +43,26 @@ export const domain1Templates: QuestionTemplate[] = [
         
         if (psychometric_property === "reliability") {
           if (measurement_context === "a single-subject design" || 
-              measurement_context === "behavioral observation") {
+              measurement_context === "behavioral observation" ||
+              measurement_context === "a classroom behavior checklist" ||
+              measurement_context === "a social skills observation protocol") {
             return "Interobserver agreement";
           }
           if (measurement_context === "a standardized cognitive assessment" ||
-              measurement_context === "a curriculum-based measurement") {
+              measurement_context === "a curriculum-based measurement" ||
+              measurement_context === "curriculum-based measurement probes" ||
+              measurement_context === "a structured diagnostic interview") {
             return "Internal consistency";
           }
           if (measurement_context === "a teacher rating scale" ||
-              measurement_context === "a behavior rating scale") {
+              measurement_context === "a behavior rating scale" ||
+              measurement_context === "multiple raters observing the same student" ||
+              measurement_context === "an adaptive behavior rating scale") {
             return "Interrater reliability";
           }
-          if (measurement_context === "repeated administrations over time") {
+          if (measurement_context === "repeated administrations over time" ||
+              measurement_context === "a self-report anxiety measure" ||
+              measurement_context === "a projective personality assessment") {
             return "Test-retest reliability";
           }
         }
@@ -91,7 +107,14 @@ export const domain1Templates: QuestionTemplate[] = [
           "correlating scores with an established measure administered at the same time",
           "correlating scores with future performance on a criterion measure",
           "examining whether items group together as predicted by theory",
-          "determining whether the assessment appears to measure what it claims"
+          "determining whether the assessment appears to measure what it claims",
+          "predicting future academic performance",
+          "correlation with another established measure",
+          "factor analysis of test structure",
+          "differentiation between known groups",
+          "alignment with curriculum standards",
+          "convergent evidence from multiple sources",
+          "longitudinal prediction of outcomes"
         ]
       }
     },
@@ -99,20 +122,29 @@ export const domain1Templates: QuestionTemplate[] = [
       evaluate: (slotValues) => {
         const { validity_method } = slotValues;
         
-        if (validity_method.includes("experts review") || validity_method.includes("content domain")) {
+        if (validity_method.includes("experts review") || validity_method.includes("content domain") || validity_method.includes("alignment with curriculum")) {
           return "Content validity";
         }
-        if (validity_method.includes("correlating") && validity_method.includes("same time")) {
+        if ((validity_method.includes("correlating") && validity_method.includes("same time")) || 
+            (validity_method.includes("correlation") && validity_method.includes("established measure"))) {
           return "Concurrent criterion validity";
         }
-        if (validity_method.includes("correlating") && validity_method.includes("future")) {
+        if ((validity_method.includes("correlating") && validity_method.includes("future")) ||
+            validity_method.includes("predicting future") ||
+            validity_method.includes("longitudinal prediction")) {
           return "Predictive criterion validity";
         }
-        if (validity_method.includes("theory") || validity_method.includes("group together")) {
+        if (validity_method.includes("theory") || 
+            validity_method.includes("group together") ||
+            validity_method.includes("factor analysis") ||
+            validity_method.includes("convergent evidence")) {
           return "Construct validity";
         }
         if (validity_method.includes("appears to measure")) {
           return "Face validity";
+        }
+        if (validity_method.includes("differentiation between known groups")) {
+          return "Criterion validity";
         }
         
         return "Construct validity"; // Default
@@ -180,7 +212,7 @@ export const domain1Templates: QuestionTemplate[] = [
     templateId: "DBDM-T04",
     skillId: "DBDM-S04",
     templateType: "definition-recognition",
-    stem: "A screening tool correctly identifies 90% of students who have reading difficulties and correctly identifies 85% of students who do not have reading difficulties. Which of the following best describes these statistics?",
+    stem: "A screening tool correctly identifies {sensitivity_value} of students who have reading difficulties and correctly identifies {specificity_value} of students who do not have reading difficulties. Which of the following best describes these statistics?",
     slots: {
       sensitivity_value: {
         name: "sensitivity_value",
@@ -476,10 +508,130 @@ export const domain1Templates: QuestionTemplate[] = [
       stakeholder: "The principal",
       problem_description: "behavior referrals have increased"
     }
+  },
+
+  // NEW-1-IQvsAchievement: Intelligence vs Achievement Distinction
+  {
+    templateId: "DBDM-T13",
+    skillId: "NEW-1-IQvsAchievement",
+    templateType: "definition-recognition",
+    stem: "A school psychologist administers an assessment that measures reasoning and problem-solving ability. This assessment is best described as measuring:",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Cognitive ability or intelligence";
+      },
+      description: "Reasoning and problem-solving = cognitive ability/intelligence, not achievement"
+    },
+    allowedDistractorPatterns: ["similar-concept"],
+    keyPrinciple: "Intelligence tests measure cognitive ability, reasoning, problem-solving potential. Achievement tests measure learned knowledge and skills. Distinguish potential from acquired knowledge.",
+    exampleSlotValues: {}
+  },
+
+  // NEW-1-PerformanceAssessment: Performance-Based Assessment Recognition
+  {
+    templateId: "DBDM-T14",
+    skillId: "NEW-1-PerformanceAssessment",
+    templateType: "definition-recognition",
+    stem: "Which of the following is an example of a performance-based assessment?",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "A student writing an essay";
+      },
+      description: "Performance-based requires demonstration of skill, not selection"
+    },
+    allowedDistractorPatterns: ["similar-concept", "context-mismatch"],
+    keyPrinciple: "Performance-based assessment = student demonstrates skill through authentic task (essay, presentation, project). Selection-based = multiple choice, true/false. Performance requires active demonstration.",
+    exampleSlotValues: {}
+  },
+
+  // NEW-1-DynamicAssessment: Dynamic Assessment Application
+  {
+    templateId: "DBDM-T15",
+    skillId: "NEW-1-DynamicAssessment",
+    templateType: "definition-recognition",
+    stem: "A school psychologist uses a test-teach-retest approach to measure a student's learning potential. This is an example of:",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Dynamic assessment";
+      },
+      description: "Test-teach-retest = dynamic assessment"
+    },
+    allowedDistractorPatterns: ["similar-concept"],
+    keyPrinciple: "Dynamic assessment = test-teach-retest, measures learning potential and responsiveness to instruction. Static assessment = measures current ability without teaching. Dynamic focuses on modifiability.",
+    exampleSlotValues: {}
+  },
+
+  // NEW-1-BackgroundInformation: Background Information Use
+  {
+    templateId: "DBDM-T20",
+    skillId: "NEW-1-BackgroundInformation",
+    templateType: "best-selection",
+    stem: "Before conducting an assessment, a school psychologist should:",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Review background information including student records, medical records, previous interventions, and developmental history";
+      },
+      description: "Background information review is essential before assessment"
+    },
+    allowedDistractorPatterns: ["premature-action", "data-ignorance"],
+    keyPrinciple: "Background information = student records, medical records, previous interventions, developmental history. Appropriate use: review before assessment, understand context, identify patterns, inform assessment planning. Medical records with parent authorization appropriate when health issues may affect learning/behavior.",
+    exampleSlotValues: {}
+  },
+
+  // NEW-1-ProblemSolvingFramework: Problem-Solving Framework
+  {
+    templateId: "DBDM-T21",
+    skillId: "NEW-1-ProblemSolvingFramework",
+    templateType: "best-selection",
+    stem: "A problem-solving framework (MTSS/RTI) should be used as the basis for:",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "All professional activities including assessment, intervention, and decision-making";
+      },
+      description: "Problem-solving framework applies to all professional activities"
+    },
+    allowedDistractorPatterns: ["similar-concept", "context-mismatch"],
+    keyPrinciple: "Problem-solving framework = systematic approach using data to identify problems, analyze causes, implement solutions, and evaluate outcomes. MTSS/RTI = multi-tiered problem-solving framework applied to all professional activities. Framework emphasizes: data-based decisions, prevention, tiered supports, continuous monitoring.",
+    exampleSlotValues: {}
+  },
+
+  // NEW-1-LowIncidenceExceptionalities: Low-Incidence Exceptionalities Assessment
+  {
+    templateId: "DBDM-T22",
+    skillId: "NEW-1-LowIncidenceExceptionalities",
+    templateType: "best-selection",
+    stem: "When assessing a student with {exceptionality_type}, the school psychologist should:",
+    slots: {
+      exceptionality_type: {
+        name: "exceptionality_type",
+        description: "Type of low-incidence exceptionality",
+        possibleValues: [
+          "a severe physical disability",
+          "a sensory impairment",
+          "a chronic health condition",
+          "multiple severe disabilities"
+        ]
+      }
+    },
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Adapt assessment procedures, consider medical factors, involve specialists, and use appropriate accommodations";
+      },
+      description: "Assessment requires adaptation and specialist involvement"
+    },
+    allowedDistractorPatterns: ["similar-concept", "context-mismatch"],
+    keyPrinciple: "Low-incidence exceptionalities = chronic health (diabetes, asthma, epilepsy), severe physical disabilities (cerebral palsy, muscular dystrophy), sensory impairments (deaf, blind, deaf-blind). Assessment considerations: adapt procedures, consider medical factors, involve specialists, use appropriate accommodations, understand condition-specific needs.",
+    exampleSlotValues: {
+      exceptionality_type: "a severe physical disability"
+    }
   }
 ];
 
-// Export as a map for easy lookup
 export const domain1TemplateMap: Record<string, QuestionTemplate> = {};
 domain1Templates.forEach(template => {
   domain1TemplateMap[template.templateId] = template;

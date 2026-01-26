@@ -1,5 +1,5 @@
 {
-  "totalQuestions": 125,
+  "totalQuestions": 238,
   "mappedQuestions": [
     {
       "questionId": "SP5403_Q001",
@@ -306,6 +306,96 @@
       "skillId": "CC-S03",
       "confidence": "medium",
       "reasoning": "Question asks about the relationship type fostered by multimethod assessment interviews (Collaborative)."
+    },
+    {
+      "questionId": "SP5403_Q126",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the primary characteristic of behavioral consultation (focus on observable behaviors and data collection)."
+    },
+    {
+      "questionId": "SP5403_Q127",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify mental health consultation based on focus on emotional experiences and social dynamics rather than observable behaviors."
+    },
+    {
+      "questionId": "SP5403_Q128",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify consultee-centered consultation based on focus on improving teacher's skills rather than solving individual student problems."
+    },
+    {
+      "questionId": "SP5403_Q129",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify conjoint behavioral consultation based on involvement of both parents and teachers with interventions in both home and school settings."
+    },
+    {
+      "questionId": "SP5403_Q130",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify organizational consultation based on system-wide change affecting all students and staff."
+    },
+    {
+      "questionId": "SP5403_Q131",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the entry/contracting stage based on establishing mutual goals, clarifying roles, and building rapport."
+    },
+    {
+      "questionId": "SP5403_Q132",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the problem identification stage based on collecting baseline data to define the problem in observable terms."
+    },
+    {
+      "questionId": "SP5403_Q133",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the problem analysis stage based on analyzing data, identifying patterns, and hypothesizing causes."
+    },
+    {
+      "questionId": "SP5403_Q134",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question tests critical concept that consultee (teacher) implements intervention, not consultant, because consultation is indirect service."
+    },
+    {
+      "questionId": "SP5403_Q135",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the evaluation stage based on collecting data to assess intervention effectiveness and make decisions."
+    },
+    {
+      "questionId": "SP5403_Q136",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks to identify active listening skill based on summarizing, reflecting feelings, and asking clarifying questions."
+    },
+    {
+      "questionId": "SP5403_Q137",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks to identify paraphrasing skill based on restating consultee's words to confirm understanding."
+    },
+    {
+      "questionId": "SP5403_Q138",
+      "skillId": "CC-S03",
+      "confidence": "high",
+      "reasoning": "Question tests avoiding expert trap by using questions to promote consultee ownership rather than providing all answers."
+    },
+    {
+      "questionId": "SP5403_Q139",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for effective response to resistance: acknowledging concerns, exploring barriers, and collaborative problem-solving."
+    },
+    {
+      "questionId": "SP5403_Q140",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for effective facilitation of communication among diverse stakeholders including community providers, requiring role clarification and perspective understanding."
     },
     {
       "questionId": "SP5403_Q015",
@@ -804,6 +894,540 @@
       "skillId": "NEW-10-TestSecurity",
       "confidence": "high",
       "reasoning": "Question asks how to handle a parent's request to see test protocols (providing explanation/viewing but not copying/releasing protocols to non-professionals)."
+    },
+    {
+      "questionId": "SP5403_Q141",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question asks for the first step in NASP's ethical problem-solving model (identifying ethical principles in conflict)."
+    },
+    {
+      "questionId": "SP5403_Q142",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question tests application of ethical problem-solving model when confidentiality conflicts with duty to protect (duty to protect takes precedence with imminent threat)."
+    },
+    {
+      "questionId": "SP5403_Q143",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question addresses ETS discussion question: how to respond when administrator behaves unethically (address directly first, then escalate if needed)."
+    },
+    {
+      "questionId": "SP5403_Q144",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question tests avoiding dual relationships - psychologist should decline evaluation when personal relationship exists and refer to another professional."
+    },
+    {
+      "questionId": "SP5403_Q145",
+      "skillId": "NEW-10-EthicalProblemSolving",
+      "confidence": "high",
+      "reasoning": "Question tests scope of competence - psychologist must decline services requiring specialized training they don't have and refer to qualified professional."
+    },
+    {
+      "questionId": "SP5403_Q146",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question tests IDEA vs Section 504 eligibility - student needing accommodations but not specialized instruction is eligible under 504, not IDEA."
+    },
+    {
+      "questionId": "SP5403_Q147",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question tests key difference in services: IDEA provides specialized instruction and related services; Section 504 provides accommodations and modifications for access."
+    },
+    {
+      "questionId": "SP5403_Q148",
+      "skillId": "NEW-10-EducationLaw",
+      "confidence": "high",
+      "reasoning": "Question tests evaluation requirements difference: IDEA requires comprehensive evaluation by multidisciplinary team; Section 504 requires evaluation by team of knowledgeable persons."
+    },
+    {
+      "questionId": "SP5403_Q149",
+      "skillId": "NEW-10-RecordKeeping",
+      "confidence": "high",
+      "reasoning": "Question tests FERPA access rights - school officials with legitimate educational interests can access records without parental consent."
+    },
+    {
+      "questionId": "SP5403_Q150",
+      "skillId": "NEW-10-RecordKeeping",
+      "confidence": "high",
+      "reasoning": "Question tests FERPA parent rights to amend records - parents can request amendment and hearing if school refuses."
+    },
+    {
+      "questionId": "SP5403_Q151",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Rowley case standard - IEP must provide 'some educational benefit,' not maximum potential."
+    },
+    {
+      "questionId": "SP5403_Q152",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Endrew F. case - raised standard from Rowley's 'some benefit' to 'meaningful educational benefit' that is appropriately ambitious."
+    },
+    {
+      "questionId": "SP5403_Q153",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Larry P. case - prohibited use of IQ tests for placing African American students in special education for educable mentally retarded in California."
+    },
+    {
+      "questionId": "SP5403_Q154",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Tarasoff case - duty to warn/protect when specific, credible threat of serious harm to identifiable victim."
+    },
+    {
+      "questionId": "SP5403_Q155",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "Question applies Tarasoff case law to scenario - psychologist must warn intended victim and/or take steps to protect, even if breaching confidentiality."
+    },
+    {
+      "questionId": "SP5403_Q156",
+      "skillId": "LEG-S05",
+      "confidence": "high",
+      "reasoning": "Question tests when manifestation determination is required - before removal of more than 10 consecutive school days."
+    },
+    {
+      "questionId": "SP5403_Q157",
+      "skillId": "LEG-S05",
+      "confidence": "high",
+      "reasoning": "Question addresses ETS discussion question: what questions must be answered in manifestation determination (conduct caused by disability or failure to implement IEP)."
+    },
+    {
+      "questionId": "SP5403_Q158",
+      "skillId": "LEG-S07",
+      "confidence": "high",
+      "reasoning": "Question tests informed consent requirements - must explain purpose, procedures, and that consent can be revoked."
+    },
+    {
+      "questionId": "SP5403_Q159",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests LRE requirement - students with disabilities educated with non-disabled peers to maximum extent appropriate."
+    },
+    {
+      "questionId": "SP5403_Q160",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests when seclusion/restraint allowed - only when imminent danger of serious physical harm, as last resort."
+    },
+    {
+      "questionId": "ETS_Q001",
+      "skillId": "DIV-S03",
+      "confidence": "high",
+      "reasoning": "Question tests ELL assessment requirement: verify learning disability in both native language and English to rule out language acquisition as alternative explanation."
+    },
+    {
+      "questionId": "ETS_Q002",
+      "skillId": "SWP-S03",
+      "confidence": "high",
+      "reasoning": "Question tests Tier 1 identification: environmentally designed crime deterrence is a universal Tier 1 intervention."
+    },
+    {
+      "questionId": "ETS_Q003",
+      "skillId": "MBH-S01",
+      "confidence": "high",
+      "reasoning": "Question tests FBA quantitative measurement: converting behavior counts to standardized rate (weekly average) for quantitative measurement."
+    },
+    {
+      "questionId": "ETS_Q004",
+      "skillId": "NEW-10-RecordKeeping",
+      "confidence": "high",
+      "reasoning": "Question tests when medical record access with authorization is appropriate: when health issues may affect learning/behavior."
+    },
+    {
+      "questionId": "ETS_Q005",
+      "skillId": "MBH-S05",
+      "confidence": "high",
+      "reasoning": "Question tests CBT recognition: identifying cognitive distortions is a core CBT technique."
+    },
+    {
+      "questionId": "ETS_Q006",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question tests MTSS framework definition: MTSS integrates multiple systems to address academic, behavior, and social-emotional simultaneously."
+    },
+    {
+      "questionId": "ETS_Q007",
+      "skillId": "DBDM-S10",
+      "confidence": "high",
+      "reasoning": "Question tests data-first decision making: first step is gathering data (administer worksheet to class) before individual assessment."
+    },
+    {
+      "questionId": "ETS_Q008",
+      "skillId": "SWP-S03",
+      "confidence": "high",
+      "reasoning": "Question tests Tier 1 definition: primary intervention = Tier 1 = meets needs of most students, applied across all settings."
+    },
+    {
+      "questionId": "ETS_Q009",
+      "skillId": "NEW-4-Psychopathology",
+      "confidence": "high",
+      "reasoning": "Question tests social influences assessment: peer relationships and reactions to success/failure are social influences on mental health."
+    },
+    {
+      "questionId": "ETS_Q010",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests IDEA requirements: IDEA specifies provisions for electronic communication of procedural safeguards."
+    },
+    {
+      "questionId": "ETS_Q011",
+      "skillId": "SWP-S01",
+      "confidence": "high",
+      "reasoning": "Question tests Tier 2 identification: secondary-level interventions = classroom-level, classwide interventions, character development lessons."
+    },
+    {
+      "questionId": "ETS_Q012",
+      "skillId": "NEW-4-Psychopathology",
+      "confidence": "high",
+      "reasoning": "Question tests depression diagnostic criteria: withdrawal, irritability, and loss of pleasure are symptoms of depression."
+    },
+    {
+      "questionId": "ETS_Q013",
+      "skillId": "NEW-9-ValidityThreats",
+      "confidence": "high",
+      "reasoning": "Question tests validity threat identification: maturation threat = changes due to natural development/aging over time."
+    },
+    {
+      "questionId": "ETS_Q014",
+      "skillId": "LEG-S06",
+      "confidence": "high",
+      "reasoning": "Question tests competence principle: seeking training/supervision before using unfamiliar assessment demonstrates competence."
+    },
+    {
+      "questionId": "ETS_Q015",
+      "skillId": "LEG-S03",
+      "confidence": "high",
+      "reasoning": "Question tests confidentiality breach: duty to warn/protect when student intends to harm another (imminent danger)."
+    },
+    {
+      "questionId": "ETS_Q016",
+      "skillId": "DBDM-S01",
+      "confidence": "high",
+      "reasoning": "Question tests reliability definition: reliability = consistency/stability in measurement. Low reliability = scores vary across administrations."
+    },
+    {
+      "questionId": "ETS_Q017",
+      "skillId": "MBH-S06",
+      "confidence": "high",
+      "reasoning": "Question tests behavioral principles: clear rules + positive reinforcement for compliance increases desired behavior."
+    },
+    {
+      "questionId": "ETS_Q018",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests zero-reject principle: no child denied FAPE based on disability severity (part of IDEA/FAPE)."
+    },
+    {
+      "questionId": "ETS_Q019",
+      "skillId": "SWP-S04",
+      "confidence": "high",
+      "reasoning": "Question tests implementation fidelity: reminders/prompts help ensure consistent implementation of PBIS components."
+    },
+    {
+      "questionId": "ETS_Q020",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question tests percentile interpretation: percentile rank = percentage of scores equal to or lower."
+    },
+    {
+      "questionId": "ETS_Q021",
+      "skillId": "NEW-9-ValidityThreats",
+      "confidence": "high",
+      "reasoning": "Question tests ecological validity: concern about generalization to real-world settings = ecological validity."
+    },
+    {
+      "questionId": "ETS_Q022",
+      "skillId": "LEG-S06",
+      "confidence": "high",
+      "reasoning": "Question tests advocacy responsibilities: work to change discriminatory practices, distinguish professional vs private statements."
+    },
+    {
+      "questionId": "ETS_Q023",
+      "skillId": "NEW-8-LanguageAcquisition",
+      "confidence": "high",
+      "reasoning": "Question tests BICS vs CALP distinction: social fluency (BICS) develops before academic language (CALP). BICS = 6mo-2yr, CALP = 5-7yr."
+    },
+    {
+      "questionId": "ETS_Q024",
+      "skillId": "MBH-S05",
+      "confidence": "high",
+      "reasoning": "Question tests evidence-based practice recognition: CBT is an EBP for treating internalizing problems (depression, anxiety)."
+    },
+    {
+      "questionId": "ETS_Q025",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question tests z-score calculation: z-score = (score - mean) / SD."
+    },
+    {
+      "questionId": "ETS_Q026",
+      "skillId": "DBDM-S03",
+      "confidence": "high",
+      "reasoning": "Question tests cognitive construct identification: working memory = ability to attend, hold information, and perform mental operations."
+    },
+    {
+      "questionId": "ETS_Q027",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests IEP content requirements: IEP includes specialized instruction and related services (counseling) based on student needs."
+    },
+    {
+      "questionId": "ETS_Q028",
+      "skillId": "LEG-S07",
+      "confidence": "high",
+      "reasoning": "Question tests informed consent requirements: ensure safety first, then require parental consent for ongoing counseling services."
+    },
+    {
+      "questionId": "ETS_Q029",
+      "skillId": "LEG-S02",
+      "confidence": "high",
+      "reasoning": "Question tests interagency collaboration purpose: planning for postsecondary transitions (part of IDEA requirements)."
+    },
+    {
+      "questionId": "ETS_Q030",
+      "skillId": "SWP-S02",
+      "confidence": "high",
+      "reasoning": "Question tests PBIS/Tier 1 response: examine Tier 1 interventions (SWPBIS, SEL) when schoolwide behavior issues increase."
+    },
+    {
+      "questionId": "GEN-MBH-T15-67xzh7",
+      "skillId": "NEW-4-DevelopmentalInterventions",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Developmental-Level Interventions. Question tests Understand how to adapt intervention techniques based on developmental level (elementary vs. secondary)."
+    },
+    {
+      "questionId": "GEN-MBH-T03-f3ag1a",
+      "skillId": "MBH-S03",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Replacement Behavior Selection. Question tests Select replacement behaviors that serve the same function as problem behavior."
+    },
+    {
+      "questionId": "GEN-SWP-T10-3nv1dn",
+      "skillId": "NEW-5-EducationalPolicies",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Educational Policies. Question tests Understand educational policies including retention, tracking, and their implications."
+    },
+    {
+      "questionId": "GEN-FSC-T08-hhzmm2",
+      "skillId": "NEW-7-InteragencyCollaboration",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+    },
+    {
+      "questionId": "GEN-FSC-T08-d7kjml",
+      "skillId": "NEW-7-InteragencyCollaboration",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+    },
+    {
+      "questionId": "GEN-FSC-T07-ulm77m",
+      "skillId": "NEW-7-ParentingInterventions",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Parenting & Home Interventions. Question tests Know strategies for parenting interventions and home-based supports to address student needs."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-5i35q1",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-ydf1d4",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-gccqo6",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-oxddo6",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-ivu7un",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-FSC-T04-5caagi",
+      "skillId": "NEW-7-InteragencyCollaboration",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+    },
+    {
+      "questionId": "GEN-RES-T11-u4mi42",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-w89l4s",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-jj9s0w",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-nfq9h",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-RES-T11-m8kn3h",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+    },
+    {
+      "questionId": "GEN-RES-T11-795f7h",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-icrjpf",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-19f1hz",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-RES-T11-efezcm",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-8z1vt8",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-cuomeq",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-ACAD-T10-y98cke",
+      "skillId": "NEW-3-AccommodationsModifications",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+    },
+    {
+      "questionId": "GEN-MBH-T08C-qlbme3",
+      "skillId": "NEW-4-GroupCounseling",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Group Counseling Dynamics. Question tests Understand group formation, member selection (screening), and group stages (forming, storming, norming, performing).."
+    },
+    {
+      "questionId": "GEN-MBH-T08D-rc3nn4",
+      "skillId": "NEW-4-GroupCounseling",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Group Counseling Dynamics. Question tests Understand group formation, member selection (screening), and group stages (forming, storming, norming, performing).."
+    },
+    {
+      "questionId": "GEN-FSC-T06-5c90hg",
+      "skillId": "NEW-7-InteragencyCollaboration",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+    },
+    {
+      "questionId": "GEN-FSC-T08-a86lzy",
+      "skillId": "NEW-7-InteragencyCollaboration",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+    },
+    {
+      "questionId": "GEN-RES-T14-h1iv17",
+      "skillId": "NEW-9-ProgramEvaluation",
+      "confidence": "high",
+      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+    },
+    {
+      "questionId": "SP5403_FLIP_001",
+      "skillId": "MBH-S06",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Behavioral Principles: Apply behavioral principles including positive reinforcement and rule-setting."
+    },
+    {
+      "questionId": "SP5403_FLIP_002",
+      "skillId": "MBH-S01",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests FBA Purpose: Understand FBA purpose and how to measure interfering behaviors quantitatively."
+    },
+    {
+      "questionId": "SP5403_FLIP_004",
+      "skillId": "MBH-S02",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Behavior Function Identification: Identify the function of behavior (attention, escape/avoidance, tangible, sensory)."
+    },
+    {
+      "questionId": "SP5403_FLIP_005",
+      "skillId": "MBH-S02",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Behavior Function Identification: Identify the function of behavior (attention, escape/avoidance, tangible, sensory)."
+    },
+    {
+      "questionId": "SP5403_FLIP_006",
+      "skillId": "MBH-S05",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Therapy Model Recognition: Identify therapy models (CBT, SFBT, etc.) and their key components."
+    },
+    {
+      "questionId": "SP5403_FLIP_007",
+      "skillId": "PC-S02",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Crisis Response Role: Understand school psychologist's role during crisis (support, triage, not long-term therapy)."
+    },
+    {
+      "questionId": "SP5403_FLIP_008",
+      "skillId": "PC-S04",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Crisis Preparedness: Understand best practices for crisis drills (regular, developmentally appropriate)."
+    },
+    {
+      "questionId": "SP5403_FLIP_009",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Landmark Cases: Identify key legal cases and their implications (Tarasoff, Larry P., Rowley)."
+    },
+    {
+      "questionId": "SP5403_FLIP_010",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Landmark Cases: Identify key legal cases and their implications (Tarasoff, Larry P., Rowley)."
+    },
+    {
+      "questionId": "SP5403_FLIP_011",
+      "skillId": "LEG-S01",
+      "confidence": "high",
+      "reasoning": "FLIP question from distractor conversion. Question tests Landmark Cases: Identify key legal cases and their implications (Tarasoff, Larry P., Rowley)."
     }
   ],
   "unmappedQuestions": []

@@ -14,6 +14,8 @@ export interface Skill {
   boundaryConditions: string; // When this skill applies vs doesn't apply
   dokRange: [number, number]; // [min, max] depth of knowledge levels (1-4)
   questionIds: string[]; // Array of question IDs from bank that test this skill
+  prerequisites?: SkillId[]; // Skills that should be mastered before this one
+  unlocks?: SkillId[]; // Skills that become available after mastering this (auto-populated)
 }
 
 export interface SkillCluster {
@@ -47,7 +49,7 @@ const domain1Skills: Domain = {
           skillId: "DBDM-S01",
           name: "Reliability Type Selection",
           description: "Matching the appropriate reliability type to the measurement context",
-          decisionRule: "Match reliability type to measurement context. Single-subject/behavioral observation requires interobserver agreement. Consistent scores over time requires test-retest. Internal scale consistency requires Cronbach's alpha. Multiple raters requires interrater reliability.",
+          decisionRule: "Match reliability type to measurement context. Single-subject/behavioral observation requires interobserver agreement. Consistent scores over time requires test-retest. Internal scale consistency requires Cronbach's alpha. Multiple raters requires interrater reliability. Reliability = consistency or stability in measurement. Low reliability = scores vary across administrations. Test-retest reliability specifically measures stability over time.",
           commonWrongRules: [
             "Assuming all reliability types work for all measurement contexts",
             "Confusing test-retest with internal consistency",
@@ -57,7 +59,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must specify a measurement context (single-subject design, behavioral observation, standardized test, rating scale, repeated administrations)",
           boundaryConditions: "Applies when question asks which reliability metric is appropriate for a specific context. Does not apply to validity questions or general reliability definitions.",
           dokRange: [2, 3],
-          questionIds: ["SP5403_Q001"] // Will be expanded after mapping
+          questionIds: ["ETS_Q016", "SP5403_Q001", "SP5403_Q110"]
         },
         {
           skillId: "DBDM-S02",
@@ -73,13 +75,13 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must describe how validity is being established or ask which type of validity is demonstrated",
           boundaryConditions: "Applies to validity questions. Does not apply to reliability questions or general assessment selection.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q031"]
         },
         {
           skillId: "DBDM-S03",
           name: "Score Interpretation",
           description: "Interpreting confidence intervals, reliability coefficients, SEM, and standard scores",
-          decisionRule: "Confidence intervals show range where true score likely falls. Reliability coefficients (.90+ excellent, .80+ good) indicate consistency. SEM quantifies measurement error. Standard scores (mean=100, SD=15) show relative standing. Higher reliability = smaller SEM.",
+          decisionRule: "Confidence intervals show range where true score likely falls. Reliability coefficients (.90+ excellent, .80+ good) indicate consistency. SEM quantifies measurement error. Standard scores (mean=100, SD=15) show relative standing. Higher reliability = smaller SEM. Percentile rank = percentage of scores equal to or lower. Z-score = (score - mean) / SD. Working memory = cognitive ability to attend to information, hold information in immediate awareness, and perform mental operations. Cognitive construct identification requires recognizing which ability is being measured.",
           commonWrongRules: [
             "Confusing confidence interval with percentage correct",
             "Thinking high reliability guarantees validity",
@@ -89,7 +91,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must present a score, statistic, or ask about interpretation of psychometric data",
           boundaryConditions: "Applies to score interpretation questions. Does not apply to assessment selection or intervention questions.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["ETS_Q020", "ETS_Q025", "ETS_Q026", "SP5403_Q025", "SP5403_Q039", "SP5403_Q048", "SP5403_Q058", "SP5403_Q065", "SP5403_Q071", "SP5403_Q082", "SP5403_Q091", "SP5403_Q123"]
         },
         {
           skillId: "DBDM-S04",
@@ -105,7 +107,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must mention screening, identification, or ask about true positive/negative rates",
           boundaryConditions: "Applies to screening and identification questions. Does not apply to general assessment questions without screening context.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q010"]
         }
       ]
     },
@@ -128,7 +130,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must specify a purpose (screening, diagnosis, progress monitoring, evaluation) and ask which assessment is most appropriate",
           boundaryConditions: "Applies when question asks which assessment to use for a specific purpose. Does not apply to general assessment knowledge questions.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q021", "SP5403_Q028", "SP5403_Q032", "SP5403_Q034", "SP5403_Q036", "SP5403_Q064", "SP5403_Q095", "SP5403_Q098"]
         },
         {
           skillId: "DBDM-S06",
@@ -144,7 +146,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must ask about norm vs criterion reference or describe assessment characteristics",
           boundaryConditions: "Applies to assessment type questions. Does not apply to intervention or consultation questions.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q052", "SP5403_Q060", "SP5403_Q080"]
         },
         {
           skillId: "DBDM-S07",
@@ -160,7 +162,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must describe assessment characteristics or ask about assessment type",
           boundaryConditions: "Applies to assessment classification questions. Does not apply to intervention selection questions.",
           dokRange: [1, 2],
-          questionIds: []
+          questionIds: ["SP5403_Q018"]
         },
         {
           skillId: "NEW-1-PerformanceAssessment",
@@ -176,7 +178,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must ask about assessment types that require active demonstration vs. selection",
           boundaryConditions: "Applies to assessment type questions distinguishing performance-based from selection-based. Does not apply to general assessment questions.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q042"]
         },
         {
           skillId: "NEW-1-DynamicAssessment",
@@ -192,7 +194,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must ask about dynamic assessment purpose or characteristics",
           boundaryConditions: "Applies to questions about dynamic assessment. Does not apply to general assessment questions.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q070"]
         },
         {
           skillId: "NEW-1-IQvsAchievement",
@@ -208,7 +210,7 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must ask about the distinction between intelligence and achievement testing",
           boundaryConditions: "Applies to questions distinguishing IQ from achievement tests. Does not apply to general assessment questions.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q076"]
         }
       ]
     },
@@ -231,7 +233,8 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must ask about progress monitoring characteristics or protocol",
           boundaryConditions: "Applies to progress monitoring questions. Does not apply to screening or diagnostic assessment questions.",
           dokRange: [2, 3],
-          questionIds: []
+          questionIds: ["SP5403_Q012", "SP5403_Q016", "SP5403_Q062", "SP5403_Q094"],
+          prerequisites: ["DBDM-S05"] // Need to understand assessment-purpose matching first
         },
         {
           skillId: "DBDM-S09",
@@ -247,22 +250,78 @@ const domain1Skills: Domain = {
           requiredEvidence: "Question must mention screening or ask about screening purpose",
           boundaryConditions: "Applies to screening questions. Does not apply to diagnostic or evaluation questions.",
           dokRange: [2, 3],
+          questionIds: ["SP5403_Q068", "SP5403_Q121"]
+        },
+          {
+            skillId: "DBDM-S10",
+            name: "Data-First Decision Making",
+            description: "Reviewing data before recommending action",
+            decisionRule: "ALWAYS review/analyze existing data before taking action. First step is almost always data collection, review, or analysis. Never skip to intervention without assessment. Never make recommendations without examining available information.",
+            commonWrongRules: [
+              "Jumping to intervention without reviewing data",
+              "Contacting parents before assessing the situation",
+              "Implementing solutions before understanding the problem",
+              "Making recommendations without examining available data"
+            ],
+            requiredEvidence: "Question must present a scenario and ask what to do first, or ask about decision-making sequence",
+            boundaryConditions: "Applies to 'first step' or 'should first' questions. Does not apply when data has already been reviewed.",
+            dokRange: [3, 4],
+            questionIds: ["ETS_Q007", "SP5403_Q013", "SP5403_Q019", "SP5403_Q053"],
+            prerequisites: ["DBDM-S05"] // Need to understand assessment-purpose matching to know what data to collect
+          }
+      ]
+    },
+    {
+      clusterId: "DBDM-D",
+      name: "Assessment Foundations",
+      description: "Foundational assessment knowledge and problem-solving frameworks",
+      skills: [
+        {
+          skillId: "NEW-1-BackgroundInformation",
+          name: "Background Information Use",
+          description: "Understand appropriate use of background information including student records, medical records, previous interventions, and developmental history",
+          decisionRule: "Background information = student records, medical records, previous interventions, developmental history. Appropriate use: review before assessment, understand context, identify patterns, inform assessment planning. Medical records with parent authorization appropriate when health issues may affect learning/behavior.",
+          commonWrongRules: [
+            "Not reviewing background information before assessment",
+            "Ignoring previous intervention data",
+            "Not considering developmental history",
+            "Believing background information is irrelevant"
+          ],
+          requiredEvidence: "Question must ask about using background information or reviewing records",
+          boundaryConditions: "Applies to background information use questions. Does not apply to general assessment questions.",
+          dokRange: [2, 3],
           questionIds: []
         },
         {
-          skillId: "DBDM-S10",
-          name: "Data-First Decision Making",
-          description: "Reviewing data before recommending action",
-          decisionRule: "ALWAYS review/analyze existing data before taking action. First step is almost always data collection, review, or analysis. Never skip to intervention without assessment. Never make recommendations without examining available information.",
+          skillId: "NEW-1-ProblemSolvingFramework",
+          name: "Problem-Solving Framework",
+          description: "Know how to use a problem-solving framework (MTSS/RTI) as the basis for all professional activities",
+          decisionRule: "Problem-solving framework = systematic approach using data to identify problems, analyze causes, implement solutions, and evaluate outcomes. MTSS/RTI = multi-tiered problem-solving framework applied to all professional activities. Framework emphasizes: data-based decisions, prevention, tiered supports, continuous monitoring.",
           commonWrongRules: [
-            "Jumping to intervention without reviewing data",
-            "Contacting parents before assessing the situation",
-            "Implementing solutions before understanding the problem",
-            "Making recommendations without examining available data"
+            "Not using systematic problem-solving approach",
+            "Jumping to solutions without analysis",
+            "Not applying framework consistently",
+            "Believing framework only applies to special education"
           ],
-          requiredEvidence: "Question must present a scenario and ask what to do first, or ask about decision-making sequence",
-          boundaryConditions: "Applies to 'first step' or 'should first' questions. Does not apply when data has already been reviewed.",
-          dokRange: [3, 4],
+          requiredEvidence: "Question must ask about problem-solving framework or MTSS/RTI as basis for professional activities",
+          boundaryConditions: "Applies to problem-solving framework questions. Does not apply to specific RTI tier questions (covered by SWP-S01).",
+          dokRange: [2, 3],
+          questionIds: []
+        },
+        {
+          skillId: "NEW-1-LowIncidenceExceptionalities",
+          name: "Low-Incidence Exceptionalities Assessment",
+          description: "Is familiar with assessment of students with low-incidence exceptionalities including chronic health impairments, severe physical disabilities, and sensory impairments",
+          decisionRule: "Low-incidence exceptionalities = chronic health (diabetes, asthma, epilepsy), severe physical disabilities (cerebral palsy, muscular dystrophy), sensory impairments (deaf, blind, deaf-blind). Assessment considerations: adapt procedures, consider medical factors, involve specialists, use appropriate accommodations, understand condition-specific needs.",
+          commonWrongRules: [
+            "Using standard assessment procedures without adaptation",
+            "Not considering medical factors",
+            "Not involving specialists",
+            "Believing standard assessments work for all disabilities"
+          ],
+          requiredEvidence: "Question must ask about assessing students with low-incidence exceptionalities",
+          boundaryConditions: "Applies to low-incidence exceptionality assessment questions. Does not apply to general assessment or high-incidence disability questions.",
+          dokRange: [2, 3],
           questionIds: []
         }
       ]
@@ -297,7 +356,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe a consultation scenario and ask to identify the type",
             boundaryConditions: "Applies to consultation type identification. Does not apply to consultation process steps.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q002", "SP5403_Q035", "SP5403_Q049", "SP5403_Q058", "SP5403_Q126", "SP5403_Q127", "SP5403_Q128", "SP5403_Q129", "SP5403_Q130"]
           },
           {
             skillId: "NEW-2-ConsultationProcess",
@@ -313,7 +372,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about consultation stages or sequence",
             boundaryConditions: "Applies to consultation process questions. Does not apply to consultation type questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q028", "SP5403_Q033", "SP5403_Q131", "SP5403_Q132", "SP5403_Q133", "SP5403_Q134", "SP5403_Q135"]
           }
         ]
       },
@@ -336,7 +395,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present a consultation scenario and ask about first steps or sequence",
             boundaryConditions: "Applies to 'first step' or problem-solving sequence questions. Does not apply when problem is already defined.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q037", "SP5403_Q057", "SP5403_Q106"]
           },
           {
             skillId: "CC-S03",
@@ -352,7 +411,8 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about the psychologist's role or approach in consultation/collaboration",
             boundaryConditions: "Applies to role and approach questions. Does not apply to consultation type questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q012", "SP5403_Q024", "SP5403_Q063", "SP5403_Q116", "SP5403_Q138"],
+            prerequisites: ["CC-S01"] // Need to understand consultation types before understanding collaborative role
           },
           {
             skillId: "NEW-2-CommunicationStrategies",
@@ -368,6 +428,45 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present a scenario involving resistance or communication challenges",
             boundaryConditions: "Applies to communication and resistance management questions. Does not apply to general consultation questions.",
             dokRange: [3, 4],
+            questionIds: ["SP5403_Q104", "SP5403_Q136", "SP5403_Q137", "SP5403_Q139", "SP5403_Q140"]
+          }
+        ]
+      },
+      {
+        clusterId: "CC-C",
+        name: "Family & Community Collaboration",
+        description: "Working with diverse families and community agencies",
+        skills: [
+          {
+            skillId: "NEW-2-FamilyCollaboration",
+            name: "Working with Diverse Families",
+            description: "Know strategies for working with diverse families including building relationships, collaborating on intervention plans, and promoting positive habits",
+            decisionRule: "Correct answer emphasizes building trust, respecting cultural differences, involving families as partners, and promoting home-school collaboration. Strategies include: understanding family values, adapting communication styles, providing culturally responsive support, and recognizing family strengths.",
+            commonWrongRules: [
+              "Using a one-size-fits-all approach with all families",
+              "Not recognizing cultural differences in family engagement",
+              "Assuming resistance means lack of interest",
+              "Not building relationships before asking for change"
+            ],
+            requiredEvidence: "Question must ask about strategies for working with diverse families or family collaboration",
+            boundaryConditions: "Applies to family collaboration questions. Does not apply to general consultation or community agency questions.",
+            dokRange: [2, 3],
+            questionIds: []
+          },
+          {
+            skillId: "NEW-2-CommunityAgencies",
+            name: "Working with Community Agencies",
+            description: "Know strategies for working with diverse community agencies/providers to support student success",
+            decisionRule: "Correct answer emphasizes coordination, understanding roles, appropriate referrals, and interagency collaboration. Strategies include: identifying appropriate community resources, coordinating services, understanding agency roles and limitations, and facilitating communication between school and community providers.",
+            commonWrongRules: [
+              "Not coordinating between school and community services",
+              "Assuming all agencies provide the same services",
+              "Making referrals without understanding agency roles",
+              "Not facilitating communication between systems"
+            ],
+            requiredEvidence: "Question must ask about working with community agencies or interagency collaboration",
+            boundaryConditions: "Applies to community agency collaboration questions. Does not apply to family collaboration or general consultation questions.",
+            dokRange: [2, 3],
             questionIds: []
           }
         ]
@@ -398,7 +497,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe student performance level and ask for appropriate tier",
             boundaryConditions: "Applies to tier selection questions. Does not apply to specific intervention selection.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q045"]
           }
         ]
       },
@@ -421,7 +520,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe a reading skill deficit and ask for appropriate intervention",
             boundaryConditions: "Applies to reading intervention selection. Does not apply to math or writing interventions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q040", "SP5403_Q112"]
           },
           {
             skillId: "ACAD-S03",
@@ -437,7 +536,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present student errors and ask to identify the skill deficit",
             boundaryConditions: "Applies to error analysis questions. Does not apply when errors are not presented.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q099"]
           },
           {
             skillId: "ACAD-S04",
@@ -453,7 +552,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe a fluency deficit (slow but accurate) and ask for intervention",
             boundaryConditions: "Applies to fluency building questions. Does not apply to accuracy or comprehension questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q015", "SP5403_Q056"]
           },
           {
             skillId: "ACAD-S05",
@@ -469,7 +568,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present accuracy data and ask to identify instructional level",
             boundaryConditions: "Applies to instructional level questions. Does not apply to general reading questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q085"]
           },
           {
             skillId: "NEW-3-InstructionalHierarchy",
@@ -485,7 +584,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe student's learning stage and ask for appropriate strategy",
             boundaryConditions: "Applies to instructional hierarchy questions. Does not apply to general intervention selection.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q020", "SP5403_Q093"]
           },
           {
             skillId: "NEW-3-MetacognitiveStrategies",
@@ -500,6 +599,61 @@ export const SKILL_MAP: SkillMap = {
             ],
             requiredEvidence: "Question must ask about strategies for self-regulation, organization, or learning strategies",
             boundaryConditions: "Applies to metacognitive strategy questions. Does not apply to content-specific instruction.",
+            dokRange: [2, 3],
+            questionIds: ["SP5403_Q072", "SP5403_Q115"]
+          }
+        ]
+      },
+      {
+        clusterId: "ACAD-C",
+        name: "Accommodations & Modifications",
+        description: "Understanding accommodations, modifications, and factors affecting academic progress",
+        skills: [
+          {
+            skillId: "NEW-3-AccommodationsModifications",
+            name: "Accommodations & Modifications",
+            description: "Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes",
+            decisionRule: "Accommodation = changes HOW student learns/accesses curriculum (doesn't change content/standards). Modification = changes WHAT student learns (alters content/standards). Assistive technology = tools to support access. Specially designed instruction = individualized teaching methods. Test format accommodations = extended time, read aloud, separate setting.",
+            commonWrongRules: [
+              "Confusing accommodations with modifications",
+              "Believing accommodations change content standards",
+              "Not recognizing assistive technology as accommodation",
+              "Thinking all students need same accommodations"
+            ],
+            requiredEvidence: "Question must ask about accommodations, modifications, or assistive technology",
+            boundaryConditions: "Applies to accommodation/modification questions. Does not apply to general instruction or intervention questions.",
+            dokRange: [2, 3],
+            questionIds: ["GEN-ACAD-T10-19f1hz", "GEN-ACAD-T10-5i35q1", "GEN-ACAD-T10-8z1vt8", "GEN-ACAD-T10-cuomeq", "GEN-ACAD-T10-gccqo6", "GEN-ACAD-T10-icrjpf", "GEN-ACAD-T10-ivu7un", "GEN-ACAD-T10-jj9s0w", "GEN-ACAD-T10-nfq9h", "GEN-ACAD-T10-oxddo6", "GEN-ACAD-T10-w89l4s", "GEN-ACAD-T10-y98cke", "GEN-ACAD-T10-ydf1d4"]
+          },
+          {
+            skillId: "NEW-3-AcademicProgressFactors",
+            name: "Factors Related to Academic Progress",
+            description: "Understand factors that influence academic progress including classroom climate, family involvement, and socioeconomic/environmental factors",
+            decisionRule: "Correct answer identifies factors that impact academic achievement: classroom climate (supportive, engaging), family involvement (home-school partnership, parent engagement), socioeconomic factors (resources, stability), environmental factors (home environment, community resources).",
+            commonWrongRules: [
+              "Not recognizing classroom climate impact",
+              "Minimizing role of family involvement",
+              "Ignoring socioeconomic factors",
+              "Believing only instruction matters"
+            ],
+            requiredEvidence: "Question must ask about factors affecting academic progress or achievement",
+            boundaryConditions: "Applies to academic progress factor questions. Does not apply to specific intervention selection or assessment questions.",
+            dokRange: [2, 3],
+            questionIds: []
+          },
+          {
+            skillId: "NEW-3-BioCulturalInfluences",
+            name: "Biological, Cultural, and Social Influences on Academics",
+            description: "Understand how biological, cultural, and social factors influence academic performance and learning",
+            decisionRule: "Correct answer recognizes: biological factors (developmental readiness, cognitive development), cultural factors (learning styles, values, communication patterns), social factors (peer relationships, family structure, community context). These factors interact and affect how students learn and perform academically.",
+            commonWrongRules: [
+              "Ignoring developmental readiness",
+              "Not recognizing cultural influences on learning",
+              "Minimizing social factors",
+              "Believing all students learn the same way"
+            ],
+            requiredEvidence: "Question must ask about biological, cultural, or social influences on academic performance",
+            boundaryConditions: "Applies to influence factor questions. Does not apply to specific intervention or assessment questions.",
             dokRange: [2, 3],
             questionIds: []
           }
@@ -519,19 +673,19 @@ export const SKILL_MAP: SkillMap = {
         skills: [
           {
             skillId: "MBH-S01",
-            name: "ABC Model Understanding",
-            description: "Understand Antecedent-Behavior-Consequence model in FBA",
-            decisionRule: "Antecedent = what happens before behavior. Behavior = observable action. Consequence = what happens after behavior (reinforcement/punishment).",
+            name: "FBA Purpose",
+            description: "Understand FBA purpose and how to measure interfering behaviors quantitatively",
+            decisionRule: "FBA purpose = identify function of behavior through ABC analysis. Measure behavior quantitatively (frequency, duration, intensity). Convert behavior counts to standardized rate (e.g., per week) for quantitative measurement. Antecedent = what happens before behavior. Behavior = observable action. Consequence = what happens after behavior (reinforcement/punishment).",
             commonWrongRules: [
               "Confusing antecedent with consequence",
               "Not recognizing that consequences maintain behavior",
               "Thinking behavior occurs in isolation",
               "Not understanding the ABC sequence"
             ],
-            requiredEvidence: "Question must ask about ABC model components or sequence",
-            boundaryConditions: "Applies to FBA/ABC questions. Does not apply to intervention selection questions.",
+            requiredEvidence: "Question must ask about FBA purpose, ABC model components, or how to measure behavior",
+            boundaryConditions: "Applies to FBA/ABC questions and behavior measurement questions. Does not apply to intervention selection questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q003", "SP5403_FLIP_002", "SP5403_Q029"]
           },
           {
             skillId: "MBH-S02",
@@ -547,7 +701,8 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe behavior and consequences, asking to identify function",
             boundaryConditions: "Applies to function identification questions. Does not apply to intervention questions without function context.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_FLIP_004", "SP5403_FLIP_005", "SP5403_Q011"],
+            prerequisites: ["MBH-S01"] // Need to understand FBA purpose and ABC analysis first
           },
           {
             skillId: "MBH-S03",
@@ -563,7 +718,8 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe problem behavior function and ask for replacement behavior",
             boundaryConditions: "Applies to replacement behavior selection. Does not apply when function is not identified.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["GEN-MBH-T03-f3ag1a", "SP5403_Q044"],
+            prerequisites: ["MBH-S02"] // Need to identify function before selecting replacement behavior
           }
         ]
       },
@@ -586,7 +742,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present suicide risk scenario and ask for priority action",
             boundaryConditions: "Applies to suicide risk questions. Does not apply to general mental health questions.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q005", "SP5403_Q096"]
           }
         ]
       },
@@ -599,7 +755,7 @@ export const SKILL_MAP: SkillMap = {
             skillId: "MBH-S05",
             name: "Therapy Model Recognition",
             description: "Identify therapy models (CBT, SFBT, etc.) and their key components",
-            decisionRule: "CBT = identify and challenge cognitive distortions. SFBT = miracle question, solution-focused. DBT = mindfulness, emotion regulation.",
+            decisionRule: "CBT = identify and challenge cognitive distortions. SFBT = miracle question, solution-focused. DBT = mindfulness, emotion regulation. Cognitive-behavioral therapy (CBT) is an evidence-based practice (EBP) for treating internalizing problems (depression, anxiety). EBP recognition requires knowing which interventions have empirical support.",
             commonWrongRules: [
               "Confusing CBT with other therapy models",
               "Not recognizing SFBT miracle question",
@@ -609,29 +765,29 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must describe therapy technique or ask to identify model",
             boundaryConditions: "Applies to therapy model questions. Does not apply to general counseling questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q005", "ETS_Q024", "SP5403_FLIP_006", "SP5403_Q022", "SP5403_Q073"]
           },
           {
             skillId: "MBH-S06",
-            name: "Social Skills Training",
-            description: "Select methods for teaching social skills (modeling, rehearsal, feedback)",
-            decisionRule: "Most effective = modeling + rehearsal + feedback. Role-play allows practice. Direct instruction teaches skills.",
+            name: "Behavioral Principles",
+            description: "Apply behavioral principles including positive reinforcement and rule-setting",
+            decisionRule: "Positive reinforcement increases behavior. Clear rules + positive reinforcement for compliance increases desired behavior. Punishment alone is less effective. Most effective social skills training = modeling + rehearsal + feedback. Role-play allows practice. Direct instruction teaches skills.",
             commonWrongRules: [
               "Using only instruction without practice",
               "Not including modeling in social skills training",
               "Believing social skills develop naturally",
               "Skipping rehearsal/practice component"
             ],
-            requiredEvidence: "Question must ask about social skills teaching methods",
-            boundaryConditions: "Applies to social skills training questions. Does not apply to general behavior questions.",
+            requiredEvidence: "Question must ask about behavioral principles, social skills teaching methods, or parent consultation",
+            boundaryConditions: "Applies to behavioral principle questions and social skills training questions. Does not apply to general behavior questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q017", "SP5403_FLIP_001", "SP5403_Q081", "SP5403_Q113"]
           },
           {
             skillId: "NEW-4-Psychopathology",
             name: "Child & Adolescent Psychopathology",
             description: "Identify diagnostic criteria and developmental presentations of common childhood disorders (ADHD, Depression, Anxiety, ASD, ODD).",
-            decisionRule: "Correct answer requires knowledge of DSM-5 criteria or developmental variations (e.g., irritability in child depression).",
+            decisionRule: "Correct answer requires knowledge of DSM-5 criteria or developmental variations (e.g., irritability in child depression). Social influences on mental health development include: peer relationships, reactions to success and failure, protective factors. Assessment of social influences requires interviewing about peer relationships and reactions to life events.",
             commonWrongRules: [
               "Applying adult criteria to children",
               "Not recognizing developmental variations",
@@ -641,7 +797,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about diagnostic criteria or developmental presentation",
             boundaryConditions: "Applies to psychopathology questions. Does not apply to general behavior questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q009", "ETS_Q012", "SP5403_Q054", "SP5403_Q066"]
           },
           {
             skillId: "NEW-4-GroupCounseling",
@@ -656,6 +812,45 @@ export const SKILL_MAP: SkillMap = {
             ],
             requiredEvidence: "Question must ask about group member selection or group stages",
             boundaryConditions: "Applies to group counseling questions. Does not apply to individual counseling.",
+            dokRange: [2, 3],
+            questionIds: ["GEN-MBH-T08C-qlbme3", "GEN-MBH-T08D-rc3nn4", "SP5403_Q108"]
+          }
+        ]
+      },
+      {
+        clusterId: "MBH-D",
+        name: "Developmental & Educational Impact",
+        description: "Understanding developmental considerations and mental health impact on education",
+        skills: [
+          {
+            skillId: "NEW-4-DevelopmentalInterventions",
+            name: "Developmental-Level Interventions",
+            description: "Understand how to adapt intervention techniques based on developmental level (elementary vs. secondary)",
+            decisionRule: "Correct answer matches intervention approach to developmental stage: elementary (concrete, play-based, visual, shorter sessions) vs. secondary (abstract, discussion-based, longer sessions, peer-focused). Age-appropriate counseling techniques consider cognitive development, attention span, and social-emotional maturity.",
+            commonWrongRules: [
+              "Using same interventions for all ages",
+              "Not adapting for developmental level",
+              "Using abstract concepts with young children",
+              "Not considering cognitive development"
+            ],
+            requiredEvidence: "Question must ask about adapting interventions for different developmental levels or age groups",
+            boundaryConditions: "Applies to developmental adaptation questions. Does not apply to general intervention selection questions.",
+            dokRange: [2, 3],
+            questionIds: ["GEN-MBH-T15-67xzh7"]
+          },
+          {
+            skillId: "NEW-4-MentalHealthImpact",
+            name: "Mental Health Impact on Education",
+            description: "Understand how mental health conditions affect academic performance, test-taking, and school engagement",
+            decisionRule: "Correct answer recognizes: depression affects motivation, concentration, and academic performance; anxiety impacts test-taking (worry, physical symptoms), learning (attention, memory), and school engagement; mental health conditions can cause academic decline, attendance issues, and social withdrawal. Relationship between mental health and school engagement is bidirectional.",
+            commonWrongRules: [
+              "Not recognizing depression's impact on academics",
+              "Minimizing anxiety's effect on test performance",
+              "Believing mental health doesn't affect learning",
+              "Not understanding engagement connection"
+            ],
+            requiredEvidence: "Question must ask about how mental health conditions affect academic performance or school engagement",
+            boundaryConditions: "Applies to mental health impact questions. Does not apply to general mental health or intervention questions.",
             dokRange: [2, 3],
             questionIds: []
           }
@@ -687,13 +882,13 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about RTI/MTSS definition or structure",
             boundaryConditions: "Applies to RTI/MTSS framework questions. Does not apply to specific intervention questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q006", "ETS_Q011", "SP5403_Q022", "SP5403_Q044", "SP5403_Q100"]
           },
           {
             skillId: "SWP-S04",
             name: "Implementation Fidelity",
             description: "Recognize signs of successful Tier 1 implementation (consistent teaching, data collection)",
-            decisionRule: "Successful implementation = consistent teaching of expectations, regular data collection, clear decision rules, staff buy-in.",
+            decisionRule: "Successful implementation = consistent teaching of expectations, regular data collection, clear decision rules, staff buy-in. Fidelity = consistent implementation. Reminders/prompts (e.g., emailing teachers) help ensure consistent implementation of program components.",
             commonWrongRules: [
               "Believing implementation is successful without data",
               "Not recognizing need for consistency",
@@ -703,7 +898,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about implementation success indicators",
             boundaryConditions: "Applies to implementation fidelity questions. Does not apply to intervention selection.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q019", "SP5403_Q124"]
           }
         ]
       },
@@ -716,17 +911,17 @@ export const SKILL_MAP: SkillMap = {
             skillId: "SWP-S02",
             name: "PBIS Principles",
             description: "Understand PBIS focuses on teaching and reinforcing positive behaviors, not punishment",
-            decisionRule: "PBIS = proactive, teaches expectations, reinforces desired behaviors, changes environment. Not punishment-focused.",
+            decisionRule: "PBIS = proactive, teaches expectations, reinforces desired behaviors, changes environment. Not punishment-focused. When schoolwide behavior issues increase, examine Tier 1 interventions (SWPBIS, SEL) to provide all students with ongoing supports.",
             commonWrongRules: [
               "Believing PBIS is about punishment",
               "Not understanding proactive approach",
               "Thinking PBIS doesn't work",
               "Not recognizing teaching component"
             ],
-            requiredEvidence: "Question must ask about PBIS principles or approach",
-            boundaryConditions: "Applies to PBIS principle questions. Does not apply to specific intervention questions.",
+            requiredEvidence: "Question must ask about PBIS principles, approach, or schoolwide response to behavior issues",
+            boundaryConditions: "Applies to PBIS principle questions and schoolwide behavior response. Does not apply to specific intervention questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q030", "SP5403_Q074", "SP5403_Q083", "SP5403_Q095"]
           },
           {
             skillId: "SWP-S03",
@@ -742,7 +937,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask to identify Tier 1 intervention or practice",
             boundaryConditions: "Applies to Tier 1 identification questions. Does not apply to Tier 2/3 questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q002", "ETS_Q008", "SP5403_Q080", "SP5403_Q087"]
           },
           {
             skillId: "NEW-5-SchoolClimate",
@@ -757,6 +952,45 @@ export const SKILL_MAP: SkillMap = {
             ],
             requiredEvidence: "Question must ask about school climate components or factors",
             boundaryConditions: "Applies to school climate questions. Does not apply to specific intervention questions.",
+            dokRange: [2, 3],
+            questionIds: ["SP5403_Q094", "SP5403_Q111"]
+          }
+        ]
+      },
+      {
+        clusterId: "SWP-C",
+        name: "Educational Policies & Evidence-Based Practice",
+        description: "Understanding educational policies and evidence-based practices",
+        skills: [
+          {
+            skillId: "NEW-5-EducationalPolicies",
+            name: "Educational Policies",
+            description: "Understand educational policies including retention, tracking, and their implications",
+            decisionRule: "Correct answer recognizes: retention (grade retention) research shows limited effectiveness and potential negative effects; tracking (ability grouping) can limit opportunities; policies should be evidence-based and consider student needs. Best practice questions retention/tracking effectiveness.",
+            commonWrongRules: [
+              "Believing retention always helps",
+              "Not recognizing tracking limitations",
+              "Assuming policies are always effective",
+              "Not considering research evidence"
+            ],
+            requiredEvidence: "Question must ask about educational policies such as retention or tracking",
+            boundaryConditions: "Applies to educational policy questions. Does not apply to specific intervention or assessment questions.",
+            dokRange: [2, 3],
+            questionIds: ["GEN-SWP-T10-3nv1dn"]
+          },
+          {
+            skillId: "NEW-5-EBPImportance",
+            name: "Evidence-Based Practices Importance",
+            description: "Understand the importance of evidence-based practices and recognize supported EBPs",
+            decisionRule: "Evidence-based practice (EBP) = interventions with empirical research support. Importance: ensures effectiveness, avoids harmful practices, promotes best outcomes. Supported EBPs: CBT for internalizing problems, PBIS for behavior, explicit instruction for academics. Unsupported: suspension for conduct problems, retention for immaturity, diet modifications for autism.",
+            commonWrongRules: [
+              "Not recognizing importance of EBP",
+              "Confusing tradition with evidence",
+              "Believing all practices are equal",
+              "Not knowing which practices are supported"
+            ],
+            requiredEvidence: "Question must ask about evidence-based practices or their importance",
+            boundaryConditions: "Applies to EBP recognition and importance questions. Does not apply to specific intervention implementation questions.",
             dokRange: [2, 3],
             questionIds: []
           }
@@ -788,7 +1022,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present a threat scenario and ask to classify or respond",
             boundaryConditions: "Applies to threat assessment questions. Does not apply to general safety questions.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q026"]
           },
           {
             skillId: "PC-S02",
@@ -804,7 +1038,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about psychologist's role during crisis",
             boundaryConditions: "Applies to crisis response role questions. Does not apply to post-crisis questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_FLIP_007", "SP5403_Q006", "SP5403_Q078"]
           },
           {
             skillId: "PC-S03",
@@ -820,7 +1054,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about PFA elements or principles",
             boundaryConditions: "Applies to PFA questions. Does not apply to long-term intervention questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q102"]
           },
           {
             skillId: "PC-S04",
@@ -836,7 +1070,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about crisis drill practices",
             boundaryConditions: "Applies to crisis preparedness questions. Does not apply to crisis response questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_FLIP_008", "SP5403_Q088"]
           },
           {
             skillId: "PC-S05",
@@ -852,7 +1086,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about postvention goals or practices",
             boundaryConditions: "Applies to postvention questions. Does not apply to general grief counseling.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q046"]
           },
           {
             skillId: "NEW-6-BullyingPrevention",
@@ -868,7 +1102,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about bullying prevention strategies",
             boundaryConditions: "Applies to bullying prevention questions. Does not apply to individual behavior questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q014", "SP5403_Q118"]
           },
           {
             skillId: "NEW-6-TraumaInformed",
@@ -883,6 +1117,29 @@ export const SKILL_MAP: SkillMap = {
             ],
             requiredEvidence: "Question must ask about trauma impact or trauma-informed strategies",
             boundaryConditions: "Applies to trauma-informed questions. Does not apply to general behavior questions.",
+            dokRange: [2, 3],
+            questionIds: ["SP5403_Q059"]
+          }
+        ]
+      },
+      {
+        clusterId: "PC-B",
+        name: "School Climate & Safety",
+        description: "Measuring and improving school climate and safety",
+        skills: [
+          {
+            skillId: "NEW-6-SchoolClimateMeasurement",
+            name: "School Safety & Climate Measurement",
+            description: "Understand how to measure school safety and climate including engagement, safety, and environment",
+            decisionRule: "School climate components: Engagement (student-teacher relationships, belonging), Safety (physical and emotional safety), Environment (physical space, resources). Measurement methods: surveys, observations, discipline data, attendance. School safety/climate measurement requires systematic data collection on multiple dimensions.",
+            commonWrongRules: [
+              "Measuring only one dimension of climate",
+              "Not using systematic measurement",
+              "Believing climate can't be measured",
+              "Not recognizing multiple components"
+            ],
+            requiredEvidence: "Question must ask about measuring school safety or climate",
+            boundaryConditions: "Applies to school climate/safety measurement questions. Does not apply to general school improvement or intervention questions.",
             dokRange: [2, 3],
             questionIds: []
           }
@@ -914,7 +1171,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about partnership goals or principles",
             boundaryConditions: "Applies to partnership goal questions. Does not apply to specific communication strategies.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q069"]
           },
           {
             skillId: "FSC-S03",
@@ -930,7 +1187,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about communication strategies or practices",
             boundaryConditions: "Applies to communication strategy questions. Does not apply to partnership goal questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q017", "SP5403_Q086"]
           },
           {
             skillId: "FSC-S04",
@@ -946,7 +1203,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present cultural context and ask about appropriate approach",
             boundaryConditions: "Applies to cultural competence questions. Does not apply to general communication questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q043"]
           },
           {
             skillId: "NEW-7-BarriersToEngagement",
@@ -962,7 +1219,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about barriers to family involvement or strategies to overcome them",
             boundaryConditions: "Applies to barrier identification questions. Does not apply to general partnership questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q003", "SP5403_Q101"]
           },
           {
             skillId: "NEW-7-FamilySystems",
@@ -978,7 +1235,39 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about family dynamics or systems theory concepts",
             boundaryConditions: "Applies to family systems questions. Does not apply to individual student questions.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q055", "SP5403_Q117"]
+          },
+          {
+            skillId: "NEW-7-InteragencyCollaboration",
+            name: "Interagency Collaboration",
+            description: "Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions",
+            decisionRule: "Interagency collaboration = coordination between school and community agencies (mental health, vocational, postsecondary). Most useful for: postsecondary transition planning, connecting to employment opportunities, accessing community services. Collaboration facilitates connections beyond high school.",
+            commonWrongRules: [
+              "Not recognizing value of interagency collaboration",
+              "Believing school can meet all needs alone",
+              "Not coordinating with community agencies",
+              "Not understanding collaboration benefits"
+            ],
+            requiredEvidence: "Question must ask about interagency collaboration or coordination with community agencies",
+            boundaryConditions: "Applies to interagency collaboration questions. Does not apply to general family-school collaboration questions.",
+            dokRange: [2, 3],
+            questionIds: ["GEN-FSC-T04-5caagi", "GEN-FSC-T06-5c90hg", "GEN-FSC-T08-a86lzy", "GEN-FSC-T08-d7kjml", "GEN-FSC-T08-hhzmm2"]
+          },
+          {
+            skillId: "NEW-7-ParentingInterventions",
+            name: "Parenting & Home Interventions",
+            description: "Know strategies for parenting interventions and home-based supports to address student needs",
+            decisionRule: "Parenting interventions = teaching parents behavior management strategies, positive reinforcement, clear rules, consistent consequences. Home interventions support school goals. Strategies include: parent training, home-school communication, behavior contracts, home reinforcement systems.",
+            commonWrongRules: [
+              "Not involving parents in interventions",
+              "Believing home and school are separate",
+              "Not providing parent training",
+              "Not coordinating home-school strategies"
+            ],
+            requiredEvidence: "Question must ask about parenting interventions or home-based supports",
+            boundaryConditions: "Applies to parenting/home intervention questions. Does not apply to general family collaboration questions.",
+            dokRange: [2, 3],
+            questionIds: ["GEN-FSC-T07-ulm77m"]
           }
         ]
       }
@@ -1008,7 +1297,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present a scenario involving potential cultural bias",
             boundaryConditions: "Applies to bias recognition questions. Does not apply to general assessment questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q041"]
           },
           {
             skillId: "DIV-S05",
@@ -1024,7 +1313,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about cultural broker definition or role",
             boundaryConditions: "Applies to cultural broker questions. Does not apply to general communication questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q050"]
           },
           {
             skillId: "NEW-8-Acculturation",
@@ -1040,7 +1329,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about acculturation process or modes",
             boundaryConditions: "Applies to acculturation questions. Does not apply to general cultural questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q067"]
           },
           {
             skillId: "NEW-8-SocialJustice",
@@ -1056,7 +1345,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about psychologist's role regarding systemic inequities",
             boundaryConditions: "Applies to social justice questions. Does not apply to individual student questions.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q079"]
           }
         ]
       },
@@ -1079,23 +1368,23 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present ELL/limited English scenario and ask for assessment selection",
             boundaryConditions: "Applies to assessment selection for ELL students. Does not apply to general assessment questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q032", "SP5403_Q119"]
           },
           {
             skillId: "DIV-S03",
-            name: "Language Dominance Assessment",
-            description: "Determine language dominance/proficiency before assessing ELL students",
-            decisionRule: "Before assessing ELL student = determine language dominance, proficiency in both languages, primary language, English proficiency level.",
+            name: "ELL Consideration",
+            description: "Determine language dominance/proficiency before assessing ELL students and ensure assessment in both languages",
+            decisionRule: "Before assessing ELL student = determine language dominance, proficiency in both languages, primary language, English proficiency level. Learning disability must not be explained by contextual factors. Verify learning disability in both student's native language and English to rule out language acquisition as alternative explanation.",
             commonWrongRules: [
               "Not assessing language proficiency first",
               "Assuming English proficiency",
               "Not considering both languages",
               "Skipping language assessment"
             ],
-            requiredEvidence: "Question must ask about first step or consideration before assessing ELL student",
-            boundaryConditions: "Applies to ELL assessment preparation questions. Does not apply when language is not a factor.",
+            requiredEvidence: "Question must ask about ELL assessment considerations or language requirements for learning disability evaluation",
+            boundaryConditions: "Applies to ELL assessment preparation questions and learning disability evaluation for ELL students. Does not apply when language is not a factor.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q001", "SP5403_Q009"]
           },
           {
             skillId: "NEW-8-LanguageAcquisition",
@@ -1111,7 +1400,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about BICS vs. CALP or language acquisition timelines",
             boundaryConditions: "Applies to language acquisition questions. Does not apply to general ELL questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q023", "SP5403_Q105"]
           }
         ]
       },
@@ -1134,7 +1423,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present risk ratio data and ask for interpretation",
             boundaryConditions: "Applies to disproportionality interpretation questions. Does not apply to general special education questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q004"]
           }
         ]
       },
@@ -1157,7 +1446,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about interpreter use practices",
             boundaryConditions: "Applies to interpreter use questions. Does not apply to general communication questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q023"]
           }
         ]
       }
@@ -1187,7 +1476,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present a design scenario and ask to identify the design",
             boundaryConditions: "Applies to single-subject design questions. Does not apply to group design questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q084", "SP5403_Q114"]
           },
           {
             skillId: "NEW-9-Variables",
@@ -1203,13 +1492,13 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present research scenario and ask to identify IV or DV",
             boundaryConditions: "Applies to variable identification questions. Does not apply to general research questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q030"]
           },
           {
             skillId: "NEW-9-ValidityThreats",
             name: "Research Validity Threats",
             description: "Identify threats to internal validity (history, maturation, attrition) and external validity (generalizability).",
-            decisionRule: "Correct answer links a specific confounding factor (e.g., dropping out) to the correct validity threat (e.g., attrition).",
+            decisionRule: "Correct answer links a specific confounding factor (e.g., dropping out) to the correct validity threat (e.g., attrition). Internal validity threats = history, maturation, attrition, instrumentation. External validity = generalizability. Ecological validity = generalization to real-world settings.",
             commonWrongRules: [
               "Confusing internal with external validity threats",
               "Not recognizing attrition as threat",
@@ -1219,12 +1508,51 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present a research scenario and ask to identify validity threat",
             boundaryConditions: "Applies to validity threat questions. Does not apply to general research questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q013", "ETS_Q021", "SP5403_Q047"]
           }
         ]
       },
       {
         clusterId: "RES-B",
+        name: "Implementation & Evaluation",
+        description: "Understanding implementation fidelity and program evaluation",
+        skills: [
+          {
+            skillId: "NEW-9-ImplementationFidelity",
+            name: "Implementation Fidelity",
+            description: "Understand implementing change and ensuring fidelity of implementation",
+            decisionRule: "Implementation fidelity = consistent, reliable implementation of program/intervention as designed. Fidelity strategies: training, coaching, prompts/reminders, checklists, observation, feedback. Reminders (e.g., emailing teachers) help ensure consistent implementation. Fidelity monitoring = ongoing checks to ensure implementation matches design.",
+            commonWrongRules: [
+              "Not monitoring implementation fidelity",
+              "Believing implementation happens automatically",
+              "Not providing support for implementation",
+              "Not recognizing importance of fidelity"
+            ],
+            requiredEvidence: "Question must ask about implementing change or ensuring fidelity",
+            boundaryConditions: "Applies to implementation fidelity questions. Does not apply to program design or evaluation questions.",
+            dokRange: [2, 3],
+            questionIds: []
+          },
+          {
+            skillId: "NEW-9-ProgramEvaluation",
+            name: "Program Evaluation",
+            description: "Understand program evaluation methods and purposes",
+            decisionRule: "Program evaluation = systematic assessment of program effectiveness, outcomes, and impact. Evaluation purposes: determine if program works, identify areas for improvement, inform decision-making, demonstrate accountability. Evaluation methods: outcome data, process data, stakeholder feedback, comparison groups.",
+            commonWrongRules: [
+              "Not evaluating program effectiveness",
+              "Believing evaluation is unnecessary",
+              "Not using systematic evaluation methods",
+              "Not considering multiple data sources"
+            ],
+            requiredEvidence: "Question must ask about program evaluation or assessing program effectiveness",
+            boundaryConditions: "Applies to program evaluation questions. Does not apply to research design or implementation questions.",
+            dokRange: [2, 3],
+            questionIds: ["GEN-RES-T11-795f7h", "GEN-RES-T11-efezcm", "GEN-RES-T11-m8kn3h", "GEN-RES-T11-u4mi42", "GEN-RES-T14-h1iv17"]
+          }
+        ]
+      },
+      {
+        clusterId: "RES-C",
         name: "Statistical Analysis",
         description: "Understanding statistical tests and interpretation",
         skills: [
@@ -1242,7 +1570,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present effect size and ask for interpretation",
             boundaryConditions: "Applies to effect size interpretation questions. Does not apply to general statistics questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q061"]
           },
           {
             skillId: "RES-S05",
@@ -1258,7 +1586,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about error type definition or identification",
             boundaryConditions: "Applies to error type questions. Does not apply to general hypothesis testing questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q027"]
           },
           {
             skillId: "RES-S06",
@@ -1274,7 +1602,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present correlation coefficient and ask for interpretation",
             boundaryConditions: "Applies to correlation interpretation questions. Does not apply to general statistics questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q008"]
           },
           {
             skillId: "NEW-9-StatisticalTests",
@@ -1290,7 +1618,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present research scenario and ask for appropriate test",
             boundaryConditions: "Applies to test selection questions. Does not apply to general statistics questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q051", "SP5403_Q075"]
           },
           {
             skillId: "NEW-9-DescriptiveStats",
@@ -1306,7 +1634,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about descriptive statistics or measures of central tendency/dispersion",
             boundaryConditions: "Applies to descriptive statistics questions. Does not apply to inferential statistics questions.",
             dokRange: [1, 2],
-            questionIds: []
+            questionIds: ["SP5403_Q092"]
           }
         ]
       }
@@ -1336,13 +1664,13 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about specific case or its ruling",
             boundaryConditions: "Applies to landmark case questions. Does not apply to general legal questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_FLIP_009", "SP5403_FLIP_010", "SP5403_FLIP_011", "SP5403_Q077", "SP5403_Q090", "SP5403_Q109", "SP5403_Q151", "SP5403_Q152", "SP5403_Q153", "SP5403_Q154", "SP5403_Q155"]
           },
           {
             skillId: "LEG-S02",
-            name: "FAPE Requirements",
-            description: "Understand Free Appropriate Public Education (FAPE) requirements under IDEA",
-            decisionRule: "FAPE = special education and related services provided at public expense, meet state standards, provided in conformity with IEP.",
+            name: "IDEA Requirements",
+            description: "Understand Free Appropriate Public Education (FAPE) requirements under IDEA and related provisions",
+            decisionRule: "FAPE = special education and related services provided at public expense, meet state standards, provided in conformity with IEP. IDEA = FAPE, zero-reject principle, procedural safeguards, electronic communication allowed, IEP requirements, interagency collaboration for transitions. Zero-reject principle = no child denied FAPE based on disability severity. IEP content includes: specialized instruction based on student needs, related services (e.g., counseling, social work) when needed, modifications/accommodations. IEP services determined by evaluation results and student needs.",
             commonWrongRules: [
               "Not understanding FAPE requirements",
               "Believing FAPE means optimal education",
@@ -1352,7 +1680,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about FAPE definition or requirements",
             boundaryConditions: "Applies to FAPE questions. Does not apply to general IDEA questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q010", "ETS_Q018", "ETS_Q027", "ETS_Q029", "SP5403_Q007", "SP5403_Q159", "SP5403_Q160"]
           },
           {
             skillId: "NEW-10-EducationLaw",
@@ -1368,7 +1696,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about difference between 504 and IDEA",
             boundaryConditions: "Applies to 504 vs. IDEA distinction questions. Does not apply to general legal questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q097", "SP5403_Q146", "SP5403_Q147", "SP5403_Q148"]
           },
           {
             skillId: "LEG-S05",
@@ -1384,7 +1712,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about MDR purpose or process",
             boundaryConditions: "Applies to MDR questions. Does not apply to general discipline questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q122", "SP5403_Q156", "SP5403_Q157"]
           }
         ]
       },
@@ -1407,7 +1735,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present scenario and ask when to breach confidentiality",
             boundaryConditions: "Applies to confidentiality breach questions. Does not apply to general ethical questions.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["ETS_Q015", "SP5403_Q089"]
           },
           {
             skillId: "LEG-S04",
@@ -1423,13 +1751,13 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present abuse scenario and ask about legal duty",
             boundaryConditions: "Applies to mandated reporting questions. Does not apply to general confidentiality questions.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["SP5403_Q038"]
           },
           {
             skillId: "LEG-S06",
             name: "Ethical Dilemmas",
             description: "Apply ethical principles to resolve dilemmas (e.g., gifts, conflicts of interest)",
-            decisionRule: "Ethical resolution = consider cultural context, avoid conflicts of interest, prioritize student welfare, consult when uncertain.",
+            decisionRule: "Ethical resolution = consider cultural context, avoid conflicts of interest, prioritize student welfare, consult when uncertain. Advocacy = work to change discriminatory practices, distinguish professional vs private statements. Competence = practice within bounds, seek training/supervision when needed.",
             commonWrongRules: [
               "Not considering cultural context",
               "Accepting inappropriate gifts",
@@ -1439,13 +1767,46 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must present ethical dilemma and ask for resolution",
             boundaryConditions: "Applies to ethical dilemma questions. Does not apply to clear-cut legal questions.",
             dokRange: [3, 4],
-            questionIds: []
+            questionIds: ["ETS_Q014", "ETS_Q022", "SP5403_Q103"]
+          },
+          {
+            skillId: "NEW-10-EthicalProblemSolving",
+            name: "Ethical Problem-Solving Model",
+            description: "Apply NASP's ethical problem-solving model to address ethical dilemmas, including identifying competing principles, considering options, and making decisions.",
+            decisionRule: "First step = identify ethical principles in conflict. Then consider options, consult when needed, make decision prioritizing student welfare. Duty to protect overrides confidentiality when imminent threat. Address unethical behavior directly when possible. Avoid dual relationships and practice within scope of competence.",
+            commonWrongRules: [
+              "Jumping to solutions without identifying principles in conflict",
+              "Not consulting when uncertain",
+              "Believing confidentiality always takes precedence",
+              "Not addressing unethical behavior directly",
+              "Accepting dual relationships or practicing outside competence"
+            ],
+            requiredEvidence: "Question must ask about steps in ethical problem-solving model or application of model to scenarios",
+            boundaryConditions: "Applies to ethical problem-solving process questions. Does not apply to specific legal requirements or case law.",
+            dokRange: [3, 4],
+            questionIds: ["SP5403_Q141", "SP5403_Q142", "SP5403_Q143", "SP5403_Q144", "SP5403_Q145"]
+          },
+          {
+            skillId: "LEG-S07",
+            name: "Informed Consent Requirements",
+            description: "Understand requirements for parental consent for ongoing counseling services and balance with student safety",
+            decisionRule: "Ensure student safety first when student requests counseling. Inform student that parental consent is required for ongoing counseling services. Students cannot receive ongoing counseling without parental consent, but safety assessment takes priority. Distinguish between brief safety check (allowed) and ongoing counseling (requires consent).",
+            commonWrongRules: [
+              "Providing counseling without parental consent because student is in high school",
+              "Refusing any interaction until consent is obtained",
+              "Informing parents against student wishes without assessing safety first",
+              "Believing student age eliminates need for parental consent"
+            ],
+            requiredEvidence: "Question must present scenario where student requests counseling with condition of no parent notification",
+            boundaryConditions: "Applies to ongoing counseling services, not crisis intervention or safety assessment. Does not apply to confidentiality breach questions (different context).",
+            dokRange: [3, 4],
+            questionIds: ["ETS_Q028", "SP5403_Q158"]
           },
           {
             skillId: "NEW-10-RecordKeeping",
             name: "FERPA & Record Access",
             description: "Apply FERPA regulations regarding parent access to records, amendment of records, and rights of non-custodial parents.",
-            decisionRule: "Correct answer upholds parent rights to access unless specific legal revocation exists.",
+            decisionRule: "Correct answer upholds parent rights to access unless specific legal revocation exists. Medical records with parent authorization appropriate when health issues may affect student learning or behavior. Requesting medical records is appropriate when: (1) student reports symptoms not clearly related to health condition, (2) student receives medication during school day that may affect learning/behavior.",
             commonWrongRules: [
               "Denying access without legal basis",
               "Not understanding non-custodial parent rights",
@@ -1455,7 +1816,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about FERPA or record access rights",
             boundaryConditions: "Applies to FERPA questions. Does not apply to general confidentiality questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["ETS_Q004", "SP5403_Q107", "SP5403_Q149", "SP5403_Q150"]
           },
           {
             skillId: "NEW-10-TestSecurity",
@@ -1471,7 +1832,7 @@ export const SKILL_MAP: SkillMap = {
             requiredEvidence: "Question must ask about test protocol access or security",
             boundaryConditions: "Applies to test security questions. Does not apply to general record access questions.",
             dokRange: [2, 3],
-            questionIds: []
+            questionIds: ["SP5403_Q125"]
           },
           {
             skillId: "NEW-10-Supervision",
@@ -1486,6 +1847,29 @@ export const SKILL_MAP: SkillMap = {
             ],
             requiredEvidence: "Question must ask about supervision standards or requirements",
             boundaryConditions: "Applies to supervision standard questions. Does not apply to general professional practice questions.",
+            dokRange: [2, 3],
+            questionIds: ["SP5403_Q120"]
+          }
+        ]
+      },
+      {
+        clusterId: "LEG-C",
+        name: "Professional Development",
+        description: "Lifelong learning and professional growth",
+        skills: [
+          {
+            skillId: "NEW-10-ProfessionalGrowth",
+            name: "Lifelong Learning & Professional Growth",
+            description: "Understand the importance of lifelong learning and professional growth including continuing education, staying current with research, and professional development",
+            decisionRule: "Professional growth = ongoing learning, staying current with research, continuing education, professional development activities, reading research literature, attending conferences, seeking supervision/consultation. Lifelong learning ensures competence and best practice. Professional growth is essential for maintaining effectiveness.",
+            commonWrongRules: [
+              "Not engaging in professional development",
+              "Believing initial training is sufficient",
+              "Not staying current with research",
+              "Not recognizing importance of ongoing learning"
+            ],
+            requiredEvidence: "Question must ask about professional growth, lifelong learning, or continuing education",
+            boundaryConditions: "Applies to professional growth questions. Does not apply to initial training or certification questions.",
             dokRange: [2, 3],
             questionIds: []
           }

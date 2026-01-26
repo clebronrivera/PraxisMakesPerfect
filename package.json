@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "diagnostics": "npx tsx src/scripts/run-all-diagnostics.ts"
   },
   "dependencies": {
     "lucide-react": "^0.263.1",

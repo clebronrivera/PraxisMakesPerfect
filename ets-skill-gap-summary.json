@@ -1,0 +1,254 @@
+{
+  "summary": {
+    "totalQuestions": 30,
+    "useExisting": 23,
+    "expandExisting": 6,
+    "createNewSkill": 1
+  },
+  "summaryTable": [
+    {
+      "questionId": "ETS_Q001",
+      "currentSkill": "DIV-S03",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q002",
+      "currentSkill": "SWP-S03",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q003",
+      "currentSkill": "MBH-S01",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q004",
+      "currentSkill": "NEW-10-RecordKeeping",
+      "matchConfidence": "partial",
+      "recommendation": "expand-existing"
+    },
+    {
+      "questionId": "ETS_Q005",
+      "currentSkill": "MBH-S05",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q006",
+      "currentSkill": "SWP-S01",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q007",
+      "currentSkill": "DBDM-S10",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q008",
+      "currentSkill": "SWP-S03",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q009",
+      "currentSkill": "NEW-4-Psychopathology",
+      "matchConfidence": "partial",
+      "recommendation": "expand-existing"
+    },
+    {
+      "questionId": "ETS_Q010",
+      "currentSkill": "LEG-S02",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q011",
+      "currentSkill": "SWP-S01",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q012",
+      "currentSkill": "NEW-4-Psychopathology",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q013",
+      "currentSkill": "NEW-9-ValidityThreats",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q014",
+      "currentSkill": "LEG-S06",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q015",
+      "currentSkill": "LEG-S03",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q016",
+      "currentSkill": "DBDM-S01",
+      "matchConfidence": "partial",
+      "recommendation": "expand-existing"
+    },
+    {
+      "questionId": "ETS_Q017",
+      "currentSkill": "MBH-S06",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q018",
+      "currentSkill": "LEG-S02",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q019",
+      "currentSkill": "SWP-S04",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q020",
+      "currentSkill": "DBDM-S03",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q021",
+      "currentSkill": "NEW-9-ValidityThreats",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q022",
+      "currentSkill": "LEG-S06",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q023",
+      "currentSkill": "NEW-8-LanguageAcquisition",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q024",
+      "currentSkill": "MBH-S05",
+      "matchConfidence": "partial",
+      "recommendation": "expand-existing"
+    },
+    {
+      "questionId": "ETS_Q025",
+      "currentSkill": "DBDM-S03",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q026",
+      "currentSkill": "DBDM-S03",
+      "matchConfidence": "partial",
+      "recommendation": "expand-existing"
+    },
+    {
+      "questionId": "ETS_Q027",
+      "currentSkill": "LEG-S02",
+      "matchConfidence": "partial",
+      "recommendation": "expand-existing"
+    },
+    {
+      "questionId": "ETS_Q028",
+      "currentSkill": "LEG-S07",
+      "matchConfidence": "none",
+      "recommendation": "create-new-skill"
+    },
+    {
+      "questionId": "ETS_Q029",
+      "currentSkill": "LEG-S02",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    },
+    {
+      "questionId": "ETS_Q030",
+      "currentSkill": "SWP-S02",
+      "matchConfidence": "exact",
+      "recommendation": "use-existing"
+    }
+  ],
+  "proposedNewSkills": [
+    {
+      "skillId": "LEG-S07",
+      "name": "Informed Consent Requirements",
+      "decisionRule": "Ensure student safety first when student requests counseling. Inform student that parental consent is required for ongoing counseling. Cannot provide ongoing counseling services without parental consent, regardless of student age or request for confidentiality. Distinguish between brief safety check (allowed) and ongoing counseling (requires consent).",
+      "questions": ["ETS_Q028"],
+      "justification": "This is a distinct ethical/legal requirement not covered by existing confidentiality (LEG-S03) or general ethics (LEG-S06) skills. It specifically addresses the balance between student autonomy and parental consent requirements for ongoing counseling services.",
+      "commonWrongRules": [
+        "Providing ongoing counseling without parental consent because student is in high school",
+        "Denying any contact with student without first ensuring safety",
+        "Automatically informing parents without first assessing student safety",
+        "Believing student age eliminates need for parental consent"
+      ],
+      "requiredEvidence": "Question must present scenario where student requests counseling with condition of no parent notification",
+      "boundaryConditions": "Applies to informed consent questions. Does not apply to confidentiality breach questions (different context).",
+      "domain": 10,
+      "cluster": "LEG-B"
+    }
+  ],
+  "expandedSkills": [
+    {
+      "skillId": "NEW-10-RecordKeeping",
+      "currentDecisionRule": "Correct answer upholds parent rights to access unless specific legal revocation exists.",
+      "newConcepts": "Medical records with parent authorization appropriate when health issues may affect student learning or behavior. Requesting medical records is appropriate when: (1) student reports symptoms not clearly related to health condition, (2) student receives medication during school day that may affect learning/behavior.",
+      "questions": ["ETS_Q004"],
+      "expansionNote": "Adds concept of WHEN to request medical records (different from parent access rights)"
+    },
+    {
+      "skillId": "NEW-4-Psychopathology",
+      "currentDecisionRule": "Correct answer requires knowledge of DSM-5 criteria or developmental variations (e.g., irritability in child depression).",
+      "newConcepts": "Social influences on mental health development include: peer relationships, reactions to success and failure, protective factors. Assessment of social influences requires interviewing about peer relationships and reactions to life events.",
+      "questions": ["ETS_Q009"],
+      "expansionNote": "Adds assessment of social/environmental factors (beyond diagnostic criteria)"
+    },
+    {
+      "skillId": "DBDM-S01",
+      "currentDecisionRule": "Match reliability type to measurement context. Single-subject/behavioral observation requires interobserver agreement. Consistent scores over time requires test-retest. Internal scale consistency requires Cronbach's alpha.",
+      "newConcepts": "Reliability = consistency or stability in measurement. Low reliability = scores vary across administrations. Test-retest reliability specifically measures stability over time.",
+      "questions": ["ETS_Q016"],
+      "expansionNote": "Adds reliability definition/concept (beyond type selection)"
+    },
+    {
+      "skillId": "MBH-S05",
+      "currentDecisionRule": "CBT = identify and challenge cognitive distortions. SFBT = miracle question, solution-focused. DBT = mindfulness, emotion regulation.",
+      "newConcepts": "Cognitive-behavioral therapy (CBT) is an evidence-based practice (EBP) for treating internalizing problems (depression, anxiety). EBP recognition requires knowing which interventions have empirical support.",
+      "questions": ["ETS_Q024"],
+      "expansionNote": "Adds EBP recognition aspect (broader than just technique identification)"
+    },
+    {
+      "skillId": "DBDM-S03",
+      "currentDecisionRule": "Confidence intervals show range where true score likely falls. Reliability coefficients (.90+ excellent, .80+ good) indicate consistency. SEM quantifies measurement error. Standard scores (mean=100, SD=15) show relative standing. Percentile rank = percentage of scores equal to or lower. Z-score = (score - mean) / SD.",
+      "newConcepts": "Working memory = cognitive ability to attend to information, hold information in immediate awareness, and perform mental operations. Cognitive construct identification requires recognizing which ability is being measured.",
+      "questions": ["ETS_Q026"],
+      "expansionNote": "Adds cognitive construct identification (beyond score interpretation)"
+    },
+    {
+      "skillId": "LEG-S02",
+      "currentDecisionRule": "IDEA = FAPE, zero-reject principle, procedural safeguards, electronic communication allowed, IEP requirements, interagency collaboration for transitions.",
+      "newConcepts": "IEP content includes: specialized instruction based on student needs, related services (e.g., counseling, social work) when needed, modifications/accommodations. IEP services determined by evaluation results and student needs.",
+      "questions": ["ETS_Q027"],
+      "expansionNote": "Adds specific IEP content requirements (beyond general IDEA requirements)"
+    }
+  ],
+  "newClusters": []
+}

@@ -1,0 +1,3745 @@
+{
+  "totalDistractors": 374,
+  "distractors": [
+    {
+      "term": "Internal consistency",
+      "sourceQuestion": "SP5403_Q001",
+      "sourceSkill": "DBDM-S01",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Test-retest reliability",
+      "sourceQuestion": "SP5403_Q001",
+      "sourceSkill": "DBDM-S01",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "The generalizability coefficient",
+      "sourceQuestion": "SP5403_Q001",
+      "sourceSkill": "DBDM-S01",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Consultee-centered",
+      "sourceQuestion": "SP5403_Q002",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Problem-solving",
+      "sourceQuestion": "SP5403_Q002",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "NEW-1-IQvsAchievement",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches intelligence vs. achievement distinction"
+    },
+    {
+      "term": "Indirect",
+      "sourceQuestion": "SP5403_Q002",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "When using an interpreter in a family conference, direct statements and questions to the interpreter to increase the accuracy of the translation.",
+      "sourceQuestion": "SP5403_Q003",
+      "sourceSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSkill": "RES-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches correlation interpretation"
+    },
+    {
+      "term": "Set aside personal cultural beliefs and values in working with this population.",
+      "sourceQuestion": "SP5403_Q003",
+      "sourceSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches barriers to engagement"
+    },
+    {
+      "term": "Reviewing the results of an empirical research study to find out whether a reading intervention is effective",
+      "sourceQuestion": "SP5403_Q004",
+      "sourceSkill": "DIV-S04",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Conducting an experimental study in the school to determine whether cognitive behavior techniques are effective in alleviating anxiety",
+      "sourceQuestion": "SP5403_Q004",
+      "sourceSkill": "DIV-S04",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Reading testimonials on a Web site for a writing intervention program and deciding to implement the program in the school",
+      "sourceQuestion": "SP5403_Q004",
+      "sourceSkill": "DIV-S04",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Training the special education teacher to provide TOD services",
+      "sourceQuestion": "SP5403_Q005",
+      "sourceSkill": "MBH-S04",
+      "mapsToSkill": "LEG-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches fape requirements"
+    },
+    {
+      "term": "Proceeding with the director's recommendation that only special education teacher supports are warranted",
+      "sourceQuestion": "SP5403_Q005",
+      "sourceSkill": "MBH-S04",
+      "mapsToSkill": "NEW-9-DescriptiveStats",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches descriptive statistics"
+    },
+    {
+      "term": "Consulting with the speech and language therapist to revise Emily's plan of services",
+      "sourceQuestion": "SP5403_Q005",
+      "sourceSkill": "MBH-S04",
+      "mapsToSkill": "MBH-S04",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches suicide risk assessment"
+    },
+    {
+      "term": "Retaining Juan so he can develop his English skills with native-speaking peers",
+      "sourceQuestion": "SP5403_Q006",
+      "sourceSkill": "PC-S02",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Providing individual pull-out services for English language arts to improve Juan's grammar",
+      "sourceQuestion": "SP5403_Q006",
+      "sourceSkill": "PC-S02",
+      "mapsToSkill": "PC-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches crisis response role"
+    },
+    {
+      "term": "Recommending small-group social skills training for Juan",
+      "sourceQuestion": "SP5403_Q006",
+      "sourceSkill": "PC-S02",
+      "mapsToSkill": "MBH-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches social skills training"
+    },
+    {
+      "term": "Take additional classes in multicultural psychology",
+      "sourceQuestion": "SP5403_Q007",
+      "sourceSkill": "LEG-S02",
+      "mapsToSkill": "LEG-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches fape requirements"
+    },
+    {
+      "term": "Only work with students from the same cultural background as themselves",
+      "sourceQuestion": "SP5403_Q007",
+      "sourceSkill": "LEG-S02",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Decline to evaluate students from diverse backgrounds to avoid supporting disproportionate representations in special education",
+      "sourceQuestion": "SP5403_Q007",
+      "sourceSkill": "LEG-S02",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": false,
+      "distractorType": "cross-domain-connection",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Conducting a needs assessment at the district and school levels",
+      "sourceQuestion": "SP5403_Q008",
+      "sourceSkill": "RES-S06",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Interviewing parents and students regarding the district's school safety policy",
+      "sourceQuestion": "SP5403_Q008",
+      "sourceSkill": "RES-S06",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Consulting cultural brokers for culturally sensitive crisis responses",
+      "sourceQuestion": "SP5403_Q008",
+      "sourceSkill": "RES-S06",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "A study was conducted that compared grade retention rates to student dropout rates in one school.",
+      "sourceQuestion": "SP5403_Q009",
+      "sourceSkill": "DIV-S03",
+      "mapsToSkill": "DBDM-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches sensitivity/specificity distinction"
+    },
+    {
+      "term": "A county researched the grade retention rates and compared the retention rates to the pass rate on the national state exam.",
+      "sourceQuestion": "SP5403_Q009",
+      "sourceSkill": "DIV-S03",
+      "mapsToSkill": "DBDM-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches sensitivity/specificity distinction"
+    },
+    {
+      "term": "A student examines the number of students who have been retained over the past ten years in one district and compares their performance to their overall final high school GPA.",
+      "sourceQuestion": "SP5403_Q009",
+      "sourceSkill": "DIV-S03",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Performance on the DIBELS reading fluency measure was found to correlate well with other established measures of reading fluency.",
+      "sourceQuestion": "SP5403_Q010",
+      "sourceSkill": "DBDM-S04",
+      "mapsToSkill": "DBDM-S04",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches sensitivity/specificity distinction"
+    },
+    {
+      "term": "Two different teachers complete the BASC-3 for the same student, and similar scores are found across most subscales between the two teachers.",
+      "sourceQuestion": "SP5403_Q010",
+      "sourceSkill": "DBDM-S04",
+      "mapsToSkill": "DBDM-S04",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches sensitivity/specificity distinction"
+    },
+    {
+      "term": "The Woodcock-Johnson IV shows good consistency of results over multiple administrations across most subtests.",
+      "sourceQuestion": "SP5403_Q010",
+      "sourceSkill": "DBDM-S04",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Mills v. Board of Education of the District of Columbia",
+      "sourceQuestion": "SP5403_Q011",
+      "sourceSkill": "MBH-S02",
+      "mapsToSkill": "MBH-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches behavior function identification"
+    },
+    {
+      "term": "Larry P. v. Riles",
+      "sourceQuestion": "SP5403_Q011",
+      "sourceSkill": "MBH-S02",
+      "mapsToSkill": "MBH-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches behavior function identification"
+    },
+    {
+      "term": "Lau v. Nichols",
+      "sourceQuestion": "SP5403_Q011",
+      "sourceSkill": "MBH-S02",
+      "mapsToSkill": "MBH-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches behavior function identification"
+    },
+    {
+      "term": "Coteaching lessons once weekly to observe the students in the classroom",
+      "sourceQuestion": "SP5403_Q012",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches metacognitive & study skills"
+    },
+    {
+      "term": "Conducting weekly observations of each classroom to determine if the teachers are correctly following the curriculum and reporting to the principal with information from the observation",
+      "sourceQuestion": "SP5403_Q012",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "NEW-9-DescriptiveStats",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches descriptive statistics"
+    },
+    {
+      "term": "Taking over for the teacher when implementing the reading program to identify students who might need more individualized support",
+      "sourceQuestion": "SP5403_Q012",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": false,
+      "distractorType": "cross-domain-connection",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Selecting an appropriate evidence-based intervention",
+      "sourceQuestion": "SP5403_Q013",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Monitoring the student's performance",
+      "sourceQuestion": "SP5403_Q013",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Evaluating the effectiveness of the intervention",
+      "sourceQuestion": "SP5403_Q013",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Continuing to advocate with teachers for interventions that address specific student deficits and documenting results",
+      "sourceQuestion": "SP5403_Q014",
+      "sourceSkill": "NEW-6-BullyingPrevention",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Meeting with families to discuss their children's educational deficits and providing at-home intervention activities to increase achievement",
+      "sourceQuestion": "SP5403_Q014",
+      "sourceSkill": "NEW-6-BullyingPrevention",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches rti/mtss framework"
+    },
+    {
+      "term": "Presenting to the school board on how the school psychologist can improve district outcomes through evaluating more students for special education",
+      "sourceQuestion": "SP5403_Q014",
+      "sourceSkill": "NEW-6-BullyingPrevention",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Completing a cognitive and achievement assessment for the purpose of identifying a specific learning disability",
+      "sourceQuestion": "SP5403_Q015",
+      "sourceSkill": "ACAD-S04",
+      "mapsToSkill": "NEW-1-DynamicAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches dynamic assessment application"
+    },
+    {
+      "term": "Analyzing data to identify academic difficulties that can be addressed with interventions",
+      "sourceQuestion": "SP5403_Q015",
+      "sourceSkill": "ACAD-S04",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Completing a depression screening for the purpose of identifying mental health concerns",
+      "sourceQuestion": "SP5403_Q015",
+      "sourceSkill": "ACAD-S04",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Completing cognitive testing to identify intellectual ability",
+      "sourceQuestion": "SP5403_Q016",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "NEW-1-IQvsAchievement",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches intelligence vs. achievement distinction"
+    },
+    {
+      "term": "Completing classroom observations of a student for the purpose of identifying the function of a behavior",
+      "sourceQuestion": "SP5403_Q016",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Administering a universal reading screener to all students",
+      "sourceQuestion": "SP5403_Q016",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "DBDM-S08",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when to change intervention."
+    },
+    {
+      "term": "immediately contact the student's parents or guardians",
+      "sourceQuestion": "SP5403_Q017",
+      "sourceSkill": "FSC-S03",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "ask the student if she feels safe",
+      "sourceQuestion": "SP5403_Q017",
+      "sourceSkill": "FSC-S03",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "immediately contact a crisis center",
+      "sourceQuestion": "SP5403_Q017",
+      "sourceSkill": "FSC-S03",
+      "mapsToSkill": "PC-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches crisis response role"
+    },
+    {
+      "term": "Formative assessments occur at the end of instruction, while summative assessments occur during instruction.",
+      "sourceQuestion": "SP5403_Q018",
+      "sourceSkill": "DBDM-S07",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Formative assessments are graded, while summative assessments are not graded.",
+      "sourceQuestion": "SP5403_Q018",
+      "sourceSkill": "DBDM-S07",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Formative assessments are used to rank students, while summative assessments are not used for ranking.",
+      "sourceQuestion": "SP5403_Q018",
+      "sourceSkill": "DBDM-S07",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Meet with classroom teachers to identify strategies they use for playground and hallway transitions",
+      "sourceQuestion": "SP5403_Q019",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Contact the district's behavior specialist to schedule professional development on positive behavior support strategies",
+      "sourceQuestion": "SP5403_Q019",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "NEW-6-TraumaInformed",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches trauma-informed care"
+    },
+    {
+      "term": "Present a plan to implement a schoolwide positive behavior intervention and support (PBIS) program",
+      "sourceQuestion": "SP5403_Q019",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Recommend that Sarah be provided with extended testing time on all math tests",
+      "sourceQuestion": "SP5403_Q020",
+      "sourceSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Contact Sarah's parents to suggest she see a doctor about anxiety medication",
+      "sourceQuestion": "SP5403_Q020",
+      "sourceSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Suggest that Sarah's teacher allow her to take tests in a separate, quieter location",
+      "sourceQuestion": "SP5403_Q020",
+      "sourceSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSkill": "DBDM-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches sensitivity/specificity distinction"
+    },
+    {
+      "term": "Medical records, teacher interview, and behavior checklist",
+      "sourceQuestion": "SP5403_Q021",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Parent interview, classroom observation, and medical records",
+      "sourceQuestion": "SP5403_Q021",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Universal screening data, teacher interview, and parent interview",
+      "sourceQuestion": "SP5403_Q021",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A schoolwide positive behavior support program",
+      "sourceQuestion": "SP5403_Q022",
+      "sourceSkill": "MBH-S05",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "An individualized behavior intervention plan",
+      "sourceQuestion": "SP5403_Q022",
+      "sourceSkill": "MBH-S05",
+      "mapsToSkill": "SWP-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches tier 1 universal practices"
+    },
+    {
+      "term": "A universal reading curriculum",
+      "sourceQuestion": "SP5403_Q022",
+      "sourceSkill": "MBH-S05",
+      "mapsToSkill": "MBH-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches therapy model recognition"
+    },
+    {
+      "term": "A practice that has been used for many years and is supported by experienced teachers",
+      "sourceQuestion": "SP5403_Q023",
+      "sourceSkill": "DIV-S07",
+      "mapsToSkill": "DBDM-S08",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "when to change intervention."
+    },
+    {
+      "term": "A practice that was developed by experts in the field",
+      "sourceQuestion": "SP5403_Q023",
+      "sourceSkill": "DIV-S07",
+      "mapsToSkill": "DIV-S07",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches interpreter best practices"
+    },
+    {
+      "term": "A practice that is mandated by state or federal law",
+      "sourceQuestion": "SP5403_Q023",
+      "sourceSkill": "DIV-S07",
+      "mapsToSkill": "DIV-S07",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches interpreter best practices"
+    },
+    {
+      "term": "Facilitating the meeting and keeping the team focused on the agenda",
+      "sourceQuestion": "SP5403_Q024",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "Analyzing assessment data and sharing the results with the team",
+      "sourceQuestion": "SP5403_Q024",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Helping the team identify evidence-based interventions",
+      "sourceQuestion": "SP5403_Q024",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "The student's true IQ is 85.",
+      "sourceQuestion": "SP5403_Q025",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "The student will always score between 80 and 90 on this test.",
+      "sourceQuestion": "SP5403_Q025",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "The student's IQ score is significantly below average.",
+      "sourceQuestion": "SP5403_Q025",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "Explaining the consequences if the student refuses to participate",
+      "sourceQuestion": "SP5403_Q026",
+      "sourceSkill": "PC-S01",
+      "mapsToSkill": "PC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches threat assessment"
+    },
+    {
+      "term": "Having the student's teacher or parent present during the evaluation",
+      "sourceQuestion": "SP5403_Q026",
+      "sourceSkill": "PC-S01",
+      "mapsToSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches instructional hierarchy application"
+    },
+    {
+      "term": "Rushing through the evaluation to minimize the student's discomfort",
+      "sourceQuestion": "SP5403_Q026",
+      "sourceSkill": "PC-S01",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Providing the student with a fidget toy to keep his hands busy",
+      "sourceQuestion": "SP5403_Q027",
+      "sourceSkill": "RES-S05",
+      "mapsToSkill": "RES-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when it's true."
+    },
+    {
+      "term": "Moving the student's seat closer to the teacher",
+      "sourceQuestion": "SP5403_Q027",
+      "sourceSkill": "RES-S05",
+      "mapsToSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches metacognitive & study skills"
+    },
+    {
+      "term": "Providing the student with more opportunities to respond appropriately",
+      "sourceQuestion": "SP5403_Q027",
+      "sourceSkill": "RES-S05",
+      "mapsToSkill": "RES-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when it's true."
+    },
+    {
+      "term": "Administering a standardized achievement test",
+      "sourceQuestion": "SP5403_Q028",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Administering a standardized intelligence test",
+      "sourceQuestion": "SP5403_Q028",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Conducting a classroom observation",
+      "sourceQuestion": "SP5403_Q028",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "To document the frequency and severity of a student's problem behaviors",
+      "sourceQuestion": "SP5403_Q029",
+      "sourceSkill": "MBH-S01",
+      "mapsToSkill": "MBH-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches abc model understanding"
+    },
+    {
+      "term": "To identify the consequences that will be applied when a student misbehaves",
+      "sourceQuestion": "SP5403_Q029",
+      "sourceSkill": "MBH-S01",
+      "mapsToSkill": "MBH-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches abc model understanding"
+    },
+    {
+      "term": "To determine whether a student qualifies for special education services",
+      "sourceQuestion": "SP5403_Q029",
+      "sourceSkill": "MBH-S01",
+      "mapsToSkill": "MBH-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches abc model understanding"
+    },
+    {
+      "term": "Providing the student with extended time to complete assignments",
+      "sourceQuestion": "SP5403_Q030",
+      "sourceSkill": "NEW-9-Variables",
+      "mapsToSkill": "NEW-9-Variables",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches variable identification"
+    },
+    {
+      "term": "Having the student complete assignments in a resource room with adult support",
+      "sourceQuestion": "SP5403_Q030",
+      "sourceSkill": "NEW-9-Variables",
+      "mapsToSkill": "NEW-9-Variables",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches variable identification"
+    },
+    {
+      "term": "Modifying assignments to reduce the number of problems",
+      "sourceQuestion": "SP5403_Q030",
+      "sourceSkill": "NEW-9-Variables",
+      "mapsToSkill": "NEW-9-Variables",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches variable identification"
+    },
+    {
+      "term": "Content validity",
+      "sourceQuestion": "SP5403_Q031",
+      "sourceSkill": "DBDM-S02",
+      "mapsToSkill": "DBDM-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches validity type recognition"
+    },
+    {
+      "term": "Construct validity",
+      "sourceQuestion": "SP5403_Q031",
+      "sourceSkill": "DBDM-S02",
+      "mapsToSkill": "DBDM-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches validity type recognition"
+    },
+    {
+      "term": "Face validity",
+      "sourceQuestion": "SP5403_Q031",
+      "sourceSkill": "DBDM-S02",
+      "mapsToSkill": "DBDM-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches validity type recognition"
+    },
+    {
+      "term": "Choosing tests with strong reliability evidence",
+      "sourceQuestion": "SP5403_Q032",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Selecting tests that were normed on students from the student's country of origin",
+      "sourceQuestion": "SP5403_Q032",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Administering tests in the student's native language only",
+      "sourceQuestion": "SP5403_Q032",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "use technical jargon to demonstrate expertise",
+      "sourceQuestion": "SP5403_Q033",
+      "sourceSkill": "NEW-2-ConsultationProcess",
+      "mapsToSkill": "NEW-2-ConsultationProcess",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation process knowledge"
+    },
+    {
+      "term": "focus only on the student's weaknesses to justify the need for services",
+      "sourceQuestion": "SP5403_Q033",
+      "sourceSkill": "NEW-2-ConsultationProcess",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "avoid discussing any results that might concern the parents",
+      "sourceQuestion": "SP5403_Q033",
+      "sourceSkill": "NEW-2-ConsultationProcess",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "To rank students by ability and track them into different educational programs",
+      "sourceQuestion": "SP5403_Q034",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "To predict a student's potential for academic achievement and success in life",
+      "sourceQuestion": "SP5403_Q034",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "To determine the specific academic interventions a student needs",
+      "sourceQuestion": "SP5403_Q034",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Referring the student for individual counseling with an outside therapist",
+      "sourceQuestion": "SP5403_Q035",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Suggesting the parents arrange more playdates for the student",
+      "sourceQuestion": "SP5403_Q035",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Recommending the student be placed in a smaller classroom setting",
+      "sourceQuestion": "SP5403_Q035",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "A standardized reading achievement test",
+      "sourceQuestion": "SP5403_Q036",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A comprehensive reading diagnostic assessment",
+      "sourceQuestion": "SP5403_Q036",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A reading interest inventory",
+      "sourceQuestion": "SP5403_Q036",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Referring the student for a comprehensive evaluation",
+      "sourceQuestion": "SP5403_Q037",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Implementing a token economy system",
+      "sourceQuestion": "SP5403_Q037",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches problem-solving model application"
+    },
+    {
+      "term": "Recommending the student for placement in a more structured classroom",
+      "sourceQuestion": "SP5403_Q037",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches problem-solving model application"
+    },
+    {
+      "term": "Random assignment to treatment and control groups",
+      "sourceQuestion": "SP5403_Q038",
+      "sourceSkill": "LEG-S04",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Large sample size",
+      "sourceQuestion": "SP5403_Q038",
+      "sourceSkill": "LEG-S04",
+      "mapsToSkill": "RES-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches effect size interpretation"
+    },
+    {
+      "term": "Double-blind procedures",
+      "sourceQuestion": "SP5403_Q038",
+      "sourceSkill": "LEG-S04",
+      "mapsToSkill": "LEG-S04",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches mandated reporting"
+    },
+    {
+      "term": "The test measures what it claims to measure 95% of the time.",
+      "sourceQuestion": "SP5403_Q039",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches validity type recognition"
+    },
+    {
+      "term": "95% of students will score within the average range.",
+      "sourceQuestion": "SP5403_Q039",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "The test predicts future performance with 95% accuracy.",
+      "sourceQuestion": "SP5403_Q039",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Data-based decision making",
+      "sourceQuestion": "SP5403_Q040",
+      "sourceSkill": "ACAD-S02",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Consultation and collaboration",
+      "sourceQuestion": "SP5403_Q040",
+      "sourceSkill": "ACAD-S02",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Interventions and instructional support",
+      "sourceQuestion": "SP5403_Q040",
+      "sourceSkill": "ACAD-S02",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "Contact the student's parents",
+      "sourceQuestion": "SP5403_Q041",
+      "sourceSkill": "DIV-S01",
+      "mapsToSkill": "DIV-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when behavior is misinterpreted due to cultural bias (e."
+    },
+    {
+      "term": "Report the statement to the school administration",
+      "sourceQuestion": "SP5403_Q041",
+      "sourceSkill": "DIV-S01",
+      "mapsToSkill": "DIV-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when behavior is misinterpreted due to cultural bias (e."
+    },
+    {
+      "term": "Document the statement and continue monitoring",
+      "sourceQuestion": "SP5403_Q041",
+      "sourceSkill": "DIV-S01",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A multiple-choice test on math facts",
+      "sourceQuestion": "SP5403_Q042",
+      "sourceSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "A standardized reading comprehension test",
+      "sourceQuestion": "SP5403_Q042",
+      "sourceSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A teacher rating scale of student behavior",
+      "sourceQuestion": "SP5403_Q042",
+      "sourceSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Reducing the amount of homework assigned",
+      "sourceQuestion": "SP5403_Q043",
+      "sourceSkill": "FSC-S04",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Allowing the student to retake tests until passing",
+      "sourceQuestion": "SP5403_Q043",
+      "sourceSkill": "FSC-S04",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Excusing the student from group activities",
+      "sourceQuestion": "SP5403_Q043",
+      "sourceSkill": "FSC-S04",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A model for identifying students with disabilities based on IQ-achievement discrepancies",
+      "sourceQuestion": "SP5403_Q044",
+      "sourceSkill": "MBH-S03",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "A process for evaluating the effectiveness of special education programs",
+      "sourceQuestion": "SP5403_Q044",
+      "sourceSkill": "MBH-S03",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A method for assessing student intelligence without standardized tests",
+      "sourceQuestion": "SP5403_Q044",
+      "sourceSkill": "MBH-S03",
+      "mapsToSkill": "DIV-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches nonverbal assessment selection"
+    },
+    {
+      "term": "Administering only standardized cognitive and achievement tests",
+      "sourceQuestion": "SP5403_Q045",
+      "sourceSkill": "ACAD-S01",
+      "mapsToSkill": "NEW-1-IQvsAchievement",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches intelligence vs. achievement distinction"
+    },
+    {
+      "term": "Relying primarily on parent report of early developmental history",
+      "sourceQuestion": "SP5403_Q045",
+      "sourceSkill": "ACAD-S01",
+      "mapsToSkill": "ACAD-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches tier selection & intensity"
+    },
+    {
+      "term": "Focusing exclusively on academic performance data",
+      "sourceQuestion": "SP5403_Q045",
+      "sourceSkill": "ACAD-S01",
+      "mapsToSkill": "ACAD-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches tier selection & intensity"
+    },
+    {
+      "term": "Agree to keep the report confidential from school staff",
+      "sourceQuestion": "SP5403_Q046",
+      "sourceSkill": "PC-S05",
+      "mapsToSkill": "PC-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches postvention services"
+    },
+    {
+      "term": "Refuse to complete the evaluation",
+      "sourceQuestion": "SP5403_Q046",
+      "sourceSkill": "PC-S05",
+      "mapsToSkill": "PC-S05",
+      "mapsToSameSkill": true,
+      "flippable": false,
+      "distractorType": "same-category-different-context",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Share the full report with all school staff",
+      "sourceQuestion": "SP5403_Q046",
+      "sourceSkill": "PC-S05",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Attention seeking",
+      "sourceQuestion": "SP5403_Q047",
+      "sourceSkill": "NEW-9-ValidityThreats",
+      "mapsToSkill": "MBH-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches behavior function identification"
+    },
+    {
+      "term": "Sensory stimulation",
+      "sourceQuestion": "SP5403_Q047",
+      "sourceSkill": "NEW-9-ValidityThreats",
+      "mapsToSkill": "MBH-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches behavior function identification"
+    },
+    {
+      "term": "Tangible reinforcement",
+      "sourceQuestion": "SP5403_Q047",
+      "sourceSkill": "NEW-9-ValidityThreats",
+      "mapsToSkill": "NEW-9-ValidityThreats",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches research validity threats"
+    },
+    {
+      "term": "Mean",
+      "sourceQuestion": "SP5403_Q048",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "MBH-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches suicide risk assessment"
+    },
+    {
+      "term": "Standard deviation",
+      "sourceQuestion": "SP5403_Q048",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "NEW-9-DescriptiveStats",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches descriptive statistics"
+    },
+    {
+      "term": "Correlation coefficient",
+      "sourceQuestion": "SP5403_Q048",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "RES-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches correlation interpretation"
+    },
+    {
+      "term": "Expert consultation",
+      "sourceQuestion": "SP5403_Q049",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Behavioral consultation",
+      "sourceQuestion": "SP5403_Q049",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Mental health consultation",
+      "sourceQuestion": "SP5403_Q049",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Using only nonverbal tests for all students from diverse backgrounds",
+      "sourceQuestion": "SP5403_Q050",
+      "sourceSkill": "DIV-S05",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Avoiding discussion of cultural factors to maintain objectivity",
+      "sourceQuestion": "SP5403_Q050",
+      "sourceSkill": "DIV-S05",
+      "mapsToSkill": "DIV-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches cultural broker role"
+    },
+    {
+      "term": "Using tests that have been translated into the student's native language",
+      "sourceQuestion": "SP5403_Q050",
+      "sourceSkill": "DIV-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Implementing a punishment-based consequence system",
+      "sourceQuestion": "SP5403_Q051",
+      "sourceSkill": "NEW-9-StatisticalTests",
+      "mapsToSkill": "NEW-9-StatisticalTests",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches statistical test selection"
+    },
+    {
+      "term": "Removing the student from class when oppositional behavior occurs",
+      "sourceQuestion": "SP5403_Q051",
+      "sourceSkill": "NEW-9-StatisticalTests",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Referring the student for an outside mental health evaluation",
+      "sourceQuestion": "SP5403_Q051",
+      "sourceSkill": "NEW-9-StatisticalTests",
+      "mapsToSkill": "NEW-9-StatisticalTests",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches statistical test selection"
+    },
+    {
+      "term": "They measure a student's mastery of specific content standards.",
+      "sourceQuestion": "SP5403_Q052",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches sensitivity/specificity distinction"
+    },
+    {
+      "term": "They assess a student's rate of progress over time.",
+      "sourceQuestion": "SP5403_Q052",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "They are designed to be administered by classroom teachers.",
+      "sourceQuestion": "SP5403_Q052",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Declining to evaluate students from that ethnic group",
+      "sourceQuestion": "SP5403_Q053",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Recommending fewer students from that group for special education services",
+      "sourceQuestion": "SP5403_Q053",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches rti/mtss framework"
+    },
+    {
+      "term": "Using only assessments developed for that specific ethnic group",
+      "sourceQuestion": "SP5403_Q053",
+      "sourceSkill": "DBDM-S10",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Accommodations change what is taught; modifications change how it is taught.",
+      "sourceQuestion": "SP5403_Q054",
+      "sourceSkill": "NEW-4-Psychopathology",
+      "mapsToSkill": "DBDM-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches validity type recognition"
+    },
+    {
+      "term": "Accommodations are only for students with disabilities; modifications are for all students.",
+      "sourceQuestion": "SP5403_Q054",
+      "sourceSkill": "NEW-4-Psychopathology",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Accommodations are permanent; modifications are temporary.",
+      "sourceQuestion": "SP5403_Q054",
+      "sourceSkill": "NEW-4-Psychopathology",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Phonemic awareness",
+      "sourceQuestion": "SP5403_Q055",
+      "sourceSkill": "NEW-7-FamilySystems",
+      "mapsToSkill": "ACAD-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reading intervention selection"
+    },
+    {
+      "term": "Fine motor coordination",
+      "sourceQuestion": "SP5403_Q055",
+      "sourceSkill": "NEW-7-FamilySystems",
+      "mapsToSkill": "NEW-7-FamilySystems",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches family systems theory"
+    },
+    {
+      "term": "Prereading skills",
+      "sourceQuestion": "SP5403_Q055",
+      "sourceSkill": "NEW-7-FamilySystems",
+      "mapsToSkill": "ACAD-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reading intervention selection"
+    },
+    {
+      "term": "Providing long-term individual therapy to affected students",
+      "sourceQuestion": "SP5403_Q056",
+      "sourceSkill": "ACAD-S04",
+      "mapsToSkill": "PC-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches crisis response role"
+    },
+    {
+      "term": "Conducting comprehensive mental health evaluations",
+      "sourceQuestion": "SP5403_Q056",
+      "sourceSkill": "ACAD-S04",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Assigning students to support groups based on diagnosis",
+      "sourceQuestion": "SP5403_Q056",
+      "sourceSkill": "ACAD-S04",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "A case study of one student who improved after using the program",
+      "sourceQuestion": "SP5403_Q057",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "A survey of teachers who used the program and reported satisfaction",
+      "sourceQuestion": "SP5403_Q057",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches problem-solving model application"
+    },
+    {
+      "term": "A comparison of test scores before and after program implementation without a control group",
+      "sourceQuestion": "SP5403_Q057",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "The ability to hold information in mind while working with it",
+      "sourceQuestion": "SP5403_Q058",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "The ability to reason and solve novel problems",
+      "sourceQuestion": "SP5403_Q058",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "NEW-1-IQvsAchievement",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches intelligence vs. achievement distinction"
+    },
+    {
+      "term": "The ability to retrieve information from long-term memory",
+      "sourceQuestion": "SP5403_Q058",
+      "sourceSkill": "CC-S01",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Exploring the student's early childhood experiences",
+      "sourceQuestion": "SP5403_Q059",
+      "sourceSkill": "NEW-6-TraumaInformed",
+      "mapsToSkill": "NEW-6-TraumaInformed",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches trauma-informed care"
+    },
+    {
+      "term": "Using play therapy techniques to help the student express feelings",
+      "sourceQuestion": "SP5403_Q059",
+      "sourceSkill": "NEW-6-TraumaInformed",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Focusing on the unconscious motivations behind the student's behavior",
+      "sourceQuestion": "SP5403_Q059",
+      "sourceSkill": "NEW-6-TraumaInformed",
+      "mapsToSkill": "NEW-6-TraumaInformed",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches trauma-informed care"
+    },
+    {
+      "term": "To determine whether a student has mastered grade-level content standards",
+      "sourceQuestion": "SP5403_Q060",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "To measure a student's rate of improvement over time",
+      "sourceQuestion": "SP5403_Q060",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "To identify specific skills that need remediation",
+      "sourceQuestion": "SP5403_Q060",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Referring the student for a comprehensive evaluation for attention problems",
+      "sourceQuestion": "SP5403_Q061",
+      "sourceSkill": "RES-S03",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Recommending that the student be placed in a smaller classroom",
+      "sourceQuestion": "SP5403_Q061",
+      "sourceSkill": "RES-S03",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Contacting the parents to recommend family therapy",
+      "sourceQuestion": "SP5403_Q061",
+      "sourceSkill": "RES-S03",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "It provides detailed diagnostic information about specific skill deficits.",
+      "sourceQuestion": "SP5403_Q062",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "ACAD-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reading intervention selection"
+    },
+    {
+      "term": "It compares students to a national normative sample.",
+      "sourceQuestion": "SP5403_Q062",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "It measures a comprehensive range of academic skills.",
+      "sourceQuestion": "SP5403_Q062",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "DBDM-S08",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when to change intervention."
+    },
+    {
+      "term": "Taking over the classroom for a day to demonstrate effective strategies",
+      "sourceQuestion": "SP5403_Q063",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": false,
+      "distractorType": "same-category-different-context",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Providing the teacher with a list of research-based strategies to implement",
+      "sourceQuestion": "SP5403_Q063",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "NEW-2-CommunicationStrategies",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches communication & resistance management"
+    },
+    {
+      "term": "Observing the classroom and reporting findings to the principal",
+      "sourceQuestion": "SP5403_Q063",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "A standardized achievement test",
+      "sourceQuestion": "SP5403_Q064",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A projective personality assessment",
+      "sourceQuestion": "SP5403_Q064",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "A universal reading screener",
+      "sourceQuestion": "SP5403_Q064",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "The student has a learning disability.",
+      "sourceQuestion": "SP5403_Q065",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "The Full Scale IQ is a valid representation of the student's overall ability.",
+      "sourceQuestion": "SP5403_Q065",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "The student should be referred for further evaluation of nonverbal learning disability.",
+      "sourceQuestion": "SP5403_Q065",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Using psychoanalytic techniques to understand a student's behavior",
+      "sourceQuestion": "SP5403_Q066",
+      "sourceSkill": "NEW-4-Psychopathology",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Prescribing medication to address behavioral symptoms",
+      "sourceQuestion": "SP5403_Q066",
+      "sourceSkill": "NEW-4-Psychopathology",
+      "mapsToSkill": "NEW-4-Psychopathology",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches child & adolescent psychopathology"
+    },
+    {
+      "term": "Using projective techniques to assess personality",
+      "sourceQuestion": "SP5403_Q066",
+      "sourceSkill": "NEW-4-Psychopathology",
+      "mapsToSkill": "NEW-4-Psychopathology",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches child & adolescent psychopathology"
+    },
+    {
+      "term": "Emotional disturbance",
+      "sourceQuestion": "SP5403_Q067",
+      "sourceSkill": "NEW-8-Acculturation",
+      "mapsToSkill": "NEW-8-Acculturation",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches acculturation dynamics"
+    },
+    {
+      "term": "Autism spectrum disorder",
+      "sourceQuestion": "SP5403_Q067",
+      "sourceSkill": "NEW-8-Acculturation",
+      "mapsToSkill": "NEW-8-Acculturation",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches acculturation dynamics"
+    },
+    {
+      "term": "Other health impairment",
+      "sourceQuestion": "SP5403_Q067",
+      "sourceSkill": "NEW-8-Acculturation",
+      "mapsToSkill": "NEW-8-Acculturation",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches acculturation dynamics"
+    },
+    {
+      "term": "To diagnose specific disabilities in students",
+      "sourceQuestion": "SP5403_Q068",
+      "sourceSkill": "DBDM-S09",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "To determine eligibility for special education services",
+      "sourceQuestion": "SP5403_Q068",
+      "sourceSkill": "DBDM-S09",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "To evaluate the effectiveness of classroom instruction",
+      "sourceQuestion": "SP5403_Q068",
+      "sourceSkill": "DBDM-S09",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Placing the student in a self-contained classroom for students with disabilities",
+      "sourceQuestion": "SP5403_Q069",
+      "sourceSkill": "FSC-S01",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Recommending that the student skip two grade levels",
+      "sourceQuestion": "SP5403_Q069",
+      "sourceSkill": "FSC-S01",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Suggesting the parents find educational opportunities outside of school",
+      "sourceQuestion": "SP5403_Q069",
+      "sourceSkill": "FSC-S01",
+      "mapsToSkill": "FSC-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches partnership goals"
+    },
+    {
+      "term": "To compare a student's performance to national norms",
+      "sourceQuestion": "SP5403_Q070",
+      "sourceSkill": "NEW-1-DynamicAssessment",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "To diagnose specific learning disabilities",
+      "sourceQuestion": "SP5403_Q070",
+      "sourceSkill": "NEW-1-DynamicAssessment",
+      "mapsToSkill": "NEW-1-DynamicAssessment",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches dynamic assessment application"
+    },
+    {
+      "term": "To measure achievement in specific academic content areas",
+      "sourceQuestion": "SP5403_Q070",
+      "sourceSkill": "NEW-1-DynamicAssessment",
+      "mapsToSkill": "NEW-1-DynamicAssessment",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches dynamic assessment application"
+    },
+    {
+      "term": "It shows the percentage of questions your child answered correctly.",
+      "sourceQuestion": "SP5403_Q071",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "It predicts your child's future academic success.",
+      "sourceQuestion": "SP5403_Q071",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "It shows the percentage of content your child has mastered.",
+      "sourceQuestion": "SP5403_Q071",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "Proceeding with the evaluation since it is in the child's best interest",
+      "sourceQuestion": "SP5403_Q072",
+      "sourceSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches metacognitive & study skills"
+    },
+    {
+      "term": "Having the principal contact the parents to require participation",
+      "sourceQuestion": "SP5403_Q072",
+      "sourceSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Documenting the refusal and closing the case",
+      "sourceQuestion": "SP5403_Q072",
+      "sourceSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches metacognitive & study skills"
+    },
+    {
+      "term": "Recommend extended time for all students in the class to be fair",
+      "sourceQuestion": "SP5403_Q073",
+      "sourceSkill": "MBH-S05",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Refuse to provide any accommodations until a formal evaluation is completed",
+      "sourceQuestion": "SP5403_Q073",
+      "sourceSkill": "MBH-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": false,
+      "distractorType": "cross-domain-connection",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Automatically approve the extended time request since the teacher made the request",
+      "sourceQuestion": "SP5403_Q073",
+      "sourceSkill": "MBH-S05",
+      "mapsToSkill": "MBH-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches therapy model recognition"
+    },
+    {
+      "term": "Punishment is the most effective way to change behavior.",
+      "sourceQuestion": "SP5403_Q074",
+      "sourceSkill": "SWP-S02",
+      "mapsToSkill": "SWP-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches pbis principles"
+    },
+    {
+      "term": "Problem behavior indicates that a student needs a more restrictive placement.",
+      "sourceQuestion": "SP5403_Q074",
+      "sourceSkill": "SWP-S02",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Behavior change occurs best through external control systems.",
+      "sourceQuestion": "SP5403_Q074",
+      "sourceSkill": "SWP-S02",
+      "mapsToSkill": "SWP-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches pbis principles"
+    },
+    {
+      "term": "Ensuring all students in the group have the same type of loss",
+      "sourceQuestion": "SP5403_Q075",
+      "sourceSkill": "NEW-9-StatisticalTests",
+      "mapsToSkill": "NEW-9-StatisticalTests",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches statistical test selection"
+    },
+    {
+      "term": "Including students who are at similar developmental levels",
+      "sourceQuestion": "SP5403_Q075",
+      "sourceSkill": "NEW-9-StatisticalTests",
+      "mapsToSkill": "PC-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches crisis preparedness"
+    },
+    {
+      "term": "Limiting the group to no more than three students",
+      "sourceQuestion": "SP5403_Q075",
+      "sourceSkill": "NEW-9-StatisticalTests",
+      "mapsToSkill": "NEW-9-StatisticalTests",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches statistical test selection"
+    },
+    {
+      "term": "Intelligence measures what a student knows; achievement measures learning potential.",
+      "sourceQuestion": "SP5403_Q076",
+      "sourceSkill": "NEW-1-IQvsAchievement",
+      "mapsToSkill": "NEW-1-IQvsAchievement",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches intelligence vs. achievement distinction"
+    },
+    {
+      "term": "Intelligence is fixed; achievement changes over time.",
+      "sourceQuestion": "SP5403_Q076",
+      "sourceSkill": "NEW-1-IQvsAchievement",
+      "mapsToSkill": "NEW-1-IQvsAchievement",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches intelligence vs. achievement distinction"
+    },
+    {
+      "term": "Intelligence tests are norm-referenced; achievement tests are criterion-referenced.",
+      "sourceQuestion": "SP5403_Q076",
+      "sourceSkill": "NEW-1-IQvsAchievement",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Providing the student with attention when on-task",
+      "sourceQuestion": "SP5403_Q077",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Moving the student to a quiet area when off-task",
+      "sourceQuestion": "SP5403_Q077",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "LEG-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when specific threat."
+    },
+    {
+      "term": "Ignoring the off-task behavior",
+      "sourceQuestion": "SP5403_Q077",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "LEG-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when specific threat."
+    },
+    {
+      "term": "Ignoring the information since it does not directly affect the school psychologist's work",
+      "sourceQuestion": "SP5403_Q078",
+      "sourceSkill": "PC-S02",
+      "mapsToSkill": "PC-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches crisis response role"
+    },
+    {
+      "term": "Immediately reporting the colleague to the state licensing board",
+      "sourceQuestion": "SP5403_Q078",
+      "sourceSkill": "PC-S02",
+      "mapsToSkill": "PC-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches crisis response role"
+    },
+    {
+      "term": "Documenting the disclosure but taking no further action",
+      "sourceQuestion": "SP5403_Q078",
+      "sourceSkill": "PC-S02",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Significant limitations in intellectual functioning only",
+      "sourceQuestion": "SP5403_Q079",
+      "sourceSkill": "NEW-8-SocialJustice",
+      "mapsToSkill": "NEW-7-FamilySystems",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches family systems theory"
+    },
+    {
+      "term": "Significant limitations in adaptive behavior only",
+      "sourceQuestion": "SP5403_Q079",
+      "sourceSkill": "NEW-8-SocialJustice",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "IQ score below 70 regardless of adaptive functioning",
+      "sourceQuestion": "SP5403_Q079",
+      "sourceSkill": "NEW-8-SocialJustice",
+      "mapsToSkill": "NEW-8-SocialJustice",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches social justice & advocacy"
+    },
+    {
+      "term": "They compare a student's performance to a normative sample.",
+      "sourceQuestion": "SP5403_Q080",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "They are typically administered once per year.",
+      "sourceQuestion": "SP5403_Q080",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "They require standardized administration procedures.",
+      "sourceQuestion": "SP5403_Q080",
+      "sourceSkill": "DBDM-S06",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Telling the student to ignore the bullying",
+      "sourceQuestion": "SP5403_Q081",
+      "sourceSkill": "MBH-S06",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Moving the student who was bullied to a different classroom",
+      "sourceQuestion": "SP5403_Q081",
+      "sourceSkill": "MBH-S06",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Recommending the student who was bullied receive training in self-defense",
+      "sourceQuestion": "SP5403_Q081",
+      "sourceSkill": "MBH-S06",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Processing speed",
+      "sourceQuestion": "SP5403_Q082",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "Working memory",
+      "sourceQuestion": "SP5403_Q082",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "Long-term retrieval",
+      "sourceQuestion": "SP5403_Q082",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "All students who have experienced trauma need individual therapy",
+      "sourceQuestion": "SP5403_Q083",
+      "sourceSkill": "SWP-S02",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Requiring students to discuss their traumatic experiences in group settings",
+      "sourceQuestion": "SP5403_Q083",
+      "sourceSkill": "SWP-S02",
+      "mapsToSkill": "NEW-6-TraumaInformed",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches trauma-informed care"
+    },
+    {
+      "term": "Using punishment-based approaches to address trauma-related behaviors",
+      "sourceQuestion": "SP5403_Q083",
+      "sourceSkill": "SWP-S02",
+      "mapsToSkill": "SWP-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches pbis principles"
+    },
+    {
+      "term": "Concluding there is no effect when there actually is one",
+      "sourceQuestion": "SP5403_Q084",
+      "sourceSkill": "RES-S01",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Using an inappropriate statistical test",
+      "sourceQuestion": "SP5403_Q084",
+      "sourceSkill": "RES-S01",
+      "mapsToSkill": "NEW-9-StatisticalTests",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches statistical test selection"
+    },
+    {
+      "term": "Having too small a sample size",
+      "sourceQuestion": "SP5403_Q084",
+      "sourceSkill": "RES-S01",
+      "mapsToSkill": "RES-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches single-subject design recognition"
+    },
+    {
+      "term": "Eliminating all changes to the student's routine",
+      "sourceQuestion": "SP5403_Q085",
+      "sourceSkill": "ACAD-S05",
+      "mapsToSkill": "ACAD-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches instructional level determination"
+    },
+    {
+      "term": "Ignoring the student's distress until it passes",
+      "sourceQuestion": "SP5403_Q085",
+      "sourceSkill": "ACAD-S05",
+      "mapsToSkill": "ACAD-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches instructional level determination"
+    },
+    {
+      "term": "Requiring the student to adapt to changes without support",
+      "sourceQuestion": "SP5403_Q085",
+      "sourceSkill": "ACAD-S05",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "To determine whether the student still qualifies for special education",
+      "sourceQuestion": "SP5403_Q086",
+      "sourceSkill": "FSC-S03",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "To compare the student's performance to that of peers",
+      "sourceQuestion": "SP5403_Q086",
+      "sourceSkill": "FSC-S03",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "To identify new goals for the upcoming year",
+      "sourceQuestion": "SP5403_Q086",
+      "sourceSkill": "FSC-S03",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Requiring the student to speak in all situations",
+      "sourceQuestion": "SP5403_Q087",
+      "sourceSkill": "SWP-S03",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Allowing the student to communicate only in writing",
+      "sourceQuestion": "SP5403_Q087",
+      "sourceSkill": "SWP-S03",
+      "mapsToSkill": "SWP-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches tier 1 universal practices"
+    },
+    {
+      "term": "Removing the student from social situations",
+      "sourceQuestion": "SP5403_Q087",
+      "sourceSkill": "SWP-S03",
+      "mapsToSkill": "SWP-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches tier 1 universal practices"
+    },
+    {
+      "term": "Whether the teacher likes implementing the intervention",
+      "sourceQuestion": "SP5403_Q088",
+      "sourceSkill": "PC-S04",
+      "mapsToSkill": "DBDM-S10",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches data-first decision making"
+    },
+    {
+      "term": "Whether the intervention is research-based",
+      "sourceQuestion": "SP5403_Q088",
+      "sourceSkill": "PC-S04",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Whether the intervention was recommended by an outside expert",
+      "sourceQuestion": "SP5403_Q088",
+      "sourceSkill": "PC-S04",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Select an intervention from a list of evidence-based programs",
+      "sourceQuestion": "SP5403_Q089",
+      "sourceSkill": "LEG-S03",
+      "mapsToSkill": "ACAD-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reading intervention selection"
+    },
+    {
+      "term": "Refer the student for special education evaluation",
+      "sourceQuestion": "SP5403_Q089",
+      "sourceSkill": "LEG-S03",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Recommend the student for retention",
+      "sourceQuestion": "SP5403_Q089",
+      "sourceSkill": "LEG-S03",
+      "mapsToSkill": "LEG-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when: imminent danger to self or others, child abuse, court order."
+    },
+    {
+      "term": "Students with disabilities should receive all services in the general education classroom.",
+      "sourceQuestion": "SP5403_Q090",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "LEG-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when specific threat."
+    },
+    {
+      "term": "Students with disabilities should receive services in specialized settings.",
+      "sourceQuestion": "SP5403_Q090",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches rti/mtss framework"
+    },
+    {
+      "term": "Students with disabilities should be grouped together for instruction.",
+      "sourceQuestion": "SP5403_Q090",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Below average",
+      "sourceQuestion": "SP5403_Q091",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "Above average",
+      "sourceQuestion": "SP5403_Q091",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "Significantly below average",
+      "sourceQuestion": "SP5403_Q091",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches score interpretation"
+    },
+    {
+      "term": "Measuring how many times a behavior occurs",
+      "sourceQuestion": "SP5403_Q092",
+      "sourceSkill": "NEW-9-DescriptiveStats",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Calculating effect sizes from research studies",
+      "sourceQuestion": "SP5403_Q092",
+      "sourceSkill": "NEW-9-DescriptiveStats",
+      "mapsToSkill": "NEW-9-Variables",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches variable identification"
+    },
+    {
+      "term": "Administering a standardized behavior rating scale",
+      "sourceQuestion": "SP5403_Q092",
+      "sourceSkill": "NEW-9-DescriptiveStats",
+      "mapsToSkill": "NEW-9-DescriptiveStats",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches descriptive statistics"
+    },
+    {
+      "term": "Reducing the number of math problems assigned",
+      "sourceQuestion": "SP5403_Q093",
+      "sourceSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches instructional hierarchy application"
+    },
+    {
+      "term": "Providing the student with a modified math curriculum",
+      "sourceQuestion": "SP5403_Q093",
+      "sourceSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches instructional hierarchy application"
+    },
+    {
+      "term": "Excusing the student from math class",
+      "sourceQuestion": "SP5403_Q093",
+      "sourceSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSkill": "NEW-3-InstructionalHierarchy",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches instructional hierarchy application"
+    },
+    {
+      "term": "It is administered at the beginning and end of the school year.",
+      "sourceQuestion": "SP5403_Q094",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "It compares student performance to grade-level expectations.",
+      "sourceQuestion": "SP5403_Q094",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "It provides detailed diagnostic information about specific skills.",
+      "sourceQuestion": "SP5403_Q094",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "DBDM-S08",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "when to change intervention."
+    },
+    {
+      "term": "Number of students referred for special education",
+      "sourceQuestion": "SP5403_Q095",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches rti/mtss framework"
+    },
+    {
+      "term": "Scores on standardized achievement tests",
+      "sourceQuestion": "SP5403_Q095",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Teacher satisfaction surveys",
+      "sourceQuestion": "SP5403_Q095",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Promising the student that the information will be kept confidential",
+      "sourceQuestion": "SP5403_Q096",
+      "sourceSkill": "MBH-S04",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Investigating the allegation before making any report",
+      "sourceQuestion": "SP5403_Q096",
+      "sourceSkill": "MBH-S04",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Asking the student to write a detailed account of what happened",
+      "sourceQuestion": "SP5403_Q096",
+      "sourceSkill": "MBH-S04",
+      "mapsToSkill": "DBDM-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches validity type recognition"
+    },
+    {
+      "term": "Ignoring all of the student's behavior",
+      "sourceQuestion": "SP5403_Q097",
+      "sourceSkill": "NEW-10-EducationLaw",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Sending the student to the office when attention-seeking behavior occurs",
+      "sourceQuestion": "SP5403_Q097",
+      "sourceSkill": "NEW-10-EducationLaw",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Providing more individual attention to prevent the behavior",
+      "sourceQuestion": "SP5403_Q097",
+      "sourceSkill": "NEW-10-EducationLaw",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Standardized intelligence testing with verbal and nonverbal subtests",
+      "sourceQuestion": "SP5403_Q098",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DIV-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches nonverbal assessment selection"
+    },
+    {
+      "term": "Academic achievement testing",
+      "sourceQuestion": "SP5403_Q098",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Self-report questionnaires about social-emotional functioning",
+      "sourceQuestion": "SP5403_Q098",
+      "sourceSkill": "DBDM-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Requiring the student to describe the traumatic event in detail",
+      "sourceQuestion": "SP5403_Q099",
+      "sourceSkill": "ACAD-S03",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Telling the student to try not to think about what happened",
+      "sourceQuestion": "SP5403_Q099",
+      "sourceSkill": "ACAD-S03",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Focusing only on academic performance",
+      "sourceQuestion": "SP5403_Q099",
+      "sourceSkill": "ACAD-S03",
+      "mapsToSkill": "MBH-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches social skills training"
+    },
+    {
+      "term": "Maximizing assessment revenue for the school district",
+      "sourceQuestion": "SP5403_Q100",
+      "sourceSkill": "SWP-S01",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment-purpose matching"
+    },
+    {
+      "term": "Prioritizing the preferences of teachers over parents",
+      "sourceQuestion": "SP5403_Q100",
+      "sourceSkill": "SWP-S01",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Maintaining strict confidentiality in all circumstances",
+      "sourceQuestion": "SP5403_Q100",
+      "sourceSkill": "SWP-S01",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches rti/mtss framework"
+    },
+    {
+      "term": "Having the teacher reduce the amount of homework assigned",
+      "sourceQuestion": "SP5403_Q101",
+      "sourceSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches barriers to engagement"
+    },
+    {
+      "term": "Requiring the student's parents to check homework each night",
+      "sourceQuestion": "SP5403_Q101",
+      "sourceSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches barriers to engagement"
+    },
+    {
+      "term": "Having the student complete all homework at school",
+      "sourceQuestion": "SP5403_Q101",
+      "sourceSkill": "NEW-7-BarriersToEngagement",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "To provide an expert opinion on a topic",
+      "sourceQuestion": "SP5403_Q102",
+      "sourceSkill": "PC-S03",
+      "mapsToSkill": "PC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches psychological first aid"
+    },
+    {
+      "term": "To describe findings from a single research study",
+      "sourceQuestion": "SP5403_Q102",
+      "sourceSkill": "PC-S03",
+      "mapsToSkill": "PC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches psychological first aid"
+    },
+    {
+      "term": "To generate new research hypotheses",
+      "sourceQuestion": "SP5403_Q102",
+      "sourceSkill": "PC-S03",
+      "mapsToSkill": "DBDM-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches sensitivity/specificity distinction"
+    },
+    {
+      "term": "Communicating directly with the student without involving the family",
+      "sourceQuestion": "SP5403_Q103",
+      "sourceSkill": "LEG-S06",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Expecting the student to advocate independently for their needs",
+      "sourceQuestion": "SP5403_Q103",
+      "sourceSkill": "LEG-S06",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Focusing exclusively on individual student outcomes",
+      "sourceQuestion": "SP5403_Q103",
+      "sourceSkill": "LEG-S06",
+      "mapsToSkill": "ACAD-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches tier selection & intensity"
+    },
+    {
+      "term": "Emphasizing the school psychologist's expertise",
+      "sourceQuestion": "SP5403_Q104",
+      "sourceSkill": "NEW-2-CommunicationStrategies",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "Telling the teacher what strategies must be implemented",
+      "sourceQuestion": "SP5403_Q104",
+      "sourceSkill": "NEW-2-CommunicationStrategies",
+      "mapsToSkill": "NEW-2-CommunicationStrategies",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches communication & resistance management"
+    },
+    {
+      "term": "Suggesting that the principal mandate the teacher's participation",
+      "sourceQuestion": "SP5403_Q104",
+      "sourceSkill": "NEW-2-CommunicationStrategies",
+      "mapsToSkill": "NEW-2-CommunicationStrategies",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches communication & resistance management"
+    },
+    {
+      "term": "One of the teachers is incorrect.",
+      "sourceQuestion": "SP5403_Q105",
+      "sourceSkill": "NEW-8-LanguageAcquisition",
+      "mapsToSkill": "NEW-8-LanguageAcquisition",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches second language acquisition"
+    },
+    {
+      "term": "The rating scale is not reliable.",
+      "sourceQuestion": "SP5403_Q105",
+      "sourceSkill": "NEW-8-LanguageAcquisition",
+      "mapsToSkill": "NEW-8-LanguageAcquisition",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches second language acquisition"
+    },
+    {
+      "term": "The student has multiple behavior disorders.",
+      "sourceQuestion": "SP5403_Q105",
+      "sourceSkill": "NEW-8-LanguageAcquisition",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "It determines causation between variables.",
+      "sourceQuestion": "SP5403_Q106",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches problem-solving model application"
+    },
+    {
+      "term": "It eliminates the need for control groups.",
+      "sourceQuestion": "SP5403_Q106",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches problem-solving model application"
+    },
+    {
+      "term": "It is easier to compute than correlation.",
+      "sourceQuestion": "SP5403_Q106",
+      "sourceSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSkill": "NEW-2-ProblemSolvingSteps",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches problem-solving model application"
+    },
+    {
+      "term": "A plan that addresses only natural disasters",
+      "sourceQuestion": "SP5403_Q107",
+      "sourceSkill": "NEW-10-RecordKeeping",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "A plan developed solely by the school psychologist",
+      "sourceQuestion": "SP5403_Q107",
+      "sourceSkill": "NEW-10-RecordKeeping",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "A plan that focuses only on immediate response, not prevention or recovery",
+      "sourceQuestion": "SP5403_Q107",
+      "sourceSkill": "NEW-10-RecordKeeping",
+      "mapsToSkill": "PC-S02",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches crisis response role"
+    },
+    {
+      "term": "Whether the intervention is new and innovative",
+      "sourceQuestion": "SP5403_Q108",
+      "sourceSkill": "NEW-4-GroupCounseling",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Whether the intervention is recommended by other school psychologists",
+      "sourceQuestion": "SP5403_Q108",
+      "sourceSkill": "NEW-4-GroupCounseling",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Whether the intervention requires minimal teacher training",
+      "sourceQuestion": "SP5403_Q108",
+      "sourceSkill": "NEW-4-GroupCounseling",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Asking another psychologist with a similar background to the student to conduct the evaluation",
+      "sourceQuestion": "SP5403_Q109",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Using only tests developed in the student's culture of origin",
+      "sourceQuestion": "SP5403_Q109",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "NEW-8-Acculturation",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches acculturation dynamics"
+    },
+    {
+      "term": "Ignoring cultural differences to maintain objectivity",
+      "sourceQuestion": "SP5403_Q109",
+      "sourceSkill": "LEG-S01",
+      "mapsToSkill": "FSC-S04",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches cultural competence"
+    },
+    {
+      "term": "A student receives similar scores when tested on two different days.",
+      "sourceQuestion": "SP5403_Q110",
+      "sourceSkill": "DBDM-S01",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "A test measures what it is supposed to measure.",
+      "sourceQuestion": "SP5403_Q110",
+      "sourceSkill": "DBDM-S01",
+      "mapsToSkill": "NEW-1-IQvsAchievement",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches intelligence vs. achievement distinction"
+    },
+    {
+      "term": "Different items on a test measure the same construct.",
+      "sourceQuestion": "SP5403_Q110",
+      "sourceSkill": "DBDM-S01",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "Avoiding tests whenever possible",
+      "sourceQuestion": "SP5403_Q111",
+      "sourceSkill": "NEW-5-SchoolClimate",
+      "mapsToSkill": "DBDM-S06",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches norm vs criterion reference distinction"
+    },
+    {
+      "term": "Requesting that tests be given orally instead",
+      "sourceQuestion": "SP5403_Q111",
+      "sourceSkill": "NEW-5-SchoolClimate",
+      "mapsToSkill": "NEW-5-SchoolClimate",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches school climate components"
+    },
+    {
+      "term": "Having a parent present during testing",
+      "sourceQuestion": "SP5403_Q111",
+      "sourceSkill": "NEW-5-SchoolClimate",
+      "mapsToSkill": "NEW-5-SchoolClimate",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches school climate components"
+    },
+    {
+      "term": "Limiting contact to formal meetings only",
+      "sourceQuestion": "SP5403_Q112",
+      "sourceSkill": "ACAD-S02",
+      "mapsToSkill": "ACAD-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches reading intervention selection"
+    },
+    {
+      "term": "Using jargon to demonstrate professional expertise",
+      "sourceQuestion": "SP5403_Q112",
+      "sourceSkill": "ACAD-S02",
+      "mapsToSkill": "ACAD-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches reading intervention selection"
+    },
+    {
+      "term": "Communicating primarily through written reports",
+      "sourceQuestion": "SP5403_Q112",
+      "sourceSkill": "ACAD-S02",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "The intervention will work for 95% of students.",
+      "sourceQuestion": "SP5403_Q113",
+      "sourceSkill": "MBH-S06",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "The intervention has a large practical effect.",
+      "sourceQuestion": "SP5403_Q113",
+      "sourceSkill": "MBH-S06",
+      "mapsToSkill": "RES-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches effect size interpretation"
+    },
+    {
+      "term": "The results are clinically meaningful.",
+      "sourceQuestion": "SP5403_Q113",
+      "sourceSkill": "MBH-S06",
+      "mapsToSkill": "NEW-9-DescriptiveStats",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches descriptive statistics"
+    },
+    {
+      "term": "Ignoring the error if it seems minor",
+      "sourceQuestion": "SP5403_Q114",
+      "sourceSkill": "RES-S01",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Completing the evaluation without mentioning the error",
+      "sourceQuestion": "SP5403_Q114",
+      "sourceSkill": "RES-S01",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Waiting to see if anyone notices the error",
+      "sourceQuestion": "SP5403_Q114",
+      "sourceSkill": "RES-S01",
+      "mapsToSkill": "ACAD-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches error pattern analysis"
+    },
+    {
+      "term": "Prescribing antidepressant medication",
+      "sourceQuestion": "SP5403_Q115",
+      "sourceSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches metacognitive & study skills"
+    },
+    {
+      "term": "Reducing academic expectations",
+      "sourceQuestion": "SP5403_Q115",
+      "sourceSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches metacognitive & study skills"
+    },
+    {
+      "term": "Isolating the student from peers",
+      "sourceQuestion": "SP5403_Q115",
+      "sourceSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSkill": "NEW-3-MetacognitiveStrategies",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches metacognitive & study skills"
+    },
+    {
+      "term": "Relying solely on information from colleagues",
+      "sourceQuestion": "SP5403_Q116",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "Using the same assessment and intervention approaches learned in graduate school",
+      "sourceQuestion": "SP5403_Q116",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "Attending only state-mandated training sessions",
+      "sourceQuestion": "SP5403_Q116",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches collaborative role & approach"
+    },
+    {
+      "term": "A medical diagnosis of a mental health disorder",
+      "sourceQuestion": "SP5403_Q117",
+      "sourceSkill": "NEW-7-FamilySystems",
+      "mapsToSkill": "NEW-4-Psychopathology",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches child & adolescent psychopathology"
+    },
+    {
+      "term": "Aggressive behavior toward peers and adults",
+      "sourceQuestion": "SP5403_Q117",
+      "sourceSkill": "NEW-7-FamilySystems",
+      "mapsToSkill": "NEW-7-FamilySystems",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches family systems theory"
+    },
+    {
+      "term": "Failure to respond to behavioral interventions",
+      "sourceQuestion": "SP5403_Q117",
+      "sourceSkill": "NEW-7-FamilySystems",
+      "mapsToSkill": "NEW-7-FamilySystems",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches family systems theory"
+    },
+    {
+      "term": "To determine whether a student qualifies for special education",
+      "sourceQuestion": "SP5403_Q118",
+      "sourceSkill": "NEW-6-BullyingPrevention",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches rti/mtss framework"
+    },
+    {
+      "term": "To develop a behavior intervention plan",
+      "sourceQuestion": "SP5403_Q118",
+      "sourceSkill": "NEW-6-BullyingPrevention",
+      "mapsToSkill": "NEW-6-BullyingPrevention",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches bullying & harassment prevention"
+    },
+    {
+      "term": "To decide whether a student should be suspended",
+      "sourceQuestion": "SP5403_Q118",
+      "sourceSkill": "NEW-6-BullyingPrevention",
+      "mapsToSkill": "DBDM-S07",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches assessment type recognition"
+    },
+    {
+      "term": "Ensuring all students receive the same number of tokens",
+      "sourceQuestion": "SP5403_Q119",
+      "sourceSkill": "DIV-S02",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Using tokens that have monetary value",
+      "sourceQuestion": "SP5403_Q119",
+      "sourceSkill": "DIV-S02",
+      "mapsToSkill": "DIV-S02",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches nonverbal assessment selection"
+    },
+    {
+      "term": "Implementing the system for at least one full school year",
+      "sourceQuestion": "SP5403_Q119",
+      "sourceSkill": "DIV-S02",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches consultation type recognition"
+    },
+    {
+      "term": "Proceeding with services but documenting the conflict",
+      "sourceQuestion": "SP5403_Q120",
+      "sourceSkill": "NEW-10-Supervision",
+      "mapsToSkill": "NEW-5-SchoolClimate",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches school climate components"
+    },
+    {
+      "term": "Ignoring the conflict if it does not seem serious",
+      "sourceQuestion": "SP5403_Q120",
+      "sourceSkill": "NEW-10-Supervision",
+      "mapsToSkill": "NEW-6-TraumaInformed",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches trauma-informed care"
+    },
+    {
+      "term": "Letting the parents decide how to handle the conflict",
+      "sourceQuestion": "SP5403_Q120",
+      "sourceSkill": "NEW-10-Supervision",
+      "mapsToSkill": "NEW-9-Variables",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches variable identification"
+    },
+    {
+      "term": "Calculating the overall school average",
+      "sourceQuestion": "SP5403_Q121",
+      "sourceSkill": "DBDM-S09",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Reviewing only the scores of students already receiving special education",
+      "sourceQuestion": "SP5403_Q121",
+      "sourceSkill": "DBDM-S09",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Looking at last year's data only",
+      "sourceQuestion": "SP5403_Q121",
+      "sourceSkill": "DBDM-S09",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "Professionals make decisions about services without family input",
+      "sourceQuestion": "SP5403_Q122",
+      "sourceSkill": "LEG-S05",
+      "mapsToSkill": "LEG-S05",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches manifestation determination"
+    },
+    {
+      "term": "Services focus exclusively on the child",
+      "sourceQuestion": "SP5403_Q122",
+      "sourceSkill": "LEG-S05",
+      "mapsToSkill": "NEW-7-FamilySystems",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches family systems theory"
+    },
+    {
+      "term": "Communication with families is limited to formal meetings",
+      "sourceQuestion": "SP5403_Q122",
+      "sourceSkill": "LEG-S05",
+      "mapsToSkill": "FSC-S03",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches communication strategies"
+    },
+    {
+      "term": "The intervention is working well",
+      "sourceQuestion": "SP5403_Q123",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches reliability type selection"
+    },
+    {
+      "term": "The student is making adequate progress",
+      "sourceQuestion": "SP5403_Q123",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "DBDM-S09",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches universal screening purpose"
+    },
+    {
+      "term": "The student should be referred for special education",
+      "sourceQuestion": "SP5403_Q123",
+      "sourceSkill": "DBDM-S03",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches rti/mtss framework"
+    },
+    {
+      "term": "The district recreation department posts signs indicating behavior expectations on each sports field.",
+      "sourceQuestion": "SP5403_Q124",
+      "sourceSkill": "SWP-S04",
+      "mapsToSkill": "SWP-S04",
+      "mapsToSameSkill": true,
+      "flippable": true,
+      "distractorType": "same-category-different-context",
+      "contextWhenCorrect": "When the context matches implementation fidelity"
+    },
+    {
+      "term": "Local businesses partner with the district to provide incentives for students.",
+      "sourceQuestion": "SP5403_Q124",
+      "sourceSkill": "SWP-S04",
+      "mapsToSkill": "NEW-1-PerformanceAssessment",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "When the context matches performance-based assessment recognition"
+    },
+    {
+      "term": "Students can recite the expectations of the program when asked.",
+      "sourceQuestion": "SP5403_Q124",
+      "sourceSkill": "SWP-S04",
+      "mapsToSkill": "LEG-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "when specific threat."
+    },
+    {
+      "term": "An unbiased assumption",
+      "sourceQuestion": "SP5403_Q125",
+      "sourceSkill": "NEW-10-TestSecurity",
+      "mapsToSkill": "DIV-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "when behavior is misinterpreted due to cultural bias (e."
+    },
+    {
+      "term": "An explicitly biased assumption",
+      "sourceQuestion": "SP5403_Q125",
+      "sourceSkill": "NEW-10-TestSecurity",
+      "mapsToSkill": "DIV-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "when behavior is misinterpreted due to cultural bias (e."
+    },
+    {
+      "term": "Both an implicitly and explicitly biased assumption",
+      "sourceQuestion": "SP5403_Q125",
+      "sourceSkill": "NEW-10-TestSecurity",
+      "mapsToSkill": "DIV-S01",
+      "mapsToSameSkill": false,
+      "flippable": true,
+      "distractorType": "cross-domain-connection",
+      "contextWhenCorrect": "when behavior is misinterpreted due to cultural bias (e."
+    }
+  ]
+}
