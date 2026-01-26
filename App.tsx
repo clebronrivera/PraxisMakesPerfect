@@ -16,11 +16,14 @@ import FullAssessment from './src/components/FullAssessment';
 import ScoreReport from './src/components/ScoreReport';
 import PracticeSession from './src/components/PracticeSession';
 import DomainTiles from './src/components/DomainTiles';
+import TeachMode from './src/components/TeachMode';
 
 // Import hooks
 import { useUserProgress } from './src/hooks/useUserProgress';
 import { useAdaptiveLearning } from './src/hooks/useAdaptiveLearning';
 import { loadSession, hasActiveSession, clearSession, AssessmentSession } from './src/utils/sessionStorage';
+import { getCurrentUser, setCurrentUser, getCurrentSession, createUserSession, UserSession } from './src/utils/userSessionStorage';
+import UserLogin from './src/components/UserLogin';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -39,18 +42,24 @@ export default function PraxisStudyApp() {
   const { profile, updateProfile, updateSkillProgress, resetProgress } = useUserProgress();
   const { selectNextQuestion } = useAdaptiveLearning();
   
+  // User management
+  const [currentUserName, setCurrentUserName] = useState<string | null>(() => getCurrentUser());
+  const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>();
+  const [showLogin, setShowLogin] = useState(!getCurrentUser());
+  
   // Check for saved session on mount
   const savedSession = useMemo(() => loadSession(), []);
   const hasSession = useMemo(() => hasActiveSession(), []);
   
   // App state
-  const [mode, setMode] = useState<'home' | 'preassessment' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'review'>('home');
+  const [mode, setMode] = useState<'home' | 'preassessment' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'review' | 'teach'>('home');
   const [preAssessmentQuestions, setPreAssessmentQuestions] = useState<AnalyzedQuestion[]>([]);
   const [fullAssessmentQuestions, setFullAssessmentQuestions] = useState<AnalyzedQuestion[]>([]);
   const [assessmentStartTime, setAssessmentStartTime] = useState<number>(savedSession?.startTime || 0);
   const [lastAssessmentResponses, setLastAssessmentResponses] = useState<UserResponse[]>([]);
   const [lastAssessmentType, setLastAssessmentType] = useState<'pre-assessment' | 'full-assessment'>('pre-assessment');
   const [practiceDomainFilter, setPracticeDomainFilter] = useState<number | null>(null);
+  const [teachModeDomains, setTeachModeDomains] = useState<number[] | undefined>(undefined);
   
   // Analyze all questions
   const analyzedQuestions = useMemo(() => {
@@ -69,7 +78,7 @@ export default function PraxisStudyApp() {
   // HANDLERS
   // ============================================
   
-  const startPreAssessment = useCallback((resumeSession?: AssessmentSession) => {
+  const startPreAssessment = useCallback((resumeSession?: AssessmentSession | UserSession) => {
     if (resumeSession && resumeSession.type === 'pre-assessment') {
       // Resume from saved session - restore question order
       const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
@@ -95,12 +104,20 @@ export default function PraxisStudyApp() {
     }
     
     // Shuffle final selection
-    setPreAssessmentQuestions(selected.sort(() => Math.random() - 0.5));
+    const questionIds = selected.sort(() => Math.random() - 0.5).map(q => q.id);
+    
+    // Create new user session if we have a current user
+    if (currentUserName) {
+      const newSession = createUserSession(currentUserName, 'pre-assessment', questionIds);
+      setSelectedSessionId(newSession.sessionId);
+    }
+    
+    setPreAssessmentQuestions(selected);
     setAssessmentStartTime(Date.now());
     setMode('preassessment');
-  }, [analyzedQuestions]);
+  }, [analyzedQuestions, currentUserName]);
   
-  const startFullAssessment = useCallback((resumeSession?: AssessmentSession) => {
+  const startFullAssessment = useCallback((resumeSession?: AssessmentSession | UserSession) => {
     if (resumeSession && resumeSession.type === 'full-assessment') {
       // Resume from saved session - restore question order
       const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
@@ -119,20 +136,62 @@ export default function PraxisStudyApp() {
     // Start new assessment
     // Use all 125 questions, shuffled
     const shuffled = [...analyzedQuestions].sort(() => Math.random() - 0.5);
+    const questionIds = shuffled.map(q => q.id);
+    
+    // Create new user session if we have a current user
+    if (currentUserName) {
+      const newSession = createUserSession(currentUserName, 'full-assessment', questionIds);
+      setSelectedSessionId(newSession.sessionId);
+    }
+    
     setFullAssessmentQuestions(shuffled);
     setAssessmentStartTime(Date.now());
     setMode('fullassessment');
-  }, [analyzedQuestions]);
+  }, [analyzedQuestions, currentUserName]);
   
   const handleResumeAssessment = useCallback(() => {
-    if (!savedSession) return;
+    if (!currentUserName) return;
     
-    if (savedSession.type === 'pre-assessment') {
-      startPreAssessment(savedSession);
-    } else if (savedSession.type === 'full-assessment') {
-      startFullAssessment(savedSession);
+    // Try to load user session first
+    const userSession = getCurrentSession(currentUserName);
+    if (userSession) {
+      if (userSession.type === 'pre-assessment') {
+        startPreAssessment(userSession);
+      } else if (userSession.type === 'full-assessment') {
+        startFullAssessment(userSession);
+      }
+      return;
     }
-  }, [savedSession, startPreAssessment, startFullAssessment]);
+    
+    // Fallback to old session system
+    if (savedSession) {
+      if (savedSession.type === 'pre-assessment') {
+        startPreAssessment(savedSession);
+      } else if (savedSession.type === 'full-assessment') {
+        startFullAssessment(savedSession);
+      }
+    }
+  }, [currentUserName, savedSession, startPreAssessment, startFullAssessment]);
+
+  const handleUserSelected = useCallback((userName: string, sessionId?: string) => {
+    setCurrentUserName(userName);
+    setCurrentUser(userName);
+    setShowLogin(false);
+    
+    if (sessionId) {
+      setSelectedSessionId(sessionId);
+      // Load the session
+      const { loadUserSession } = require('./src/utils/userSessionStorage');
+      const session = loadUserSession(sessionId);
+      if (session) {
+        if (session.type === 'pre-assessment') {
+          startPreAssessment(session);
+        } else if (session.type === 'full-assessment') {
+          startFullAssessment(session);
+        }
+      }
+    }
+  }, [startPreAssessment, startFullAssessment]);
   
   const handleDiscardSession = useCallback(() => {
     clearSession();
@@ -197,6 +256,11 @@ export default function PraxisStudyApp() {
   // RENDER
   // ============================================
   
+  // Show login screen if no user is selected
+  if (showLogin || !currentUserName) {
+    return <UserLogin onUserSelected={handleUserSelected} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       
@@ -215,14 +279,27 @@ export default function PraxisStudyApp() {
             </div>
           </div>
           
-          {profile.preAssessmentComplete && mode !== 'home' && (
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-slate-500">User: <span className="text-slate-300">{currentUserName}</span></span>
+            {profile.preAssessmentComplete && mode !== 'home' && (
+              <button
+                onClick={() => setMode('home')}
+                className="px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                ← Home
+              </button>
+            )}
             <button
-              onClick={() => setMode('home')}
-              className="px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+              onClick={() => {
+                setCurrentUserName(null);
+                setShowLogin(true);
+              }}
+              className="px-4 py-2 text-sm text-slate-500 hover:text-slate-300 transition-colors"
+              title="Switch user"
             >
-              ← Home
+              Switch User
             </button>
-          )}
+          </div>
         </div>
       </header>
       
@@ -362,6 +439,42 @@ export default function PraxisStudyApp() {
                   </button>
                   
                   <button
+                    onClick={() => {
+                      if (profile.fullAssessmentComplete) {
+                        setTeachModeDomains(undefined);
+                        setMode('teach');
+                      }
+                    }}
+                    disabled={!profile.fullAssessmentComplete}
+                    className={`w-full p-6 rounded-2xl flex items-center justify-between group transition-all ${
+                      profile.fullAssessmentComplete
+                        ? 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:shadow-lg hover:shadow-purple-500/20 cursor-pointer'
+                        : 'bg-slate-800/30 border border-slate-700/50 cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                        profile.fullAssessmentComplete ? 'bg-white/20' : 'bg-slate-700/50'
+                      }`}>
+                        <Target className={`w-6 h-6 ${profile.fullAssessmentComplete ? 'text-white' : 'text-slate-500'}`} />
+                      </div>
+                      <div className="text-left">
+                        <p className={`font-bold text-lg ${profile.fullAssessmentComplete ? 'text-white' : 'text-slate-500'}`}>
+                          Teach Mode
+                        </p>
+                        <p className={`text-sm ${profile.fullAssessmentComplete ? 'text-purple-100' : 'text-slate-600'}`}>
+                          {profile.fullAssessmentComplete 
+                            ? 'Learn from mistakes with guided explanations'
+                            : 'Complete full assessment to unlock'}
+                        </p>
+                      </div>
+                    </div>
+                    {profile.fullAssessmentComplete && (
+                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
+                    )}
+                  </button>
+                  
+                  <button
                     onClick={() => setMode('results')}
                     className="w-full p-6 bg-slate-800/50 border border-slate-700 rounded-2xl flex items-center justify-between group hover:bg-slate-800 transition-all"
                   >
@@ -430,6 +543,8 @@ export default function PraxisStudyApp() {
           <PreAssessment
             questions={preAssessmentQuestions}
             onComplete={handlePreAssessmentComplete}
+            showTimer={true}
+            sessionId={selectedSessionId}
           />
         )}
         
@@ -438,6 +553,8 @@ export default function PraxisStudyApp() {
           <FullAssessment
             questions={fullAssessmentQuestions}
             onComplete={handleFullAssessmentComplete}
+            showTimer={true}
+            sessionId={selectedSessionId}
           />
         )}
         
@@ -451,6 +568,14 @@ export default function PraxisStudyApp() {
             onStartPractice={startPractice}
             onRetakeAssessment={lastAssessmentType === 'full-assessment' ? () => startFullAssessment(undefined) : () => startPreAssessment(undefined)}
             onGoHome={() => setMode('home')}
+            onStartTeachMode={(domains) => {
+              setTeachModeDomains(domains);
+              setMode('teach');
+            }}
+            onStartPracticeWithDomains={(domains) => {
+              setPracticeDomainFilter(domains[0] || null);
+              setMode('practice');
+            }}
           />
         )}
         
@@ -464,6 +589,16 @@ export default function PraxisStudyApp() {
             selectNextQuestion={selectNextQuestion}
             detectWeaknesses={detectWeaknesses}
             practiceDomain={practiceDomainFilter}
+          />
+        )}
+        
+        {/* TEACH MODE */}
+        {mode === 'teach' && (
+          <TeachMode
+            userProfile={profile}
+            analyzedQuestions={analyzedQuestions}
+            onUpdateProfile={updateProfile}
+            selectedDomains={teachModeDomains}
           />
         )}
         

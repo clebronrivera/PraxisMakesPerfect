@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Zap } from 'lucide-react';
+import { Zap, Clock } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { NASP_DOMAINS } from '../../knowledge-base';
@@ -72,6 +72,8 @@ export default function PracticeSession({
   const [startTime, setStartTime] = useState<number>(Date.now());
   const [questionHistory, setQuestionHistory] = useState<string[]>([]);
   const [localProfile, setLocalProfile] = useState<UserProfile>(userProfile);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [showTimer, setShowTimer] = useState(true);
   
   // Sync local profile with prop updates
   useEffect(() => {
@@ -88,6 +90,16 @@ export default function PracticeSession({
       }
     }
   }, [currentQuestion, localProfile, analyzedQuestions, questionHistory, selectNextQuestion]);
+
+  // Timer effect
+  useEffect(() => {
+    if (!showFeedback && currentQuestion && showTimer) {
+      const interval = setInterval(() => {
+        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [showFeedback, startTime, currentQuestion, showTimer]);
 
   const toggleAnswer = (letter: string) => {
     if (showFeedback || !currentQuestion) return;
@@ -259,6 +271,7 @@ export default function PracticeSession({
     if (next) {
       setCurrentQuestion(next);
       setStartTime(Date.now());
+      setElapsedTime(0);
       setSelectedAnswers([]);
       setShowFeedback(false);
       setConfidence('medium');
@@ -268,6 +281,12 @@ export default function PracticeSession({
   if (!currentQuestion) {
     return <div className="text-center text-slate-400">Loading question...</div>;
   }
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -288,15 +307,29 @@ export default function PracticeSession({
             </div>
           )}
         </div>
-        <div className="flex gap-2">
-          {currentQuestion.domains.slice(0, 2).map(d => (
-            <span key={d} className="px-2 py-1 rounded text-xs" style={{
-              backgroundColor: `${getDomainColor(d)}20`,
-              color: getDomainColor(d)
-            }}>
-              {NASP_DOMAINS[d as keyof typeof NASP_DOMAINS]?.shortName}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowTimer(!showTimer)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
+          >
+            <Clock className={`w-4 h-4 ${showTimer ? 'text-amber-400' : ''}`} />
+            <span>{showTimer ? 'Hide Timer' : 'Show Timer'}</span>
+          </button>
+          {showTimer && (
+            <span className="text-sm text-slate-400">
+              Time: <span className="text-slate-300 font-mono">{formatTime(elapsedTime)}</span>
             </span>
-          ))}
+          )}
+          <div className="flex gap-2">
+            {currentQuestion.domains.slice(0, 2).map(d => (
+              <span key={d} className="px-2 py-1 rounded text-xs" style={{
+                backgroundColor: `${getDomainColor(d)}20`,
+                color: getDomainColor(d)
+              }}>
+                {NASP_DOMAINS[d as keyof typeof NASP_DOMAINS]?.shortName}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 

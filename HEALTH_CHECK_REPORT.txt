@@ -2,9 +2,9 @@
 PART 2: Question-Skill Mapping Health
 ================================================================================
 
-1. Total questions: 267
+1. Total questions: 299
 
-2. Questions with valid skillId: 267
+2. Questions with valid skillId: 299
    Questions with invalid/missing skillId: 0
 
 3. All questions have valid skillIds ✓
@@ -21,32 +21,27 @@ Skills with 0 questions: 0
 
 Question distribution per skill:
    Min: 0
-   Max: 11
-   Avg: 2.75
+   Max: 12
+   Avg: 3.08
 
 Top 10 skills by question count:
+   NEW-3-AccommodationsModifications: 12 questions
+   NEW-4-MentalHealthImpact: 12 questions
    DBDM-S03: 11 questions
-   NEW-4-MentalHealthImpact: 11 questions
-   NEW-3-AccommodationsModifications: 10 questions
-   NEW-4-DevelopmentalInterventions: 10 questions
+   NEW-4-DevelopmentalInterventions: 11 questions
+   LEG-S01: 10 questions
+   NEW-2-FamilyCollaboration: 10 questions
+   NEW-5-EducationalPolicies: 10 questions
    CC-S01: 9 questions
-   NEW-2-FamilyCollaboration: 9 questions
-   LEG-S01: 8 questions
    LEG-S02: 7 questions
    DBDM-S05: 6 questions
-   NEW-2-ConsultationProcess: 6 questions
 
 ================================================================================
 PART 4: Show Generated Questions
 ================================================================================
 
-Total generated questions found: 77
+Total generated questions found: 99
 
-ID: GEN-CC-T09-aivvcx
-Skill ID: NEW-2-FamilyCollaboration
-Question Stem: A school psychologist is working with a family from a diverse cultural background who has difficulty attending meetings. What is the most effective strategy?
-Correct Answer: C (C: Identify and address barriers to engagement, such as scheduling or transportation)
---------------------------------------------------------------------------------
 ID: GEN-CC-T09-n1gdr6
 Skill ID: NEW-2-FamilyCollaboration
 Question Stem: A school psychologist is working with a family from a diverse cultural background who seems resistant to intervention recommendations. What is the most effective strategy?
@@ -66,11 +61,6 @@ ID: GEN-ACAD-T10-5i35q1
 Skill ID: NEW-3-AccommodationsModifications
 Question Stem: A student with a sensory impairment needs a reduced assignment load. This is an example of:
 Correct Answer: C (C: A modification (changes what the student learns))
---------------------------------------------------------------------------------
-ID: GEN-ACAD-T10-ydf1d4
-Skill ID: NEW-3-AccommodationsModifications
-Question Stem: A student with a learning disability needs extended time on tests. This is an example of:
-Correct Answer: D (D: An accommodation (changes how the student accesses the curriculum))
 --------------------------------------------------------------------------------
 ID: GEN-ACAD-T11-lf8txu
 Skill ID: NEW-3-AcademicProgressFactors
@@ -96,11 +86,6 @@ ID: GEN-MBH-T15-9d7t4e
 Skill ID: NEW-4-DevelopmentalInterventions
 Question Stem: A school psychologist is planning an intervention for a elementary school student who struggles with social skills. Which approach is most developmentally appropriate?
 Correct Answer: A (A: Concrete, play-based, visual strategies with shorter sessions)
---------------------------------------------------------------------------------
-ID: GEN-MBH-T16-nfabq2
-Skill ID: NEW-4-MentalHealthImpact
-Question Stem: A student experiencing anxiety is likely to show which impact on test-taking?
-Correct Answer: C (C: Worry, physical symptoms, and impaired test performance)
 --------------------------------------------------------------------------------
 ID: GEN-MBH-T16-icjxve
 Skill ID: NEW-4-MentalHealthImpact
@@ -156,11 +141,6 @@ ID: GEN-ACAD-T12-6hbn8m
 Skill ID: NEW-3-BioCulturalInfluences
 Question Stem: A student's academic performance is affected by multiple interacting factors. Which consideration is most important?
 Correct Answer: A (A: The interaction of biological, cultural, and social factors)
---------------------------------------------------------------------------------
-ID: GEN-MBH-T15-o18kwa
-Skill ID: NEW-4-DevelopmentalInterventions
-Question Stem: A school psychologist is planning an intervention for a high school student who has difficulty managing emotions. Which approach is most developmentally appropriate?
-Correct Answer: C (C: Abstract, discussion-based approaches with longer sessions and peer-focused activities)
 --------------------------------------------------------------------------------
 ID: GEN-MBH-T15-gvj5ao
 Skill ID: NEW-4-DevelopmentalInterventions
@@ -237,25 +217,10 @@ Skill ID: NEW-3-AccommodationsModifications
 Question Stem: A student with ADHD needs tests read aloud. This is an example of:
 Correct Answer: B (B: An accommodation (changes how the student accesses the curriculum))
 --------------------------------------------------------------------------------
-ID: GEN-ACAD-T11-auiv3t
-Skill ID: NEW-3-AcademicProgressFactors
-Question Stem: A student's academic progress is influenced by family factors. Which factor is most likely to impact achievement?
-Correct Answer: B (B: Family involvement and home-school partnership)
---------------------------------------------------------------------------------
 ID: GEN-MBH-T15-tlttwr
 Skill ID: NEW-4-DevelopmentalInterventions
 Question Stem: A school psychologist is planning an intervention for a middle school student who experiences anxiety. Which approach is most developmentally appropriate?
 Correct Answer: A (A: Abstract, discussion-based approaches with longer sessions and peer-focused activities)
---------------------------------------------------------------------------------
-ID: GEN-MBH-T15-ozvb5k
-Skill ID: NEW-4-DevelopmentalInterventions
-Question Stem: A school psychologist is planning an intervention for a high school student who struggles with social skills. Which approach is most developmentally appropriate?
-Correct Answer: B (B: Abstract, discussion-based approaches with longer sessions and peer-focused activities)
---------------------------------------------------------------------------------
-ID: GEN-MBH-T16-rim6ed
-Skill ID: NEW-4-MentalHealthImpact
-Question Stem: A student experiencing ADHD is likely to show which impact on academic performance?
-Correct Answer: C (C: Impact on academic performance, engagement, and learning)
 --------------------------------------------------------------------------------
 ID: GEN-MBH-T16-lak9lq
 Skill ID: NEW-4-MentalHealthImpact
@@ -287,25 +252,10 @@ Skill ID: NEW-3-AccommodationsModifications
 Question Stem: A student with a physical disability needs assistive technology for writing. This is an example of:
 Correct Answer: B (B: An accommodation (changes how the student accesses the curriculum))
 --------------------------------------------------------------------------------
-ID: GEN-ACAD-T11-y0z9i1
-Skill ID: NEW-3-AcademicProgressFactors
-Question Stem: A student's academic progress is influenced by environmental factors. Which factor is most likely to impact achievement?
-Correct Answer: C (C: Home environment and community resources)
---------------------------------------------------------------------------------
 ID: GEN-MBH-T15-74jiy
 Skill ID: NEW-4-DevelopmentalInterventions
 Question Stem: A school psychologist is planning an intervention for a kindergarten student who has difficulty managing emotions. Which approach is most developmentally appropriate?
 Correct Answer: D (D: Concrete, play-based, visual strategies with shorter sessions)
---------------------------------------------------------------------------------
-ID: GEN-MBH-T15-lf7gbw
-Skill ID: NEW-4-DevelopmentalInterventions
-Question Stem: A school psychologist is planning an intervention for a kindergarten student who has behavioral challenges. Which approach is most developmentally appropriate?
-Correct Answer: D (D: Concrete, play-based, visual strategies with shorter sessions)
---------------------------------------------------------------------------------
-ID: GEN-MBH-T16-pvuz86
-Skill ID: NEW-4-MentalHealthImpact
-Question Stem: A student experiencing depression is likely to show which impact on school engagement?
-Correct Answer: D (D: Withdrawal, decreased participation, and reduced school engagement)
 --------------------------------------------------------------------------------
 ID: GEN-MBH-T16-rhfa1a
 Skill ID: NEW-4-MentalHealthImpact
@@ -341,11 +291,6 @@ ID: GEN-MBH-T15-ytf543
 Skill ID: NEW-4-DevelopmentalInterventions
 Question Stem: A school psychologist is planning an intervention for a middle school student who has behavioral challenges. Which approach is most developmentally appropriate?
 Correct Answer: A (A: Abstract, discussion-based approaches with longer sessions and peer-focused activities)
---------------------------------------------------------------------------------
-ID: GEN-PC-T09-rpmeb0
-Skill ID: NEW-6-SchoolClimateMeasurement
-Question Stem: To measure school climate effectively, a school psychologist should:
-Correct Answer: D (D: Collect data on multiple dimensions including engagement, safety, and environment using systematic methods)
 --------------------------------------------------------------------------------
 ID: GEN-DBDM-T22-dakx6e
 Skill ID: NEW-1-LowIncidenceExceptionalities
@@ -397,11 +342,6 @@ Skill ID: NEW-4-DevelopmentalInterventions
 Question Stem: A school psychologist is planning an intervention for a middle school student who has difficulty managing emotions. Which approach is most developmentally appropriate?
 Correct Answer: C (C: Abstract, discussion-based approaches with longer sessions and peer-focused activities)
 --------------------------------------------------------------------------------
-ID: GEN-MBH-T16-6cqovq
-Skill ID: NEW-4-MentalHealthImpact
-Question Stem: A student experiencing trauma is likely to show which impact on school engagement?
-Correct Answer: A (A: Impact on academic performance, engagement, and learning)
---------------------------------------------------------------------------------
 ID: GEN-MBH-T03B-kjx9x7
 Skill ID: MBH-S03
 Question Stem: A student's disruption serves a escape function. Which replacement behavior would be most effective?
@@ -426,6 +366,176 @@ ID: GEN-SWP-T10-r7fpak
 Skill ID: NEW-5-EducationalPolicies
 Question Stem: A school is considering grade retention for students who are performing below grade level. What should the school psychologist recommend?
 Correct Answer: D (D: Question the effectiveness of retention and consider evidence-based alternatives)
+--------------------------------------------------------------------------------
+ID: GEN-ACAD-T10-cuomeq
+Skill ID: NEW-3-AccommodationsModifications
+Question Stem: A student with a learning disability needs assistive technology for writing. This is an example of:
+Correct Answer: D (D: An accommodation (changes how the student accesses the curriculum))
+--------------------------------------------------------------------------------
+ID: GEN-ACAD-T10-y98cke
+Skill ID: NEW-3-AccommodationsModifications
+Question Stem: A student with a learning disability needs a reduced assignment load. This is an example of:
+Correct Answer: D (D: A modification (changes what the student learns))
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T15-53ofgg
+Skill ID: NEW-4-DevelopmentalInterventions
+Question Stem: A school psychologist is planning an intervention for a elementary school student who has difficulty managing emotions. Which approach is most developmentally appropriate?
+Correct Answer: C (C: Concrete, play-based, visual strategies with shorter sessions)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T08C-qlbme3
+Skill ID: NEW-4-GroupCounseling
+Question Stem: A school psychologist observes that a grief and loss group is experiencing conflict, members challenging the leader, and testing boundaries. This group is in which stage?
+Correct Answer: B (B: Storming stage (characterized by conflict, resistance, and testing of group norms))
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T08D-rc3nn4
+Skill ID: NEW-4-GroupCounseling
+Question Stem: When screening students for a anxiety management group, a school psychologist should prioritize:
+Correct Answer: C (C: Ensuring members have similar needs, can benefit from group format, and are not contraindicated (e.g., aggressive behavior))
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T03B-yaaoc2
+Skill ID: MBH-S03
+Question Stem: A student's tantrums serves a sensory function. Which replacement behavior would be most effective?
+Correct Answer: B (B: Teaching a functionally equivalent replacement behavior)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T03B-r0w8r2
+Skill ID: MBH-S03
+Question Stem: A student's disruption serves a tangible function. Which replacement behavior would be most effective?
+Correct Answer: B (B: Teaching the student to request the item appropriately)
+--------------------------------------------------------------------------------
+ID: GEN-SWP-T10-x2xyl5
+Skill ID: NEW-5-EducationalPolicies
+Question Stem: A school is considering tracking students into different academic programs for students who show different ability levels. What should the school psychologist recommend?
+Correct Answer: B (B: Consider the limitations of tracking and ensure equal access to opportunities)
+--------------------------------------------------------------------------------
+ID: GEN-SWP-T10-wtfngp
+Skill ID: NEW-5-EducationalPolicies
+Question Stem: A school is considering tracking students into different academic programs for students who are performing below grade level. What should the school psychologist recommend?
+Correct Answer: C (C: Consider the limitations of tracking and ensure equal access to opportunities)
+--------------------------------------------------------------------------------
+ID: GEN-FSC-T06-5c90hg
+Skill ID: NEW-7-InteragencyCollaboration
+Question Stem: Interagency collaboration for students with disabilities is most useful for:
+Correct Answer: A (A: Planning for postsecondary transitions and connecting students to employment and education opportunities)
+--------------------------------------------------------------------------------
+ID: GEN-FSC-T08-a86lzy
+Skill ID: NEW-7-InteragencyCollaboration
+Question Stem: A school psychologist is developing a transition plan for a ninth-grade student with emotional disturbance. Which interagency collaboration is most critical?
+Correct Answer: A (A: Partnership with mental health agencies and vocational services)
+--------------------------------------------------------------------------------
+ID: GEN-FSC-T07-j1iacp
+Skill ID: NEW-7-ParentingInterventions
+Question Stem: A school psychologist is working with parents to address challenging behaviors at home. What is the most effective approach?
+Correct Answer: A (A: Teach parents behavior management strategies including positive reinforcement, clear rules, and consistent consequences)
+--------------------------------------------------------------------------------
+ID: GEN-RES-T14-h1iv17
+Skill ID: NEW-9-ProgramEvaluation
+Question Stem: Before implementing a program evaluation, a school psychologist should first:
+Correct Answer: C (C: Identify program goals and objectives, and determine what data will measure success)
+--------------------------------------------------------------------------------
+ID: GEN-FSC-T08-hhzmm2
+Skill ID: NEW-7-InteragencyCollaboration
+Question Stem: A school psychologist is developing a transition plan for a ninth-grade student with intellectual disability. Which interagency collaboration is most critical?
+Correct Answer: C (C: Collaboration with vocational rehabilitation and supported employment agencies)
+--------------------------------------------------------------------------------
+ID: GEN-FSC-T07-ulm77m
+Skill ID: NEW-7-ParentingInterventions
+Question Stem: A school psychologist is working with parents to address homework completion at home. What is the most effective approach?
+Correct Answer: A (A: Teach parents behavior management strategies including positive reinforcement, clear rules, and consistent consequences)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T16-1yvjp2
+Skill ID: NEW-4-MentalHealthImpact
+Question Stem: A student experiencing depression is likely to show which impact on test-taking?
+Correct Answer: D (D: Impact on academic performance, engagement, and learning)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T15-yha9xk
+Skill ID: NEW-4-DevelopmentalInterventions
+Question Stem: A school psychologist is planning an intervention for a high school student who experiences anxiety. Which approach is most developmentally appropriate?
+Correct Answer: B (B: Abstract, discussion-based approaches with longer sessions and peer-focused activities)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T15-1dye4
+Skill ID: NEW-4-DevelopmentalInterventions
+Question Stem: A school psychologist is planning an intervention for a kindergarten student who experiences anxiety. Which approach is most developmentally appropriate?
+Correct Answer: A (A: Concrete, play-based, visual strategies with shorter sessions)
+--------------------------------------------------------------------------------
+ID: GEN-FSC-T05-5c9ngz
+Skill ID: NEW-7-FamilySystems
+Question Stem: A core concept of Family Systems Theory is:
+Correct Answer: C (C: Events affecting one family member affect the whole system)
+--------------------------------------------------------------------------------
+ID: GEN-CC-T09-f15239
+Skill ID: NEW-2-FamilyCollaboration
+Question Stem: A school psychologist is working with a family from a different cultural background who seems resistant to intervention recommendations. What is the most effective strategy?
+Correct Answer: A (A: Build trust by understanding family values and adapting communication styles)
+--------------------------------------------------------------------------------
+ID: GEN-SWP-T10-bozhd0
+Skill ID: NEW-5-EducationalPolicies
+Question Stem: A school is considering tracking students into different academic programs for students who have varying academic needs. What should the school psychologist recommend?
+Correct Answer: C (C: Consider the limitations of tracking and ensure equal access to opportunities)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T16-jbzlqu
+Skill ID: NEW-4-MentalHealthImpact
+Question Stem: A student experiencing trauma is likely to show which impact on test-taking?
+Correct Answer: C (C: Impact on academic performance, engagement, and learning)
+--------------------------------------------------------------------------------
+ID: GEN-ACAD-T10-kz4bc1
+Skill ID: NEW-3-AccommodationsModifications
+Question Stem: A student with a sensory impairment needs extended time on tests. This is an example of:
+Correct Answer: A (A: An accommodation (changes how the student accesses the curriculum))
+--------------------------------------------------------------------------------
+ID: GEN-SWP-T10-fcbekl
+Skill ID: NEW-5-EducationalPolicies
+Question Stem: A school is considering grade retention based on immaturity for students who show different ability levels. What should the school psychologist recommend?
+Correct Answer: A (A: Question the effectiveness of retention and consider evidence-based alternatives)
+--------------------------------------------------------------------------------
+ID: GEN-SWP-T10-8t4pc3
+Skill ID: NEW-5-EducationalPolicies
+Question Stem: A school is considering ability tracking for students who are immature for their grade. What should the school psychologist recommend?
+Correct Answer: B (B: Consider the limitations of tracking and ensure equal access to opportunities)
+--------------------------------------------------------------------------------
+ID: GEN-CC-T09-tsziox
+Skill ID: NEW-2-FamilyCollaboration
+Question Stem: A school psychologist is working with a family from a diverse cultural background who expresses concerns about the school's approach. What is the most effective strategy?
+Correct Answer: B (B: Build trust by understanding family values and adapting communication styles)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T16-pvuz86
+Skill ID: NEW-4-MentalHealthImpact
+Question Stem: A student experiencing depression is likely to show which impact on school engagement?
+Correct Answer: D (D: Withdrawal, decreased participation, and reduced school engagement)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T16-6cqovq
+Skill ID: NEW-4-MentalHealthImpact
+Question Stem: A student experiencing trauma is likely to show which impact on school engagement?
+Correct Answer: D (D: Impact on academic performance, engagement, and learning)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T16-uidh0z
+Skill ID: NEW-4-MentalHealthImpact
+Question Stem: A student experiencing anxiety is likely to show which impact on learning?
+Correct Answer: D (D: Attention difficulties, memory problems, and learning challenges)
+--------------------------------------------------------------------------------
+ID: GEN-ACAD-T11-y0z9i1
+Skill ID: NEW-3-AcademicProgressFactors
+Question Stem: A student's academic progress is influenced by environmental factors. Which factor is most likely to impact achievement?
+Correct Answer: C (C: Home environment and community resources)
+--------------------------------------------------------------------------------
+ID: GEN-PC-T09-rpmeb0
+Skill ID: NEW-6-SchoolClimateMeasurement
+Question Stem: To measure school climate effectively, a school psychologist should:
+Correct Answer: B (B: Collect data on multiple dimensions including engagement, safety, and environment using systematic methods)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T15-ozvb5k
+Skill ID: NEW-4-DevelopmentalInterventions
+Question Stem: A school psychologist is planning an intervention for a high school student who struggles with social skills. Which approach is most developmentally appropriate?
+Correct Answer: B (B: Abstract, discussion-based approaches with longer sessions and peer-focused activities)
+--------------------------------------------------------------------------------
+ID: GEN-MBH-T03-f3ag1a
+Skill ID: MBH-S03
+Question Stem: A student's problem behavior serves an escape function. What is essential for a replacement behavior?
+Correct Answer: A (A: It must serve the same function (escape) as the problem behavior)
+--------------------------------------------------------------------------------
+ID: GEN-FSC-T08-q8hn0e
+Skill ID: NEW-7-InteragencyCollaboration
+Question Stem: A school psychologist is developing a transition plan for a ninth-grade student with autism spectrum disorder. Which interagency collaboration is most critical?
+Correct Answer: D (D: Coordination with postsecondary education support services and employment agencies)
 --------------------------------------------------------------------------------
 
 Health check complete!

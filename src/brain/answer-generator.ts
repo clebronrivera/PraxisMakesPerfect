@@ -58,15 +58,18 @@ export function generateDistractor(
       return generateCorrelationAsCausationDistractor(correctAnswer, context);
     
     case "function-confusion":
+      if (!isBehavioralDomain(context.template.skillId)) return null;
       return generateFunctionConfusionDistractor(correctAnswer, context);
     
     case "case-confusion":
+      if (!isLegalDomain(context.template.skillId)) return null;
       return generateCaseConfusionDistractor(correctAnswer, context);
     
     case "sequence-error":
       return generateSequenceErrorDistractor(correctAnswer, context);
     
     case "function-mismatch":
+      if (!isBehavioralDomain(context.template.skillId)) return null;
       return generateFunctionMismatchDistractor(correctAnswer, context);
     
     case "model-confusion":
@@ -100,6 +103,7 @@ export function generateDistractor(
       return generateAbsoluteRulesDistractor(correctAnswer, context);
     
     case "law-confusion":
+      if (!isLegalDomain(context.template.skillId)) return null;
       return generateLawConfusionDistractor(correctAnswer, context);
     
     case "no-access":
@@ -143,26 +147,26 @@ function truncateDistractor(text: string, maxLength: number = 150): string {
 
 /**
  * Balances distractor length relative to correct answer
+ * Returns null if distractor should be rejected (too short to fix)
  * Target: distractors within 50-150% of correct answer length
  */
-function balanceDistractorLength(text: string, correctAnswer: string): string {
+function balanceDistractorLength(text: string, correctAnswer: string): string | null {
   const targetLength = correctAnswer.length;
-  const minLength = Math.max(10, Math.floor(targetLength * 0.5));
+  const minLength = Math.max(20, Math.floor(targetLength * 0.5));
   const maxLength = Math.min(150, Math.floor(targetLength * 1.5));
   const currentLength = text.length;
 
-  // If within acceptable range, return as-is
-  if (currentLength >= minLength && currentLength <= maxLength) {
-    return text;
+  // Reject single words or very short distractors that can't be expanded
+  if (currentLength < 15 || text.split(' ').length <= 2) {
+    // Exception for known short valid answers (acronyms, terms)
+    const validShortTerms = ['FERPA', 'IDEA', 'ADA', 'FAPE', 'IEP', 'BIP', 'FBA', 'RTI', 'MTSS'];
+    if (!validShortTerms.some(term => text.toUpperCase().includes(term))) {
+      return null; // Signal to try another distractor
+    }
   }
 
-  // If too short, try to expand (but this is harder, so just ensure minimum)
-  if (currentLength < minLength) {
-    // For very short distractors, return as-is (they might be acronyms like "FERPA")
-    if (currentLength < 10) {
-      return text;
-    }
-    // Otherwise, try to add context if possible
+  // If within acceptable range, return as-is
+  if (currentLength >= minLength && currentLength <= maxLength) {
     return text;
   }
 
@@ -171,7 +175,273 @@ function balanceDistractorLength(text: string, correctAnswer: string): string {
     return truncateDistractor(text, maxLength);
   }
 
+  // If too short but not rejectable, return as-is
   return text;
+}
+
+// Banned terms by domain (from banned-terms-check.ts)
+const BANNED_TERMS: Record<string, string[]> = {
+  consultation: [
+    'Tarasoff', 'IDEA', 'Mills', 'Larry P.', 'Lau', 'FERPA', 
+    'Section 504', ' v. ', 'Rowley', 'PARC', 'FAPE', 'due process', 'IEP'
+  ],
+  therapy: [
+    'Tarasoff', 'Mills', 'Larry P.', 'Lau', ' v. ', 'IDEA', 'FERPA'
+  ],
+  intervention: [
+    'Tarasoff', 'Mills', 'Larry P.', ' v. ', 'IDEA'
+  ],
+  fba: [
+    'Tarasoff', 'IDEA', 'Mills', ' v. ', 'Larry P.', 'Lau'
+  ],
+  assessment: [
+    'Tarasoff', ' v. '
+  ],
+  psychometric: [
+    'Tarasoff', ' v. '
+  ],
+  legal: [] // Legal domain can have legal terms, so no bans
+};
+
+// Map skills to their expected domains (from audit script)
+const SKILL_TO_DOMAIN_MAP: Record<string, string[]> = {
+  'DBDM-S01': ['psychometric'],
+  'DBDM-S02': ['psychometric'],
+  'DBDM-S03': ['psychometric'],
+  'DBDM-S04': ['psychometric'],
+  'DBDM-S05': ['assessment', 'psychometric'],
+  'DBDM-S06': ['assessment'],
+  'DBDM-S07': ['assessment'],
+  'DBDM-S08': ['assessment'],
+  'DBDM-S09': ['assessment'],
+  'DBDM-S10': ['assessment'],
+  'NEW-1-BackgroundInformation': ['assessment'],
+  'NEW-1-DynamicAssessment': ['assessment'],
+  'NEW-1-IQvsAchievement': ['psychometric', 'assessment'],
+  'NEW-1-LowIncidenceExceptionalities': ['assessment'],
+  'NEW-1-PerformanceAssessment': ['assessment'],
+  'NEW-1-ProblemSolvingFramework': ['intervention'],
+  'CC-S01': ['consultation'],
+  'CC-S03': ['consultation'],
+  'NEW-2-ConsultationProcess': ['consultation'],
+  'NEW-2-ProblemSolvingSteps': ['consultation'],
+  'NEW-2-CommunicationStrategies': ['consultation'],
+  'NEW-2-FamilyCollaboration': ['consultation'],
+  'NEW-2-CommunityAgencies': ['consultation'],
+  'ACAD-S01': ['intervention'],
+  'ACAD-S02': ['intervention'],
+  'ACAD-S03': ['intervention'],
+  'ACAD-S04': ['intervention'],
+  'ACAD-S05': ['assessment', 'intervention'],
+  'NEW-3-AccommodationsModifications': ['intervention'],
+  'NEW-3-AcademicProgressFactors': ['intervention'],
+  'NEW-3-BioCulturalInfluences': ['intervention'],
+  'NEW-3-InstructionalHierarchy': ['intervention'],
+  'NEW-3-MetacognitiveStrategies': ['intervention'],
+  'MBH-S01': ['fba'],
+  'MBH-S02': ['fba'],
+  'MBH-S03': ['fba'],
+  'MBH-S04': ['therapy'],
+  'MBH-S05': ['therapy'],
+  'MBH-S06': ['intervention', 'fba'],
+  'NEW-4-Psychopathology': ['therapy'],
+  'NEW-4-DevelopmentalInterventions': ['therapy'],
+  'NEW-4-MentalHealthImpact': ['therapy'],
+  'NEW-4-GroupCounseling': ['therapy'],
+  'SWP-S01': ['intervention'],
+  'SWP-S02': ['intervention'],
+  'SWP-S03': ['intervention'],
+  'SWP-S04': ['intervention'],
+  'NEW-5-EducationalPolicies': ['legal', 'assessment'],
+  'NEW-5-EBPImportance': ['intervention'],
+  'NEW-5-SchoolClimate': ['intervention'],
+  'RES-S01': ['intervention'],
+  'RES-S02': ['intervention'],
+  'RES-S03': ['intervention'],
+  'RES-S04': ['intervention'],
+  'RES-S05': ['intervention'],
+  'RES-S06': ['intervention'],
+  'NEW-6-BullyingPrevention': ['intervention'],
+  'NEW-6-TraumaInformed': ['intervention'],
+  'NEW-6-SchoolClimateMeasurement': ['assessment', 'intervention'],
+  'FSC-S01': ['consultation'],
+  'FSC-S02': ['consultation'],
+  'FSC-S03': ['therapy'],
+  'FSC-S04': ['consultation'],
+  'NEW-7-BarriersToEngagement': ['consultation'],
+  'NEW-7-FamilySystems': ['consultation'],
+  'NEW-7-InteragencyCollaboration': ['consultation'],
+  'NEW-7-ParentingInterventions': ['consultation', 'intervention'],
+  'DIV-S01': ['assessment'],
+  'DIV-S02': ['assessment'],
+  'DIV-S03': ['psychometric'],
+  'DIV-S04': ['assessment'],
+  'DIV-S05': ['assessment'],
+  'DIV-S06': ['assessment'],
+  'DIV-S07': ['intervention'],
+  'NEW-8-Acculturation': ['assessment'],
+  'NEW-8-LanguageAcquisition': ['assessment'],
+  'NEW-8-SocialJustice': ['legal'],
+  'NEW-9-DescriptiveStats': ['psychometric'],
+  'NEW-9-ValidityThreats': ['psychometric'],
+  'NEW-9-StatisticalTests': ['psychometric'],
+  'NEW-9-Variables': ['psychometric'],
+  'NEW-9-ProgramEvaluation': ['assessment'],
+  'NEW-9-ImplementationFidelity': ['intervention'],
+  'LEG-S01': ['legal'],
+  'LEG-S02': ['legal'],
+  'LEG-S03': ['legal'],
+  'LEG-S04': ['legal'],
+  'LEG-S05': ['legal'],
+  'LEG-S06': ['legal'],
+  'LEG-S07': ['legal'],
+  'PC-S01': ['assessment'],
+  'PC-S02': ['assessment'],
+  'PC-S03': ['legal'],
+  'PC-S04': ['intervention'],
+  'PC-S05': ['legal'],
+  'NEW-10-EducationLaw': ['legal'],
+  'NEW-10-EthicalProblemSolving': ['legal'],
+  'NEW-10-RecordKeeping': ['legal'],
+  'NEW-10-TestSecurity': ['legal'],
+  'NEW-10-Supervision': ['legal'],
+  'NEW-10-ProfessionalGrowth': ['legal'],
+};
+
+// Domain-specific distractor pools - ensures distractors match question domain
+const DOMAIN_DISTRACTOR_POOLS: Record<string, string[]> = {
+  consultation: [
+    "Implementing the intervention immediately without baseline data or consultation",
+    "Focusing solely on the student without seeking teacher input or collaboration",
+    "Making decisions unilaterally without collaboration or family partnership",
+    "Skipping the entry and contracting phase to move directly to intervention",
+    "Using a one-size-fits-all approach without considering cultural context",
+    "Prescribing solutions before understanding the problem or building rapport",
+    "Providing recommendations without observing the classroom environment",
+    "Ending consultation after providing a single recommendation"
+  ],
+  therapy: [
+    "Focusing only on academic performance without addressing emotional needs",
+    "Using punishment-based approaches without understanding underlying causes",
+    "Applying adult diagnostic criteria without considering developmental variations",
+    "Ignoring cultural factors and family context in treatment planning",
+    "Using a single intervention approach without considering individual needs",
+    "Implementing interventions without understanding function or maintaining factors",
+    "Providing therapy without establishing rapport or treatment goals",
+    "Using techniques inappropriate for the student's developmental level"
+  ],
+  fba: [
+    "Implementing intervention without conducting functional assessment first",
+    "Selecting replacement behavior that serves a different function",
+    "Focusing on topography rather than function of behavior",
+    "Using punishment without teaching alternative behaviors",
+    "Ignoring setting events and antecedent conditions",
+    "Assuming behavior is attention-maintained without data",
+    "Collecting frequency data when duration would be more appropriate",
+    "Defining target behavior in vague or subjective terms"
+  ],
+  assessment: [
+    "Using curriculum-based measurement for comprehensive evaluation",
+    "Using a screening tool to determine eligibility",
+    "Using an individual assessment for universal screening",
+    "Using progress monitoring tools for program evaluation",
+    "Recommend services without analyzing progress monitoring data",
+    "Selecting assessment tools based on convenience rather than purpose",
+    "Interpreting results without considering the referral question"
+  ],
+  psychometric: [
+    "Interpreting scores without considering standard error of measurement",
+    "Comparing scores from different norm groups directly",
+    "Using a single score to make high-stakes decisions",
+    "Ignoring confidence intervals in score interpretation",
+    "Treating subtest scores as more reliable than composite scores",
+    "Assuming test scores represent fixed traits",
+    "Ignoring practice effects in repeated testing"
+  ],
+  intervention: [
+    "Implementing intervention without baseline data",
+    "Selecting intervention based on availability rather than evidence",
+    "Moving to more intensive intervention without trying less intensive first",
+    "Providing intervention without progress monitoring",
+    "Using the same intervention for all students regardless of need",
+    "Discontinuing intervention immediately after seeing improvement",
+    "Implementing multiple interventions simultaneously without rationale"
+  ],
+  legal: [
+    "Making decisions without considering procedural requirements",
+    "Exceeding professional scope of practice",
+    "Sharing information without proper consent",
+    "Failing to document decision-making process",
+    "Ignoring timeline requirements for evaluations",
+    "Making placement decisions without team input",
+    "Denying services based on disability category alone"
+  ]
+};
+
+// Get domain-appropriate distractors for a skill
+function getDomainDistractors(skillId: string): string[] {
+  const domains = SKILL_TO_DOMAIN_MAP[skillId] || [];
+  const distractors: string[] = [];
+  
+  for (const domain of domains) {
+    const pool = DOMAIN_DISTRACTOR_POOLS[domain];
+    if (pool) {
+      distractors.push(...pool);
+    }
+  }
+  
+  // Fallback to generic intervention distractors if no domain match
+  if (distractors.length === 0) {
+    return DOMAIN_DISTRACTOR_POOLS['intervention'] || [];
+  }
+  
+  return distractors;
+}
+
+// Check if skill is in legal domain
+function isLegalDomain(skillId: string): boolean {
+  if (!skillId) return false;
+  return skillId.startsWith('LEG-') || 
+         skillId.startsWith('NEW-10-') || 
+         skillId === 'PC-S03' || 
+         skillId === 'PC-S05' ||
+         skillId === 'NEW-8-SocialJustice';
+}
+
+// Check if skill is in behavioral/FBA domain
+function isBehavioralDomain(skillId: string): boolean {
+  if (!skillId) return false;
+  return skillId.startsWith('MBH-') || 
+         skillId === 'NEW-4-GroupCounseling' ||
+         skillId === 'NEW-4-DevelopmentalInterventions';
+}
+
+// Check if skill is in consultation domain
+function isConsultationDomain(skillId: string): boolean {
+  if (!skillId) return false;
+  return skillId.startsWith('CC-') || 
+         skillId.startsWith('FSC-') ||
+         skillId.startsWith('NEW-2-') ||
+         skillId.startsWith('NEW-7-');
+}
+
+/**
+ * Check if a distractor contains banned terms for the given skill's domains
+ */
+function containsBannedTerms(text: string, skillId: string): boolean {
+  const expectedDomains = SKILL_TO_DOMAIN_MAP[skillId] || [];
+  const textLower = text.toLowerCase();
+  
+  for (const domain of expectedDomains) {
+    const bannedTerms = BANNED_TERMS[domain] || [];
+    for (const bannedTerm of bannedTerms) {
+      if (textLower.includes(bannedTerm.toLowerCase())) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
 }
 
 /**
@@ -193,7 +463,7 @@ export function generateDistractors(
 
   const distractors: Distractor[] = [];
   const usedPatterns = new Set<PatternId>();
-  const maxAttempts = 50; // Prevent infinite loops
+  const maxAttempts = 100; // Increased to account for filtering
   let attempts = 0;
 
   // Try to generate distractors using allowed patterns first
@@ -215,8 +485,17 @@ export function generateDistractors(
     attempts++;
     const distractor = generateDistractor(correctAnswer, pattern, context);
     if (distractor && !distractors.some(d => d.text.toLowerCase().trim() === distractor.text.toLowerCase().trim())) {
-      // Balance length relative to correct answer
-      distractor.text = balanceDistractorLength(distractor.text, correctAnswer);
+      // Filter out banned terms
+      if (containsBannedTerms(distractor.text, template.skillId)) {
+        continue;
+      }
+      
+      // Balance length relative to correct answer - null means reject
+      const balancedText = balanceDistractorLength(distractor.text, correctAnswer);
+      if (balancedText === null) {
+        continue; // Skip this distractor, try another
+      }
+      distractor.text = balancedText;
       
       // Final length check - truncate if still too long
       if (distractor.text.length > 150) {
@@ -237,8 +516,17 @@ export function generateDistractors(
       attempts++;
       const distractor = generateDistractor(correctAnswer, pattern, context);
       if (distractor && !distractors.some(d => d.text.toLowerCase().trim() === distractor.text.toLowerCase().trim())) {
-        // Balance length relative to correct answer
-        distractor.text = balanceDistractorLength(distractor.text, correctAnswer);
+        // Filter out banned terms
+        if (containsBannedTerms(distractor.text, template.skillId)) {
+          continue;
+        }
+        
+        // Balance length relative to correct answer - null means reject
+        const balancedText = balanceDistractorLength(distractor.text, correctAnswer);
+        if (balancedText === null) {
+          continue; // Skip this distractor, try another
+        }
+        distractor.text = balancedText;
         
         // Final length check
         if (distractor.text.length > 150) {
@@ -314,27 +602,67 @@ function generatePrematureActionDistractor(
   correctAnswer: string,
   context: AnswerGenerationContext
 ): Distractor | null {
-  // If correct answer involves assessment/data review, suggest an action instead
-  if (correctAnswer.toLowerCase().includes("review") ||
-      correctAnswer.toLowerCase().includes("analyze") ||
-      correctAnswer.toLowerCase().includes("assess") ||
-      correctAnswer.toLowerCase().includes("collect")) {
-    
-    const actions = [
-      "Contact the student's parents immediately",
-      "Implement an intervention program",
+  const { template } = context;
+  const skillId = template.skillId;
+  
+  // Only generate if correct answer involves assessment/data review
+  const assessmentKeywords = ['review', 'analyze', 'assess', 'collect', 'gather', 'examine', 'evaluate', 'observe'];
+  const hasAssessmentKeyword = assessmentKeywords.some(kw => 
+    correctAnswer.toLowerCase().includes(kw)
+  );
+  
+  if (!hasAssessmentKeyword) return null;
+  
+  // Domain-specific premature actions
+  const domainSpecificActions: Record<string, string[]> = {
+    consultation: [
+      "Immediately provide intervention recommendations to the teacher",
+      "Begin implementing changes before completing problem identification",
+      "Schedule a follow-up meeting before gathering baseline data"
+    ],
+    therapy: [
+      "Begin counseling sessions before completing intake assessment",
+      "Implement treatment protocol before establishing treatment goals",
+      "Start group therapy before conducting individual screening"
+    ],
+    fba: [
+      "Implement behavior intervention before identifying function",
+      "Begin extinction procedure before collecting baseline data",
+      "Select replacement behavior before completing functional assessment"
+    ],
+    assessment: [
+      "Contact the student's parents immediately with recommendations",
       "Refer the student for special education evaluation",
-      "Begin counseling sessions with the student",
-      "Schedule a meeting with school administration"
-    ];
-
-    return {
-      text: actions[Math.floor(Math.random() * actions.length)],
-      explanation: "This answer skips the crucial first step of assessment or data collection. School psychologists must understand the problem before taking action.",
-      patternId: "premature-action"
-    };
+      "Begin intervention program before completing assessment"
+    ],
+    intervention: [
+      "Implement Tier 3 intervention before trying Tier 2",
+      "Begin intensive support before universal screening",
+      "Start specialized services before documenting Tier 1 response"
+    ]
+  };
+  
+  // Get domain(s) for this skill
+  const domains = SKILL_TO_DOMAIN_MAP[skillId] || ['assessment'];
+  
+  // Collect applicable actions
+  let applicable: string[] = [];
+  for (const domain of domains) {
+    if (domainSpecificActions[domain]) {
+      applicable.push(...domainSpecificActions[domain]);
+    }
   }
-  return null;
+  
+  // Fallback
+  if (applicable.length === 0) {
+    applicable = domainSpecificActions['assessment'];
+  }
+  
+  return {
+    text: applicable[Math.floor(Math.random() * applicable.length)],
+    explanation: "This answer skips the crucial first step of assessment or data collection. School psychologists must understand the problem before taking action.",
+    patternId: "premature-action"
+  };
 }
 
 function generateRoleConfusionDistractor(
@@ -390,6 +718,61 @@ function generateSimilarConceptDistractor(
     }
   }
   
+  // Domain-specific distractors based on skillId
+  const skillId = template.skillId;
+  
+  // Consultation domain (Domain 2) - CC-T09, CC-T10, etc.
+  if (skillId?.startsWith('CC-') || skillId?.startsWith('NEW-2-') || skillId?.startsWith('FSC-')) {
+    const consultationDistractors = [
+      "Implementing the intervention immediately without baseline data or consultation",
+      "Focusing solely on the student without seeking teacher input or collaboration",
+      "Prescribing solutions before understanding the problem or building rapport",
+      "Skipping the entry and contracting phase to move directly to intervention",
+      "Collecting data before establishing rapport and understanding family values",
+      "Using a one-size-fits-all approach without considering cultural or contextual factors",
+      "Making decisions unilaterally without collaboration or family partnership",
+      "Rushing to action before problem identification and relationship building"
+    ];
+    
+    // Filter out if matches correct answer
+    const filtered = consultationDistractors.filter(d => 
+      d.toLowerCase() !== correctAnswer.toLowerCase()
+    );
+    
+    if (filtered.length > 0) {
+      return {
+        text: filtered[Math.floor(Math.random() * filtered.length)],
+        explanation: "While this approach may seem related, it doesn't match the specific consultation context described in the question.",
+        patternId: "similar-concept"
+      };
+    }
+  }
+  
+  // Therapy/Mental Health domain (Domain 4) - MBH-T16, etc.
+  if (skillId?.startsWith('MBH-') || skillId?.startsWith('NEW-4-')) {
+    const therapyDistractors = [
+      "Focusing only on academic performance without addressing emotional or social needs",
+      "Using punishment-based approaches to address behavior without understanding underlying causes",
+      "Implementing interventions without understanding the underlying function or maintaining factors",
+      "Applying adult diagnostic criteria without considering developmental variations and age-appropriate presentations",
+      "Relying solely on medication without behavioral supports or environmental modifications",
+      "Ignoring cultural factors and family context in treatment planning and intervention design",
+      "Using a single intervention approach without considering individual needs or response patterns"
+    ];
+    
+    const filtered = therapyDistractors.filter(d => 
+      d.toLowerCase() !== correctAnswer.toLowerCase()
+    );
+    
+    if (filtered.length > 0) {
+      return {
+        text: filtered[Math.floor(Math.random() * filtered.length)],
+        explanation: "While this approach may seem related, it doesn't match the specific mental health context described in the question.",
+        patternId: "similar-concept"
+      };
+    }
+  }
+  
   // Generate related but incorrect concepts based on the correct answer
   const conceptMap: Record<string, string[]> = {
     "interobserver agreement": ["Test-retest reliability", "Internal consistency", "Interrater reliability"],
@@ -423,16 +806,63 @@ function generateDataIgnoranceDistractor(
   correctAnswer: string,
   context: AnswerGenerationContext
 ): Distractor | null {
-  const dataIgnorantActions = [
-    "Make a recommendation based on teacher observations alone",
-    "Implement an intervention without reviewing assessment data",
-    "Decide on placement without examining evaluation results",
-    "Make a determination based solely on parent report",
-    "Recommend services without analyzing progress monitoring data"
-  ];
+  const { template } = context;
+  const skillId = template.skillId;
+  
+  // Domain-specific data ignorance examples
+  const domainSpecificIgnorance: Record<string, string[]> = {
+    consultation: [
+      "Make a recommendation based on teacher report alone without observation",
+      "Implement an intervention without gathering baseline data first",
+      "Conclude consultation after a single meeting without follow-up data"
+    ],
+    therapy: [
+      "Select treatment approach without conducting intake assessment",
+      "Determine diagnosis based on presenting complaint alone",
+      "Discharge from services without measuring treatment outcomes"
+    ],
+    fba: [
+      "Identify behavior function based on assumption rather than data",
+      "Select replacement behavior without analyzing antecedent patterns",
+      "Develop BIP without sufficient baseline observation data"
+    ],
+    assessment: [
+      "Make a recommendation based on teacher observations alone",
+      "Decide on placement without examining evaluation results",
+      "Recommend services without analyzing progress monitoring data"
+    ],
+    intervention: [
+      "Implement an intervention without reviewing assessment data",
+      "Select intervention tier without screening data",
+      "Discontinue services without progress monitoring results"
+    ]
+  };
+  
+  // Get domain(s) for this skill
+  const domains = SKILL_TO_DOMAIN_MAP[skillId] || ['assessment'];
+  
+  // Collect applicable distractors
+  let applicable: string[] = [];
+  for (const domain of domains) {
+    if (domainSpecificIgnorance[domain]) {
+      applicable.push(...domainSpecificIgnorance[domain]);
+    }
+  }
+  
+  // Fallback if no domain match
+  if (applicable.length === 0) {
+    applicable = domainSpecificIgnorance['assessment'];
+  }
+  
+  // Filter out similar to correct answer
+  const filtered = applicable.filter(d => 
+    d.toLowerCase() !== correctAnswer.toLowerCase()
+  );
+  
+  if (filtered.length === 0) return null;
 
   return {
-    text: dataIgnorantActions[Math.floor(Math.random() * dataIgnorantActions.length)],
+    text: filtered[Math.floor(Math.random() * filtered.length)],
     explanation: "School psychologists practice data-based decision making. Decisions should be informed by reviewing and analyzing relevant data first.",
     patternId: "data-ignorance"
   };
@@ -467,17 +897,25 @@ function generateContextMismatchDistractor(
   correctAnswer: string,
   context: AnswerGenerationContext
 ): Distractor | null {
-  // Use correct approach but wrong context
-  const mismatchedContexts = [
-    "Use curriculum-based measurement for comprehensive evaluation",
-    "Use a screening tool to determine eligibility",
-    "Use an individual assessment for universal screening",
-    "Use progress monitoring tools for program evaluation",
-    "Use a diagnostic assessment for weekly monitoring"
-  ];
-
+  const { template } = context;
+  const skillId = template.skillId;
+  
+  // Get domain-appropriate distractors
+  const domainDistractors = getDomainDistractors(skillId);
+  
+  // Filter out anything too similar to correct answer
+  const filtered = domainDistractors.filter(d => {
+    const dLower = d.toLowerCase();
+    const correctLower = correctAnswer.toLowerCase();
+    return dLower !== correctLower &&
+           !dLower.includes(correctLower.substring(0, 20)) &&
+           !correctLower.includes(dLower.substring(0, 20));
+  });
+  
+  if (filtered.length === 0) return null;
+  
   return {
-    text: mismatchedContexts[Math.floor(Math.random() * mismatchedContexts.length)],
+    text: filtered[Math.floor(Math.random() * filtered.length)],
     explanation: "While this approach is valid in general, it doesn't match the specific context or purpose described in this question.",
     patternId: "context-mismatch"
   };
@@ -556,6 +994,18 @@ function generateCaseConfusionDistractor(
   correctAnswer: string,
   context: AnswerGenerationContext
 ): Distractor | null {
+  const { template } = context;
+  const skillId = template.skillId;
+  
+  // Only use case-confusion for legal/ethical domains (Domain 10, LEG-*, PC-S03, NEW-10-*)
+  if (!skillId?.startsWith('LEG-') && 
+      !skillId?.startsWith('PC-S03') && 
+      !skillId?.startsWith('NEW-10-') &&
+      !skillId?.startsWith('NEW-8-SocialJustice')) {
+    // Don't use legal cases for non-legal questions
+    return null;
+  }
+  
   const cases = ["Tarasoff", "Larry P.", "Rowley", "Brown v. Board", "Endrew F."];
   const wrongCase = cases.find(c => c !== correctAnswer) || cases[0];
   
@@ -714,6 +1164,19 @@ function generateLawConfusionDistractor(
   correctAnswer: string,
   context: AnswerGenerationContext
 ): Distractor | null {
+  const { template } = context;
+  const skillId = template.skillId;
+  
+  // Only use law-confusion for legal/ethical domains (Domain 10, LEG-*, PC-S03, NEW-10-*)
+  if (!skillId?.startsWith('LEG-') && 
+      !skillId?.startsWith('PC-S03') && 
+      !skillId?.startsWith('PC-S05') &&
+      !skillId?.startsWith('NEW-10-') &&
+      !skillId?.startsWith('NEW-8-SocialJustice')) {
+    // Don't use legal laws for non-legal questions
+    return null;
+  }
+  
   const laws = ["IDEA", "Section 504", "FERPA", "ADA"];
   const wrongLaw = laws.find(l => !correctAnswer.includes(l)) || laws[0];
   
