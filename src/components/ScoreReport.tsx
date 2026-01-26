@@ -1,4 +1,5 @@
-import { Trophy, Clock, Target, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, BookOpen, Zap, Layers } from 'lucide-react';
+import { useState } from 'react';
+import { Trophy, Clock, Target, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, BookOpen, Zap, Layers, RotateCcw } from 'lucide-react';
 import { NASP_DOMAINS } from '../../knowledge-base';
 import { UserResponse } from '../brain/weakness-detector';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
@@ -44,6 +45,66 @@ export default function ScoreReport({
 }: ScoreReportProps) {
   const [showDomainSelection, setShowDomainSelection] = useState(false);
   const [selectedDomains, setSelectedDomains] = useState<number[]>([]);
+
+  // Safety check: Handle missing or corrupted data
+  if (!responses || responses.length === 0 || !questions || questions.length === 0) {
+    // Try to recover from session storage if available
+    const tryRecalculate = () => {
+      const { loadSession } = require('../utils/sessionStorage');
+      const session = loadSession();
+      if (session && session.responses && session.responses.length > 0) {
+        // If we have raw responses, we could potentially recalculate
+        // For now, just show recovery UI
+        window.location.reload();
+      } else {
+        // No recovery possible, reset and go home
+        const { clearSession } = require('../utils/sessionStorage');
+        clearSession();
+        onGoHome();
+      }
+    };
+
+    return (
+      <div className="space-y-8">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-red-400" />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-slate-100">Results Missing or Corrupted</h2>
+            <p className="text-slate-400">
+              We couldn't find your assessment results. This may happen if you refreshed the page or your session expired.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3 pt-4">
+            <button
+              onClick={tryRecalculate}
+              className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Try to Recalculate
+            </button>
+            <button
+              onClick={() => {
+                const { clearSession } = require('../utils/sessionStorage');
+                clearSession();
+                onGoHome();
+              }}
+              className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Home className="w-4 h-4" />
+              Reset Attempt & Go Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Calculate overall score
   const totalQuestions = responses.length;
   const correctAnswers = responses.filter(r => r.isCorrect).length;

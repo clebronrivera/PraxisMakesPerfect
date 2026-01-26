@@ -70,10 +70,29 @@ export function useFirebaseProgress() {
     // Real-time listener for profile changes
     const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
-        const data = docSnap.data() as UserProfile;
+        const data = docSnap.data() as Partial<UserProfile>;
+        // Apply safe defaults for all fields to prevent undefined crashes
         setProfile({
           ...defaultProfile,
-          ...data
+          ...data,
+          // Ensure arrays are always arrays (never undefined)
+          practiceHistory: data.practiceHistory ?? [],
+          generatedQuestionsSeen: data.generatedQuestionsSeen ?? [],
+          weakestDomains: data.weakestDomains ?? [],
+          factualGaps: data.factualGaps ?? [],
+          errorPatterns: data.errorPatterns ?? [],
+          // Ensure objects are always objects (never undefined)
+          domainScores: data.domainScores ?? {},
+          skillScores: data.skillScores ?? {},
+          flaggedQuestions: data.flaggedQuestions ?? {},
+          distractorErrors: data.distractorErrors ?? {},
+          skillDistractorErrors: data.skillDistractorErrors ?? {},
+          // Ensure booleans have defaults
+          preAssessmentComplete: data.preAssessmentComplete ?? false,
+          fullAssessmentComplete: data.fullAssessmentComplete ?? false,
+          // Ensure numbers have defaults
+          totalQuestionsSeen: data.totalQuestionsSeen ?? 0,
+          streak: data.streak ?? 0
         });
       } else {
         // No profile exists yet, use default
@@ -207,11 +226,25 @@ export function useFirebaseProgress() {
         localProfile.generatedQuestionsSeen = [];
       }
       
-      // Ensure all required fields exist
+      // Ensure all required fields exist with safe defaults
       const migratedProfile: UserProfile = {
         ...defaultProfile,
         ...localProfile,
-        generatedQuestionsSeen: localProfile.generatedQuestionsSeen || []
+        // Apply safe defaults for all fields
+        practiceHistory: localProfile.practiceHistory ?? [],
+        generatedQuestionsSeen: localProfile.generatedQuestionsSeen || [],
+        weakestDomains: localProfile.weakestDomains ?? [],
+        factualGaps: localProfile.factualGaps ?? [],
+        errorPatterns: localProfile.errorPatterns ?? [],
+        domainScores: localProfile.domainScores ?? {},
+        skillScores: localProfile.skillScores ?? {},
+        flaggedQuestions: localProfile.flaggedQuestions ?? {},
+        distractorErrors: localProfile.distractorErrors ?? {},
+        skillDistractorErrors: localProfile.skillDistractorErrors ?? {},
+        preAssessmentComplete: localProfile.preAssessmentComplete ?? false,
+        fullAssessmentComplete: localProfile.fullAssessmentComplete ?? false,
+        totalQuestionsSeen: localProfile.totalQuestionsSeen ?? 0,
+        streak: localProfile.streak ?? 0
       };
       
       // Save to Firestore

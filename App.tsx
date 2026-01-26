@@ -17,6 +17,7 @@ import ScoreReport from './src/components/ScoreReport';
 import PracticeSession from './src/components/PracticeSession';
 import DomainTiles from './src/components/DomainTiles';
 import TeachMode from './src/components/TeachMode';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 // Import hooks
 import { useFirebaseProgress } from './src/hooks/useFirebaseProgress';
@@ -219,6 +220,13 @@ function PraxisStudyAppContent() {
   }, [resetProgress]);
   
   const handlePreAssessmentComplete = useCallback((responses: UserResponse[]) => {
+    const questionCount = responses.length;
+    const correctCount = responses.filter(r => r.isCorrect).length;
+    const durationMs = assessmentStartTime > 0 ? Date.now() - assessmentStartTime : 0;
+    
+    // Temporary completion logging
+    console.log("PreAssessmentComplete", { questionCount, correctCount, durationMs });
+    
     const analysis = detectWeaknesses(responses, analyzedQuestions);
     updateProfile({
       preAssessmentComplete: true,
@@ -228,7 +236,7 @@ function PraxisStudyAppContent() {
     setLastAssessmentResponses(responses);
     setLastAssessmentType('pre-assessment');
     setMode('score-report');
-  }, [analyzedQuestions, profile.practiceHistory, updateProfile]);
+  }, [analyzedQuestions, profile.practiceHistory, updateProfile, assessmentStartTime]);
   
   const handleFullAssessmentComplete = useCallback((responses: UserResponse[]) => {
     const analysis = detectWeaknesses(responses, analyzedQuestions);
@@ -569,24 +577,50 @@ function PraxisStudyAppContent() {
         )}
         
         {/* SCORE REPORT MODE */}
-        {mode === 'score-report' && lastAssessmentResponses.length > 0 && (
-          <ScoreReport
-            responses={lastAssessmentResponses}
-            questions={lastAssessmentType === 'full-assessment' ? fullAssessmentQuestions : preAssessmentQuestions}
-            assessmentType={lastAssessmentType}
-            totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
-            onStartPractice={startPractice}
-            onRetakeAssessment={lastAssessmentType === 'full-assessment' ? () => startFullAssessment(undefined) : () => startPreAssessment(undefined)}
-            onGoHome={() => setMode('home')}
-            onStartTeachMode={(domains) => {
-              setTeachModeDomains(domains);
-              setMode('teach');
-            }}
-            onStartPracticeWithDomains={(domains) => {
-              setPracticeDomainFilter(domains[0] || null);
-              setMode('practice');
-            }}
-          />
+        {mode === 'score-report' && (
+          <ErrorBoundary>
+            {lastAssessmentResponses.length > 0 ? (
+              <ScoreReport
+                responses={lastAssessmentResponses}
+                questions={lastAssessmentType === 'full-assessment' ? fullAssessmentQuestions : preAssessmentQuestions}
+                assessmentType={lastAssessmentType}
+                totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
+                onStartPractice={startPractice}
+                onRetakeAssessment={lastAssessmentType === 'full-assessment' ? () => startFullAssessment(undefined) : () => startPreAssessment(undefined)}
+                onGoHome={() => setMode('home')}
+                onStartTeachMode={(domains) => {
+                  setTeachModeDomains(domains);
+                  setMode('teach');
+                }}
+                onStartPracticeWithDomains={(domains) => {
+                  setPracticeDomainFilter(domains[0] || null);
+                  setMode('practice');
+                }}
+              />
+            ) : (
+              <div className="space-y-8">
+                <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center space-y-6">
+                  <div className="flex justify-center">
+                    <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="w-8 h-8 text-red-400" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-bold text-slate-100">Results Missing or Corrupted</h2>
+                    <p className="text-slate-400">
+                      We couldn't find your assessment results. Please start a new assessment.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setMode('home')}
+                    className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Go Home
+                  </button>
+                </div>
+              </div>
+            )}
+          </ErrorBoundary>
         )}
         
         {/* PRACTICE MODE */}
