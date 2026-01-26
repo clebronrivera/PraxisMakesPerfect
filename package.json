@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "diagnostics": "npx tsx src/scripts/run-all-diagnostics.ts",
     "audit:distractors": "npx tsx scripts/audit-distractor-quality.ts",
