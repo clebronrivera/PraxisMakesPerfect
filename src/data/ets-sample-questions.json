@@ -1,0 +1,574 @@
+[
+  {
+    "id": "ETS_Q001",
+    "question": "A school psychologist has been asked to evaluate a third-grade student for a possible learning disability. The student's family reports that the native language at home is Portuguese and that the student is in the process of acquiring English. Best practice dictates that the minimum standard for classification is a discrepancy between general intellectual functioning and full-scale achievement found via assessment",
+    "choices": {
+      "A": "in the student's native language only",
+      "B": "in English only",
+      "C": "in both the student's native language and in English",
+      "D": "using standardized nonverbal tests"
+    },
+    "correct_answer": ["C"],
+    "rationale": "A learning disability must not be explained by contextual or other environmental factors. A lack of language acquisition would be just such an alternative hypothesis. Therefore, any hypothesized learning or language disability should be verified in both the student's primary language and the language of the school setting.",
+    "domain": 8,
+    "skillId": "DIV-S03",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q002",
+    "question": "Which of the following is a Tier 1 preventive strategy?",
+    "choices": {
+      "A": "Behaviorally focused parent-management training",
+      "B": "Environmentally designed crime deterrence",
+      "C": "Conflict de-escalation",
+      "D": "Student check-in/check-out meetings"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Environmentally designed crime deterrence is a universal intervention that focuses on the school environment to reduce opportunities for violence and is implemented at the school level. Therefore, it qualifies as a Tier 1 intervention.",
+    "domain": 5,
+    "skillId": "SWP-S03",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q003",
+    "question": "Which of the following best describes how a school psychologist can measure interfering behaviors during a functional behavioral assessment?",
+    "choices": {
+      "A": "The school psychologist receives documentation of the number of discipline referrals and in-school suspensions a student received.",
+      "B": "The school psychologist assumes that variables that are present during the observation of a problem behavior were also present during previous instances of the behavior.",
+      "C": "The school psychologist observes a student committing a problem behavior during reading instruction and assumes that reading instruction triggers the behavior.",
+      "D": "The school psychologist converts the number of physical fights recorded over a two-month period to the average number of fights per week."
+    },
+    "correct_answer": ["D"],
+    "rationale": "Converting the number of physical fights to a weekly average allows the school psychologist to quantitatively measure the interfering behavior.",
+    "domain": 4,
+    "skillId": "MBH-S01",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q004",
+    "question": "In which TWO of the following situations is a school psychologist's request to obtain a student's medical record with parent authorization most appropriate?",
+    "choices": {
+      "A": "The student reports fatigue and irritability that is not clearly related to a health condition.",
+      "B": "The student is newly enrolled in the school after moving to the district from out of state.",
+      "C": "The student's classroom teacher notes that the student goes to the school clinic for medication twice during the school day.",
+      "D": "The school psychologist has a personal interest in studying the etiology of autism spectrum disorder (ASD) and is examining the records of students who are receiving services for ASD."
+    },
+    "correct_answer": ["A", "C"],
+    "rationale": "Reviewing a record of the student's medical history could, in both cases, shed light on physical or health issues that may affect the student's learning and behavior.",
+    "domain": 10,
+    "skillId": "NEW-10-RecordKeeping",
+    "questionType": "select-two",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q005",
+    "question": "Lenny is a fifth-grade student who receives individual counseling as a related service to address poor frustration tolerance for challenging academic tasks and verbal and physical aggression when he is upset. His primary counseling goal is to identify and apply anger management strategies that are more appropriate and effective. Using a cognitive-behavioral approach, the school psychologist is most likely to do which of the following?",
+    "choices": {
+      "A": "Determine effective reinforcers to reward Lenny when he engages in alternatives to the target behaviors.",
+      "B": "Discuss the choices Lenny is making with him and help him to identify what he can do differently to get what he wants.",
+      "C": "Help Lenny identify the distortions in thinking that affect how he responds to challenging academic tasks.",
+      "D": "Describe Lenny's behaviors and reflect his feelings while he plays with toys or other available materials of his choosing."
+    },
+    "correct_answer": ["C"],
+    "rationale": "Identifying cognitive distortions that affect how Lenny responds to challenging academic tasks describes a common technique employed in a cognitive-behavioral approach.",
+    "domain": 4,
+    "skillId": "MBH-S05",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q006",
+    "question": "According to NASP, which of the following is an evidence-based framework for effectively integrating multiple systems and services to simultaneously address students' academic achievement, behavior, and social-emotional well-being?",
+    "choices": {
+      "A": "Positive behavioral interventions and supports (PBIS)",
+      "B": "Multitiered system of support (MTSS)",
+      "C": "Individuals with Disabilities Education Act (IDEA)",
+      "D": "Bully proofing your school (BPYS)"
+    },
+    "correct_answer": ["B"],
+    "rationale": "MTSS is the only option that integrates multiple systems and services to simultaneously address students' academic achievement, behavior, and social-emotional well-being.",
+    "domain": 5,
+    "skillId": "SWP-S01",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q007",
+    "question": "Viraag, a third-grade student, was referred by his teacher to the school psychologist due to concerns about his ability to perform expected grade-level math tasks. Which of the following statements best reflects the school psychologist's first step in addressing the concern?",
+    "choices": {
+      "A": "The school psychologist identifies a high-achieving student in the class who can serve as a peer tutor for Viraag.",
+      "B": "The school psychologist asks the teacher to identify the typical math performance of a different student in the class who performs at grade level.",
+      "C": "The school psychologist obtains permission to assess Viraag with an individually administered math diagnostic achievement test.",
+      "D": "The school psychologist selects a math-skills worksheet that can be administered to the entire class and that represents skills that the average student should successfully complete."
+    },
+    "correct_answer": ["D"],
+    "rationale": "Administering a worksheet to the whole class is relatively unobtrusive and will allow the school psychologist to assess how students in this class are performing to ensure there is no deficit in teaching.",
+    "domain": 1,
+    "skillId": "DBDM-S10",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q008",
+    "question": "Which of the following is the most accurate definition of primary intervention?",
+    "choices": {
+      "A": "Primary intervention is designed to meet the needs of most students within the school and is applied across all settings.",
+      "B": "Primary intervention addresses the needs of students who require additional assistance to prevent academic or social difficulties.",
+      "C": "Primary intervention is essential for students who present with significant risk factors and may require more specialized forms of assistance beyond the support provided in general education.",
+      "D": "Primary intervention is individualized to best meet the needs of students who require more specialized forms of assistance beyond the support provided in general education."
+    },
+    "correct_answer": ["A"],
+    "rationale": "Primary, or Tier 1, interventions are implemented in the general education setting or at the whole-school level and should meet the needs of the majority of students.",
+    "domain": 5,
+    "skillId": "SWP-S03",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q009",
+    "question": "Which of the following best describes how a school psychologist might assess social influences on a student's development of a mental health issue?",
+    "choices": {
+      "A": "Meeting with the parents to discuss the family's history of diagnosed mental health issues",
+      "B": "Asking the parents for the student's medical history",
+      "C": "Interviewing the teacher and parents about the student's peer relationships and reactions to success and failure",
+      "D": "Completing a social history to determine whether the student met all developmental milestones, within normal limits"
+    },
+    "correct_answer": ["C"],
+    "rationale": "Social influences include the student's relationships with peers and reactions to successes or failures in life. Understanding a student's peer connections is important, since social relationships serve as a protective factor against mental health disorders. Resiliency, or the lack of, in response to failures is predictive of present and future mental health as well.",
+    "domain": 4,
+    "skillId": "NEW-4-Psychopathology",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q010",
+    "question": "Which federal law specifically allows parents to choose to receive procedural safeguards electronically?",
+    "choices": {
+      "A": "Family Educational Rights and Privacy Act (FERPA)",
+      "B": "Protection of Pupil Rights Amendment (PPRA)",
+      "C": "Individuals with Disabilities Education Act (IDEA)",
+      "D": "Health Insurance Portability and Accountability Act (HIPAA)"
+    },
+    "correct_answer": ["C"],
+    "rationale": "Of the options available, IDEA is the only law that specifies provisions and regulations for electronic communication.",
+    "domain": 10,
+    "skillId": "LEG-S02",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q011",
+    "question": "Which TWO of the following best describe secondary-level interventions when utilizing a positive behavior support model?",
+    "choices": {
+      "A": "The inclusion of counseling in a student's IEP to address defiant behaviors",
+      "B": "Classroom lessons on positive character development",
+      "C": "Schoolwide assemblies promoting good behavior and celebrating schoolwide success at following rules",
+      "D": "A classwide behavior plan where all students can earn prizes for their behavior",
+      "E": "A behavior plan developed by the district's behaviorist for a student's behavioral concerns"
+    },
+    "correct_answer": ["B", "D"],
+    "rationale": "Secondary-level interventions occur in the classroom. Classwide behavior interventions to reinforce positive behavior as well as lessons on character development fit within this level of intervention.",
+    "domain": 5,
+    "skillId": "SWP-S01",
+    "questionType": "select-two",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q012",
+    "question": "A school psychologist notices that Yusuf, a tenth-grade student, has stopped eating lunch, quit the soccer team, and is increasingly irritable with his friends. He has also become more withdrawn. Which of the following mental health concerns is Yusuf most likely experiencing?",
+    "choices": {
+      "A": "Anxiety",
+      "B": "Depression",
+      "C": "Bipolar disorder",
+      "D": "Conduct disorder"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Withdrawal, irritability, and loss of pleasure in previously enjoyed activities are all symptoms of depression.",
+    "domain": 4,
+    "skillId": "NEW-4-Psychopathology",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q013",
+    "question": "A school psychologist implements a new aggression-reduction program with several second-grade students and plans to monitor the students for the next three years. The school psychologist finds that relative to the start of the program, aggression in the group of students who received the intervention is down 35 percent. Based on these results, which of the following threats to internal validity has the school psychologist most likely failed to account for?",
+    "choices": {
+      "A": "Instrumentation",
+      "B": "Maturation",
+      "C": "Attrition",
+      "D": "History"
+    },
+    "correct_answer": ["B"],
+    "rationale": "It is possible that aggression is down because the students have matured and are handling situations less aggressively as a function of aging.",
+    "domain": 9,
+    "skillId": "NEW-9-ValidityThreats",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q014",
+    "question": "Mr. Suzuki, a school psychologist, is asked to administer an assessment with which he has no experience. Before using the assessment with students, Mr. Suzuki completes a continuing education module on the assessment and asks for supervision and consultation from another school psychologist in the district who has used the assessment before. Mr. Suzuki is acting in accordance with of the following NASP Principles for Professional Ethics?",
+    "choices": {
+      "A": "Autonomy and self-determination",
+      "B": "Competence",
+      "C": "Fairness, equity, and justice",
+      "D": "Honesty and integrity in professional relationships"
+    },
+    "correct_answer": ["B"],
+    "rationale": "School psychologists must practice within the bounds of their competence. Mr. Suzuki is seeking to increase his competence by completing additional training and obtaining supervision.",
+    "domain": 10,
+    "skillId": "LEG-S06",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q015",
+    "question": "In which of the following scenarios would it be appropriate for a school psychologist to break confidentiality?",
+    "choices": {
+      "A": "A high school student informs the school psychologist that they are sexually active with a same-age partner.",
+      "B": "A student tells the school psychologist that they intend to harm another student.",
+      "C": "A student tells the school psychologist that there are firearms in their home.",
+      "D": "A student tells the school psychologist that they cheated on an exam."
+    },
+    "correct_answer": ["B"],
+    "rationale": "School psychologists have a duty to warn and to protect potential victims of violence.",
+    "domain": 10,
+    "skillId": "LEG-S03",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q016",
+    "question": "While selecting a test to use in school, a school psychologist discovered that a particular test was not very consistent or stable over time. In other words, some test takers' scores varied each time they took it. The school psychologist can most likely conclude which of the following?",
+    "choices": {
+      "A": "The test is biased.",
+      "B": "The test has poor evidence of validity.",
+      "C": "The test makers did not use an appropriate norming sample.",
+      "D": "The test is not reliable."
+    },
+    "correct_answer": ["D"],
+    "rationale": "The test is not reliable. Reliability refers to an instrument's consistency or stability in measurement.",
+    "domain": 1,
+    "skillId": "DBDM-S01",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q017",
+    "question": "Claire is a second-grade student who experiences difficulty following her parents' directions at home. When her parents meet with the school psychologist, they ask for advice on how to improve Claire's behaviors at home. Claire's parents shared that they have used consequences in the past such as taking away privileges, giving Claire additional chores to complete, and implementing an early bedtime. Which of the following should the school psychologist suggest Claire's parents try instead?",
+    "choices": {
+      "A": "Focusing on using one type of punishment procedure instead of several different approaches",
+      "B": "Increasing the duration of the consequences, such as taking away privileges for three days instead of one",
+      "C": "Removing consequences for rule-breaking behavior",
+      "D": "Clearly stating the house rules Claire is expected to follow and using positive reinforcement for her compliance with the rules"
+    },
+    "correct_answer": ["D"],
+    "rationale": "A clear statement of the house rules along with positive reinforcement for following the house rules will increase Claire's compliance.",
+    "domain": 4,
+    "skillId": "MBH-S06",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q018",
+    "question": "Ms. Trainor is frustrated with her student, Hamilton. Hamilton has an Individualized Education Program (IEP), but he has multiple severe disabilities, and he makes very little progress in school because of the severity of his disabilities. Ms. Trainor tells the school psychologist that she does not believe that Hamilton is benefiting from attending school. The school psychologist politely tells Ms. Trainor that Hamilton has a right to an education, no matter how severe his disabilities. The school psychologist's response best illustrates which of the following?",
+    "choices": {
+      "A": "Zero-reject principle",
+      "B": "Child Find",
+      "C": "Least restrictive environment",
+      "D": "Nondiscriminatory evaluation"
+    },
+    "correct_answer": ["A"],
+    "rationale": "The zero-reject principle states that no child can be denied a free appropriate public education (FAPE) on the basis of disability.",
+    "domain": 10,
+    "skillId": "LEG-S02",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q019",
+    "question": "A school psychologist would like to evaluate the effectiveness of a school's Positive Behavioral Interventions and Supports (PBIS) initiative. E-mailing teachers to remind them about certain classroom expectations can serve as a means of",
+    "choices": {
+      "A": "treatment fidelity",
+      "B": "progress monitoring",
+      "C": "intervention development",
+      "D": "universal screening"
+    },
+    "correct_answer": ["A"],
+    "rationale": "By sending a reminder to implement components of the program to serve as a prompt for teachers, the school psychologist is helping to ensure that the treatment in the school's Positive Behavioral Interventions and Supports (PBIS) initiative is conducted consistently and reliably.",
+    "domain": 5,
+    "skillId": "SWP-S04",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q020",
+    "question": "A student's score on a reading comprehension test is in the 80th percentile. Which of the following best explains the student's score?",
+    "choices": {
+      "A": "The student scored higher than 20 percent of all the students who took the test.",
+      "B": "The student earned 80 percent correct on the test.",
+      "C": "The student scored 80 out of 100 questions correct on the test.",
+      "D": "The student scored higher than 80 percent of all the students who took the test."
+    },
+    "correct_answer": ["D"],
+    "rationale": "The percentile rank of a score is the percentage of scores in its frequency distribution that are equal to or lower than it.",
+    "domain": 1,
+    "skillId": "DBDM-S03",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q021",
+    "question": "A school psychologist in an elementary school reads a study about a counseling technique that helps with behavior management. The study took place in a summer-camp setting and indicated this technique was associated with reduced aggression. The school psychologist is interested in using the technique at the school but is concerned about whether that summer-camp setting would generalize to an elementary school classroom. The school psychologist is primarily concerned about which of the following?",
+    "choices": {
+      "A": "Test-retest reliability",
+      "B": "Internal validity",
+      "C": "Content validity",
+      "D": "Ecological validity"
+    },
+    "correct_answer": ["D"],
+    "rationale": "Ecological validity examines whether the results of a study can be generalized to a real-life setting.",
+    "domain": 9,
+    "skillId": "NEW-9-ValidityThreats",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q022",
+    "question": "Which TWO of the following accurately describe a school psychologist's legal and ethical responsibility as an advocate for children and their families?",
+    "choices": {
+      "A": "Identifying and working to change school practices that may unintentionally discriminate against or result in harm to transgender students",
+      "B": "Clearly indicating when they are giving their opinion as a private citizen versus as a public employee during a public meeting regarding a controversial school policy",
+      "C": "Demonstrating respect for diversity by adopting a color-blind perspective toward students of color",
+      "D": "Incorporating their personal and religious beliefs in advice given to students if these beliefs do not conflict with the law"
+    },
+    "correct_answer": ["A", "B"],
+    "rationale": "NASP's Principles for Professional Ethics stipulate that school psychologists should work to change school practices that discriminate against specified groups, especially those who are marginalized and minority populations. Additionally, they require school psychologists to distinguish statements made as a professional school employee from those made as a private citizen.",
+    "domain": 10,
+    "skillId": "LEG-S06",
+    "questionType": "select-two",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q023",
+    "question": "A classroom teacher wants to refer a student for evaluation for a learning disability. The student emigrated to the United States two and a half years ago, quickly learned English, and can communicate fluently with all the children in the classroom. However, the student continues to have difficulty with schoolwork, frequently asks for directions to be repeated, and demonstrates poor comprehension based on written work. To help the teacher understand the student's difficulty, it is most important that the school psychologist explain which of the following?",
+    "choices": {
+      "A": "The difference between acculturation and assimilation",
+      "B": "The difference between basic interpersonal communication skills (BICS) and cognitive academic language proficiency (CALP)",
+      "C": "The Culture-Language Interpretive Matrix (C-LIM)",
+      "D": "The cultural and linguistic biases that are present in testing"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Basic interpersonal communication skills (BICS) are developed before cognitive language academic proficiency (CALP). It typically takes learners from six months to two years to develop BICS, while CALP can take five to seven years to develop.",
+    "domain": 8,
+    "skillId": "NEW-8-LanguageAcquisition",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q024",
+    "question": "Evidence-based practice (EBP) is a movement that has gained much attention in the field of school psychology. Some EBPs have been found to have empirical support in addressing the problems associated with common mental health and social-emotional needs of students. Which of the following is a supported EBP?",
+    "choices": {
+      "A": "Student suspension to address conduct problems",
+      "B": "Cognitive behavioral therapy for the treatment of internalizing problems",
+      "C": "Student retention to address immaturity",
+      "D": "Diet modifications for the treatment of autism spectrum disorders"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Cognitive-behavioral therapy for the treatment of internalizing problems is a well-established EBP for depression and anxiety.",
+    "domain": 4,
+    "skillId": "MBH-S05",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q025",
+    "question": "A test has a mean score of 100 and a standard deviation of 15. A student receives a standard score of 85. The student's z score would be",
+    "choices": {
+      "A": "1.00",
+      "B": "2.00",
+      "C": "-1.00",
+      "D": "-2.00"
+    },
+    "correct_answer": ["C"],
+    "rationale": "The z-score (which is the location on the normal curve identifying how far from the mean the score lies) can be calculated by subtracting the mean score from the obtained score and dividing that number by the standard deviation.",
+    "domain": 1,
+    "skillId": "DBDM-S03",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q026",
+    "question": "A school psychologist evaluates a child's ability to attend to information, hold information in immediate awareness, concentrate, and perform a mental operation. Which of the following is the school psychologist measuring?",
+    "choices": {
+      "A": "Verbal comprehension",
+      "B": "Working memory",
+      "C": "Processing speed",
+      "D": "Fluid reasoning"
+    },
+    "correct_answer": ["B"],
+    "rationale": "Working memory refers to the ability to attend to information, hold the information in immediate awareness, and work with the information in some way.",
+    "domain": 1,
+    "skillId": "DBDM-S03",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q027",
+    "question": "Joel is a fourth-grade student who has been referred for a special education evaluation. The results of the evaluation show that he is functioning below grade level in reading comprehension. Additionally, Joel's teacher and parent report that he has significant difficulty coping with setbacks and often has emotional outbursts when overwhelmed. The student support team recommends that Joel be classified under the category of Specific Learning Disability. Based on this information, which TWO of the following will most likely appear in Joel's IEP?",
+    "choices": {
+      "A": "Small-group counseling",
+      "B": "Social work services",
+      "C": "Modification of reading assignments",
+      "D": "Individual instruction in reading",
+      "E": "Provision of extra time for reading assignments"
+    },
+    "correct_answer": ["A", "D"],
+    "rationale": "Small-group counseling will allow Joel to work to develop coping strategies for when he feels overwhelmed. Individual instruction in reading is a common Tier 3 intervention for specific learning disability as it provides more opportunities for students to practice and respond.",
+    "domain": 10,
+    "skillId": "LEG-S02",
+    "questionType": "select-two",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q028",
+    "question": "A high school sophomore asks to meet with the school psychologist for counseling but only under the condition that the school psychologist does not inform the student's parents. Which of the following is the best course of action for the school psychologist to take?",
+    "choices": {
+      "A": "Informing the student's parents of this request in order to gain parental consent despite the student's wishes",
+      "B": "Ensuring that the student is not in danger and informing the student that parental consent is required for ongoing counseling",
+      "C": "Providing counseling to the student without parental consent since the student is in high school",
+      "D": "Informing the student that counseling cannot be provided without parental consent and sending the student back to class"
+    },
+    "correct_answer": ["B"],
+    "rationale": "The school psychologist should first determine that the student is safe, but should not proceed with ongoing counseling unless parental consent is provided.",
+    "domain": 10,
+    "skillId": "LEG-S07",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q029",
+    "question": "Interagency collaboration for students with disabilities is most useful for doing which of the following tasks?",
+    "choices": {
+      "A": "Developing IEPs",
+      "B": "Implementing disciplinary programs",
+      "C": "Increasing high school enrollment",
+      "D": "Planning for postsecondary transitions"
+    },
+    "correct_answer": ["D"],
+    "rationale": "Interagency collaboration is most important in planning for life beyond high school and provides connections to employment opportunities as well as opportunities for postsecondary education.",
+    "domain": 10,
+    "skillId": "LEG-S02",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  },
+  {
+    "id": "ETS_Q030",
+    "question": "Ms. Carey is a school psychologist at a middle school. Within the first six weeks of the school year, there has been a notable increase in behaviors related to fighting, name-calling, and general student disagreements. Each time a student is referred to the office for a disciplinary problem, the office contacts Ms. Carey to provide counseling services. Which of the following might Ms. Carey suggest in a meeting with school staff as the next best response to this increase in general need?",
+    "choices": {
+      "A": "Providing intensive behavioral interventions and supports for each student referred for disciplinary problems",
+      "B": "Implementing schoolwide positive behavioral intervention and supports (SWPBIS) and social-emotional learning",
+      "C": "Allowing other school staff to assist in meeting with students with problem behaviors",
+      "D": "Providing more small-group instruction in conflict resolution and general social skills to all students"
+    },
+    "correct_answer": ["B"],
+    "rationale": "It is appropriate for school staff to examine Tier 1 interventions, such as positive behavioral support initiatives and schoolwide social-emotional learning opportunities to provide all students with ongoing supports and monitoring for possible Tier 2 interventions.",
+    "domain": 5,
+    "skillId": "SWP-S02",
+    "questionType": "single",
+    "metadata": {
+      "source": "ETS-official",
+      "difficulty": "standard"
+    }
+  }
+]

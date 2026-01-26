@@ -38,7 +38,8 @@ export type PatternId =
   | "law-confusion"
   | "no-access"
   | "insufficient-hours"
-  | "full-release";
+  | "full-release"
+  | "definition-error";
 
 export interface SlotDefinition {
   name: string;
@@ -131,7 +132,8 @@ export function validateTemplate(template: QuestionTemplate): {
     "law-confusion",
     "no-access",
     "insufficient-hours",
-    "full-release"
+    "full-release",
+    "definition-error"
   ];
 
   for (const pattern of template.allowedDistractorPatterns) {

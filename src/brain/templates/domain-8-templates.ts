@@ -16,7 +16,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Bias recognition"
     },
-    allowedDistractorPatterns: ["cultural-awareness"],
+    allowedDistractorPatterns: ["similar-concept"],
     keyPrinciple: "Recognize when assumptions are based on cultural bias. Behavior may be cultural, not defiance. Question assumptions.",
     exampleSlotValues: {}
   },
@@ -34,7 +34,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Nonverbal reduces linguistic bias"
     },
-    allowedDistractorPatterns: ["verbal-assessment", "translation"],
+    allowedDistractorPatterns: ["context-mismatch", "context-mismatch"],
     keyPrinciple: "For ELL students = use nonverbal assessments, reduce linguistic demands, consider cultural factors. Translation violates standardization.",
     exampleSlotValues: {}
   },
@@ -52,7 +52,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Language assessment comes first"
     },
-    allowedDistractorPatterns: ["skip-language-assessment"],
+    allowedDistractorPatterns: ["premature-action"],
     keyPrinciple: "Before assessing ELL student = determine language dominance, proficiency in both languages, primary language, English proficiency level.",
     exampleSlotValues: {}
   },
@@ -70,7 +70,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Risk ratio interpretation"
     },
-    allowedDistractorPatterns: ["underrepresentation"],
+    allowedDistractorPatterns: ["similar-concept"],
     keyPrinciple: "Risk ratio > 1.0 = overrepresentation. Risk ratio 2.5 = group is 2.5x more likely. Higher ratio = greater disproportionality.",
     exampleSlotValues: {}
   },
@@ -88,7 +88,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Cultural broker definition"
     },
-    allowedDistractorPatterns: ["interpreter-confusion"],
+    allowedDistractorPatterns: ["similar-concept"],
     keyPrinciple: "Cultural broker = community liaison, bridges cultural gap, facilitates communication, understands both cultures. Not just interpreter.",
     exampleSlotValues: {}
   },
@@ -106,7 +106,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Interpreter best practice"
     },
-    allowedDistractorPatterns: ["speak-to-interpreter"],
+    allowedDistractorPatterns: ["context-mismatch"],
     keyPrinciple: "Best practice = speak directly to parent/family, use qualified interpreter, maintain eye contact with parent, allow time for interpretation.",
     exampleSlotValues: {}
   },
@@ -124,7 +124,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Integration = high original + high new culture"
     },
-    allowedDistractorPatterns: ["assimilation", "separation"],
+    allowedDistractorPatterns: ["similar-concept", "similar-concept"],
     keyPrinciple: "Acculturation modes: Integration = high original + high new. Assimilation = low original + high new. Separation = high original + low new. Marginalization = low both.",
     exampleSlotValues: {}
   },
@@ -142,7 +142,7 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "BICS vs CALP distinction"
     },
-    allowedDistractorPatterns: ["timeline-confusion"],
+    allowedDistractorPatterns: ["similar-concept"],
     keyPrinciple: "BICS = social language ('playground English'), 2-3 years. CALP = academic language (cognitive tasks), 5-7 years. Don't confuse social fluency with academic readiness.",
     exampleSlotValues: {}
   },
@@ -160,9 +160,109 @@ export const domain8Templates: QuestionTemplate[] = [
       },
       description: "Social justice advocacy role"
     },
-    allowedDistractorPatterns: ["passive-acceptance"],
+    allowedDistractorPatterns: ["context-mismatch"],
     keyPrinciple: "Psychologist's role = challenge systemic inequities, advocate for fair practices, not passive acceptance of discriminatory practices.",
     exampleSlotValues: {}
+  },
+
+  // DIV-T10: Assessment Modification for ELL
+  {
+    templateId: "DIV-T10",
+    skillId: "DIV-S02",
+    templateType: "best-selection",
+    stem: "An ELL student with {language_background} and {proficiency_level} English proficiency needs cognitive assessment. What is the best approach?",
+    slots: {
+      language_background: {
+        name: "language_background",
+        description: "Student's primary language",
+        possibleValues: [
+          "Spanish",
+          "Mandarin",
+          "Arabic",
+          "Vietnamese",
+          "Tagalog",
+          "French",
+          "Portuguese"
+        ]
+      },
+      proficiency_level: {
+        name: "proficiency_level",
+        description: "English proficiency level",
+        possibleValues: [
+          "limited",
+          "intermediate",
+          "advanced",
+          "beginner",
+          "emerging"
+        ]
+      }
+    },
+    correctAnswerLogic: {
+      evaluate: (slotValues) => {
+        const { proficiency_level } = slotValues;
+        if (proficiency_level === "limited" || proficiency_level === "beginner" || proficiency_level === "emerging") {
+          return "Use a nonverbal assessment to reduce linguistic bias";
+        }
+        return "Use nonverbal assessment or reduce linguistic demands";
+      },
+      description: "Nonverbal assessment for ELL reduces bias"
+    },
+    allowedDistractorPatterns: ["context-mismatch", "premature-action"],
+    keyPrinciple: "For ELL students = use nonverbal assessments, reduce linguistic demands, consider cultural factors. Translation violates standardization.",
+    exampleSlotValues: {
+      language_background: "Spanish",
+      proficiency_level: "limited"
+    }
+  },
+
+  // DIV-T11: Disproportionality Response
+  {
+    templateId: "DIV-T11",
+    skillId: "DIV-S04",
+    templateType: "first-step-scenario",
+    stem: "Data analysis reveals a risk ratio of {risk_ratio} for {group} in special education identification. What should the school psychologist do first?",
+    slots: {
+      risk_ratio: {
+        name: "risk_ratio",
+        description: "Risk ratio value",
+        possibleValues: [
+          "2.5",
+          "1.8",
+          "3.0",
+          "1.2",
+          "2.0",
+          "1.5"
+        ]
+      },
+      group: {
+        name: "group",
+        description: "Affected group",
+        possibleValues: [
+          "African American students",
+          "Hispanic students",
+          "students with disabilities",
+          "English Language Learners",
+          "students from low-income backgrounds"
+        ]
+      }
+    },
+    correctAnswerLogic: {
+      evaluate: (slotValues) => {
+        const { risk_ratio } = slotValues;
+        const ratio = parseFloat(risk_ratio);
+        if (ratio > 2.0) {
+          return "Investigate root causes of disproportionality through data review";
+        }
+        return "Review assessment practices and referral patterns for bias";
+      },
+      description: "Disproportionality requires investigation"
+    },
+    allowedDistractorPatterns: ["premature-action", "data-ignorance"],
+    keyPrinciple: "Risk ratio > 1.0 = overrepresentation. Risk ratio 2.5 = group is 2.5x more likely. Higher ratio = greater disproportionality. Investigate root causes.",
+    exampleSlotValues: {
+      risk_ratio: "2.5",
+      group: "African American students"
+    }
   }
 ];
 

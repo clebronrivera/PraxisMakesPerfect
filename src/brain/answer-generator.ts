@@ -117,6 +117,64 @@ export function generateDistractor(
 }
 
 /**
+ * Truncates a distractor to 150 characters at the nearest sentence boundary
+ */
+function truncateDistractor(text: string, maxLength: number = 150): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  // Find the last sentence boundary (period, exclamation, question mark) before maxLength
+  const truncated = text.substring(0, maxLength);
+  const lastPeriod = truncated.lastIndexOf('.');
+  const lastExclamation = truncated.lastIndexOf('!');
+  const lastQuestion = truncated.lastIndexOf('?');
+  
+  const lastBoundary = Math.max(lastPeriod, lastExclamation, lastQuestion);
+  
+  if (lastBoundary > maxLength * 0.5) {
+    // If we found a sentence boundary reasonably close to maxLength, use it
+    return text.substring(0, lastBoundary + 1).trim();
+  }
+  
+  // Otherwise, truncate at maxLength and add ellipsis
+  return text.substring(0, maxLength - 3).trim() + '...';
+}
+
+/**
+ * Balances distractor length relative to correct answer
+ * Target: distractors within 50-150% of correct answer length
+ */
+function balanceDistractorLength(text: string, correctAnswer: string): string {
+  const targetLength = correctAnswer.length;
+  const minLength = Math.max(10, Math.floor(targetLength * 0.5));
+  const maxLength = Math.min(150, Math.floor(targetLength * 1.5));
+  const currentLength = text.length;
+
+  // If within acceptable range, return as-is
+  if (currentLength >= minLength && currentLength <= maxLength) {
+    return text;
+  }
+
+  // If too short, try to expand (but this is harder, so just ensure minimum)
+  if (currentLength < minLength) {
+    // For very short distractors, return as-is (they might be acronyms like "FERPA")
+    if (currentLength < 10) {
+      return text;
+    }
+    // Otherwise, try to add context if possible
+    return text;
+  }
+
+  // If too long, truncate intelligently
+  if (currentLength > maxLength) {
+    return truncateDistractor(text, maxLength);
+  }
+
+  return text;
+}
+
+/**
  * Generate distractors for a template
  */
 export function generateDistractors(
@@ -135,31 +193,58 @@ export function generateDistractors(
 
   const distractors: Distractor[] = [];
   const usedPatterns = new Set<PatternId>();
+  const maxAttempts = 50; // Prevent infinite loops
+  let attempts = 0;
 
-  // Try to generate distractors using allowed patterns
-  for (const patternId of template.allowedDistractorPatterns) {
-    if (distractors.length >= count) break;
+  // Try to generate distractors using allowed patterns first
+  const allowedPatterns = [...template.allowedDistractorPatterns];
+  const allPatterns = Object.values(DISTRACTOR_PATTERNS);
+  
+  // Shuffle patterns to ensure variety
+  const shuffledPatterns = [...allowedPatterns].sort(() => Math.random() - 0.5);
+  const shuffledAllPatterns = [...allPatterns].sort(() => Math.random() - 0.5);
+
+  // First pass: use allowed patterns
+  for (const patternId of shuffledPatterns) {
+    if (distractors.length >= count || attempts >= maxAttempts) break;
     if (usedPatterns.has(patternId)) continue;
 
     const pattern = getPatternById(patternId);
     if (!pattern) continue;
 
+    attempts++;
     const distractor = generateDistractor(correctAnswer, pattern, context);
-    if (distractor && !distractors.some(d => d.text === distractor.text)) {
+    if (distractor && !distractors.some(d => d.text.toLowerCase().trim() === distractor.text.toLowerCase().trim())) {
+      // Balance length relative to correct answer
+      distractor.text = balanceDistractorLength(distractor.text, correctAnswer);
+      
+      // Final length check - truncate if still too long
+      if (distractor.text.length > 150) {
+        distractor.text = truncateDistractor(distractor.text, 150);
+      }
+      
       distractors.push(distractor);
       usedPatterns.add(patternId);
     }
   }
 
-  // If we don't have enough, try other patterns
-  if (distractors.length < count) {
-    const allPatterns = Object.values(DISTRACTOR_PATTERNS);
-    for (const pattern of allPatterns) {
-      if (distractors.length >= count) break;
+  // Second pass: use other patterns if needed
+  if (distractors.length < count && attempts < maxAttempts) {
+    for (const pattern of shuffledAllPatterns) {
+      if (distractors.length >= count || attempts >= maxAttempts) break;
       if (usedPatterns.has(pattern.patternId)) continue;
 
+      attempts++;
       const distractor = generateDistractor(correctAnswer, pattern, context);
-      if (distractor && !distractors.some(d => d.text === distractor.text)) {
+      if (distractor && !distractors.some(d => d.text.toLowerCase().trim() === distractor.text.toLowerCase().trim())) {
+        // Balance length relative to correct answer
+        distractor.text = balanceDistractorLength(distractor.text, correctAnswer);
+        
+        // Final length check
+        if (distractor.text.length > 150) {
+          distractor.text = truncateDistractor(distractor.text, 150);
+        }
+        
         distractors.push(distractor);
         usedPatterns.add(pattern.patternId);
       }
@@ -202,12 +287,18 @@ export function validateDistractors(
     }
   }
 
-  // Check length appropriateness (distractors shouldn't be drastically different lengths)
+  // Check length appropriateness (distractors should be within 50-150% of correct answer)
   const correctLength = correctAnswer.length;
   for (const distractor of distractors) {
-    const ratio = distractor.text.length / correctLength;
-    if (ratio < 0.3 || ratio > 3.0) {
+    const ratio = correctLength > 0 ? distractor.text.length / correctLength : 1;
+    // Allow some flexibility for very short answers (like "FERPA")
+    if (correctLength > 10 && (ratio < 0.5 || ratio > 1.5)) {
       issues.push(`Distractor length inappropriate: "${distractor.text}" (ratio: ${ratio.toFixed(2)})`);
+    }
+    
+    // Warn if distractor exceeds 150 characters
+    if (distractor.text.length > 150) {
+      issues.push(`Distractor exceeds recommended length (${distractor.text.length} chars): "${distractor.text.substring(0, 50)}..."`);
     }
   }
 
@@ -270,6 +361,35 @@ function generateSimilarConceptDistractor(
   correctAnswer: string,
   context: AnswerGenerationContext
 ): Distractor | null {
+  const { template, slotValues } = context;
+  
+  // Special handling for sensitivity/specificity questions (DBDM-T04)
+  if (template.templateId === "DBDM-T04" && slotValues.sensitivity_value && slotValues.specificity_value) {
+    const sensitivity = slotValues.sensitivity_value;
+    const specificity = slotValues.specificity_value;
+    
+    // Generate distractors that swap values, use wrong metrics, or confuse concepts
+    const distractors = [
+      `Sensitivity is ${specificity} and specificity is ${sensitivity}`, // Swap values
+      `Positive predictive value is ${sensitivity} and negative predictive value is ${specificity}`, // Wrong metrics
+      `The test has high reliability with a coefficient of ${sensitivity}`, // Wrong concept entirely
+      `Sensitivity is ${sensitivity} and specificity is ${sensitivity}` // Use same value for both
+    ];
+    
+    // Filter out the correct answer if it happens to match
+    const filteredDistractors = distractors.filter(d => 
+      d.toLowerCase() !== correctAnswer.toLowerCase()
+    );
+    
+    if (filteredDistractors.length > 0) {
+      return {
+        text: filteredDistractors[Math.floor(Math.random() * filteredDistractors.length)],
+        explanation: "This answer confuses sensitivity and specificity, uses the wrong statistical metrics, or doesn't match the values described in the question.",
+        patternId: "similar-concept"
+      };
+    }
+  }
+  
   // Generate related but incorrect concepts based on the correct answer
   const conceptMap: Record<string, string[]> = {
     "interobserver agreement": ["Test-retest reliability", "Internal consistency", "Interrater reliability"],
@@ -323,15 +443,16 @@ function generateExtremeLanguageDistractor(
   context: AnswerGenerationContext
 ): Distractor | null {
   // Add extreme language to a correct principle
-  const extremeModifiers = ["always", "never", "only", "must", "all", "every"];
+  const extremeModifiers = ["always", "never", "only", "all", "every"];
   const modifier = extremeModifiers[Math.floor(Math.random() * extremeModifiers.length)];
   
   // Create a statement with extreme language
+  // Fixed grammar: "must determine" not "must determines"
   const extremeStatements = [
-    `School psychologists must ${modifier} use standardized assessments`,
+    `School psychologists ${modifier} use standardized assessments`,
     `Interventions ${modifier} require parent consent`,
     `Students ${modifier} need comprehensive evaluations before intervention`,
-    `Assessment ${modifier} determines eligibility`,
+    `Assessment must determine eligibility`, // Fixed grammar
     `Data collection ${modifier} comes before intervention`
   ];
 

@@ -455,7 +455,15 @@ export const SLOT_LIBRARIES: SlotLibrary = {
       "a curriculum-based measurement",
       "a behavior rating scale",
       "a group-administered screening",
-      "an individually-administered test"
+      "an individually-administered test",
+      "multiple raters observing the same student",
+      "a classroom behavior checklist",
+      "a self-report anxiety measure",
+      "a projective personality assessment",
+      "curriculum-based measurement probes",
+      "a structured diagnostic interview",
+      "an adaptive behavior rating scale",
+      "a social skills observation protocol"
     ],
     metadata: {}
   },

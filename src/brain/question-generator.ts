@@ -31,6 +31,7 @@ export interface GeneratedQuestion {
   choices: Record<string, string>; // { A: "...", B: "...", C: "...", D: "..." }
   correct_answer: string[]; // ["B"]
   rationale: string; // Generated explanation
+  distractors: Distractor[];
   metadata: {
     skillId: SkillId;
     templateId: string;
@@ -295,6 +296,7 @@ export function generateQuestion(
     choices,
     correct_answer: [correctLetter],
     rationale,
+    distractors,
     metadata: {
       skillId,
       templateId: template.templateId,

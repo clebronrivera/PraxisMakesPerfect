@@ -181,6 +181,50 @@ export const domain10Templates: QuestionTemplate[] = [
     allowedDistractorPatterns: ["full-release", "no-access"],
     keyPrinciple: "Balance parent rights to inspect records with test security. Allow viewing/explanation but prohibit copying or releasing raw protocols.",
     exampleSlotValues: {}
+  },
+
+  // LEG-S07: Informed Consent Requirements
+  {
+    templateId: "LEG-T11",
+    skillId: "LEG-S07",
+    templateType: "consent-resolution",
+    stem: "A {student_age} student asks to meet with the school psychologist for counseling but only under the condition that the school psychologist does not inform the student's parents. Which of the following is the best course of action?",
+    slots: {
+      student_age: {
+        name: "student_age",
+        description: "The age/grade level of the student",
+        possibleValues: ["high school", "middle school", "elementary school"]
+      }
+    },
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Ensuring that the student is not in danger and informing the student that parental consent is required for ongoing counseling";
+      },
+      description: "Safety first, then require consent for ongoing services"
+    },
+    allowedDistractorPatterns: ["no-consent-needed", "refuse-contact", "auto-inform-parents"],
+    keyPrinciple: "Ensure student safety first when student requests counseling. Inform student that parental consent is required for ongoing counseling services. Cannot provide ongoing counseling without parental consent, regardless of student age.",
+    exampleSlotValues: {
+      student_age: "high school"
+    }
+  },
+
+  // NEW-10-ProfessionalGrowth: Lifelong Learning & Professional Growth
+  {
+    templateId: "LEG-T15",
+    skillId: "NEW-10-ProfessionalGrowth",
+    templateType: "best-selection",
+    stem: "To maintain professional competence, a school psychologist should:",
+    slots: {},
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Engage in ongoing professional development, stay current with research, and seek supervision when needed";
+      },
+      description: "Professional growth requires ongoing learning"
+    },
+    allowedDistractorPatterns: ["similar-concept", "context-mismatch"],
+    keyPrinciple: "Professional growth = ongoing learning, staying current with research, continuing education, professional development activities, reading research literature, attending conferences, seeking supervision/consultation. Lifelong learning ensures competence and best practice. Professional growth is essential for maintaining effectiveness.",
+    exampleSlotValues: {}
   }
 ];
 

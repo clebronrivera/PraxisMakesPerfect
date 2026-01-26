@@ -85,6 +85,96 @@
       "skillId": "CC-S03",
       "confidence": "medium",
       "reasoning": "Question asks about the relationship type fostered by multimethod assessment interviews (Collaborative)."
+    },
+    {
+      "questionId": "SP5403_Q126",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the primary characteristic of behavioral consultation (focus on observable behaviors and data collection)."
+    },
+    {
+      "questionId": "SP5403_Q127",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify mental health consultation based on focus on emotional experiences and social dynamics rather than observable behaviors."
+    },
+    {
+      "questionId": "SP5403_Q128",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify consultee-centered consultation based on focus on improving teacher's skills rather than solving individual student problems."
+    },
+    {
+      "questionId": "SP5403_Q129",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify conjoint behavioral consultation based on involvement of both parents and teachers with interventions in both home and school settings."
+    },
+    {
+      "questionId": "SP5403_Q130",
+      "skillId": "CC-S01",
+      "confidence": "high",
+      "reasoning": "Question asks to identify organizational consultation based on system-wide change affecting all students and staff."
+    },
+    {
+      "questionId": "SP5403_Q131",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the entry/contracting stage based on establishing mutual goals, clarifying roles, and building rapport."
+    },
+    {
+      "questionId": "SP5403_Q132",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the problem identification stage based on collecting baseline data to define the problem in observable terms."
+    },
+    {
+      "questionId": "SP5403_Q133",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the problem analysis stage based on analyzing data, identifying patterns, and hypothesizing causes."
+    },
+    {
+      "questionId": "SP5403_Q134",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question tests critical concept that consultee (teacher) implements intervention, not consultant, because consultation is indirect service."
+    },
+    {
+      "questionId": "SP5403_Q135",
+      "skillId": "NEW-2-ConsultationProcess",
+      "confidence": "high",
+      "reasoning": "Question asks to identify the evaluation stage based on collecting data to assess intervention effectiveness and make decisions."
+    },
+    {
+      "questionId": "SP5403_Q136",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks to identify active listening skill based on summarizing, reflecting feelings, and asking clarifying questions."
+    },
+    {
+      "questionId": "SP5403_Q137",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks to identify paraphrasing skill based on restating consultee's words to confirm understanding."
+    },
+    {
+      "questionId": "SP5403_Q138",
+      "skillId": "CC-S03",
+      "confidence": "high",
+      "reasoning": "Question tests avoiding expert trap by using questions to promote consultee ownership rather than providing all answers."
+    },
+    {
+      "questionId": "SP5403_Q139",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for effective response to resistance: acknowledging concerns, exploring barriers, and collaborative problem-solving."
+    },
+    {
+      "questionId": "SP5403_Q140",
+      "skillId": "NEW-2-CommunicationStrategies",
+      "confidence": "high",
+      "reasoning": "Question asks for effective facilitation of communication among diverse stakeholders including community providers, requiring role clarification and perspective understanding."
     }
   ],
   "suggestedNewSkills": [

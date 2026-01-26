@@ -1,0 +1,55 @@
+{
+  "totalDiscarded": 5,
+  "distractors": [
+    {
+      "term": "Decline to evaluate students from diverse backgrounds to avoid supporting disproportionate representations in special education",
+      "sourceQuestion": "SP5403_Q007",
+      "sourceSkill": "LEG-S02",
+      "mapsToSkill": "SWP-S01",
+      "mapsToSameSkill": false,
+      "flippable": false,
+      "distractorType": "cross-domain-connection",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Taking over for the teacher when implementing the reading program to identify students who might need more individualized support",
+      "sourceQuestion": "SP5403_Q012",
+      "sourceSkill": "DBDM-S08",
+      "mapsToSkill": "CC-S01",
+      "mapsToSameSkill": false,
+      "flippable": false,
+      "distractorType": "cross-domain-connection",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Refuse to complete the evaluation",
+      "sourceQuestion": "SP5403_Q046",
+      "sourceSkill": "PC-S05",
+      "mapsToSkill": "PC-S05",
+      "mapsToSameSkill": true,
+      "flippable": false,
+      "distractorType": "same-category-different-context",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Taking over the classroom for a day to demonstrate effective strategies",
+      "sourceQuestion": "SP5403_Q063",
+      "sourceSkill": "CC-S03",
+      "mapsToSkill": "CC-S03",
+      "mapsToSameSkill": true,
+      "flippable": false,
+      "distractorType": "same-category-different-context",
+      "reason": "Does not represent a testable competency in this context"
+    },
+    {
+      "term": "Refuse to provide any accommodations until a formal evaluation is completed",
+      "sourceQuestion": "SP5403_Q073",
+      "sourceSkill": "MBH-S05",
+      "mapsToSkill": "DBDM-S05",
+      "mapsToSameSkill": false,
+      "flippable": false,
+      "distractorType": "cross-domain-connection",
+      "reason": "Does not represent a testable competency in this context"
+    }
+  ]
+}
