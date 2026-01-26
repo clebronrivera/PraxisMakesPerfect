@@ -21,5 +21,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "App.tsx", "knowledge-base.ts"],
+  "exclude": ["src/scripts", "node_modules", "dist"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
