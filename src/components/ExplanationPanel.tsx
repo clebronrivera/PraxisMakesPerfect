@@ -1,7 +1,7 @@
 import { CheckCircle, XCircle } from 'lucide-react';
 import { generateDiagnosticFeedback } from '../brain/diagnostic-feedback';
 import { Question } from '../brain/question-analyzer';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 import DiagnosticFeedback from './DiagnosticFeedback';
 
 interface AnalyzedQuestion {

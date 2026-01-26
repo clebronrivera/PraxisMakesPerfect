@@ -4,7 +4,7 @@
 
 import { calculateLearningState, checkPrerequisitesMet, SkillPerformance, LearningState } from '../brain/learning-state';
 import { SkillId, getSkillById, SKILL_MAP } from '../brain/skill-map';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 
 interface StateTransitionTest {
   name: string;

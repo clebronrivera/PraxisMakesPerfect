@@ -9,7 +9,7 @@ import { matchDistractorPattern } from './distractor-matcher';
 import { FRAMEWORK_STEPS, getStepById } from './framework-definitions';
 import { SkillId, getSkillById } from './skill-map';
 import { LearningState, SkillPerformance, checkPrerequisitesMet } from './learning-state';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 
 export interface FrameworkGuidance {
   currentStepId: string | null;

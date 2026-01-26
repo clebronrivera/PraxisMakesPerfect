@@ -7,7 +7,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { generateDiagnosticFeedback, DiagnosticFeedback } from '../brain/diagnostic-feedback';
 import { Question } from '../brain/question-analyzer';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 import { PatternId } from '../brain/template-schema';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,7 +40,7 @@ function createTestUserProfile(overrides: Partial<UserProfile> = {}): UserProfil
     practiceHistory: [],
     totalQuestionsSeen: 0,
     streak: 0,
-    generatedQuestionsSeen: new Set(),
+    generatedQuestionsSeen: [],
     flaggedQuestions: {},
     distractorErrors: {},
     skillDistractorErrors: {},

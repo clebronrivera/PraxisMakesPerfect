@@ -4,7 +4,7 @@ import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { NASP_DOMAINS } from '../../knowledge-base';
 import { UserResponse } from '../brain/weakness-detector';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 
 interface TeachModeProps {
