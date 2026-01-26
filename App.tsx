@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Brain, Target, ChevronRight, AlertTriangle, Zap, BarChart3, RotateCcw } from 'lucide-react';
 
 // Import knowledge base
@@ -19,11 +19,12 @@ import DomainTiles from './src/components/DomainTiles';
 import TeachMode from './src/components/TeachMode';
 
 // Import hooks
-import { useUserProgress } from './src/hooks/useUserProgress';
+import { useFirebaseProgress } from './src/hooks/useFirebaseProgress';
 import { useAdaptiveLearning } from './src/hooks/useAdaptiveLearning';
 import { loadSession, hasActiveSession, clearSession, AssessmentSession } from './src/utils/sessionStorage';
-import { getCurrentUser, setCurrentUser, getCurrentSession, createUserSession, UserSession } from './src/utils/userSessionStorage';
-import UserLogin from './src/components/UserLogin';
+import { createUserSession, UserSession } from './src/utils/userSessionStorage';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import LoginScreen from './src/components/LoginScreen';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -37,15 +38,30 @@ import UserLogin from './src/components/UserLogin';
 // MAIN APP COMPONENT
 // ============================================
 
-export default function PraxisStudyApp() {
+function PraxisStudyAppContent() {
   // Use hooks for profile and adaptive learning
-  const { profile, updateProfile, updateSkillProgress, resetProgress } = useUserProgress();
+  const { user, loading: authLoading } = useAuth();
+  const { profile, updateProfile, updateSkillProgress, resetProgress, migrateFromLocalStorage, isLoaded } = useFirebaseProgress();
   const { selectNextQuestion } = useAdaptiveLearning();
   
+  // Migration flag - run once on first login
+  const [hasMigrated, setHasMigrated] = useState(false);
+  
+  // Migrate localStorage data on first login
+  useEffect(() => {
+    if (user && !hasMigrated && isLoaded) {
+      migrateFromLocalStorage().then((migrated) => {
+        if (migrated) {
+          console.log('Migration completed');
+        }
+        setHasMigrated(true);
+      });
+    }
+  }, [user, hasMigrated, isLoaded, migrateFromLocalStorage]);
+  
   // User management
-  const [currentUserName, setCurrentUserName] = useState<string | null>(() => getCurrentUser());
   const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>();
-  const [showLogin, setShowLogin] = useState(!getCurrentUser());
+  const currentUserName = user?.displayName || user?.email || (user?.isAnonymous ? 'Guest' : null);
   
   // Check for saved session on mount
   const savedSession = useMemo(() => loadSession(), []);
@@ -108,8 +124,12 @@ export default function PraxisStudyApp() {
     
     // Create new user session if we have a current user
     if (currentUserName) {
-      const newSession = createUserSession(currentUserName, 'pre-assessment', questionIds);
-      setSelectedSessionId(newSession.sessionId);
+      try {
+        const newSession = createUserSession(currentUserName, 'pre-assessment', questionIds);
+        setSelectedSessionId(newSession.sessionId);
+      } catch (error) {
+        console.error('Error creating session:', error);
+      }
     }
     
     setPreAssessmentQuestions(selected);
@@ -140,8 +160,12 @@ export default function PraxisStudyApp() {
     
     // Create new user session if we have a current user
     if (currentUserName) {
-      const newSession = createUserSession(currentUserName, 'full-assessment', questionIds);
-      setSelectedSessionId(newSession.sessionId);
+      try {
+        const newSession = createUserSession(currentUserName, 'full-assessment', questionIds);
+        setSelectedSessionId(newSession.sessionId);
+      } catch (error) {
+        console.error('Error creating session:', error);
+      }
     }
     
     setFullAssessmentQuestions(shuffled);
@@ -150,17 +174,20 @@ export default function PraxisStudyApp() {
   }, [analyzedQuestions, currentUserName]);
   
   const handleResumeAssessment = useCallback(() => {
-    if (!currentUserName) return;
+    if (!user) return;
     
-    // Try to load user session first
-    const userSession = getCurrentSession(currentUserName);
-    if (userSession) {
-      if (userSession.type === 'pre-assessment') {
-        startPreAssessment(userSession);
-      } else if (userSession.type === 'full-assessment') {
-        startFullAssessment(userSession);
+    // Try to load user session first (if userSessionStorage is still used for sessions)
+    if (currentUserName) {
+      const { getCurrentSession } = require('./src/utils/userSessionStorage');
+      const userSession = getCurrentSession(currentUserName);
+      if (userSession) {
+        if (userSession.type === 'pre-assessment') {
+          startPreAssessment(userSession);
+        } else if (userSession.type === 'full-assessment') {
+          startFullAssessment(userSession);
+        }
+        return;
       }
-      return;
     }
     
     // Fallback to old session system
@@ -171,27 +198,10 @@ export default function PraxisStudyApp() {
         startFullAssessment(savedSession);
       }
     }
-  }, [currentUserName, savedSession, startPreAssessment, startFullAssessment]);
+  }, [user, currentUserName, savedSession, startPreAssessment, startFullAssessment]);
 
-  const handleUserSelected = useCallback((userName: string, sessionId?: string) => {
-    setCurrentUserName(userName);
-    setCurrentUser(userName);
-    setShowLogin(false);
-    
-    if (sessionId) {
-      setSelectedSessionId(sessionId);
-      // Load the session
-      const { loadUserSession } = require('./src/utils/userSessionStorage');
-      const session = loadUserSession(sessionId);
-      if (session) {
-        if (session.type === 'pre-assessment') {
-          startPreAssessment(session);
-        } else if (session.type === 'full-assessment') {
-          startFullAssessment(session);
-        }
-      }
-    }
-  }, [startPreAssessment, startFullAssessment]);
+  // Note: User selection is now handled by Firebase auth, so this callback is no longer needed
+  // Sessions can still be loaded if needed, but user management is via Firebase
   
   const handleDiscardSession = useCallback(() => {
     clearSession();
@@ -256,9 +266,18 @@ export default function PraxisStudyApp() {
   // RENDER
   // ============================================
   
-  // Show login screen if no user is selected
-  if (showLogin || !currentUserName) {
-    return <UserLogin onUserSelected={handleUserSelected} />;
+  // Show loading while checking auth or loading profile
+  if (authLoading || !isLoaded) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400">Loading...</div>
+      </div>
+    );
+  }
+  
+  // Show login screen if not authenticated
+  if (!user) {
+    return <LoginScreen />;
   }
 
   return (
@@ -289,16 +308,7 @@ export default function PraxisStudyApp() {
                 ← Home
               </button>
             )}
-            <button
-              onClick={() => {
-                setCurrentUserName(null);
-                setShowLogin(true);
-              }}
-              className="px-4 py-2 text-sm text-slate-500 hover:text-slate-300 transition-colors"
-              title="Switch user"
-            >
-              Switch User
-            </button>
+            {/* User info is now managed by Firebase auth */}
           </div>
         </div>
       </header>
@@ -612,5 +622,14 @@ export default function PraxisStudyApp() {
         )}
       </main>
     </div>
+  );
+}
+
+// Wrap app with AuthProvider
+export default function PraxisStudyApp() {
+  return (
+    <AuthProvider>
+      <PraxisStudyAppContent />
+    </AuthProvider>
   );
 }

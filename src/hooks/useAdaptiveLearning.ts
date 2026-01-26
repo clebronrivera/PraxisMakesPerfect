@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { generateQuestion } from '../brain/question-generator';
 import { SkillId, getSkillById } from '../brain/skill-map';
-import { UserProfile } from './useUserProgress';
+import { UserProfile } from './useFirebaseProgress';
 import questionSkillMapData from '../data/question-skill-map.json';
 import { runCapacityTest } from '../scripts/capacity-test';
 
@@ -138,7 +138,8 @@ export function useAdaptiveLearning() {
         
         if (generated) {
           // Check if we've seen this question before (by ID)
-          const seenQuestions = profile.generatedQuestionsSeen || new Set();
+          // Convert array to Set for checking
+          const seenQuestions = new Set(profile.generatedQuestionsSeen || []);
           
           if (!seenQuestions.has(generated.id)) {
             // Convert generated question to AnalyzedQuestion format

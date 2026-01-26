@@ -4,7 +4,7 @@ import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { NASP_DOMAINS } from '../../knowledge-base';
 import { matchDistractorPattern } from '../brain/distractor-matcher';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 import { SkillId } from '../brain/skill-map';
 
 interface AnalyzedQuestion {
@@ -223,10 +223,12 @@ export default function PracticeSession({
     }
 
     // Track generated questions if this was a generated question
+    // Convert array to Set for operations, then back to array for storage
     let updatedGeneratedSeen = localProfile.generatedQuestionsSeen;
     if (currentQuestion.isGenerated && currentQuestion.id) {
-      updatedGeneratedSeen = new Set(localProfile.generatedQuestionsSeen);
-      updatedGeneratedSeen.add(currentQuestion.id);
+      const seenSet = new Set(localProfile.generatedQuestionsSeen || []);
+      seenSet.add(currentQuestion.id);
+      updatedGeneratedSeen = Array.from(seenSet);
     }
 
     const updatedProfile: Partial<UserProfile> = {
@@ -259,10 +261,12 @@ export default function PracticeSession({
     // Track generated question if it was one
     let profileForSelection = localProfile;
     if (currentQuestion.isGenerated && currentQuestion.id) {
-      const updatedSeen = new Set(localProfile.generatedQuestionsSeen);
-      updatedSeen.add(currentQuestion.id);
-      profileForSelection = { ...localProfile, generatedQuestionsSeen: updatedSeen };
-      onUpdateProfile({ generatedQuestionsSeen: updatedSeen });
+      // Convert array to Set, add item, convert back to array
+      const seenSet = new Set(localProfile.generatedQuestionsSeen || []);
+      seenSet.add(currentQuestion.id);
+      const updatedSeenArray = Array.from(seenSet);
+      profileForSelection = { ...localProfile, generatedQuestionsSeen: updatedSeenArray };
+      onUpdateProfile({ generatedQuestionsSeen: updatedSeenArray });
       setLocalProfile(profileForSelection);
     }
 

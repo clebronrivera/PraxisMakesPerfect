@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BarChart3, AlertTriangle, Lightbulb, Play, Layers } from 'lucide-react';
 import { NASP_DOMAINS } from '../../knowledge-base';
 import PraxisPerformanceView from './PraxisPerformanceView';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 
 interface ResultsDashboardProps {
   userProfile: UserProfile;

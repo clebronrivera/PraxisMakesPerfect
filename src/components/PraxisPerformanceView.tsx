@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp, TrendingDown, TrendingUp, BarChart3, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { NASP_DOMAINS } from '../../knowledge-base';
-import { UserProfile } from '../hooks/useUserProgress';
+import { UserProfile } from '../hooks/useFirebaseProgress';
 
 interface PraxisPerformanceViewProps {
   userProfile: UserProfile;
