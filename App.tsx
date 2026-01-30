@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, Target, ChevronRight, AlertTriangle, Zap, BarChart3, RotateCcw } from 'lucide-react';
+import { Brain, Target, ChevronRight, AlertTriangle, Zap, BarChart3, RotateCcw, LogOut } from 'lucide-react';
 
 // Import knowledge base
 import { NASP_DOMAINS } from './knowledge-base';
@@ -26,7 +26,7 @@ import { loadSession, hasActiveSession, clearSession, AssessmentSession } from '
 import { createUserSession, UserSession } from './src/utils/userSessionStorage';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import LoginScreen from './src/components/LoginScreen';
-import { buildFullAssessment } from './src/utils/assessment-selector';
+import { buildFullAssessment } from './src/utils/assessment-builder';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -42,8 +42,8 @@ import { buildFullAssessment } from './src/utils/assessment-selector';
 
 function PraxisStudyAppContent() {
   // Use hooks for profile and adaptive learning
-  const { user, loading: authLoading } = useAuth();
-  const { profile, updateProfile, updateSkillProgress, resetProgress, migrateFromLocalStorage, isLoaded } = useFirebaseProgress();
+  const { user, loading: authLoading, logout } = useAuth();
+  const { profile, updateProfile, updateSkillProgress, resetProgress, migrateFromLocalStorage, logResponse, updateLastSession, isLoaded } = useFirebaseProgress();
   const { selectNextQuestion } = useAdaptiveLearning();
   
   // Migration flag - run once on first login
@@ -52,12 +52,20 @@ function PraxisStudyAppContent() {
   // Migrate localStorage data on first login
   useEffect(() => {
     if (user && !hasMigrated && isLoaded) {
-      migrateFromLocalStorage().then((migrated) => {
-        if (migrated) {
-          console.log('Migration completed');
-        }
-        setHasMigrated(true);
-      });
+      migrateFromLocalStorage()
+        .then((migrated) => {
+          if (migrated) {
+            console.log('[Migration] Completed successfully');
+          } else {
+            console.log('[Migration] No localStorage data to migrate');
+          }
+          setHasMigrated(true);
+        })
+        .catch((error) => {
+          console.error('[Migration] Error during migration:', error);
+          // Still mark as migrated to prevent infinite retries
+          setHasMigrated(true);
+        });
     }
   }, [user, hasMigrated, isLoaded, migrateFromLocalStorage]);
   
@@ -145,6 +153,26 @@ function PraxisStudyAppContent() {
       }
     }
     
+    // Backfill if we don't have 40 questions yet
+    if (selected.length < 40) {
+      const remaining = 40 - selected.length;
+      const available = analyzedQuestions.filter(q => !usedQuestionIds.has(q.id));
+      const shuffled = [...available].sort(() => Math.random() - 0.5);
+      const backfill = shuffled.slice(0, remaining);
+      
+      backfill.forEach(q => {
+        selected.push(q);
+        usedQuestionIds.add(q.id);
+      });
+      
+      console.log(`[PreAssessment] Backfilled ${backfill.length} questions to reach 40 total`);
+    }
+    
+    // Final sanity check
+    if (selected.length !== 40 || usedQuestionIds.size !== 40) {
+      console.warn(`[PreAssessment] Expected 40 questions, got ${selected.length} (unique: ${usedQuestionIds.size})`);
+    }
+    
     // Sanity check: ensure we have questions
     if (selected.length === 0) {
       console.error('No questions selected for pre-assessment');
@@ -186,17 +214,18 @@ function PraxisStudyAppContent() {
       }
     }
     
-    // Start new assessment: Full Test (120Q) with domain-balanced distribution
-    // Use assessment selector to get exactly 120 questions proportionally distributed
-    const selected = buildFullAssessment(analyzedQuestions, {
-      totalQuestions: 120,
-      excludeQuestionIds: new Set(), // Future: exclude questions already in practice pool
-      minPerDomain: 0 // No minimum per domain, pure proportional
-    });
+    // Start new assessment: Full Test (125Q) with Praxis-aligned distribution
+    // Use assessment builder to get exactly 125 questions distributed per Praxis percentages
+    const excludeIds = profile.preAssessmentQuestionIds ?? [];
+    const selected = buildFullAssessment(analyzedQuestions, 125, excludeIds);
     
     if (selected.length === 0) {
-      console.error('Failed to build full assessment - no questions selected');
+      console.error('[FullAssessment] Failed to build assessment - no questions selected');
       return;
+    }
+    
+    if (selected.length !== 125) {
+      console.warn(`[FullAssessment] Expected 125 questions, got ${selected.length}`);
     }
     
     const questionIds = selected.map(q => q.id);
@@ -261,36 +290,67 @@ function PraxisStudyAppContent() {
     }
   }, [resetProgress]);
   
-  const handlePreAssessmentComplete = useCallback((responses: UserResponse[]) => {
+  const handlePreAssessmentComplete = useCallback(async (responses: UserResponse[]) => {
     const questionCount = responses.length;
     const correctCount = responses.filter(r => r.isCorrect).length;
     const durationMs = assessmentStartTime > 0 ? Date.now() - assessmentStartTime : 0;
+    const questionIds = preAssessmentQuestions.map(q => q.id);
     
-    // Temporary completion logging
-    console.log("PreAssessmentComplete", { questionCount, correctCount, durationMs });
+    console.log('[PreAssessment] Complete', {
+      questionCount,
+      correctCount,
+      durationMs,
+      questionIds: questionIds.length,
+      responsesSaved: responses.length
+    });
     
     const analysis = detectWeaknesses(responses, analyzedQuestions);
-    updateProfile({
+    
+    // Save results to Firebase before navigation
+    // Note: Responses are already logged to responses subcollection during assessment
+    await updateProfile({
       preAssessmentComplete: true,
-      practiceHistory: [...profile.practiceHistory, ...responses],
+      preAssessmentQuestionIds: questionIds,
       ...analysis
     });
+    
+    console.log('[PreAssessment] Results saved to Firebase, navigating to score report');
+    
     setLastAssessmentResponses(responses);
     setLastAssessmentType('pre-assessment');
     setMode('score-report');
-  }, [analyzedQuestions, profile.practiceHistory, updateProfile, assessmentStartTime]);
+  }, [analyzedQuestions, updateProfile, assessmentStartTime, preAssessmentQuestions]);
   
-  const handleFullAssessmentComplete = useCallback((responses: UserResponse[]) => {
+  const handleFullAssessmentComplete = useCallback(async (responses: UserResponse[]) => {
+    const questionCount = responses.length;
+    const correctCount = responses.filter(r => r.isCorrect).length;
+    const durationMs = assessmentStartTime > 0 ? Date.now() - assessmentStartTime : 0;
+    const questionIds = fullAssessmentQuestions.map(q => q.id);
+    
+    console.log('[FullAssessment] Complete', {
+      questionCount,
+      correctCount,
+      durationMs,
+      questionIds: questionIds.length,
+      responsesSaved: responses.length
+    });
+    
     const analysis = detectWeaknesses(responses, analyzedQuestions);
-    updateProfile({
+    
+    // Save results to Firebase before navigation
+    // Note: Responses are already logged to responses subcollection during assessment
+    await updateProfile({
       fullAssessmentComplete: true,
-      practiceHistory: [...profile.practiceHistory, ...responses],
+      fullAssessmentQuestionIds: questionIds,
       ...analysis
     });
+    
+    console.log('[FullAssessment] Results saved to Firebase, navigating to score report');
+    
     setLastAssessmentResponses(responses);
     setLastAssessmentType('full-assessment');
     setMode('score-report');
-  }, [analyzedQuestions, profile.practiceHistory, updateProfile]);
+  }, [analyzedQuestions, updateProfile, assessmentStartTime, fullAssessmentQuestions]);
   
   const startPractice = useCallback((domainId?: number) => {
     setPracticeDomainFilter(domainId || null);
@@ -358,7 +418,24 @@ function PraxisStudyAppContent() {
                 ← Home
               </button>
             )}
-            {/* User info is now managed by Firebase auth */}
+            <button
+              onClick={async () => {
+                // Clear any local session data
+                clearSession();
+                // Log out from Firebase
+                await logout();
+                // Reset local state
+                setMode('home');
+                setPreAssessmentQuestions([]);
+                setFullAssessmentQuestions([]);
+                setLastAssessmentResponses([]);
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-lg transition-colors"
+              title="Log out"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
       </header>
@@ -420,6 +497,65 @@ function PraxisStudyAppContent() {
                   </button>
                   <button
                     onClick={handleDiscardSession}
+                    className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                  >
+                    Start New
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Resume Practice Session */}
+            {profile.lastSession && (
+              <div className="p-6 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="font-semibold text-emerald-300 mb-1">Resume Last Session</h3>
+                    <p className="text-sm text-emerald-200/80">
+                      {profile.lastSession.mode === 'practice' && 'Practice mode'}
+                      {profile.lastSession.mode === 'full' && 'Full assessment'}
+                      {profile.lastSession.mode === 'diagnostic' && 'Diagnostic'}
+                      {profile.lastSession.questionIndex > 0 && ` • Question ${profile.lastSession.questionIndex + 1}`}
+                    </p>
+                    {profile.lastSession.updatedAt && (
+                      <p className="text-xs text-emerald-300/60 mt-1">
+                        Last updated: {new Date(profile.lastSession.updatedAt.seconds * 1000 || profile.lastSession.updatedAt).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      // Check if localStorage has matching sessionId
+                      const sessionKey = `praxis-session-${profile.lastSession!.sessionId}`;
+                      const storedSession = localStorage.getItem(sessionKey);
+                      
+                      if (storedSession && profile.lastSession!.mode === 'practice') {
+                        // Resume practice session
+                        startPractice();
+                      } else if (profile.lastSession!.mode === 'diagnostic') {
+                        // Start new diagnostic but preserve progress
+                        startPreAssessment(undefined);
+                      } else if (profile.lastSession!.mode === 'full') {
+                        // Start new full assessment but preserve progress
+                        startFullAssessment(undefined);
+                      } else {
+                        // Start new session in that mode
+                        if (profile.lastSession!.mode === 'practice') {
+                          startPractice();
+                        }
+                      }
+                    }}
+                    className="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Resume
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Clear lastSession pointer
+                      updateProfile({ lastSession: undefined });
+                    }}
                     className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
                   >
                     Start New
@@ -605,6 +741,8 @@ function PraxisStudyAppContent() {
             onComplete={handlePreAssessmentComplete}
             showTimer={true}
             sessionId={selectedSessionId}
+            logResponse={logResponse}
+            updateLastSession={updateLastSession}
           />
         )}
         
@@ -615,6 +753,8 @@ function PraxisStudyAppContent() {
             onComplete={handleFullAssessmentComplete}
             showTimer={true}
             sessionId={selectedSessionId}
+            logResponse={logResponse}
+            updateLastSession={updateLastSession}
           />
         )}
         
@@ -671,6 +811,8 @@ function PraxisStudyAppContent() {
             userProfile={profile}
             onUpdateProfile={updateProfile}
             updateSkillProgress={updateSkillProgress}
+            logResponse={logResponse}
+            updateLastSession={updateLastSession}
             analyzedQuestions={practiceQuestions}
             selectNextQuestion={selectNextQuestion}
             detectWeaknesses={detectWeaknesses}

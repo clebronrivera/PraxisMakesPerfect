@@ -76,7 +76,7 @@ PraxisMakesPerfect/
 
 ## Usage
 
-1. **Start Pre-Assessment**: Complete a 20-question diagnostic to identify your weak areas
+1. **Start Quick Diagnostic (40Q)**: Complete the quick diagnostic to identify your weak areas
 2. **Review Results**: See your domain scores and identified knowledge gaps
 3. **Practice Mode**: Adaptive practice questions focused on your weaknesses
 4. **Track Progress**: Monitor your streak and total questions answered

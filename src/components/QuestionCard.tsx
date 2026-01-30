@@ -1,5 +1,6 @@
-import { CheckCircle, XCircle, ArrowRight, Flag, X } from 'lucide-react';
+import { CheckCircle, XCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
+import ReportQuestionModal from './ReportQuestionModal';
 
 interface AnalyzedQuestion {
   id: string;
@@ -28,8 +29,7 @@ interface QuestionCardProps {
   onConfidenceChange: (level: 'low' | 'medium' | 'high') => void;
   disabled: boolean;
   showFeedback: boolean;
-  onFlag?: (questionId: string, note: string) => void;
-  flaggedNote?: string;
+  assessmentType?: 'pre' | 'full' | 'practice';
 }
 
 export default function QuestionCard({
@@ -42,19 +42,9 @@ export default function QuestionCard({
   onConfidenceChange,
   disabled,
   showFeedback,
-  onFlag,
-  flaggedNote
+  assessmentType = 'practice'
 }: QuestionCardProps) {
-  const [showFlagModal, setShowFlagModal] = useState(false);
-  const [flagNote, setFlagNote] = useState(flaggedNote || '');
-  const isFlagged = !!flaggedNote;
-
-  const handleFlag = () => {
-    if (onFlag) {
-      onFlag(question.id, flagNote);
-      setShowFlagModal(false);
-    }
-  };
+  const [showReportModal, setShowReportModal] = useState(false);
 
   // Determine source display
   const getSourceDisplay = () => {
@@ -78,19 +68,13 @@ export default function QuestionCard({
               {getSourceDisplay()}
             </span>
           </div>
-          {onFlag && (
-            <button
-              onClick={() => setShowFlagModal(true)}
-              className={`p-2 rounded-lg transition-all ${
-                isFlagged 
-                  ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
-                  : 'text-slate-500 hover:text-slate-400 hover:bg-slate-700/50'
-              }`}
-              title={isFlagged ? 'View flag note' : 'Flag this question'}
-            >
-              <Flag className={`w-4 h-4 ${isFlagged ? 'fill-current' : ''}`} />
-            </button>
-          )}
+          <button
+            onClick={() => setShowReportModal(true)}
+            className="p-2 rounded-lg transition-all text-slate-500 hover:text-amber-400 hover:bg-slate-700/50"
+            title="Report this question"
+          >
+            <AlertTriangle className="w-4 h-4" />
+          </button>
         </div>
         
         <div className="p-6 pt-2">
@@ -202,58 +186,17 @@ export default function QuestionCard({
         )}
       </div>
 
-      {/* Flag Modal */}
-      {showFlagModal && onFlag && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowFlagModal(false)}>
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-200">Flag Question</h3>
-              <button
-                onClick={() => setShowFlagModal(false)}
-                className="text-slate-500 hover:text-slate-300"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <p className="text-sm text-slate-400 mb-4">
-              Why are you flagging this question?
-            </p>
-            <textarea
-              value={flagNote}
-              onChange={(e) => setFlagNote(e.target.value)}
-              placeholder="Enter your note (e.g., 'Grammar error in option A', 'Wrong answer', 'Confusing wording')..."
-              className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50 resize-none"
-              rows={4}
-            />
-            <div className="flex gap-3 mt-4">
-              <button
-                onClick={handleFlag}
-                className="flex-1 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all font-medium"
-              >
-                {isFlagged ? 'Update Flag' : 'Flag Question'}
-              </button>
-              <button
-                onClick={() => setShowFlagModal(false)}
-                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all"
-              >
-                Cancel
-              </button>
-            </div>
-            {isFlagged && (
-              <button
-                onClick={() => {
-                  onFlag(question.id, '');
-                  setFlagNote('');
-                  setShowFlagModal(false);
-                }}
-                className="mt-2 w-full px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-400 text-sm rounded-lg transition-all"
-              >
-                Remove Flag
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Report Question Modal */}
+      <ReportQuestionModal
+        question={question}
+        assessmentType={assessmentType}
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onSuccess={() => {
+          // Show toast notification (could use a toast library)
+          console.log('Report submitted successfully');
+        }}
+      />
     </>
   );
 }

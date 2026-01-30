@@ -3,7 +3,63 @@
 
 import { SkillId, getSkillById } from './skill-map';
 
+/**
+ * Calculate confidence weight modifier
+ * High+Correct: x1.2 (true mastery)
+ * High+Wrong: x0.5 (misconception)
+ * Low+Correct: x0.8 (shaky/guess)
+ * Low+Wrong: x1.0 (expected gap)
+ * Medium: x1.0 (neutral)
+ */
+export function calculateConfidenceWeight(
+  confidence: 'low' | 'medium' | 'high',
+  isCorrect: boolean
+): number {
+  if (confidence === 'high' && isCorrect) return 1.2;
+  if (confidence === 'high' && !isCorrect) return 0.5;
+  if (confidence === 'low' && isCorrect) return 0.8;
+  if (confidence === 'low' && !isCorrect) return 1.0;
+  return 1.0; // medium or default
+}
+
+/**
+ * Calculate weighted accuracy from attempt history
+ */
+export function calculateWeightedAccuracy(attemptHistory: SkillAttempt[]): number {
+  if (attemptHistory.length === 0) return 0;
+  
+  let totalWeight = 0;
+  let correctWeight = 0;
+  
+  attemptHistory.forEach(attempt => {
+    const weight = calculateConfidenceWeight(attempt.confidence, attempt.correct);
+    totalWeight += weight;
+    if (attempt.correct) {
+      correctWeight += weight;
+    }
+  });
+  
+  return totalWeight > 0 ? correctWeight / totalWeight : 0;
+}
+
+/**
+ * Count high+wrong attempts (misconceptions)
+ */
+export function countConfidenceFlags(attemptHistory: SkillAttempt[]): number {
+  return attemptHistory.filter(
+    a => a.confidence === 'high' && !a.correct
+  ).length;
+}
+
 export type LearningState = 'emerging' | 'developing' | 'proficient' | 'mastery';
+
+export interface SkillAttempt {
+  questionId: string;
+  correct: boolean;
+  confidence: 'low' | 'medium' | 'high';
+  timestamp: number;
+  timeSpent: number;
+}
 
 export interface SkillPerformance {
   score: number;              // Lifetime accuracy (0-1)
@@ -13,6 +69,9 @@ export interface SkillPerformance {
   history: boolean[];         // Last 5 results (true=correct)
   learningState: LearningState;
   masteryDate?: number;       // Timestamp when mastery was first reached
+  attemptHistory?: SkillAttempt[]; // Raw attempt history (bounded to last 50-100)
+  weightedAccuracy?: number;  // Confidence-weighted accuracy
+  confidenceFlags?: number;    // Count of high+wrong (misconceptions)
 }
 
 /**

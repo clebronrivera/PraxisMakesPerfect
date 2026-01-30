@@ -1,12 +1,10 @@
-// src/components/ErrorBoundary.tsx
-// React Error Boundary for crash-proofing results page
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RotateCcw, Home } from 'lucide-react';
+import { AlertTriangle, Home, RotateCcw } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  onReset?: () => void;
 }
 
 interface State {
@@ -17,17 +15,11 @@ interface State {
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: null
-    };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return {
-      hasError: true,
-      error
-    };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -35,14 +27,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    this.setState({
-      hasError: false,
-      error: null
-    });
-  };
-
-  handleGoHome = () => {
-    window.location.href = '/';
+    this.setState({ hasError: false, error: null });
+    if (this.props.onReset) {
+      this.props.onReset();
+    }
   };
 
   render() {
@@ -53,7 +41,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-slate-800 border border-red-500/30 rounded-2xl p-8 text-center space-y-6">
+          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 max-w-md w-full text-center space-y-6">
             <div className="flex justify-center">
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
                 <AlertTriangle className="w-8 h-8 text-red-400" />
@@ -61,19 +49,16 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-100">Something went wrong</h2>
+              <h2 className="text-2xl font-bold text-slate-100">Something Went Wrong</h2>
               <p className="text-slate-400">
-                An error occurred while loading this page. This has been logged for review.
+                An error occurred while displaying your results. This may happen if your session data is corrupted or incomplete.
               </p>
-            </div>
-
-            {this.state.error && process.env.NODE_ENV === 'development' && (
-              <div className="bg-slate-900/50 rounded-lg p-4 text-left">
-                <p className="text-xs text-red-400 font-mono break-all">
-                  {this.state.error.toString()}
+              {this.state.error && (
+                <p className="text-xs text-slate-500 mt-2 font-mono">
+                  {this.state.error.message}
                 </p>
-              </div>
-            )}
+              )}
+            </div>
 
             <div className="flex flex-col gap-3 pt-4">
               <button
@@ -84,7 +69,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 Try Again
               </button>
               <button
-                onClick={this.handleGoHome}
+                onClick={() => {
+                  const { clearSession } = require('../utils/sessionStorage');
+                  clearSession();
+                  window.location.href = '/';
+                }}
                 className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />
