@@ -320,6 +320,7 @@ export default function TeachMode({
         onConfidenceChange={() => {}}
         disabled={false}
         showFeedback={showFeedback && (!showTeachingContext || isRetry)}
+        assessmentType="practice"
       />
       
       {/* Feedback Panel */}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Zap, Clock } from 'lucide-react';
+import { Zap, Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { NASP_DOMAINS } from '../../knowledge-base';
@@ -25,7 +25,21 @@ interface AnalyzedQuestion {
 interface PracticeSessionProps {
   userProfile: UserProfile;
   onUpdateProfile: (updates: Partial<UserProfile>) => void;
-  updateSkillProgress?: (skillId: SkillId, isCorrect: boolean) => void;
+  updateSkillProgress?: (skillId: SkillId, isCorrect: boolean, confidence?: 'low' | 'medium' | 'high', questionId?: string, timeSpent?: number) => Promise<void>;
+  logResponse?: (response: {
+    questionId: string;
+    skillId?: string;
+    domainId?: number;
+    assessmentType: 'diagnostic' | 'full' | 'practice';
+    sessionId: string;
+    isCorrect: boolean;
+    confidence: 'low' | 'medium' | 'high';
+    timeSpent: number;
+    timestamp: number;
+    selectedAnswer?: string;
+    distractorPatternId?: string;
+  }) => Promise<void>;
+  updateLastSession?: (sessionId: string, mode: 'practice' | 'full' | 'diagnostic', questionIndex: number) => Promise<void>;
   analyzedQuestions: AnalyzedQuestion[];
   selectNextQuestion: (profile: UserProfile, questions: AnalyzedQuestion[], history: string[]) => AnalyzedQuestion | null;
   detectWeaknesses: (responses: Array<{
@@ -60,6 +74,8 @@ export default function PracticeSession({
   userProfile,
   onUpdateProfile,
   updateSkillProgress,
+  logResponse,
+  updateLastSession,
   analyzedQuestions,
   selectNextQuestion,
   detectWeaknesses,
@@ -72,8 +88,23 @@ export default function PracticeSession({
   const [startTime, setStartTime] = useState<number>(Date.now());
   const [questionHistory, setQuestionHistory] = useState<string[]>([]);
   const [localProfile, setLocalProfile] = useState<UserProfile>(userProfile);
+  const [localResponses, setLocalResponses] = useState<Array<{
+    questionId: string;
+    selectedAnswers: string[];
+    correctAnswers: string[];
+    isCorrect: boolean;
+    timeSpent: number;
+    confidence: 'low' | 'medium' | 'high';
+    timestamp: number;
+  }>>([]); // Local array for weakness detection (last 50)
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [showTimer, setShowTimer] = useState(true);
+  const [showTimer, setShowTimer] = useState(false); // Default OFF, tracking still happens
+  const [isPaused, setIsPaused] = useState(false);
+  const [pauseStartTime, setPauseStartTime] = useState<number | null>(null);
+  const [totalPausedTime, setTotalPausedTime] = useState(0);
+  // Generate sessionId for this practice session
+  const [sessionId] = useState<string>(() => `practice-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const [questionIndex, setQuestionIndex] = useState(0);
   
   // Sync local profile with prop updates
   useEffect(() => {
@@ -91,15 +122,34 @@ export default function PracticeSession({
     }
   }, [currentQuestion, localProfile, analyzedQuestions, questionHistory, selectNextQuestion]);
 
-  // Timer effect
+  // Timer effect - compute elapsed time (not tick-based)
   useEffect(() => {
-    if (!showFeedback && currentQuestion && showTimer) {
+    if (!showFeedback && currentQuestion && !isPaused) {
       const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+        // Compute elapsed time: (now - startTime) - totalPausedTime
+        const now = Date.now();
+        const elapsed = Math.floor((now - startTime) / 1000) - totalPausedTime;
+        setElapsedTime(Math.max(0, elapsed));
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [showFeedback, startTime, currentQuestion, showTimer]);
+  }, [showFeedback, startTime, currentQuestion, isPaused, totalPausedTime]);
+  
+  // Handle pause/resume
+  const handlePause = () => {
+    if (!isPaused) {
+      setIsPaused(true);
+      setPauseStartTime(Date.now());
+    } else {
+      // Resume: calculate pause duration and add to total
+      if (pauseStartTime) {
+        const pauseDuration = Math.floor((Date.now() - pauseStartTime) / 1000);
+        setTotalPausedTime(prev => prev + pauseDuration);
+        setPauseStartTime(null);
+      }
+      setIsPaused(false);
+    }
+  };
 
   const toggleAnswer = (letter: string) => {
     if (showFeedback || !currentQuestion) return;
@@ -117,16 +167,20 @@ export default function PracticeSession({
     });
   };
 
-  const submitAnswer = () => {
+  const submitAnswer = async () => {
     if (selectedAnswers.length === 0 || !currentQuestion) return;
 
-    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    // Calculate time spent: (now - startTime) - totalPausedTime
+    const now = Date.now();
+    const timeSpent = Math.max(0, Math.floor((now - startTime) / 1000) - totalPausedTime);
+    const timestamp = now;
     const isCorrect = 
       selectedAnswers.every(a => currentQuestion.correct_answer.includes(a)) &&
       selectedAnswers.length === currentQuestion.correct_answer.length;
 
     // Track selected distractor if answer is wrong
     let selectedDistractor: { letter: string; text: string; patternId?: string } | undefined;
+    let distractorPatternId: string | undefined;
     if (!isCorrect && selectedAnswers.length > 0) {
       // Find the first wrong answer (distractor)
       const wrongAnswer = selectedAnswers.find(a => !currentQuestion.correct_answer.includes(a));
@@ -142,9 +196,28 @@ export default function PracticeSession({
           text: distractorText,
           patternId: patternId || undefined
         };
+        distractorPatternId = patternId || undefined;
       }
     }
 
+    // Log response to Firestore subcollection (source of truth)
+    if (logResponse) {
+      await logResponse({
+        questionId: currentQuestion.id,
+        skillId: currentQuestion.skillId,
+        domainId: currentQuestion.domains[0], // Use first domain
+        assessmentType: 'practice',
+        sessionId,
+        isCorrect,
+        confidence,
+        timeSpent,
+        timestamp,
+        selectedAnswer: selectedAnswers[0], // First selected answer letter
+        distractorPatternId
+      });
+    }
+
+    // Build response object for weakness detection (local only, not stored)
     const response = {
       questionId: currentQuestion.id,
       selectedAnswers,
@@ -152,64 +225,37 @@ export default function PracticeSession({
       isCorrect,
       timeSpent,
       confidence,
-      timestamp: Date.now(),
+      timestamp,
       selectedDistractor
     };
 
-    // Update profile
-    const newHistory = [...localProfile.practiceHistory, response];
-    const analysis = detectWeaknesses(newHistory, analyzedQuestions);
+    // Add to local responses array for weakness detection (keep last 50)
+    const updatedLocalResponses = [...localResponses, response].slice(-50);
+    setLocalResponses(updatedLocalResponses);
+    
+    // Get recent responses for weakness detection (from local state, not Firestore)
+    // In future, could query responses subcollection for more accurate analysis
+    const analysis = detectWeaknesses(updatedLocalResponses, analyzedQuestions);
     
     // Update skill scores if question has a skillId
-    let updatedSkillScores = { ...localProfile.skillScores };
-    if (currentQuestion.skillId) {
-      const skillId = currentQuestion.skillId;
-      const currentSkillScore = updatedSkillScores[skillId];
-      
-      if (currentSkillScore) {
-        // Update existing skill score (new format)
-        const newAttempts = currentSkillScore.attempts + 1;
-        const newCorrect = currentSkillScore.correct + (isCorrect ? 1 : 0);
-        const newScore = newAttempts > 0 ? newCorrect / newAttempts : 0;
-        const newConsecutiveCorrect = isCorrect ? currentSkillScore.consecutiveCorrect + 1 : 0;
-        const newHistory = [...currentSkillScore.history, isCorrect].slice(-5);
-        
-        updatedSkillScores[skillId] = {
-          ...currentSkillScore,
-          score: newScore,
-          attempts: newAttempts,
-          correct: newCorrect,
-          consecutiveCorrect: newConsecutiveCorrect,
-          history: newHistory
-          // learningState and masteryDate will be calculated by updateSkillProgress or on next load
-        };
-      } else {
-        // Initialize new skill score
-        updatedSkillScores[skillId] = {
-          score: isCorrect ? 1 : 0,
-          attempts: 1,
-          correct: isCorrect ? 1 : 0,
-          consecutiveCorrect: isCorrect ? 1 : 0,
-          history: [isCorrect],
-          learningState: 'emerging',
-          masteryDate: undefined
-        };
-      }
-      
-      // Use updateSkillProgress if available (calculates learning state with prerequisites)
-      if (updateSkillProgress) {
-        updateSkillProgress(skillId, isCorrect);
-      }
+    if (currentQuestion.skillId && updateSkillProgress) {
+      await updateSkillProgress(
+        currentQuestion.skillId, 
+        isCorrect, 
+        confidence, 
+        currentQuestion.id, 
+        timeSpent
+      );
     }
 
     // Track distractor errors
     let updatedDistractorErrors = { ...localProfile.distractorErrors };
     let updatedSkillDistractorErrors = { ...localProfile.skillDistractorErrors };
     
-    if (!isCorrect && selectedDistractor?.patternId) {
+    if (!isCorrect && distractorPatternId) {
       // Update global distractor error count
-      updatedDistractorErrors[selectedDistractor.patternId] = 
-        (updatedDistractorErrors[selectedDistractor.patternId] || 0) + 1;
+      updatedDistractorErrors[distractorPatternId] = 
+        (updatedDistractorErrors[distractorPatternId] || 0) + 1;
       
       // Update skill-specific distractor error count
       if (currentQuestion.skillId) {
@@ -217,34 +263,37 @@ export default function PracticeSession({
         if (!updatedSkillDistractorErrors[skillId]) {
           updatedSkillDistractorErrors[skillId] = {};
         }
-        updatedSkillDistractorErrors[skillId][selectedDistractor.patternId] = 
-          (updatedSkillDistractorErrors[skillId][selectedDistractor.patternId] || 0) + 1;
+        updatedSkillDistractorErrors[skillId][distractorPatternId] = 
+          (updatedSkillDistractorErrors[skillId][distractorPatternId] || 0) + 1;
       }
     }
 
-    // Track generated questions if this was a generated question
-    // Convert array to Set for operations, then back to array for storage
-    let updatedGeneratedSeen = localProfile.generatedQuestionsSeen;
-    if (currentQuestion.isGenerated && currentQuestion.id) {
-      const seenSet = new Set(localProfile.generatedQuestionsSeen || []);
-      seenSet.add(currentQuestion.id);
-      updatedGeneratedSeen = Array.from(seenSet);
-    }
-
+    // Update summary doc (cached view)
     const updatedProfile: Partial<UserProfile> = {
-      practiceHistory: newHistory,
-      skillScores: updatedSkillScores, // Always include for localProfile sync
-      generatedQuestionsSeen: updatedGeneratedSeen,
+      skillScores: localProfile.skillScores, // Will be updated by updateSkillProgress
       distractorErrors: updatedDistractorErrors,
       skillDistractorErrors: updatedSkillDistractorErrors,
       ...analysis,
-      totalQuestionsSeen: localProfile.totalQuestionsSeen + 1,
-      streak: isCorrect ? localProfile.streak + 1 : 0
+      totalQuestionsSeen: (localProfile.totalQuestionsSeen || 0) + 1,
+      streak: isCorrect ? (localProfile.streak || 0) + 1 : 0,
+      practiceResponseCount: (localProfile.practiceResponseCount || 0) + 1,
+      lastPracticeAt: timestamp
     };
     
     onUpdateProfile(updatedProfile);
     // Update local profile immediately so next question selection uses latest data
     setLocalProfile(prev => ({ ...prev, ...updatedProfile } as UserProfile));
+
+    // Update recent practice question IDs (rolling window of last 20)
+    const recentPracticeIds = [...(localProfile.recentPracticeQuestionIds || []), currentQuestion.id];
+    const trimmedRecent = recentPracticeIds.slice(-20); // Keep last 20
+    onUpdateProfile({ recentPracticeQuestionIds: trimmedRecent });
+    setLocalProfile(prev => ({ ...prev, recentPracticeQuestionIds: trimmedRecent }));
+
+    // Update lastSession pointer
+    if (updateLastSession) {
+      await updateLastSession(sessionId, 'practice', questionIndex);
+    }
 
     setQuestionHistory(prev => [...prev, currentQuestion.id]);
     setShowFeedback(true);
@@ -258,27 +307,28 @@ export default function PracticeSession({
     const updatedHistory = [...questionHistory, currentQuestion.id];
     setQuestionHistory(updatedHistory);
     
-    // Track generated question if it was one
-    let profileForSelection = localProfile;
-    if (currentQuestion.isGenerated && currentQuestion.id) {
-      // Convert array to Set, add item, convert back to array
-      const seenSet = new Set(localProfile.generatedQuestionsSeen || []);
-      seenSet.add(currentQuestion.id);
-      const updatedSeenArray = Array.from(seenSet);
-      profileForSelection = { ...localProfile, generatedQuestionsSeen: updatedSeenArray };
-      onUpdateProfile({ generatedQuestionsSeen: updatedSeenArray });
-      setLocalProfile(profileForSelection);
-    }
-
     // Select next question using updated profile and history
-    const next = selectNextQuestion(profileForSelection, analyzedQuestions, updatedHistory);
+    const next = selectNextQuestion(localProfile, analyzedQuestions, updatedHistory);
     if (next) {
       setCurrentQuestion(next);
       setStartTime(Date.now());
       setElapsedTime(0);
+      setTotalPausedTime(0); // Reset paused time for new question
       setSelectedAnswers([]);
       setShowFeedback(false);
       setConfidence('medium');
+      setQuestionIndex(prev => prev + 1);
+    } else {
+      // Debug logging when no questions available
+      console.warn('[PracticeSession] No questions available', {
+        selectedSkill: localProfile.weakestDomains[0],
+        exclusionCounts: {
+          assessment: (localProfile.preAssessmentQuestionIds?.length || 0) + (localProfile.fullAssessmentQuestionIds?.length || 0),
+          recent: localProfile.recentPracticeQuestionIds?.length || 0,
+          session: questionHistory.length
+        },
+        availablePoolSize: analyzedQuestions.length
+      });
     }
   };
 
@@ -312,13 +362,31 @@ export default function PracticeSession({
           )}
         </div>
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowTimer(!showTimer)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
-          >
-            <Clock className={`w-4 h-4 ${showTimer ? 'text-amber-400' : ''}`} />
-            <span>{showTimer ? 'Hide Timer' : 'Show Timer'}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowTimer(!showTimer)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
+            >
+              <Clock className={`w-4 h-4 ${showTimer ? 'text-amber-400' : ''}`} />
+              <span>{showTimer ? 'Hide Timer' : 'Show Timer'}</span>
+            </button>
+            <button
+              onClick={handlePause}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
+            >
+              {isPaused ? (
+                <>
+                  <Play className="w-4 h-4 text-emerald-400" />
+                  <span>Resume</span>
+                </>
+              ) : (
+                <>
+                  <Pause className="w-4 h-4" />
+                  <span>Pause</span>
+                </>
+              )}
+            </button>
+          </div>
           {showTimer && (
             <span className="text-sm text-slate-400">
               Time: <span className="text-slate-300 font-mono">{formatTime(elapsedTime)}</span>
@@ -337,32 +405,48 @@ export default function PracticeSession({
         </div>
       </div>
 
+      {/* Pause Overlay */}
+      {isPaused && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center space-y-6 max-w-md mx-4">
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center">
+                <Pause className="w-8 h-8 text-slate-400" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-slate-100 mb-2">Practice Paused</h3>
+              <p className="text-slate-400">Take your time. Your progress is saved.</p>
+            </div>
+            <button
+              onClick={handlePause}
+              className="w-full px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+            >
+              <Play className="w-5 h-5" />
+              Resume Practice
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Question Card */}
-      <QuestionCard
-        question={currentQuestion}
-        selectedAnswers={selectedAnswers}
-        onSelectAnswer={toggleAnswer}
-        onSubmit={submitAnswer}
-        onNext={nextQuestion}
-        confidence={confidence}
-        onConfidenceChange={setConfidence}
-        disabled={false}
-        showFeedback={showFeedback}
-        onFlag={(questionId, note) => {
-          const updatedFlags = { ...localProfile.flaggedQuestions };
-          if (note.trim()) {
-            updatedFlags[questionId] = note;
-          } else {
-            delete updatedFlags[questionId];
-          }
-          onUpdateProfile({ flaggedQuestions: updatedFlags });
-          setLocalProfile(prev => ({ ...prev, flaggedQuestions: updatedFlags }));
-        }}
-        flaggedNote={localProfile.flaggedQuestions[currentQuestion.id]}
-      />
+      {!isPaused && (
+        <QuestionCard
+          question={currentQuestion}
+          selectedAnswers={selectedAnswers}
+          onSelectAnswer={toggleAnswer}
+          onSubmit={submitAnswer}
+          onNext={nextQuestion}
+          confidence={confidence}
+          onConfidenceChange={setConfidence}
+          disabled={false}
+          showFeedback={showFeedback}
+          assessmentType="practice"
+        />
+      )}
 
       {/* Feedback Panel */}
-      {showFeedback && (
+      {showFeedback && !isPaused && (
         <ExplanationPanel
           question={currentQuestion}
           userAnswer={selectedAnswers}

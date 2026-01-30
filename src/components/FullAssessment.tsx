@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { UserResponse } from '../brain/weakness-detector';
@@ -27,13 +27,29 @@ interface FullAssessmentProps {
   onComplete: (responses: UserResponse[]) => void;
   showTimer?: boolean;
   sessionId?: string;
+  logResponse?: (response: {
+    questionId: string;
+    skillId?: string;
+    domainId?: number;
+    assessmentType: 'diagnostic' | 'full' | 'practice';
+    sessionId: string;
+    isCorrect: boolean;
+    confidence: 'low' | 'medium' | 'high';
+    timeSpent: number;
+    timestamp: number;
+    selectedAnswer?: string;
+    distractorPatternId?: string;
+  }) => Promise<void>;
+  updateLastSession?: (sessionId: string, mode: 'practice' | 'full' | 'diagnostic', questionIndex: number) => Promise<void>;
 }
 
 export default function FullAssessment({
   questions,
   onComplete,
   showTimer = true,
-  sessionId
+  sessionId,
+  logResponse,
+  updateLastSession
 }: FullAssessmentProps) {
   const currentUser = getCurrentUser();
   const userSession = currentUser && sessionId ? getCurrentSession(currentUser) : null;
@@ -51,7 +67,10 @@ export default function FullAssessment({
   const [startTime, setStartTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [showTimerState, setShowTimerState] = useState(showTimer);
+  const [showTimerState, setShowTimerState] = useState(false); // Default OFF, tracking still happens
+  const [isPaused, setIsPaused] = useState(false);
+  const [pauseStartTime, setPauseStartTime] = useState<number | null>(null);
+  const [totalPausedTime, setTotalPausedTime] = useState(isResuming ? (savedSession as any).totalPausedTime || 0 : 0);
 
   const currentQuestion = questions[currentIndex];
 
@@ -98,15 +117,34 @@ export default function FullAssessment({
     }
   }, [currentIndex, questions.length, responses.length]);
 
-  // Timer effect
+  // Timer effect - compute elapsed time (not tick-based)
   useEffect(() => {
-    if (!showFeedback && currentQuestion && showTimerState) {
+    if (!showFeedback && currentQuestion && !isPaused) {
       const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+        // Compute elapsed time: (now - startTime) - totalPausedTime
+        const now = Date.now();
+        const elapsed = Math.floor((now - startTime) / 1000) - totalPausedTime;
+        setElapsedTime(Math.max(0, elapsed));
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [showFeedback, startTime, currentQuestion, showTimerState]);
+  }, [showFeedback, startTime, currentQuestion, isPaused, totalPausedTime]);
+  
+  // Handle pause/resume
+  const handlePause = () => {
+    if (!isPaused) {
+      setIsPaused(true);
+      setPauseStartTime(Date.now());
+    } else {
+      // Resume: calculate pause duration and add to total
+      if (pauseStartTime) {
+        const pauseDuration = Math.floor((Date.now() - pauseStartTime) / 1000);
+        setTotalPausedTime(prev => prev + pauseDuration);
+        setPauseStartTime(null);
+      }
+      setIsPaused(false);
+    }
+  };
 
   const toggleAnswer = (letter: string) => {
     if (showFeedback) return;
@@ -124,16 +162,20 @@ export default function FullAssessment({
     });
   };
 
-  const submitAnswer = () => {
+  const submitAnswer = async () => {
     if (selectedAnswers.length === 0) return;
 
-    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    // Calculate time spent: (now - startTime) - totalPausedTime
+    const now = Date.now();
+    const timeSpent = Math.max(0, Math.floor((now - startTime) / 1000) - totalPausedTime);
+    const timestamp = now;
     const isCorrect = 
       selectedAnswers.every(a => currentQuestion.correct_answer.includes(a)) &&
       selectedAnswers.length === currentQuestion.correct_answer.length;
 
     // Track selected distractor if answer is wrong
     let selectedDistractor: { letter: string; text: string; patternId?: string } | undefined;
+    let distractorPatternId: string | undefined;
     if (!isCorrect && selectedAnswers.length > 0) {
       // Find the first wrong answer (distractor)
       const wrongAnswer = selectedAnswers.find(a => !currentQuestion.correct_answer.includes(a));
@@ -149,7 +191,30 @@ export default function FullAssessment({
           text: distractorText,
           patternId: patternId || undefined
         };
+        distractorPatternId = patternId || undefined;
       }
+    }
+
+    // Log response to Firestore subcollection (source of truth)
+    if (logResponse && sessionId) {
+      await logResponse({
+        questionId: currentQuestion.id,
+        skillId: currentQuestion.skillId,
+        domainId: currentQuestion.domains[0],
+        assessmentType: 'full',
+        sessionId,
+        isCorrect,
+        confidence,
+        timeSpent,
+        timestamp,
+        selectedAnswer: selectedAnswers[0],
+        distractorPatternId
+      });
+    }
+
+    // Update lastSession pointer
+    if (updateLastSession && sessionId) {
+      await updateLastSession(sessionId, 'full', currentIndex);
     }
 
     const response: UserResponse = {
@@ -159,7 +224,7 @@ export default function FullAssessment({
       isCorrect,
       timeSpent,
       confidence,
-      timestamp: Date.now(),
+      timestamp,
       selectedDistractor
     };
 
@@ -220,37 +285,82 @@ export default function FullAssessment({
         </div>
       </div>
 
-      {/* Timer Toggle and Display */}
+      {/* Timer Toggle, Pause Button, and Display */}
       <div className="flex items-center justify-between">
-        <button
-          onClick={() => setShowTimerState(!showTimerState)}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
-        >
-          <Clock className={`w-4 h-4 ${showTimerState ? 'text-amber-400' : ''}`} />
-          <span>{showTimerState ? 'Hide Timer' : 'Show Timer'}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowTimerState(!showTimerState)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
+          >
+            <Clock className={`w-4 h-4 ${showTimerState ? 'text-amber-400' : ''}`} />
+            <span>{showTimerState ? 'Hide Timer' : 'Show Timer'}</span>
+          </button>
+          <button
+            onClick={handlePause}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
+          >
+            {isPaused ? (
+              <>
+                <Play className="w-4 h-4 text-emerald-400" />
+                <span>Resume</span>
+              </>
+            ) : (
+              <>
+                <Pause className="w-4 h-4" />
+                <span>Pause</span>
+              </>
+            )}
+          </button>
+        </div>
         {showTimerState && (
           <div className="text-sm text-slate-400">
             Question Time: <span className="text-slate-300 font-mono">{formatTime(elapsedTime)}</span>
           </div>
         )}
       </div>
+      
+      {/* Pause Overlay */}
+      {isPaused && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center space-y-6 max-w-md mx-4">
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center">
+                <Pause className="w-8 h-8 text-slate-400" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-slate-100 mb-2">Assessment Paused</h3>
+              <p className="text-slate-400">Take your time. Your progress is saved.</p>
+            </div>
+            <button
+              onClick={handlePause}
+              className="w-full px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+            >
+              <Play className="w-5 h-5" />
+              Resume Assessment
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Question Card */}
-      <QuestionCard
-        question={currentQuestion}
-        selectedAnswers={selectedAnswers}
-        onSelectAnswer={toggleAnswer}
-        onSubmit={submitAnswer}
-        onNext={nextQuestion}
-        confidence={confidence}
-        onConfidenceChange={setConfidence}
-        disabled={false}
-        showFeedback={showFeedback}
-      />
+      {!isPaused && (
+        <QuestionCard
+          question={currentQuestion}
+          selectedAnswers={selectedAnswers}
+          onSelectAnswer={toggleAnswer}
+          onSubmit={submitAnswer}
+          onNext={nextQuestion}
+          confidence={confidence}
+          onConfidenceChange={setConfidence}
+          disabled={false}
+          showFeedback={showFeedback}
+          assessmentType="full"
+        />
+      )}
 
       {/* Feedback Panel */}
-      {showFeedback && (
+      {showFeedback && !isPaused && (
         <ExplanationPanel
           question={currentQuestion}
           userAnswer={selectedAnswers}

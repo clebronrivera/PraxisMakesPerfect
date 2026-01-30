@@ -6,17 +6,30 @@ import { useState, useEffect, useCallback } from 'react';
 import { 
   doc, 
   getDoc, 
-  setDoc, 
+  setDoc,
+  deleteDoc,
   onSnapshot,
-  serverTimestamp 
+  serverTimestamp,
+  collection,
+  addDoc,
+  Timestamp
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { PatternId } from '../brain/template-schema';
 import { SkillId } from '../brain/skill-map';
-import { LearningState, SkillPerformance, calculateLearningState } from '../brain/learning-state';
+import { 
+  LearningState, 
+  SkillPerformance, 
+  SkillAttempt,
+  calculateLearningState,
+  calculateConfidenceWeight,
+  calculateWeightedAccuracy,
+  countConfidenceFlags
+} from '../brain/learning-state';
 
-// Same interface as existing useUserProgress, but generatedQuestionsSeen is array for Firestore
+// Updated interface: removed practiceHistory, generatedQuestionsSeen, attemptHistory
+// Added response logging subcollection and session tracking
 export interface UserProfile {
   preAssessmentComplete: boolean;
   fullAssessmentComplete?: boolean;
@@ -25,14 +38,41 @@ export interface UserProfile {
   weakestDomains: number[];
   factualGaps: string[];
   errorPatterns: string[];
-  practiceHistory: any[];
   totalQuestionsSeen: number;
   streak: number;
-  generatedQuestionsSeen: string[]; // Changed from Set to array for Firestore
   flaggedQuestions: Record<string, string>;
   distractorErrors: Record<PatternId, number>;
   skillDistractorErrors: Record<SkillId, Record<PatternId, number>>;
+  preAssessmentQuestionIds?: string[]; // Questions used in pre-assessment
+  fullAssessmentQuestionIds?: string[]; // Questions used in full assessment
+  recentPracticeQuestionIds?: string[]; // Rolling window of recent practice questions (last 20)
+  // New fields
+  practiceResponseCount?: number; // Count of practice responses (replaces practiceHistory)
+  lastPracticeAt?: any; // Timestamp of last practice answer
+  migrationVersion?: number; // Set to 1 to prevent legacy array writes
+  lastSession?: {
+    sessionId: string;
+    mode: 'practice' | 'full' | 'diagnostic';
+    questionIndex: number;
+    updatedAt: any; // Timestamp
+  };
   lastUpdated?: any;
+}
+
+// Response log document structure (stored in users/{uid}/responses/{responseId})
+export interface ResponseLog {
+  questionId: string;
+  skillId?: string;
+  domainId?: number;
+  assessmentType: 'diagnostic' | 'full' | 'practice';
+  sessionId: string;
+  isCorrect: boolean;
+  confidence: 'low' | 'medium' | 'high';
+  timeSpent: number;
+  timestamp: number;
+  selectedAnswer?: string; // Optional letter
+  distractorPatternId?: string; // Optional pattern ID if wrong answer selected
+  createdAt: any; // serverTimestamp
 }
 
 const defaultProfile: UserProfile = {
@@ -42,13 +82,16 @@ const defaultProfile: UserProfile = {
   weakestDomains: [],
   factualGaps: [],
   errorPatterns: [],
-  practiceHistory: [],
   totalQuestionsSeen: 0,
   streak: 0,
-  generatedQuestionsSeen: [],
   flaggedQuestions: {},
   distractorErrors: {},
-  skillDistractorErrors: {}
+  skillDistractorErrors: {},
+  preAssessmentQuestionIds: [],
+  fullAssessmentQuestionIds: [],
+  recentPracticeQuestionIds: [],
+  practiceResponseCount: 0,
+  migrationVersion: 1
 };
 
 export function useFirebaseProgress() {
@@ -69,6 +112,13 @@ export function useFirebaseProgress() {
     
     // Real-time listener for profile changes
     const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+      // Debug logging on auth state change
+      console.log('[Auth] User changed:', {
+        uid: user?.uid,
+        provider: user?.providerData[0]?.providerId,
+        profileExists: docSnap.exists()
+      });
+      
       if (docSnap.exists()) {
         const data = docSnap.data() as Partial<UserProfile>;
         // Apply safe defaults for all fields to prevent undefined crashes
@@ -76,8 +126,6 @@ export function useFirebaseProgress() {
           ...defaultProfile,
           ...data,
           // Ensure arrays are always arrays (never undefined)
-          practiceHistory: data.practiceHistory ?? [],
-          generatedQuestionsSeen: data.generatedQuestionsSeen ?? [],
           weakestDomains: data.weakestDomains ?? [],
           factualGaps: data.factualGaps ?? [],
           errorPatterns: data.errorPatterns ?? [],
@@ -92,10 +140,17 @@ export function useFirebaseProgress() {
           fullAssessmentComplete: data.fullAssessmentComplete ?? false,
           // Ensure numbers have defaults
           totalQuestionsSeen: data.totalQuestionsSeen ?? 0,
-          streak: data.streak ?? 0
+          streak: data.streak ?? 0,
+          practiceResponseCount: data.practiceResponseCount ?? 0,
+          migrationVersion: data.migrationVersion ?? 1,
+          // Ensure new assessment tracking arrays have defaults
+          preAssessmentQuestionIds: data.preAssessmentQuestionIds ?? [],
+          fullAssessmentQuestionIds: data.fullAssessmentQuestionIds ?? [],
+          recentPracticeQuestionIds: data.recentPracticeQuestionIds ?? []
         });
       } else {
         // No profile exists yet, use default
+        // DO NOT initialize defaults here - only initialize when explicitly needed
         setProfile(defaultProfile);
       }
       setIsLoaded(true);
@@ -132,10 +187,66 @@ export function useFirebaseProgress() {
     await saveProfile(newProfile);
   }, [profile, saveProfile]);
 
+  /**
+   * Log a response to the responses subcollection
+   * This is the source of truth - summary doc is cached view
+   */
+  const logResponse = useCallback(async (
+    response: Omit<ResponseLog, 'createdAt'>
+  ): Promise<void> => {
+    if (!user) {
+      console.warn('[logResponse] No user, skipping log');
+      return;
+    }
+
+    try {
+      const responseId = `${response.sessionId}_${response.questionId}_${response.timestamp}`;
+      const responsesRef = collection(db, 'users', user.uid, 'responses');
+      await addDoc(responsesRef, {
+        ...response,
+        createdAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error('[logResponse] Error logging response:', error);
+      // Don't throw - response logging failure shouldn't break answer submission
+      // Summary update will still happen
+    }
+  }, [user]);
+
+  /**
+   * Update lastSession pointer in summary doc
+   */
+  const updateLastSession = useCallback(async (
+    sessionId: string,
+    mode: 'practice' | 'full' | 'diagnostic',
+    questionIndex: number
+  ): Promise<void> => {
+    if (!user) return;
+
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(userDocRef, {
+        lastSession: {
+          sessionId,
+          mode,
+          questionIndex,
+          updatedAt: serverTimestamp()
+        },
+        lastUpdated: serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      console.error('[updateLastSession] Error updating last session:', error);
+    }
+  }, [user]);
+
   // Update skill progress after answering a question
+  // Note: attemptHistory removed - compute weightedAccuracy from responses subcollection if needed
   const updateSkillProgress = useCallback(async (
     skillId: SkillId,
-    isCorrect: boolean
+    isCorrect: boolean,
+    confidence: 'low' | 'medium' | 'high' = 'medium',
+    questionId?: string,
+    timeSpent?: number
   ) => {
     const currentSkill = profile.skillScores[skillId];
     
@@ -146,7 +257,9 @@ export function useFirebaseProgress() {
       consecutiveCorrect: 0,
       history: [],
       learningState: 'emerging' as LearningState,
-      masteryDate: undefined
+      masteryDate: undefined,
+      weightedAccuracy: 0,
+      confidenceFlags: 0
     };
     
     const newAttempts = baseSkill.attempts + 1;
@@ -155,13 +268,29 @@ export function useFirebaseProgress() {
     const newConsecutiveCorrect = isCorrect ? baseSkill.consecutiveCorrect + 1 : 0;
     const newHistory = [...baseSkill.history, isCorrect].slice(-5);
     
+    // Calculate weighted accuracy from recent history (last 5)
+    // For more accurate calculation, query responses subcollection
+    const recentAttempts: SkillAttempt[] = newHistory.map((correct, idx) => ({
+      questionId: questionId || `unknown-${Date.now()}-${idx}`,
+      correct,
+      confidence: confidence, // Use current confidence for recent attempts
+      timestamp: Date.now(),
+      timeSpent: timeSpent || 0
+    }));
+    const weightedAccuracy = calculateWeightedAccuracy(recentAttempts);
+    
+    // Count confidence flags from recent history
+    const confidenceFlags = countConfidenceFlags(recentAttempts);
+    
     const updatedSkill: SkillPerformance = {
       ...baseSkill,
       score: newScore,
       attempts: newAttempts,
       correct: newCorrect,
       consecutiveCorrect: newConsecutiveCorrect,
-      history: newHistory
+      history: newHistory,
+      weightedAccuracy,
+      confidenceFlags
     };
     
     // Calculate new learning state
@@ -193,13 +322,72 @@ export function useFirebaseProgress() {
 
   // Reset all progress
   const resetProgress = useCallback(async () => {
-    setProfile(defaultProfile);
-    if (user) {
-      await saveProfile(defaultProfile);
+    if (!user) {
+      setProfile(defaultProfile);
+      return;
     }
-  }, [user, saveProfile]);
+    
+    // Completely overwrite Firestore document (don't merge)
+    setIsSaving(true);
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      // Use setDoc without merge to completely overwrite (not merge)
+      await setDoc(userDocRef, {
+        ...defaultProfile,
+        lastUpdated: serverTimestamp()
+      }, { merge: false }); // Explicitly set merge to false for complete overwrite
+      
+      setProfile(defaultProfile);
+      console.log('[ResetProgress] All progress cleared');
+    } catch (error) {
+      console.error('Error resetting progress:', error);
+      // Still update local state even if Firestore fails
+      setProfile(defaultProfile);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [user]);
+
+  /**
+   * Migrate old skillScores format to new format
+   */
+  const migrateSkillScores = useCallback((oldScores: any): Record<SkillId, SkillPerformance> => {
+    const migrated: Record<SkillId, SkillPerformance> = {};
+    
+    if (!oldScores || typeof oldScores !== 'object') {
+      return migrated;
+    }
+    
+    for (const [skillId, oldScore] of Object.entries(oldScores)) {
+      if (oldScore && typeof oldScore === 'object') {
+        // Check if it's already in new format
+        if ('learningState' in oldScore && 'consecutiveCorrect' in oldScore) {
+          migrated[skillId] = oldScore as SkillPerformance;
+        } else {
+          // Migrate from old format: { correct, total, lastSeen }
+          const correct = (oldScore as any).correct || 0;
+          const total = (oldScore as any).total || 0;
+          const score = total > 0 ? correct / total : 0;
+          
+          migrated[skillId] = {
+            score,
+            attempts: total,
+            correct,
+            consecutiveCorrect: 0, // Can't determine from old data
+            history: [], // Can't recover history from old data
+            learningState: 'emerging' as LearningState,
+            masteryDate: undefined
+          };
+        }
+      }
+    }
+    
+    return migrated;
+  }, []);
 
   // Migrate from localStorage (call this once when user first logs in)
+  // Note: Do NOT write practiceHistory or generatedQuestionsSeen to Firestore
+  // Calculate practiceResponseCount from practiceHistory length if it exists
   const migrateFromLocalStorage = useCallback(async () => {
     if (!user) return false;
     
@@ -211,40 +399,37 @@ export function useFirebaseProgress() {
     try {
       const localProfile = JSON.parse(stored);
       
-      // Convert Set to array if needed
-      if (localProfile.generatedQuestionsSeen && 
-          typeof localProfile.generatedQuestionsSeen === 'object' &&
-          !Array.isArray(localProfile.generatedQuestionsSeen)) {
-        // It's a Set-like object, convert to array
-        if (localProfile.generatedQuestionsSeen instanceof Set) {
-          localProfile.generatedQuestionsSeen = Array.from(localProfile.generatedQuestionsSeen);
-        } else {
-          // Handle case where it might be stored as object keys
-          localProfile.generatedQuestionsSeen = Object.keys(localProfile.generatedQuestionsSeen);
-        }
-      } else if (!Array.isArray(localProfile.generatedQuestionsSeen)) {
-        localProfile.generatedQuestionsSeen = [];
-      }
+      // Migrate skillScores if they exist and are in old format
+      const migratedSkillScores = localProfile.skillScores 
+        ? migrateSkillScores(localProfile.skillScores)
+        : {};
+      
+      // Calculate practiceResponseCount from legacy practiceHistory if it exists
+      const practiceResponseCount = localProfile.practiceHistory?.length || 0;
       
       // Ensure all required fields exist with safe defaults
+      // DO NOT include practiceHistory or generatedQuestionsSeen in migrated profile
       const migratedProfile: UserProfile = {
         ...defaultProfile,
-        ...localProfile,
-        // Apply safe defaults for all fields
-        practiceHistory: localProfile.practiceHistory ?? [],
-        generatedQuestionsSeen: localProfile.generatedQuestionsSeen || [],
+        // Copy over non-legacy fields
+        preAssessmentComplete: localProfile.preAssessmentComplete ?? false,
+        fullAssessmentComplete: localProfile.fullAssessmentComplete ?? false,
+        domainScores: localProfile.domainScores ?? {},
+        skillScores: migratedSkillScores,
         weakestDomains: localProfile.weakestDomains ?? [],
         factualGaps: localProfile.factualGaps ?? [],
         errorPatterns: localProfile.errorPatterns ?? [],
-        domainScores: localProfile.domainScores ?? {},
-        skillScores: localProfile.skillScores ?? {},
+        totalQuestionsSeen: localProfile.totalQuestionsSeen ?? 0,
+        streak: localProfile.streak ?? 0,
         flaggedQuestions: localProfile.flaggedQuestions ?? {},
         distractorErrors: localProfile.distractorErrors ?? {},
         skillDistractorErrors: localProfile.skillDistractorErrors ?? {},
-        preAssessmentComplete: localProfile.preAssessmentComplete ?? false,
-        fullAssessmentComplete: localProfile.fullAssessmentComplete ?? false,
-        totalQuestionsSeen: localProfile.totalQuestionsSeen ?? 0,
-        streak: localProfile.streak ?? 0
+        preAssessmentQuestionIds: localProfile.preAssessmentQuestionIds ?? [],
+        fullAssessmentQuestionIds: localProfile.fullAssessmentQuestionIds ?? [],
+        recentPracticeQuestionIds: localProfile.recentPracticeQuestionIds ?? [],
+        // New fields
+        practiceResponseCount,
+        migrationVersion: 1
       };
       
       // Save to Firestore
@@ -260,7 +445,7 @@ export function useFirebaseProgress() {
       console.error('Error migrating from localStorage:', error);
       return false;
     }
-  }, [user, saveProfile]);
+  }, [user, saveProfile, migrateSkillScores]);
 
   return {
     profile,
@@ -268,6 +453,8 @@ export function useFirebaseProgress() {
     updateSkillProgress,
     resetProgress,
     migrateFromLocalStorage,
+    logResponse,
+    updateLastSession,
     isLoaded,
     isSaving,
     isLoggedIn: !!user

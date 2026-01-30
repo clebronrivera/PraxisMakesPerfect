@@ -93,26 +93,91 @@ function getDynamicRatio(skillId: SkillId, questions: AnalyzedQuestion[], histor
 export function useAdaptiveLearning() {
   // Question history is managed by components, not the hook
 
+  /**
+   * Calculate priority score for a skill based on confidence+result patterns
+   * Priority rules:
+   * - High + Wrong = priority 4 (highest - misconception)
+   * - Low + Wrong = priority 3
+   * - Low + Correct = priority 2
+   * - High + Correct = priority 1 (lowest - mastery)
+   */
+  const calculateSkillPriority = useCallback((skill: any): number => {
+    if (!skill.attemptHistory || skill.attemptHistory.length === 0) {
+      // No history, use accuracy-based priority
+      return skill.attempts > 0 && skill.score < 0.6 ? 3 : 2;
+    }
+    
+    // Analyze recent attempts (last 10)
+    const recent = skill.attemptHistory.slice(-10);
+    let prioritySum = 0;
+    let count = 0;
+    
+    recent.forEach((attempt: any) => {
+      if (attempt.confidence === 'high' && !attempt.correct) {
+        prioritySum += 4; // Highest priority
+      } else if (attempt.confidence === 'low' && !attempt.correct) {
+        prioritySum += 3;
+      } else if (attempt.confidence === 'low' && attempt.correct) {
+        prioritySum += 2;
+      } else if (attempt.confidence === 'high' && attempt.correct) {
+        prioritySum += 1; // Lowest priority
+      } else {
+        prioritySum += 2; // Medium confidence defaults to 2
+      }
+      count++;
+    });
+    
+    return count > 0 ? prioritySum / count : 2;
+  }, []);
+
   const getWeakestSkills = useCallback((profile: UserProfile): string[] => {
     const skillArray = Object.entries(profile.skillScores)
       .map(([skillId, score]) => ({
         skillId,
         accuracy: score.score, // Use cached score (0-1)
-        attempts: score.attempts
+        attempts: score.attempts,
+        priority: calculateSkillPriority(score)
       }))
       .filter(s => s.attempts > 0)
-      .sort((a, b) => a.accuracy - b.accuracy);
+      .sort((a, b) => {
+        // Sort by priority (higher = more practice needed), then by accuracy
+        if (Math.abs(a.priority - b.priority) > 0.1) {
+          return b.priority - a.priority;
+        }
+        return a.accuracy - b.accuracy;
+      });
 
-    // Return bottom 30% of skills
+    // Return top 30% by priority (most need practice)
     const cutoff = Math.max(1, Math.floor(skillArray.length * 0.3));
     return skillArray.slice(0, cutoff).map(s => s.skillId);
-  }, []);
+  }, [calculateSkillPriority]);
 
   const selectNextQuestion = useCallback((
     profile: UserProfile,
     questions: AnalyzedQuestion[],
     history: string[]
   ): AnalyzedQuestion | null => {
+    // Build exclusion set: assessment questions + recent practice + session history
+    const excludeIds = new Set<string>();
+    
+    // Exclude pre-assessment questions
+    if (profile.preAssessmentQuestionIds) {
+      profile.preAssessmentQuestionIds.forEach(id => excludeIds.add(id));
+    }
+    
+    // Exclude full assessment questions
+    if (profile.fullAssessmentQuestionIds) {
+      profile.fullAssessmentQuestionIds.forEach(id => excludeIds.add(id));
+    }
+    
+    // Exclude recent practice questions (rolling window)
+    if (profile.recentPracticeQuestionIds) {
+      profile.recentPracticeQuestionIds.forEach(id => excludeIds.add(id));
+    }
+    
+    // Exclude questions already seen in this session
+    history.forEach(id => excludeIds.add(id));
+    
     // Determine target skill (prefer weakest)
     const weakestSkills = getWeakestSkills(profile);
     const targetSkill = weakestSkills.length > 0
@@ -169,8 +234,8 @@ export function useAdaptiveLearning() {
     }
     
     // Fall back to bank questions
-    // Filter out questions already seen in this session
-    const available = questions.filter(q => !history.includes(q.id));
+    // Filter out excluded questions (assessment + recent practice + session history)
+    const available = questions.filter(q => !excludeIds.has(q.id));
     
     if (available.length === 0) {
       // Reset history if we've seen all questions

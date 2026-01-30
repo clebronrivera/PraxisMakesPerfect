@@ -255,7 +255,7 @@ export function buildAssessmentFromGenerated(
 }
 
 /**
- * Build a pre-assessment (20 questions: 2 per domain)
+ * Build a pre-assessment (2 questions per domain)
  */
 export function buildPreAssessment(
   generatorOptions?: Omit<GenerateQuestionOptions, 'templateId' | 'slotValues'>
