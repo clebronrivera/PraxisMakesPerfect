@@ -11,7 +11,9 @@
     "audit:distractors": "npx tsx scripts/audit-distractor-quality.ts",
     "test:banned-terms": "npx tsx scripts/banned-terms-check.ts",
     "audit:bank": "npx tsx scripts/audit-question-bank.ts",
-    "audit:answers": "npx tsx scripts/audit-answer-distribution.ts"
+    "audit:answers": "npx tsx scripts/audit-answer-distribution.ts",
+    "firebase:deploy-rules": "firebase deploy --only firestore:rules",
+    "firebase:test-rules": "npx tsx scripts/test-firebase-security.ts"
   },
   "dependencies": {
     "firebase": "^12.8.0",

@@ -11,7 +11,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -23,6 +24,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, displayName?: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -65,7 +67,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err: any) {
-      setError(err.message);
+      // Handle specific sign-in errors with user-friendly messages
+      if (err.code === 'auth/user-not-found') {
+        setError('No account found with this email. Please sign up first.');
+      } else if (err.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again or reset your password.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Invalid email address. Please check and try again.');
+      } else if (err.code === 'auth/user-disabled') {
+        setError('This account has been disabled. Please contact support.');
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Please try again later or reset your password.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
+      } else {
+        setError(err.message || 'Failed to sign in. Please try again.');
+      }
       throw err;
     } finally {
       setLoading(false);
@@ -84,7 +101,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await updateProfile(result.user, { displayName });
       }
     } catch (err: any) {
-      setError(err.message);
+      // Handle specific sign-up errors with user-friendly messages
+      if (err.code === 'auth/email-already-in-use') {
+        setError('An account with this email already exists. Please sign in instead.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Invalid email address. Please check and try again.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Password is too weak. Please use at least 6 characters.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
+      } else {
+        setError(err.message || 'Failed to create account. Please try again.');
+      }
       throw err;
     } finally {
       setLoading(false);
@@ -97,9 +125,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       setLoading(true);
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      // Add additional scopes if needed
+      provider.addScope('profile');
+      provider.addScope('email');
+      // Set custom parameters
+      provider.setCustomParameters({
+        prompt: 'select_account' // Force account selection
+      });
+      const result = await signInWithPopup(auth, provider);
+      // Google sign-in successful - user is automatically signed in
+      // The user object will be available via onAuthStateChanged
+      console.log('[Auth] Google sign-in successful:', result.user.email);
     } catch (err: any) {
-      setError(err.message);
+      // Handle specific Google sign-in errors
+      if (err.code === 'auth/popup-closed-by-user') {
+        setError('Sign-in popup was closed. Please try again.');
+      } else if (err.code === 'auth/popup-blocked') {
+        setError('Popup was blocked. Please allow popups for this site and try again.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError('This domain is not authorized. Please contact support.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('Google sign-in is not enabled. Please contact support.');
+      } else {
+        setError(err.message || 'Failed to sign in with Google. Please try again.');
+      }
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset password
+  const resetPassword = async (email: string) => {
+    try {
+      setError(null);
+      setLoading(true);
+      await sendPasswordResetEmail(auth, email);
+    } catch (err: any) {
+      // Handle specific password reset errors
+      if (err.code === 'auth/user-not-found') {
+        setError('No account found with this email address.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Invalid email address. Please check and try again.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
+      } else {
+        setError(err.message || 'Failed to send password reset email. Please try again.');
+      }
       throw err;
     } finally {
       setLoading(false);
@@ -128,6 +202,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signInWithEmail,
     signUpWithEmail,
     signInWithGoogle,
+    resetPassword,
     logout,
     clearError
   };
