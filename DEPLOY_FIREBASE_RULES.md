@@ -1,5 +1,7 @@
 # Deploy Firebase Security Rules
 
+> Status: Canonical operational guide. Reviewed during documentation consolidation on 2026-03-14. Use this for Firestore rules deployment; pair it with `FIREBASE_SECURITY_TESTING.md` for validation.
+
 ## Quick Deploy
 
 ```bash

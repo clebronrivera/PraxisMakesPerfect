@@ -1,5 +1,7 @@
 # Firebase Authentication Setup Guide
 
+> Status: Canonical operational guide. Reviewed during documentation consolidation on 2026-03-14. Keep this guide for Firebase auth console setup; archive shorter duplicates instead of extending them.
+
 This guide will help you configure Firebase Authentication for email/password and Google sign-in.
 
 ## Project Information

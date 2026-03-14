@@ -235,6 +235,12 @@ export function detectWeaknesses(history: UserResponse[]): UserProfile {
 
 ### Phase 2: Adaptive Practice
 
+Adaptive practice uses the same profile fields updated at pre-assessment completion (weakestDomains, skillScores, etc.) and by practice itself. These fields drive the adaptive question selection algorithm.
+
+**Resume Behavior:**
+- "Resume" for practice restores the same session (same sessionId / lastSession)
+- "Start New" does not clear profile but starts a new practice session (new sessionId, new question sequence)
+
 ```typescript
 // hooks/useAdaptiveLearning.ts
 
