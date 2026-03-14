@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { BarChart3, AlertTriangle, Lightbulb, Play, Layers } from 'lucide-react';
-import { NASP_DOMAINS } from '../../knowledge-base';
+import { useEngine } from '../hooks/useEngine';
 import PraxisPerformanceView from './PraxisPerformanceView';
 import { UserProfile } from '../hooks/useFirebaseProgress';
+import { getDomainColor } from '../utils/domainColors';
 
 interface ResultsDashboardProps {
   userProfile: UserProfile;
@@ -10,15 +11,6 @@ interface ResultsDashboardProps {
   onRetakeAssessment: () => void;
 }
 
-const getDomainColor = (domain: number) => {
-  const colors: Record<number, string> = {
-    1: '#3B82F6', 2: '#3B82F6',
-    3: '#10B981', 4: '#10B981',
-    5: '#8B5CF6', 6: '#8B5CF6', 7: '#8B5CF6',
-    8: '#F59E0B', 9: '#F59E0B', 10: '#F59E0B'
-  };
-  return colors[domain] || '#6B7280';
-};
 
 const getScoreColor = (score: number) => {
   if (score >= 0.8) return 'text-emerald-400';
@@ -31,6 +23,9 @@ export default function ResultsDashboard({
   onStartPractice,
   onRetakeAssessment
 }: ResultsDashboardProps) {
+  const engine = useEngine();
+  const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+
   const [viewMode, setViewMode] = useState<'praxis' | 'domains'>('praxis');
 
   return (
@@ -38,7 +33,7 @@ export default function ResultsDashboard({
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold text-slate-100">Your Progress</h2>
         <p className="text-slate-400">
-          Based on {userProfile.practiceHistory.length} questions answered
+          Based on {userProfile.totalQuestionsSeen ?? userProfile.practiceResponseCount ?? 0} questions answered
         </p>
       </div>
 

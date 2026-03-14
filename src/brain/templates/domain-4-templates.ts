@@ -690,7 +690,7 @@ export const domain4Templates: QuestionTemplate[] = [
   }
 ];
 
-export const domain4TemplateMap: Record<string, QuestionTemplate> = {};
+const domain4TemplateMap: Record<string, QuestionTemplate> = {};
 domain4Templates.forEach(template => {
   domain4TemplateMap[template.templateId] = template;
 });

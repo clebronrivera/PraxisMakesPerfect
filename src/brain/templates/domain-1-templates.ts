@@ -440,7 +440,7 @@ export const domain1Templates: QuestionTemplate[] = [
       }
     },
     correctAnswerLogic: {
-      evaluate: (slotValues) => {
+      evaluate: () => {
         // Always returns that screening identifies risk, not diagnosis
         return "Identify students who are at risk and may need further assessment";
       },
@@ -495,7 +495,7 @@ export const domain1Templates: QuestionTemplate[] = [
       }
     },
     correctAnswerLogic: {
-      evaluate: (slotValues) => {
+      evaluate: () => {
         // ALWAYS review/analyze data first - this is the core rule
         return "Review and analyze available data related to the reported concern";
       },
@@ -632,7 +632,7 @@ export const domain1Templates: QuestionTemplate[] = [
   }
 ];
 
-export const domain1TemplateMap: Record<string, QuestionTemplate> = {};
+const domain1TemplateMap: Record<string, QuestionTemplate> = {};
 domain1Templates.forEach(template => {
   domain1TemplateMap[template.templateId] = template;
 });

@@ -180,7 +180,7 @@ export const domain6Templates: QuestionTemplate[] = [
   }
 ];
 
-export const domain6TemplateMap: Record<string, QuestionTemplate> = {};
+const domain6TemplateMap: Record<string, QuestionTemplate> = {};
 domain6Templates.forEach(template => {
   domain6TemplateMap[template.templateId] = template;
 });

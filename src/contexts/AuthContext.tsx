@@ -15,6 +15,8 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { db } from '../config/firebase';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -36,11 +38,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const trackAuthenticatedSession = async (currentUser: User) => {
+    if (typeof window !== 'undefined') {
+      const sessionKey = `pmp-auth-session:${currentUser.uid}`;
+      if (window.sessionStorage.getItem(sessionKey)) {
+        return;
+      }
+      window.sessionStorage.setItem(sessionKey, String(Date.now()));
+    }
+
+    try {
+      const userDocRef = doc(db, 'users', currentUser.uid);
+      const existingSnapshot = await getDoc(userDocRef);
+      const existingData = existingSnapshot.data() as {
+        authMetrics?: {
+          loginCount?: number;
+          createdAt?: any;
+        };
+      } | undefined;
+
+      await setDoc(userDocRef, {
+        authMetrics: {
+          email: currentUser.email ?? null,
+          displayName: currentUser.displayName ?? null,
+          isAnonymous: currentUser.isAnonymous,
+          providerIds: currentUser.providerData
+            .map((provider) => provider.providerId)
+            .filter(Boolean),
+          loginCount: (existingData?.authMetrics?.loginCount ?? 0) + 1,
+          createdAt: existingData?.authMetrics?.createdAt ?? serverTimestamp(),
+          lastLoginAt: serverTimestamp(),
+          lastActiveAt: serverTimestamp()
+        },
+        lastUpdated: serverTimestamp()
+      }, { merge: true });
+    } catch (trackingError) {
+      console.error('[Auth] Failed to track authenticated session:', trackingError);
+    }
+  };
+
   // Listen for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      setUser(nextUser);
       setLoading(false);
+
+      if (nextUser) {
+        void trackAuthenticatedSession(nextUser);
+      }
     });
 
     return () => unsubscribe();
@@ -184,6 +229,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       setError(null);
+      if (user && typeof window !== 'undefined') {
+        window.sessionStorage.removeItem(`pmp-auth-session:${user.uid}`);
+      }
       await signOut(auth);
     } catch (err: any) {
       setError(err.message);

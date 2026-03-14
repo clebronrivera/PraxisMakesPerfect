@@ -3,7 +3,8 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, User, Chrome, ArrowLeft, Loader2 } from 'lucide-react';
+import { Mail, User, Chrome, ArrowLeft, Loader2, Shield } from 'lucide-react';
+import { PRIMARY_ADMIN_EMAIL } from '../config/admin';
 
 export default function LoginScreen() {
   const { 
@@ -93,6 +94,27 @@ export default function LoginScreen() {
             {mode === 'reset' && 'Reset your password'}
           </p>
         </div>
+
+        {mode === 'login' && (
+          <div className="mb-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4 text-sm text-cyan-100">
+            <div className="flex items-start gap-3">
+              <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-cyan-300" />
+              <div className="flex-1">
+                <p className="font-medium text-cyan-200">Admin sign-in</p>
+                <p className="mt-1 text-cyan-100/80">
+                  Admin dashboard access is enabled for <strong>{PRIMARY_ADMIN_EMAIL}</strong>.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
+                  className="mt-3 rounded-lg border border-cyan-400/30 px-3 py-1.5 text-xs font-medium text-cyan-100 transition-colors hover:bg-cyan-500/10"
+                >
+                  Use admin email
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Success Message */}
         {resetEmailSent && !error && (

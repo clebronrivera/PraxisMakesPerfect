@@ -1,20 +1,11 @@
-import { UserResponse } from '../brain/weakness-detector';
+import type { SessionPayload } from './sessionTypes';
 
-export interface AssessmentSession {
-  type: 'pre-assessment' | 'full-assessment';
-  questionIds: string[];
-  currentIndex: number;
-  responses: UserResponse[];
-  selectedAnswers: string[];
-  showFeedback: boolean;
-  confidence: 'low' | 'medium' | 'high';
-  startTime: number;
-  lastUpdated: number;
-}
+/** Single session model: in-progress assessment (anonymous). Uses shared SessionPayload. */
+export type AssessmentSession = SessionPayload;
 
 const SESSION_KEY = 'praxis-assessment-session';
 
-export function saveSession(session: AssessmentSession): void {
+export function saveSession(session: SessionPayload): void {
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   } catch (error) {
@@ -22,11 +13,11 @@ export function saveSession(session: AssessmentSession): void {
   }
 }
 
-export function loadSession(): AssessmentSession | null {
+export function loadSession(): SessionPayload | null {
   try {
     const stored = localStorage.getItem(SESSION_KEY);
     if (!stored) return null;
-    return JSON.parse(stored) as AssessmentSession;
+    return JSON.parse(stored) as SessionPayload;
   } catch (error) {
     console.error('Error loading session:', error);
     return null;

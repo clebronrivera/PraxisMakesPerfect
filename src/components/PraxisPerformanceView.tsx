@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp, TrendingDown, TrendingUp, BarChart3, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { NASP_DOMAINS } from '../../knowledge-base';
+import { ChevronDown, ChevronUp, BarChart3, AlertTriangle } from 'lucide-react';
+import { useEngine } from '../hooks/useEngine';
 import { UserProfile } from '../hooks/useFirebaseProgress';
+import { getDomainColor } from '../utils/domainColors';
 
 interface PraxisPerformanceViewProps {
   userProfile: UserProfile;
@@ -21,42 +22,33 @@ const PRAXIS_SECTIONS: PraxisSection[] = [
   {
     id: 1,
     name: 'Professional Practices',
-    subtitle: 'Permeates all services',
-    domains: [1, 2],
-    color: '#3B82F6' // Blue
+    subtitle: 'Permeates all services — 32% of exam',
+    domains: [1],
+    color: '#3B82F6'
   },
   {
     id: 2,
     name: 'Student-Level Services',
-    subtitle: 'Direct & Indirect',
-    domains: [3, 4],
-    color: '#10B981' // Green
+    subtitle: 'Direct & Indirect — 23% of exam',
+    domains: [2],
+    color: '#10B981'
   },
   {
     id: 3,
     name: 'Systems-Level Services',
-    subtitle: 'Direct & Indirect',
-    domains: [5, 6, 7],
-    color: '#8B5CF6' // Purple
+    subtitle: 'Direct & Indirect — 20% of exam',
+    domains: [3],
+    color: '#8B5CF6'
   },
   {
     id: 4,
-    name: 'Foundations',
-    subtitle: 'Service Delivery',
-    domains: [8, 9, 10],
-    color: '#F59E0B' // Orange
+    name: 'Foundations of School Psychology',
+    subtitle: 'Service Delivery — 25% of exam',
+    domains: [4],
+    color: '#F59E0B'
   }
 ];
 
-const getDomainColor = (domain: number) => {
-  const colors: Record<number, string> = {
-    1: '#3B82F6', 2: '#3B82F6',
-    3: '#10B981', 4: '#10B981',
-    5: '#8B5CF6', 6: '#8B5CF6', 7: '#8B5CF6',
-    8: '#F59E0B', 9: '#F59E0B', 10: '#F59E0B'
-  };
-  return colors[domain] || '#6B7280';
-};
 
 const getPerformanceLabel = (score: number): { label: string; color: string; bgColor: string } => {
   if (score >= 0.8) {
@@ -85,6 +77,9 @@ export default function PraxisPerformanceView({
   onDomainSelect,
   sortBy = 'performance' 
 }: PraxisPerformanceViewProps) {
+  const engine = useEngine();
+  const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+
   const [expandedSection, setExpandedSection] = useState<number | null>(null);
   const [sortMode, setSortMode] = useState<'performance' | 'deficiencies'>(sortBy);
 
@@ -283,7 +278,7 @@ export default function PraxisPerformanceView({
               {isExpanded && (
                 <div className="border-t border-slate-700/50 p-6 bg-slate-900/50">
                   <h4 className="text-sm font-semibold text-slate-300 mb-4 uppercase tracking-wide">
-                    NASP Domains
+                    Domain Details
                   </h4>
                   
                   {section.domainScores.length === 0 ? (
@@ -368,7 +363,7 @@ export default function PraxisPerformanceView({
                               <div className="mt-3 pt-3 border-t border-slate-700/50">
                                 <p className="text-xs text-slate-500 mb-2">Key Concepts:</p>
                                 <div className="flex flex-wrap gap-1.5">
-                                  {domainInfo.keyConcepts.slice(0, 5).map((concept, idx) => (
+                                  {domainInfo.keyConcepts.slice(0, 5).map((concept: string, idx: number) => (
                                     <span
                                       key={idx}
                                       className="px-2 py-0.5 rounded text-xs bg-slate-800/50 text-slate-400 border border-slate-700/50"

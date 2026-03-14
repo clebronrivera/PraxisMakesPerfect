@@ -5,15 +5,9 @@ import { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import { useQuestionReports } from '../hooks/useQuestionReports';
 
-interface AnalyzedQuestion {
-  id: string;
-  question: string;
-  choices: Record<string, string>;
-  correct_answer: string[];
-  rationale: string;
-  skillId?: string;
-  domains: number[];
-}
+import { AnalyzedQuestion } from '../brain/question-analyzer';
+
+// Local AnalyzedQuestion interface removed
 
 interface ReportQuestionModalProps {
   question: AnalyzedQuestion;
@@ -28,6 +22,7 @@ const TARGET_OPTIONS = [
   'Answer choices',
   'Correct answer key',
   'Rationale / feedback',
+  'Question length / difficulty',
   'Skill tag / domain tag',
   'Other'
 ];
@@ -38,6 +33,7 @@ const ISSUE_TYPE_OPTIONS = [
   'Content accuracy',
   'Incorrect key',
   'Distractor quality',
+  'Too long / too short',
   'Misaligned to skill',
   'Formatting / syntax / rendering bug',
   'Duplicate / too similar',
@@ -97,10 +93,11 @@ export default function ReportQuestionModal({
         severity,
         notes,
         questionSnapshot: {
-          stem: question.question,
+          stem: question.question || (question as any).questionStem || '',
           choices: question.choices,
-          correct: question.correct_answer,
-          rationale: question.rationale
+          options: question.options,
+          correct: question.correct_answer || question.correctAnswers || [],
+          rationale: question.rationale || question.correctExplanation || ''
         }
       });
 
@@ -140,6 +137,7 @@ export default function ReportQuestionModal({
           <button
             onClick={handleCancel}
             className="text-slate-500 hover:text-slate-300 transition-colors"
+            title="Close"
           >
             <X className="w-5 h-5" />
           </button>

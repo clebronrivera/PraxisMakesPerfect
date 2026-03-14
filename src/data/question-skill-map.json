@@ -1,1830 +1,2335 @@
 {
-  "totalQuestions": 304,
+  "totalQuestions": 466,
   "mappedQuestions": [
     {
-      "questionId": "SP5403_Q001",
-      "skillId": "DBDM-S01",
-      "confidence": "high",
-      "reasoning": "Question asks for the metric used to establish reliability in single-subject designs (Interobserver agreement), directly testing reliability type selection."
+      "questionId": "PB1",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q010",
-      "skillId": "DBDM-S04",
-      "confidence": "high",
-      "reasoning": "Question asks for a specific example of test sensitivity (identifying true positives), directly testing the distinction between sensitivity and specificity."
+      "questionId": "PB2",
+      "skillId": "ACA-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q012",
-      "skillId": "DBDM-S08",
-      "confidence": "medium",
-      "reasoning": "Question involves the school psychologist assisting with data collection and tracking progress, which aligns with progress monitoring protocols."
+      "questionId": "PB3",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q013",
-      "skillId": "DBDM-S10",
-      "confidence": "high",
-      "reasoning": "Question asks for the first step in selecting an intervention, which is identifying the skill deficit (reviewing data/assessment) before action."
+      "questionId": "PB4",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q016",
-      "skillId": "DBDM-S08",
-      "confidence": "high",
-      "reasoning": "Question explicitly asks for an example of progress monitoring, with the correct answer being curriculum-based measures."
+      "questionId": "PB5",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q018",
-      "skillId": "DBDM-S07",
-      "confidence": "high",
-      "reasoning": "Question asks for the key difference between formative and summative assessments, directly testing assessment type recognition."
+      "questionId": "PB6",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q019",
-      "skillId": "DBDM-S10",
-      "confidence": "high",
-      "reasoning": "Question asks for the first step in addressing behavior referrals, which is reviewing the referral data before implementing solutions."
+      "questionId": "PB7",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q021",
-      "skillId": "DBDM-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the most important data sources for eligibility determination (cognitive/achievement/progress monitoring), testing assessment-purpose matching."
+      "questionId": "PB8",
+      "skillId": "MBH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q025",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question requires the interpretation of a confidence interval for an IQ score."
+      "questionId": "PB9",
+      "skillId": "ACA-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q028",
-      "skillId": "DBDM-S05",
-      "confidence": "medium",
-      "reasoning": "Question asks for the appropriate assessment to determine instructional level (CBM), which is matching assessment to purpose."
+      "questionId": "PB10",
+      "skillId": "ETH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q031",
-      "skillId": "DBDM-S02",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the type of validity involving the relationship between test scores and an external criterion (Criterion-related validity)."
+      "questionId": "PB11",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q032",
-      "skillId": "DBDM-S05",
-      "confidence": "medium",
-      "reasoning": "Question involves selecting an assessment (nonverbal) appropriate for a specific purpose/population (ELL student), aligning with assessment selection."
+      "questionId": "PB12",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q034",
-      "skillId": "DBDM-S05",
-      "confidence": "medium",
-      "reasoning": "Question asks for the appropriate use of IQ scores (identifying discrepancies), which aligns with matching assessment data to its valid purpose."
+      "questionId": "PB13",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q036",
-      "skillId": "DBDM-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the appropriate tool to identify reading risk (screening), matching assessment type to the purpose of risk identification."
+      "questionId": "PB14",
+      "skillId": "ACA-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q039",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for the interpretation of a reliability coefficient of .95."
+      "questionId": "PB15",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q042",
-      "skillId": "NEW-1-PerformanceAssessment",
-      "confidence": "high",
-      "reasoning": "Question asks to identify an example of a performance-based assessment, which is a distinct assessment type not fully covered by existing S07 description."
+      "questionId": "PB16",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q048",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for the statistical concept related to measurement error variability (SEM), testing score/metric interpretation."
+      "questionId": "PB17",
+      "skillId": "PSY-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q052",
-      "skillId": "DBDM-S06",
-      "confidence": "high",
-      "reasoning": "Question asks for the key characteristic of norm-referenced tests (comparison to a sample)."
+      "questionId": "PB18",
+      "skillId": "ACA-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q053",
-      "skillId": "DBDM-S10",
-      "confidence": "medium",
-      "reasoning": "Question asks for the first step in addressing disproportionality, which is examining the data/referral practices."
+      "questionId": "PB19",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q058",
-      "skillId": "DBDM-S03",
-      "confidence": "medium",
-      "reasoning": "Question asks what a specific cognitive score (processing speed) measures/interprets."
+      "questionId": "PB20",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q060",
-      "skillId": "DBDM-S06",
-      "confidence": "high",
-      "reasoning": "Question asks for the appropriate use of test norms (comparing to peers), distinguishing it from criterion referencing."
+      "questionId": "PB21",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q062",
-      "skillId": "DBDM-S08",
-      "confidence": "high",
-      "reasoning": "Question asks for a primary advantage of CBM for progress monitoring (frequent administration), aligning with monitoring protocols."
+      "questionId": "PB22",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q064",
-      "skillId": "DBDM-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the appropriate tool to measure executive functioning (rating scales), matching assessment to purpose."
+      "questionId": "PB23",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q065",
-      "skillId": "DBDM-S03",
-      "confidence": "medium",
-      "reasoning": "Question requires interpretation of a significant score difference between VCI and PRI."
+      "questionId": "PB24",
+      "skillId": "DEV-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q068",
-      "skillId": "DBDM-S09",
-      "confidence": "high",
-      "reasoning": "Question asks for the definition/purpose of universal screening (identifying risk)."
+      "questionId": "PB25",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q070",
-      "skillId": "NEW-1-DynamicAssessment",
-      "confidence": "high",
-      "reasoning": "Question asks for the appropriate use of dynamic assessment (measuring learning potential), a specific assessment type."
+      "questionId": "PB26",
+      "skillId": "PSY-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q071",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for the correct explanation (interpretation) of a percentile rank."
+      "questionId": "PB27",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q076",
-      "skillId": "NEW-1-IQvsAchievement",
-      "confidence": "medium",
-      "reasoning": "Question asks to distinguish between intelligence and achievement testing constructs."
+      "questionId": "PB28",
+      "skillId": "DBD-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q080",
-      "skillId": "DBDM-S06",
-      "confidence": "high",
-      "reasoning": "Question asks for the characteristic of criterion-referenced tests (measuring mastery), distinguishing from norm-referenced."
+      "questionId": "PB29",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q082",
-      "skillId": "DBDM-S03",
-      "confidence": "medium",
-      "reasoning": "Question asks what a specific cognitive score (Fluid Reasoning) measures/interprets."
+      "questionId": "PB30",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q091",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question requires interpretation of a standard score of 85 (Average range)."
+      "questionId": "PB31",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q094",
-      "skillId": "DBDM-S08",
-      "confidence": "high",
-      "reasoning": "Question asks for a characteristic of effective progress monitoring (frequent/standardized)."
+      "questionId": "PB32",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q095",
-      "skillId": "DBDM-S05",
-      "confidence": "medium",
-      "reasoning": "Question asks for the most useful metric for evaluating PBIS effectiveness (ODRs), which is selecting the right data source for the purpose."
+      "questionId": "PB33",
+      "skillId": "SWP-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q098",
-      "skillId": "DBDM-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the appropriate assessment approach for a preschooler (developmental screening), matching tool to population/purpose."
+      "questionId": "PB34",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q110",
-      "skillId": "DBDM-S01",
-      "confidence": "high",
-      "reasoning": "Question asks for the best example of interrater reliability."
+      "questionId": "PB35",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q121",
-      "skillId": "DBDM-S09",
-      "confidence": "high",
-      "reasoning": "Question asks how to use universal screening data to identify Tier 2 needs (comparing to benchmarks)."
+      "questionId": "PB36",
+      "skillId": "DEV-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q123",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question requires interpretation of a progress monitoring graph (flat trend line)."
+      "questionId": "PB37",
+      "skillId": "SAF-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q002",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the specific type of consultation (multicultural) used when working with a cultural broker."
+      "questionId": "PB38",
+      "skillId": "ETH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q012",
-      "skillId": "CC-S03",
-      "confidence": "medium",
-      "reasoning": "Question requires identifying the appropriate collaborative role (assisting with data/tracking) rather than taking over instruction."
+      "questionId": "PB39",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q024",
-      "skillId": "CC-S03",
-      "confidence": "high",
-      "reasoning": "Question tests knowledge of the school psychologist's role as a facilitator rather than a unilateral decision-maker in teams."
+      "questionId": "PB40",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q028",
-      "skillId": "NEW-2-ConsultationProcess",
-      "confidence": "medium",
-      "reasoning": "Question asks for the first step in establishing a parent consultation relationship (establishing mutual goals)."
+      "questionId": "PB41",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q033",
-      "skillId": "NEW-2-ConsultationProcess",
-      "confidence": "high",
-      "reasoning": "Question explicitly asks to identify the common steps (Problem Analysis, Identification, Intervention) in a problem-solving model."
+      "questionId": "PB42",
+      "skillId": "LEG-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q035",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question describes an activity (school-wide system) and asks to identify it as organizational consultation."
+      "questionId": "PB43",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q037",
-      "skillId": "NEW-2-ProblemSolvingSteps",
-      "confidence": "high",
-      "reasoning": "Question asks for the first step in consulting about a behavior problem (collecting detailed data/defining problem) before intervention."
+      "questionId": "PB44",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q049",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the consultation model that emphasizes home-school collaboration (Conjoint Behavioral Consultation)."
+      "questionId": "PB45",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q057",
-      "skillId": "NEW-2-ProblemSolvingSteps",
-      "confidence": "high",
-      "reasoning": "Question asks for the immediate first step in a consultation model for an off-task student (Defining the problem)."
+      "questionId": "PB46",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q058",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to distinguish between conjoint behavioral consultation (home & school) and standard behavioral consultation."
+      "questionId": "PB47",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q063",
-      "skillId": "CC-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for the most effective consultation approach for a struggling teacher (Collaborative problem-solving vs. expert model)."
+      "questionId": "PB48",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q104",
-      "skillId": "NEW-2-CommunicationStrategies",
-      "confidence": "high",
-      "reasoning": "Question asks for the best strategy to build rapport with a resistant teacher (Listening/acknowledging perspective)."
+      "questionId": "PB49",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q106",
-      "skillId": "NEW-2-ProblemSolvingSteps",
-      "confidence": "medium",
-      "reasoning": "Question requires knowledge of the RIOT assessment process (Observations & Tests) within a consultation framework."
+      "questionId": "PB50",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q116",
-      "skillId": "CC-S03",
-      "confidence": "medium",
-      "reasoning": "Question asks about the relationship type fostered by multimethod assessment interviews (Collaborative)."
+      "questionId": "PB51",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q126",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the primary characteristic of behavioral consultation (focus on observable behaviors and data collection)."
+      "questionId": "PB52",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q127",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify mental health consultation based on focus on emotional experiences and social dynamics rather than observable behaviors."
+      "questionId": "PB53",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q128",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify consultee-centered consultation based on focus on improving teacher's skills rather than solving individual student problems."
+      "questionId": "PB54",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q129",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify conjoint behavioral consultation based on involvement of both parents and teachers with interventions in both home and school settings."
+      "questionId": "PB55",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q130",
-      "skillId": "CC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify organizational consultation based on system-wide change affecting all students and staff."
+      "questionId": "PB56",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q131",
-      "skillId": "NEW-2-ConsultationProcess",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the entry/contracting stage based on establishing mutual goals, clarifying roles, and building rapport."
+      "questionId": "PB57",
+      "skillId": "DBD-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q132",
-      "skillId": "NEW-2-ConsultationProcess",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the problem identification stage based on collecting baseline data to define the problem in observable terms."
+      "questionId": "PB58",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q133",
-      "skillId": "NEW-2-ConsultationProcess",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the problem analysis stage based on analyzing data, identifying patterns, and hypothesizing causes."
+      "questionId": "PB59",
+      "skillId": "ACA-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q134",
-      "skillId": "NEW-2-ConsultationProcess",
-      "confidence": "high",
-      "reasoning": "Question tests critical concept that consultee (teacher) implements intervention, not consultant, because consultation is indirect service."
+      "questionId": "PB60",
+      "skillId": "MBH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q135",
-      "skillId": "NEW-2-ConsultationProcess",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the evaluation stage based on collecting data to assess intervention effectiveness and make decisions."
+      "questionId": "PB61",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q136",
-      "skillId": "NEW-2-CommunicationStrategies",
-      "confidence": "high",
-      "reasoning": "Question asks to identify active listening skill based on summarizing, reflecting feelings, and asking clarifying questions."
+      "questionId": "PB62",
+      "skillId": "ETH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q137",
-      "skillId": "NEW-2-CommunicationStrategies",
-      "confidence": "high",
-      "reasoning": "Question asks to identify paraphrasing skill based on restating consultee's words to confirm understanding."
+      "questionId": "PB63",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q138",
-      "skillId": "CC-S03",
-      "confidence": "high",
-      "reasoning": "Question tests avoiding expert trap by using questions to promote consultee ownership rather than providing all answers."
+      "questionId": "PB64",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q139",
-      "skillId": "NEW-2-CommunicationStrategies",
-      "confidence": "high",
-      "reasoning": "Question asks for effective response to resistance: acknowledging concerns, exploring barriers, and collaborative problem-solving."
+      "questionId": "PB65",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q140",
-      "skillId": "NEW-2-CommunicationStrategies",
-      "confidence": "high",
-      "reasoning": "Question asks for effective facilitation of communication among diverse stakeholders including community providers, requiring role clarification and perspective understanding."
+      "questionId": "PB66",
+      "skillId": "ACA-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q015",
-      "skillId": "ACAD-S04",
-      "confidence": "high",
-      "reasoning": "Question describes a student with slow reading speed but high accuracy and asks for the appropriate intervention (Repeated readings for fluency)."
+      "questionId": "PB67",
+      "skillId": "SAF-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q020",
-      "skillId": "NEW-3-InstructionalHierarchy",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the stage of learning (Acquisition) when a student is just learning a new skill and needs immediate feedback."
+      "questionId": "PB68",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q040",
-      "skillId": "ACAD-S02",
-      "confidence": "high",
-      "reasoning": "Question asks for an example of an evidence-based intervention for reading comprehension (Reciprocal teaching/Question generation)."
+      "questionId": "PB69",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q045",
-      "skillId": "ACAD-S01",
-      "confidence": "medium",
-      "reasoning": "Question asks to select the appropriate intensity of support (Tier 2) for a student slightly below benchmark."
+      "questionId": "PB70",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q056",
-      "skillId": "ACAD-S04",
-      "confidence": "high",
-      "reasoning": "Question asks for the best strategy to improve math fact fluency (Timed drills/Cover-Copy-Compare) vs. reasoning."
+      "questionId": "PB71",
+      "skillId": "DBD-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q072",
-      "skillId": "NEW-3-MetacognitiveStrategies",
-      "confidence": "high",
-      "reasoning": "Question asks for a strategy to help students monitor their own learning and thinking processes (Metacognition/Self-monitoring)."
+      "questionId": "PB72",
+      "skillId": "DEV-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q085",
-      "skillId": "ACAD-S05",
-      "confidence": "high",
-      "reasoning": "Question asks specifically for the accuracy range that defines the 'Instructional Level' (93-97% or 70-85% depending on text type in question)."
+      "questionId": "PB73",
+      "skillId": "DEV-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q093",
-      "skillId": "NEW-3-InstructionalHierarchy",
-      "confidence": "high",
-      "reasoning": "Question asks for the appropriate instructional focus for a student who has mastered accuracy but lacks speed (Proficiency/Fluency building)."
+      "questionId": "PB74",
+      "skillId": "PSY-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q099",
-      "skillId": "ACAD-S03",
-      "confidence": "medium",
-      "reasoning": "Question involves analyzing error patterns to identify the specific skill deficit before planning instruction."
+      "questionId": "PB75",
+      "skillId": "LEG-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q112",
-      "skillId": "ACAD-S02",
-      "confidence": "high",
-      "reasoning": "Question asks to identify Direct Instruction characteristics (Scripted, fast-paced, high response rate)."
+      "questionId": "PB76",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q115",
-      "skillId": "NEW-3-MetacognitiveStrategies",
-      "confidence": "medium",
-      "reasoning": "Question asks for strategies to support executive function/organization in academic tasks (Graphic organizers/Planners)."
+      "questionId": "PB77",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q005",
-      "skillId": "MBH-S04",
-      "confidence": "high",
-      "reasoning": "Question asks for the priority action when a student expresses suicidal thoughts (assess plan, intent, and means immediately)."
+      "questionId": "PB78",
+      "skillId": "FAM-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q011",
-      "skillId": "MBH-S02",
-      "confidence": "high",
-      "reasoning": "Question describes a student's disruptive behavior occurring only during math worksheets to get sent out, asking to identify the function (Escape/Avoidance)."
+      "questionId": "PB79",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q022",
-      "skillId": "MBH-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the primary component of Cognitive Behavioral Therapy (CBT) for anxiety (identifying and challenging cognitive distortions)."
+      "questionId": "PB80",
+      "skillId": "PSY-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q029",
-      "skillId": "MBH-S01",
-      "confidence": "medium",
-      "reasoning": "Question asks for the definition of the 'A-B-C' model in Functional Behavior Assessment (Antecedent-Behavior-Consequence)."
+      "questionId": "PB81",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q044",
-      "skillId": "MBH-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for the essential characteristic of a replacement behavior in a BIP (it must serve the same function as the problem behavior)."
+      "questionId": "PB82",
+      "skillId": "ACA-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q054",
-      "skillId": "NEW-4-Psychopathology",
-      "confidence": "medium",
-      "reasoning": "Question asks how depression presentation in children often differs from adults (Irritability/Somatic complaints vs. Sadness)."
+      "questionId": "PB83",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q066",
-      "skillId": "NEW-4-Psychopathology",
-      "confidence": "high",
-      "reasoning": "Question asks for the diagnostic criteria for ADHD regarding setting (symptoms must be present in two or more settings)."
+      "questionId": "PB84",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q073",
-      "skillId": "MBH-S05",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the therapy model that uses the 'Miracle Question' (Solution-Focused Brief Therapy)."
+      "questionId": "PB85",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q081",
-      "skillId": "MBH-S06",
-      "confidence": "medium",
-      "reasoning": "Question asks for the most effective method to teach social skills (Modeling, Rehearsal, and Feedback/Role-play)."
+      "questionId": "PB86",
+      "skillId": "DBD-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q096",
-      "skillId": "MBH-S04",
-      "confidence": "high",
-      "reasoning": "Question asks how to distinguish Non-Suicidal Self-Injury (NSSI) from suicidal intent (Assessment of intent to die)."
+      "questionId": "PB87",
+      "skillId": "DBD-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q108",
-      "skillId": "NEW-4-GroupCounseling",
-      "confidence": "medium",
-      "reasoning": "Question asks which student profile is contraindicated for group counseling (e.g., severe conduct disorder/aggressive behavior)."
+      "questionId": "PB88",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q113",
-      "skillId": "MBH-S06",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the behavioral principle where removing an aversive stimulus increases behavior (Negative Reinforcement)."
+      "questionId": "PB89",
+      "skillId": "ACA-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q022",
-      "skillId": "SWP-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify a specific example of a Tier 2 intervention (small-group social skills) within a multi-tiered framework."
+      "questionId": "PB90",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q044",
-      "skillId": "SWP-S01",
-      "confidence": "high",
-      "reasoning": "Question asks for the definition of Response to Intervention (RTI) as a multi-tiered system for providing increasingly intensive interventions."
+      "questionId": "PB91",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q074",
-      "skillId": "SWP-S02",
-      "confidence": "high",
-      "reasoning": "Question tests the fundamental principle of positive behavior support (changing the environment and teaching new skills vs. punishment)."
+      "questionId": "PB92",
+      "skillId": "RES-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q080",
-      "skillId": "SWP-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for the main goal of the universal (Tier 1) level of PBIS (teaching expectations and acknowledging desired behaviors)."
+      "questionId": "PB93",
+      "skillId": "RES-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q083",
-      "skillId": "SWP-S02",
-      "confidence": "high",
-      "reasoning": "Question asks for a commonly used outcome variable for PBIS effectiveness (Office Discipline Referrals/ODRs)."
+      "questionId": "PB94",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q087",
-      "skillId": "SWP-S03",
-      "confidence": "high",
-      "reasoning": "Question asks to identify a Tier 1 intervention from a list (school-wide assembly vs. individual counseling)."
+      "questionId": "PB95",
+      "skillId": "RES-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q094",
-      "skillId": "NEW-5-SchoolClimate",
-      "confidence": "high",
-      "reasoning": "Question asks for the three main components of school climate according to NASP (Engagement, Safety, Environment)."
+      "questionId": "PB96",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q095",
-      "skillId": "SWP-S02",
-      "confidence": "medium",
-      "reasoning": "Question asks for the most useful metric for evaluating PBIS effectiveness (ODRs and suspensions), similar to Q083 but focused on evaluation."
+      "questionId": "PB97",
+      "skillId": "ACA-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q100",
-      "skillId": "SWP-S01",
-      "confidence": "high",
-      "reasoning": "Question tests the distinction between Tier 1 (all students) and Tier 2 (targeted group) supports."
+      "questionId": "PB98",
+      "skillId": "ACA-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q111",
-      "skillId": "NEW-5-SchoolClimate",
-      "confidence": "high",
-      "reasoning": "Question asks for factors used to assess school climate (Physical, Social, and Emotional environments)."
+      "questionId": "PB99",
+      "skillId": "ACA-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q124",
-      "skillId": "SWP-S04",
-      "confidence": "high",
-      "reasoning": "Question asks for the best sign of successful Tier 1 PBIS implementation (consistent teaching strategies and metrics) which relates to fidelity."
+      "questionId": "PB100",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q006",
-      "skillId": "PC-S02",
-      "confidence": "high",
-      "reasoning": "Question asks for the primary role of the school psychologist during a crisis event (supporting students/staff and triage, not long-term therapy)."
+      "questionId": "PB101",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q014",
-      "skillId": "NEW-6-BullyingPrevention",
-      "confidence": "high",
-      "reasoning": "Question asks for the most effective school-wide strategy to reduce bullying (improving school climate/supervision vs. zero tolerance policies)."
+      "questionId": "PB102",
+      "skillId": "DBD-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q026",
-      "skillId": "PC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to distinguish between a transient threat and a substantive threat in a threat assessment context."
+      "questionId": "PB103",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q046",
-      "skillId": "PC-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the primary goal of postvention services following a student suicide (preventing contagion/clusters)."
+      "questionId": "PB104",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q059",
-      "skillId": "NEW-6-TraumaInformed",
-      "confidence": "medium",
-      "reasoning": "Question asks to identify common symptoms of trauma in young children (regression, sleep disturbance)."
+      "questionId": "PB105",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q078",
-      "skillId": "PC-S02",
-      "confidence": "high",
-      "reasoning": "Question asks about the re-entry planning process for a student returning from psychiatric hospitalization (safety planning)."
+      "questionId": "PB106",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q088",
-      "skillId": "PC-S04",
-      "confidence": "high",
-      "reasoning": "Question asks for best practices regarding crisis drills (they should be practiced regularly and in a developmentally appropriate way)."
+      "questionId": "PB107",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q102",
-      "skillId": "PC-S03",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the core elements of Psychological First Aid (establish safety, calm, connectedness, self-efficacy, hope)."
+      "questionId": "PB108",
+      "skillId": "ETH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q118",
-      "skillId": "NEW-6-BullyingPrevention",
-      "confidence": "medium",
-      "reasoning": "Question asks specifically about strategies to address cyberbullying (education on digital citizenship)."
+      "questionId": "PB109",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q003",
-      "skillId": "NEW-7-BarriersToEngagement",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the most significant barrier to parental involvement for low-SES families (logistical issues/lack of flexibility vs. lack of interest)."
+      "questionId": "PB110",
+      "skillId": "MBH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q017",
-      "skillId": "FSC-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for an effective strategy to increase parent engagement at the school level (creating a welcoming environment/two-way communication)."
+      "questionId": "PB111",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q043",
-      "skillId": "FSC-S04",
-      "confidence": "medium",
-      "reasoning": "Question involves working with a family from a collectivist culture and respecting the role of extended family members in decision-making."
+      "questionId": "PB112",
+      "skillId": "DBD-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q055",
-      "skillId": "NEW-7-FamilySystems",
-      "confidence": "high",
-      "reasoning": "Question asks to identify a core concept of Family Systems Theory (events affecting one member affect the whole system)."
+      "questionId": "PB113",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q069",
-      "skillId": "FSC-S01",
-      "confidence": "high",
-      "reasoning": "Question asks for the primary goal of family-school partnerships (shared responsibility for student learning/success)."
+      "questionId": "PB114",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q086",
-      "skillId": "FSC-S03",
-      "confidence": "medium",
-      "reasoning": "Question asks for the best way to present assessment results to parents (using jargon-free language and focusing on strengths/needs)."
+      "questionId": "PB115",
+      "skillId": "LEG-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q101",
-      "skillId": "NEW-7-BarriersToEngagement",
-      "confidence": "high",
-      "reasoning": "Question asks how to address a specific barrier (language) to ensure meaningful parent participation (using qualified interpreters)."
+      "questionId": "PB116",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q117",
-      "skillId": "NEW-7-FamilySystems",
-      "confidence": "medium",
-      "reasoning": "Question describes a scenario of reciprocal influence between parent and child behavior, testing understanding of circular causality."
+      "questionId": "PB117",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q004",
-      "skillId": "DIV-S04",
-      "confidence": "high",
-      "reasoning": "Question asks to interpret a risk ratio of 2.5 for a specific racial group in special education (indicating overrepresentation/disproportionality)."
+      "questionId": "PB118",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q009",
-      "skillId": "DIV-S03",
-      "confidence": "high",
-      "reasoning": "Question asks for the primary consideration before assessing an ELL student (determining language dominance/proficiency in both languages)."
+      "questionId": "PB119",
+      "skillId": "ETH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q023",
-      "skillId": "DIV-S07",
-      "confidence": "high",
-      "reasoning": "Question asks for best practice when using an interpreter during a parent meeting (speaking directly to the parent, not the interpreter)."
+      "questionId": "PB120",
+      "skillId": "ACA-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q032",
-      "skillId": "DIV-S02",
-      "confidence": "medium",
-      "reasoning": "Question involves selecting a nonverbal assessment to reduce linguistic bias for a student with limited English proficiency."
+      "questionId": "PB121",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q041",
-      "skillId": "DIV-S01",
-      "confidence": "medium",
-      "reasoning": "Question describes a scenario where a psychologist assumes a student's lack of eye contact is defiance rather than cultural, identifying implicit bias."
+      "questionId": "PB122",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q050",
-      "skillId": "DIV-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the definition/role of a cultural broker (a community liaison who bridges the cultural gap between school and family)."
+      "questionId": "PB123",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q067",
-      "skillId": "NEW-8-Acculturation",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the stage of acculturation where a student adopts new cultural norms while maintaining their original culture (Integration/Biculturalism)."
+      "questionId": "PB124",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q079",
-      "skillId": "NEW-8-SocialJustice",
-      "confidence": "medium",
-      "reasoning": "Question asks for the school psychologist's ethical responsibility when observing systemic barriers affecting marginalized groups (Social justice advocacy)."
+      "questionId": "PB125",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q105",
-      "skillId": "NEW-8-LanguageAcquisition",
-      "confidence": "high",
-      "reasoning": "Question asks to distinguish between BICS (social language) and CALP (academic language) regarding timeline for proficiency."
+      "questionId": "PB126",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q119",
-      "skillId": "DIV-S02",
-      "confidence": "high",
-      "reasoning": "Question asks why translating a standardized test into another language on the fly is poor practice (violates validity/standardization)."
+      "questionId": "PB127",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q008",
-      "skillId": "RES-S06",
-      "confidence": "high",
-      "reasoning": "Question asks to interpret a correlation coefficient of -0.85 (Strong negative relationship)."
+      "questionId": "PB128",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q027",
-      "skillId": "RES-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the definition of Type I error (rejecting the null hypothesis when it is true)."
+      "questionId": "PB129",
+      "skillId": "PSY-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q030",
-      "skillId": "NEW-9-Variables",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the independent variable in a described experiment (the intervention being manipulated)."
+      "questionId": "PB130",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q047",
-      "skillId": "NEW-9-ValidityThreats",
-      "confidence": "medium",
-      "reasoning": "Question asks to identify a threat to internal validity where participants drop out of the study (Attrition/Mortality)."
+      "questionId": "PB131",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q051",
-      "skillId": "NEW-9-StatisticalTests",
-      "confidence": "high",
-      "reasoning": "Question asks for the appropriate statistical test to compare the means of two distinct groups (Independent t-test)."
+      "questionId": "PB132",
+      "skillId": "FAM-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q061",
-      "skillId": "RES-S03",
-      "confidence": "high",
-      "reasoning": "Question asks to interpret a Cohen's d value of 0.80 (Large effect size), testing practical significance."
+      "questionId": "PB133",
+      "skillId": "LEG-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q075",
-      "skillId": "NEW-9-StatisticalTests",
-      "confidence": "high",
-      "reasoning": "Question asks for the correct test to compare means across three or more groups (ANOVA)."
+      "questionId": "PB134",
+      "skillId": "DBD-09",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q084",
-      "skillId": "RES-S01",
-      "confidence": "high",
-      "reasoning": "Question asks to identify the specific single-subject design being used (A-B-A-B Reversal Design)."
+      "questionId": "PB135",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q092",
-      "skillId": "NEW-9-DescriptiveStats",
-      "confidence": "high",
-      "reasoning": "Question asks for the statistical measure that describes the spread or variability of scores around the mean (Standard Deviation)."
+      "questionId": "PB136",
+      "skillId": "DBD-10",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q114",
-      "skillId": "RES-S01",
-      "confidence": "medium",
-      "reasoning": "Question asks for the primary purpose of random assignment in experimental design (to ensure groups are equivalent/control extraneous variables)."
+      "questionId": "PB137",
+      "skillId": "ACA-09",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q007",
-      "skillId": "LEG-S02",
-      "confidence": "high",
-      "reasoning": "Question asks for the primary requirement of FAPE under IDEA (special education and related services provided at public expense)."
+      "questionId": "PB138",
+      "skillId": "ACA-09",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q038",
-      "skillId": "LEG-S04",
-      "confidence": "high",
-      "reasoning": "Question presents a scenario where a child reveals abuse and asks for the psychologist's immediate legal duty (report to CPS, not investigate)."
+      "questionId": "PB139",
+      "skillId": "LEG-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q077",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question asks for the landmark case that established the duty to warn/protect when a client makes a specific threat (Tarasoff)."
+      "questionId": "PB140",
+      "skillId": "ETH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q089",
-      "skillId": "LEG-S03",
-      "confidence": "high",
-      "reasoning": "Question asks when it is appropriate to breach confidentiality (imminent danger to self or others)."
+      "questionId": "PB141",
+      "skillId": "SWP-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q090",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question asks for the case that banned the use of IQ tests for placing African American students in special education in CA (Larry P. v. Riles)."
+      "questionId": "PB142",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q097",
-      "skillId": "NEW-10-EducationLaw",
-      "confidence": "high",
-      "reasoning": "Question asks for the key difference between Section 504 and IDEA (civil rights/access vs. educational benefit/funding)."
+      "questionId": "PB143",
+      "skillId": "PSY-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q103",
-      "skillId": "LEG-S06",
-      "confidence": "medium",
-      "reasoning": "Question involves an ethical dilemma about accepting a gift from a parent (evaluating cultural context vs. conflict of interest)."
+      "questionId": "PB144",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q107",
-      "skillId": "NEW-10-RecordKeeping",
-      "confidence": "medium",
-      "reasoning": "Question asks about the rights of non-custodial parents to access student records under FERPA (they generally have access unless court order states otherwise)."
+      "questionId": "PB145",
+      "skillId": "PSY-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q109",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question asks for the case defining 'appropriate' education as providing 'some educational benefit' rather than optimal potential (Rowley)."
+      "questionId": "PB146",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q120",
-      "skillId": "NEW-10-Supervision",
-      "confidence": "high",
-      "reasoning": "Question asks for the required supervision conditions for a school psychology intern (e.g., 2 hours per week by a credentialed psychologist)."
+      "questionId": "PB147",
+      "skillId": "PSY-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q122",
-      "skillId": "LEG-S05",
-      "confidence": "high",
-      "reasoning": "Question asks for the purpose of a Manifestation Determination Review (to decide if conduct was caused by the disability)."
+      "questionId": "PB148",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q125",
-      "skillId": "NEW-10-TestSecurity",
-      "confidence": "high",
-      "reasoning": "Question asks how to handle a parent's request to see test protocols (providing explanation/viewing but not copying/releasing protocols to non-professionals)."
+      "questionId": "PB149",
+      "skillId": "PSY-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q141",
-      "skillId": "NEW-10-EthicalProblemSolving",
-      "confidence": "high",
-      "reasoning": "Question asks for the first step in NASP's ethical problem-solving model (identifying ethical principles in conflict)."
+      "questionId": "PB150",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q142",
-      "skillId": "NEW-10-EthicalProblemSolving",
-      "confidence": "high",
-      "reasoning": "Question tests application of ethical problem-solving model when confidentiality conflicts with duty to protect (duty to protect takes precedence with imminent threat)."
+      "questionId": "PB151",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q143",
-      "skillId": "NEW-10-EthicalProblemSolving",
-      "confidence": "high",
-      "reasoning": "Question addresses ETS discussion question: how to respond when administrator behaves unethically (address directly first, then escalate if needed)."
+      "questionId": "PB152",
+      "skillId": "PSY-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q144",
-      "skillId": "NEW-10-EthicalProblemSolving",
-      "confidence": "high",
-      "reasoning": "Question tests avoiding dual relationships - psychologist should decline evaluation when personal relationship exists and refer to another professional."
+      "questionId": "PB153",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q145",
-      "skillId": "NEW-10-EthicalProblemSolving",
-      "confidence": "high",
-      "reasoning": "Question tests scope of competence - psychologist must decline services requiring specialized training they don't have and refer to qualified professional."
+      "questionId": "PB154",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q146",
-      "skillId": "NEW-10-EducationLaw",
-      "confidence": "high",
-      "reasoning": "Question tests IDEA vs Section 504 eligibility - student needing accommodations but not specialized instruction is eligible under 504, not IDEA."
+      "questionId": "PB155",
+      "skillId": "DBD-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q147",
-      "skillId": "NEW-10-EducationLaw",
-      "confidence": "high",
-      "reasoning": "Question tests key difference in services: IDEA provides specialized instruction and related services; Section 504 provides accommodations and modifications for access."
+      "questionId": "PB156",
+      "skillId": "DBD-07",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q148",
-      "skillId": "NEW-10-EducationLaw",
-      "confidence": "high",
-      "reasoning": "Question tests evaluation requirements difference: IDEA requires comprehensive evaluation by multidisciplinary team; Section 504 requires evaluation by team of knowledgeable persons."
+      "questionId": "PB157",
+      "skillId": "DBD-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q149",
-      "skillId": "NEW-10-RecordKeeping",
-      "confidence": "high",
-      "reasoning": "Question tests FERPA access rights - school officials with legitimate educational interests can access records without parental consent."
+      "questionId": "PB158",
+      "skillId": "DBD-08",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q150",
-      "skillId": "NEW-10-RecordKeeping",
-      "confidence": "high",
-      "reasoning": "Question tests FERPA parent rights to amend records - parents can request amendment and hearing if school refuses."
+      "questionId": "PB159",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q151",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question tests Rowley case standard - IEP must provide 'some educational benefit,' not maximum potential."
+      "questionId": "PB160",
+      "skillId": "PSY-04",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q152",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question tests Endrew F. case - raised standard from Rowley's 'some benefit' to 'meaningful educational benefit' that is appropriately ambitious."
+      "questionId": "PB161",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q153",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question tests Larry P. case - prohibited use of IQ tests for placing African American students in special education for educable mentally retarded in California."
+      "questionId": "PB162",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q154",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question tests Tarasoff case - duty to warn/protect when specific, credible threat of serious harm to identifiable victim."
+      "questionId": "PB163",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q155",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "Question applies Tarasoff case law to scenario - psychologist must warn intended victim and/or take steps to protect, even if breaching confidentiality."
+      "questionId": "PB164",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q156",
-      "skillId": "LEG-S05",
-      "confidence": "high",
-      "reasoning": "Question tests when manifestation determination is required - before removal of more than 10 consecutive school days."
+      "questionId": "PB165",
+      "skillId": "SAF-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q157",
-      "skillId": "LEG-S05",
-      "confidence": "high",
-      "reasoning": "Question addresses ETS discussion question: what questions must be answered in manifestation determination (conduct caused by disability or failure to implement IEP)."
+      "questionId": "PB166",
+      "skillId": "SAF-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q158",
-      "skillId": "LEG-S07",
-      "confidence": "high",
-      "reasoning": "Question tests informed consent requirements - must explain purpose, procedures, and that consent can be revoked."
+      "questionId": "PB167",
+      "skillId": "SAF-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q159",
-      "skillId": "LEG-S02",
-      "confidence": "high",
-      "reasoning": "Question tests LRE requirement - students with disabilities educated with non-disabled peers to maximum extent appropriate."
+      "questionId": "PB168",
+      "skillId": "SWP-03",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_Q160",
-      "skillId": "LEG-S02",
-      "confidence": "high",
-      "reasoning": "Question tests when seclusion/restraint allowed - only when imminent danger of serious physical harm, as last resort."
+      "questionId": "PB169",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q001",
-      "skillId": "DIV-S03",
-      "confidence": "high",
-      "reasoning": "Question tests ELL assessment requirement: verify learning disability in both native language and English to rule out language acquisition as alternative explanation."
+      "questionId": "PB170",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q002",
-      "skillId": "SWP-S03",
-      "confidence": "high",
-      "reasoning": "Question tests Tier 1 identification: environmentally designed crime deterrence is a universal Tier 1 intervention."
+      "questionId": "PB171",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q003",
-      "skillId": "MBH-S01",
-      "confidence": "high",
-      "reasoning": "Question tests FBA quantitative measurement: converting behavior counts to standardized rate (weekly average) for quantitative measurement."
+      "questionId": "PB172",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q004",
-      "skillId": "NEW-10-RecordKeeping",
-      "confidence": "high",
-      "reasoning": "Question tests when medical record access with authorization is appropriate: when health issues may affect learning/behavior."
+      "questionId": "PB173",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q005",
-      "skillId": "MBH-S05",
-      "confidence": "high",
-      "reasoning": "Question tests CBT recognition: identifying cognitive distortions is a core CBT technique."
+      "questionId": "PB174",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q006",
-      "skillId": "SWP-S01",
-      "confidence": "high",
-      "reasoning": "Question tests MTSS framework definition: MTSS integrates multiple systems to address academic, behavior, and social-emotional simultaneously."
+      "questionId": "PB175",
+      "skillId": "SAF-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q007",
-      "skillId": "DBDM-S10",
-      "confidence": "high",
-      "reasoning": "Question tests data-first decision making: first step is gathering data (administer worksheet to class) before individual assessment."
+      "questionId": "PB176",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q008",
-      "skillId": "SWP-S03",
-      "confidence": "high",
-      "reasoning": "Question tests Tier 1 definition: primary intervention = Tier 1 = meets needs of most students, applied across all settings."
+      "questionId": "PB177",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q009",
-      "skillId": "NEW-4-Psychopathology",
-      "confidence": "high",
-      "reasoning": "Question tests social influences assessment: peer relationships and reactions to success/failure are social influences on mental health."
+      "questionId": "PB178",
+      "skillId": "SAF-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q010",
-      "skillId": "LEG-S02",
-      "confidence": "high",
-      "reasoning": "Question tests IDEA requirements: IDEA specifies provisions for electronic communication of procedural safeguards."
+      "questionId": "PB179",
+      "skillId": "SAF-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q011",
-      "skillId": "SWP-S01",
-      "confidence": "high",
-      "reasoning": "Question tests Tier 2 identification: secondary-level interventions = classroom-level, classwide interventions, character development lessons."
+      "questionId": "PB180",
+      "skillId": "DEV-01",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q012",
-      "skillId": "NEW-4-Psychopathology",
-      "confidence": "high",
-      "reasoning": "Question tests depression diagnostic criteria: withdrawal, irritability, and loss of pleasure are symptoms of depression."
+      "questionId": "PB181",
+      "skillId": "DEV-01",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q013",
-      "skillId": "NEW-9-ValidityThreats",
-      "confidence": "high",
-      "reasoning": "Question tests validity threat identification: maturation threat = changes due to natural development/aging over time."
+      "questionId": "PB182",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q014",
-      "skillId": "LEG-S06",
-      "confidence": "high",
-      "reasoning": "Question tests competence principle: seeking training/supervision before using unfamiliar assessment demonstrates competence."
+      "questionId": "PB183",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q015",
-      "skillId": "LEG-S03",
-      "confidence": "high",
-      "reasoning": "Question tests confidentiality breach: duty to warn/protect when student intends to harm another (imminent danger)."
+      "questionId": "PB184",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q016",
-      "skillId": "DBDM-S01",
-      "confidence": "high",
-      "reasoning": "Question tests reliability definition: reliability = consistency/stability in measurement. Low reliability = scores vary across administrations."
+      "questionId": "PB185",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q017",
-      "skillId": "MBH-S06",
-      "confidence": "high",
-      "reasoning": "Question tests behavioral principles: clear rules + positive reinforcement for compliance increases desired behavior."
+      "questionId": "PB186",
+      "skillId": "DEV-01",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q018",
-      "skillId": "LEG-S02",
-      "confidence": "high",
-      "reasoning": "Question tests zero-reject principle: no child denied FAPE based on disability severity (part of IDEA/FAPE)."
+      "questionId": "PB187",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q019",
-      "skillId": "SWP-S04",
-      "confidence": "high",
-      "reasoning": "Question tests implementation fidelity: reminders/prompts help ensure consistent implementation of PBIS components."
+      "questionId": "PB188",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q020",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question tests percentile interpretation: percentile rank = percentage of scores equal to or lower."
+      "questionId": "PB189",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q021",
-      "skillId": "NEW-9-ValidityThreats",
-      "confidence": "high",
-      "reasoning": "Question tests ecological validity: concern about generalization to real-world settings = ecological validity."
+      "questionId": "PB190",
+      "skillId": "DBD-05",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q022",
-      "skillId": "LEG-S06",
-      "confidence": "high",
-      "reasoning": "Question tests advocacy responsibilities: work to change discriminatory practices, distinguish professional vs private statements."
+      "questionId": "PB191",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q023",
-      "skillId": "NEW-8-LanguageAcquisition",
-      "confidence": "high",
-      "reasoning": "Question tests BICS vs CALP distinction: social fluency (BICS) develops before academic language (CALP). BICS = 6mo-2yr, CALP = 5-7yr."
+      "questionId": "PB192",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q024",
-      "skillId": "MBH-S05",
-      "confidence": "high",
-      "reasoning": "Question tests evidence-based practice recognition: CBT is an EBP for treating internalizing problems (depression, anxiety)."
+      "questionId": "PB193",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q025",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question tests z-score calculation: z-score = (score - mean) / SD."
+      "questionId": "PB194",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q026",
-      "skillId": "DBDM-S03",
-      "confidence": "high",
-      "reasoning": "Question tests cognitive construct identification: working memory = ability to attend, hold information, and perform mental operations."
+      "questionId": "PB195",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q027",
-      "skillId": "LEG-S02",
-      "confidence": "high",
-      "reasoning": "Question tests IEP content requirements: IEP includes specialized instruction and related services (counseling) based on student needs."
+      "questionId": "PB196",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q028",
-      "skillId": "LEG-S07",
-      "confidence": "high",
-      "reasoning": "Question tests informed consent requirements: ensure safety first, then require parental consent for ongoing counseling services."
+      "questionId": "PB197",
+      "skillId": "ACA-07",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q029",
-      "skillId": "LEG-S02",
-      "confidence": "high",
-      "reasoning": "Question tests interagency collaboration purpose: planning for postsecondary transitions (part of IDEA requirements)."
+      "questionId": "PB198",
+      "skillId": "ACA-07",
+      "confidence": "high"
     },
     {
-      "questionId": "ETS_Q030",
-      "skillId": "SWP-S02",
-      "confidence": "high",
-      "reasoning": "Question tests PBIS/Tier 1 response: examine Tier 1 interventions (SWPBIS, SEL) when schoolwide behavior issues increase."
+      "questionId": "PB199",
+      "skillId": "PSY-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T08-hhzmm2",
-      "skillId": "NEW-7-InteragencyCollaboration",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+      "questionId": "PB200",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T07-ulm77m",
-      "skillId": "NEW-7-ParentingInterventions",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Parenting & Home Interventions. Question tests Know strategies for parenting interventions and home-based supports to address student needs."
+      "questionId": "PB201",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-5i35q1",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB202",
+      "skillId": "PSY-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-gccqo6",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB203",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-oxddo6",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB204",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-ivu7un",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB205",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T04-5caagi",
-      "skillId": "NEW-7-InteragencyCollaboration",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+      "questionId": "PB206",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-u4mi42",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+      "questionId": "PB207",
+      "skillId": "FAM-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-w89l4s",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB208",
+      "skillId": "SWP-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-jj9s0w",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB209",
+      "skillId": "SWP-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-nfq9h",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB210",
+      "skillId": "ACA-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-m8kn3h",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+      "questionId": "PB211",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-795f7h",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+      "questionId": "PB212",
+      "skillId": "ACA-08",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-icrjpf",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB213",
+      "skillId": "ACA-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-19f1hz",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB214",
+      "skillId": "ACA-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-efezcm",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+      "questionId": "PB215",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-cuomeq",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB216",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-y98cke",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Accommodations & Modifications. Question tests Know common curricular accommodations and modifications including assistive technology, specially designed instruction, and test format changes."
+      "questionId": "PB217",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T08C-qlbme3",
-      "skillId": "NEW-4-GroupCounseling",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Group Counseling Dynamics. Question tests Understand group formation, member selection (screening), and group stages (forming, storming, norming, performing).."
+      "questionId": "PB218",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T08D-rc3nn4",
-      "skillId": "NEW-4-GroupCounseling",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Group Counseling Dynamics. Question tests Understand group formation, member selection (screening), and group stages (forming, storming, norming, performing).."
+      "questionId": "PB219",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T06-5c90hg",
-      "skillId": "NEW-7-InteragencyCollaboration",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+      "questionId": "PB220",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T08-a86lzy",
-      "skillId": "NEW-7-InteragencyCollaboration",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Interagency Collaboration. Question tests Understand interagency collaboration for students with disabilities, particularly for postsecondary transitions."
+      "questionId": "PB221",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T14-h1iv17",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Auto-generated question from template for skill: Program Evaluation. Question tests Understand program evaluation methods and purposes."
+      "questionId": "PB222",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_001",
-      "skillId": "MBH-S06",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Behavioral Principles: Apply behavioral principles including positive reinforcement and rule-setting."
+      "questionId": "PB223",
+      "skillId": "CON-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_002",
-      "skillId": "MBH-S01",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests FBA Purpose: Understand FBA purpose and how to measure interfering behaviors quantitatively."
+      "questionId": "PB224",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_004",
-      "skillId": "MBH-S02",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Behavior Function Identification: Identify the function of behavior (attention, escape/avoidance, tangible, sensory)."
+      "questionId": "PB225",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_005",
-      "skillId": "MBH-S02",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Behavior Function Identification: Identify the function of behavior (attention, escape/avoidance, tangible, sensory)."
+      "questionId": "PB226",
+      "skillId": "ETH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_006",
-      "skillId": "MBH-S05",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Therapy Model Recognition: Identify therapy models (CBT, SFBT, etc.) and their key components."
+      "questionId": "PB227",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_007",
-      "skillId": "PC-S02",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Crisis Response Role: Understand school psychologist's role during crisis (support, triage, not long-term therapy)."
+      "questionId": "PB228",
+      "skillId": "ETH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_008",
-      "skillId": "PC-S04",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Crisis Preparedness: Understand best practices for crisis drills (regular, developmentally appropriate)."
+      "questionId": "PB229",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_009",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Landmark Cases: Identify key legal cases and their implications (Tarasoff, Larry P., Rowley)."
+      "questionId": "PB230",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_010",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Landmark Cases: Identify key legal cases and their implications (Tarasoff, Larry P., Rowley)."
+      "questionId": "PB231",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "SP5403_FLIP_011",
-      "skillId": "LEG-S01",
-      "confidence": "high",
-      "reasoning": "FLIP question from distractor conversion. Question tests Landmark Cases: Identify key legal cases and their implications (Tarasoff, Larry P., Rowley)."
+      "questionId": "PB232",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-mwt51a",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB233",
+      "skillId": "LEG-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-3v5g7",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB234",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-1yvjp2",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB235",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-yha9xk",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB236",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-1dye4",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB237",
+      "skillId": "ETH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-y98cke",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB238",
+      "skillId": "DBD-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-vri4i0",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB239",
+      "skillId": "LEG-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-wa796g",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB240",
+      "skillId": "LEG-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-yzifuw",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB241",
+      "skillId": "LEG-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T10-bbg7ik",
-      "skillId": "NEW-2-CommunityAgencies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB242",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T10-dbtzi6",
-      "skillId": "NEW-2-CommunityAgencies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB243",
+      "skillId": "DBD-05",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-DBDM-T22-sb7b18",
-      "skillId": "NEW-1-LowIncidenceExceptionalities",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB244",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-DBDM-T22-9itema",
-      "skillId": "NEW-1-LowIncidenceExceptionalities",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB245",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-f3bgcv",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB246",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-wtfngp",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB247",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T05-5c9ngz",
-      "skillId": "NEW-7-FamilySystems",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB248",
+      "skillId": "PSY-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-efezcm",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB249",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-795f7h",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB250",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-w6eyil",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB251",
+      "skillId": "MBH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-icjxve",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB252",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-3v5g7",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB253",
+      "skillId": "MBH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-53ofgg",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB254",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-gvj5ao",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB255",
+      "skillId": "DBD-09",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-gccqo6",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB256",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-5i35q1",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB257",
+      "skillId": "ACA-09",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-cuomeq",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB258",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-n1gdr6",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB259",
+      "skillId": "ACA-08",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-f15239",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB260",
+      "skillId": "ETH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T10-bbg7ik",
-      "skillId": "NEW-2-CommunityAgencies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB261",
+      "skillId": "PSY-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T10-2pv6ex",
-      "skillId": "NEW-2-CommunityAgencies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB262",
+      "skillId": "PSY-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-DBDM-T22-9itema",
-      "skillId": "NEW-1-LowIncidenceExceptionalities",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB263",
+      "skillId": "PSY-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-d6sx3k",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB264",
+      "skillId": "MBH-05",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-r7fpak",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB265",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-bozhd0",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB266",
+      "skillId": "SAF-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-u4mi42",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB267",
+      "skillId": "FAM-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-efezcm",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB268",
+      "skillId": "RES-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T05-5c9ngz",
-      "skillId": "NEW-7-FamilySystems",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB269",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-53ofgg",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB270",
+      "skillId": "SAF-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-hmirnm",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB271",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-yha9xk",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB272",
+      "skillId": "DBD-06",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-rhfa1a",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB273",
+      "skillId": "PSY-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-jbzlqu",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB274",
+      "skillId": "SAF-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-gccqo6",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB275",
+      "skillId": "LEG-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-ivu7un",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB276",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-kz4bc1",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB277",
+      "skillId": "ACA-06",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-xyxrhj",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB278",
+      "skillId": "ACA-09",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-b16rnm",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB279",
+      "skillId": "SAF-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T10-bbg7ik",
-      "skillId": "NEW-2-CommunityAgencies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "PB280",
+      "skillId": "SAF-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-DBDM-T22-sb7b18",
-      "skillId": "NEW-1-LowIncidenceExceptionalities",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC281",
+      "skillId": "PSY-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-DBDM-T22-9itema",
-      "skillId": "NEW-1-LowIncidenceExceptionalities",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC282",
+      "skillId": "SAF-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-fcbekl",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC283",
+      "skillId": "DBD-07",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-r7fpak",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC284",
+      "skillId": "DBD-10",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-8t4pc3",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC285",
+      "skillId": "MBH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T11-9xv9oj",
-      "skillId": "NEW-3-AcademicProgressFactors",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC286",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T11-lf8txu",
-      "skillId": "NEW-3-AcademicProgressFactors",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC287",
+      "skillId": "DBD-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-u4mi42",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC288",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-RES-T11-efezcm",
-      "skillId": "NEW-9-ProgramEvaluation",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC289",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T05-5c9ngz",
-      "skillId": "NEW-7-FamilySystems",
-      "confidence": "high",
-      "reasoning": "Regenerated question for template"
+      "questionId": "SC290",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-CC-T09-f15239",
-      "skillId": "NEW-2-FamilyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC291",
+      "skillId": "SWP-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-w89l4s",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC292",
+      "skillId": "MBH-04",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T10-oxddo6",
-      "skillId": "NEW-3-AccommodationsModifications",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC293",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-uidh0z",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC294",
+      "skillId": "ETH-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T16-3v5g7",
-      "skillId": "NEW-4-MentalHealthImpact",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC295",
+      "skillId": "ETH-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-ytf543",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC296",
+      "skillId": "PSY-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-gvj5ao",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC297",
+      "skillId": "FAM-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-1dye4",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC298",
+      "skillId": "LEG-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-ACAD-T11-9xv9oj",
-      "skillId": "NEW-3-AcademicProgressFactors",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC299",
+      "skillId": "RES-02",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-PC-T09-rpmeb0",
-      "skillId": "NEW-6-SchoolClimateMeasurement",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC300",
+      "skillId": "PSY-01",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T15-ozvb5k",
-      "skillId": "NEW-4-DevelopmentalInterventions",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC301",
+      "skillId": "RES-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-MBH-T03-f3ag1a",
-      "skillId": "MBH-S03",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC302",
+      "skillId": "ETH-03",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-SWP-T10-d6sx3k",
-      "skillId": "NEW-5-EducationalPolicies",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC303",
+      "skillId": "ACA-07",
+      "confidence": "high"
     },
     {
-      "questionId": "GEN-FSC-T08-q8hn0e",
-      "skillId": "NEW-7-InteragencyCollaboration",
-      "confidence": "high",
-      "reasoning": "Regenerated to fix banned term violation"
+      "questionId": "SC304",
+      "skillId": "RES-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "SC305",
+      "skillId": "RES-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "SC306",
+      "skillId": "DBD-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "SC307",
+      "skillId": "DIV-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "SC308",
+      "skillId": "ETH-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "SC309",
+      "skillId": "FAM-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "SC310",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS311",
+      "skillId": "RES-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS312",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS313",
+      "skillId": "DIV-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS314",
+      "skillId": "RES-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS315",
+      "skillId": "LEG-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS316",
+      "skillId": "PSY-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS317",
+      "skillId": "DIV-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS318",
+      "skillId": "SAF-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS319",
+      "skillId": "RES-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS320",
+      "skillId": "PSY-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS321",
+      "skillId": "LEG-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS322",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS323",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS324",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS325",
+      "skillId": "ACA-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS326",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS327",
+      "skillId": "ACA-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS328",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS329",
+      "skillId": "LEG-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS330",
+      "skillId": "PSY-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS331",
+      "skillId": "SWP-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS332",
+      "skillId": "ACA-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS333",
+      "skillId": "SAF-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS334",
+      "skillId": "ETH-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS335",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS336",
+      "skillId": "PSY-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS337",
+      "skillId": "PSY-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS338",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS339",
+      "skillId": "ETH-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS340",
+      "skillId": "PSY-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS341",
+      "skillId": "ACA-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS342",
+      "skillId": "DBD-08",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS343",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS344",
+      "skillId": "DBD-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS345",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS346",
+      "skillId": "SWP-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS347",
+      "skillId": "DBD-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS348",
+      "skillId": "SWP-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS349",
+      "skillId": "RES-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS350",
+      "skillId": "MBH-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS351",
+      "skillId": "PSY-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS352",
+      "skillId": "DBD-07",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS353",
+      "skillId": "RES-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS354",
+      "skillId": "DBD-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS355",
+      "skillId": "LEG-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS356",
+      "skillId": "FAM-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS357",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS358",
+      "skillId": "ACA-07",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS359",
+      "skillId": "SWP-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS360",
+      "skillId": "ETH-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS361",
+      "skillId": "FAM-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS362",
+      "skillId": "ACA-08",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS363",
+      "skillId": "MBH-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS364",
+      "skillId": "RES-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS365",
+      "skillId": "DBD-08",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS366",
+      "skillId": "DIV-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS367",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS368",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS369",
+      "skillId": "DIV-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS370",
+      "skillId": "ETH-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS371",
+      "skillId": "MBH-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS372",
+      "skillId": "DBD-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS373",
+      "skillId": "DBD-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS374",
+      "skillId": "RES-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS375",
+      "skillId": "PSY-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS376",
+      "skillId": "ACA-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS377",
+      "skillId": "DBD-07",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS378",
+      "skillId": "SWP-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS379",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS380",
+      "skillId": "LEG-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS381",
+      "skillId": "FAM-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS382",
+      "skillId": "DBD-10",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS383",
+      "skillId": "MBH-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS384",
+      "skillId": "PSY-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS385",
+      "skillId": "PSY-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS386",
+      "skillId": "ACA-06",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS387",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS388",
+      "skillId": "SAF-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS389",
+      "skillId": "ETH-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS390",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS391",
+      "skillId": "FAM-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS392",
+      "skillId": "DBD-08",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS393",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS394",
+      "skillId": "DIV-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS395",
+      "skillId": "DBD-06",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS396",
+      "skillId": "LEG-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS397",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS398",
+      "skillId": "LEG-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS399",
+      "skillId": "DBD-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS400",
+      "skillId": "PSY-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS401",
+      "skillId": "DIV-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS402",
+      "skillId": "DBD-06",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS403",
+      "skillId": "ACA-07",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS404",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS405",
+      "skillId": "PSY-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS406",
+      "skillId": "ACA-06",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS407",
+      "skillId": "DBD-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS408",
+      "skillId": "DIV-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS409",
+      "skillId": "ETH-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS410",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS411",
+      "skillId": "DBD-08",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS412",
+      "skillId": "FAM-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS413",
+      "skillId": "ETH-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS414",
+      "skillId": "SWP-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS415",
+      "skillId": "MBH-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS416",
+      "skillId": "DBD-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS417",
+      "skillId": "SWP-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS418",
+      "skillId": "FAM-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS419",
+      "skillId": "PSY-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS420",
+      "skillId": "LEG-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS421",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS422",
+      "skillId": "DIV-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS423",
+      "skillId": "DBD-08",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS424",
+      "skillId": "ACA-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS425",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS426",
+      "skillId": "CON-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS427",
+      "skillId": "FAM-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS428",
+      "skillId": "SWP-04",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS429",
+      "skillId": "FAM-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS430",
+      "skillId": "SAF-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS431",
+      "skillId": "DIV-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS432",
+      "skillId": "PSY-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS433",
+      "skillId": "RES-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS434",
+      "skillId": "SAF-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "ETS435",
+      "skillId": "DIV-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG001",
+      "skillId": "DBD-10",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG002",
+      "skillId": "DBD-10",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG003",
+      "skillId": "DBD-10",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG004",
+      "skillId": "DBD-10",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG005",
+      "skillId": "DBD-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG006",
+      "skillId": "DBD-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG007",
+      "skillId": "DBD-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG008",
+      "skillId": "DBD-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG009",
+      "skillId": "DIV-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG010",
+      "skillId": "DIV-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG011",
+      "skillId": "DIV-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG012",
+      "skillId": "DIV-05",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG013",
+      "skillId": "LEG-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG014",
+      "skillId": "LEG-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG015",
+      "skillId": "LEG-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG016",
+      "skillId": "LEG-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG017",
+      "skillId": "DIV-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG018",
+      "skillId": "DIV-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG019",
+      "skillId": "DIV-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG020",
+      "skillId": "SWP-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG021",
+      "skillId": "SWP-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG022",
+      "skillId": "SWP-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG023",
+      "skillId": "ACA-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG024",
+      "skillId": "ACA-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG025",
+      "skillId": "ACA-03",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG026",
+      "skillId": "ACA-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG027",
+      "skillId": "ACA-09",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG028",
+      "skillId": "MBH-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG029",
+      "skillId": "MBH-02",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG030",
+      "skillId": "DIV-01",
+      "confidence": "high"
+    },
+    {
+      "questionId": "UG031",
+      "skillId": "DIV-01",
+      "confidence": "high"
     }
-  ],
-  "unmappedQuestions": []
+  ]
 }

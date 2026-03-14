@@ -36,7 +36,6 @@ export function validateQuestion(question: GeneratedQuestion): ValidationResult 
     issues.push(`Correct answer letter ${correctAnswerLetter} not found in choices`);
   } else {
     // Check that correct answer text matches
-    const correctAnswerText = question.choices[correctAnswerLetter];
     // This is a basic check - in practice, we'd want to verify it matches the expected answer
   }
 
@@ -178,7 +177,7 @@ function checkGrammar(question: GeneratedQuestion): string[] {
   }
 
   // Check answer choices for basic grammar
-  Object.entries(question.choices).forEach(([letter, choice]) => {
+  Object.entries(question.choices).forEach(([_letter, choice]) => {
     if (choice.trim().length === 0) return;
 
     // Check for capitalization (choices should typically start with capital)

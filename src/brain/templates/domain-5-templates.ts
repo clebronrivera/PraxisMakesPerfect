@@ -249,7 +249,7 @@ export const domain5Templates: QuestionTemplate[] = [
   }
 ];
 
-export const domain5TemplateMap: Record<string, QuestionTemplate> = {};
+const domain5TemplateMap: Record<string, QuestionTemplate> = {};
 domain5Templates.forEach(template => {
   domain5TemplateMap[template.templateId] = template;
 });

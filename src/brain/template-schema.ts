@@ -3,43 +3,9 @@
 
 import { SkillId } from './skill-map';
 
-export type TemplateType = 
-  | "context-matching"
-  | "first-step-scenario"
-  | "definition-recognition"
-  | "best-selection"
-  | "characteristic-identification"
-  | "interpretation";
+export type TemplateType = string;
 
-export type PatternId = 
-  | "premature-action"
-  | "role-confusion"
-  | "similar-concept"
-  | "data-ignorance"
-  | "extreme-language"
-  | "context-mismatch"
-  | "incomplete-response"
-  | "legal-overreach"
-  | "correlation-as-causation"
-  | "function-confusion"
-  | "case-confusion"
-  | "sequence-error"
-  | "function-mismatch"
-  | "model-confusion"
-  | "instruction-only"
-  | "adult-criteria"
-  | "inclusion-error"
-  | "optimal-education"
-  | "general-concerns"
-  | "investigation"
-  | "delay"
-  | "punishment-focus"
-  | "absolute-rules"
-  | "law-confusion"
-  | "no-access"
-  | "insufficient-hours"
-  | "full-release"
-  | "definition-error";
+export type PatternId = string;
 
 export interface SlotDefinition {
   name: string;

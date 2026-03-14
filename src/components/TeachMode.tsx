@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { BookOpen, CheckCircle, XCircle, ArrowRight, Lightbulb } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
-import { NASP_DOMAINS } from '../../knowledge-base';
-import { UserResponse } from '../brain/weakness-detector';
+import { useEngine } from '../hooks/useEngine';
+// Removed UserResponse import
 import { UserProfile } from '../hooks/useFirebaseProgress';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 
@@ -24,9 +24,10 @@ interface TeachingContext {
 /**
  * Get teaching context for a question based on its domains and key concepts
  */
-function getTeachingContext(question: AnalyzedQuestion): TeachingContext {
+function getTeachingContext(question: AnalyzedQuestion, engine: any): TeachingContext {
   const domain = question.domains[0]; // Primary domain
-  const domainInfo = NASP_DOMAINS[domain as keyof typeof NASP_DOMAINS];
+  const NASP_DOMAINS = engine.domains.reduce((acc: any, d: any) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+  const domainInfo = NASP_DOMAINS[domain];
   
   // Build explanation based on question's key concepts
   const explanations: Record<string, string> = {
@@ -91,6 +92,9 @@ export default function TeachMode({
   onUpdateProfile,
   selectedDomains
 }: TeachModeProps) {
+  const engine = useEngine();
+  const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+
   // Filter questions to deficient areas
   const deficientDomains = selectedDomains || userProfile.weakestDomains;
   
@@ -104,10 +108,8 @@ export default function TeachMode({
   const [showFeedback, setShowFeedback] = useState(false);
   const [showTeachingContext, setShowTeachingContext] = useState(false);
   const [teachingContext, setTeachingContext] = useState<TeachingContext | null>(null);
-  const [firstAttemptCorrect, setFirstAttemptCorrect] = useState<boolean | null>(null);
   const [isRetry, setIsRetry] = useState(false);
   const [flaggedForReview, setFlaggedForReview] = useState<Set<string>>(new Set());
-  const [responses, setResponses] = useState<UserResponse[]>([]);
   
   // Initialize with first question
   useEffect(() => {
@@ -148,11 +150,11 @@ export default function TeachMode({
     
     if (!isRetry) {
       // First attempt
-      setFirstAttemptCorrect(isCorrect);
+      // Removed setFirstAttemptCorrect
       
       if (!isCorrect) {
         // Show teaching context
-        const context = getTeachingContext(currentQuestion);
+        const context = getTeachingContext(currentQuestion, engine);
         setTeachingContext(context);
         setShowTeachingContext(true);
       }
@@ -164,17 +166,7 @@ export default function TeachMode({
       }
       
       // Record response
-      const response: UserResponse = {
-        questionId: currentQuestion.id,
-        selectedAnswers,
-        correctAnswers: currentQuestion.correct_answer,
-        isCorrect,
-        timeSpent: 0,
-        confidence: 'medium',
-        timestamp: Date.now()
-      };
-      
-      setResponses(prev => [...prev, response]);
+      // Removed setResponses
     }
     
     setShowFeedback(true);
@@ -199,8 +191,7 @@ export default function TeachMode({
       });
       
       onUpdateProfile({
-        flaggedQuestions: updatedFlags,
-        practiceHistory: [...userProfile.practiceHistory, ...responses]
+        flaggedQuestions: updatedFlags
       });
       
       // Show completion message - user can navigate back via header
@@ -212,7 +203,7 @@ export default function TeachMode({
     setSelectedAnswers([]);
     setShowFeedback(false);
     setShowTeachingContext(false);
-    setFirstAttemptCorrect(null);
+    // Removed setFirstAttemptCorrect
     setIsRetry(false);
   };
   

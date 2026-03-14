@@ -356,7 +356,7 @@ export const domain2Templates: QuestionTemplate[] = [
 ];
 
 // Export as a map for easy lookup
-export const domain2TemplateMap: Record<string, QuestionTemplate> = {};
+const domain2TemplateMap: Record<string, QuestionTemplate> = {};
 domain2Templates.forEach(template => {
   domain2TemplateMap[template.templateId] = template;
 });

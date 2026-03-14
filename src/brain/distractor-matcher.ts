@@ -2,8 +2,6 @@
 // Uses heuristic analysis to identify which error pattern likely generated the distractor
 // Part of Phase D Step 5: Track Distractor Selection
 
-import { PatternId } from './template-schema';
-import { DISTRACTOR_PATTERNS } from './distractor-patterns';
 
 /**
  * Matches a selected wrong answer to a distractor pattern
@@ -15,8 +13,9 @@ import { DISTRACTOR_PATTERNS } from './distractor-patterns';
  */
 export function matchDistractorPattern(
   selectedText: string,
-  correctAnswer?: string
-): PatternId | null {
+  correctAnswer?: string,
+  _distractorPatterns?: Record<string, any> // kept for API compatibility, but pattern matching rules are heuristic
+): string | null {
   const text = selectedText.toLowerCase().trim();
   
   // Pattern matching rules based on distractor pattern characteristics
@@ -122,13 +121,14 @@ export function matchDistractorPattern(
  */
 export function getDistractorPatternMatches(
   selectedText: string,
-  correctAnswer?: string
-): Array<{ patternId: PatternId; confidence: number }> {
-  const matches: Array<{ patternId: PatternId; confidence: number }> = [];
+  correctAnswer?: string,
+  distractorPatterns?: Record<string, any>
+): Array<{ patternId: string; confidence: number }> {
+  const matches: Array<{ patternId: string; confidence: number }> = [];
   const text = selectedText.toLowerCase().trim();
   
   // Check each pattern and assign confidence scores
-  const patterns: PatternId[] = [
+  const patterns: string[] = [
     'premature-action',
     'role-confusion',
     'sequence-error',
@@ -141,7 +141,7 @@ export function getDistractorPatternMatches(
   ];
   
   for (const patternId of patterns) {
-    const pattern = DISTRACTOR_PATTERNS[patternId];
+    const pattern = distractorPatterns ? distractorPatterns[patternId] : null;
     if (!pattern) continue;
     
     let confidence = 0;
@@ -149,15 +149,15 @@ export function getDistractorPatternMatches(
     // Check if text matches pattern characteristics
     const lowerText = text;
     const patternLower = pattern.description.toLowerCase();
-    const feedbackLower = pattern.feedbackExplanation.toLowerCase();
+
     
     // Base confidence on keyword matches
-    if (patternLower.split(' ').some(word => lowerText.includes(word))) {
+    if (patternLower.split(' ').some((word: string) => lowerText.includes(word))) {
       confidence += 0.3;
     }
     
     // Higher confidence if specific pattern matching function returns this pattern
-    const matchedPattern = matchDistractorPattern(selectedText, correctAnswer);
+    const matchedPattern = matchDistractorPattern(selectedText, correctAnswer, distractorPatterns);
     if (matchedPattern === patternId) {
       confidence += 0.7;
     }
@@ -183,9 +183,10 @@ export function getDistractorPatternMatches(
 export function getBestDistractorPattern(
   selectedText: string,
   correctAnswer?: string,
-  minConfidence: number = 0.3
-): PatternId | null {
-  const matches = getDistractorPatternMatches(selectedText, correctAnswer);
+  minConfidence: number = 0.3,
+  distractorPatterns?: Record<string, any>
+): string | null {
+  const matches = getDistractorPatternMatches(selectedText, correctAnswer, distractorPatterns);
   if (matches.length === 0 || matches[0].confidence < minConfidence) {
     return null;
   }
