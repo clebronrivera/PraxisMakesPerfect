@@ -1,0 +1,31 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/main.tsx",
+    "App.tsx",
+    "api/**/*.ts",
+    "scripts/**/*.{ts,cjs}",
+    "src/scripts/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "scripts/**/*.{ts,cjs}",
+    "api/**/*.ts",
+    "tests/**/*.ts",
+    "*.ts",
+    "*.tsx"
+  ],
+  "ignore": [
+    "archive/**",
+    "dist/**",
+    "quality-reports/**",
+    "reports/**",
+    "TEMP/**",
+    "output/**",
+    "artifacts/**",
+    "**/*.backup.*",
+    "firebase-debug.log",
+    "*.txt"
+  ]
+}
