@@ -2,7 +2,7 @@
 // Firebase configuration and initialization
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics, Analytics } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -25,10 +25,6 @@ export const db = getFirestore(app);
 // Initialize Authentication (for user accounts)
 export const auth = getAuth(app);
 
-// Initialize Analytics (only in browser environment)
-let analytics: Analytics | null = null;
 if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+  void getAnalytics(app);
 }
-
-export { app, analytics };

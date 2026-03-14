@@ -228,7 +228,7 @@ export const domain10Templates: QuestionTemplate[] = [
   }
 ];
 
-export const domain10TemplateMap: Record<string, QuestionTemplate> = {};
+const domain10TemplateMap: Record<string, QuestionTemplate> = {};
 domain10Templates.forEach(template => {
   domain10TemplateMap[template.templateId] = template;
 });

@@ -18,7 +18,6 @@ export interface RationaleInput {
  */
 export function buildRationale(input: RationaleInput): string {
   const {
-    correctAnswer,
     correctAnswerLetter,
     keyPrinciple,
     decisionRule,
@@ -52,7 +51,7 @@ export function buildRationale(input: RationaleInput): string {
   if (whyDistractorsWrong.length > 0) {
     rationale += "The other options are incorrect because: ";
     
-    const distractorExplanations = whyDistractorsWrong.map((distractor, index) => {
+    const distractorExplanations = whyDistractorsWrong.map((distractor) => {
       // Use a brief version of the explanation
       const briefExplanation = distractor.explanation.length > 100
         ? distractor.explanation.substring(0, 100) + "..."
@@ -128,7 +127,7 @@ export function buildDetailedRationale(input: RationaleInput): string {
 
   if (whyDistractorsWrong.length > 0) {
     rationale += `\n\nThe other options are incorrect:\n`;
-    whyDistractorsWrong.forEach((distractor, index) => {
+    whyDistractorsWrong.forEach((distractor) => {
       rationale += `\n• ${distractor.text}: ${distractor.explanation}`;
     });
   }

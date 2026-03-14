@@ -1,8 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, Target, ChevronRight, AlertTriangle, Zap, BarChart3, RotateCcw, LogOut } from 'lucide-react';
-
-// Import knowledge base
-import { NASP_DOMAINS } from './knowledge-base';
+import { Brain, Target, ChevronRight, AlertTriangle, Zap, BarChart3, RotateCcw, LogOut, Shield, MessageSquare } from 'lucide-react';
 
 // Import questions and analysis
 import QUESTIONS_DATA from './src/data/questions.json';
@@ -14,25 +11,35 @@ import ResultsDashboard from './src/components/ResultsDashboard';
 import PreAssessment from './src/components/PreAssessment';
 import FullAssessment from './src/components/FullAssessment';
 import ScoreReport from './src/components/ScoreReport';
+import ScreenerResults from './src/components/ScreenerResults';
 import PracticeSession from './src/components/PracticeSession';
 import DomainTiles from './src/components/DomainTiles';
 import TeachMode from './src/components/TeachMode';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
+import AdminDashboard from './src/components/AdminDashboard';
+import StudyPlanCard from './src/components/StudyPlanCard';
+import FeedbackModal from './src/components/FeedbackModal';
 
 // Import hooks
 import { useFirebaseProgress } from './src/hooks/useFirebaseProgress';
 import { useAdaptiveLearning } from './src/hooks/useAdaptiveLearning';
 import { loadSession, hasActiveSession, clearSession, AssessmentSession } from './src/utils/sessionStorage';
-import { createUserSession, UserSession } from './src/utils/userSessionStorage';
+import { createUserSession, getCurrentSession, loadUserSession, UserSession } from './src/utils/userSessionStorage';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import { useContent } from './src/context/ContentContext';
 import LoginScreen from './src/components/LoginScreen';
-import { buildFullAssessment } from './src/utils/assessment-builder';
+import { buildFullAssessment, buildPreAssessment, buildScreener } from './src/utils/assessment-builder';
+import { getDomainColor } from './src/utils/domainColors';
+import { StudyPlanDocument, generateStudyPlan, getLatestStudyPlan } from './src/services/studyPlanService';
+import { isAdminEmail } from './src/config/admin';
 
 // ============================================
 // TYPE DEFINITIONS
 // ============================================
 
 // Types are imported from modules above
+const CANONICAL_QUESTIONS = QUESTIONS_DATA as any[];
+const CANONICAL_QUESTION_IDS = new Set(CANONICAL_QUESTIONS.map(question => question.id));
 
 
 
@@ -41,10 +48,18 @@ import { buildFullAssessment } from './src/utils/assessment-builder';
 // ============================================
 
 function PraxisStudyAppContent() {
+  type AppMode = 'home' | 'preassessment' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'review' | 'teach' | 'admin';
+  type NonAdminAppMode = Exclude<AppMode, 'admin'>;
+
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();
-  const { profile, updateProfile, updateSkillProgress, resetProgress, migrateFromLocalStorage, logResponse, updateLastSession, isLoaded } = useFirebaseProgress();
+  const { questions: fetchedQuestions, isLoading: contentLoading, domains: fetchedDomains, skills: fetchedSkills } = useContent();
+  const { profile, updateProfile, updateSkillProgress, resetProgress, migrateFromLocalStorage, logResponse, updateLastSession, getAssessmentResponses, savePracticeResponse, isLoaded } = useFirebaseProgress();
   const { selectNextQuestion } = useAdaptiveLearning();
+  const sanitizedFetchedQuestions = useMemo(
+    () => fetchedQuestions.filter(question => CANONICAL_QUESTION_IDS.has(question.id)),
+    [fetchedQuestions]
+  );
   
   // Migration flag - run once on first login
   const [hasMigrated, setHasMigrated] = useState(false);
@@ -78,7 +93,9 @@ function PraxisStudyAppContent() {
   const hasSession = useMemo(() => hasActiveSession(), []);
   
   // App state
-  const [mode, setMode] = useState<'home' | 'preassessment' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'review' | 'teach'>('home');
+  const [activeAssessmentType, setActiveAssessmentType] = useState<'diagnostic' | 'screener' | null>(null);
+  const [mode, setMode] = useState<AppMode>('home');
+  const [lastNonAdminMode, setLastNonAdminMode] = useState<NonAdminAppMode>('home');
   const [preAssessmentQuestions, setPreAssessmentQuestions] = useState<AnalyzedQuestion[]>([]);
   const [fullAssessmentQuestions, setFullAssessmentQuestions] = useState<AnalyzedQuestion[]>([]);
   const [assessmentStartTime, setAssessmentStartTime] = useState<number>(savedSession?.startTime || 0);
@@ -86,23 +103,124 @@ function PraxisStudyAppContent() {
   const [lastAssessmentType, setLastAssessmentType] = useState<'pre-assessment' | 'full-assessment'>('pre-assessment');
   const [practiceDomainFilter, setPracticeDomainFilter] = useState<number | null>(null);
   const [teachModeDomains, setTeachModeDomains] = useState<number[] | undefined>(undefined);
+  const [studyPlan, setStudyPlan] = useState<StudyPlanDocument | null>(null);
+  const [studyPlanLoading, setStudyPlanLoading] = useState(false);
+  const [studyPlanGenerating, setStudyPlanGenerating] = useState(false);
+  const [studyPlanError, setStudyPlanError] = useState<string | null>(null);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   
   // Analyze all questions
   const analyzedQuestions = useMemo(() => {
-    return QUESTIONS_DATA.map(analyzeQuestion);
-  }, []);
+    // Only trust Firestore when it matches the canonical local bank.
+    const sourceQuestions = sanitizedFetchedQuestions.length === CANONICAL_QUESTIONS.length
+      ? sanitizedFetchedQuestions
+      : CANONICAL_QUESTIONS;
+    return sourceQuestions.map(analyzeQuestion);
+  }, [sanitizedFetchedQuestions]);
+  const isAdmin = isAdminEmail(user?.email);
+
+  useEffect(() => {
+    if (contentLoading || fetchedQuestions.length === 0) {
+      return;
+    }
+
+    const staleQuestionCount = fetchedQuestions.length - sanitizedFetchedQuestions.length;
+    const missingCanonicalCount = CANONICAL_QUESTIONS.length - sanitizedFetchedQuestions.length;
+
+    if (staleQuestionCount > 0 || missingCanonicalCount > 0) {
+      console.warn('[QuestionBank] Firestore questions do not match the canonical export. Falling back to the bundled bank.', {
+        firestoreCount: fetchedQuestions.length,
+        canonicalCount: CANONICAL_QUESTIONS.length,
+        matchedCanonicalCount: sanitizedFetchedQuestions.length,
+        staleQuestionCount,
+        missingCanonicalCount
+      });
+    }
+  }, [contentLoading, fetchedQuestions, sanitizedFetchedQuestions.length]);
+
+  // Restore session ID and assessment type on mount
+  useEffect(() => {
+    if (savedSession) {
+      setSelectedSessionId((savedSession as any).sessionId);
+      if (savedSession.type === 'pre-assessment') {
+        // Distinguish screener by question count (45 for screener, 40 for diagnostic)
+        const isScreener = savedSession.questionIds.length === 45;
+        setActiveAssessmentType(isScreener ? 'screener' : 'diagnostic');
+      } else if (savedSession.type === 'full-assessment') {
+        setActiveAssessmentType('diagnostic');
+      }
+    }
+  }, [savedSession]);
 
   // Filter questions by domain for practice mode
   const practiceQuestions = useMemo(() => {
     if (practiceDomainFilter === null) {
       return analyzedQuestions;
     }
-    return analyzedQuestions.filter(q => q.domains.includes(practiceDomainFilter));
+    return analyzedQuestions.filter(q => (q.domains || []).includes(practiceDomainFilter!));
   }, [analyzedQuestions, practiceDomainFilter]);
+
+  const canGenerateStudyPlan = useMemo(() => {
+    if (!user || !profile.screenerComplete) {
+      return false;
+    }
+
+    return Boolean(profile.lastPreAssessmentSessionId || profile.lastFullAssessmentSessionId || profile.diagnosticComplete || profile.fullAssessmentComplete);
+  }, [profile.diagnosticComplete, profile.fullAssessmentComplete, profile.lastFullAssessmentSessionId, profile.lastPreAssessmentSessionId, profile.screenerComplete, user]);
+
+  useEffect(() => {
+    if (!user) {
+      setStudyPlan(null);
+      setStudyPlanError(null);
+      setStudyPlanLoading(false);
+      return;
+    }
+
+    let isCancelled = false;
+
+    const loadStudyPlan = async () => {
+      setStudyPlanLoading(true);
+      setStudyPlanError(null);
+
+      try {
+        const latestPlan = await getLatestStudyPlan(user.uid);
+        if (!isCancelled) {
+          setStudyPlan(latestPlan);
+          setStudyPlanError(null);
+        }
+      } catch (error) {
+        console.error('[StudyPlan] Failed to load latest study plan:', error);
+        if (!isCancelled) {
+          setStudyPlanError('Unable to load your saved study guide right now. You can regenerate it.');
+        }
+      } finally {
+        if (!isCancelled) {
+          setStudyPlanLoading(false);
+        }
+      }
+    };
+
+    loadStudyPlan();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [user]);
   
   // ============================================
   // HANDLERS
   // ============================================
+
+  const openAdminDashboard = useCallback(() => {
+    if (mode !== 'admin') {
+      setLastNonAdminMode(mode);
+    }
+    setMode('admin');
+  }, [mode]);
+
+  const returnFromAdmin = useCallback((targetMode?: NonAdminAppMode) => {
+    setMode(targetMode ?? lastNonAdminMode);
+  }, [lastNonAdminMode]);
   
   const startPreAssessment = useCallback((resumeSession?: AssessmentSession | UserSession) => {
     if (resumeSession && resumeSession.type === 'pre-assessment') {
@@ -115,73 +233,22 @@ function PraxisStudyAppContent() {
       if (restoredQuestions.length === resumeSession.questionIds.length) {
         setPreAssessmentQuestions(restoredQuestions);
         setAssessmentStartTime(resumeSession.startTime);
+        setSelectedSessionId((resumeSession as any).sessionId);
+        const isScreener = resumeSession.questionIds.length === 45;
+        setActiveAssessmentType(isScreener ? 'screener' : 'diagnostic');
         setMode('preassessment');
         return;
       }
     }
     
-    // Start new assessment: Quick Diagnostic (40Q)
-    // Select 4 questions per domain (40 total) with duplicate-proof selection
-    const selected: AnalyzedQuestion[] = [];
-    const usedQuestionIds = new Set<string>(); // Global duplicate prevention
-    
-    for (let domain = 1; domain <= 10; domain++) {
-      // Get all questions for this domain that haven't been selected yet
-      const domainQuestions = analyzedQuestions.filter(
-        q => q.domains.includes(domain) && !usedQuestionIds.has(q.id)
-      );
-      
-      // Sanity check: ensure we have enough questions
-      if (domainQuestions.length === 0) {
-        console.warn(`No available questions for domain ${domain} after deduplication`);
-        continue;
-      }
-      
-      // Shuffle and take up to 4 questions
-      const shuffled = [...domainQuestions].sort(() => Math.random() - 0.5);
-      const domainSelection = shuffled.slice(0, 4);
-      
-      // Add to selected and mark as used
-      domainSelection.forEach(q => {
-        selected.push(q);
-        usedQuestionIds.add(q.id);
-      });
-      
-      // If we couldn't get 4 questions for this domain, log it
-      if (domainSelection.length < 4) {
-        console.warn(`Only found ${domainSelection.length} questions for domain ${domain} (requested 4)`);
-      }
-    }
-    
-    // Backfill if we don't have 40 questions yet
-    if (selected.length < 40) {
-      const remaining = 40 - selected.length;
-      const available = analyzedQuestions.filter(q => !usedQuestionIds.has(q.id));
-      const shuffled = [...available].sort(() => Math.random() - 0.5);
-      const backfill = shuffled.slice(0, remaining);
-      
-      backfill.forEach(q => {
-        selected.push(q);
-        usedQuestionIds.add(q.id);
-      });
-      
-      console.log(`[PreAssessment] Backfilled ${backfill.length} questions to reach 40 total`);
-    }
-    
-    // Final sanity check
-    if (selected.length !== 40 || usedQuestionIds.size !== 40) {
-      console.warn(`[PreAssessment] Expected 40 questions, got ${selected.length} (unique: ${usedQuestionIds.size})`);
-    }
-    
-    // Sanity check: ensure we have questions
-    if (selected.length === 0) {
+    // Start new assessment: Quick Diagnostic (40Q) via single assessment builder
+    const shuffledSelected = buildPreAssessment(analyzedQuestions, 4, new Set());
+    if (shuffledSelected.length === 0) {
       console.error('No questions selected for pre-assessment');
       return;
     }
-    
-    // Shuffle final selection to randomize order across domains
-    const shuffledSelected = [...selected].sort(() => Math.random() - 0.5);
     const questionIds = shuffledSelected.map(q => q.id);
+    setActiveAssessmentType('diagnostic');
     
     // Create new user session if we have a current user
     if (currentUserName) {
@@ -197,6 +264,46 @@ function PraxisStudyAppContent() {
     setAssessmentStartTime(Date.now());
     setMode('preassessment');
   }, [analyzedQuestions, currentUserName]);
+  
+  const startScreener = useCallback(() => {
+    // Exclude all previously seen assessment questions
+    const excludeIds = [
+      ...(profile.preAssessmentQuestionIds || []),
+      ...(profile.fullAssessmentQuestionIds || []),
+      ...(profile.recentPracticeQuestionIds || []),
+      ...(profile.screenerItemIds || [])
+    ];
+    
+    const selected = buildScreener(analyzedQuestions, excludeIds);
+    
+    if (selected.length === 0) {
+      alert("Not enough questions available to build a new screener.");
+      return;
+    }
+
+    const questionIds = selected.map(q => q.id);
+    
+    // Store selected IDs in Firestore as requested
+    updateProfile({
+      screenerItemIds: questionIds
+    });
+    
+    // Use pre-assessment state and mode for the screener
+    setPreAssessmentQuestions(selected);
+    setAssessmentStartTime(Date.now());
+    setActiveAssessmentType('screener');
+    setMode('preassessment');
+    
+    // Create session for tracking
+    if (currentUserName) {
+      try {
+        const newSession = createUserSession(currentUserName, 'pre-assessment', questionIds);
+        setSelectedSessionId(newSession.sessionId);
+      } catch (error) {
+        console.error('Error creating session:', error);
+      }
+    }
+  }, [analyzedQuestions, profile, updateProfile, currentUserName]);
   
   const startFullAssessment = useCallback((resumeSession?: AssessmentSession | UserSession) => {
     if (resumeSession && resumeSession.type === 'full-assessment') {
@@ -243,14 +350,13 @@ function PraxisStudyAppContent() {
     setFullAssessmentQuestions(selected);
     setAssessmentStartTime(Date.now());
     setMode('fullassessment');
-  }, [analyzedQuestions, currentUserName]);
+  }, [analyzedQuestions, currentUserName, profile.preAssessmentQuestionIds]);
   
   const handleResumeAssessment = useCallback(() => {
     if (!user) return;
     
     // Try to load user session first (if userSessionStorage is still used for sessions)
     if (currentUserName) {
-      const { getCurrentSession } = require('./src/utils/userSessionStorage');
       const userSession = getCurrentSession(currentUserName);
       if (userSession) {
         if (userSession.type === 'pre-assessment') {
@@ -289,6 +395,32 @@ function PraxisStudyAppContent() {
       window.location.reload();
     }
   }, [resetProgress]);
+
+  const handleGenerateStudyPlan = useCallback(async () => {
+    if (!user) {
+      return;
+    }
+
+    setStudyPlanGenerating(true);
+    setStudyPlanError(null);
+
+    try {
+      const idToken = await user.getIdToken();
+      const generatedPlan = await generateStudyPlan({
+        userId: user.uid,
+        idToken,
+        skills: fetchedSkills,
+        domains: fetchedDomains
+      });
+
+      setStudyPlan(generatedPlan);
+    } catch (error) {
+      console.error('[StudyPlan] Generation failed:', error);
+      setStudyPlanError(error instanceof Error ? error.message : 'Study guide generation failed. Please retry.');
+    } finally {
+      setStudyPlanGenerating(false);
+    }
+  }, [fetchedDomains, fetchedSkills, user]);
   
   const handlePreAssessmentComplete = useCallback(async (responses: UserResponse[]) => {
     const questionCount = responses.length;
@@ -308,18 +440,36 @@ function PraxisStudyAppContent() {
     
     // Save results to Firebase before navigation
     // Note: Responses are already logged to responses subcollection during assessment
-    await updateProfile({
+    const updates: any = {
       preAssessmentComplete: true,
       preAssessmentQuestionIds: questionIds,
+      lastPreAssessmentSessionId: selectedSessionId,
+      lastPreAssessmentCompletedAt: new Date().toISOString(),
       ...analysis
-    });
+    };
+
+    // If this was a screener, also set screenerComplete and populate screenerResults
+    if (activeAssessmentType === 'screener') {
+      updates.screenerComplete = true;
+      updates.screenerResults = {
+        domain_scores: Object.fromEntries(
+          Object.entries(analysis.domainScores).map(([id, stats]) => [
+            id, 
+            Math.round((stats.correct / stats.total) * 100)
+          ])
+        ),
+        completed_at: new Date().toISOString()
+      };
+    }
+    
+    await updateProfile(updates);
     
     console.log('[PreAssessment] Results saved to Firebase, navigating to score report');
     
     setLastAssessmentResponses(responses);
     setLastAssessmentType('pre-assessment');
     setMode('score-report');
-  }, [analyzedQuestions, updateProfile, assessmentStartTime, preAssessmentQuestions]);
+  }, [analyzedQuestions, updateProfile, assessmentStartTime, preAssessmentQuestions, selectedSessionId]);
   
   const handleFullAssessmentComplete = useCallback(async (responses: UserResponse[]) => {
     const questionCount = responses.length;
@@ -342,6 +492,8 @@ function PraxisStudyAppContent() {
     await updateProfile({
       fullAssessmentComplete: true,
       fullAssessmentQuestionIds: questionIds,
+      lastFullAssessmentSessionId: selectedSessionId,
+      lastFullAssessmentCompletedAt: new Date().toISOString(),
       ...analysis
     });
     
@@ -350,34 +502,92 @@ function PraxisStudyAppContent() {
     setLastAssessmentResponses(responses);
     setLastAssessmentType('full-assessment');
     setMode('score-report');
-  }, [analyzedQuestions, updateProfile, assessmentStartTime, fullAssessmentQuestions]);
+  }, [analyzedQuestions, updateProfile, assessmentStartTime, fullAssessmentQuestions, selectedSessionId]);
   
   const startPractice = useCallback((domainId?: number) => {
     setPracticeDomainFilter(domainId || null);
     setMode('practice');
   }, []);
+
+  // Handler to view past assessment reports
+  const handleViewReport = useCallback(async (
+    assessmentType: 'pre-assessment' | 'full-assessment'
+  ) => {
+    const sessionId = assessmentType === 'pre-assessment' 
+      ? profile.lastPreAssessmentSessionId 
+      : profile.lastFullAssessmentSessionId;
+    
+    if (!sessionId) {
+      console.error(`[handleViewReport] No session ID found for ${assessmentType}`);
+      alert('Unable to load report. Session data not found.');
+      return;
+    }
+
+    try {
+      // Get question IDs from profile
+      const questionIds = assessmentType === 'pre-assessment'
+        ? profile.preAssessmentQuestionIds || []
+        : profile.fullAssessmentQuestionIds || [];
+
+      if (questionIds.length === 0) {
+        console.error(`[handleViewReport] No question IDs found for ${assessmentType}`);
+        alert('Unable to load report. Question data not found.');
+        return;
+      }
+
+      // Match questions with analyzedQuestions
+      const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
+      const questions = questionIds
+        .map(id => questionMap.get(id))
+        .filter((q): q is AnalyzedQuestion => q !== undefined);
+
+      if (questions.length === 0) {
+        console.error(`[handleViewReport] No matching questions found`);
+        alert('Unable to load report. Questions not found.');
+        return;
+      }
+
+      // Retrieve responses from Firestore
+      const firestoreAssessmentType = assessmentType === 'pre-assessment' ? 'diagnostic' : 'full';
+      const responses = await getAssessmentResponses(sessionId, firestoreAssessmentType, analyzedQuestions);
+
+      if (responses.length === 0) {
+        console.warn(`[handleViewReport] No responses found in Firestore for session ${sessionId}`);
+        alert('Unable to load report. Response data not found in database.');
+        return;
+      }
+
+      // Set state for ScoreReport component
+      // Reset start time — viewing a past report has no meaningful "time remaining"
+      setAssessmentStartTime(0);
+      setLastAssessmentResponses(responses);
+      setLastAssessmentType(assessmentType);
+
+      if (assessmentType === 'pre-assessment') {
+        setPreAssessmentQuestions(questions);
+      } else {
+        setFullAssessmentQuestions(questions);
+      }
+
+      setMode('score-report');
+    } catch (error) {
+      console.error(`[handleViewReport] Error loading report:`, error);
+      alert('An error occurred while loading the report. Please try again.');
+    }
+  }, [profile, analyzedQuestions, getAssessmentResponses]);
   
   // ============================================
   // RENDER HELPERS
   // ============================================
   
-  const getDomainColor = (domain: number) => {
-    const colors: Record<number, string> = {
-      1: '#3B82F6', 2: '#3B82F6',
-      3: '#10B981', 4: '#10B981',
-      5: '#8B5CF6', 6: '#8B5CF6', 7: '#8B5CF6',
-      8: '#F59E0B', 9: '#F59E0B', 10: '#F59E0B'
-    };
-    return colors[domain] || '#64748B';
-  };
   
 
   // ============================================
   // RENDER
   // ============================================
   
-  // Show loading while checking auth or loading profile
-  if (authLoading || !isLoaded) {
+  // Show loading while checking auth, loading profile, or fetching content
+  if (authLoading || !isLoaded || contentLoading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-slate-400">Loading...</div>
@@ -416,6 +626,24 @@ function PraxisStudyAppContent() {
                 className="px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
               >
                 ← Home
+              </button>
+            )}
+            <button
+              onClick={() => setIsFeedbackModalOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-cyan-300 hover:bg-slate-800/50 rounded-lg transition-colors"
+              title="Send feedback"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Feedback</span>
+            </button>
+            {isAdmin && mode !== 'admin' && (
+              <button
+                onClick={openAdminDashboard}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-amber-400 hover:bg-slate-800/50 rounded-lg transition-colors"
+                title="Admin Dashboard"
+              >
+                <Shield className="w-4 h-4" />
+                <span>Admin</span>
               </button>
             )}
             <button
@@ -470,10 +698,48 @@ function PraxisStudyAppContent() {
                 <div className="p-4 bg-slate-800/50 rounded-xl text-center">
                   <p className="text-2xl font-bold text-purple-400">{profile.weakestDomains.length}</p>
                   <p className="text-xs text-slate-500">Focus Areas</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Domains below 60%</p>
                 </div>
               </div>
             )}
-            
+
+            {/* View Report Buttons */}
+            {(profile.preAssessmentComplete && profile.lastPreAssessmentSessionId) && (
+              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                <button
+                  onClick={() => handleViewReport('pre-assessment')}
+                  className="w-full flex items-center justify-between p-4 bg-amber-500/20 hover:bg-amber-500/30 rounded-lg transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <BarChart3 className="w-5 h-5 text-amber-400" />
+                    <div className="text-left">
+                      <p className="font-semibold text-amber-300">View Pre-Assessment Report</p>
+                      <p className="text-xs text-amber-200/80">Review your diagnostic results and feedback</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-amber-400" />
+                </button>
+              </div>
+            )}
+
+            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">Beta Feedback</p>
+                  <h3 className="mt-1 text-lg font-semibold text-slate-100">Keep the reporting flow simple for testers</h3>
+                  <p className="mt-2 text-sm text-cyan-50/80">
+                    Use the feedback button in the header for feature and workflow notes. On any question, use the warning icon to report issues in the stem, answer choices, key, rationale, or question length.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsFeedbackModalOpen(true)}
+                  className="rounded-xl bg-cyan-400 px-4 py-2.5 font-medium text-slate-950 transition-colors hover:bg-cyan-300"
+                >
+                  Send beta feedback
+                </button>
+              </div>
+            </div>
+
             {/* Resume Session Notice */}
             {hasSession && savedSession && (
               <div className="p-6 bg-blue-500/20 border border-blue-500/30 rounded-2xl">
@@ -517,6 +783,11 @@ function PraxisStudyAppContent() {
                       {profile.lastSession.mode === 'diagnostic' && 'Diagnostic'}
                       {profile.lastSession.questionIndex > 0 && ` • Question ${profile.lastSession.questionIndex + 1}`}
                     </p>
+                    {profile.lastSession.mode === 'practice' && (
+                      <p className="text-xs text-emerald-200/60 mt-1">
+                        Resume practice where you left off (same session)
+                      </p>
+                    )}
                     {profile.lastSession.updatedAt && (
                       <p className="text-xs text-emerald-300/60 mt-1">
                         Last updated: {new Date(profile.lastSession.updatedAt.seconds * 1000 || profile.lastSession.updatedAt).toLocaleString()}
@@ -527,24 +798,15 @@ function PraxisStudyAppContent() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => {
-                      // Check if localStorage has matching sessionId
-                      const sessionKey = `praxis-session-${profile.lastSession!.sessionId}`;
-                      const storedSession = localStorage.getItem(sessionKey);
-                      
-                      if (storedSession && profile.lastSession!.mode === 'practice') {
-                        // Resume practice session
+                      const lastSession = profile.lastSession!;
+                      if (lastSession.mode === 'practice') {
                         startPractice();
-                      } else if (profile.lastSession!.mode === 'diagnostic') {
-                        // Start new diagnostic but preserve progress
-                        startPreAssessment(undefined);
-                      } else if (profile.lastSession!.mode === 'full') {
-                        // Start new full assessment but preserve progress
-                        startFullAssessment(undefined);
-                      } else {
-                        // Start new session in that mode
-                        if (profile.lastSession!.mode === 'practice') {
-                          startPractice();
-                        }
+                      } else if (lastSession.mode === 'diagnostic') {
+                        const saved = loadUserSession(lastSession.sessionId);
+                        startPreAssessment(saved ?? undefined);
+                      } else if (lastSession.mode === 'full') {
+                        const saved = loadUserSession(lastSession.sessionId);
+                        startFullAssessment(saved ?? undefined);
                       }
                     }}
                     className="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors"
@@ -557,6 +819,7 @@ function PraxisStudyAppContent() {
                       updateProfile({ lastSession: undefined });
                     }}
                     className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                    title={profile.lastSession?.mode === 'practice' ? 'Start a new practice session (fresh set of questions)' : undefined}
                   >
                     Start New
                   </button>
@@ -565,8 +828,10 @@ function PraxisStudyAppContent() {
             )}
             
             {/* Action Buttons */}
-            <div className="space-y-4">
-              {!profile.preAssessmentComplete ? (
+            {!savedSession && !profile.lastSession && (
+              <div className="space-y-4">
+              {(!profile.preAssessmentComplete && !profile.screenerComplete) ? (
+
                 <>
                   <button
                     onClick={() => startPreAssessment(undefined)}
@@ -583,6 +848,22 @@ function PraxisStudyAppContent() {
                     </div>
                     <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
                   </button>
+
+                  <button
+                    onClick={() => startScreener()}
+                    className="w-full p-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-purple-500/20 transition-all"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                        <Zap className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-white text-lg">Skills Screener (45Q)</p>
+                        <p className="text-purple-100 text-sm">45 questions • 1 per unique skill</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
+                  </button>
                   
                   <button
                     onClick={() => startFullAssessment(undefined)}
@@ -594,7 +875,7 @@ function PraxisStudyAppContent() {
                       </div>
                       <div className="text-left">
                         <p className="font-bold text-white text-lg">Start Full Assessment</p>
-                        <p className="text-blue-100 text-sm">120 questions • ~2-3 hours</p>
+                        <p className="text-blue-100 text-sm">125 questions • ~2-3 hours</p>
                       </div>
                     </div>
                     <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
@@ -613,26 +894,45 @@ function PraxisStudyAppContent() {
                       <div className="text-left">
                         <p className="font-bold text-white text-lg">Adaptive Practice</p>
                         <p className="text-emerald-100 text-sm">Focus on your weak areas</p>
+                        <p className="text-emerald-200/70 text-xs mt-1">Questions adapt to your performance and target your weakest domains and skills.</p>
                       </div>
                     </div>
                     <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
                   </button>
                   
-                  <button
-                    onClick={() => startFullAssessment(undefined)}
-                    className="w-full p-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-blue-500/20 transition-all"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-6 h-6 text-white" />
+                  {!profile.fullAssessmentComplete ? (
+                    <button
+                      onClick={() => startFullAssessment(undefined)}
+                      className="w-full p-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-blue-500/20 transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                          <BarChart3 className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-white text-lg">Full Assessment</p>
+                          <p className="text-blue-100 text-sm">125 questions • Complete exam simulation</p>
+                        </div>
                       </div>
-                      <div className="text-left">
-                        <p className="font-bold text-white text-lg">Full Assessment</p>
-                        <p className="text-blue-100 text-sm">120 questions • Complete exam simulation</p>
+                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleViewReport('full-assessment')}
+                      className="w-full p-6 bg-gradient-to-r from-blue-500/50 to-indigo-500/50 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-blue-500/20 transition-all border border-blue-500/30"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                          <BarChart3 className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-white text-lg">View Full Assessment Report</p>
+                          <p className="text-blue-100 text-sm">Review your completed assessment</p>
+                        </div>
                       </div>
-                    </div>
-                    <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
-                  </button>
+                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  )}
                   
                   <button
                     onClick={() => {
@@ -688,9 +988,11 @@ function PraxisStudyAppContent() {
                 </>
               )}
             </div>
+            )}
             
             {/* Weak Areas Preview */}
             {profile.preAssessmentComplete && profile.weakestDomains.length > 0 && (
+
               <div className="p-6 bg-slate-800/30 border border-slate-700/50 rounded-2xl">
                 <div className="flex items-center gap-2 mb-4">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
@@ -702,12 +1004,21 @@ function PraxisStudyAppContent() {
                       backgroundColor: `${getDomainColor(d)}20`,
                       color: getDomainColor(d)
                     }}>
-                      {NASP_DOMAINS[d as keyof typeof NASP_DOMAINS]?.shortName || `Domain ${d}`}
+                      {fetchedDomains.find(fd => fd.id === String(d))?.name || `Domain ${d}`}
                     </span>
                   ))}
                 </div>
               </div>
             )}
+
+            <StudyPlanCard
+              plan={studyPlan}
+              isGenerating={studyPlanGenerating}
+              isLoading={studyPlanLoading}
+              error={studyPlanError}
+              canGenerate={canGenerateStudyPlan}
+              onGenerate={handleGenerateStudyPlan}
+            />
             
             {/* Domain Tiles Section */}
             <div className="pt-8 border-t border-slate-800">
@@ -758,27 +1069,36 @@ function PraxisStudyAppContent() {
           />
         )}
         
-        {/* SCORE REPORT MODE */}
+        {/* SCORE REPORT / SCREENER RESULTS MODE */}
         {mode === 'score-report' && (
           <ErrorBoundary>
             {lastAssessmentResponses.length > 0 ? (
-              <ScoreReport
-                responses={lastAssessmentResponses}
-                questions={lastAssessmentType === 'full-assessment' ? fullAssessmentQuestions : preAssessmentQuestions}
-                assessmentType={lastAssessmentType}
-                totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
-                onStartPractice={startPractice}
-                onRetakeAssessment={lastAssessmentType === 'full-assessment' ? () => startFullAssessment(undefined) : () => startPreAssessment(undefined)}
-                onGoHome={() => setMode('home')}
-                onStartTeachMode={(domains) => {
-                  setTeachModeDomains(domains);
-                  setMode('teach');
-                }}
-                onStartPracticeWithDomains={(domains) => {
-                  setPracticeDomainFilter(domains[0] || null);
-                  setMode('practice');
-                }}
-              />
+              lastAssessmentType === 'pre-assessment' ? (
+                <ScreenerResults
+                  profile={profile}
+                  onStartPractice={startPractice}
+                  onTakeFullDiagnostic={() => startFullAssessment(undefined)}
+                  onGoHome={() => setMode('home')}
+                />
+              ) : (
+                <ScoreReport
+                  responses={lastAssessmentResponses}
+                  questions={fullAssessmentQuestions}
+                  assessmentType={lastAssessmentType}
+                  totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
+                  onStartPractice={startPractice}
+                  onRetakeAssessment={() => startFullAssessment(undefined)}
+                  onGoHome={() => setMode('home')}
+                  onStartTeachMode={(domains) => {
+                    setTeachModeDomains(domains);
+                    setMode('teach');
+                  }}
+                  onStartPracticeWithDomains={(domains) => {
+                    setPracticeDomainFilter(domains[0] || null);
+                    setMode('practice');
+                  }}
+                />
+              )
             ) : (
               <div className="space-y-8">
                 <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center space-y-6">
@@ -809,14 +1129,14 @@ function PraxisStudyAppContent() {
         {mode === 'practice' && (
           <PracticeSession
             userProfile={profile}
-            onUpdateProfile={updateProfile}
             updateSkillProgress={updateSkillProgress}
             logResponse={logResponse}
             updateLastSession={updateLastSession}
+            savePracticeResponse={savePracticeResponse}
             analyzedQuestions={practiceQuestions}
             selectNextQuestion={selectNextQuestion}
-            detectWeaknesses={detectWeaknesses}
             practiceDomain={practiceDomainFilter}
+            onExitPractice={() => setMode('home')}
           />
         )}
         
@@ -838,7 +1158,22 @@ function PraxisStudyAppContent() {
             onRetakeAssessment={() => startPreAssessment(undefined)}
           />
         )}
+        
+        {/* ADMIN DASHBOARD */}
+        {mode === 'admin' && (
+          <AdminDashboard
+            onExit={() => returnFromAdmin()}
+            returnLabel={lastNonAdminMode === 'home' ? 'Return to site' : `Back to ${lastNonAdminMode}`}
+            onGoHome={() => returnFromAdmin('home')}
+            onStartPractice={() => startPractice()}
+            onGoTeach={() => setMode('teach')}
+          />
+        )}
       </main>
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+      />
     </div>
   );
 }

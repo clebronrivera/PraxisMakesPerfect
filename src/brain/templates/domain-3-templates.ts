@@ -536,7 +536,7 @@ export const domain3Templates: QuestionTemplate[] = [
   }
 ];
 
-export const domain3TemplateMap: Record<string, QuestionTemplate> = {};
+const domain3TemplateMap: Record<string, QuestionTemplate> = {};
 domain3Templates.forEach(template => {
   domain3TemplateMap[template.templateId] = template;
 });

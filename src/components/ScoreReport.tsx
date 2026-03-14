@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Trophy, Clock, Target, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, BookOpen, Zap, Layers, RotateCcw } from 'lucide-react';
-import { NASP_DOMAINS } from '../../knowledge-base';
+import { useEngine } from '../hooks/useEngine';
 import { UserResponse } from '../brain/weakness-detector';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
+import { getDomainColor } from '../utils/domainColors';
 
 interface ScoreReportProps {
   responses: UserResponse[];
@@ -16,15 +17,6 @@ interface ScoreReportProps {
   onStartPracticeWithDomains?: (domains: number[]) => void;
 }
 
-const getDomainColor = (domain: number) => {
-  const colors: Record<number, string> = {
-    1: '#3B82F6', 2: '#3B82F6',
-    3: '#10B981', 4: '#10B981',
-    5: '#8B5CF6', 6: '#8B5CF6', 7: '#8B5CF6',
-    8: '#F59E0B', 9: '#F59E0B', 10: '#F59E0B'
-  };
-  return colors[domain] || '#6B7280';
-};
 
 const getScoreColor = (score: number) => {
   if (score >= 0.8) return { text: 'text-emerald-400', bg: 'bg-emerald-500/20', border: 'border-emerald-500/30' };
@@ -43,6 +35,9 @@ export default function ScoreReport({
   onStartTeachMode,
   onStartPracticeWithDomains
 }: ScoreReportProps) {
+  const engine = useEngine();
+  const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+
   const [showDomainSelection, setShowDomainSelection] = useState(false);
   const [selectedDomains, setSelectedDomains] = useState<number[]>([]);
 
@@ -118,7 +113,7 @@ export default function ScoreReport({
   responses.forEach(response => {
     const question = questionMap.get(response.questionId);
     if (question) {
-      question.domains.forEach(domain => {
+      question.domains?.forEach(domain => {
         if (!domainScores[domain]) {
           domainScores[domain] = { correct: 0, total: 0 };
         }
@@ -192,8 +187,8 @@ export default function ScoreReport({
         </div>
         <p className="text-slate-400">
           {assessmentType === 'full-assessment' 
-            ? 'You completed all 120 questions'
-            : 'You completed the Quick Diagnostic (40 questions)'}
+            ? `You completed all ${responses.length} questions`
+            : `You completed the Quick Diagnostic (${responses.length} questions)`}
         </p>
       </div>
 
@@ -483,6 +478,9 @@ export default function ScoreReport({
             <Target className="w-5 h-5" />
             Start Adaptive Practice
           </button>
+          <p className="text-sm text-slate-400 text-center px-4">
+            Questions are chosen based on your diagnostic results to focus on areas that need the most work.
+          </p>
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={onRetakeAssessment}

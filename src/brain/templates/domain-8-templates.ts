@@ -266,7 +266,7 @@ export const domain8Templates: QuestionTemplate[] = [
   }
 ];
 
-export const domain8TemplateMap: Record<string, QuestionTemplate> = {};
+const domain8TemplateMap: Record<string, QuestionTemplate> = {};
 domain8Templates.forEach(template => {
   domain8TemplateMap[template.templateId] = template;
 });

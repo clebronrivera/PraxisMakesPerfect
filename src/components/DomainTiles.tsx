@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { X, BookOpen } from 'lucide-react';
-import { NASP_DOMAINS } from '../../knowledge-base';
+import { useEngine } from '../hooks/useEngine';
 import { SKILL_MAP } from '../brain/skill-map';
 import ETS_CONTENT_TOPICS from '../data/ets-content-topics.json';
+import { getDomainColor } from '../utils/domainColors';
 
 interface DomainTilesProps {
   onDomainSelect?: (domainId: number) => void;
@@ -10,6 +11,9 @@ interface DomainTilesProps {
 
 export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
   const [selectedDomain, setSelectedDomain] = useState<number | null>(null);
+  const engine = useEngine();
+  const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+
 
   const handleTileClick = (domainId: number) => {
     setSelectedDomain(domainId);
@@ -26,15 +30,6 @@ export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
     }
   };
 
-  const getDomainColor = (domain: number) => {
-    const colors: Record<number, string> = {
-      1: '#3B82F6', 2: '#3B82F6',
-      3: '#10B981', 4: '#10B981',
-      5: '#8B5CF6', 6: '#8B5CF6', 7: '#8B5CF6',
-      8: '#F59E0B', 9: '#F59E0B', 10: '#F59E0B'
-    };
-    return colors[domain] || '#64748B';
-  };
 
   const getDomainData = (domainId: number) => {
     const domainInfo = NASP_DOMAINS[domainId as keyof typeof NASP_DOMAINS];
@@ -54,7 +49,7 @@ export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
     
     // From knowledge base
     if (domainInfo?.keyConcepts) {
-      domainInfo.keyConcepts.forEach(kw => keywords.add(kw));
+      domainInfo.keyConcepts.forEach((kw: string) => keywords.add(kw));
     }
     
     // From mustKnowTerms
@@ -83,12 +78,12 @@ export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
     <>
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-slate-100 mb-2">NASP Practice Domains</h2>
+          <h2 className="text-2xl font-bold text-slate-100 mb-2">Practice Domains</h2>
           <p className="text-slate-400 text-sm">Click on any domain to explore skills, concepts, and practice questions</p>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(domainId => {
+          {engine.domains.map(d => Number(d.id)).map(domainId => {
             const domain = NASP_DOMAINS[domainId as keyof typeof NASP_DOMAINS];
             const color = getDomainColor(domainId);
             
@@ -126,7 +121,7 @@ export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
 
       {/* Domain Detail Modal */}
       {selectedDomain && (() => {
-        const { domainInfo, skills, keywords, etsData } = getDomainData(selectedDomain);
+        const { domainInfo, skills, keywords } = getDomainData(selectedDomain);
         const color = getDomainColor(selectedDomain);
         
         return (

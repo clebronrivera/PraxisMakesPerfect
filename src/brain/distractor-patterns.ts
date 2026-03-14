@@ -3,14 +3,7 @@
 
 import { PatternId } from './template-schema';
 
-export type SkillCategory = 
-  | "first-step"
-  | "scenario"
-  | "definition"
-  | "recognition"
-  | "interpretation"
-  | "legal-ethical"
-  | "research-data";
+export type SkillCategory = string;
 
 export interface DistractorPattern {
   patternId: PatternId;

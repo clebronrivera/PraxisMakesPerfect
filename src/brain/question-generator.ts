@@ -3,7 +3,7 @@
 
 import { SkillId, getSkillById } from './skill-map';
 import { QuestionTemplate, validateTemplate } from './template-schema';
-import { domain1Templates, domain1TemplateMap } from './templates/domain-1-templates';
+import { domain1Templates } from './templates/domain-1-templates';
 import { domain2Templates } from './templates/domain-2-templates';
 import { domain3Templates } from './templates/domain-3-templates';
 import { domain4Templates } from './templates/domain-4-templates';
@@ -13,7 +13,7 @@ import { domain7Templates } from './templates/domain-7-templates';
 import { domain8Templates } from './templates/domain-8-templates';
 import { domain9Templates } from './templates/domain-9-templates';
 import { domain10Templates } from './templates/domain-10-templates';
-import { getSlotValues, getRandomSlotValue } from './slot-libraries';
+
 import { generateDistractors, validateDistractors, Distractor } from './answer-generator';
 import { buildRationale } from './rationale-builder';
 import { validateQuestion } from './question-validator';

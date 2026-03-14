@@ -1,23 +1,9 @@
 import { CheckCircle, XCircle } from 'lucide-react';
 import { generateDiagnosticFeedback } from '../brain/diagnostic-feedback';
-import { Question } from '../brain/question-analyzer';
+import { AnalyzedQuestion, Question } from '../brain/question-analyzer';
 import { UserProfile } from '../hooks/useFirebaseProgress';
 import DiagnosticFeedback from './DiagnosticFeedback';
-
-interface AnalyzedQuestion {
-  id: string;
-  question: string;
-  choices: Record<string, string>;
-  correct_answer: string[];
-  rationale: string;
-  skillId?: string;
-  domains: number[];
-  dok: number;
-  questionType: 'Scenario-Based' | 'Direct Knowledge';
-  stemType: string;
-  keyConcepts: string[];
-  isGenerated?: boolean;
-}
+import { useEngine } from '../hooks/useEngine';
 
 interface ExplanationPanelProps {
   question: AnalyzedQuestion;
@@ -34,6 +20,7 @@ export default function ExplanationPanel({
   rationale,
   userProfile
 }: ExplanationPanelProps) {
+  const engine = useEngine();
   // Convert AnalyzedQuestion to Question type for diagnostic feedback
   const questionForFeedback: Question = {
     id: question.id,
@@ -46,7 +33,7 @@ export default function ExplanationPanel({
 
   // Generate diagnostic feedback (only if userProfile is available)
   const diagnosticFeedback = userProfile 
-    ? generateDiagnosticFeedback(questionForFeedback, userAnswer, isCorrect, userProfile)
+    ? generateDiagnosticFeedback(questionForFeedback, userAnswer, isCorrect, userProfile, engine)
     : null;
 
   return (
@@ -76,7 +63,7 @@ export default function ExplanationPanel({
             <p className="text-slate-300 text-sm leading-relaxed">{rationale}</p>
             
             {/* Key Concepts */}
-            {question.keyConcepts.length > 0 && (
+            {question.keyConcepts && question.keyConcepts.length > 0 && (
               <div className="mt-4 pt-4 border-t border-slate-700/50">
                 <p className="text-xs text-slate-500 mb-2">KEY CONCEPTS:</p>
                 <div className="flex flex-wrap gap-2">

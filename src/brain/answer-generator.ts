@@ -26,7 +26,7 @@ export function generateDistractor(
   pattern: DistractorPattern,
   context: AnswerGenerationContext
 ): Distractor | null {
-  const { template, slotValues } = context;
+  const { } = context;
 
   // Apply pattern-specific logic transforms
   switch (pattern.patternId) {
@@ -416,14 +416,7 @@ function isBehavioralDomain(skillId: string): boolean {
          skillId === 'NEW-4-DevelopmentalInterventions';
 }
 
-// Check if skill is in consultation domain
-function isConsultationDomain(skillId: string): boolean {
-  if (!skillId) return false;
-  return skillId.startsWith('CC-') || 
-         skillId.startsWith('FSC-') ||
-         skillId.startsWith('NEW-2-') ||
-         skillId.startsWith('NEW-7-');
-}
+
 
 /**
  * Check if a distractor contains banned terms for the given skill's domains
@@ -666,8 +659,8 @@ function generatePrematureActionDistractor(
 }
 
 function generateRoleConfusionDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   const roleActions = [
     "Take over teaching the student directly",
@@ -869,8 +862,8 @@ function generateDataIgnoranceDistractor(
 }
 
 function generateExtremeLanguageDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   // Add extreme language to a correct principle
   const extremeModifiers = ["always", "never", "only", "all", "every"];
@@ -923,7 +916,7 @@ function generateContextMismatchDistractor(
 
 function generateIncompleteResponseDistractor(
   correctAnswer: string,
-  context: AnswerGenerationContext
+  _context: AnswerGenerationContext
 ): Distractor | null {
   // If correct answer has multiple parts, use just one part
   if (correctAnswer.includes("and") || correctAnswer.includes(",")) {
@@ -940,8 +933,8 @@ function generateIncompleteResponseDistractor(
 }
 
 function generateLegalOverreachDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   const overreachActions = [
     "Share student records with outside agencies without consent",
@@ -959,8 +952,8 @@ function generateLegalOverreachDistractor(
 }
 
 function generateCorrelationAsCausationDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   const causationStatements = [
     "The intervention caused the improvement because it was followed by better scores",
@@ -978,7 +971,7 @@ function generateCorrelationAsCausationDistractor(
 
 function generateFunctionConfusionDistractor(
   correctAnswer: string,
-  context: AnswerGenerationContext
+  _context: AnswerGenerationContext
 ): Distractor | null {
   const functions = ["Attention", "Escape/Avoidance", "Tangible", "Sensory"];
   const wrongFunction = functions.find(f => f !== correctAnswer) || functions[0];
@@ -1018,7 +1011,7 @@ function generateCaseConfusionDistractor(
 
 function generateSequenceErrorDistractor(
   correctAnswer: string,
-  context: AnswerGenerationContext
+  _context: AnswerGenerationContext
 ): Distractor | null {
   // For ABC model, swap elements
   if (correctAnswer.includes("Antecedent-Behavior-Consequence")) {
@@ -1037,8 +1030,8 @@ function generateSequenceErrorDistractor(
 }
 
 function generateFunctionMismatchDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "A replacement behavior that serves a different function",
@@ -1049,7 +1042,7 @@ function generateFunctionMismatchDistractor(
 
 function generateModelConfusionDistractor(
   correctAnswer: string,
-  context: AnswerGenerationContext
+  _context: AnswerGenerationContext
 ): Distractor | null {
   const models = ["Cognitive Behavioral Therapy", "Solution-Focused Brief Therapy", "Dialectical Behavior Therapy", "Behavioral Consultation"];
   const wrongModel = models.find(m => !correctAnswer.includes(m)) || models[0];
@@ -1062,8 +1055,8 @@ function generateModelConfusionDistractor(
 }
 
 function generateInstructionOnlyDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Provide direct instruction only",
@@ -1073,8 +1066,8 @@ function generateInstructionOnlyDistractor(
 }
 
 function generateAdultCriteriaDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Apply adult diagnostic criteria directly to children",
@@ -1084,8 +1077,8 @@ function generateAdultCriteriaDistractor(
 }
 
 function generateInclusionErrorDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Include students with severe conduct disorders in group counseling",
@@ -1095,8 +1088,8 @@ function generateInclusionErrorDistractor(
 }
 
 function generateOptimalEducationDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Provide the best possible education",
@@ -1106,8 +1099,8 @@ function generateOptimalEducationDistractor(
 }
 
 function generateGeneralConcernsDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Breach confidentiality for general concerns about student well-being",
@@ -1117,8 +1110,8 @@ function generateGeneralConcernsDistractor(
 }
 
 function generateInvestigationDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Investigate the abuse allegations before reporting",
@@ -1128,8 +1121,8 @@ function generateInvestigationDistractor(
 }
 
 function generateDelayDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Schedule assessment for next week",
@@ -1139,8 +1132,8 @@ function generateDelayDistractor(
 }
 
 function generatePunishmentFocusDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Determine appropriate punishment for the behavior",
@@ -1150,8 +1143,8 @@ function generatePunishmentFocusDistractor(
 }
 
 function generateAbsoluteRulesDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Apply the rule absolutely without considering context",
@@ -1188,8 +1181,8 @@ function generateLawConfusionDistractor(
 }
 
 function generateNoAccessDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Deny access to records without legal basis",
@@ -1199,8 +1192,8 @@ function generateNoAccessDistractor(
 }
 
 function generateInsufficientHoursDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Provide less than the required supervision hours",
@@ -1210,8 +1203,8 @@ function generateInsufficientHoursDistractor(
 }
 
 function generateFullReleaseDistractor(
-  correctAnswer: string,
-  context: AnswerGenerationContext
+  _correctAnswer: string,
+  _context: AnswerGenerationContext
 ): Distractor | null {
   return {
     text: "Allow full copying and release of test protocols",

@@ -1891,9 +1891,3 @@ export function getSkillById(skillId: SkillId): Skill | null {
 }
 
 // Helper function to get all skills for a domain
-export function getSkillsForDomain(domainId: DomainId): Skill[] {
-  const domain = SKILL_MAP[domainId];
-  if (!domain) return [];
-  
-  return domain.clusters.flatMap(cluster => cluster.skills);
-}

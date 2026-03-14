@@ -4,12 +4,12 @@
 
 import { Question } from './question-analyzer';
 import { PatternId } from './template-schema';
-import { ERROR_LIBRARY, ErrorExplanation, FrameworkStepGuidance } from './error-library';
+import { ErrorExplanation, FrameworkStepGuidance } from './error-library';
 import { matchDistractorPattern } from './distractor-matcher';
-import { FRAMEWORK_STEPS, getStepById } from './framework-definitions';
-import { SkillId, getSkillById } from './skill-map';
+import { SkillId } from './skill-map';
 import { LearningState, SkillPerformance, checkPrerequisitesMet } from './learning-state';
 import { UserProfile } from '../hooks/useFirebaseProgress';
+import { EngineConfig } from '../types/engine';
 
 export interface FrameworkGuidance {
   currentStepId: string | null;
@@ -44,7 +44,7 @@ export interface DiagnosticFeedback {
  * Infer framework step from question context
  * Uses question stem, content, and skill domain to determine most likely framework step
  */
-function inferFrameworkStep(question: Question): string | null {
+function inferFrameworkStep(question: Question, engineConfig: EngineConfig): string | null {
   const stem = question.question.toLowerCase();
   const rationale = question.rationale.toLowerCase();
 
@@ -118,7 +118,7 @@ function inferFrameworkStep(question: Question): string | null {
 
   // Default based on domain (if skillId available)
   if (question.skillId) {
-    const skill = getSkillById(question.skillId);
+    const skill = engineConfig.skills.find((s: any) => s.id === question.skillId);
     if (skill) {
       // Domain-based defaults
       const domainPrefix = question.skillId.split('-')[0];
@@ -167,9 +167,10 @@ function detectUserSelectedStep(distractorText: string, patternId: PatternId | n
  */
 function getSkillGuidance(
   skillId: SkillId,
-  userProfile: UserProfile
+  userProfile: UserProfile,
+  engineConfig: EngineConfig
 ): SkillGuidance | undefined {
-  const skill = getSkillById(skillId);
+  const skill = engineConfig.skills.find((s: any) => s.id === skillId);
   if (!skill) return undefined;
 
   const skillPerformance = userProfile.skillScores[skillId];
@@ -187,7 +188,7 @@ function getSkillGuidance(
     for (const prereqId of skill.prerequisites) {
       const prereqPerf = userProfile.skillScores[prereqId];
       if (!prereqPerf || prereqPerf.learningState !== 'mastery') {
-        const prereqSkill = getSkillById(prereqId);
+        const prereqSkill = engineConfig.skills.find((s: any) => s.id === prereqId);
         if (prereqSkill) {
           missingPrerequisites.push(prereqSkill.name);
         }
@@ -200,18 +201,20 @@ function getSkillGuidance(
   
   if (currentState === 'emerging' || currentState === 'developing') {
     // Show 1 simple tip for emerging/developing
-    if (skill.commonWrongRules && skill.commonWrongRules.length > 0) {
-      remediationTips.push(`Remember: ${skill.commonWrongRules[0]}`);
+    const skillAny = skill as any;
+    if (skillAny.commonWrongRules && skillAny.commonWrongRules.length > 0) {
+      remediationTips.push(`Remember: ${skillAny.commonWrongRules[0]}`);
     } else {
-      remediationTips.push(`Focus on understanding the core concept: ${skill.description}`);
+      remediationTips.push(`Focus on understanding the core concept: ${skillAny.description || skill.name}`);
     }
   } else {
     // Show 2 advanced tips for proficient/mastery
-    if (skill.commonWrongRules && skill.commonWrongRules.length >= 2) {
-      remediationTips.push(`Advanced tip 1: ${skill.commonWrongRules[0]}`);
-      remediationTips.push(`Advanced tip 2: ${skill.commonWrongRules[1]}`);
-    } else if (skill.commonWrongRules && skill.commonWrongRules.length === 1) {
-      remediationTips.push(`Advanced tip: ${skill.commonWrongRules[0]}`);
+    const skillAny = skill as any;
+    if (skillAny.commonWrongRules && skillAny.commonWrongRules.length >= 2) {
+      remediationTips.push(`Advanced tip 1: ${skillAny.commonWrongRules[0]}`);
+      remediationTips.push(`Advanced tip 2: ${skillAny.commonWrongRules[1]}`);
+    } else if (skillAny.commonWrongRules && skillAny.commonWrongRules.length === 1) {
+      remediationTips.push(`Advanced tip: ${skillAny.commonWrongRules[0]}`);
       remediationTips.push(`Apply this skill in varied contexts to deepen understanding`);
     } else {
       remediationTips.push(`You're doing well! Continue applying this skill consistently`);
@@ -244,7 +247,8 @@ export function generateDiagnosticFeedback(
   question: Question,
   selectedAnswers: string[],
   isCorrect: boolean,
-  userProfile: UserProfile
+  userProfile: UserProfile,
+  engineConfig: EngineConfig
 ): DiagnosticFeedback {
   // Extract selected answer text
   const selectedAnswerText = selectedAnswers
@@ -254,7 +258,7 @@ export function generateDiagnosticFeedback(
   // Handle correct answers
   if (isCorrect) {
     const skillGuidance = question.skillId 
-      ? getSkillGuidance(question.skillId, userProfile)
+      ? getSkillGuidance(question.skillId as SkillId, userProfile, engineConfig)
       : undefined;
 
     const masteryStatus = skillGuidance
@@ -304,19 +308,19 @@ export function generateDiagnosticFeedback(
     .join(' ');
 
   // Match distractor pattern
-  const patternId = matchDistractorPattern(distractorText, correctAnswerText);
+  const patternId = matchDistractorPattern(distractorText, correctAnswerText, engineConfig.distractorPatterns);
 
   // Get error explanation from library
-  const libEntry: ErrorExplanation | undefined = patternId 
-    ? ERROR_LIBRARY[patternId] 
+  const libEntry: ErrorExplanation | undefined = patternId && engineConfig.errorLibrary
+    ? engineConfig.errorLibrary[patternId] 
     : undefined;
 
   // Infer framework step
-  const inferredStepId = inferFrameworkStep(question);
-  const frameworkStep = inferredStepId ? getStepById(inferredStepId) : null;
+  const inferredStepId = inferFrameworkStep(question, engineConfig);
+  const frameworkStep = inferredStepId && engineConfig.frameworkSteps ? engineConfig.frameworkSteps[inferredStepId] : null;
 
   // Detect if user jumped to wrong step
-  const userSelectedStep = detectUserSelectedStep(distractorText, patternId);
+  const userSelectedStep = detectUserSelectedStep(distractorText, patternId as PatternId | null);
 
   // Build framework guidance
   let frameworkGuidance: FrameworkGuidance | null = null;
@@ -336,7 +340,7 @@ export function generateDiagnosticFeedback(
     
     // Add prerequisite check if skill has prerequisites
     if (question.skillId) {
-      const skillGuidance = getSkillGuidance(question.skillId, userProfile);
+      const skillGuidance = getSkillGuidance(question.skillId as SkillId, userProfile, engineConfig);
       if (skillGuidance && !skillGuidance.prerequisiteCheck.met) {
         const missingNames = skillGuidance.prerequisiteCheck.missingNames;
         if (missingNames.length > 0) {
@@ -348,9 +352,9 @@ export function generateDiagnosticFeedback(
     // Add framework-specific next steps
     if (frameworkStep.prerequisiteSteps && frameworkStep.prerequisiteSteps.length > 0) {
       const prereqSteps = frameworkStep.prerequisiteSteps
-        .map(id => getStepById(id))
+        .map((id: string) => engineConfig.frameworkSteps ? engineConfig.frameworkSteps[id] : null)
         .filter(Boolean)
-        .map(step => step!.name);
+        .map((step: any) => step!.name);
       
       if (prereqSteps.length > 0) {
         nextSteps.push(`Ensure you've completed: ${prereqSteps.join(' → ')}`);
@@ -384,7 +388,7 @@ export function generateDiagnosticFeedback(
 
   // Get skill guidance
   const skillGuidance = question.skillId 
-    ? getSkillGuidance(question.skillId, userProfile)
+    ? getSkillGuidance(question.skillId as SkillId, userProfile, engineConfig)
     : undefined;
 
   // Combine remediation tips (prioritize error library, then skill guidance)
@@ -422,7 +426,7 @@ export function generateDiagnosticFeedback(
 
   return {
     isCorrect: false,
-    patternId: patternId || null,
+    patternId: (patternId as PatternId) || null,
     generalExplanation: libEntry?.generalExplanation || 
       'This answer is incorrect. Review the rationale to understand the correct approach.',
     frameworkGuidance,

@@ -29,10 +29,12 @@ export function detectWeaknesses(
   const errorPatterns: Record<string, number> = {};
   const factualGaps: string[] = [];
   
-  // Initialize all domains
-  for (let i = 1; i <= 10; i++) {
-    domainScores[i] = { correct: 0, total: 0 };
-  }
+  const activeDomainIds = [...new Set(questions.flatMap(q => q.domains || []))];
+  
+  // Initialize only active domains
+  activeDomainIds.forEach(id => {
+    domainScores[id] = { correct: 0, total: 0 };
+  });
   
   // Analyze each response
   for (const response of responses) {
@@ -40,18 +42,22 @@ export function detectWeaknesses(
     if (!question) continue;
     
     // Update domain scores
-    for (const domain of question.domains) {
-      domainScores[domain].total++;
-      if (response.isCorrect) {
-        domainScores[domain].correct++;
+    const qDomains = question.domains || [];
+    for (const domain of qDomains) {
+      if (domainScores[domain]) {
+        domainScores[domain].total++;
+        if (response.isCorrect) {
+          domainScores[domain].correct++;
+        }
       }
     }
     
     // If wrong, analyze why
     if (!response.isCorrect) {
       // Check for pattern in wrong answer
+      const choices = question.choices || {};
       const selectedText = response.selectedAnswers
-        .map(a => question.choices[a])
+        .map(a => choices[a] || '')
         .join(' ')
         .toLowerCase();
       
@@ -64,7 +70,8 @@ export function detectWeaknesses(
       }
       
       // Track concepts missed
-      for (const concept of question.keyConcepts) {
+      const concepts = question.keyConcepts || [];
+      for (const concept of concepts) {
         if (!factualGaps.includes(concept)) {
           factualGaps.push(concept);
         }

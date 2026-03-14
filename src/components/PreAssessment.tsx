@@ -1,26 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
-import ExplanationPanel from './ExplanationPanel';
 import { UserResponse } from '../brain/weakness-detector';
 import { saveSession, loadSession, clearSession, AssessmentSession } from '../utils/sessionStorage';
 import { getCurrentUser, getCurrentSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
-import { matchDistractorPattern } from '../brain/distractor-matcher';
+import { AnalyzedQuestion } from '../brain/question-analyzer';
+import { useElapsedTimer } from '../hooks/useElapsedTimer';
 
-interface AnalyzedQuestion {
-  id: string;
-  question: string;
-  choices: Record<string, string>;
-  correct_answer: string[];
-  rationale: string;
-  skillId?: string;
-  domains: number[];
-  dok: number;
-  questionType: 'Scenario-Based' | 'Direct Knowledge';
-  stemType: string;
-  keyConcepts: string[];
-  isGenerated?: boolean;
-}
+// Local type definition removed in favor of imported AnalyzedQuestion
 
 
 interface PreAssessmentProps {
@@ -31,23 +18,24 @@ interface PreAssessmentProps {
   logResponse?: (response: {
     questionId: string;
     skillId?: string;
-    domainId?: number;
+    domainIds?: number[];
     assessmentType: 'diagnostic' | 'full' | 'practice';
     sessionId: string;
     isCorrect: boolean;
     confidence: 'low' | 'medium' | 'high';
     timeSpent: number;
+    time_on_item_seconds?: number;
     timestamp: number;
-    selectedAnswer?: string;
+    selectedAnswers: string[];
+    correctAnswers: string[];
     distractorPatternId?: string;
   }) => Promise<void>;
-  updateLastSession?: (sessionId: string, mode: 'practice' | 'full' | 'diagnostic', questionIndex: number) => Promise<void>;
+  updateLastSession?: (sessionId: string, mode: 'practice' | 'full' | 'diagnostic', questionIndex: number, elapsedSeconds?: number) => Promise<void>;
 }
 
 export default function PreAssessment({
   questions,
   onComplete,
-  showTimer = true,
   sessionId,
   logResponse,
   updateLastSession
@@ -59,21 +47,36 @@ export default function PreAssessment({
   const savedSession = userSession || loadSession();
   const isResuming = savedSession?.type === 'pre-assessment' && 
     savedSession.questionIds.length === questions.length &&
-    savedSession.questionIds.every((id, idx) => questions[idx]?.id === id);
+    savedSession.questionIds.every((id: string, idx: number) => questions[idx]?.id === id);
 
   const [currentIndex, setCurrentIndex] = useState(isResuming ? savedSession!.currentIndex : 0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>(isResuming ? savedSession!.selectedAnswers : []);
-  const [showFeedback, setShowFeedback] = useState(isResuming ? savedSession!.showFeedback : false);
   const [confidence, setConfidence] = useState<'low' | 'medium' | 'high'>(isResuming ? savedSession!.confidence : 'medium');
-  const [startTime, setStartTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
+  const [startTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [showTimerState, setShowTimerState] = useState(false); // Default OFF, tracking still happens
-  const [isPaused, setIsPaused] = useState(false);
-  const [pauseStartTime, setPauseStartTime] = useState<number | null>(null);
-  const [totalPausedTime, setTotalPausedTime] = useState(isResuming ? (savedSession as any).totalPausedTime || 0 : 0);
-
   const currentQuestion = questions[currentIndex];
+
+  const [isSubmitted, setIsSubmitted] = useState(isResuming && savedSession!.responses.some(r => r.questionId === currentQuestion?.id));
+
+  // Use the new centralized timer hook
+  const { 
+    formattedTime, 
+    timerLabel, 
+    isPaused, 
+    showInactivityWarning, 
+    isAutoPaused,
+    pause, 
+    resume, 
+    resetQuestionTimer,
+    elapsedSeconds,
+    recordInteraction
+  } = useElapsedTimer({
+    initialElapsedSeconds: savedSession?.elapsedSeconds || 0,
+    onAutoPause: () => {
+      // Logic for persistent save on auto-pause if needed
+      console.log('[PreAssessment] Auto-paused due to inactivity');
+    }
+  });
 
   // Save session whenever state changes (store IDs and timestamps only, no full objects)
   useEffect(() => {
@@ -87,11 +90,12 @@ export default function PreAssessment({
         currentIndex,
         responses,
         selectedAnswers,
-        showFeedback,
+        showFeedback: false,
         confidence,
         startTime,
         lastUpdated: Date.now(),
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        elapsedSeconds // Save current elapsed time
       };
       saveUserSession(userSession);
     } else {
@@ -102,14 +106,22 @@ export default function PreAssessment({
         currentIndex,
         responses,
         selectedAnswers,
-        showFeedback,
+        showFeedback: false,
         confidence,
         startTime,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
+        elapsedSeconds // Save current elapsed time
       };
       saveSession(session);
     }
-  }, [currentIndex, responses, selectedAnswers, showFeedback, confidence, startTime, questions, currentUser, sessionId, isPaused, totalPausedTime]);
+  }, [currentIndex, responses, selectedAnswers, confidence, startTime, questions, currentUser, sessionId, isPaused, elapsedSeconds]);
+  
+  // Save to Firestore on pause
+  useEffect(() => {
+    if (isPaused && updateLastSession && sessionId) {
+      updateLastSession(sessionId, 'diagnostic', currentIndex, elapsedSeconds);
+    }
+  }, [isPaused, updateLastSession, sessionId, currentIndex, elapsedSeconds]);
 
   // Clear session when assessment is complete
   useEffect(() => {
@@ -118,41 +130,32 @@ export default function PreAssessment({
     }
   }, [currentIndex, questions.length, responses.length]);
 
-  // Timer effect - compute elapsed time (not tick-based)
-  useEffect(() => {
-    if (!showFeedback && currentQuestion && !isPaused) {
-      const interval = setInterval(() => {
-        // Compute elapsed time: (now - startTime) - totalPausedTime
-        const now = Date.now();
-        const elapsed = Math.floor((now - startTime) / 1000) - totalPausedTime;
-        setElapsedTime(Math.max(0, elapsed));
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [showFeedback, startTime, currentQuestion, isPaused, totalPausedTime]);
+  const pacingMessage = useMemo(() => {
+    const targetSecPerQuest = 45; // 30 min for 40 questions
+    const expectedTime = (currentIndex + 1) * targetSecPerQuest;
+    const diff = elapsedSeconds - expectedTime;
+    
+    if (diff < -60) return "🚀 Efficient pace - ahead of schedule.";
+    if (diff > 60) return "⚠️ Behind pace - try to move slightly faster.";
+    return "✅ On track - steady pacing maintained.";
+  }, [currentIndex, elapsedSeconds]);
   
   // Handle pause/resume
-  const handlePause = () => {
-    if (!isPaused) {
-      setIsPaused(true);
-      setPauseStartTime(Date.now());
+  const handlePauseToggle = () => {
+    if (isPaused) {
+      resume();
     } else {
-      // Resume: calculate pause duration and add to total
-      if (pauseStartTime) {
-        const pauseDuration = Math.floor((Date.now() - pauseStartTime) / 1000);
-        setTotalPausedTime(prev => prev + pauseDuration);
-        setPauseStartTime(null);
-      }
-      setIsPaused(false);
+      pause();
     }
   };
 
   const toggleAnswer = (letter: string) => {
-    if (showFeedback) return;
+    if (isSubmitted) return;
     
-    const maxAnswers = currentQuestion?.correct_answer.length || 1;
+    const correctList = currentQuestion?.correct_answer || currentQuestion?.correctAnswers || [];
+    const maxAnswers = correctList.length || 1;
     
-    setSelectedAnswers(prev => {
+    setSelectedAnswers((prev: string[]) => {
       if (prev.includes(letter)) {
         return prev.filter(a => a !== letter);
       }
@@ -161,103 +164,81 @@ export default function PreAssessment({
       }
       return prev;
     });
+
+    recordInteraction();
   };
 
   const submitAnswer = async () => {
     if (selectedAnswers.length === 0) return;
 
-    // Calculate time spent: (now - startTime) - totalPausedTime
+    // Calculate time spent on THIS question specifically
+    const timeSpent = resetQuestionTimer();
     const now = Date.now();
-    const timeSpent = Math.max(0, Math.floor((now - startTime) / 1000) - totalPausedTime);
     const timestamp = now;
+    const correctList = currentQuestion.correct_answer || currentQuestion.correctAnswers || [];
     const isCorrect = 
-      selectedAnswers.every(a => currentQuestion.correct_answer.includes(a)) &&
-      selectedAnswers.length === currentQuestion.correct_answer.length;
+      selectedAnswers.every(a => correctList.includes(a)) &&
+      selectedAnswers.length === correctList.length;
 
-    // Track selected distractor if answer is wrong
-    let selectedDistractor: { letter: string; text: string; patternId?: string } | undefined;
-    let distractorPatternId: string | undefined;
-    if (!isCorrect && selectedAnswers.length > 0) {
-      // Find the first wrong answer (distractor)
-      const wrongAnswer = selectedAnswers.find(a => !currentQuestion.correct_answer.includes(a));
-      if (wrongAnswer) {
-        const distractorText = currentQuestion.choices[wrongAnswer] || '';
-        const correctAnswerText = currentQuestion.correct_answer
-          .map(a => currentQuestion.choices[a])
-          .join(' ') || '';
-        const patternId = matchDistractorPattern(distractorText, correctAnswerText);
-        
-        selectedDistractor = {
-          letter: wrongAnswer,
-          text: distractorText,
-          patternId: patternId || undefined
-        };
-        distractorPatternId = patternId || undefined;
-      }
-    }
-
-    // Log response to Firestore subcollection (source of truth)
+    // Log response to Firestore (single response event schema)
     if (logResponse && sessionId) {
       await logResponse({
         questionId: currentQuestion.id,
-        skillId: currentQuestion.skillId,
-        domainId: currentQuestion.domains[0],
+        skillId: currentQuestion.skillId || '',
+        domainIds: currentQuestion.domains || [],
         assessmentType: 'diagnostic',
         sessionId,
         isCorrect,
         confidence,
         timeSpent,
+        time_on_item_seconds: timeSpent, // Verification field
         timestamp,
-        selectedAnswer: selectedAnswers[0],
-        distractorPatternId
+        selectedAnswers,
+        correctAnswers: correctList
       });
     }
 
     // Update lastSession pointer
     if (updateLastSession && sessionId) {
-      await updateLastSession(sessionId, 'diagnostic', currentIndex);
+      await updateLastSession(sessionId, 'diagnostic', currentIndex, elapsedSeconds);
     }
 
     const response: UserResponse = {
       questionId: currentQuestion.id,
       selectedAnswers,
-      correctAnswers: currentQuestion.correct_answer,
+      correctAnswers: correctList,
       isCorrect,
       timeSpent,
       confidence,
-      timestamp,
-      selectedDistractor
+      timestamp
     };
 
-    setResponses(prev => [...prev, response]);
-    setShowFeedback(true);
+    const updatedResponses = [...responses, response];
+    setResponses(updatedResponses);
+    // Transition immediately to the next question in diagnostic mode
+    nextQuestion(updatedResponses);
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = (updatedResponses?: UserResponse[]) => {
     const nextIndex = currentIndex + 1;
+    const currentResponses = updatedResponses || responses;
+    
     if (nextIndex >= questions.length) {
       // Pre-assessment complete
       clearSession();
-      onComplete(responses);
+      onComplete(currentResponses);
     } else {
       setCurrentIndex(nextIndex);
-      setStartTime(Date.now());
       setSelectedAnswers([]);
-      setShowFeedback(false);
+      setIsSubmitted(false);
       setConfidence('medium');
-      setElapsedTime(0);
     }
+    recordInteraction();
   };
 
   if (!currentQuestion) {
     return null;
   }
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   return (
     <div className="space-y-6">
@@ -285,91 +266,101 @@ export default function PreAssessment({
       </div>
 
       {/* Timer Toggle, Pause Button, and Display */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowTimerState(!showTimerState)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
-          >
-            <Clock className={`w-4 h-4 ${showTimerState ? 'text-amber-400' : ''}`} />
-            <span>{showTimerState ? 'Hide Timer' : 'Show Timer'}</span>
-          </button>
-          <button
-            onClick={handlePause}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all"
-          >
-            {isPaused ? (
-              <>
-                <Play className="w-4 h-4 text-emerald-400" />
-                <span>Resume</span>
-              </>
-            ) : (
-              <>
-                <Pause className="w-4 h-4" />
-                <span>Pause</span>
-              </>
-            )}
-          </button>
-        </div>
-        {showTimerState && (
-          <div className="text-sm text-slate-400">
-            Time: <span className="text-slate-300 font-mono">{formatTime(elapsedTime)}</span>
+      <div className="flex items-center justify-between bg-slate-800/30 p-4 rounded-2xl border border-slate-700/30">
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">{timerLabel}</span>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-amber-400" />
+              <span className="text-xl font-mono text-slate-200">{formattedTime}</span>
+            </div>
           </div>
-        )}
+          <div className="h-8 w-px bg-slate-700/50" />
+          <div className="flex flex-col">
+            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Pacing</span>
+            <span className="text-sm text-slate-300 font-medium">{pacingMessage}</span>
+          </div>
+        </div>
+        
+        <button
+          onClick={handlePauseToggle}
+          className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-xl transition-all border border-slate-600/30"
+        >
+          {isPaused ? <Play className="w-4 h-4 text-emerald-400" /> : <Pause className="w-4 h-4" />}
+          <span>{isPaused ? 'Resume' : 'Pause'}</span>
+        </button>
       </div>
+      
+      {/* Inactivity Warning */}
+      {showInactivityWarning && !isPaused && (
+        <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-4 animate-pulse">
+          <div className="bg-amber-500/20 p-2 rounded-lg">
+            <Clock className="w-5 h-5 text-amber-400" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-amber-300">Still there? Your test will pause soon.</p>
+          </div>
+        </div>
+      )}
       
       {/* Pause Overlay */}
       {isPaused && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center space-y-6 max-w-md mx-4">
+          <div className="bg-slate-800 border border-slate-700 rounded-3xl p-8 text-center space-y-6 max-w-md mx-4 shadow-2xl">
             <div className="flex justify-center">
-              <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center">
-                <Pause className="w-8 h-8 text-slate-400" />
+              <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center">
+                <Pause className="w-10 h-10 text-slate-400" />
               </div>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold text-slate-100 mb-2">Assessment Paused</h3>
-              <p className="text-slate-400">Take your time. Your progress is saved.</p>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold text-slate-100 uppercase tracking-tight">{isAutoPaused ? 'Session Paused' : 'Test Paused'}</h3>
+              <p className="text-slate-400 leading-relaxed text-sm">
+                {isAutoPaused 
+                  ? 'Your session was paused due to inactivity. Resume when ready.' 
+                  : 'Your progress is securely saved. You can resume at any time or return to the home screen.'}
+              </p>
             </div>
-            <button
-              onClick={handlePause}
-              className="w-full px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-            >
-              <Play className="w-5 h-5" />
-              Resume Assessment
-            </button>
+            <div className="space-y-3 pt-4">
+              <button
+                onClick={resume}
+                className="w-full px-6 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+              >
+                <Play className="w-5 h-5" />
+                Resume Assessment
+              </button>
+              <button
+                onClick={() => window.location.reload()} // Quickest way to return home in this app's routing
+                className="w-full px-6 py-4 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-2xl font-bold transition-all border border-slate-600"
+              >
+                Save & Exit to Home
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Question Card */}
       {!isPaused && (
-        <QuestionCard
-          question={currentQuestion}
-          selectedAnswers={selectedAnswers}
-          onSelectAnswer={toggleAnswer}
-          onSubmit={submitAnswer}
-          onNext={nextQuestion}
-          confidence={confidence}
-          onConfidenceChange={setConfidence}
-          disabled={false}
-          showFeedback={showFeedback}
-          assessmentType="pre"
-        />
+        <div className={isSubmitted ? "opacity-50 pointer-events-none" : ""}>
+          <QuestionCard
+            question={currentQuestion}
+            selectedAnswers={selectedAnswers}
+            onSelectAnswer={toggleAnswer}
+            onSubmit={submitAnswer}
+            onNext={nextQuestion}
+            confidence={confidence}
+            onConfidenceChange={setConfidence}
+            disabled={isSubmitted}
+            showFeedback={false}
+            assessmentType="pre"
+            hideFooterControls={isSubmitted}
+          />
+        </div>
       )}
 
-      {/* Feedback Panel */}
-      {showFeedback && !isPaused && (
-        <ExplanationPanel
-          question={currentQuestion}
-          userAnswer={selectedAnswers}
-          isCorrect={
-            selectedAnswers.every(a => currentQuestion.correct_answer.includes(a)) &&
-            selectedAnswers.length === currentQuestion.correct_answer.length
-          }
-          rationale={currentQuestion.rationale}
-        />
-      )}
+      {/* Post-submit continuation removed to allow direct transition */}
+
+      {/* Feedback Panel REMOVED for diagnostic */}
     </div>
   );
 }

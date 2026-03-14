@@ -1,30 +1,10 @@
-import { UserResponse } from '../brain/weakness-detector';
+import type { SessionPayload } from './sessionTypes';
 
-export interface UserSession {
+/** Single session model: in-progress assessment (per-user). Payload + identity for resume. */
+export interface UserSession extends SessionPayload {
   userName: string;
   sessionId: string;
-  type: 'pre-assessment' | 'full-assessment';
-  questionIds: string[];
-  currentIndex: number;
-  responses: UserResponse[];
-  selectedAnswers: string[];
-  showFeedback: boolean;
-  confidence: 'low' | 'medium' | 'high';
-  startTime: number;
-  lastUpdated: number;
   createdAt: number;
-}
-
-export interface UserSessionList {
-  userName: string;
-  sessions: Array<{
-    sessionId: string;
-    type: 'pre-assessment' | 'full-assessment';
-    createdAt: number;
-    lastUpdated: number;
-    progress: number; // percentage complete
-    questionCount: number;
-  }>;
 }
 
 const SESSIONS_KEY_PREFIX = 'praxis-session-';
@@ -34,7 +14,7 @@ const CURRENT_USER_KEY = 'praxis-current-user';
 /**
  * Get all saved sessions for a user
  */
-export function getUserSessions(userName: string): UserSession[] {
+function getUserSessions(userName: string): UserSession[] {
   try {
     const listKey = `${USER_SESSIONS_LIST_KEY}-${userName}`;
     const stored = localStorage.getItem(listKey);
@@ -58,50 +38,10 @@ export function getUserSessions(userName: string): UserSession[] {
 }
 
 /**
- * Get list of all users with their sessions
- */
-export function getAllUsersWithSessions(): UserSessionList[] {
-  try {
-    const stored = localStorage.getItem(USER_SESSIONS_LIST_KEY);
-    if (!stored) return [];
-    
-    const users: string[] = JSON.parse(stored);
-    const result: UserSessionList[] = [];
-    
-    for (const userName of users) {
-      const sessions = getUserSessions(userName);
-      result.push({
-        userName,
-        sessions: sessions.map(s => ({
-          sessionId: s.sessionId,
-          type: s.type,
-          createdAt: s.createdAt,
-          lastUpdated: s.lastUpdated,
-          progress: s.questionIds.length > 0 
-            ? Math.round((s.currentIndex / s.questionIds.length) * 100)
-            : 0,
-          questionCount: s.questionIds.length
-        }))
-      });
-    }
-    
-    return result.sort((a, b) => {
-      const aLatest = a.sessions[0]?.lastUpdated || 0;
-      const bLatest = b.sessions[0]?.lastUpdated || 0;
-      return bLatest - aLatest;
-    });
-  } catch (error) {
-    console.error('Error loading all users:', error);
-    return [];
-  }
-}
-
-/**
- * Save a session
+ * Save a session (single session model: same payload shape as sessionStorage)
  */
 export function saveUserSession(session: UserSession): void {
   try {
-    // Save the session
     localStorage.setItem(`${SESSIONS_KEY_PREFIX}${session.sessionId}`, JSON.stringify(session));
     
     // Update user's session list
@@ -164,25 +104,6 @@ export function getCurrentSession(userName: string): UserSession | null {
 }
 
 /**
- * Delete a session
- */
-export function deleteUserSession(sessionId: string, userName: string): void {
-  try {
-    localStorage.removeItem(`${SESSIONS_KEY_PREFIX}${sessionId}`);
-    
-    const listKey = `${USER_SESSIONS_LIST_KEY}-${userName}`;
-    const stored = localStorage.getItem(listKey);
-    if (stored) {
-      const sessionIds: string[] = JSON.parse(stored);
-      const updated = sessionIds.filter(id => id !== sessionId);
-      localStorage.setItem(listKey, JSON.stringify(updated));
-    }
-  } catch (error) {
-    console.error('Error deleting session:', error);
-  }
-}
-
-/**
  * Get current user
  */
 export function getCurrentUser(): string | null {
@@ -190,17 +111,6 @@ export function getCurrentUser(): string | null {
     return localStorage.getItem(CURRENT_USER_KEY);
   } catch {
     return null;
-  }
-}
-
-/**
- * Set current user
- */
-export function setCurrentUser(userName: string): void {
-  try {
-    localStorage.setItem(CURRENT_USER_KEY, userName);
-  } catch (error) {
-    console.error('Error setting current user:', error);
   }
 }
 

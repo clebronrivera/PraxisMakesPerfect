@@ -554,10 +554,3 @@ export const STEM_PATTERNS = {
     trap: "Don't stop at first 'good' answer - check all"
   }
 };
-
-export default {
-  NASP_DOMAINS,
-  KEY_COURT_CASES,
-  DISTRACTOR_PATTERNS,
-  STEM_PATTERNS
-};

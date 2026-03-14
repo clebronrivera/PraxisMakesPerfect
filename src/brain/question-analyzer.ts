@@ -1,25 +1,38 @@
 import questionSkillMapData from '../data/question-skill-map.json';
-import { NASP_DOMAINS } from '../../knowledge-base';
 
 export interface Question {
   id: string;
-  question: string;
-  choices: Record<string, string>;
-  correct_answer: string[];
-  rationale: string;
+  question?: string;
+  questionStem?: string;
+  choices?: Record<string, string>;
+  options?: { letter: string; text: string }[];
+  correct_answer?: string[];
+  correctAnswers?: string[];
+  rationale?: string;
+  correctExplanation?: string;
   skillId?: string;
+  domainName?: string;
+  DOMAIN?: number | string;
+  domain?: number | string;
+  isMultiSelect?: boolean;
+  cognitiveComplexity?: 'Recall' | 'Application' | string;
 }
 
 export interface AnalyzedQuestion extends Question {
-  domains: number[];
-  dok: number;
-  questionType: 'Scenario-Based' | 'Direct Knowledge';
-  stemType: string;
-  keyConcepts: string[];
+  domains?: number[];
+  domainName?: string;
+  dok?: number;
+  questionType?: string;
+  hasCaseVignette?: boolean;
+  caseText?: string;
+  stemType?: string;
+  keyConcepts?: string[];
   skillId?: string;
   isGenerated?: boolean;
   source?: 'bank' | 'generated';
   templateId?: string; // For generated questions, shows which template was used
+  isMultiSelect?: boolean;
+  cognitiveComplexity?: 'Recall' | 'Application' | string;
 }
 
 type ConfidenceLevel = 'high' | 'medium' | 'low';
@@ -36,7 +49,7 @@ interface QuestionSkillMapSchema {
 }
 
 // Build QUESTION_SKILL_LOOKUP from question-skill-map.json
-const questionSkillMap: QuestionSkillMapSchema = questionSkillMapData;
+const questionSkillMap = questionSkillMapData as QuestionSkillMapSchema;
 const CONFIDENCE_RANK: Record<ConfidenceLevel, number> = { high: 3, medium: 2, low: 1 };
 
 const INTERIM_SKILL_LOOKUP = questionSkillMap.mappedQuestions.reduce<
@@ -53,38 +66,46 @@ const QUESTION_SKILL_LOOKUP: Record<string, string> = Object.fromEntries(
   Object.entries(INTERIM_SKILL_LOOKUP).map(([questionId, value]) => [questionId, value.skillId])
 );
 
+const PRAXIS_DOMAIN_MAP: Record<string, number> = { 
+  'Professional Practices that Permeate All Aspects of Service Delivery': 1, 
+  'Direct and Indirect Services for Children, Families, and Schools (Student-Level Services)': 2, 
+  'Systems-Level Services': 3, 
+  'Foundations of School Psychological Service Delivery': 4,
+  // Keep fallbacks just in case
+  'Professional Practices': 1,
+  'Student-Level Services': 2,
+  'Foundations': 4
+};
+
 export function analyzeQuestion(q: Question): AnalyzedQuestion {
-  const text = q.question.toLowerCase();
-  const rationale = q.rationale.toLowerCase();
+  const text = (q.question || q.questionStem || '').toLowerCase();
   
-  // Detect domains based on content
-  const domains: number[] = [];
+  // Detect domains based on PRAXIS_DOMAIN_MAP and q.DOMAIN
+  let domainId: number | undefined;
   
-  // Domain detection keywords
-  const domainKeywords: Record<number, string[]> = {
-    1: ['reliability', 'validity', 'assessment', 'data', 'cbm', 'screening', 'progress monitoring', 'measurement', 'psychometric'],
-    2: ['consultation', 'collaborate', 'consultee', 'indirect'],
-    3: ['academic', 'intervention', 'reading', 'math', 'instruction', 'tier 2', 'tier 3', 'learning disability'],
-    4: ['behavior', 'mental health', 'counseling', 'fba', 'bip', 'anxiety', 'depression', 'suicide', 'social-emotional'],
-    5: ['school-wide', 'pbis', 'mtss', 'rti', 'universal', 'tier 1', 'climate'],
-    6: ['crisis', 'threat', 'safety', 'prevention', 'responsive'],
-    7: ['family', 'parent', 'home-school', 'caregiver'],
-    8: ['cultural', 'diversity', 'bias', 'equity', 'ell', 'multicultural', 'disproportional'],
-    9: ['research', 'meta-analysis', 'effect size', 'statistical', 'study', 'evidence-based'],
-    10: ['ethical', 'legal', 'confidential', 'idea', 'ferpa', 'court case', 'nasp', 'mandated', 'tarasoff']
-  };
-  
-  for (const [domain, keywords] of Object.entries(domainKeywords)) {
-    if (keywords.some(kw => text.includes(kw) || rationale.includes(kw))) {
-      domains.push(parseInt(domain));
+  // Read q.domainName first, fall back to numeric q.DOMAIN field
+  if (q.domainName && PRAXIS_DOMAIN_MAP[q.domainName]) {
+    domainId = PRAXIS_DOMAIN_MAP[q.domainName];
+  } else if (q.DOMAIN !== undefined) {
+    domainId = typeof q.DOMAIN === 'number' ? q.DOMAIN : parseInt(q.DOMAIN as string);
+  } else {
+    // Log warning if neither domainName nor DOMAIN is present
+    console.warn(`[QuestionAnalyzer] No domainName or DOMAIN for question ${q.id}. Falling back.`);
+    // Fall back to original domain field if available
+    if (q.domain !== undefined) {
+      domainId = typeof q.domain === 'number' ? q.domain : parseInt(q.domain as string);
     }
   }
-  
-  if (domains.length === 0) domains.push(1); // Default
+
+  if (!domainId || domainId < 1 || domainId > 4) {
+    domainId = 1; // Default fallback
+  }
+
+  const domains = [domainId];
   
   // Detect question type
   const scenarioIndicators = ['school psychologist', 'teacher', 'student', 'parent', 'dr.'];
-  const isScenario = scenarioIndicators.some(ind => text.includes(ind)) && q.question.length > 150;
+  const isScenario = scenarioIndicators.some(ind => text.includes(ind)) && text.length > 150;
   
   // Detect stem type
   let stemType = 'Other';
@@ -99,22 +120,14 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
   if (stemType === 'First Step' || isScenario) dok = 3;
   if (text.includes('definition') || text.includes('which of the following is')) dok = 1;
   
-  // Extract key concepts being tested
+  // Extract key concepts being tested (Requires generic domain array passed in next iteration, 
+  // bypassing hardcoded extraction for now to decouple it)
   const keyConcepts: string[] = [];
-  for (const domain of domains) {
-    const domainInfo = NASP_DOMAINS[domain as keyof typeof NASP_DOMAINS];
-    if (domainInfo?.keyConcepts) {
-      for (const concept of domainInfo.keyConcepts) {
-        if (text.includes(concept) || rationale.includes(concept)) {
-          keyConcepts.push(concept);
-        }
-      }
-    }
-  }
+  // For now, keyConcepts can be mapped later when we have complete Domain integration in context.
   
   return {
     ...q,
-    skillId: QUESTION_SKILL_LOOKUP[q.id],
+    skillId: q.skillId || QUESTION_SKILL_LOOKUP[q.id],
     domains,
     dok,
     questionType: isScenario ? 'Scenario-Based' : 'Direct Knowledge',
