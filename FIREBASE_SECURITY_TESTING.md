@@ -1,5 +1,7 @@
 # Firebase Security Rules Testing Guide
 
+> Status: Canonical operational guide. Reviewed during documentation consolidation on 2026-03-14. Use this with `DEPLOY_FIREBASE_RULES.md` to validate Firestore security behavior.
+
 This guide helps you verify that Firestore security rules are working correctly.
 
 ## Quick Test
