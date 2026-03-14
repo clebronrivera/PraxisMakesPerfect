@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs';
-import questionSkillMap from './src/data/question-skill-map.json';
+import questionSkillMap from '../src/data/question-skill-map.json';
 
 /**
  * Syncs question IDs from question-skill-map.json into skill-map.ts

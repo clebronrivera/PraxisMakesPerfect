@@ -1,9 +1,9 @@
 // Test script for question generation system
 // Generates 3 questions for each skill and displays full details
 
-import { generateQuestions } from './src/brain/question-generator';
-import { validateQuestion } from './src/brain/question-validator';
-import { getSkillById } from './src/brain/skill-map';
+import { generateQuestions } from '../src/brain/question-generator';
+import { validateQuestion } from '../src/brain/question-validator';
+import { getSkillById } from '../src/brain/skill-map';
 
 const skillsToTest = [
   'DBDM-S01', // Reliability Type Selection

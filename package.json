@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "scan:types": "tsc -p tsconfig.json --noEmit",
+    "scan:knip": "knip --config knip.json --include files,exports,dependencies --no-config-hints",
+    "scan:cycles": "dpdm 'App.tsx' 'src/main.tsx' 'api/**/*.ts' 'scripts/**/*.{ts,cjs}' 'src/scripts/**/*.ts' 'tests/**/*.ts' --tsconfig tsconfig.json --tree false --warning false -T",
     "diagnostics": "npx tsx src/scripts/run-all-diagnostics.ts",
     "audit:distractors": "npx tsx scripts/audit-distractor-quality.ts",
     "test:banned-terms": "npx tsx scripts/banned-terms-check.ts",
@@ -16,7 +19,9 @@
     "firebase:test-rules": "npx tsx scripts/test-firebase-security.ts"
   },
   "dependencies": {
+    "csv-parse": "^6.1.0",
     "firebase": "^12.8.0",
+    "firebase-admin": "^13.7.0",
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -26,6 +31,8 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.14",
+    "dpdm": "^4.0.1",
+    "knip": "^5.86.0",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.2",

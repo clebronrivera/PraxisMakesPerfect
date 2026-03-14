@@ -1,4 +1,4 @@
-import { SKILL_MAP } from './src/brain/skill-map';
+import { SKILL_MAP } from '../src/brain/skill-map';
 import { writeFileSync } from 'fs';
 
 function generateVisualTree(): string {
