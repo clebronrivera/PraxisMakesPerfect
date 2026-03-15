@@ -1,6 +1,4 @@
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
-import { db } from '../config/firebase';
-import { sanitizeForFirestore } from './firestore';
+import { supabase } from '../config/supabase';
 
 // Constants for weighting
 const SCREENER_WEIGHT = 0.20;
@@ -41,39 +39,51 @@ export async function fetchGlobalScoreInputs(userId: string): Promise<GlobalScor
     throw new Error('userId is required');
   }
 
-  const screenerRef = collection(db, 'responses', userId, 'screener');
-  const screenerSnap = await getDocs(screenerRef);
-  const legacyScreenerResponses = screenerSnap.docs.map(d => d.data() as ScreenerScoreInput);
+  // Fetch all responses (screener, diagnostic, practice) in one go
+  const { data: allResponseLogs, error } = await supabase
+    .from('responses')
+    .select('*')
+    .eq('user_id', userId);
 
-  const responsesRef = collection(db, 'users', userId, 'responses');
-  const responsesSnap = await getDocs(responsesRef);
-  const allResponseLogs = responsesSnap.docs.map(d => d.data() as ResponseScoreInput);
+  if (error) {
+     console.error('[fetchGlobalScoreInputs] Error fetching from Supabase:', error);
+     return { screenerResponses: [], responseLogs: [] };
+  }
 
-  const sharedScreenerResponses: ScreenerScoreInput[] = allResponseLogs
-    .filter(log => log.assessmentType === 'screener')
+  const rawLogs = allResponseLogs || [];
+
+  const sharedScreenerResponses: ScreenerScoreInput[] = rawLogs
+    .filter(log => log.assessment_type === 'screener')
     .flatMap((log) => {
-      const domainIds = Array.isArray(log.domainIds)
-        ? log.domainIds
-        : (log.domainId !== undefined && log.domainId !== null ? [log.domainId] : []);
-      const normalizedDomains = domainIds
-        .map(domainId => Number(domainId))
-        .filter(domainId => Number.isFinite(domainId));
+      const domainIds = Array.isArray(log.domain_ids) && log.domain_ids.length > 0
+        ? log.domain_ids
+        : (log.domain_id !== undefined && log.domain_id !== null ? [log.domain_id] : []);
+        
+      const normalizedDomains: number[] = domainIds
+        .map((id: any) => Number(id))
+        .filter((id: number) => Number.isFinite(id));
 
-      return normalizedDomains.map(domainId => ({
-        domain_id: domainId,
-        skill_id: log.skillId,
-        is_correct: log.isCorrect,
+      return normalizedDomains.map((domain_id: number) => ({
+        domain_id,
+        skill_id: log.skill_id,
+        is_correct: log.is_correct,
         confidence: log.confidence
       }));
     });
 
-  const responseLogs = allResponseLogs.filter(log => log.assessmentType !== 'screener');
-  const screenerResponses = sharedScreenerResponses.length > 0
-    ? sharedScreenerResponses
-    : legacyScreenerResponses;
+  const responseLogs: ResponseScoreInput[] = rawLogs
+    .filter(log => log.assessment_type !== 'screener')
+    .map(log => ({
+       assessmentType: log.assessment_type,
+       domainIds: log.domain_ids,
+       domainId: log.domain_id,
+       skillId: log.skill_id,
+       isCorrect: log.is_correct,
+       confidence: log.confidence
+    }));
 
   return {
-    screenerResponses,
+    screenerResponses: sharedScreenerResponses,
     responseLogs
   };
 }
@@ -251,9 +261,15 @@ export function calculateGlobalScoresFromData({
   return result;
 }
 
-async function saveGlobalScores(userId: string, result: GlobalScoreResult): Promise<void> {
-  const docRef = doc(db, 'userProgress', userId, 'globalScores', 'latest');
-  await setDoc(docRef, sanitizeForFirestore(result));
+async function saveGlobalScores(_userId: string, result: GlobalScoreResult): Promise<void> {
+  // If we wanted to store the global scores persistently in Supabase:
+  /*
+  const { error } = await supabase
+    .from('user_progress')
+    .update({ global_scores: result })
+    .eq('user_id', _userId);
+  */
+  console.log('[saveGlobalScores] Supabase Global Scores calculation produced:', result);
 }
 
 export async function calculateAndSaveGlobalScores(userId: string): Promise<GlobalScoreResult> {

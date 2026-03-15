@@ -1,18 +1,11 @@
+// src/hooks/useBetaFeedback.ts
+// Hook for submitting and managing beta feedback
+// Re-implemented to use Supabase instead of Firestore
+
 import { useCallback, useState } from 'react';
-import {
-  addDoc,
-  collection,
-  getDocs,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
-  doc
-} from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
-import { sanitizeForFirestore } from '../utils/firestore';
 
 export type BetaFeedbackCategory =
   | 'bug'
@@ -42,6 +35,8 @@ export interface BetaFeedback {
   createdAt: any;
   questionId?: string;
   appVersion?: string;
+  session_id?: string;
+  browser_info?: string;
 }
 
 export function useBetaFeedback() {
@@ -57,14 +52,20 @@ export function useBetaFeedback() {
 
     setIsSubmitting(true);
     try {
-      await addDoc(collection(db, 'betaFeedback'), sanitizeForFirestore({
-        ...feedback,
-        userId: user.uid,
-        userEmail: user.email ?? null,
-        userDisplayName: user.displayName ?? null,
-        status: 'new' as const,
-        createdAt: serverTimestamp()
-      }));
+      await supabase.from('beta_feedback').insert([{
+        user_id: user.id,
+        user_email: user.email ?? null,
+        user_display_name: user.user_metadata?.full_name ?? user.user_metadata?.displayName ?? null,
+        category: feedback.category,
+        context_type: feedback.contextType,
+        feature_area: feedback.featureArea,
+        message: feedback.message,
+        page: feedback.page,
+        status: 'new',
+        session_id: feedback.session_id,
+        app_version: feedback.appVersion,
+        browser_info: feedback.browser_info
+      }]);
     } catch (error) {
       console.error('[useBetaFeedback] Error submitting feedback:', error);
       throw error;
@@ -79,16 +80,29 @@ export function useBetaFeedback() {
     }
 
     try {
-      const feedbackQuery = query(
-        collection(db, 'betaFeedback'),
-        orderBy('createdAt', 'desc')
-      );
-      const snapshot = await getDocs(feedbackQuery);
+      const { data, error } = await supabase
+        .from('beta_feedback')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      return snapshot.docs.map((feedbackDoc) => ({
-        id: feedbackDoc.id,
-        ...feedbackDoc.data()
-      } as BetaFeedback));
+      if (error) throw error;
+
+      return (data || []).map(row => ({
+        id: row.id,
+        userId: row.user_id,
+        userEmail: row.user_email,
+        userDisplayName: row.user_display_name,
+        category: row.category as BetaFeedbackCategory,
+        contextType: row.context_type as any,
+        featureArea: row.feature_area,
+        message: row.message,
+        page: row.page,
+        status: row.status as BetaFeedbackStatus,
+        createdAt: row.created_at,
+        appVersion: row.app_version,
+        session_id: row.session_id,
+        browser_info: row.browser_info
+      }));
     } catch (error) {
       console.error('[useBetaFeedback] Error fetching feedback:', error);
       return [];
@@ -103,9 +117,12 @@ export function useBetaFeedback() {
       throw new Error('Admin access required');
     }
 
-    await updateDoc(doc(db, 'betaFeedback', feedbackId), {
-      status
-    });
+    const { error } = await supabase
+      .from('beta_feedback')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', feedbackId);
+
+    if (error) throw error;
   }, [user]);
 
   return {

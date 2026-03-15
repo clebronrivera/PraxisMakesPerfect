@@ -1,12 +1,11 @@
 // src/hooks/useQuestionReports.ts
 // Hook for submitting and managing question reports
+// Re-implemented to use Supabase instead of Firestore
 
 import { useState, useCallback } from 'react';
-import { collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
-import { sanitizeForFirestore } from '../utils/firestore';
 
 export interface QuestionReport {
   id?: string;
@@ -15,11 +14,11 @@ export interface QuestionReport {
   userEmail?: string | null;
   userDisplayName?: string | null;
   assessmentType: 'pre' | 'full' | 'practice';
-  targets: string[]; // What was reported (question stem, answer choices, etc.)
-  issueTypes: string[]; // Type of issue (grammar, clarity, etc.)
+  targets: string[]; 
+  issueTypes: string[]; 
   severity: 'minor' | 'major' | 'critical';
   notes: string;
-  createdAt: any; // serverTimestamp
+  createdAt: any; 
   status: 'open' | 'triaged' | 'fixed' | 'wont-fix';
   questionSnapshot?: {
     stem: string;
@@ -35,9 +34,6 @@ export function useQuestionReports() {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /**
-   * Submit a question report to Firestore
-   */
   const submitReport = useCallback(async (
     report: Omit<QuestionReport, 'userId' | 'createdAt' | 'status'>
   ): Promise<void> => {
@@ -47,15 +43,20 @@ export function useQuestionReports() {
 
     setIsSubmitting(true);
     try {
-      const reportsRef = collection(db, 'questionReports');
-      await addDoc(reportsRef, sanitizeForFirestore({
-        ...report,
-        userId: user.uid,
-        userEmail: user.email ?? null,
-        userDisplayName: user.displayName ?? null,
-        status: 'open' as const,
-        createdAt: serverTimestamp()
-      }));
+      await supabase.from('question_reports').insert([{
+        user_id: user.id,
+        user_email: user.email ?? null,
+        user_display_name: user.user_metadata?.full_name ?? user.user_metadata?.displayName ?? null,
+        question_id: report.questionId,
+        assessment_type: report.assessmentType,
+        targets: report.targets,
+        issue_types: report.issueTypes,
+        severity: report.severity,
+        notes: report.notes,
+        status: 'open',
+        question_snapshot: report.questionSnapshot,
+        app_version: report.appVersion
+      }]);
     } catch (error) {
       console.error('[useQuestionReports] Error submitting report:', error);
       throw error;
@@ -64,54 +65,72 @@ export function useQuestionReports() {
     }
   }, [user]);
 
-  /**
-   * Get reports for a specific question
-   */
   const getReportsByQuestion = useCallback(async (questionId: string): Promise<QuestionReport[]> => {
     if (!user) return [];
 
     try {
-      const reportsRef = collection(db, 'questionReports');
-      const isAdmin = isAdminEmail(user.email);
-      const q = isAdmin
-        ? query(
-            reportsRef,
-            where('questionId', '==', questionId)
-          )
-        : query(
-            reportsRef,
-            where('questionId', '==', questionId),
-            where('userId', '==', user.uid)
-          );
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as QuestionReport & { id: string })).sort((a, b) => {
-        const aMillis = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0;
-        const bMillis = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0;
-        return bMillis - aMillis;
-      });
+      let query = supabase
+        .from('question_reports')
+        .select('*')
+        .eq('question_id', questionId)
+        .order('created_at', { ascending: false });
+
+      if (!isAdminEmail(user.email)) {
+        query = query.eq('user_id', user.id);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      return (data || []).map(row => ({
+        id: row.id,
+        questionId: row.question_id,
+        userId: row.user_id,
+        userEmail: row.user_email,
+        userDisplayName: row.user_display_name,
+        assessmentType: row.assessment_type as any,
+        targets: row.targets || [],
+        issueTypes: row.issue_types || [],
+        severity: row.severity as any,
+        notes: row.notes,
+        status: row.status as any,
+        createdAt: row.created_at,
+        questionSnapshot: row.question_snapshot,
+        appVersion: row.app_version
+      }));
     } catch (error) {
       console.error('[useQuestionReports] Error fetching reports:', error);
       return [];
     }
   }, [user]);
 
-  /**
-   * Get all reports (admin function)
-   */
   const getAllReports = useCallback(async (): Promise<(QuestionReport & { id: string })[]> => {
     if (!user || !isAdminEmail(user.email)) return [];
 
     try {
-      const reportsRef = collection(db, 'questionReports');
-      const q = query(reportsRef, orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as QuestionReport & { id: string }));
+      const { data, error } = await supabase
+        .from('question_reports')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map(row => ({
+        id: row.id,
+        questionId: row.question_id,
+        userId: row.user_id,
+        userEmail: row.user_email,
+        userDisplayName: row.user_display_name,
+        assessmentType: row.assessment_type as any,
+        targets: row.targets || [],
+        issueTypes: row.issue_types || [],
+        severity: row.severity as any,
+        notes: row.notes,
+        status: row.status as any,
+        createdAt: row.created_at,
+        questionSnapshot: row.question_snapshot,
+        appVersion: row.app_version
+      }));
     } catch (error) {
       console.error('[useQuestionReports] Error fetching all reports:', error);
       return [];
@@ -126,9 +145,12 @@ export function useQuestionReports() {
       throw new Error('Admin access required');
     }
 
-    await updateDoc(doc(db, 'questionReports', reportId), {
-      status
-    });
+    const { error } = await supabase
+      .from('question_reports')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', reportId);
+
+    if (error) throw error;
   }, [user]);
 
   return {

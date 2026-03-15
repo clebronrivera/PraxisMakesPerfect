@@ -1,21 +1,6 @@
-// src/contexts/AuthContext.tsx
-// Manages authentication state across the app
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-  User,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-  updateProfile,
-  sendPasswordResetEmail
-} from 'firebase/auth';
-import { auth } from '../config/firebase';
-import { db } from '../config/firebase';
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '../config/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -31,30 +16,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const initialUserProfile = {
-  preAssessmentComplete: false,
-  fullAssessmentComplete: false,
-  domainScores: {},
-  skillScores: {},
-  weakestDomains: [],
-  factualGaps: [],
-  errorPatterns: [],
-  totalQuestionsSeen: 0,
-  streak: 0,
-  flaggedQuestions: {},
-  distractorErrors: {},
-  skillDistractorErrors: {},
-  preAssessmentQuestionIds: [],
-  fullAssessmentQuestionIds: [],
-  recentPracticeQuestionIds: [],
-  screenerItemIds: [],
-  practiceResponseCount: 0,
-  migrationVersion: 1,
-  screenerComplete: false,
-  diagnosticComplete: false,
-  lastSession: null
-};
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const trackAuthenticatedSession = async (currentUser: User) => {
     if (typeof window !== 'undefined') {
-      const sessionKey = `pmp-auth-session:${currentUser.uid}`;
+      const sessionKey = `pmp-auth-session:${currentUser.id}`;
       if (window.sessionStorage.getItem(sessionKey)) {
         return;
       }
@@ -70,31 +31,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const userDocRef = doc(db, 'users', currentUser.uid);
-      const existingSnapshot = await getDoc(userDocRef);
-      const existingData = existingSnapshot.data() as {
-        authMetrics?: {
-          loginCount?: number;
-          createdAt?: any;
-        };
-      } | undefined;
+      // Create or update user tracking inside Supabase's user_progress
+      const { data: existingData } = await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .single();
+        
+      const updates = {
+        user_id: currentUser.id,
+        email: currentUser.email ?? null,
+        display_name: currentUser.user_metadata?.full_name ?? currentUser.user_metadata?.displayName ?? null,
+        login_count: ((existingData?.login_count as number) ?? 0) + 1,
+        last_login_at: new Date().toISOString(),
+        last_active_at: new Date().toISOString()
+      };
 
-      await setDoc(userDocRef, {
-        ...(!existingSnapshot.exists() ? initialUserProfile : {}),
-        authMetrics: {
-          email: currentUser.email ?? null,
-          displayName: currentUser.displayName ?? null,
-          isAnonymous: currentUser.isAnonymous,
-          providerIds: currentUser.providerData
-            .map((provider) => provider.providerId)
-            .filter(Boolean),
-          loginCount: (existingData?.authMetrics?.loginCount ?? 0) + 1,
-          createdAt: existingData?.authMetrics?.createdAt ?? serverTimestamp(),
-          lastLoginAt: serverTimestamp(),
-          lastActiveAt: serverTimestamp()
-        },
-        lastUpdated: serverTimestamp()
-      }, { merge: true });
+      await supabase
+        .from('user_progress')
+        .upsert(updates, { onConflict: 'user_id' });
+        
     } catch (trackingError) {
       console.error('[Auth] Failed to track authenticated session:', trackingError);
     }
@@ -102,29 +58,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Listen for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
-      if (nextUser?.isAnonymous) {
-        if (typeof window !== 'undefined') {
-          window.sessionStorage.removeItem(`pmp-auth-session:${nextUser.uid}`);
-        }
-        setError('Guest access has been removed. Please sign in with Google or email.');
-        setUser(null);
-        setLoading(false);
-        void signOut(auth).catch((signOutError) => {
-          console.error('[Auth] Failed to clear anonymous session:', signOutError);
-        });
-        return;
-      }
-
-      setUser(nextUser);
+    // Check active session immediately
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       setLoading(false);
-
-      if (nextUser) {
-        void trackAuthenticatedSession(nextUser);
+      if (session?.user) {
+        void trackAuthenticatedSession(session.user);
       }
     });
 
-    return () => unsubscribe();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        const nextUser = session?.user ?? null;
+        setUser(nextUser);
+        setLoading(false);
+
+        if (nextUser) {
+          void trackAuthenticatedSession(nextUser);
+        } else if (typeof window !== 'undefined') {
+          // Clear session key if they log out
+          for (let i = 0; i < window.sessionStorage.length; i++) {
+            const key = window.sessionStorage.key(i);
+            if (key?.startsWith('pmp-auth-session:')) {
+              window.sessionStorage.removeItem(key);
+            }
+          }
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Sign in with email and password
@@ -132,21 +95,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (signInError) throw signInError;
     } catch (err: any) {
-      // Handle specific sign-in errors with user-friendly messages
-      if (err.code === 'auth/user-not-found') {
-        setError('No account found with this email. Please sign up first.');
-      } else if (err.code === 'auth/wrong-password') {
-        setError('Incorrect password. Please try again or reset your password.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Invalid email address. Please check and try again.');
-      } else if (err.code === 'auth/user-disabled') {
-        setError('This account has been disabled. Please contact support.');
-      } else if (err.code === 'auth/too-many-requests') {
-        setError('Too many failed attempts. Please try again later or reset your password.');
-      } else if (err.code === 'auth/network-request-failed') {
-        setError('Network error. Please check your internet connection.');
+      if (err.message === 'Invalid login credentials') {
+        setError('Incorrect email or password. Please try again.');
+      } else if (err.message === 'Email not confirmed') {
+        setError('Please verify your email address before signing in.');
       } else {
         setError(err.message || 'Failed to sign in. Please try again.');
       }
@@ -161,22 +117,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       setLoading(true);
-      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const { error: signUpError } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            displayName,
+            full_name: displayName
+          }
+        }
+      });
       
-      // Set display name if provided
-      if (displayName && result.user) {
-        await updateProfile(result.user, { displayName });
-      }
+      if (signUpError) throw signUpError;
     } catch (err: any) {
-      // Handle specific sign-up errors with user-friendly messages
-      if (err.code === 'auth/email-already-in-use') {
+      if (err.message.includes('User already registered')) {
         setError('An account with this email already exists. Please sign in instead.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Invalid email address. Please check and try again.');
-      } else if (err.code === 'auth/weak-password') {
+      } else if (err.message.includes('Password')) {
         setError('Password is too weak. Please use at least 6 characters.');
-      } else if (err.code === 'auth/network-request-failed') {
-        setError('Network error. Please check your internet connection.');
       } else {
         setError(err.message || 'Failed to create account. Please try again.');
       }
@@ -191,36 +148,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       setLoading(true);
-      const provider = new GoogleAuthProvider();
-      // Add additional scopes if needed
-      provider.addScope('profile');
-      provider.addScope('email');
-      // Set custom parameters
-      provider.setCustomParameters({
-        prompt: 'select_account' // Force account selection
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
       });
-      const result = await signInWithPopup(auth, provider);
-      // Google sign-in successful - user is automatically signed in
-      // The user object will be available via onAuthStateChanged
-      console.log('[Auth] Google sign-in successful:', result.user.email);
+      if (error) throw error;
     } catch (err: any) {
-      // Handle specific Google sign-in errors
-      if (err.code === 'auth/popup-closed-by-user') {
-        setError('Sign-in popup was closed. Please try again.');
-      } else if (err.code === 'auth/popup-blocked') {
-        setError('Popup was blocked. Please allow popups for this site and try again.');
-      } else if (err.code === 'auth/network-request-failed') {
-        setError('Network error. Please check your internet connection.');
-      } else if (err.code === 'auth/unauthorized-domain') {
-        setError('This domain is not authorized. Please contact support.');
-      } else if (err.code === 'auth/operation-not-allowed') {
-        setError('Google sign-in is not enabled. Please contact support.');
-      } else {
-        setError(err.message || 'Failed to sign in with Google. Please try again.');
-      }
-      throw err;
-    } finally {
+      setError(err.message || 'Failed to sign in with Google. Please try again.');
       setLoading(false);
+      throw err;
     }
   };
 
@@ -229,18 +170,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       setLoading(true);
-      await sendPasswordResetEmail(auth, email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
     } catch (err: any) {
-      // Handle specific password reset errors
-      if (err.code === 'auth/user-not-found') {
-        setError('No account found with this email address.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Invalid email address. Please check and try again.');
-      } else if (err.code === 'auth/network-request-failed') {
-        setError('Network error. Please check your internet connection.');
-      } else {
-        setError(err.message || 'Failed to send password reset email. Please try again.');
-      }
+      setError(err.message || 'Failed to send password reset email. Please try again.');
       throw err;
     } finally {
       setLoading(false);
@@ -252,9 +187,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       if (user && typeof window !== 'undefined') {
-        window.sessionStorage.removeItem(`pmp-auth-session:${user.uid}`);
+        window.sessionStorage.removeItem(`pmp-auth-session:${user.id}`);
       }
-      await signOut(auth);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
     } catch (err: any) {
       setError(err.message);
       throw err;

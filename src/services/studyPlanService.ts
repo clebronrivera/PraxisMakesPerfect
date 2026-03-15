@@ -1,16 +1,10 @@
-import {
-  doc,
-  getDoc,
-  setDoc
-} from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
 import { Domain, Skill } from '../types/content';
 import {
   GlobalScoreInputs,
   calculateGlobalScoresFromData,
   fetchGlobalScoreInputs
 } from '../utils/globalScoreCalculator';
-import { sanitizeForFirestore } from '../utils/firestore';
 import { getSkillById } from '../brain/skill-map';
 import type { StudyPlanApiRequest, StudyPlanApiResponse } from '../types/studyPlanApi';
 
@@ -153,9 +147,10 @@ interface GenerateStudyPlanArgs {
   domains: Domain[];
 }
 
-function getStudyPlanDocRef(userId: string) {
-  return doc(db, 'studyPlans', userId, 'plans', 'latest');
-}
+// Using Supabase instead
+// function getStudyPlanDocRef(userId: string) {
+//   return doc(db, 'studyPlans', userId, 'plans', 'latest');
+// }
 
 function buildDomainLookup(domains: Domain[]): Map<number, string> {
   const lookup = new Map<number, string>();
@@ -785,13 +780,24 @@ function normalizeStudyPlanDocument(data: Record<string, unknown>): StudyPlanDoc
 }
 
 export async function getLatestStudyPlan(userId: string): Promise<StudyPlanDocument | null> {
-  const planSnapshot = await getDoc(getStudyPlanDocRef(userId));
+  const { data, error } = await supabase
+    .from('study_plans')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
 
-  if (!planSnapshot.exists()) {
+  if (error || !data) {
+    if (error && error.code !== 'PGRST116') {
+      console.error('[getLatestStudyPlan] Supabase error:', error);
+    }
     return null;
   }
 
-  return normalizeStudyPlanDocument(planSnapshot.data() as Record<string, unknown>);
+  // Assuming `data.plan_document` stores the JSON matching StudyPlanDocument structure
+  const rawDocument = data.plan_document as Record<string, unknown>;
+  return normalizeStudyPlanDocument(rawDocument);
 }
 
 export async function generateStudyPlan({
@@ -808,12 +814,18 @@ export async function generateStudyPlan({
     throw new Error('idToken is required');
   }
 
-  const [profileSnapshot, scoreInputs] = await Promise.all([
-    getDoc(doc(db, 'users', userId)),
-    fetchGlobalScoreInputs(userId)
-  ]);
+  const { data: profileRow } = await supabase
+    .from('user_progress')
+    .select('screener_complete, screener_results')
+    .eq('user_id', userId)
+    .single();
+    
+  const scoreInputs = await fetchGlobalScoreInputs(userId);
 
-  const profile = (profileSnapshot.exists() ? profileSnapshot.data() : {}) as UserProfileDoc;
+  const profile = profileRow ? {
+    screenerComplete: profileRow.screener_complete,
+    screenerResults: profileRow.screener_results as any,
+  } : {} as UserProfileDoc;
 
   if (!profile.screenerComplete) {
     throw new Error('Complete the screener before generating a study guide.');
@@ -879,7 +891,10 @@ export async function generateStudyPlan({
     sourceSummary
   };
 
-  await setDoc(getStudyPlanDocRef(userId), sanitizeForFirestore(studyPlanDocument));
+  await supabase.from('study_plans').insert([{
+    user_id: userId,
+    plan_document: studyPlanDocument
+  }]);
 
   return studyPlanDocument;
 }

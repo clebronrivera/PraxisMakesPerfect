@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
 import type { Question, Skill, Domain } from '../types/content';
 import type { EngineConfig } from '../types/engine';
 
@@ -18,10 +17,6 @@ const PRAXIS_DOMAIN_NAMES: Record<number, string> = {
   4: 'Foundations of School Psychology'
 };
 
-// Since the platform is currently fully static and loads from a bundled JSON, 
-// this Provider creates the boundary line for where dynamic content 
-// (e.g. from Firebase) will eventually be injected into the react tree.
-
 export interface ContentContextState {
   questions: Question[];
   skills: Skill[];
@@ -35,7 +30,6 @@ const ContentContext = createContext<ContentContextState | undefined>(undefined)
 
 interface ContentProviderProps {
   children: ReactNode;
-  // In the future, this can take a 'contentSource' or 'courseId' to load dynamically
 }
 
 export function ContentProvider({ children }: ContentProviderProps) {
@@ -50,19 +44,32 @@ export function ContentProvider({ children }: ContentProviderProps) {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const qSnap = await getDocs(collection(db, 'questions'));
-        const sSnap = await getDocs(collection(db, 'skills'));
+        const [qRes, sRes] = await Promise.all([
+          supabase.from('questions').select('*'),
+          supabase.from('skills').select('*')
+        ]);
+        
+        let questionsData: Question[] = [];
+        let skillsData: Skill[] = [];
 
-        const questionsData = qSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Question));
-        const skillsData = sSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Skill));
+        if (qRes.error && qRes.error.code !== 'PGRST116') {
+           console.warn('Questions table not ready or empty in Supabase:', qRes.error);
+        } else if (qRes.data) {
+           questionsData = qRes.data as unknown as Question[];
+        }
 
-        // Derive domain ID from either q.domain or q.domainName
+        if (sRes.error && sRes.error.code !== 'PGRST116') {
+           console.warn('Skills table not ready or empty in Supabase:', sRes.error);
+        } else if (sRes.data) {
+           skillsData = sRes.data as unknown as Skill[];
+        }
+
         const resolveDomainId = (q: any): number | null => {
           if (q.domain && typeof q.domain === 'number' && q.domain >= 1 && q.domain <= 4) {
-            return q.domain;
+             return q.domain;
           }
           if (q.domainName && PRAXIS_DOMAIN_MAP[q.domainName]) {
-            return PRAXIS_DOMAIN_MAP[q.domainName];
+             return PRAXIS_DOMAIN_MAP[q.domainName];
           }
           return null;
         };

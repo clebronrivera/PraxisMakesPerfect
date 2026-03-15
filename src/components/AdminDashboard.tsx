@@ -12,8 +12,7 @@ import {
   Shield,
   Users
 } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
 import { useQuestionReports, QuestionReport } from '../hooks/useQuestionReports';
 import {
   BetaFeedback,
@@ -36,12 +35,10 @@ interface UserAnalyticsDoc {
   authMetrics?: {
     email?: string | null;
     displayName?: string | null;
-    isAnonymous?: boolean;
     loginCount?: number;
     createdAt?: any;
     lastLoginAt?: any;
     lastActiveAt?: any;
-    providerIds?: string[];
   };
 }
 
@@ -79,24 +76,13 @@ function toMillis(value: any): number | null {
   if (!value) {
     return null;
   }
-
   if (typeof value === 'number') {
     return value;
   }
-
   if (value instanceof Date) {
     return value.getTime();
   }
-
-  if (typeof value?.seconds === 'number') {
-    return value.seconds * 1000;
-  }
-
-  if (typeof value?.toMillis === 'function') {
-    return value.toMillis();
-  }
-
-  return null;
+  return new Date(value).getTime();
 }
 
 function formatDate(value: any): string {
@@ -104,7 +90,6 @@ function formatDate(value: any): string {
   if (!millis) {
     return 'Unknown';
   }
-
   return new Date(millis).toLocaleString();
 }
 
@@ -152,16 +137,31 @@ export default function AdminDashboard({
 
     setIsRefreshing(true);
     try {
-      const [usersSnapshot, allReports, allFeedback] = await Promise.all([
-        getDocs(collection(db, 'users')),
+      const [{ data: usersData, error: usersError }, allReports, allFeedback] = await Promise.all([
+        supabase.from('user_progress').select('*'),
         getAllReports(),
         getAllFeedback()
       ]);
 
-      const allUsers = usersSnapshot.docs.map((userDoc) => ({
-        id: userDoc.id,
-        ...userDoc.data()
-      } as UserAnalyticsDoc));
+      if (usersError) throw usersError;
+
+      const allUsers: UserAnalyticsDoc[] = (usersData || []).map(row => ({
+        id: row.user_id,
+        totalQuestionsSeen: row.total_questions_seen,
+        practiceResponseCount: row.practice_response_count,
+        screenerComplete: row.screener_complete,
+        diagnosticComplete: row.diagnostic_complete,
+        fullAssessmentComplete: row.full_assessment_complete,
+        lastUpdated: row.updated_at,
+        authMetrics: {
+          email: row.email,
+          displayName: row.display_name,
+          loginCount: row.login_count,
+          createdAt: row.created_at,
+          lastLoginAt: row.last_login_at,
+          lastActiveAt: row.last_active_at
+        }
+      }));
 
       allUsers.sort((a, b) => (getActivityTimestamp(b) ?? 0) - (getActivityTimestamp(a) ?? 0));
 
@@ -407,7 +407,7 @@ export default function AdminDashboard({
                               {entry.authMetrics?.displayName || entry.authMetrics?.email || entry.id}
                             </p>
                             <p className="text-sm text-slate-500">
-                              {entry.authMetrics?.email || (entry.authMetrics?.isAnonymous ? 'Anonymous user' : 'No email on record')}
+                              {entry.authMetrics?.email || 'No email on record'}
                             </p>
                           </div>
                           <div className="text-right text-sm text-slate-400">
@@ -606,7 +606,7 @@ export default function AdminDashboard({
                             {entry.authMetrics?.displayName || entry.authMetrics?.email || entry.id}
                           </p>
                           <p className="text-slate-500">
-                            {entry.authMetrics?.email || (entry.authMetrics?.isAnonymous ? 'Anonymous user' : 'No email')}
+                            {entry.authMetrics?.email || 'No email'}
                           </p>
                         </td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.createdAt || entry.lastUpdated)}</td>
