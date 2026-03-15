@@ -12,6 +12,13 @@ Use these files as the active documentation set:
 - [CODEBASE_OVERVIEW.md](/Users/lebron/Documents/PraxisMakesPerfect/CODEBASE_OVERVIEW.md)
 - [ASSESSMENT_DATA_FLOW_ANALYSIS.md](/Users/lebron/Documents/PraxisMakesPerfect/ASSESSMENT_DATA_FLOW_ANALYSIS.md)
 
+Working grounding docs:
+
+- [docs/DOCS_SYSTEM.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/DOCS_SYSTEM.md)
+- [AGENTS.md](/Users/lebron/Documents/PraxisMakesPerfect/AGENTS.md)
+- [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
+- [docs/ISSUE_LEDGER.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/ISSUE_LEDGER.md)
+
 Operational guides kept in root:
 
 - [FIREBASE_AUTH_SETUP.md](/Users/lebron/Documents/PraxisMakesPerfect/FIREBASE_AUTH_SETUP.md)
@@ -66,7 +73,7 @@ npm run firebase:test-rules
 - Question bank: `src/data/questions.json`
 - Skill taxonomy: `src/brain/skill-map.ts`
 - Assessment builder: `src/utils/assessment-builder.ts`
-- Adaptive and diagnostic logic: `src/brain/*`, `src/hooks/*`, `src/components/*`
+- Assessment and adaptive logic: `src/brain/*`, `src/hooks/*`, `src/components/*`
 
 ## Repo Layout
 

@@ -11,7 +11,7 @@ import { SkillId, getSkillById } from './skill-map';
  * Low+Wrong: x1.0 (expected gap)
  * Medium: x1.0 (neutral)
  */
-export function calculateConfidenceWeight(
+function calculateConfidenceWeight(
   confidence: 'low' | 'medium' | 'high',
   isCorrect: boolean
 ): number {
@@ -162,28 +162,3 @@ export function calculateLearningState(
   return 'emerging';
 }
 
-/**
- * Get the next learning state in progression
- */
-export function getNextState(current: LearningState): LearningState | null {
-  const progression: LearningState[] = ['emerging', 'developing', 'proficient', 'mastery'];
-  const currentIndex = progression.indexOf(current);
-  return currentIndex < progression.length - 1 ? progression[currentIndex + 1] : null;
-}
-
-/**
- * Check if a state transition occurred
- */
-export function didStateTransition(
-  oldState: LearningState | undefined,
-  newState: LearningState
-): boolean {
-  if (!oldState) return true; // First time tracking
-  if (oldState === newState) return false;
-  
-  const progression: LearningState[] = ['emerging', 'developing', 'proficient', 'mastery'];
-  const oldIndex = progression.indexOf(oldState);
-  const newIndex = progression.indexOf(newState);
-  
-  return newIndex > oldIndex; // Only count forward progress
-}

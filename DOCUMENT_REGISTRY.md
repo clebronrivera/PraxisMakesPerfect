@@ -6,6 +6,7 @@ This registry records the classification and final disposition of every reviewed
 
 | File | Bucket | Status | Disposition | Replacement / Active Reference | Stale Assumptions | Notes |
 |---|---|---|---|---|---|---|
+| `AGENTS.md` | Canonical source | Active | Keep in root | Self, `docs/WORKFLOW_GROUNDING.md`, `docs/ISSUE_LEDGER.md` | No | Repo-local grounding entrypoint for IDE/agent workflow and where durable rules vs issue notes belong. |
 | `ARCHITECTURE.md` | Archive as historical | Superseded | Archive to `archive/docs-legacy-2026-03-14/` | `REWRITE_DEVELOPMENT_GUIDE.md`, `CODEBASE_OVERVIEW.md` | Yes | Older NASP-centric architecture and local-first assumptions no longer match current direction. |
 | `ASSESSMENT_DATA_FLOW_ANALYSIS.md` | Canonical source | Active | Keep in root | Self | Partial | Valid as a risk analysis; line references may drift, so code still wins. |
 | `AUTHENTICATION_ENHANCEMENTS.md` | Merge into master report | Historical | Archive to `archive/docs-legacy-2026-03-14/` | `FIREBASE_AUTH_SETUP.md`, `README.md` | Yes | Describes completed auth changes but is no longer the active setup guide. |

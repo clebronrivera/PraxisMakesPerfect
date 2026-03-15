@@ -11,7 +11,7 @@ export interface Distractor {
   patternId: PatternId; // Which pattern generated this distractor
 }
 
-export interface AnswerGenerationContext {
+interface AnswerGenerationContext {
   correctAnswer: string;
   template: QuestionTemplate;
   slotValues: Record<string, string>;
@@ -21,7 +21,7 @@ export interface AnswerGenerationContext {
 /**
  * Generates a distractor using a specific pattern
  */
-export function generateDistractor(
+function generateDistractor(
   correctAnswer: string,
   pattern: DistractorPattern,
   context: AnswerGenerationContext

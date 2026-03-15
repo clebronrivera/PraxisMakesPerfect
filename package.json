@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run scan:types && vite build",
     "preview": "vite preview",
+    "generate:practice": "npx tsx scripts/generate-practice.ts",
+    "test:runtime": "npx tsx tests/adaptive-coaching.test.ts && npx tsx tests/code-health.test.ts",
+    "verify:health": "npm run test:runtime && npm run diagnostics && npm run build",
     "scan:types": "tsc -p tsconfig.json --noEmit",
     "scan:knip": "knip --config knip.json --include files,exports,dependencies --no-config-hints",
     "scan:cycles": "dpdm 'App.tsx' 'src/main.tsx' 'api/**/*.ts' 'scripts/**/*.{ts,cjs}' 'src/scripts/**/*.ts' 'tests/**/*.ts' --tsconfig tsconfig.json --tree false --warning false -T",
@@ -16,17 +19,23 @@
     "audit:bank": "npx tsx scripts/audit-question-bank.ts",
     "audit:answers": "npx tsx scripts/audit-answer-distribution.ts",
     "firebase:deploy-rules": "firebase deploy --only firestore:rules",
-    "firebase:test-rules": "npx tsx scripts/test-firebase-security.ts"
+    "firebase:test-rules": "npx tsx scripts/test-firebase-security.ts",
+    "firebase:cleanup-user-data": "npx tsx scripts/cleanup-user-data.ts"
   },
   "dependencies": {
     "csv-parse": "^6.1.0",
+    "docx": "^9.6.1",
+    "file-saver": "^2.0.5",
     "firebase": "^12.8.0",
     "firebase-admin": "^13.7.0",
     "lucide-react": "^0.263.1",
+    "openai": "^6.29.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",

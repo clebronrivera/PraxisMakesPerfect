@@ -1,0 +1,226 @@
+# Workflow Grounding
+
+Status: Active working guide.
+
+This file is the durable place for repo-specific workflow rules, reporting rules, and implementation clarifications that should not get lost in chat history.
+
+Use it for:
+
+- rules that affect how the product should behave
+- reporting and scoring clarifications
+- source-of-truth notes
+- places in code where critical logic lives
+- "do this, not that" implementation guidance
+
+Do not use it for:
+
+- one-off brainstorming
+- long historical narratives
+- temporary personal reminders
+- duplicate changelog entries
+
+## 1. Source Of Truth Model
+
+- `users/{uid}/responses` in Firestore is the source of truth for answered items.
+- `profile` is a cached summary layer, not the deepest source of truth.
+- Assessment and reporting views should derive from actual response data whenever practical.
+- If a summary field and response events disagree, response events win and the cache should be repaired.
+
+## 2. Where To Put Rules
+
+- Product and workflow rules:
+  `docs/WORKFLOW_GROUNDING.md`
+- Discovered bugs, reporting mismatches, and unresolved findings:
+  `docs/ISSUE_LEDGER.md`
+- Historical implementation record:
+  `CHANGELOG.md`
+- Architecture-level constraints:
+  `REWRITE_DEVELOPMENT_GUIDE.md`
+- Maintained map of active docs and how to use them:
+  `docs/DOCS_SYSTEM.md`
+
+## 3. Assessment And Reporting Rules
+
+### 3.1 Assessment and bank terminology
+
+- Product terminology is centralized in:
+  [src/utils/productTerminology.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/productTerminology.ts)
+- `screener` is the active short assessment flow.
+  It is the `50`-question assessment built by `buildScreener()` and is the kept short-form assessment because it spreads coverage across skills for adaptive practice and study-plan seeding.
+  Code anchors:
+  [src/utils/assessment-builder.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessment-builder.ts)
+  [src/components/ScreenerAssessment.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ScreenerAssessment.tsx)
+  [src/hooks/useFirebaseProgress.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useFirebaseProgress.ts)
+- `full assessment` is the `125`-question flow built by `buildFullAssessment()`.
+  In response logs this flow uses `assessmentType: 'full'`.
+  Code anchors:
+  [src/utils/assessment-builder.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessment-builder.ts)
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+  [src/components/FullAssessment.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/FullAssessment.tsx)
+- Current active product reality: there are two assessment flows in the product layer:
+  - screener
+  - full assessment
+- The shared response-event store now distinguishes active screener data with `assessmentType: 'screener'`.
+- Do not use storage field names alone as the public terminology model.
+  When discussing the product, say `screener` for the short assessment and `full assessment` for the long assessment.
+- `question bank` means the canonical curated question source loaded from `src/data/questions.json` and then analyzed into `analyzedQuestions`.
+  This is the main bank used by assessment builders, reporting, and practice.
+  Code anchors:
+  [src/data/questions.json](/Users/lebron/Documents/PraxisMakesPerfect/src/data/questions.json)
+  [src/brain/question-analyzer.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/brain/question-analyzer.ts)
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+- `practice question bank` should be treated as a conversational shortcut for the derived `practice question pool`, not as a second persisted bank.
+  In current code this is the in-memory subset exposed as `practiceQuestions` and filtered again by the adaptive selector.
+  Code anchors:
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+  [src/hooks/useAdaptiveLearning.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useAdaptiveLearning.ts)
+- Post-assessment reporting for the screener should continue using the shared derived report model.
+- Retired or mistaken terminology does not belong in this file.
+  If old naming matters for debugging or migration history, record it in [docs/ISSUE_LEDGER.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/ISSUE_LEDGER.md) instead.
+
+### 3.2 Readiness and domain reporting
+
+- Readiness labels are study-guidance labels, not formal scaled scores.
+- Domain reporting should use actual `correct / attempted` counts for the questions the student actually saw.
+- Do not show misleading fixed denominators unless the denominator is truly part of the assessment design and clearly labeled.
+- Timing metrics are secondary. They should not outrank domain performance, skill gaps, or next study actions.
+- For the current shared assessment report model:
+  - domain `ready` threshold = `70%`
+  - domain `building` threshold = `55%`
+  - overall `on track` threshold = `75%`
+  - overall `building` threshold = `60%`
+  Code anchor:
+  [src/utils/assessmentReport.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentReport.ts)
+- The post-screener report should be based on the current assessment attempt first.
+  Do not silently mix in cumulative practice data unless the UI is explicitly labeled as cumulative.
+
+### 3.3 Foundational gaps
+
+- Foundational or prerequisite gaps should only be surfaced when supported by existing skill metadata.
+- If a missed skill has prerequisite skills, those may be shown as foundational review targets.
+- Do not infer hidden prerequisite relationships that are not present in metadata.
+
+### 3.4 Practice-driven updates
+
+- Domain readiness should be able to evolve as the student answers more items.
+- Prefer reusing a shared report model or derived summary utility instead of hardcoding separate home-page and report-page logic.
+- If the home page displays readiness signals, those signals should come from the same threshold logic used in the report layer.
+- If both current-attempt and cumulative readiness are shown in the product, they must be labeled separately.
+- The current desired direction is:
+  - response events remain the source of truth
+  - report views derive from response events
+  - home-page readiness signals should eventually update as more items are answered, including practice
+
+### 3.5 Practice question repeat policy
+
+- A durable repeat-policy rule has not been fully implemented yet.
+- Current desired behavior discussed in working sessions:
+  - avoid unnecessary repeats
+  - prefer exposing unseen skill/question opportunities before recycling items
+  - if repeats are later allowed for reinforcement, that rule should be explicit and documented
+- Until this is formalized in code and documented here, do not assume the current adaptive selector matches the intended long-term repeat policy.
+
+### 3.6 Home-page domain readiness tiles
+
+- Home-page domain tiles are expected to become more readiness-oriented over time.
+- If gauges, lights, or red-to-green readiness states are added:
+  - they should be backed by the same shared readiness interpretation logic as the report layer
+  - they should clearly communicate whether they are based on current attempt, cumulative history, or a recent rolling window
+  - collapsible domain details should summarize strengths, weaknesses, and growth opportunities rather than raw analytics dumps
+
+### 3.7 AI study guide grounding
+
+- The AI study guide should be grounded in:
+  - screener response data
+  - full-assessment response data
+  - global domain and skill scores
+  - skill metadata such as prerequisites, decision rules, common wrong rules, and required evidence
+- Vocabulary recommendations should come from weak or flagged skills and their supporting metadata, not from invented terminology.
+- Foundational review items should be tied to actual prerequisite chains already defined in the skill map.
+- Study-resource recommendations should stay grounded in available in-product study moves and known skill metadata.
+  Do not invent external books, websites, or citations unless the repo later gains a curated resource source of truth.
+- The study guide may include a mastery checklist and progress toward the planned final full-assessment gate.
+  That checklist should be tied to currently tracked deficit skills and the current unlock threshold rather than free-form AI guesses.
+  Code anchors:
+  [src/services/studyPlanService.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/services/studyPlanService.ts)
+  [src/components/StudyPlanViewer.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/StudyPlanViewer.tsx)
+  [src/utils/globalScoreCalculator.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/globalScoreCalculator.ts)
+  [src/brain/skill-map.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/brain/skill-map.ts)
+
+### 3.8 Study guide API contract
+
+- The study-guide generation API is `POST /api/study-plan`.
+- The request must include:
+  - bearer auth for the signed-in Firebase user
+  - `userId`
+  - `prompt`
+  - `sourceSummary` counts describing the grounded inputs used to build the guide
+- The API must verify that the bearer token user matches the `userId` in the request body before calling the model.
+- The API response should return:
+  - generated text content
+  - model identifier
+  - generation timestamp
+  - API version
+- The client is responsible for:
+  - assembling grounded study inputs from response data and skill metadata
+  - building the prompt
+  - calling the API
+  - validating/parsing the returned content into the persisted study-plan document
+  - saving the latest plan to `studyPlans/{uid}/plans/latest`
+- The user page should load the latest persisted study plan for the signed-in user and replace it immediately in local state after a successful regeneration so the display feels dynamic without requiring a refresh.
+  Code anchors:
+  [api/study-plan.ts](/Users/lebron/Documents/PraxisMakesPerfect/api/study-plan.ts)
+  [src/types/studyPlanApi.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/types/studyPlanApi.ts)
+  [src/services/studyPlanService.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/services/studyPlanService.ts)
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+
+## 4. Current Code Anchors
+
+- Assessment building:
+  [src/utils/assessment-builder.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessment-builder.ts)
+- Assessment constants:
+  [src/utils/assessmentConstants.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentConstants.ts)
+- Firebase progress and response retrieval:
+  [src/hooks/useFirebaseProgress.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useFirebaseProgress.ts)
+- Adaptive practice selection:
+  [src/hooks/useAdaptiveLearning.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useAdaptiveLearning.ts)
+- Shared assessment report derivation:
+  [src/utils/assessmentReport.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentReport.ts)
+- Post-assessment screener UI:
+  [src/components/ScreenerResults.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ScreenerResults.tsx)
+
+## 5. Change Checklist
+
+When changing reporting, readiness, or assessment wiring:
+
+1. Confirm the real source of truth.
+2. Verify denominator logic and threshold logic.
+3. Update shared utilities before patching multiple components.
+4. Add or update an entry in `docs/ISSUE_LEDGER.md` if a bug or mismatch was found.
+5. Update this file if the rule or wiring changed in a durable way.
+6. Update `CHANGELOG.md` if the change is meaningful to repo history.
+7. Update `docs/DOCS_SYSTEM.md` if the role of an active doc changed or a new active doc was added.
+
+## 6. Definition Of Done For Grounded Changes
+
+A change is grounded when:
+
+- the behavior is implemented in code
+- the rule is documented in the right place if it is durable
+- known gaps are logged instead of forgotten
+- the same logic is not reimplemented in multiple UI layers without reason
+- the team can tell where to update the rule next time
+
+## 7. Rule Entry Template
+
+Use this template when adding a new durable rule:
+
+```md
+### Rule: <short name>
+
+- Decision:
+- Why:
+- Source data:
+- Code anchor:
+- Notes / limits:
+```

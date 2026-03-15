@@ -61,3 +61,6 @@ data/export_skills.csv
 
 # Generated audit and regeneration outputs
 distractor-regeneration.log
+
+# Secrets
+serviceAccountKey.json

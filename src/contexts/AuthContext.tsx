@@ -5,7 +5,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   User,
   onAuthStateChanged,
-  signInAnonymously,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
@@ -22,7 +21,6 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
-  signInAnonymous: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, displayName?: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -32,6 +30,30 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const initialUserProfile = {
+  preAssessmentComplete: false,
+  fullAssessmentComplete: false,
+  domainScores: {},
+  skillScores: {},
+  weakestDomains: [],
+  factualGaps: [],
+  errorPatterns: [],
+  totalQuestionsSeen: 0,
+  streak: 0,
+  flaggedQuestions: {},
+  distractorErrors: {},
+  skillDistractorErrors: {},
+  preAssessmentQuestionIds: [],
+  fullAssessmentQuestionIds: [],
+  recentPracticeQuestionIds: [],
+  screenerItemIds: [],
+  practiceResponseCount: 0,
+  migrationVersion: 1,
+  screenerComplete: false,
+  diagnosticComplete: false,
+  lastSession: null
+};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -58,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } | undefined;
 
       await setDoc(userDocRef, {
+        ...(!existingSnapshot.exists() ? initialUserProfile : {}),
         authMetrics: {
           email: currentUser.email ?? null,
           displayName: currentUser.displayName ?? null,
@@ -80,6 +103,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      if (nextUser?.isAnonymous) {
+        if (typeof window !== 'undefined') {
+          window.sessionStorage.removeItem(`pmp-auth-session:${nextUser.uid}`);
+        }
+        setError('Guest access has been removed. Please sign in with Google or email.');
+        setUser(null);
+        setLoading(false);
+        void signOut(auth).catch((signOutError) => {
+          console.error('[Auth] Failed to clear anonymous session:', signOutError);
+        });
+        return;
+      }
+
       setUser(nextUser);
       setLoading(false);
 
@@ -90,20 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => unsubscribe();
   }, []);
-
-  // Sign in anonymously (for trying the app without an account)
-  const signInAnonymous = async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      await signInAnonymously(auth);
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Sign in with email and password
   const signInWithEmail = async (email: string, password: string) => {
@@ -246,7 +268,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     loading,
     error,
-    signInAnonymous,
     signInWithEmail,
     signUpWithEmail,
     signInWithGoogle,

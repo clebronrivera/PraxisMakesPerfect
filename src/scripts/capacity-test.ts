@@ -1,3 +1,5 @@
+export { runCapacityTest } from '../brain/question-capacity';
+
 import { runCapacityTest } from '../brain/question-capacity';
 
 if (import.meta.main) {

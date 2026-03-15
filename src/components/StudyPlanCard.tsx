@@ -36,13 +36,13 @@ export default function StudyPlanCard({
             <div>
               <h3 className="text-xl font-bold text-slate-100">AI Study Guide</h3>
               <p className="text-sm text-slate-400">
-                Generate a personalized plan from your screener, diagnostic, and global score data.
+                Generate a personalized plan with vocabulary gaps, foundational review, study resources, and a mastery checklist from your screener, full assessment, and global score data.
               </p>
             </div>
           </div>
           {!canGenerate && (
             <p className="text-sm text-amber-300">
-              Complete the screener and at least one diagnostic or full assessment to unlock this guide.
+              Complete the screener and at least one full assessment to unlock this guide.
             </p>
           )}
         </div>

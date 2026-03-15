@@ -10,7 +10,7 @@ This document is the single source for how to develop the Praxis study app from 
 
 **What the app is for**
 
-- **Purpose:** A smart study app for the **Praxis School Psychologist (5403) exam** that (1) organizes content by the **Praxis content areas** (the exam's primary structure), (2) diagnoses weaknesses via a short diagnostic, (3) adapts practice to deficit areas, (4) tracks not only correctness but how the user thinks, and (5) delivers targeted practice (from a bank and optionally generated items). NASP practice domains are used as an analytical lens for understanding *why* a user missed a question and *what* they need to study, but the Praxis content areas are the authoritative structure for assessment building, distribution, scoring, and user-facing reporting.
+- **Purpose:** A smart study app for the **Praxis School Psychologist (5403) exam** that (1) organizes content by the **Praxis content areas** (the exam's primary structure), (2) diagnoses weaknesses via a skills screener, (3) adapts practice to deficit areas, (4) tracks not only correctness but how the user thinks, and (5) delivers targeted practice (from a bank and optionally generated items). NASP practice domains are used as an analytical lens for understanding *why* a user missed a question and *what* they need to study, but the Praxis content areas are the authoritative structure for assessment building, distribution, scoring, and user-facing reporting.
 
 - **Target outcomes**
   - User clearly sees **where they are weak** (domains, skills, error types).
@@ -26,7 +26,7 @@ Every major design choice should support at least one of these outcomes.
 
 ### 2.1 One source of truth for “what happened”
 
-- **Response events** are the only record of each answer. Every submission (diagnostic, full assessment, practice) writes one event to a single store (e.g. a “responses” collection keyed by user).
+- **Response events** are the only record of each answer. Every submission (screener, full assessment, practice) writes one event to a single store (e.g. a “responses” collection keyed by user).
 - **No parallel summaries.** Do not maintain a separate “history” or “practice log” array that duplicates or drifts from the event stream. Anything that looks like “progress” or “weakness” is derived from events (or a cached view that is updated only from events).
 
 ### 2.2 Profile is a derived view
@@ -36,14 +36,14 @@ Every major design choice should support at least one of these outcomes.
 
 ### 2.3 One session model
 
-- A **session** is a single abstraction: an in-progress or completed run of a diagnostic, full assessment, or practice.
-- It has: type (diagnostic / full / practice), list of question IDs, current index (if in progress), start time, and—when completed—end time and completion flag. Optionally attach a stable session ID and user ID for resume and “view report.”
+- A **session** is a single abstraction: an in-progress or completed run of a screener, full assessment, or practice.
+- It has: type (screener / full / practice), list of question IDs, current index (if in progress), start time, and—when completed—end time and completion flag. Optionally attach a stable session ID and user ID for resume and “view report.”
 - “Resume” and “start new” are operations on this model. There is one place that defines the session shape and one place that persists/loads it (whether in memory, local storage, or the backend).
 
 ### 2.4 One content source and one assessment builder
 
 - **Content:** One question bank (e.g. a single JSON or module that exports the list of questions). One domain/skill taxonomy that defines the canonical hierarchy: **Praxis content area → domain → skill**. No duplicate copies of the same taxonomy or bank in different places.
-- **Assessment building:** One module that knows how to build (a) the short diagnostic and (b) the full-length assessment. The **Praxis content areas and their percentage weights** are the primary structure for distributing questions on the full assessment. Domains and skills are used *within* each content area for finer-grained selection, but the top-level distribution must match the Praxis blueprint. The UI only calls these builders; it does not implement its own selection logic.
+- **Assessment building:** One module that knows how to build (a) the screener and (b) the full-length assessment. The screener should prioritize broad skill coverage for adaptive practice and study-plan seeding. The **Praxis content areas and their percentage weights** are the primary structure for distributing questions on the full assessment. Domains and skills are used *within* each content area for finer-grained selection, but the top-level distribution must match the Praxis blueprint. The UI only calls these builders; it does not implement its own selection logic.
 
 ### 2.5 Praxis content areas are the primary structure; NASP domains are the analytical lens
 
@@ -64,7 +64,7 @@ Define these first; everything else builds on them.
 
 Every answer, in every flow, writes an event with this shape (or equivalent):
 
-- **Identity:** user ID, session ID, assessment type (diagnostic / full / practice).
+- **Identity:** user ID, session ID, assessment type (screener / full / practice).
 - **Item:** question ID, skill ID (if any), list of domain IDs for that question.
 - **Outcome:** correct/incorrect, full list of selected answer letters, full list of correct answer letters, time spent, confidence (e.g. low/medium/high).
 - **Diagnostics (when wrong):** error type or distractor pattern ID (e.g. premature-action, role-confusion, similar-concept) so the app can say “you often skip the first step” and so analytics can aggregate by pattern.
@@ -79,8 +79,8 @@ Store these in one stream only (e.g. one collection or table per user). All repo
 
 ### 3.3 Profile (cached derived view)
 
-- **Completion flags:** e.g. “diagnostic completed,” “full assessment completed.”
-- **Last-session pointers:** e.g. last diagnostic session ID, last full-assessment session ID, last practice session ID and index (for resume).
+- **Completion flags:** e.g. “screener completed,” “full assessment completed.”
+- **Last-session pointers:** e.g. last screener session ID, last full-assessment session ID, last practice session ID and index (for resume).
 - **Derived weakness (cached):** domain scores, weakest domain IDs, skill-level performance, factual gaps, top error patterns. These are recomputed from response events and then written here so the UI does not recompute on every load. Optionally: total questions seen, streak, practice response count.
 - **No long arrays:** do not store “all practice responses” or “all generated question IDs seen” in the profile. Use a count or a bounded recent list (e.g. last N question IDs for practice) if needed; the full truth is in the event stream.
 
@@ -104,7 +104,7 @@ Use this order so each step has a clear foundation and you never introduce a sec
 
 1. **Define shared types** for: response event, session (in-progress and completed), profile (cached view), question, and domain/skill taxonomy (with the Praxis content area → domain → skill chain). Put them in one place so the rest of the app imports from there.
 2. **Implement the single content source:** load the question bank and the domain/skill taxonomy from one module or one set of files. Expose all questions and the canonical taxonomy (Praxis content areas, domains, skills) from that module. Every question must have a `skillId`; domain and Praxis content area are resolved from the taxonomy, never inferred from question text.
-3. **Implement the single assessment builder:** one function that builds the short diagnostic, one that builds the full assessment. The full assessment distributes questions by **Praxis content area percentages first** (Professional Practices ~32%, Student-Level ~23%, Systems-Level ~20%, Foundations ~25%), then within each content area distributes across its domains proportionally. The diagnostic samples across content areas to provide coverage. Both take the full question list and optional exclusion set; both return an ordered list of questions. Domain assignment for each question comes from its `skillId` via the taxonomy — not from keyword inference. No other code should implement its own question-selection logic for assessments.
+3. **Implement the single assessment builder:** one function that builds the screener, one that builds the full assessment. The screener should distribute questions to ensure broad skill coverage for downstream adaptive guidance. The full assessment distributes questions by **Praxis content area percentages first** (Professional Practices ~32%, Student-Level ~23%, Systems-Level ~20%, Foundations ~25%), then within each content area distributes across its domains proportionally. Both take the full question list and optional exclusion set; both return an ordered list of questions. Domain assignment for each question comes from its `skillId` via the taxonomy — not from keyword inference. No other code should implement its own question-selection logic for assessments.
 
 ### Phase B: Response event store and session model
 
@@ -123,9 +123,9 @@ Use this order so each step has a clear foundation and you never introduce a sec
 
 ### Phase E: User flows (UI)
 
-10. **Login / home:** show sign-in options; after auth, show home (stats from profile, “view report” if completed, “resume” if there is an in-progress session, and buttons to start diagnostic, full assessment, or practice).
-11. **Diagnostic flow:** start diagnostic (create session via assessment builder, create session record), show one question at a time, capture answer + confidence + time, append one response event per answer, update session index. On last question: mark session completed, load events for that session, run weakness computation, update profile cache, navigate to score report.
-12. **Full assessment flow:** same as diagnostic but use the full-assessment builder and full-assessment session type. Same event shape and same “on complete → compute → update profile → show report” path.
+10. **Login / home:** show sign-in options; after auth, show home (stats from profile, “view report” if completed, “resume” if there is an in-progress session, and buttons to start the screener, full assessment, or practice).
+11. **Screener flow:** start screener (create session via assessment builder, create session record), show one question at a time, capture answer + confidence + time, append one response event per answer, update session index. On last question: mark session completed, load events for that session, run weakness computation, update profile cache, navigate to score report.
+12. **Full assessment flow:** same as screener but use the full-assessment builder and full-assessment session type. Same event shape and same “on complete → compute → update profile → show report” path.
 13. **Score report:** input is “list of response events for this session” (from state or from “load events by session ID”). Compute or reuse domain scores, weakest domains, and error patterns; show summary, domain breakdown, and “start practice” / “view teach” / “go home.” Reports are always rebuildable from events (e.g. “view last report” = load last session ID from profile, load events for that session, render report).
 14. **Practice flow:** “next question” is chosen by a single adaptive selector that reads only from the profile cache (weakest domains, skill performance, optional recent-question IDs) and the question bank (and optionally a question generator). Append one response event per answer; update profile cache periodically (e.g. after each answer or on exit) from events so the selector stays accurate. Do not maintain a separate “practice history” array in the profile.
 15. **Teach / review flow:** input = “questions from last full assessment (or wrong-only)” and “response events for that session.” Show questions with explanations; optionally let the user “flag for review” (store a small list of question IDs in profile or as tags). Do not write “practice history” or long arrays back to the profile.
@@ -142,7 +142,7 @@ Use this order so each step has a clear foundation and you never introduce a sec
 
 These are design constraints that keep the architecture stable. Treat them as the intended shape of the system rather than as reactions to problems.
 
-- **One assessment builder:** There is exactly one place that builds the short diagnostic and one that builds the full assessment (or one function with a mode). The UI only calls that layer; it does not implement its own question selection for assessments.
+- **One assessment builder:** There is exactly one place that builds the screener and one that builds the full assessment (or one function with a mode). The UI only calls that layer; it does not implement its own question selection for assessments.
 - **Profile stays a cache:** The profile holds completion flags, last-session pointers, and a cached weakness summary. It does not hold “all practice responses” or “all generated question IDs.” Use a count or a bounded recent list (e.g. last N question IDs) if needed; the event stream remains the source of truth.
 - **Reports are always rebuildable:** The score report can always be produced from “session ID → load events → compute.” It never depends only on in-memory state, so refresh or re-entry still shows the report.
 - **No duplicate history:** Any “recent” or “history” view reads from the event store (or a cached slice derived from it). There is no separate “history” array in the profile that mirrors the event stream.
@@ -179,11 +179,11 @@ To keep the codebase from drifting or overcomplicating over time, maintain a few
 
 ## Part 7: Checklist Before You Call the Rewrite Done
 
-- [ ] Every answer (diagnostic, full, practice) writes one event with the same shape to one store.
+- [ ] Every answer (screener, full, practice) writes one event with the same shape to one store.
 - [ ] Profile contains only completion flags, last-session pointers, and a cached weakness summary (domain scores, weakest domains, skill performance, gaps, error patterns). No long arrays of responses or question IDs beyond a small “recent” window if needed.
 - [ ] Weakness and “areas to work on” are computed from response events (or from the cached summary that was computed from events).
 - [ ] One session abstraction; resume and “view report” use it.
-- [ ] One question bank and one domain/skill taxonomy; one assessment builder for diagnostic and full.
+- [ ] One question bank and one domain/skill taxonomy; one assessment builder for screener and full.
 - [ ] Score report can be produced from “session ID + load events” alone.
 - [ ] Adaptive “next question” uses only the profile cache (and optionally the event store for a recent window); it does not depend on removed fields like “practice history” or “generated IDs seen.”
 - [ ] Wrong answers store an error type or distractor pattern ID in the event.
@@ -203,7 +203,7 @@ Building the app with this guide means:
 3. **Implement** one response-event store and one session model.
 4. **Implement** weakness computation from events and wire it to the profile cache.
 5. **Add** auth and persistence so events and profile live in the backend.
-6. **Build** each user flow (diagnostic, full, report, practice, teach, resume, view report) on top of these layers, without adding a second source of truth.
+6. **Build** each user flow (screener, full, report, practice, teach, resume, view report) on top of these layers, without adding a second source of truth.
 
 The result is a single, consistent way to develop the app: events are the source of truth, profile is a derived cache, sessions and assessments each have one model and one builder, and the UI stays a thin layer over this structure. That supports both user outcomes (see weakness, improve, get exam-ready) and long-term platform outcomes (analytics, item quality, pedagogy) without ad-hoc state or duplicate logic.
 
@@ -325,6 +325,11 @@ For each new feature, complete this sequence:
 - **Adaptive integrity**
   - Selector uses existing profile fields only (no removed/legacy fields).
   - Practice flow updates data that selector depends on (or clearly documents update cadence).
+
+- **Study-guide and mastery integrity**
+  - AI study-guide output is grounded in response events, global scores, and canonical skill metadata rather than unsupported recommendations.
+  - Vocabulary and foundational review items trace back to weak skills or prerequisite chains.
+  - If a future final full assessment is added, its unlock rule should be driven by a centralized threshold check on currently tracked deficit skills rather than duplicated UI logic.
 
 - **Schema integrity**
   - No unknown fields are written to profile/session documents.

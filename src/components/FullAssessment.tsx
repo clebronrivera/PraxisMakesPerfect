@@ -2,12 +2,18 @@ import { useState, useEffect, useMemo } from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import { UserResponse } from '../brain/weakness-detector';
-import { saveSession, loadSession, clearSession, AssessmentSession } from '../utils/sessionStorage';
-import { getCurrentUser, getCurrentSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
-import { AnalyzedQuestion } from '../brain/question-analyzer';
+import { clearSession } from '../utils/sessionStorage';
+import { deleteUserSession, loadUserSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
+import {
+  AnalyzedQuestion,
+  getQuestionChoiceText,
+  getQuestionCorrectAnswers
+} from '../brain/question-analyzer';
 import { matchDistractorPattern } from '../brain/distractor-matcher';
 import { useEngine } from '../hooks/useEngine';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
+import type { ResponseAssessmentType, SessionMode } from '../types/assessment';
+import type { SkillId } from '../brain/skill-map';
 
 // Local AnalyzedQuestion interface removed
 
@@ -16,11 +22,12 @@ interface FullAssessmentProps {
   onComplete: (responses: UserResponse[]) => void;
   showTimer?: boolean;
   sessionId?: string;
+  currentUserName?: string | null;
   logResponse?: (response: {
     questionId: string;
     skillId?: string;
     domainIds?: number[];
-    assessmentType: 'diagnostic' | 'full' | 'practice';
+    assessmentType: ResponseAssessmentType;
     sessionId: string;
     isCorrect: boolean;
     confidence: 'low' | 'medium' | 'high';
@@ -31,22 +38,27 @@ interface FullAssessmentProps {
     correctAnswers: string[];
     distractorPatternId?: string;
   }) => Promise<void>;
-  updateLastSession?: (sessionId: string, mode: 'practice' | 'full' | 'diagnostic', questionIndex: number, elapsedSeconds?: number) => Promise<void>;
+  updateSkillProgress?: (
+    skillId: SkillId,
+    isCorrect: boolean,
+    confidence?: 'low' | 'medium' | 'high',
+    questionId?: string,
+    timeSpent?: number
+  ) => Promise<void>;
+  updateLastSession?: (sessionId: string, mode: SessionMode, questionIndex: number, elapsedSeconds?: number) => Promise<void>;
 }
 
 export default function FullAssessment({
   questions,
   onComplete,
   sessionId,
+  currentUserName,
   logResponse,
+  updateSkillProgress,
   updateLastSession
 }: FullAssessmentProps) {
   const engine = useEngine();
-  const currentUser = getCurrentUser();
-  const userSession = currentUser && sessionId ? getCurrentSession(currentUser) : null;
-  
-  // Try to load saved session (prefer user session, fallback to old system)
-  const savedSession = userSession || loadSession();
+  const savedSession = sessionId ? loadUserSession(sessionId) : null;
   const isResuming = savedSession?.type === 'full-assessment' && 
     savedSession.questionIds.length === questions.length &&
     savedSession.questionIds.every((id, idx) => questions[idx]?.id === id);
@@ -56,6 +68,7 @@ export default function FullAssessment({
   const [confidence, setConfidence] = useState<'low' | 'medium' | 'high'>(isResuming ? savedSession!.confidence : 'medium');
   const [startTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const currentQuestion = questions[currentIndex];
   const [isSubmitted, setIsSubmitted] = useState(isResuming && savedSession!.responses.some(r => r.questionId === currentQuestion?.id));
@@ -83,12 +96,12 @@ export default function FullAssessment({
 
   // Save session whenever state changes
   useEffect(() => {
-    if (currentUser && sessionId) {
-      // Save to user session system
+    if (currentUserName && sessionId) {
       const userSession: UserSession = {
-        userName: currentUser,
+        userName: currentUserName,
         sessionId: sessionId,
         type: 'full-assessment',
+        assessmentFlow: 'full',
         questionIds: questions.map(q => q.id),
         currentIndex,
         responses,
@@ -101,23 +114,8 @@ export default function FullAssessment({
         elapsedSeconds // Save current elapsed time
       };
       saveUserSession(userSession);
-    } else {
-      // Fallback to old session system
-      const session: AssessmentSession = {
-        type: 'full-assessment',
-        questionIds: questions.map(q => q.id),
-        currentIndex,
-        responses,
-        selectedAnswers,
-        showFeedback: false, // Immediate feedback disabled for full assessment
-        confidence,
-        startTime,
-        lastUpdated: Date.now(),
-        elapsedSeconds // Save current elapsed time
-      };
-      saveSession(session);
     }
-  }, [currentIndex, responses, selectedAnswers, confidence, startTime, questions, currentUser, sessionId, isPaused, elapsedSeconds]);
+  }, [currentIndex, responses, selectedAnswers, confidence, startTime, questions, currentUserName, sessionId, elapsedSeconds]);
   
   // Save to Firestore on pause
   useEffect(() => {
@@ -129,9 +127,12 @@ export default function FullAssessment({
   // Clear session when assessment is complete
   useEffect(() => {
     if (currentIndex >= questions.length && responses.length === questions.length) {
+      if (currentUserName && sessionId) {
+        deleteUserSession(currentUserName, sessionId);
+      }
       clearSession();
     }
-  }, [currentIndex, questions.length, responses.length]);
+  }, [currentIndex, currentUserName, questions.length, responses.length, sessionId]);
 
   const pacingMessage = useMemo(() => {
     const targetSecPerQuest = 60; // Target 60 seconds per question for 125 questions
@@ -155,7 +156,7 @@ export default function FullAssessment({
   const toggleAnswer = (letter: string) => {
     if (isSubmitted) return; // Prevent changing answers after submission
     
-    const correctList = currentQuestion?.correct_answer || currentQuestion?.correctAnswers || [];
+    const correctList = currentQuestion ? getQuestionCorrectAnswers(currentQuestion) : [];
     const maxAnswers = correctList.length || 1;
     
     setSelectedAnswers((prev: string[]) => {
@@ -172,79 +173,86 @@ export default function FullAssessment({
   };
 
   const submitAnswer = async () => {
-    if (selectedAnswers.length === 0) return;
+    if (selectedAnswers.length === 0 || isSubmitting) return;
 
-    // Calculate time spent on THIS question
-    const timeSpentOnQuestion = resetQuestionTimer();
-    const now = Date.now();
-    const timestamp = now;
-    
-    const correctAnswersList = currentQuestion.correct_answer || currentQuestion.correctAnswers || [];
-    const isCorrect = 
-      selectedAnswers.every(a => correctAnswersList.includes(a)) &&
-      selectedAnswers.length === correctAnswersList.length;
+    setIsSubmitting(true);
+    try {
+      const timeSpentOnQuestion = resetQuestionTimer();
+      const timestamp = Date.now();
+      const correctAnswersList = getQuestionCorrectAnswers(currentQuestion);
+      const isCorrect =
+        selectedAnswers.every(a => correctAnswersList.includes(a)) &&
+        selectedAnswers.length === correctAnswersList.length;
 
-    // Track selected distractor if answer is wrong
-    let selectedDistractor: { letter: string; text: string; patternId?: any } | undefined;
-    let distractorPatternId: string | undefined;
-    if (!isCorrect && selectedAnswers.length > 0) {
-      // Find the first wrong answer (distractor)
-      const wrongAnswer = selectedAnswers.find(a => !correctAnswersList.includes(a));
-      if (wrongAnswer && currentQuestion.choices) {
-        const distractorText = currentQuestion.choices[wrongAnswer] || '';
-        const correctAnswerText = correctAnswersList
-          .map(a => currentQuestion.choices?.[a] || '')
-          .join(' ');
-        const patternId = matchDistractorPattern(distractorText, correctAnswerText, engine.distractorPatterns);
-        
-        selectedDistractor = {
-          letter: wrongAnswer,
-          text: distractorText,
-          patternId: patternId || undefined
-        };
-        distractorPatternId = patternId || undefined;
+      let selectedDistractor: { letter: string; text: string; patternId?: any } | undefined;
+      let distractorPatternId: string | undefined;
+      if (!isCorrect && selectedAnswers.length > 0) {
+        const wrongAnswer = selectedAnswers.find(a => !correctAnswersList.includes(a));
+        if (wrongAnswer) {
+          try {
+            const distractorText = getQuestionChoiceText(currentQuestion, wrongAnswer);
+            const correctAnswerText = correctAnswersList
+              .map(a => getQuestionChoiceText(currentQuestion, a))
+              .join(' ');
+            const patternId = matchDistractorPattern(distractorText, correctAnswerText, engine.distractorPatterns);
+
+            selectedDistractor = {
+              letter: wrongAnswer,
+              text: distractorText,
+              patternId: patternId || undefined
+            };
+            distractorPatternId = patternId || undefined;
+          } catch (error) {
+            console.error('[FullAssessment] Failed to analyze distractor:', error);
+          }
+        }
       }
-    }
 
-    // Log response to Firestore (single response event schema)
-    if (logResponse && sessionId) {
-      await logResponse({
+      if (logResponse && sessionId) {
+        await logResponse({
+          questionId: currentQuestion.id,
+          skillId: currentQuestion.skillId || '',
+          domainIds: currentQuestion.domains || [],
+          assessmentType: 'full',
+          sessionId,
+          isCorrect,
+          confidence,
+          timeSpent: timeSpentOnQuestion,
+          time_on_item_seconds: timeSpentOnQuestion,
+          timestamp,
+          selectedAnswers,
+          correctAnswers: correctAnswersList,
+          distractorPatternId
+        });
+      }
+
+      if (updateLastSession && sessionId) {
+        await updateLastSession(sessionId, 'full', currentIndex, elapsedSeconds);
+      }
+
+      if (currentQuestion.skillId && updateSkillProgress) {
+        await updateSkillProgress(currentQuestion.skillId, isCorrect, confidence, currentQuestion.id, timeSpentOnQuestion);
+      }
+
+      const response: UserResponse = {
         questionId: currentQuestion.id,
-        skillId: currentQuestion.skillId || '',
-        domainIds: currentQuestion.domains || [],
-        assessmentType: 'full',
-        sessionId,
-        isCorrect,
-        confidence,
-        timeSpent: timeSpentOnQuestion, // Log per-question time
-        time_on_item_seconds: timeSpentOnQuestion, // Verification field
-        timestamp,
         selectedAnswers,
         correctAnswers: correctAnswersList,
-        distractorPatternId
-      });
+        isCorrect,
+        timeSpent: timeSpentOnQuestion,
+        confidence,
+        timestamp,
+        selectedDistractor
+      };
+
+      const updatedResponses = [...responses, response];
+      setResponses(updatedResponses);
+      nextQuestion(updatedResponses);
+    } catch (error) {
+      console.error('[FullAssessment] Failed to submit answer:', error);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Update lastSession pointer
-    if (updateLastSession && sessionId) {
-      await updateLastSession(sessionId, 'full', currentIndex, elapsedSeconds);
-    }
-
-    const response: UserResponse = {
-      questionId: currentQuestion.id,
-      selectedAnswers,
-      correctAnswers: correctAnswersList,
-      isCorrect,
-      timeSpent: timeSpentOnQuestion, // Store per-question time in local state
-      confidence,
-      timestamp,
-      selectedDistractor
-    };
-
-    const updatedResponses = [...responses, response];
-    setResponses(updatedResponses);
-    // Transition immediately to the next question in full assessment mode
-    nextQuestion(updatedResponses);
   };
 
   const nextQuestion = (updatedResponses?: UserResponse[]) => {
@@ -253,6 +261,9 @@ export default function FullAssessment({
     
     if (nextIndex >= questions.length) {
       // Full assessment complete
+      if (currentUserName && sessionId) {
+        deleteUserSession(currentUserName, sessionId);
+      }
       clearSession();
       onComplete(currentResponses);
     } else {
@@ -381,6 +392,7 @@ export default function FullAssessment({
             confidence={confidence}
             onConfidenceChange={setConfidence}
             disabled={isSubmitted} // Disable interaction after submission
+            isSubmitting={isSubmitting}
             showFeedback={false} // No immediate feedback
             assessmentType="full"
             hideFooterControls={isSubmitted}
@@ -390,7 +402,7 @@ export default function FullAssessment({
 
       {/* Post-submit continuation removed to allow direct transition */}
 
-      {/* Feedback Panel REMOVED for full diagnostic */}
+      {/* Post-submit feedback panel intentionally omitted here. */}
     </div>
   );
 }

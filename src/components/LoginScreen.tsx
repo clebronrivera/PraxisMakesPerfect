@@ -3,12 +3,11 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, User, Chrome, ArrowLeft, Loader2, Shield } from 'lucide-react';
+import { Mail, Chrome, ArrowLeft, Loader2, Shield } from 'lucide-react';
 import { PRIMARY_ADMIN_EMAIL } from '../config/admin';
 
 export default function LoginScreen() {
   const { 
-    signInAnonymous, 
     signInWithEmail, 
     signUpWithEmail, 
     signInWithGoogle, 
@@ -54,15 +53,6 @@ export default function LoginScreen() {
     clearError();
     try {
       await signInWithGoogle();
-    } catch (err) {
-      // Error is handled in context
-    }
-  };
-
-  const handleAnonymousSignIn = async () => {
-    clearError();
-    try {
-      await signInAnonymous();
     } catch (err) {
       // Error is handled in context
     }
@@ -288,17 +278,9 @@ export default function LoginScreen() {
             </>
           )}
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-slate-700"></div>
-            <span className="text-sm text-slate-500">or</span>
-            <div className="flex-1 h-px bg-slate-700"></div>
-          </div>
-
-          {/* Social/Alternative Buttons - Only show when not in reset mode */}
+          {/* Social Sign-In - Only show when not in reset mode */}
           {mode !== 'reset' && (
             <>
-              {/* Divider */}
               <div className="flex items-center gap-4 my-6">
                 <div className="flex-1 h-px bg-slate-700"></div>
                 <span className="text-sm text-slate-500">or</span>
@@ -319,20 +301,6 @@ export default function LoginScreen() {
                   )}
                   Continue with Google
                 </button>
-
-                <button
-                  type="button"
-                  onClick={handleAnonymousSignIn}
-                  disabled={loading}
-                  className="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-medium text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <User className="w-4 h-4" />
-                  )}
-                  Try Without Account
-                </button>
               </div>
             </>
           )}
@@ -340,7 +308,7 @@ export default function LoginScreen() {
 
         {/* Footer */}
         <p className="text-center text-xs text-slate-500 mt-6">
-          Your progress will be saved and synced across devices
+          An account is required. Your progress will be saved and synced across devices.
         </p>
       </div>
     </div>

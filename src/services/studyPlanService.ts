@@ -10,8 +10,13 @@ import {
   calculateGlobalScoresFromData,
   fetchGlobalScoreInputs
 } from '../utils/globalScoreCalculator';
+import { sanitizeForFirestore } from '../utils/firestore';
+import { getSkillById } from '../brain/skill-map';
+import type { StudyPlanApiRequest, StudyPlanApiResponse } from '../types/studyPlanApi';
 
 const STUDY_PLAN_MODEL = 'claude-sonnet-4-20250514';
+const FINAL_FULL_ASSESSMENT_UNLOCK_THRESHOLD = 60;
+const FOUNDATIONAL_REVIEW_TARGET = 70;
 
 const FALLBACK_DOMAIN_NAMES: Record<number, string> = {
   1: 'Professional Practices',
@@ -37,6 +42,10 @@ interface StudyInputResponse {
   confidence: string;
   distractor_selected: string | null;
   assessment_type: 'screener' | 'diagnostic' | 'full';
+}
+
+function isDefined<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
 }
 
 export interface StudyPlanSummary {
@@ -66,6 +75,38 @@ export interface StudyPlanVocabularyGap {
   whyItMatters: string;
 }
 
+export interface StudyPlanFoundationalReview {
+  skillId: string;
+  skillName: string;
+  whyNow: string;
+  reviewActions: string[];
+}
+
+export interface StudyPlanResource {
+  title: string;
+  resourceType: string;
+  focusArea: string;
+  whyItHelps: string;
+  action: string;
+}
+
+export interface StudyPlanChecklistItem {
+  skillId: string;
+  skillName: string;
+  currentScore: number | null;
+  targetScore: number;
+  category: 'deficit' | 'foundational';
+  note: string;
+}
+
+export interface FinalAssessmentGateStatus {
+  unlocked: boolean;
+  thresholdPercent: number;
+  remainingSkillCount: number;
+  remainingSkills: string[];
+  guidance: string;
+}
+
 export interface StudyPlanPhase {
   phase: string;
   goal: string;
@@ -84,6 +125,10 @@ export interface StudyPlanContent {
   domainAnalysis: StudyPlanDomainAnalysis[];
   prioritySkills: StudyPlanPrioritySkill[];
   vocabularyGaps: StudyPlanVocabularyGap[];
+  foundationalReview: StudyPlanFoundationalReview[];
+  studyResources: StudyPlanResource[];
+  masteryChecklist: StudyPlanChecklistItem[];
+  finalAssessmentGate: FinalAssessmentGateStatus | null;
   studyPlan: StudyPlanPhase[];
   weeklySchedule: WeeklyScheduleDay[];
 }
@@ -94,9 +139,10 @@ export interface StudyPlanDocument {
   model: string;
   sourceSummary: {
     screenerResponseCount: number;
-    diagnosticResponseCount: number;
+    assessmentResponseCount: number;
     flaggedSkillCount: number;
     domainScoreCount: number;
+    deficitSkillCount: number;
   };
 }
 
@@ -161,15 +207,159 @@ function getDistractorSelected(response: {
   return selectedAnswers.find(answer => !correctAnswers.includes(answer)) ?? selectedAnswers[0] ?? null;
 }
 
-function normalizeStudyInputs(
+interface SkillEvidenceCard {
+  skillId: string;
+  skillName: string;
+  currentScore: number | null;
+  domainId: number | null;
+  domainName: string;
+  decisionRule: string | null;
+  requiredEvidence: string | null;
+  commonWrongRules: string[];
+  prerequisites: Array<{
+    skillId: string;
+    skillName: string;
+    currentScore: number | null;
+  }>;
+}
+
+function buildSkillDomainLookup(studyInputs: {
+  screenerResponses: StudyInputResponse[];
+  assessmentResponses: StudyInputResponse[];
+}): Map<string, { domainId: number; domainName: string }> {
+  const lookup = new Map<string, { domainId: number; domainName: string }>();
+
+  for (const response of [...studyInputs.screenerResponses, ...studyInputs.assessmentResponses]) {
+    if (!lookup.has(response.skill_id)) {
+      lookup.set(response.skill_id, {
+        domainId: response.domain_id,
+        domainName: response.domain_name
+      });
+    }
+  }
+
+  return lookup;
+}
+
+function buildSkillEvidenceCards(
+  globalScores: ReturnType<typeof calculateGlobalScoresFromData>,
+  skillLookup: Map<string, string>,
+  studyInputs: {
+    screenerResponses: StudyInputResponse[];
+    assessmentResponses: StudyInputResponse[];
+  }
+): SkillEvidenceCard[] {
+  const skillDomainLookup = buildSkillDomainLookup(studyInputs);
+
+  return Object.entries(globalScores.skillScores)
+    .sort((a, b) => a[1] - b[1])
+    .slice(0, 12)
+    .map(([skillId, currentScore]) => {
+      const metadata = getSkillById(skillId);
+      const domainInfo = skillDomainLookup.get(skillId);
+
+      return {
+        skillId,
+        skillName: skillLookup.get(skillId) || metadata?.name || `Skill ${skillId}`,
+        currentScore,
+        domainId: domainInfo?.domainId ?? null,
+        domainName: domainInfo?.domainName || `Domain ${domainInfo?.domainId ?? 'unknown'}`,
+        decisionRule: metadata?.decisionRule ?? null,
+        requiredEvidence: metadata?.requiredEvidence ?? null,
+        commonWrongRules: metadata?.commonWrongRules?.slice(0, 3) ?? [],
+        prerequisites: (metadata?.prerequisites ?? []).map((prereqId) => ({
+          skillId: prereqId,
+          skillName: skillLookup.get(prereqId) || getSkillById(prereqId)?.name || prereqId,
+          currentScore: globalScores.skillScores[prereqId] ?? null
+        }))
+      };
+    });
+}
+
+function buildFinalAssessmentGateStatus(
+  globalScores: ReturnType<typeof calculateGlobalScoresFromData>,
+  skillLookup: Map<string, string>
+): FinalAssessmentGateStatus {
+  const remainingDeficitSkills = Object.entries(globalScores.skillScores)
+    .filter(([, score]) => score < FINAL_FULL_ASSESSMENT_UNLOCK_THRESHOLD)
+    .sort((a, b) => a[1] - b[1])
+    .map(([skillId, score]) => `${skillLookup.get(skillId) || getSkillById(skillId)?.name || skillId} (${score}%)`);
+
+  const unlocked = remainingDeficitSkills.length === 0 && Object.keys(globalScores.skillScores).length > 0;
+
+  return {
+    unlocked,
+    thresholdPercent: FINAL_FULL_ASSESSMENT_UNLOCK_THRESHOLD,
+    remainingSkillCount: remainingDeficitSkills.length,
+    remainingSkills: remainingDeficitSkills.slice(0, 12),
+    guidance: unlocked
+      ? 'All currently tracked deficit skills are at or above 60%. This learner would be ready for the planned final full assessment once that flow is implemented.'
+      : `${remainingDeficitSkills.length} tracked deficit skills are still below 60%. Use the checklist below to close those gaps before unlocking the planned final full assessment.`
+  };
+}
+
+function buildMasteryChecklist(
+  globalScores: ReturnType<typeof calculateGlobalScoresFromData>,
+  skillLookup: Map<string, string>
+): StudyPlanChecklistItem[] {
+  const checklist: StudyPlanChecklistItem[] = [];
+  const seenSkills = new Set<string>();
+
+  const deficitSkills = Object.entries(globalScores.skillScores)
+    .filter(([, score]) => score < FINAL_FULL_ASSESSMENT_UNLOCK_THRESHOLD)
+    .sort((a, b) => a[1] - b[1]);
+
+  for (const [skillId, currentScore] of deficitSkills) {
+    if (seenSkills.has(skillId)) {
+      continue;
+    }
+
+    checklist.push({
+      skillId,
+      skillName: skillLookup.get(skillId) || getSkillById(skillId)?.name || skillId,
+      currentScore,
+      targetScore: FINAL_FULL_ASSESSMENT_UNLOCK_THRESHOLD,
+      category: 'deficit',
+      note: 'Raise this tracked deficit skill to at least 60% before the final full assessment unlocks.'
+    });
+    seenSkills.add(skillId);
+  }
+
+  for (const [skillId] of deficitSkills) {
+    const metadata = getSkillById(skillId);
+    for (const prereqId of metadata?.prerequisites ?? []) {
+      const prereqScore = globalScores.skillScores[prereqId] ?? null;
+      if (seenSkills.has(prereqId)) {
+        continue;
+      }
+      if (prereqScore !== null && prereqScore >= FOUNDATIONAL_REVIEW_TARGET) {
+        continue;
+      }
+
+      checklist.push({
+        skillId: prereqId,
+        skillName: skillLookup.get(prereqId) || getSkillById(prereqId)?.name || prereqId,
+        currentScore: prereqScore,
+        targetScore: FOUNDATIONAL_REVIEW_TARGET,
+        category: 'foundational',
+        note: 'Strengthen this prerequisite so the deficit skills built on top of it become easier to raise.'
+      });
+      seenSkills.add(prereqId);
+    }
+  }
+
+  return checklist.slice(0, 16);
+}
+
+export function normalizeStudyInputs(
   scoreInputs: GlobalScoreInputs,
   domainLookup: Map<number, string>,
   skillLookup: Map<string, string>
 ): {
   screenerResponses: StudyInputResponse[];
-  diagnosticResponses: StudyInputResponse[];
+  assessmentResponses: StudyInputResponse[];
 } {
-  const screenerResponses = scoreInputs.screenerResponses
+  const screenerResponses: StudyInputResponse[] = scoreInputs.screenerResponses
     .map(response => {
       const domainId = Number(response.domain_id);
       const skillId = String(response.skill_id || 'unknown');
@@ -189,9 +379,9 @@ function normalizeStudyInputs(
         assessment_type: 'screener' as const
       };
     })
-    .filter((response): response is StudyInputResponse => response !== null);
+    .filter(isDefined);
 
-  const diagnosticResponses = scoreInputs.responseLogs
+  const assessmentResponses: StudyInputResponse[] = scoreInputs.responseLogs
     .filter(response => response.assessmentType === 'diagnostic' || response.assessmentType === 'full')
     .flatMap(response => {
       const domainIds = Array.isArray(response.domainIds)
@@ -199,7 +389,8 @@ function normalizeStudyInputs(
         : (response.domainId !== undefined && response.domainId !== null ? [Number(response.domainId)].filter(domainId => Number.isFinite(domainId)) : []);
       const skillId = String(response.skillId || 'unknown');
       const distractorSelected = getDistractorSelected(response);
-      const assessmentType = response.assessmentType === 'full' ? 'full' : 'diagnostic';
+      const assessmentType: StudyInputResponse['assessment_type'] =
+        response.assessmentType === 'full' ? 'full' : 'diagnostic';
 
       return domainIds.map(domainId => ({
         skill_id: skillId,
@@ -215,28 +406,30 @@ function normalizeStudyInputs(
 
   return {
     screenerResponses,
-    diagnosticResponses
+    assessmentResponses
   };
 }
 
 function buildPrompt({
   screenerSummary,
   globalScores,
-  studyInputs
+  studyInputs,
+  skillLookup
 }: {
   screenerSummary: UserProfileDoc['screenerResults'];
   globalScores: ReturnType<typeof calculateGlobalScoresFromData>;
   studyInputs: {
     screenerResponses: StudyInputResponse[];
-    diagnosticResponses: StudyInputResponse[];
+    assessmentResponses: StudyInputResponse[];
   };
+  skillLookup: Map<string, string>;
 }): string {
   const domainScores = Object.entries(globalScores.domainScores).map(([domainId, score]) => ({
     domainId: Number(domainId),
     score,
     domainName:
       studyInputs.screenerResponses.find(response => response.domain_id === Number(domainId))?.domain_name ||
-      studyInputs.diagnosticResponses.find(response => response.domain_id === Number(domainId))?.domain_name ||
+      studyInputs.assessmentResponses.find(response => response.domain_id === Number(domainId))?.domain_name ||
       FALLBACK_DOMAIN_NAMES[Number(domainId)] ||
       `Domain ${domainId}`
   }));
@@ -245,7 +438,7 @@ function buildPrompt({
     skillId,
     skillName:
       studyInputs.screenerResponses.find(response => response.skill_id === skillId)?.skill_name ||
-      studyInputs.diagnosticResponses.find(response => response.skill_id === skillId)?.skill_name ||
+      studyInputs.assessmentResponses.find(response => response.skill_id === skillId)?.skill_name ||
       `Skill ${skillId}`
   }));
 
@@ -256,10 +449,13 @@ function buildPrompt({
       skillId,
       skillName:
         studyInputs.screenerResponses.find(response => response.skill_id === skillId)?.skill_name ||
-        studyInputs.diagnosticResponses.find(response => response.skill_id === skillId)?.skill_name ||
+        studyInputs.assessmentResponses.find(response => response.skill_id === skillId)?.skill_name ||
         `Skill ${skillId}`,
       score
     }));
+
+  const skillEvidenceCards = buildSkillEvidenceCards(globalScores, skillLookup, studyInputs);
+  const finalAssessmentGate = buildFinalAssessmentGateStatus(globalScores, skillLookup);
 
   const payload = {
     screenerSummary: screenerSummary || null,
@@ -267,8 +463,10 @@ function buildPrompt({
     globalDomainScores: domainScores,
     flaggedHighConfidenceWrongSkills: flaggedSkills,
     weakestSkillScores: weakestSkills,
+    skillEvidenceCards,
+    finalAssessmentGate,
     screenerResponses: studyInputs.screenerResponses,
-    diagnosticResponses: studyInputs.diagnosticResponses
+    assessmentResponses: studyInputs.assessmentResponses
   };
 
   return [
@@ -306,6 +504,23 @@ function buildPrompt({
             whyItMatters: 'string'
           }
         ],
+        foundationalReview: [
+          {
+            skillId: 'string',
+            skillName: 'string',
+            whyNow: 'string',
+            reviewActions: ['string']
+          }
+        ],
+        studyResources: [
+          {
+            title: 'string',
+            resourceType: 'string',
+            focusArea: 'string',
+            whyItHelps: 'string',
+            action: 'string'
+          }
+        ],
         studyPlan: [
           {
             phase: 'string',
@@ -328,6 +543,9 @@ function buildPrompt({
     'Requirements:',
     '- Tie all recommendations directly to the provided data.',
     '- Prioritize domain and skill weaknesses, especially high-confidence wrong skills.',
+    '- Use the skill evidence cards to ground vocabulary terms, foundational review, and remediation advice.',
+    '- `studyResources` must only reference grounded, in-product study moves such as decision-rule review, prerequisite review, vocabulary review, domain review, skill practice, and wrong-answer review. Do not invent external links, books, or websites.',
+    '- `foundationalReview` should focus on prerequisite skills that support weaker or flagged skills.',
     '- Keep the tone practical and specific for one learner.',
     '- Provide 3 to 6 items for each array section unless the data strongly supports fewer.',
     '- Keep each string concise but actionable.',
@@ -409,6 +627,9 @@ function parseStudyPlanContent(rawContent: string): StudyPlanContent {
   const domainAnalysis = Array.isArray(parsed.domainAnalysis) ? parsed.domainAnalysis : null;
   const prioritySkills = Array.isArray(parsed.prioritySkills) ? parsed.prioritySkills : null;
   const vocabularyGaps = Array.isArray(parsed.vocabularyGaps) ? parsed.vocabularyGaps : null;
+  const foundationalReview = Array.isArray(parsed.foundationalReview) ? parsed.foundationalReview : [];
+  const studyResources = Array.isArray(parsed.studyResources) ? parsed.studyResources : [];
+  const masteryChecklist = Array.isArray(parsed.masteryChecklist) ? parsed.masteryChecklist : [];
   const studyPlan = Array.isArray(parsed.studyPlan) ? parsed.studyPlan : null;
   const weeklySchedule = Array.isArray(parsed.weeklySchedule) ? parsed.weeklySchedule : null;
 
@@ -455,6 +676,56 @@ function parseStudyPlanContent(rawContent: string): StudyPlanContent {
         whyItMatters: asString(section.whyItMatters, `vocabularyGaps[${index}].whyItMatters`)
       };
     }),
+    foundationalReview: foundationalReview.map((item, index) => {
+      const section = asObject(item, `foundationalReview[${index}]`);
+      return {
+        skillId: asString(section.skillId, `foundationalReview[${index}].skillId`),
+        skillName: asString(section.skillName, `foundationalReview[${index}].skillName`),
+        whyNow: asString(section.whyNow, `foundationalReview[${index}].whyNow`),
+        reviewActions: asStringArray(section.reviewActions, `foundationalReview[${index}].reviewActions`)
+      };
+    }),
+    studyResources: studyResources.map((item, index) => {
+      const section = asObject(item, `studyResources[${index}]`);
+      return {
+        title: asString(section.title, `studyResources[${index}].title`),
+        resourceType: asString(section.resourceType, `studyResources[${index}].resourceType`),
+        focusArea: asString(section.focusArea, `studyResources[${index}].focusArea`),
+        whyItHelps: asString(section.whyItHelps, `studyResources[${index}].whyItHelps`),
+        action: asString(section.action, `studyResources[${index}].action`)
+      };
+    }),
+    masteryChecklist: masteryChecklist.map((item, index) => {
+      const section = asObject(item, `masteryChecklist[${index}]`);
+      const category = asString(section.category, `masteryChecklist[${index}].category`);
+
+      if (category !== 'deficit' && category !== 'foundational') {
+        throw new Error(`Invalid study plan field: masteryChecklist[${index}].category`);
+      }
+
+      return {
+        skillId: asString(section.skillId, `masteryChecklist[${index}].skillId`),
+        skillName: asString(section.skillName, `masteryChecklist[${index}].skillName`),
+        currentScore: section.currentScore === null || section.currentScore === undefined
+          ? null
+          : asNullableNumber(section.currentScore, `masteryChecklist[${index}].currentScore`),
+        targetScore: asNumber(section.targetScore, `masteryChecklist[${index}].targetScore`),
+        category,
+        note: asString(section.note, `masteryChecklist[${index}].note`)
+      };
+    }),
+    finalAssessmentGate: parsed.finalAssessmentGate
+      ? (() => {
+          const gate = asObject(parsed.finalAssessmentGate, 'finalAssessmentGate');
+          return {
+            unlocked: Boolean(gate.unlocked),
+            thresholdPercent: asNumber(gate.thresholdPercent, 'finalAssessmentGate.thresholdPercent'),
+            remainingSkillCount: asNumber(gate.remainingSkillCount, 'finalAssessmentGate.remainingSkillCount'),
+            remainingSkills: asStringArray(gate.remainingSkills, 'finalAssessmentGate.remainingSkills'),
+            guidance: asString(gate.guidance, 'finalAssessmentGate.guidance')
+          };
+        })()
+      : null,
     studyPlan: studyPlan.map((item, index) => {
       const section = asObject(item, `studyPlan[${index}]`);
       return {
@@ -476,28 +747,40 @@ function parseStudyPlanContent(rawContent: string): StudyPlanContent {
 }
 
 function normalizeStudyPlanDocument(data: Record<string, unknown>): StudyPlanDocument {
+  const parsedPlan = parseStudyPlanContent(JSON.stringify(data.plan));
   return {
-    plan: parseStudyPlanContent(JSON.stringify(data.plan)),
+    plan: {
+      ...parsedPlan,
+      masteryChecklist: parsedPlan.masteryChecklist ?? [],
+      finalAssessmentGate: parsedPlan.finalAssessmentGate ?? null
+    },
     generatedAt: asString(data.generatedAt, 'generatedAt'),
     model: asString(data.model, 'model'),
-    sourceSummary: {
-      screenerResponseCount: asNumber(
-        asObject(data.sourceSummary, 'sourceSummary').screenerResponseCount,
-        'sourceSummary.screenerResponseCount'
-      ),
-      diagnosticResponseCount: asNumber(
-        asObject(data.sourceSummary, 'sourceSummary').diagnosticResponseCount,
-        'sourceSummary.diagnosticResponseCount'
-      ),
-      flaggedSkillCount: asNumber(
-        asObject(data.sourceSummary, 'sourceSummary').flaggedSkillCount,
-        'sourceSummary.flaggedSkillCount'
-      ),
-      domainScoreCount: asNumber(
-        asObject(data.sourceSummary, 'sourceSummary').domainScoreCount,
-        'sourceSummary.domainScoreCount'
-      )
-    }
+    sourceSummary: (() => {
+      const sourceSummary = asObject(data.sourceSummary, 'sourceSummary');
+      return {
+        screenerResponseCount: asNumber(
+          sourceSummary.screenerResponseCount,
+          'sourceSummary.screenerResponseCount'
+        ),
+        assessmentResponseCount: asNumber(
+          sourceSummary.assessmentResponseCount ?? sourceSummary.diagnosticResponseCount,
+          'sourceSummary.assessmentResponseCount'
+        ),
+        flaggedSkillCount: asNumber(
+          sourceSummary.flaggedSkillCount,
+          'sourceSummary.flaggedSkillCount'
+        ),
+        domainScoreCount: asNumber(
+          sourceSummary.domainScoreCount,
+          'sourceSummary.domainScoreCount'
+        ),
+        deficitSkillCount: asNumber(
+          sourceSummary.deficitSkillCount ?? 0,
+          'sourceSummary.deficitSkillCount'
+        )
+      };
+    })()
   };
 }
 
@@ -540,16 +823,33 @@ export async function generateStudyPlan({
   const skillLookup = buildSkillLookup(skills);
   const studyInputs = normalizeStudyInputs(scoreInputs, domainLookup, skillLookup);
 
-  if (studyInputs.diagnosticResponses.length === 0) {
-    throw new Error('Complete a diagnostic or full assessment before generating a study guide.');
+  if (studyInputs.assessmentResponses.length === 0) {
+    throw new Error('Complete the full assessment before generating a study guide.');
   }
 
   const globalScores = calculateGlobalScoresFromData(scoreInputs);
+  const finalAssessmentGate = buildFinalAssessmentGateStatus(globalScores, skillLookup);
+  const masteryChecklist = buildMasteryChecklist(globalScores, skillLookup);
+  const sourceSummary = {
+    screenerResponseCount: studyInputs.screenerResponses.length,
+    assessmentResponseCount: studyInputs.assessmentResponses.length,
+    flaggedSkillCount: globalScores.flaggedSkills.length,
+    domainScoreCount: Object.keys(globalScores.domainScores).length,
+    deficitSkillCount: finalAssessmentGate.remainingSkillCount
+  };
   const prompt = buildPrompt({
     screenerSummary: profile.screenerResults,
     globalScores,
-    studyInputs
+    studyInputs,
+    skillLookup
   });
+
+  const requestBody: StudyPlanApiRequest = {
+    userId,
+    prompt,
+    sourceSummary,
+    requestedAt: new Date().toISOString()
+  };
 
   const response = await fetch('/api/study-plan', {
     method: 'POST',
@@ -557,29 +857,29 @@ export async function generateStudyPlan({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${idToken}`
     },
-    body: JSON.stringify({ prompt })
+    body: JSON.stringify(requestBody)
   });
 
-  const responseBody = (await response.json().catch(() => ({}))) as { content?: string; error?: string };
+  const responseBody = (await response.json().catch(() => ({}))) as Partial<StudyPlanApiResponse> & { error?: string };
 
   if (!response.ok || typeof responseBody.content !== 'string') {
     throw new Error(responseBody.error || 'Study plan generation failed. Please retry.');
   }
 
-  const plan = parseStudyPlanContent(responseBody.content);
+  const parsedPlan = parseStudyPlanContent(responseBody.content);
+  const plan: StudyPlanContent = {
+    ...parsedPlan,
+    masteryChecklist,
+    finalAssessmentGate
+  };
   const studyPlanDocument: StudyPlanDocument = {
     plan,
-    generatedAt: new Date().toISOString(),
-    model: STUDY_PLAN_MODEL,
-    sourceSummary: {
-      screenerResponseCount: studyInputs.screenerResponses.length,
-      diagnosticResponseCount: studyInputs.diagnosticResponses.length,
-      flaggedSkillCount: globalScores.flaggedSkills.length,
-      domainScoreCount: Object.keys(globalScores.domainScores).length
-    }
+    generatedAt: responseBody.generatedAt || new Date().toISOString(),
+    model: responseBody.model || STUDY_PLAN_MODEL,
+    sourceSummary
   };
 
-  await setDoc(getStudyPlanDocRef(userId), studyPlanDocument);
+  await setDoc(getStudyPlanDocRef(userId), sanitizeForFirestore(studyPlanDocument));
 
   return studyPlanDocument;
 }

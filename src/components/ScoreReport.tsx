@@ -1,20 +1,19 @@
-import { useState } from 'react';
-import { Trophy, Clock, Target, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, BookOpen, Zap, Layers, RotateCcw } from 'lucide-react';
+import { Trophy, Clock, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, Zap, RotateCcw } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
-import { UserResponse } from '../brain/weakness-detector';
-import { AnalyzedQuestion } from '../brain/question-analyzer';
+import { detectWeaknesses, UserResponse } from '../brain/weakness-detector';
+import { AnalyzedQuestion, getQuestionIdentifierLabel, getQuestionPrompt } from '../brain/question-analyzer';
 import { getDomainColor } from '../utils/domainColors';
+import { getDomainLabel } from '../utils/domainLabels';
+import { useFirebaseProgress } from '../hooks/useFirebaseProgress';
+import { downloadScoreReport } from '../utils/scoreReportGenerator';
 
 interface ScoreReportProps {
   responses: UserResponse[];
   questions: AnalyzedQuestion[];
-  assessmentType: 'pre-assessment' | 'full-assessment';
   totalTime: number;
-  onStartPractice: () => void;
+  onStartPractice: (domainId?: number) => void;
   onRetakeAssessment: () => void;
   onGoHome: () => void;
-  onStartTeachMode?: (domains?: number[]) => void;
-  onStartPracticeWithDomains?: (domains: number[]) => void;
 }
 
 
@@ -27,19 +26,16 @@ const getScoreColor = (score: number) => {
 export default function ScoreReport({
   responses,
   questions,
-  assessmentType,
   totalTime,
   onStartPractice,
   onRetakeAssessment,
-  onGoHome,
-  onStartTeachMode,
-  onStartPracticeWithDomains
+  onGoHome
 }: ScoreReportProps) {
   const engine = useEngine();
   const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
 
-  const [showDomainSelection, setShowDomainSelection] = useState(false);
-  const [selectedDomains, setSelectedDomains] = useState<number[]>([]);
+
+  const { profile } = useFirebaseProgress();
 
   // Safety check: Handle missing or corrupted data
   if (!responses || responses.length === 0 || !questions || questions.length === 0) {
@@ -154,7 +150,8 @@ export default function ScoreReport({
       const response = responses.find(r => r.questionId === questionId);
       return {
         questionId,
-        question: question?.question || 'Unknown question',
+        questionLabel: question ? getQuestionIdentifierLabel(question) : questionId,
+        prompt: question ? getQuestionPrompt(question) : '',
         timeSpent: totalTime,
         isCorrect: response?.isCorrect || false
       };
@@ -181,15 +178,20 @@ export default function ScoreReport({
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center gap-3">
           <Trophy className={`w-10 h-10 ${scoreStyle.text}`} />
-          <h2 className="text-3xl font-bold text-slate-100">
-            {assessmentType === 'full-assessment' ? 'Full Assessment Complete!' : 'Pre-Assessment Complete!'}
-          </h2>
+          <h2 className="text-3xl font-bold text-slate-100">Full Assessment Complete!</h2>
         </div>
         <p className="text-slate-400">
-          {assessmentType === 'full-assessment' 
-            ? `You completed all ${responses.length} questions`
-            : `You completed the Quick Diagnostic (${responses.length} questions)`}
+          {`You completed all ${responses.length} questions`}
         </p>
+        <button
+          onClick={() => {
+            const { currentSkillScores } = detectWeaknesses(responses, questions);
+            downloadScoreReport(responses, profile, currentSkillScores);
+          }}
+          className="mx-auto px-6 py-2 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-200 rounded-full font-medium transition-colors flex items-center justify-center gap-2"
+        >
+          Download Detailed Report
+        </button>
       </div>
 
       {/* Overall Score Card */}
@@ -251,8 +253,13 @@ export default function ScoreReport({
               >
                 <div className="flex items-start justify-between gap-4 mb-2">
                   <div className="flex-1">
-                    <p className="text-sm text-slate-300 line-clamp-2">
-                      {index + 1}. {item.question.substring(0, 100)}{item.question.length > 100 ? '...' : ''}
+                    <p className="text-sm font-semibold text-slate-200">
+                      {index + 1}. {item.questionLabel}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-400 line-clamp-2">
+                      {item.prompt
+                        ? `${item.prompt.substring(0, 100)}${item.prompt.length > 100 ? '...' : ''}`
+                        : 'Question text unavailable for this report.'}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -288,7 +295,7 @@ export default function ScoreReport({
               <div key={domain} className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-slate-300">
-                    {domainInfo?.shortName}: {domainInfo?.name}
+                    {getDomainLabel(domainInfo)}
                   </span>
                   <span className={`text-sm font-bold ${domainStyle.text}`}>
                     {pct}%
@@ -342,162 +349,33 @@ export default function ScoreReport({
       )}
 
       {/* Action Buttons */}
-      {assessmentType === 'full-assessment' ? (
-        <div className="space-y-4">
-          {!showDomainSelection ? (
-            <>
-              <div className="space-y-3">
-                <button
-                  onClick={onStartPractice}
-                  className="w-full p-6 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center gap-3 font-semibold text-white hover:shadow-lg hover:shadow-emerald-500/20 transition-all"
-                >
-                  <Zap className="w-5 h-5" />
-                  Recommended Practice (All Weak Areas)
-                </button>
-                
-                {onStartTeachMode && (
-                  <button
-                    onClick={() => onStartTeachMode()}
-                    className="w-full p-6 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center gap-3 font-semibold text-white hover:shadow-lg hover:shadow-purple-500/20 transition-all"
-                  >
-                    <BookOpen className="w-5 h-5" />
-                    Teach Mode (Guided Learning)
-                  </button>
-                )}
-                
-                <button
-                  onClick={() => setShowDomainSelection(true)}
-                  className="w-full p-6 bg-slate-800/50 border border-slate-700 rounded-2xl flex items-center justify-center gap-3 font-semibold text-slate-300 hover:bg-slate-800 transition-all"
-                >
-                  <Layers className="w-5 h-5" />
-                  Select Specific Areas
-                </button>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={onRetakeAssessment}
-                  className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all"
-                >
-                  Retake Assessment
-                </button>
-                <button
-                  onClick={onGoHome}
-                  className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-                >
-                  <Home className="w-4 h-4" />
-                  Home
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="space-y-4">
-              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
-                <h3 className="font-semibold text-slate-200 mb-4">Select Domains to Focus On</h3>
-                <div className="space-y-2">
-                  {domainArray.map(({ domain }) => {
-                    const domainInfo = NASP_DOMAINS[domain as keyof typeof NASP_DOMAINS];
-                    const isSelected = selectedDomains.includes(domain);
-                    return (
-                      <button
-                        key={domain}
-                        onClick={() => {
-                          setSelectedDomains(prev => 
-                            prev.includes(domain)
-                              ? prev.filter(d => d !== domain)
-                              : [...prev, domain]
-                          );
-                        }}
-                        className={`w-full p-3 rounded-lg text-left transition-all ${
-                          isSelected
-                            ? 'bg-amber-500/20 border border-amber-500/50'
-                            : 'bg-slate-700/30 border border-slate-700/50 hover:bg-slate-700/50'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-slate-200">
-                            {domainInfo?.shortName}: {domainInfo?.name}
-                          </span>
-                          {isSelected && (
-                            <CheckCircle2 className="w-4 h-4 text-amber-400" />
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    if (selectedDomains.length > 0) {
-                      if (onStartPracticeWithDomains) {
-                        onStartPracticeWithDomains(selectedDomains);
-                      } else {
-                        onStartPractice();
-                      }
-                    }
-                  }}
-                  disabled={selectedDomains.length === 0}
-                  className="w-full p-6 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center gap-3 font-semibold text-white hover:shadow-lg hover:shadow-emerald-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Zap className="w-5 h-5" />
-                  Practice Selected Areas ({selectedDomains.length})
-                </button>
-                
-                {onStartTeachMode && selectedDomains.length > 0 && (
-                  <button
-                    onClick={() => onStartTeachMode(selectedDomains)}
-                    className="w-full p-6 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center gap-3 font-semibold text-white hover:shadow-lg hover:shadow-purple-500/20 transition-all"
-                  >
-                    <BookOpen className="w-5 h-5" />
-                    Teach Mode: Selected Areas
-                  </button>
-                )}
-                
-                <button
-                  onClick={() => {
-                    setShowDomainSelection(false);
-                    setSelectedDomains([]);
-                  }}
-                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all"
-                >
-                  Back
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
+      <div className="space-y-4">
         <div className="space-y-3">
           <button
-            onClick={onStartPractice}
+            onClick={() => onStartPractice(weakestDomains[0])}
             className="w-full p-6 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center gap-3 font-semibold text-white hover:shadow-lg hover:shadow-emerald-500/20 transition-all"
           >
-            <Target className="w-5 h-5" />
-            Start Adaptive Practice
+            <Zap className="w-5 h-5" />
+            Start Domain Review in Weakest Domain
           </button>
-          <p className="text-sm text-slate-400 text-center px-4">
-            Questions are chosen based on your diagnostic results to focus on areas that need the most work.
-          </p>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={onRetakeAssessment}
-              className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all"
-            >
-              Retake Assessment
-            </button>
-            <button
-              onClick={onGoHome}
-              className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-            >
-              <Home className="w-4 h-4" />
-              Home
-            </button>
-          </div>
         </div>
-      )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={onRetakeAssessment}
+            className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all"
+          >
+            Retake Assessment
+          </button>
+          <button
+            onClick={onGoHome}
+            className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+          >
+            <Home className="w-4 h-4" />
+            Home
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
