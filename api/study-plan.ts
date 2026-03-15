@@ -1,5 +1,4 @@
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
+import { createClient } from '@supabase/supabase-js';
 import {
   STUDY_PLAN_API_VERSION,
   StudyPlanApiRequestSchema,
@@ -8,26 +7,16 @@ import {
 
 const MODEL = 'claude-sonnet-4-20250514';
 
-function getFirebaseAdminApp() {
-  if (getApps().length > 0) {
-    return getApps()[0];
+function getSupabaseClient() {
+  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Supabase Service Role credentials are not configured.');
   }
 
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-
-  if (!projectId || !clientEmail || !privateKey) {
-    throw new Error('Firebase Admin credentials are not configured.');
-  }
-
-  return initializeApp({
-    credential: cert({
-      projectId,
-      clientEmail,
-      privateKey
-    })
-  });
+  // Using service role to bypass RLS, primarily for verification and admin actions
+  return createClient(supabaseUrl, supabaseServiceKey);
 }
 
 function getBearerToken(authorizationHeader?: string): string | null {
@@ -60,11 +49,18 @@ export default async function handler(req: any, res: any) {
       return res.status(401).json({ error: 'Missing authentication token.' });
     }
 
-    const app = getFirebaseAdminApp();
-    const decodedToken = await getAuth(app).verifyIdToken(idToken);
+    const supabase = getSupabaseClient();
+    
+    // Verify the JWT by getting the user. Supabase's `getUser(jwt)` verifies it securely.
+    const { data: { user }, error: authError } = await supabase.auth.getUser(idToken);
+
+    if (authError || !user) {
+      console.error('[study-plan api] Supabase Auth Error:', authError);
+      return res.status(401).json({ error: 'Invalid authentication token.' });
+    }
 
     const requestBody = getParsedRequestBody(req.body);
-    if (decodedToken.uid !== requestBody.userId) {
+    if (user.id !== requestBody.userId) {
       return res.status(403).json({ error: 'Authenticated user does not match requested study guide owner.' });
     }
 

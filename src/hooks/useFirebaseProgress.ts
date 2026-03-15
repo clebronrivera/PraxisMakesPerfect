@@ -1,19 +1,10 @@
 // src/hooks/useFirebaseProgress.ts
-// Cloud-synced user progress using Firestore
-// Replaces localStorage with Firebase for persistent, cross-device storage
+// Re-implemented to use Supabase instead of Firestore
+// Keeping filename the same to avoid breaking 10+ imports across the app, 
+// but internals are fully Supabase now
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { 
-  doc, 
-  setDoc,
-  onSnapshot,
-  serverTimestamp,
-  collection,
-  query,
-  where,
-  getDocs
-} from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { SkillId } from '../brain/skill-map';
 import { 
@@ -27,19 +18,14 @@ import {
 import { UserResponse } from '../brain/weakness-detector';
 import { calculateAndSaveGlobalScores } from '../utils/globalScoreCalculator';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
-import { sanitizeForFirestore } from '../utils/firestore';
 import type {
   AssessmentReportType,
   ResponseAssessmentType,
   SessionMode
 } from '../types/assessment';
 
-// Profile is a cached view derived from response events (users/{uid}/responses).
-// domainScores, weakestDomains, factualGaps, errorPatterns are computed from events
-// on assessment complete (or can be recomputed via getAssessmentResponses + detectWeaknesses).
-// No practiceHistory or generatedQuestionsSeen - use practiceResponseCount / recentPracticeQuestionIds.
 export interface UserProfile {
-  preAssessmentComplete: boolean; // Legacy quick-diagnostic completion flag
+  preAssessmentComplete: boolean;
   fullAssessmentComplete?: boolean;
   domainScores: Record<number, { correct: number; total: number }>;
   skillScores: Record<SkillId, SkillPerformance>;
@@ -51,26 +37,25 @@ export interface UserProfile {
   flaggedQuestions: Record<string, string>;
   distractorErrors: Record<string, number>;
   skillDistractorErrors: Record<SkillId, Record<string, number>>;
-  preAssessmentQuestionIds?: string[]; // Legacy quick-diagnostic question IDs
-  fullAssessmentQuestionIds?: string[]; // Questions used in full assessment
-  recentPracticeQuestionIds?: string[]; // Rolling window of recent practice questions (last 20)
-  screenerItemIds?: string[]; // Questions selected for the screener
-  // New fields
-  practiceResponseCount?: number; // Count of practice responses (replaces practiceHistory)
-  lastPracticeAt?: any; // Timestamp of last practice answer
-  migrationVersion?: number; // Set to 1 to prevent legacy array writes
+  preAssessmentQuestionIds?: string[];
+  fullAssessmentQuestionIds?: string[];
+  recentPracticeQuestionIds?: string[];
+  screenerItemIds?: string[];
+  practiceResponseCount?: number;
+  lastPracticeAt?: any;
+  migrationVersion?: number;
   lastSession?: {
     sessionId: string;
     mode: SessionMode;
     questionIndex: number;
-    updatedAt: any; // Timestamp
+    updatedAt: any;
   } | null;
-  lastPreAssessmentSessionId?: string; // Session ID of last completed legacy quick diagnostic
-  lastFullAssessmentSessionId?: string; // Session ID of last completed full assessment
-  lastScreenerSessionId?: string; // Session ID of last completed screener
-  lastPreAssessmentCompletedAt?: any; // Timestamp of last legacy quick-diagnostic completion
-  lastFullAssessmentCompletedAt?: any; // Timestamp of last full assessment completion
-  lastScreenerCompletedAt?: any; // Timestamp of last screener completion
+  lastPreAssessmentSessionId?: string;
+  lastFullAssessmentSessionId?: string;
+  lastScreenerSessionId?: string;
+  lastPreAssessmentCompletedAt?: any;
+  lastFullAssessmentCompletedAt?: any;
+  lastScreenerCompletedAt?: any;
   screenerComplete?: boolean;
   screenerResults?: {
     domain_scores: Record<number, number>;
@@ -80,23 +65,21 @@ export interface UserProfile {
   lastUpdated?: any;
 }
 
-// Single response event schema (stored in users/{uid}/responses) - same shape for all flows
 export interface ResponseLog {
   questionId: string;
   skillId?: string;
-  domainIds?: number[]; // All domains for this question (supports multi-domain)
+  domainIds?: number[];
   assessmentType: ResponseAssessmentType;
   sessionId: string;
   isCorrect: boolean;
   confidence: 'low' | 'medium' | 'high';
   timeSpent: number;
-  time_on_item_seconds?: number; // Legacy mirror field retained for existing data checks
+  time_on_item_seconds?: number;
   timestamp: number;
-  selectedAnswers: string[]; // Full multi-select (source of truth)
-  correctAnswers: string[]; // For weakness analysis and analytics
-  distractorPatternId?: string; // Error type/pattern when wrong (for "how they think")
-  createdAt: any; // serverTimestamp
-  // Legacy: selectedAnswer/domainId for backward compat when reading old docs
+  selectedAnswers: string[];
+  correctAnswers: string[];
+  distractorPatternId?: string;
+  createdAt?: any; 
   selectedAnswer?: string;
   domainId?: number;
 }
@@ -187,109 +170,128 @@ export function useFirebaseProgress() {
     };
   }, []);
 
-  // Subscribe to user's profile in Firestore
-  useEffect(() => {
+  // Fetch from Supabase
+  const loadProfile = useCallback(async () => {
     if (!user) {
       setProfileState(defaultProfile);
       setIsLoaded(true);
       return;
     }
 
-    const userDocRef = doc(db, 'users', user.uid);
-    
-    // Real-time listener for profile changes
-    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-      // Debug logging on auth state change
-      console.log('[Auth] User changed:', {
-        uid: user?.uid,
-        provider: user?.providerData[0]?.providerId,
-        profileExists: docSnap.exists()
-      });
-      
-      if (docSnap.exists()) {
-        const data = docSnap.data() as Partial<UserProfile>;
-        // Apply safe defaults for all fields to prevent undefined crashes
+    try {
+      const { data, error } = await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        console.error('Error fetching Supabase profile:', error);
+      }
+
+      if (data) {
         setProfileState({
           ...defaultProfile,
-          ...data,
-          // Ensure arrays are always arrays (never undefined)
-          weakestDomains: data.weakestDomains ?? [],
-          factualGaps: data.factualGaps ?? [],
-          errorPatterns: data.errorPatterns ?? [],
-          // Ensure objects are always objects (never undefined)
-          domainScores: data.domainScores ?? {},
-          skillScores: data.skillScores ?? {},
-          flaggedQuestions: data.flaggedQuestions ?? {},
-          distractorErrors: data.distractorErrors ?? {},
-          skillDistractorErrors: data.skillDistractorErrors ?? {},
-          // Ensure booleans have defaults
-          preAssessmentComplete: data.preAssessmentComplete ?? false,
-          fullAssessmentComplete: data.fullAssessmentComplete ?? false,
-          screenerComplete: data.screenerComplete ?? false,
-          diagnosticComplete: data.diagnosticComplete ?? false,
-          // Ensure objects are always objects (never undefined)
-          screenerResults: data.screenerResults,
-          // Ensure numbers have defaults
-          totalQuestionsSeen: data.totalQuestionsSeen ?? 0,
+          
+          screenerComplete: data.screener_complete ?? false,
+          diagnosticComplete: data.diagnostic_complete ?? false,
+          fullAssessmentComplete: data.full_assessment_complete ?? false,
+          
+          domainScores: data.domain_scores ?? {},
+          skillScores: data.skill_scores ?? {},
+          weakestDomains: data.weakest_domains ?? [],
+          factualGaps: data.factual_gaps ?? [],
+          errorPatterns: data.error_patterns ?? [],
+          flaggedQuestions: data.flagged_questions ?? {},
+          distractorErrors: data.distractor_errors ?? {},
+          skillDistractorErrors: data.skill_distractor_errors ?? {},
+          
+          screenerResults: data.screener_results ?? {},
+          
+          preAssessmentQuestionIds: data.pre_assessment_question_ids ?? [],
+          fullAssessmentQuestionIds: data.full_assessment_question_ids ?? [],
+          recentPracticeQuestionIds: data.recent_practice_question_ids ?? [],
+          screenerItemIds: data.screener_item_ids ?? [],
+          
+          totalQuestionsSeen: data.total_questions_seen ?? 0,
+          practiceResponseCount: data.practice_response_count ?? 0,
           streak: data.streak ?? 0,
-          practiceResponseCount: data.practiceResponseCount ?? 0,
-          migrationVersion: data.migrationVersion ?? 1,
-          // Ensure new assessment tracking arrays have defaults
-          preAssessmentQuestionIds: data.preAssessmentQuestionIds ?? [],
-          fullAssessmentQuestionIds: data.fullAssessmentQuestionIds ?? [],
-          recentPracticeQuestionIds: data.recentPracticeQuestionIds ?? [],
-          screenerItemIds: data.screenerItemIds ?? []
+          lastSession: data.last_session,
+          migrationVersion: data.migration_version ?? 1,
+          
+          lastUpdated: data.updated_at
         });
       } else {
-        // No profile exists yet, use default
-        // DO NOT initialize defaults here - only initialize when explicitly needed
         setProfileState(defaultProfile);
       }
+    } catch (e) {
+      console.error(e);
+      setProfileState(defaultProfile);
+    } finally {
       setIsLoaded(true);
-    }, (error) => {
-      console.error('Error listening to profile:', error);
-      setIsLoaded(true);
-    });
-
-    return () => unsubscribe();
+    }
   }, [user, setProfileState]);
 
+  // Initial data load
+  useEffect(() => {
+    void loadProfile();
+  }, [loadProfile]);
 
-
-  // Save profile to Firestore
+  // Save profile to Supabase
   const saveProfile = useCallback(async (newProfile: UserProfile) => {
     if (!user) return;
     
     try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, sanitizeForFirestore({
-        ...newProfile,
-        lastUpdated: serverTimestamp()
-      }), { merge: true });
+      const updates = {
+        user_id: user.id,
+        screener_complete: newProfile.screenerComplete,
+        diagnostic_complete: newProfile.diagnosticComplete,
+        full_assessment_complete: newProfile.fullAssessmentComplete,
+        
+        domain_scores: newProfile.domainScores,
+        skill_scores: newProfile.skillScores,
+        weakest_domains: newProfile.weakestDomains,
+        factual_gaps: newProfile.factualGaps,
+        error_patterns: newProfile.errorPatterns,
+        flagged_questions: newProfile.flaggedQuestions,
+        distractor_errors: newProfile.distractorErrors,
+        skill_distractor_errors: newProfile.skillDistractorErrors,
+        
+        screener_results: newProfile.screenerResults,
+        
+        pre_assessment_question_ids: newProfile.preAssessmentQuestionIds,
+        full_assessment_question_ids: newProfile.fullAssessmentQuestionIds,
+        recent_practice_question_ids: newProfile.recentPracticeQuestionIds,
+        screener_item_ids: newProfile.screenerItemIds,
+        
+        total_questions_seen: newProfile.totalQuestionsSeen,
+        practice_response_count: newProfile.practiceResponseCount,
+        streak: newProfile.streak,
+        last_session: newProfile.lastSession,
+        migration_version: newProfile.migrationVersion,
+        
+        updated_at: new Date().toISOString()
+      };
+
+      await supabase
+        .from('user_progress')
+        .upsert(updates, { onConflict: 'user_id' });
+        
     } catch (error) {
-      console.error('Error saving profile:', error);
+      console.error('Error saving Supabase profile:', error);
     }
   }, [user]);
 
-  // Update profile (with automatic save)
   const updateProfile = useCallback(async (updates: Partial<UserProfile>) => {
     const newProfile = { ...profileRef.current, ...updates };
     setProfileState(newProfile);
     await saveProfile(newProfile);
   }, [saveProfile, setProfileState]);
 
-  /**
-   * Migrate legacy domain data (10-domain system) to new 4-domain system.
-   * Logic: if any value in the stored weakestDomains array is greater than 4, clear weakestDomains and domainScores entirely.
-   * This removes corrupted progress data written by the old 10-domain system.
-   */
   const migrateDomainSchema = useCallback(async () => {
     if (!user || !isLoaded) return;
-    
     const hasLegacyData = profile.weakestDomains.some(id => id > 4);
-    
     if (hasLegacyData) {
-      console.log('Legacy domain data detected and cleared. Progress reset to clean state.');
       await updateProfile({
         weakestDomains: [],
         domainScores: {}
@@ -297,43 +299,42 @@ export function useFirebaseProgress() {
     }
   }, [user, isLoaded, profile.weakestDomains, updateProfile]);
 
-  // Trigger schema migration once when user loads/logs in
   useEffect(() => {
-    if (user && isLoaded && schemaCheckRef.current !== user.uid) {
-      migrateDomainSchema();
-      schemaCheckRef.current = user.uid;
+    if (user && isLoaded && schemaCheckRef.current !== user.id) {
+      void migrateDomainSchema();
+      schemaCheckRef.current = user.id;
     }
   }, [user, isLoaded, migrateDomainSchema]);
 
   /**
-   * Log a response to the responses subcollection
-   * This is the source of truth - summary doc is cached view
+   * Log a response to the responses table (Supabase)
    */
   const logResponse = useCallback(async (
     response: Omit<ResponseLog, 'createdAt'>
   ): Promise<void> => {
-    if (!user) {
-      console.warn('[logResponse] No user, skipping log');
-      return;
-    }
-
+    if (!user) return;
     try {
-      const responseId = `${response.sessionId}_${response.questionId}_${response.timestamp}`;
-      const responsesRef = collection(db, 'users', user.uid, 'responses');
-      await setDoc(doc(responsesRef, responseId), sanitizeForFirestore({
-        ...response,
-        createdAt: serverTimestamp()
-      }), { merge: true });
+      await supabase.from('responses').insert([{
+        user_id: user.id,
+        session_id: response.sessionId,
+        question_id: response.questionId,
+        skill_id: response.skillId,
+        domain_id: response.domainId,
+        domain_ids: response.domainIds || [],
+        assessment_type: response.assessmentType,
+        is_correct: response.isCorrect,
+        confidence: response.confidence,
+        time_spent: response.timeSpent,
+        time_on_item_seconds: response.time_on_item_seconds,
+        selected_answers: response.selectedAnswers || (response.selectedAnswer ? [response.selectedAnswer] : []),
+        correct_answers: response.correctAnswers || [],
+        distractor_pattern_id: response.distractorPatternId
+      }]);
     } catch (error) {
-      console.error('[logResponse] Error logging response:', error);
-      // Don't throw - response logging failure shouldn't break answer submission
-      // Summary update will still happen
+      console.error('[logResponse] Error logging Supabase response:', error);
     }
   }, [user]);
 
-  /**
-   * Update lastSession pointer in summary doc
-   */
   const updateLastSession = useCallback(async (
     sessionId: string,
     mode: SessionMode,
@@ -341,26 +342,30 @@ export function useFirebaseProgress() {
     elapsedSeconds?: number
   ): Promise<void> => {
     if (!user) return;
-
     try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, sanitizeForFirestore({
-        lastSession: {
-          sessionId,
-          mode,
-          questionIndex,
-          elapsedSeconds: elapsedSeconds || 0,
-          updatedAt: serverTimestamp()
-        },
-        lastUpdated: serverTimestamp()
-      }), { merge: true });
+      const lastSessionData = {
+        sessionId,
+        mode,
+        questionIndex,
+        elapsedSeconds: elapsedSeconds || 0,
+        updatedAt: new Date().toISOString()
+      };
+      
+      await supabase.from('user_progress').upsert({
+        user_id: user.id,
+        last_session: lastSessionData,
+        updated_at: new Date().toISOString()
+      });
+      
+      setProfileState({
+        ...profileRef.current,
+        lastSession: lastSessionData
+      });
     } catch (error) {
       console.error('[updateLastSession] Error updating last session:', error);
     }
-  }, [user]);
+  }, [user, setProfileState]);
 
-  // Update skill progress after answering a question
-  // Note: attemptHistory removed - compute weightedAccuracy from responses subcollection if needed
   const updateSkillProgress = useCallback(async (
     skillId: SkillId,
     isCorrect: boolean,
@@ -389,18 +394,14 @@ export function useFirebaseProgress() {
     const newConsecutiveCorrect = isCorrect ? baseSkill.consecutiveCorrect + 1 : 0;
     const newHistory = [...baseSkill.history, isCorrect].slice(-5);
     
-    // Calculate weighted accuracy from recent history (last 5)
-    // For more accurate calculation, query responses subcollection
     const recentAttempts: SkillAttempt[] = newHistory.map((correct, idx) => ({
       questionId: questionId || `unknown-${Date.now()}-${idx}`,
       correct,
-      confidence: confidence, // Use current confidence for recent attempts
+      confidence: confidence,
       timestamp: Date.now(),
       timeSpent: timeSpent || 0
     }));
     const weightedAccuracy = calculateWeightedAccuracy(recentAttempts);
-    
-    // Count confidence flags from recent history
     const confidenceFlags = countConfidenceFlags(recentAttempts);
     
     const updatedSkill: SkillPerformance = {
@@ -414,7 +415,6 @@ export function useFirebaseProgress() {
       confidenceFlags
     };
     
-    // Calculate new learning state
     const skillPerfLookup = (id: SkillId) => {
       if (id === skillId) return updatedSkill;
       return latestProfile.skillScores[id];
@@ -441,57 +441,54 @@ export function useFirebaseProgress() {
     await saveProfile(newProfile);
   }, [saveProfile, setProfileState]);
 
-  // Reset all progress
   const resetProgress = useCallback(async () => {
     if (!user) {
       setProfileState(defaultProfile);
       return;
     }
-    
-    // Completely overwrite Firestore document (don't merge)
     try {
-      const userDocRef = doc(db, 'users', user.uid);
-      // Use setDoc without merge to completely overwrite (not merge)
-      await setDoc(userDocRef, {
-        ...defaultProfile,
-        lastUpdated: serverTimestamp()
-      }, { merge: false }); // Explicitly set merge to false for complete overwrite
-
+      await saveProfile(defaultProfile);
       setProfileState(defaultProfile);
-      console.log('[ResetProgress] All progress cleared');
+      console.log('[ResetProgress] All progress cleared in Supabase');
     } catch (error) {
-      console.error('Error resetting progress:', error);
-      // Still update local state even if Firestore fails
+      console.error('Error resetting Supabase progress:', error);
       setProfileState(defaultProfile);
     }
-  }, [user, setProfileState]);
+  }, [user, saveProfile, setProfileState]);
 
-  /**
-   * Retrieve assessment responses from Firestore for a given session.
-   * Reports are always retrievable from response events (source of truth).
-   * Reconstructs UserResponse[] from response logs for ScoreReport and past report view.
-   */
   const getAssessmentResponses = useCallback(async (
     sessionId: string,
     assessmentTypes: AssessmentReportType[],
     questions: AnalyzedQuestion[]
   ): Promise<UserResponse[]> => {
-    if (!user) {
-      console.warn('[getAssessmentResponses] No user, cannot retrieve responses');
-      return [];
-    }
+    if (!user) return [];
 
     try {
-      const responsesRef = collection(db, 'users', user.uid, 'responses');
-      const q = query(responsesRef, where('sessionId', '==', sessionId));
+      const { data, error } = await supabase
+        .from('responses')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('session_id', sessionId)
+        .in('assessment_type', assessmentTypes);
+
+      if (error) throw error;
       
-      const querySnapshot = await getDocs(q);
-      const responseLogs = querySnapshot.docs
-        .map((doc) => doc.data() as ResponseLog)
-        .filter((log) => assessmentTypes.includes(log.assessmentType as AssessmentReportType));
+      const responseLogs = (data || []).map(row => ({
+        questionId: row.question_id,
+        skillId: row.skill_id,
+        domainIds: row.domain_ids,
+        assessmentType: row.assessment_type as ResponseAssessmentType,
+        sessionId: row.session_id,
+        isCorrect: row.is_correct,
+        confidence: row.confidence,
+        timeSpent: row.time_spent,
+        timestamp: new Date(row.created_at).getTime(),
+        selectedAnswers: row.selected_answers,
+        correctAnswers: row.correct_answers,
+        distractorPatternId: row.distractor_pattern_id
+      }));
+
       const { responses } = rebuildAssessmentResponses(responseLogs, questions);
-      
-      console.log(`[getAssessmentResponses] Retrieved ${responses.length} responses for session ${sessionId}`);
       return responses;
     } catch (error) {
       console.error('[getAssessmentResponses] Error retrieving responses:', error);
@@ -503,30 +500,42 @@ export function useFirebaseProgress() {
     assessmentTypes: AssessmentReportType[],
     questions: AnalyzedQuestion[]
   ): Promise<AssessmentResponseBundle> => {
-    if (!user) {
-      console.warn('[getLatestAssessmentResponses] No user, cannot retrieve responses');
-      return { sessionId: null, questionIds: [], responses: [] };
-    }
+    if (!user) return { sessionId: null, questionIds: [], responses: [] };
 
     try {
-      const responsesRef = collection(db, 'users', user.uid, 'responses');
-      const q = query(responsesRef);
+      const { data, error } = await supabase
+        .from('responses')
+        .select('*')
+        .eq('user_id', user.id)
+        .in('assessment_type', assessmentTypes)
+        .order('created_at', { ascending: false });
 
-      const querySnapshot = await getDocs(q);
+      if (error) throw error;
+      
+      if (!data || data.length === 0) {
+         return { sessionId: null, questionIds: [], responses: [] };
+      }
+      
+      // Group by sessionId
       const logsBySession = new Map<string, ResponseLog[]>();
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data() as ResponseLog;
-        if (!data.sessionId) {
-          return;
-        }
-        if (!assessmentTypes.includes(data.assessmentType as AssessmentReportType)) {
-          return;
-        }
-
-        const sessionLogs = logsBySession.get(data.sessionId) ?? [];
-        sessionLogs.push(data);
-        logsBySession.set(data.sessionId, sessionLogs);
+      data.forEach(row => {
+        const log = {
+          questionId: row.question_id,
+          skillId: row.skill_id,
+          domainIds: row.domain_ids,
+          assessmentType: row.assessment_type as ResponseAssessmentType,
+          sessionId: row.session_id,
+          isCorrect: row.is_correct,
+          confidence: row.confidence,
+          timeSpent: row.time_spent,
+          timestamp: new Date(row.created_at).getTime(),
+          selectedAnswers: row.selected_answers,
+          correctAnswers: row.correct_answers,
+          distractorPatternId: row.distractor_pattern_id
+        };
+        const arr = logsBySession.get(log.sessionId) ?? [];
+        arr.push(log);
+        logsBySession.set(log.sessionId, arr);
       });
 
       let latestSessionId: string | null = null;
@@ -551,9 +560,6 @@ export function useFirebaseProgress() {
     }
   }, [rebuildAssessmentResponses, user]);
 
-  /**
-   * Save a screener response and check for completion
-   */
   const saveScreenerResponse = useCallback(async (
     response: {
       question_id: string;
@@ -570,29 +576,40 @@ export function useFirebaseProgress() {
     if (!user) return;
 
     try {
-      // 1. Save to responses/{userId}/screener/{questionId}
-      // Note: Path specified as responses/{userId}/screener/{questionId}
-      const screenerResponseRef = doc(db, 'responses', user.uid, 'screener', response.question_id);
-      await setDoc(screenerResponseRef, sanitizeForFirestore({
-        ...response,
-        createdAt: serverTimestamp()
-      }), { merge: true });
+      // 1. Save to responses (using screener assessment type)
+      await supabase.from('responses').insert([{
+         user_id: user.id,
+         session_id: 'screener_session', 
+         question_id: response.question_id,
+         skill_id: response.skill_id,
+         domain_id: response.domain_id,
+         assessment_type: 'screener',
+         is_correct: response.is_correct,
+         confidence: response.confidence,
+         selected_answers: [response.selected_answer],
+         correct_answers: [response.correct_answer],
+         time_spent: 0
+      }]);
 
-      // 2. Check if screener is complete
-      const screenerCollRef = collection(db, 'responses', user.uid, 'screener');
-      const snapshot = await getDocs(screenerCollRef);
-      const completedCount = snapshot.size;
+      // 2. Aggregate screener logic
+      const { data: snapshot } = await supabase
+        .from('responses')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('assessment_type', 'screener');
+        
+      const completedCount = snapshot?.length || 0;
 
-      if (completedCount >= totalQuestions) {
-        // Calculate domain scores
-        const responses = snapshot.docs.map(d => d.data());
+      if (completedCount >= totalQuestions && snapshot) {
         const domainStats: Record<number, { correct: number; total: number }> = {};
         
-        responses.forEach(r => {
-          const dId = Number(r.domain_id);
-          if (!domainStats[dId]) domainStats[dId] = { correct: 0, total: 0 };
-          domainStats[dId].total++;
-          if (r.is_correct) domainStats[dId].correct++;
+        snapshot.forEach(r => {
+          const dId = r.domain_id;
+          if (dId !== null) {
+            if (!domainStats[dId]) domainStats[dId] = { correct: 0, total: 0 };
+            domainStats[dId].total++;
+            if (r.is_correct) domainStats[dId].correct++;
+          }
         });
 
         const domainScores: Record<number, number> = {};
@@ -600,12 +617,11 @@ export function useFirebaseProgress() {
           domainScores[Number(dId)] = Math.round((stats.correct / stats.total) * 100);
         });
 
-        // 3. Update user document
         await updateProfile({
           screenerComplete: true,
           screenerResults: {
             domain_scores: domainScores,
-            completed_at: serverTimestamp()
+            completed_at: new Date().toISOString()
           }
         });
       }
@@ -625,9 +641,6 @@ export function useFirebaseProgress() {
     getAssessmentResponses,
     getLatestAssessmentResponses,
     saveScreenerResponse,
-    /**
-     * Save a practice response to Firestore: practiceResponses/{userId}/{sessionId}/{questionId}
-     */
     savePracticeResponse: useCallback(async (
       sessionId: string,
       questionId: string,
@@ -644,22 +657,27 @@ export function useFirebaseProgress() {
     ) => {
       if (!user) return;
       try {
-        const docRef = doc(db, 'practiceResponses', user.uid, sessionId, questionId);
-        await setDoc(docRef, sanitizeForFirestore({
-          ...response,
-          timestamp: serverTimestamp()
-        }), { merge: true });
+        await supabase.from('practice_responses').insert([{
+          user_id: user.id,
+          session_id: sessionId,
+          question_id: questionId,
+          skill_id: response.skill_id,
+          domain_id: response.domain_id,
+          selected_answer: response.selected_answer,
+          correct_answer: response.correct_answer,
+          is_correct: response.is_correct,
+          confidence: response.confidence,
+          time_on_item_seconds: response.time_on_item_seconds,
+          shuffled_order: response.shuffled_order
+        }]);
       } catch (error) {
         console.error('[savePracticeResponse] Error saving response:', error);
       }
     }, [user]),
-    /**
-     * Recalculate global scores (aggregating screener, assessment, practice)
-     */
     recalculateGlobalScores: useCallback(async () => {
       if (!user) return null;
       try {
-        const result = await calculateAndSaveGlobalScores(user.uid);
+        const result = await calculateAndSaveGlobalScores(user.id);
         console.log('[GlobalScores] Recalculated and saved:', result);
         return result;
       } catch (error) {
