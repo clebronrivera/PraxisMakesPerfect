@@ -6,7 +6,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return signedIn() && request.auth.token.email == 'clebronrivera@icloud.com';
+      return signedIn() && request.auth.token != null && "email" in request.auth.token && request.auth.token.email == 'clebronrivera@icloud.com';
     }
 
     // Users can only read/write their own profile data
@@ -25,6 +25,16 @@ service cloud.firestore {
     }
 
     match /responses/{userId}/screener/{responseId} {
+      allow read, write: if (signedIn() && request.auth.uid == userId) || isAdmin();
+      allow create: if (signedIn() && request.auth.uid == userId) || isAdmin();
+    }
+
+    match /practiceResponses/{userId}/{sessionId}/{questionId} {
+      allow read, write: if (signedIn() && request.auth.uid == userId) || isAdmin();
+      allow create: if (signedIn() && request.auth.uid == userId) || isAdmin();
+    }
+
+    match /diagnosticSessions/{userId}/sessions/{sessionId} {
       allow read, write: if (signedIn() && request.auth.uid == userId) || isAdmin();
       allow create: if (signedIn() && request.auth.uid == userId) || isAdmin();
     }

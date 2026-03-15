@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, BarChart3, AlertTriangle } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
 import { UserProfile } from '../hooks/useFirebaseProgress';
 import { getDomainColor } from '../utils/domainColors';
+import { getDomainLabel } from '../utils/domainLabels';
 
 interface PraxisPerformanceViewProps {
   userProfile: UserProfile;
@@ -316,7 +317,7 @@ export default function PraxisPerformanceView({
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1">
                                     <p className="font-semibold text-slate-200">
-                                      {domainInfo?.shortName}: {domainInfo?.name}
+                                      {getDomainLabel(domainInfo)}
                                     </p>
                                     {isWeak && (
                                       <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
@@ -392,7 +393,7 @@ export default function PraxisPerformanceView({
       </div>
 
       {/* Summary Stats */}
-      {userProfile.preAssessmentComplete && (
+      {(userProfile.screenerComplete || userProfile.preAssessmentComplete || userProfile.fullAssessmentComplete) && (
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-800">
           <div className="p-4 bg-slate-800/50 rounded-xl text-center">
             <p className="text-2xl font-bold text-amber-400">

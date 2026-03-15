@@ -24,8 +24,10 @@ export function detectWeaknesses(
   factualGaps: string[];
   errorPatterns: string[];
   domainScores: Record<number, { correct: number; total: number }>;
+  currentSkillScores: Record<string, { correct: number; total: number }>;
 } {
   const domainScores: Record<number, { correct: number; total: number }> = {};
+  const currentSkillScores: Record<string, { correct: number; total: number }> = {};
   const errorPatterns: Record<string, number> = {};
   const factualGaps: string[] = [];
   
@@ -49,6 +51,17 @@ export function detectWeaknesses(
         if (response.isCorrect) {
           domainScores[domain].correct++;
         }
+      }
+    }
+    
+    // Update skill scores
+    if (question.skillId) {
+      if (!currentSkillScores[question.skillId]) {
+        currentSkillScores[question.skillId] = { correct: 0, total: 0 };
+      }
+      currentSkillScores[question.skillId].total++;
+      if (response.isCorrect) {
+        currentSkillScores[question.skillId].correct++;
       }
     }
     
@@ -95,6 +108,7 @@ export function detectWeaknesses(
     weakestDomains,
     factualGaps: factualGaps.slice(0, 10),
     errorPatterns: topErrorPatterns,
-    domainScores
+    domainScores,
+    currentSkillScores
   };
 }

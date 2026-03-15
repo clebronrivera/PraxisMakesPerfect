@@ -54,7 +54,7 @@ interface OverviewStats {
   totalQuestionsSeen: number;
   practiceUsers: number;
   screenerUsers: number;
-  diagnosticUsers: number;
+  assessmentUsers: number;
   feedbackOpen: number;
   reportsOpen: number;
   criticalReports: number;
@@ -203,7 +203,7 @@ export default function AdminDashboard({
       totalQuestionsSeen: users.reduce((sum, entry) => sum + (entry.totalQuestionsSeen ?? 0), 0),
       practiceUsers: users.filter((entry) => (entry.practiceResponseCount ?? 0) > 0).length,
       screenerUsers: users.filter((entry) => Boolean(entry.screenerComplete)).length,
-      diagnosticUsers: users.filter((entry) => Boolean(entry.diagnosticComplete || entry.fullAssessmentComplete)).length,
+      assessmentUsers: users.filter((entry) => Boolean(entry.diagnosticComplete || entry.fullAssessmentComplete)).length,
       feedbackOpen: feedback.filter((item) => ['new', 'reviewing', 'planned'].includes(item.status)).length,
       reportsOpen: reports.filter((item) => ['open', 'triaged'].includes(item.status)).length,
       criticalReports: reports.filter((item) => item.severity === 'critical' && item.status !== 'fixed').length
@@ -385,7 +385,7 @@ export default function AdminDashboard({
                   <h3 className="mb-4 text-lg font-semibold text-slate-100">Adoption Snapshot</h3>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <StatLine label="Completed screener" value={overview.screenerUsers} />
-                    <StatLine label="Reached diagnostic" value={overview.diagnosticUsers} />
+                    <StatLine label="Reached assessment beyond screener" value={overview.assessmentUsers} />
                     <StatLine label="Used practice mode" value={overview.practiceUsers} />
                     <StatLine label="Open beta feedback" value={overview.feedbackOpen} />
                     <StatLine label="Open question reports" value={overview.reportsOpen} />
@@ -618,15 +618,18 @@ export default function AdminDashboard({
                             {entry.screenerComplete && (
                               <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs text-blue-300">Screener</span>
                             )}
-                            {entry.diagnosticComplete && (
-                              <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300">Diagnostic</span>
+                            {entry.fullAssessmentComplete && (
+                              <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300">Full assessment</span>
+                            )}
+                            {entry.diagnosticComplete && !entry.fullAssessmentComplete && (
+                              <span className="rounded-full bg-teal-500/15 px-3 py-1 text-xs text-teal-300">Archived assessment</span>
                             )}
                             {(entry.practiceResponseCount ?? 0) > 0 && (
                               <span className="rounded-full bg-amber-500/15 px-3 py-1 text-xs text-amber-300">
                                 Practice {entry.practiceResponseCount}
                               </span>
                             )}
-                            {!entry.screenerComplete && !entry.diagnosticComplete && (entry.practiceResponseCount ?? 0) === 0 && (
+                            {!entry.screenerComplete && !entry.diagnosticComplete && !entry.fullAssessmentComplete && (entry.practiceResponseCount ?? 0) === 0 && (
                               <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-400">Not started</span>
                             )}
                           </div>

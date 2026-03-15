@@ -1,4 +1,5 @@
-import type { SessionPayload } from './sessionTypes';
+import type { ActiveSessionStorageType, SessionPayload } from './sessionTypes';
+import type { SessionAssessmentFlow } from '../types/assessment';
 
 /** Single session model: in-progress assessment (per-user). Payload + identity for resume. */
 export interface UserSession extends SessionPayload {
@@ -35,6 +36,13 @@ function getUserSessions(userName: string): UserSession[] {
     console.error('Error loading user sessions:', error);
     return [];
   }
+}
+
+function deleteUserSessionsByType(userName: string, type: UserSession['type']): void {
+  const sessions = getUserSessions(userName).filter(session => session.type === type);
+  sessions.forEach(session => {
+    deleteUserSession(userName, session.sessionId);
+  });
 }
 
 /**
@@ -86,6 +94,25 @@ export function loadUserSession(sessionId: string): UserSession | null {
   }
 }
 
+export function deleteUserSession(userName: string, sessionId: string): void {
+  try {
+    localStorage.removeItem(`${SESSIONS_KEY_PREFIX}${sessionId}`);
+
+    const listKey = `${USER_SESSIONS_LIST_KEY}-${userName}`;
+    const stored = localStorage.getItem(listKey);
+    const sessionIds: string[] = stored ? JSON.parse(stored) : [];
+    const nextSessionIds = sessionIds.filter((id) => id !== sessionId);
+
+    if (nextSessionIds.length > 0) {
+      localStorage.setItem(listKey, JSON.stringify(nextSessionIds));
+    } else {
+      localStorage.removeItem(listKey);
+    }
+  } catch (error) {
+    console.error('Error deleting session:', error);
+  }
+}
+
 /**
  * Get current active session for a user
  */
@@ -119,15 +146,20 @@ export function getCurrentUser(): string | null {
  */
 export function createUserSession(
   userName: string,
-  type: 'pre-assessment' | 'full-assessment',
-  questionIds: string[]
+  type: ActiveSessionStorageType,
+  questionIds: string[],
+  assessmentFlow?: SessionAssessmentFlow
 ): UserSession {
+  // Keep a single in-progress session per assessment type to avoid surfacing stale resume cards.
+  deleteUserSessionsByType(userName, type);
+
   const sessionId = `${type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   
   const session: UserSession = {
     userName,
     sessionId,
     type,
+    assessmentFlow,
     questionIds,
     currentIndex: 0,
     responses: [],

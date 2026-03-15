@@ -5,7 +5,11 @@ import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
 // Removed UserResponse import
 import { UserProfile } from '../hooks/useFirebaseProgress';
-import { AnalyzedQuestion } from '../brain/question-analyzer';
+import {
+  AnalyzedQuestion,
+  getQuestionCorrectAnswers,
+  isQuestionSelectionCorrect
+} from '../brain/question-analyzer';
 
 interface TeachModeProps {
   userProfile: UserProfile;
@@ -24,8 +28,10 @@ interface TeachingContext {
 /**
  * Get teaching context for a question based on its domains and key concepts
  */
-function getTeachingContext(question: AnalyzedQuestion, engine: any): TeachingContext {
-  const domain = question.domains[0]; // Primary domain
+export function getTeachingContext(question: AnalyzedQuestion, engine: any): TeachingContext {
+  const domains = question.domains || [];
+  const keyConcepts = question.keyConcepts || [];
+  const domain = domains[0]; // Primary domain
   const NASP_DOMAINS = engine.domains.reduce((acc: any, d: any) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
   const domainInfo = NASP_DOMAINS[domain];
   
@@ -66,22 +72,22 @@ Always match intervention intensity to student need level.`,
   
   // Determine which explanation to use based on key concepts
   let explanationKey = 'problem-solving';
-  if (question.keyConcepts.some(c => c.toLowerCase().includes('consultation'))) {
+  if (keyConcepts.some(c => c.toLowerCase().includes('consultation'))) {
     explanationKey = 'consultation';
-  } else if (question.keyConcepts.some(c => c.toLowerCase().includes('assessment') || c.toLowerCase().includes('test'))) {
+  } else if (keyConcepts.some(c => c.toLowerCase().includes('assessment') || c.toLowerCase().includes('test'))) {
     explanationKey = 'assessment';
-  } else if (question.keyConcepts.some(c => c.toLowerCase().includes('intervention') || c.toLowerCase().includes('tier'))) {
+  } else if (keyConcepts.some(c => c.toLowerCase().includes('intervention') || c.toLowerCase().includes('tier'))) {
     explanationKey = 'intervention';
-  } else if (question.keyConcepts.some(c => c.toLowerCase().includes('behavior') || c.toLowerCase().includes('fba'))) {
+  } else if (keyConcepts.some(c => c.toLowerCase().includes('behavior') || c.toLowerCase().includes('fba'))) {
     explanationKey = 'behavior';
   }
   
   const explanation = explanations[explanationKey] || explanations['problem-solving'];
   
   return {
-    concept: question.keyConcepts[0] || 'Key Concept',
+    concept: keyConcepts[0] || 'Key Concept',
     explanation,
-    keyPoints: question.keyConcepts.slice(0, 3),
+    keyPoints: keyConcepts.slice(0, 3),
     commonMistakes: domainInfo?.commonMistakes || []
   };
 }
@@ -98,8 +104,8 @@ export default function TeachMode({
   // Filter questions to deficient areas
   const deficientDomains = selectedDomains || userProfile.weakestDomains;
   
-  const teachQuestions = analyzedQuestions.filter(q => 
-    q.domains.some(d => deficientDomains.includes(d))
+  const teachQuestions = analyzedQuestions.filter(q =>
+    (q.domains || []).some(d => deficientDomains.includes(d))
   );
   
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -127,8 +133,8 @@ export default function TeachMode({
   
   const toggleAnswer = (letter: string) => {
     if (showFeedback) return;
-    
-    const maxAnswers = currentQuestion?.correct_answer.length || 1;
+
+    const maxAnswers = currentQuestion ? getQuestionCorrectAnswers(currentQuestion).length || 1 : 1;
     
     setSelectedAnswers(prev => {
       if (prev.includes(letter)) {
@@ -143,10 +149,8 @@ export default function TeachMode({
   
   const submitAnswer = () => {
     if (selectedAnswers.length === 0 || !currentQuestion) return;
-    
-    const isCorrect = 
-      selectedAnswers.every(a => currentQuestion.correct_answer.includes(a)) &&
-      selectedAnswers.length === currentQuestion.correct_answer.length;
+
+    const isCorrect = isQuestionSelectionCorrect(currentQuestion, selectedAnswers);
     
     if (!isRetry) {
       // First attempt
@@ -229,9 +233,8 @@ export default function TeachMode({
     );
   }
   
-  const isCorrect = 
-    selectedAnswers.every(a => currentQuestion.correct_answer.includes(a)) &&
-    selectedAnswers.length === currentQuestion.correct_answer.length;
+  const isCorrect = isQuestionSelectionCorrect(currentQuestion, selectedAnswers);
+  const currentDomains = currentQuestion.domains || [];
   
   return (
     <div className="space-y-6">
@@ -249,7 +252,7 @@ export default function TeachMode({
           </div>
         </div>
         <div className="flex gap-2">
-          {currentQuestion.domains.slice(0, 2).map(d => {
+          {currentDomains.slice(0, 2).map(d => {
             const domainInfo = NASP_DOMAINS[d as keyof typeof NASP_DOMAINS];
             return (
               <span key={d} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-300">
@@ -321,7 +324,7 @@ export default function TeachMode({
             question={currentQuestion}
             userAnswer={selectedAnswers}
             isCorrect={isCorrect}
-            rationale={currentQuestion.rationale}
+            rationale={currentQuestion.rationale || ''}
           />
           
           {isRetry && !isCorrect && (

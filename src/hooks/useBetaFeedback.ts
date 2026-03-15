@@ -12,6 +12,7 @@ import {
 import { db } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
+import { sanitizeForFirestore } from '../utils/firestore';
 
 export type BetaFeedbackCategory =
   | 'bug'
@@ -56,14 +57,14 @@ export function useBetaFeedback() {
 
     setIsSubmitting(true);
     try {
-      await addDoc(collection(db, 'betaFeedback'), {
+      await addDoc(collection(db, 'betaFeedback'), sanitizeForFirestore({
         ...feedback,
         userId: user.uid,
         userEmail: user.email ?? null,
         userDisplayName: user.displayName ?? null,
         status: 'new' as const,
         createdAt: serverTimestamp()
-      });
+      }));
     } catch (error) {
       console.error('[useBetaFeedback] Error submitting feedback:', error);
       throw error;

@@ -1,5 +1,10 @@
 import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
+import {
+  STUDY_PLAN_API_VERSION,
+  StudyPlanApiRequestSchema,
+  StudyPlanApiResponseSchema
+} from '../src/types/studyPlanApi';
 
 const MODEL = 'claude-sonnet-4-20250514';
 
@@ -34,25 +39,13 @@ function getBearerToken(authorizationHeader?: string): string | null {
   return scheme === 'Bearer' && token ? token : null;
 }
 
-function getPromptFromBody(body: unknown): string {
+function getParsedRequestBody(body: unknown) {
   if (!body) {
     throw new Error('Request body is missing.');
   }
 
-  if (typeof body === 'string') {
-    const parsed = JSON.parse(body) as { prompt?: unknown };
-    if (typeof parsed.prompt !== 'string' || parsed.prompt.trim().length === 0) {
-      throw new Error('Prompt is required.');
-    }
-    return parsed.prompt;
-  }
-
-  const parsedBody = body as { prompt?: unknown };
-  if (typeof parsedBody.prompt !== 'string' || parsedBody.prompt.trim().length === 0) {
-    throw new Error('Prompt is required.');
-  }
-
-  return parsedBody.prompt;
+  const parsedBody = typeof body === 'string' ? JSON.parse(body) : body;
+  return StudyPlanApiRequestSchema.parse(parsedBody);
 }
 
 export default async function handler(req: any, res: any) {
@@ -68,9 +61,14 @@ export default async function handler(req: any, res: any) {
     }
 
     const app = getFirebaseAdminApp();
-    await getAuth(app).verifyIdToken(idToken);
+    const decodedToken = await getAuth(app).verifyIdToken(idToken);
 
-    const prompt = getPromptFromBody(req.body);
+    const requestBody = getParsedRequestBody(req.body);
+    if (decodedToken.uid !== requestBody.userId) {
+      return res.status(403).json({ error: 'Authenticated user does not match requested study guide owner.' });
+    }
+
+    const prompt = requestBody.prompt;
     const apiKey = process.env.ANTHROPIC_API_KEY;
 
     if (!apiKey) {
@@ -115,7 +113,14 @@ export default async function handler(req: any, res: any) {
       return res.status(502).json({ error: 'Study plan generation returned an empty response.' });
     }
 
-    return res.status(200).json({ content });
+    const responseBody = StudyPlanApiResponseSchema.parse({
+      content,
+      model: MODEL,
+      generatedAt: new Date().toISOString(),
+      apiVersion: STUDY_PLAN_API_VERSION
+    });
+
+    return res.status(200).json(responseBody);
   } catch (error) {
     console.error('[study-plan api] Request failed:', error);
     return res.status(500).json({

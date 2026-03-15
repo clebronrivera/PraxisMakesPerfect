@@ -1,5 +1,5 @@
-// Assessment Builder - Single source for building pre and full assessments from question bank.
-// Uses Praxis distribution for full assessment; fixed per-domain count for pre-assessment.
+// Assessment Builder - Single source for building the screener and full assessment from question bank.
+// Uses a skill-coverage screener blueprint plus Praxis distribution for the full assessment.
 // Content source: questions from question bank (analyzedQuestions); domain taxonomy from knowledge-base.
 
 import { AnalyzedQuestion } from '../brain/question-analyzer';
@@ -46,7 +46,7 @@ function calculateDomainDistribution(
   excludeQuestionIds: Set<string> = new Set(),
   customDistribution?: Record<string, { percentage: number; domains: number[] }>
 ): Record<number, number> {
-  const activeDomainIds = [...new Set(analyzedQuestions.map(q => q.domain as number))].filter(d => d !== undefined);
+  const activeDomainIds = [...new Set(analyzedQuestions.flatMap(q => q.domains ?? []))].filter(d => d !== undefined).sort((a, b) => a - b);
   
   // Use custom distribution if provided, otherwise fall back to Praxis distribution
   const distributionConfig = customDistribution || PRAXIS_DISTRIBUTION;
@@ -203,7 +203,7 @@ export function buildFullAssessment(
   excludeQuestionIds: string[] = [],
   customDistribution?: Record<string, { percentage: number; domains: number[] }>
 ): AnalyzedQuestion[] {
-  const activeDomainIds = [...new Set(analyzedQuestions.map(q => q.domain as number))].filter(d => d !== undefined);
+  const activeDomainIds = [...new Set(analyzedQuestions.flatMap(q => q.domains ?? []))].filter(d => d !== undefined).sort((a, b) => a - b);
   const excludeSet = new Set(excludeQuestionIds);
   const selectedIds = new Set<string>();
   const selected: AnalyzedQuestion[] = [];
@@ -254,46 +254,6 @@ export function buildFullAssessment(
   }
   
   // Shuffle final selection
-  return selected.sort(() => Math.random() - 0.5);
-}
-
-/**
- * Build pre-assessment (Quick Diagnostic): questionsPerDomain per NASP domain, then shuffle.
- * Single assessment builder - use this instead of inline logic in App.
- */
-export function buildPreAssessment(
-  analyzedQuestions: AnalyzedQuestion[],
-  questionsPerDomain: number = 4,
-  excludeQuestionIds: Set<string> = new Set()
-): AnalyzedQuestion[] {
-  const activeDomainIds = [...new Set(analyzedQuestions.map(q => q.domain as number))].filter(d => d !== undefined);
-  const selected: AnalyzedQuestion[] = [];
-  const usedQuestionIds = new Set<string>(excludeQuestionIds);
-
-  for (const domain of activeDomainIds) {
-    const domainQuestions = analyzedQuestions.filter(
-      q => q.domains?.includes(domain) && !usedQuestionIds.has(q.id)
-    );
-    if (domainQuestions.length === 0) continue;
-    const shuffled = [...domainQuestions].sort(() => Math.random() - 0.5);
-    const take = shuffled.slice(0, questionsPerDomain);
-    take.forEach(q => {
-      selected.push(q);
-      usedQuestionIds.add(q.id);
-    });
-  }
-
-  const targetTotal = activeDomainIds.length * questionsPerDomain;
-  if (selected.length < targetTotal) {
-    const remaining = targetTotal - selected.length;
-    const available = analyzedQuestions.filter(q => !usedQuestionIds.has(q.id));
-    const shuffled = [...available].sort(() => Math.random() - 0.5);
-    shuffled.slice(0, remaining).forEach(q => {
-      selected.push(q);
-      usedQuestionIds.add(q.id);
-    });
-  }
-
   return selected.sort(() => Math.random() - 0.5);
 }
 
@@ -453,180 +413,6 @@ export function buildScreener(
 
   // 5. Interleave interleaved questions (round-robin)
   // Ensure each domain list is independently randomized before interleaving
-  const d1 = [...domainQuestions[1]].sort(() => Math.random() - 0.5);
-  const d2 = [...domainQuestions[2]].sort(() => Math.random() - 0.5);
-  const d3 = [...domainQuestions[3]].sort(() => Math.random() - 0.5);
-  const d4 = [...domainQuestions[4]].sort(() => Math.random() - 0.5);
-
-  const result: AnalyzedQuestion[] = [];
-  const lists = [d1, d2, d3, d4];
-  
-  let hasItems = true;
-  while (hasItems) {
-    hasItems = false;
-    for (const list of lists) {
-      if (list.length > 0) {
-        result.push(list.shift()!);
-        hasItems = true;
-      }
-    }
-  }
-
-  return result;
-}
-
-/**
- * Build a 120-question Full Diagnostic assessment.
- * - Both single and multi-select eligible.
- * - Excludes screener IDs.
- * - Prioritizes multi-select first per skill.
- * - Interleaves domains round-robin.
- */
-export function buildDiagnostic(
-  analyzedQuestions: AnalyzedQuestion[],
-  usedScreenerIds: string[]
-): AnalyzedQuestion[] {
-  const DIAG_BLUEPRINT: Record<string, { domain: number; slots: number; recallTarget?: number }> = {
-    // Domain 1: 38 questions, 9 Recall + 29 Application
-    'CON-01': { domain: 1, slots: 3, recallTarget: 9 },
-    'DBD-01': { domain: 1, slots: 3, recallTarget: 9 },
-    'DBD-03': { domain: 1, slots: 3, recallTarget: 9 },
-    'DBD-05': { domain: 1, slots: 2, recallTarget: 9 },
-    'DBD-06': { domain: 1, slots: 3, recallTarget: 9 },
-    'DBD-07': { domain: 1, slots: 2, recallTarget: 9 },
-    'DBD-08': { domain: 1, slots: 3, recallTarget: 9 },
-    'DBD-09': { domain: 1, slots: 2, recallTarget: 9 },
-    'DBD-10': { domain: 1, slots: 2, recallTarget: 9 },
-    'PSY-01': { domain: 1, slots: 3, recallTarget: 9 },
-    'PSY-02': { domain: 1, slots: 2, recallTarget: 9 },
-    'PSY-03': { domain: 1, slots: 3, recallTarget: 9 },
-    'PSY-04': { domain: 1, slots: 3, recallTarget: 9 },
-
-    // Domain 2: 28 questions, 7 Recall + 21 Application
-    'ACA-02': { domain: 2, slots: 2, recallTarget: 7 },
-    'ACA-03': { domain: 2, slots: 2, recallTarget: 7 },
-    'ACA-04': { domain: 2, slots: 2, recallTarget: 7 },
-    'ACA-06': { domain: 2, slots: 3, recallTarget: 7 },
-    'ACA-07': { domain: 2, slots: 2, recallTarget: 7 },
-    'ACA-08': { domain: 2, slots: 2, recallTarget: 7 },
-    'ACA-09': { domain: 2, slots: 2, recallTarget: 7 },
-    'DEV-01': { domain: 2, slots: 2, recallTarget: 7 },
-    'MBH-02': { domain: 2, slots: 2, recallTarget: 7 },
-    'MBH-03': { domain: 2, slots: 3, recallTarget: 7 },
-    'MBH-04': { domain: 2, slots: 2, recallTarget: 7 },
-    'MBH-05': { domain: 2, slots: 2, recallTarget: 7 },
-
-    // Domain 3: 24 questions, 6 Recall + 18 Application
-    'FAM-02': { domain: 3, slots: 3, recallTarget: 6 },
-    'FAM-03': { domain: 3, slots: 2, recallTarget: 6 },
-    'SAF-01': { domain: 3, slots: 4, recallTarget: 6 },
-    'SAF-03': { domain: 3, slots: 4, recallTarget: 6 },
-    'SAF-04': { domain: 3, slots: 3, recallTarget: 6 },
-    'SWP-02': { domain: 3, slots: 2, recallTarget: 6 },
-    'SWP-03': { domain: 3, slots: 3, recallTarget: 6 },
-    'SWP-04': { domain: 3, slots: 3, recallTarget: 6 },
-
-    // Domain 4: 30 questions, 8 Recall + 22 Application
-    'DIV-01': { domain: 4, slots: 2, recallTarget: 8 },
-    'DIV-03': { domain: 4, slots: 2, recallTarget: 8 },
-    'DIV-05': { domain: 4, slots: 2, recallTarget: 8 },
-    'ETH-01': { domain: 4, slots: 3, recallTarget: 8 },
-    'ETH-02': { domain: 4, slots: 2, recallTarget: 8 },
-    'ETH-03': { domain: 4, slots: 2, recallTarget: 8 },
-    'LEG-01': { domain: 4, slots: 2, recallTarget: 8 },
-    'LEG-02': { domain: 4, slots: 3, recallTarget: 8 },
-    'LEG-03': { domain: 4, slots: 2, recallTarget: 8 },
-    'LEG-04': { domain: 4, slots: 2, recallTarget: 8 },
-    'RES-02': { domain: 4, slots: 3, recallTarget: 8 },
-    'RES-03': { domain: 4, slots: 3, recallTarget: 8 }
-  };
-
-  const excludeSet = new Set(usedScreenerIds);
-
-  // 1. Filter: exclude IDs
-  const filteredQuestions = analyzedQuestions.filter(q => !excludeSet.has(q.id));
-
-  // 2. Group by skillId for pool selection
-  const poolBySkill = new Map<string, AnalyzedQuestion[]>();
-  filteredQuestions.forEach(q => {
-    if (q.skillId) {
-      if (!poolBySkill.has(q.skillId)) {
-        poolBySkill.set(q.skillId, []);
-      }
-      poolBySkill.get(q.skillId)!.push(q);
-    }
-  });
-
-  const domainQuestions: Record<number, AnalyzedQuestion[]> = { 1: [], 2: [], 3: [], 4: [] };
-  const skillRemainingPools = new Map<string, AnalyzedQuestion[]>();
-
-  // 3. Selection per skill based on slots, prioritizing multi-select first
-  for (const [skillId, config] of Object.entries(DIAG_BLUEPRINT)) {
-    const skillPool = poolBySkill.get(skillId) || [];
-    if (skillPool.length < config.slots) {
-      console.warn(`[AssessmentBuilder] Skill ${skillId} pool is smaller than blueprint slots (${skillPool.length} < ${config.slots}).`);
-    }
-
-    const multiSelect = skillPool.filter(q => q.isMultiSelect === true);
-    const singleSelect = skillPool.filter(q => q.isMultiSelect !== true);
-
-    const shuffledMulti = [...multiSelect].sort(() => Math.random() - 0.5);
-    const shuffledSingle = [...singleSelect].sort(() => Math.random() - 0.5);
-
-    const combined = [...shuffledMulti, ...shuffledSingle];
-    const selection = combined.slice(0, config.slots);
-    const remaining = combined.slice(config.slots);
-
-    domainQuestions[config.domain].push(...selection);
-    skillRemainingPools.set(skillId, remaining);
-  }
-
-  // 4. Complexity enforcement per domain
-  for (let d = 1; d <= 4; d++) {
-    const domainSkills = Object.entries(DIAG_BLUEPRINT).filter(([_, config]) => config.domain === d);
-    const recallTarget = domainSkills[0]?.[1]?.recallTarget || 0;
-    
-    const currentQuestions = domainQuestions[d];
-    const getRecallCount = () => currentQuestions.filter(q => q.cognitiveComplexity === 'Recall').length;
-    
-    let recallCount = getRecallCount();
-
-    if (recallCount < recallTarget) {
-      // Need more Recall
-      let needed = recallTarget - recallCount;
-      for (let i = 0; i < currentQuestions.length && needed > 0; i++) {
-        const q = currentQuestions[i];
-        if (q.cognitiveComplexity !== 'Application') continue;
-
-        const pool = skillRemainingPools.get(q.skillId!) || [];
-        const recallIdx = pool.findIndex(p => p.cognitiveComplexity === 'Recall');
-
-        if (recallIdx !== -1) {
-          const recallQuestion = pool.splice(recallIdx, 1)[0];
-          currentQuestions[i] = recallQuestion;
-          needed--;
-        }
-      }
-    } else if (recallCount > recallTarget) {
-      // Need fewer Recall
-      let toReduce = recallCount - recallTarget;
-      for (let i = 0; i < currentQuestions.length && toReduce > 0; i++) {
-        const q = currentQuestions[i];
-        if (q.cognitiveComplexity !== 'Recall') continue;
-
-        const pool = skillRemainingPools.get(q.skillId!) || [];
-        const appIdx = pool.findIndex(p => p.cognitiveComplexity === 'Application');
-
-        if (appIdx !== -1) {
-          const appQuestion = pool.splice(appIdx, 1)[0];
-          currentQuestions[i] = appQuestion;
-          toReduce--;
-        }
-      }
-    }
-  }
-
-  // 5. Interleave interleaved questions (round-robin)
   const d1 = [...domainQuestions[1]].sort(() => Math.random() - 0.5);
   const d2 = [...domainQuestions[2]].sort(() => Math.random() - 0.5);
   const d3 = [...domainQuestions[3]].sort(() => Math.random() - 0.5);

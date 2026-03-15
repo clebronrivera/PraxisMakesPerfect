@@ -6,16 +6,12 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   doc, 
   setDoc,
-  updateDoc,
-  getDoc,
-  arrayUnion,
   onSnapshot,
   serverTimestamp,
   collection,
   query,
   where,
-  getDocs,
-  orderBy
+  getDocs
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
@@ -31,13 +27,19 @@ import {
 import { UserResponse } from '../brain/weakness-detector';
 import { calculateAndSaveGlobalScores } from '../utils/globalScoreCalculator';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
+import { sanitizeForFirestore } from '../utils/firestore';
+import type {
+  AssessmentReportType,
+  ResponseAssessmentType,
+  SessionMode
+} from '../types/assessment';
 
 // Profile is a cached view derived from response events (users/{uid}/responses).
 // domainScores, weakestDomains, factualGaps, errorPatterns are computed from events
 // on assessment complete (or can be recomputed via getAssessmentResponses + detectWeaknesses).
 // No practiceHistory or generatedQuestionsSeen - use practiceResponseCount / recentPracticeQuestionIds.
 export interface UserProfile {
-  preAssessmentComplete: boolean;
+  preAssessmentComplete: boolean; // Legacy quick-diagnostic completion flag
   fullAssessmentComplete?: boolean;
   domainScores: Record<number, { correct: number; total: number }>;
   skillScores: Record<SkillId, SkillPerformance>;
@@ -49,7 +51,7 @@ export interface UserProfile {
   flaggedQuestions: Record<string, string>;
   distractorErrors: Record<string, number>;
   skillDistractorErrors: Record<SkillId, Record<string, number>>;
-  preAssessmentQuestionIds?: string[]; // Questions used in pre-assessment
+  preAssessmentQuestionIds?: string[]; // Legacy quick-diagnostic question IDs
   fullAssessmentQuestionIds?: string[]; // Questions used in full assessment
   recentPracticeQuestionIds?: string[]; // Rolling window of recent practice questions (last 20)
   screenerItemIds?: string[]; // Questions selected for the screener
@@ -59,14 +61,16 @@ export interface UserProfile {
   migrationVersion?: number; // Set to 1 to prevent legacy array writes
   lastSession?: {
     sessionId: string;
-    mode: 'practice' | 'full' | 'diagnostic';
+    mode: SessionMode;
     questionIndex: number;
     updatedAt: any; // Timestamp
-  };
-  lastPreAssessmentSessionId?: string; // Session ID of last completed pre-assessment
+  } | null;
+  lastPreAssessmentSessionId?: string; // Session ID of last completed legacy quick diagnostic
   lastFullAssessmentSessionId?: string; // Session ID of last completed full assessment
-  lastPreAssessmentCompletedAt?: any; // Timestamp of last pre-assessment completion
+  lastScreenerSessionId?: string; // Session ID of last completed screener
+  lastPreAssessmentCompletedAt?: any; // Timestamp of last legacy quick-diagnostic completion
   lastFullAssessmentCompletedAt?: any; // Timestamp of last full assessment completion
+  lastScreenerCompletedAt?: any; // Timestamp of last screener completion
   screenerComplete?: boolean;
   screenerResults?: {
     domain_scores: Record<number, number>;
@@ -81,12 +85,12 @@ export interface ResponseLog {
   questionId: string;
   skillId?: string;
   domainIds?: number[]; // All domains for this question (supports multi-domain)
-  assessmentType: 'diagnostic' | 'full' | 'practice';
+  assessmentType: ResponseAssessmentType;
   sessionId: string;
   isCorrect: boolean;
   confidence: 'low' | 'medium' | 'high';
   timeSpent: number;
-  time_on_item_seconds?: number; // Mirror field for diagnostic verification
+  time_on_item_seconds?: number; // Legacy mirror field retained for existing data checks
   timestamp: number;
   selectedAnswers: string[]; // Full multi-select (source of truth)
   correctAnswers: string[]; // For weakness analysis and analytics
@@ -97,27 +101,10 @@ export interface ResponseLog {
   domainId?: number;
 }
 
-export interface DiagnosticResponse {
-  question_id: string;
-  skill_id: string;
-  domain_id: number;
-  selected_answer: string;
-  correct_answer: string;
-  is_correct: boolean;
-  confidence: string;
-  time_on_item_seconds: number;
-  distractor_selected?: string;
-  attempt_number?: number;
-}
-
-export interface DiagnosticSessionDoc {
-  status: 'in_progress' | 'paused' | 'complete';
-  started_at: any;
-  current_question_index: number;
-  elapsed_seconds: number;
-  responses: DiagnosticResponse[];
-  saved_at?: any;
-  completed_at?: any;
+interface AssessmentResponseBundle {
+  sessionId: string | null;
+  questionIds: string[];
+  responses: UserResponse[];
 }
 
 const defaultProfile: UserProfile = {
@@ -146,12 +133,64 @@ export function useFirebaseProgress() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile>(defaultProfile);
   const [isLoaded, setIsLoaded] = useState(false);
-  const migrationRef = useRef<string | null>(null);
+  const schemaCheckRef = useRef<string | null>(null);
+  const profileRef = useRef<UserProfile>(defaultProfile);
+
+  const setProfileState = useCallback((nextProfile: UserProfile) => {
+    profileRef.current = nextProfile;
+    setProfile(nextProfile);
+  }, []);
+
+  const rebuildAssessmentResponses = useCallback((
+    logs: ResponseLog[],
+    questions: AnalyzedQuestion[]
+  ): AssessmentResponseBundle => {
+    const sortedLogs = [...logs].sort((a, b) => a.timestamp - b.timestamp);
+    const questionIds: string[] = [];
+    const responses: UserResponse[] = [];
+
+    sortedLogs.forEach((data) => {
+      const question = questions.find(q => q.id === data.questionId);
+
+      if (!question) {
+        console.warn(`[rebuildAssessmentResponses] Question not found: ${data.questionId}`);
+        return;
+      }
+
+      questionIds.push(data.questionId);
+
+      const selectedAnswers = Array.isArray(data.selectedAnswers) && data.selectedAnswers.length > 0
+        ? data.selectedAnswers
+        : (data.selectedAnswer ? [data.selectedAnswer] : []);
+      const correctAnswers = Array.isArray(data.correctAnswers) && data.correctAnswers.length > 0
+        ? data.correctAnswers
+        : (question.correct_answer || []);
+
+      responses.push({
+        questionId: data.questionId,
+        selectedAnswers,
+        correctAnswers,
+        isCorrect: data.isCorrect,
+        timeSpent: data.timeSpent,
+        confidence: data.confidence,
+        timestamp: data.timestamp,
+        selectedDistractor: data.distractorPatternId
+          ? { letter: selectedAnswers[0] || '', text: '', patternId: data.distractorPatternId as any }
+          : undefined,
+      });
+    });
+
+    return {
+      sessionId: sortedLogs[0]?.sessionId ?? null,
+      questionIds,
+      responses
+    };
+  }, []);
 
   // Subscribe to user's profile in Firestore
   useEffect(() => {
     if (!user) {
-      setProfile(defaultProfile);
+      setProfileState(defaultProfile);
       setIsLoaded(true);
       return;
     }
@@ -170,7 +209,7 @@ export function useFirebaseProgress() {
       if (docSnap.exists()) {
         const data = docSnap.data() as Partial<UserProfile>;
         // Apply safe defaults for all fields to prevent undefined crashes
-        setProfile({
+        setProfileState({
           ...defaultProfile,
           ...data,
           // Ensure arrays are always arrays (never undefined)
@@ -204,7 +243,7 @@ export function useFirebaseProgress() {
       } else {
         // No profile exists yet, use default
         // DO NOT initialize defaults here - only initialize when explicitly needed
-        setProfile(defaultProfile);
+        setProfileState(defaultProfile);
       }
       setIsLoaded(true);
     }, (error) => {
@@ -213,7 +252,7 @@ export function useFirebaseProgress() {
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, [user, setProfileState]);
 
 
 
@@ -223,10 +262,10 @@ export function useFirebaseProgress() {
     
     try {
       const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, {
+      await setDoc(userDocRef, sanitizeForFirestore({
         ...newProfile,
         lastUpdated: serverTimestamp()
-      }, { merge: true });
+      }), { merge: true });
     } catch (error) {
       console.error('Error saving profile:', error);
     }
@@ -234,10 +273,10 @@ export function useFirebaseProgress() {
 
   // Update profile (with automatic save)
   const updateProfile = useCallback(async (updates: Partial<UserProfile>) => {
-    const newProfile = { ...profile, ...updates };
-    setProfile(newProfile);
+    const newProfile = { ...profileRef.current, ...updates };
+    setProfileState(newProfile);
     await saveProfile(newProfile);
-  }, [profile, saveProfile]);
+  }, [saveProfile, setProfileState]);
 
   /**
    * Migrate legacy domain data (10-domain system) to new 4-domain system.
@@ -260,9 +299,9 @@ export function useFirebaseProgress() {
 
   // Trigger schema migration once when user loads/logs in
   useEffect(() => {
-    if (user && isLoaded && migrationRef.current !== user.uid) {
+    if (user && isLoaded && schemaCheckRef.current !== user.uid) {
       migrateDomainSchema();
-      migrationRef.current = user.uid;
+      schemaCheckRef.current = user.uid;
     }
   }, [user, isLoaded, migrateDomainSchema]);
 
@@ -281,10 +320,10 @@ export function useFirebaseProgress() {
     try {
       const responseId = `${response.sessionId}_${response.questionId}_${response.timestamp}`;
       const responsesRef = collection(db, 'users', user.uid, 'responses');
-      await setDoc(doc(responsesRef, responseId), {
+      await setDoc(doc(responsesRef, responseId), sanitizeForFirestore({
         ...response,
         createdAt: serverTimestamp()
-      }, { merge: true });
+      }), { merge: true });
     } catch (error) {
       console.error('[logResponse] Error logging response:', error);
       // Don't throw - response logging failure shouldn't break answer submission
@@ -297,7 +336,7 @@ export function useFirebaseProgress() {
    */
   const updateLastSession = useCallback(async (
     sessionId: string,
-    mode: 'practice' | 'full' | 'diagnostic',
+    mode: SessionMode,
     questionIndex: number,
     elapsedSeconds?: number
   ): Promise<void> => {
@@ -305,7 +344,7 @@ export function useFirebaseProgress() {
 
     try {
       const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, {
+      await setDoc(userDocRef, sanitizeForFirestore({
         lastSession: {
           sessionId,
           mode,
@@ -314,7 +353,7 @@ export function useFirebaseProgress() {
           updatedAt: serverTimestamp()
         },
         lastUpdated: serverTimestamp()
-      }, { merge: true });
+      }), { merge: true });
     } catch (error) {
       console.error('[updateLastSession] Error updating last session:', error);
     }
@@ -329,7 +368,8 @@ export function useFirebaseProgress() {
     questionId?: string,
     timeSpent?: number
   ) => {
-    const currentSkill = profile.skillScores[skillId];
+    const latestProfile = profileRef.current;
+    const currentSkill = latestProfile.skillScores[skillId];
     
     const baseSkill: SkillPerformance = currentSkill || {
       score: 0,
@@ -377,7 +417,7 @@ export function useFirebaseProgress() {
     // Calculate new learning state
     const skillPerfLookup = (id: SkillId) => {
       if (id === skillId) return updatedSkill;
-      return profile.skillScores[id];
+      return latestProfile.skillScores[id];
     };
     
     const oldState = baseSkill.learningState;
@@ -390,21 +430,21 @@ export function useFirebaseProgress() {
     updatedSkill.learningState = newState;
     
     const newProfile = {
-      ...profile,
+      ...latestProfile,
       skillScores: {
-        ...profile.skillScores,
+        ...latestProfile.skillScores,
         [skillId]: updatedSkill
       }
     };
     
-    setProfile(newProfile);
+    setProfileState(newProfile);
     await saveProfile(newProfile);
-  }, [profile, saveProfile]);
+  }, [saveProfile, setProfileState]);
 
   // Reset all progress
   const resetProgress = useCallback(async () => {
     if (!user) {
-      setProfile(defaultProfile);
+      setProfileState(defaultProfile);
       return;
     }
     
@@ -417,51 +457,14 @@ export function useFirebaseProgress() {
         lastUpdated: serverTimestamp()
       }, { merge: false }); // Explicitly set merge to false for complete overwrite
 
-      setProfile(defaultProfile);
+      setProfileState(defaultProfile);
       console.log('[ResetProgress] All progress cleared');
     } catch (error) {
       console.error('Error resetting progress:', error);
       // Still update local state even if Firestore fails
-      setProfile(defaultProfile);
+      setProfileState(defaultProfile);
     }
-  }, [user]);
-
-  /**
-   * Migrate old skillScores format to new format
-   */
-  const migrateSkillScores = useCallback((oldScores: any): Record<SkillId, SkillPerformance> => {
-    const migrated: Record<SkillId, SkillPerformance> = {};
-    
-    if (!oldScores || typeof oldScores !== 'object') {
-      return migrated;
-    }
-    
-    for (const [skillId, oldScore] of Object.entries(oldScores)) {
-      if (oldScore && typeof oldScore === 'object') {
-        // Check if it's already in new format
-        if ('learningState' in oldScore && 'consecutiveCorrect' in oldScore) {
-          migrated[skillId] = oldScore as SkillPerformance;
-        } else {
-          // Migrate from old format: { correct, total, lastSeen }
-          const correct = (oldScore as any).correct || 0;
-          const total = (oldScore as any).total || 0;
-          const score = total > 0 ? correct / total : 0;
-          
-          migrated[skillId] = {
-            score,
-            attempts: total,
-            correct,
-            consecutiveCorrect: 0, // Can't determine from old data
-            history: [], // Can't recover history from old data
-            learningState: 'emerging' as LearningState,
-            masteryDate: undefined
-          };
-        }
-      }
-    }
-    
-    return migrated;
-  }, []);
+  }, [user, setProfileState]);
 
   /**
    * Retrieve assessment responses from Firestore for a given session.
@@ -470,7 +473,7 @@ export function useFirebaseProgress() {
    */
   const getAssessmentResponses = useCallback(async (
     sessionId: string,
-    assessmentType: 'diagnostic' | 'full',
+    assessmentTypes: AssessmentReportType[],
     questions: AnalyzedQuestion[]
   ): Promise<UserResponse[]> => {
     if (!user) {
@@ -480,46 +483,13 @@ export function useFirebaseProgress() {
 
     try {
       const responsesRef = collection(db, 'users', user.uid, 'responses');
-      const q = query(
-        responsesRef,
-        where('sessionId', '==', sessionId),
-        where('assessmentType', '==', assessmentType),
-        orderBy('timestamp', 'asc')
-      );
+      const q = query(responsesRef, where('sessionId', '==', sessionId));
       
       const querySnapshot = await getDocs(q);
-      const responses: UserResponse[] = [];
-      
-      querySnapshot.forEach((doc) => {
-        const data = doc.data() as ResponseLog;
-        const question = questions.find(q => q.id === data.questionId);
-        
-        if (!question) {
-          console.warn(`[getAssessmentResponses] Question not found: ${data.questionId}`);
-          return;
-        }
-        
-        // Reconstruct UserResponse from ResponseLog (supports new schema and legacy)
-        const selectedAnswers = Array.isArray(data.selectedAnswers) && data.selectedAnswers.length > 0
-          ? data.selectedAnswers
-          : (data.selectedAnswer ? [data.selectedAnswer] : []);
-        const correctAnswers = Array.isArray(data.correctAnswers) && data.correctAnswers.length > 0
-          ? data.correctAnswers
-          : (question.correct_answer || []);
-        const userResponse: UserResponse = {
-          questionId: data.questionId,
-          selectedAnswers,
-          correctAnswers,
-          isCorrect: data.isCorrect,
-          timeSpent: data.timeSpent,
-          confidence: data.confidence,
-          timestamp: data.timestamp,
-          selectedDistractor: data.distractorPatternId
-            ? { letter: selectedAnswers[0] || '', text: '', patternId: data.distractorPatternId as any }
-            : undefined,
-        };
-        responses.push(userResponse);
-      });
+      const responseLogs = querySnapshot.docs
+        .map((doc) => doc.data() as ResponseLog)
+        .filter((log) => assessmentTypes.includes(log.assessmentType as AssessmentReportType));
+      const { responses } = rebuildAssessmentResponses(responseLogs, questions);
       
       console.log(`[getAssessmentResponses] Retrieved ${responses.length} responses for session ${sessionId}`);
       return responses;
@@ -527,7 +497,59 @@ export function useFirebaseProgress() {
       console.error('[getAssessmentResponses] Error retrieving responses:', error);
       return [];
     }
-  }, [user]);
+  }, [rebuildAssessmentResponses, user]);
+
+  const getLatestAssessmentResponses = useCallback(async (
+    assessmentTypes: AssessmentReportType[],
+    questions: AnalyzedQuestion[]
+  ): Promise<AssessmentResponseBundle> => {
+    if (!user) {
+      console.warn('[getLatestAssessmentResponses] No user, cannot retrieve responses');
+      return { sessionId: null, questionIds: [], responses: [] };
+    }
+
+    try {
+      const responsesRef = collection(db, 'users', user.uid, 'responses');
+      const q = query(responsesRef);
+
+      const querySnapshot = await getDocs(q);
+      const logsBySession = new Map<string, ResponseLog[]>();
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data() as ResponseLog;
+        if (!data.sessionId) {
+          return;
+        }
+        if (!assessmentTypes.includes(data.assessmentType as AssessmentReportType)) {
+          return;
+        }
+
+        const sessionLogs = logsBySession.get(data.sessionId) ?? [];
+        sessionLogs.push(data);
+        logsBySession.set(data.sessionId, sessionLogs);
+      });
+
+      let latestSessionId: string | null = null;
+      let latestTimestamp = -Infinity;
+
+      logsBySession.forEach((sessionLogs, sessionId) => {
+        const sessionLatestTimestamp = Math.max(...sessionLogs.map(log => log.timestamp));
+        if (sessionLatestTimestamp > latestTimestamp) {
+          latestTimestamp = sessionLatestTimestamp;
+          latestSessionId = sessionId;
+        }
+      });
+
+      if (!latestSessionId) {
+        return { sessionId: null, questionIds: [], responses: [] };
+      }
+
+      return rebuildAssessmentResponses(logsBySession.get(latestSessionId) ?? [], questions);
+    } catch (error) {
+      console.error('[getLatestAssessmentResponses] Error retrieving latest responses:', error);
+      return { sessionId: null, questionIds: [], responses: [] };
+    }
+  }, [rebuildAssessmentResponses, user]);
 
   /**
    * Save a screener response and check for completion
@@ -543,7 +565,7 @@ export function useFirebaseProgress() {
       confidence: string;
       timestamp: number;
     },
-    totalQuestions: number = 45
+    totalQuestions: number = 50
   ) => {
     if (!user) return;
 
@@ -551,10 +573,10 @@ export function useFirebaseProgress() {
       // 1. Save to responses/{userId}/screener/{questionId}
       // Note: Path specified as responses/{userId}/screener/{questionId}
       const screenerResponseRef = doc(db, 'responses', user.uid, 'screener', response.question_id);
-      await setDoc(screenerResponseRef, {
+      await setDoc(screenerResponseRef, sanitizeForFirestore({
         ...response,
         createdAt: serverTimestamp()
-      }, { merge: true });
+      }), { merge: true });
 
       // 2. Check if screener is complete
       const screenerCollRef = collection(db, 'responses', user.uid, 'screener');
@@ -592,80 +614,16 @@ export function useFirebaseProgress() {
     }
   }, [user, updateProfile]);
 
-  // Migrate from localStorage (call this once when user first logs in)
-  // Note: Do NOT write practiceHistory or generatedQuestionsSeen to Firestore
-  // Calculate practiceResponseCount from practiceHistory length if it exists
-  const migrateFromLocalStorage = useCallback(async () => {
-    if (!user) return false;
-    
-    const STORAGE_KEY = 'praxis-user-profile';
-    const stored = localStorage.getItem(STORAGE_KEY);
-    
-    if (!stored) return false;
-    
-    try {
-      const localProfile = JSON.parse(stored);
-      
-      // Migrate skillScores if they exist and are in old format
-      const migratedSkillScores = localProfile.skillScores 
-        ? migrateSkillScores(localProfile.skillScores)
-        : {};
-      
-      // Calculate practiceResponseCount from legacy practiceHistory if it exists
-      const practiceResponseCount = localProfile.practiceHistory?.length || 0;
-      
-      // Ensure all required fields exist with safe defaults
-      // DO NOT include practiceHistory or generatedQuestionsSeen in migrated profile
-      const migratedProfile: UserProfile = {
-        ...defaultProfile,
-        // Copy over non-legacy fields
-        preAssessmentComplete: localProfile.preAssessmentComplete ?? false,
-        fullAssessmentComplete: localProfile.fullAssessmentComplete ?? false,
-        domainScores: localProfile.domainScores ?? {},
-        skillScores: migratedSkillScores,
-        weakestDomains: localProfile.weakestDomains ?? [],
-        factualGaps: localProfile.factualGaps ?? [],
-        errorPatterns: localProfile.errorPatterns ?? [],
-        totalQuestionsSeen: localProfile.totalQuestionsSeen ?? 0,
-        streak: localProfile.streak ?? 0,
-        flaggedQuestions: localProfile.flaggedQuestions ?? {},
-        distractorErrors: localProfile.distractorErrors ?? {},
-        skillDistractorErrors: localProfile.skillDistractorErrors ?? {},
-        preAssessmentQuestionIds: localProfile.preAssessmentQuestionIds ?? [],
-        fullAssessmentQuestionIds: localProfile.fullAssessmentQuestionIds ?? [],
-        recentPracticeQuestionIds: localProfile.recentPracticeQuestionIds ?? [],
-        screenerItemIds: localProfile.screenerItemIds ?? [],
-        diagnosticComplete: localProfile.diagnosticComplete ?? false,
-        // New fields
-        practiceResponseCount,
-        migrationVersion: 1
-      };
-      
-      // Save to Firestore
-      await saveProfile(migratedProfile);
-      
-      // Clear localStorage after successful migration
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem('praxis-assessment-session');
-      
-      console.log('Successfully migrated localStorage to Firebase');
-      return true;
-    } catch (error) {
-      console.error('Error migrating from localStorage:', error);
-      return false;
-    }
-  }, [user, saveProfile, migrateSkillScores]);
-
   return {
     profile,
     updateProfile,
     updateSkillProgress,
     resetProgress,
     migrateDomainSchema,
-    migrateFromLocalStorage,
     logResponse,
     updateLastSession,
     getAssessmentResponses,
+    getLatestAssessmentResponses,
     saveScreenerResponse,
     /**
      * Save a practice response to Firestore: practiceResponses/{userId}/{sessionId}/{questionId}
@@ -687,16 +645,16 @@ export function useFirebaseProgress() {
       if (!user) return;
       try {
         const docRef = doc(db, 'practiceResponses', user.uid, sessionId, questionId);
-        await setDoc(docRef, {
+        await setDoc(docRef, sanitizeForFirestore({
           ...response,
           timestamp: serverTimestamp()
-        }, { merge: true });
+        }), { merge: true });
       } catch (error) {
         console.error('[savePracticeResponse] Error saving response:', error);
       }
     }, [user]),
     /**
-     * Recalculate global scores (aggregating screener, diagnostic, practice)
+     * Recalculate global scores (aggregating screener, assessment, practice)
      */
     recalculateGlobalScores: useCallback(async () => {
       if (!user) return null;
@@ -706,129 +664,6 @@ export function useFirebaseProgress() {
         return result;
       } catch (error) {
         console.error('[GlobalScores] Error recalculating:', error);
-        return null;
-      }
-    }, [user]),
-    /**
-     * Start a new diagnostic session
-     * Path: diagnosticSessions/{userId}/sessions/{sessionId}
-     */
-    startDiagnosticSession: useCallback(async (sessionId: string) => {
-      if (!user) return;
-      try {
-        const sessionRef = doc(db, 'diagnosticSessions', user.uid, 'sessions', sessionId);
-        await setDoc(sessionRef, {
-          status: 'in_progress',
-          started_at: serverTimestamp(),
-          current_question_index: 0,
-          elapsed_seconds: 0,
-          responses: []
-        });
-        console.log(`[Diagnostic] Session ${sessionId} started`);
-      } catch (error) {
-        console.error('[Diagnostic] Error starting session:', error);
-      }
-    }, [user]),
-
-    /**
-     * Update progress in a diagnostic session
-     */
-    updateDiagnosticSessionProgress: useCallback(async (
-      sessionId: string, 
-      currentQuestionIndex: number, 
-      elapsedSeconds: number, 
-      response?: DiagnosticResponse
-    ) => {
-      if (!user) return;
-      try {
-        const sessionRef = doc(db, 'diagnosticSessions', user.uid, 'sessions', sessionId);
-        const updates: any = {
-          current_question_index: currentQuestionIndex,
-          elapsed_seconds: elapsedSeconds,
-          saved_at: serverTimestamp()
-        };
-        
-        if (response) {
-          updates.responses = arrayUnion(response);
-        }
-        
-        await updateDoc(sessionRef, updates);
-      } catch (error) {
-        console.error('[Diagnostic] Error updating session:', error);
-      }
-    }, [user]),
-
-    /**
-     * Pause a diagnostic session
-     */
-    pauseDiagnosticSession: useCallback(async (sessionId: string) => {
-      if (!user) return;
-      try {
-        const sessionRef = doc(db, 'diagnosticSessions', user.uid, 'sessions', sessionId);
-        await updateDoc(sessionRef, {
-          status: 'paused',
-          saved_at: serverTimestamp()
-        });
-        console.log(`[Diagnostic] Session ${sessionId} paused`);
-      } catch (error) {
-        console.error('[Diagnostic] Error pausing session:', error);
-      }
-    }, [user]),
-
-    /**
-     * Complete a diagnostic session
-     */
-    completeDiagnosticSession: useCallback(async (sessionId: string) => {
-      if (!user) return;
-      try {
-        const sessionRef = doc(db, 'diagnosticSessions', user.uid, 'sessions', sessionId);
-        await updateDoc(sessionRef, {
-          status: 'complete',
-          completed_at: serverTimestamp(),
-          saved_at: serverTimestamp()
-        });
-        console.log(`[Diagnostic] Session ${sessionId} completed`);
-        
-        // Recalculate global scores after completion
-        try {
-          await calculateAndSaveGlobalScores(user.uid);
-        } catch (calcError) {
-          console.error('[Diagnostic] Error recalculating global scores:', calcError);
-        }
-      } catch (error) {
-        console.error('[Diagnostic] Error completing session:', error);
-      }
-    }, [user]),
-
-    /**
-     * Resume a diagnostic session
-     * Returns the saved state to restore the user's progress
-     */
-    resumeDiagnosticSession: useCallback(async (sessionId: string): Promise<{questionIndex: number, elapsedSeconds: number} | null> => {
-      if (!user) return null;
-      try {
-        const sessionRef = doc(db, 'diagnosticSessions', user.uid, 'sessions', sessionId);
-        const docSnap = await getDoc(sessionRef);
-        
-        if (docSnap.exists()) {
-          const data = docSnap.data() as DiagnosticSessionDoc;
-          
-          // If it was paused, set it back to in_progress
-          if (data.status === 'paused') {
-            await updateDoc(sessionRef, {
-              status: 'in_progress',
-              saved_at: serverTimestamp()
-            });
-          }
-          
-          return {
-            questionIndex: data.current_question_index,
-            elapsedSeconds: data.elapsed_seconds
-          };
-        }
-        return null;
-      } catch (error) {
-        console.error('[Diagnostic] Error resuming session:', error);
         return null;
       }
     }, [user]),

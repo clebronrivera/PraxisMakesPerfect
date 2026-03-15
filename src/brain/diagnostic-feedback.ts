@@ -2,7 +2,7 @@
 // Analyzes wrong answers, matches to error patterns, and provides adaptive coaching
 // Part of Phase D Step 7: Build Diagnostic Feedback Engine
 
-import { Question } from './question-analyzer';
+import { Question, getQuestionChoiceText, getQuestionChoices, getQuestionCorrectAnswers } from './question-analyzer';
 import { PatternId } from './template-schema';
 import { ErrorExplanation, FrameworkStepGuidance } from './error-library';
 import { matchDistractorPattern } from './distractor-matcher';
@@ -45,8 +45,8 @@ export interface DiagnosticFeedback {
  * Uses question stem, content, and skill domain to determine most likely framework step
  */
 function inferFrameworkStep(question: Question, engineConfig: EngineConfig): string | null {
-  const stem = question.question.toLowerCase();
-  const rationale = question.rationale.toLowerCase();
+  const stem = question.question?.toLowerCase() || '';
+  const rationale = question.rationale?.toLowerCase() || '';
 
   // Check for explicit step indicators in stem
   if (stem.includes('first step') || stem.includes('should first') || stem.includes('initial step')) {
@@ -250,9 +250,12 @@ export function generateDiagnosticFeedback(
   userProfile: UserProfile,
   engineConfig: EngineConfig
 ): DiagnosticFeedback {
+  const choices = getQuestionChoices(question);
+  const correctAnswers = getQuestionCorrectAnswers(question);
+
   // Extract selected answer text
   const selectedAnswerText = selectedAnswers
-    .map(letter => question.choices[letter] || '')
+    .map(letter => getQuestionChoiceText({ choices }, letter))
     .join(' ');
 
   // Handle correct answers
@@ -287,7 +290,7 @@ export function generateDiagnosticFeedback(
 
   // Handle incorrect answers - extract distractor text
   const wrongAnswer = selectedAnswers.find(
-    letter => !question.correct_answer.includes(letter)
+    letter => !correctAnswers.includes(letter)
   );
 
   if (!wrongAnswer) {
@@ -302,9 +305,9 @@ export function generateDiagnosticFeedback(
     };
   }
 
-  const distractorText = question.choices[wrongAnswer] || '';
-  const correctAnswerText = question.correct_answer
-    .map(letter => question.choices[letter] || '')
+  const distractorText = getQuestionChoiceText({ choices }, wrongAnswer);
+  const correctAnswerText = correctAnswers
+    .map(letter => getQuestionChoiceText({ choices }, letter))
     .join(' ');
 
   // Match distractor pattern

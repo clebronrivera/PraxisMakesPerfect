@@ -1,9 +1,12 @@
 import { ReactNode, useMemo, useState } from 'react';
 import {
   BookOpen,
+  CheckSquare,
+  ExternalLink,
   CalendarDays,
   ChevronDown,
   ChevronUp,
+  Library,
   Printer,
   Sparkles,
   Target
@@ -19,6 +22,9 @@ type SectionKey =
   | 'domainAnalysis'
   | 'prioritySkills'
   | 'vocabularyGaps'
+  | 'foundationalReview'
+  | 'studyResources'
+  | 'masteryChecklist'
   | 'studyPlan'
   | 'weeklySchedule';
 
@@ -98,6 +104,9 @@ export default function StudyPlanViewer({ plan }: StudyPlanViewerProps) {
     domainAnalysis: true,
     prioritySkills: true,
     vocabularyGaps: true,
+    foundationalReview: true,
+    studyResources: true,
+    masteryChecklist: true,
     studyPlan: true,
     weeklySchedule: true
   });
@@ -209,6 +218,29 @@ export default function StudyPlanViewer({ plan }: StudyPlanViewerProps) {
           isOpen={openSections.summary}
           onToggle={handleToggle}
         >
+          {plan.plan.finalAssessmentGate && (
+            <div className={`mb-4 p-4 rounded-2xl border ${
+              plan.plan.finalAssessmentGate.unlocked
+                ? 'bg-emerald-500/10 border-emerald-500/30'
+                : 'bg-amber-500/10 border-amber-500/30'
+            }`}>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500 mb-2">Planned Final Full Assessment Gate</p>
+              <p className="text-sm font-semibold text-slate-100">
+                {plan.plan.finalAssessmentGate.unlocked
+                  ? `Unlocked by current data (${plan.plan.finalAssessmentGate.thresholdPercent}% threshold met).`
+                  : `${plan.plan.finalAssessmentGate.remainingSkillCount} tracked deficit skills still need to reach ${plan.plan.finalAssessmentGate.thresholdPercent}%.`}
+              </p>
+              <p className="mt-2 text-sm text-slate-300">{plan.plan.finalAssessmentGate.guidance}</p>
+              {plan.plan.finalAssessmentGate.remainingSkills.length > 0 && (
+                <div className="mt-3 space-y-1">
+                  {plan.plan.finalAssessmentGate.remainingSkills.map(skill => (
+                    <p key={skill} className="text-xs text-slate-400">{skill}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="study-plan-card-grid grid gap-4 lg:grid-cols-3 pt-1">
             <div className="p-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500 mb-2">Readiness</p>
@@ -298,6 +330,90 @@ export default function StudyPlanViewer({ plan }: StudyPlanViewerProps) {
                 </div>
                 <p className="text-sm text-slate-300">{gap.meaning}</p>
                 <p className="text-xs text-slate-500">{gap.whyItMatters}</p>
+              </div>
+            ))}
+          </div>
+        </ViewerSection>
+
+        <ViewerSection
+          title="Foundational Review"
+          sectionKey="foundationalReview"
+          isOpen={openSections.foundationalReview}
+          onToggle={handleToggle}
+        >
+          <div className="space-y-3 pt-1">
+            {plan.plan.foundationalReview.length === 0 && (
+              <p className="text-sm text-slate-400">No prerequisite review items were surfaced from this guide.</p>
+            )}
+            {plan.plan.foundationalReview.map(item => (
+              <div key={item.skillId} className="p-4 bg-slate-800/50 border border-slate-700/40 rounded-2xl space-y-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-100">{item.skillName}</p>
+                  <p className="text-xs text-slate-500 mt-1">{item.skillId}</p>
+                </div>
+                <p className="text-sm text-slate-300">{item.whyNow}</p>
+                <div className="space-y-2">
+                  {item.reviewActions.map(action => (
+                    <p key={action} className="text-sm text-slate-400">{action}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </ViewerSection>
+
+        <ViewerSection
+          title="Study Resources"
+          sectionKey="studyResources"
+          isOpen={openSections.studyResources}
+          onToggle={handleToggle}
+        >
+          <div className="space-y-3 pt-1">
+            {plan.plan.studyResources.length === 0 && (
+              <p className="text-sm text-slate-400">Regenerate the guide after more practice to surface study-resource recommendations.</p>
+            )}
+            {plan.plan.studyResources.map(resource => (
+              <div key={`${resource.title}-${resource.focusArea}`} className="p-4 bg-slate-800/50 border border-slate-700/40 rounded-2xl space-y-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <Library className="w-4 h-4 text-cyan-300" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-100">{resource.title}</p>
+                      <p className="text-xs text-slate-500 mt-1">{resource.resourceType} • {resource.focusArea}</p>
+                    </div>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                </div>
+                <p className="text-sm text-slate-300">{resource.whyItHelps}</p>
+                <p className="text-sm text-slate-400">{resource.action}</p>
+              </div>
+            ))}
+          </div>
+        </ViewerSection>
+
+        <ViewerSection
+          title="Mastery Checklist"
+          sectionKey="masteryChecklist"
+          isOpen={openSections.masteryChecklist}
+          onToggle={handleToggle}
+        >
+          <div className="space-y-3 pt-1">
+            {plan.plan.masteryChecklist.length === 0 && (
+              <p className="text-sm text-slate-400">No checklist items are available yet for this guide.</p>
+            )}
+            {plan.plan.masteryChecklist.map(item => (
+              <div key={`${item.category}-${item.skillId}`} className="p-4 bg-slate-800/50 border border-slate-700/40 rounded-2xl">
+                <div className="flex items-start gap-3">
+                  <CheckSquare className="w-5 h-5 text-emerald-300 mt-0.5 flex-shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-slate-100">{item.skillName}</p>
+                    <p className="text-xs text-slate-500">
+                      {item.category === 'deficit' ? 'Deficit skill' : 'Foundational review'} • Target {item.targetScore}%+
+                      {item.currentScore !== null ? ` • Current ${item.currentScore}%` : ''}
+                    </p>
+                    <p className="text-sm text-slate-300">{item.note}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

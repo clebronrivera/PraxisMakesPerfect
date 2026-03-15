@@ -15,6 +15,14 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 - Archived 35 superseded root-level markdown files to `archive/docs-legacy-2026-03-14/`
 - Added explicit authority/status headers to the canonical non-root docs retained in the repo root
 - Rewrote `README.md` to reflect the current Firebase-backed, taxonomy-driven app rather than the earlier local-only description
+- Added a repo-local grounding system: `AGENTS.md` for IDE/agent instructions, `docs/WORKFLOW_GROUNDING.md` for durable workflow/reporting rules, and `docs/ISSUE_LEDGER.md` for active bug and mismatch tracking
+- Updated the grounding docs with recent reporting decisions: centralized readiness thresholds, current-attempt screener reporting, and tracked follow-ups for home-page readiness scope and practice-repeat policy
+- Added `docs/DOCS_SYSTEM.md` as the maintained map for what the active docs are, how to use them, and when they must be updated
+- Added a centralized assessment/question-bank terminology map in `src/utils/productTerminology.ts` and mirrored the durable glossary into `docs/WORKFLOW_GROUNDING.md` so `screener`, `quick diagnostic`, `full assessment`, `question bank`, and `practice question pool` have one maintained definition
+- Retired the quick diagnostic from the active product flow, made the screener the only live short assessment, logged screener responses distinctly in shared response data, and archived the legacy quick-diagnostic builders under `archive/cleanup-2026-03-14/`
+- Cleaned up live naming so active session/report/admin/study-plan code uses `screener` and `full assessment` terminology while legacy compatibility stays behind the scenes
+- Expanded the AI study guide so it now uses skill metadata to generate grounded vocabulary gaps, foundational review, study-resource recommendations, and a mastery checklist, and added a live progress view for the planned final full-assessment unlock rule
+- Formalized the study-guide API contract with shared request/response validation, user-to-token verification, and documented client/server responsibilities for dynamic user-page rendering
 
 ## 2026-03-11
 

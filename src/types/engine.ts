@@ -9,7 +9,7 @@ export interface EngineConfig {
   distractorPatterns?: Record<string, any>;
   assessmentConfig?: {
     fullAssessmentQuestions: number;
-    preAssessmentQuestionsPerDomain: number;
+    screenerQuestionsPerDomain: number;
     distribution?: Record<string, { percentage: number; domains: number[] }>;
   };
 }

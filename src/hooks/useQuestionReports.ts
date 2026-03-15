@@ -6,6 +6,7 @@ import { collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, up
 import { db } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
+import { sanitizeForFirestore } from '../utils/firestore';
 
 export interface QuestionReport {
   id?: string;
@@ -47,14 +48,14 @@ export function useQuestionReports() {
     setIsSubmitting(true);
     try {
       const reportsRef = collection(db, 'questionReports');
-      await addDoc(reportsRef, {
+      await addDoc(reportsRef, sanitizeForFirestore({
         ...report,
         userId: user.uid,
         userEmail: user.email ?? null,
         userDisplayName: user.displayName ?? null,
         status: 'open' as const,
         createdAt: serverTimestamp()
-      });
+      }));
     } catch (error) {
       console.error('[useQuestionReports] Error submitting report:', error);
       throw error;

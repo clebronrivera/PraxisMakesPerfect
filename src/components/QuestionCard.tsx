@@ -1,7 +1,7 @@
 import { CheckCircle, XCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import ReportQuestionModal from './ReportQuestionModal';
-import { AnalyzedQuestion } from '../brain/question-analyzer';
+import { AnalyzedQuestion, getQuestionPrompt } from '../brain/question-analyzer';
 
 // Local AnalyzedQuestion interface removed
 
@@ -15,6 +15,7 @@ interface QuestionCardProps {
   onConfidenceChange: (level: 'low' | 'medium' | 'high') => void;
   disabled: boolean;
   showFeedback: boolean;
+  isSubmitting?: boolean;
   assessmentType?: 'pre' | 'full' | 'practice';
   hideFooterControls?: boolean;
 }
@@ -29,6 +30,7 @@ export default function QuestionCard({
   onConfidenceChange,
   disabled,
   showFeedback,
+  isSubmitting = false,
   assessmentType = 'practice',
   hideFooterControls = false
 }: QuestionCardProps) {
@@ -75,7 +77,7 @@ export default function QuestionCard({
         )}
         
         <div className="p-6 pt-4">
-          <p className="text-lg text-slate-200 leading-relaxed">{question.question || (question as any).questionStem || ''}</p>
+          <p className="text-lg text-slate-200 leading-relaxed">{getQuestionPrompt(question)}</p>
         </div>
         
         {/* Answer Format Indicator */}
@@ -99,9 +101,10 @@ export default function QuestionCard({
               
             return optionsList
               .filter(([_, v]) => v && v.trim())
-              .map(([letter, text]) => {
+              .map(([letter, text], index) => {
                 const isSelected = selectedAnswers.includes(letter);
                 const isCorrect = correctAnswersList.includes(letter);
+                const displayLabel = String.fromCharCode(65 + index);
                 
                 let bgColor = 'bg-slate-700/50 hover:bg-slate-700';
                 let borderColor = 'border-transparent';
@@ -127,7 +130,7 @@ export default function QuestionCard({
                   <button
                     key={letter}
                     onClick={() => onSelectAnswer(letter)}
-                    disabled={disabled || showFeedback}
+                    disabled={disabled || showFeedback || isSubmitting}
                     className={`w-full p-4 rounded-xl border ${bgColor} ${borderColor} text-left transition-all flex items-start gap-4`}
                   >
                     <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
@@ -135,7 +138,7 @@ export default function QuestionCard({
                       showFeedback && isSelected && !isCorrect ? 'bg-red-500 text-white' :
                       isSelected ? 'bg-amber-500 text-white' : 'bg-slate-600 text-slate-300'
                     }`}>
-                      {letter}
+                      {displayLabel}
                     </span>
                     <span className={textColor}>{text}</span>
                     {showFeedback && isCorrect && (
@@ -177,10 +180,10 @@ export default function QuestionCard({
           {!showFeedback ? (
             <button
               onClick={onSubmit}
-              disabled={selectedAnswers.length === 0}
+              disabled={selectedAnswers.length === 0 || isSubmitting}
               className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-amber-500/20 transition-all"
             >
-              Submit Answer
+              {isSubmitting ? 'Submitting...' : 'Submit Answer'}
             </button>
           ) : (
             <button

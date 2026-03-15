@@ -1,6 +1,13 @@
 import { CheckCircle, XCircle } from 'lucide-react';
 import { generateDiagnosticFeedback } from '../brain/diagnostic-feedback';
-import { AnalyzedQuestion, Question } from '../brain/question-analyzer';
+import {
+  AnalyzedQuestion,
+  Question,
+  getQuestionChoices,
+  getQuestionCorrectAnswers,
+  getQuestionPrompt,
+  getQuestionRationale
+} from '../brain/question-analyzer';
 import { UserProfile } from '../hooks/useFirebaseProgress';
 import DiagnosticFeedback from './DiagnosticFeedback';
 import { useEngine } from '../hooks/useEngine';
@@ -24,17 +31,22 @@ export default function ExplanationPanel({
   // Convert AnalyzedQuestion to Question type for diagnostic feedback
   const questionForFeedback: Question = {
     id: question.id,
-    question: question.question,
-    choices: question.choices,
-    correct_answer: question.correct_answer,
-    rationale: question.rationale,
+    question: getQuestionPrompt(question),
+    choices: getQuestionChoices(question),
+    correct_answer: getQuestionCorrectAnswers(question),
+    rationale: getQuestionRationale(question),
     skillId: question.skillId
   };
 
   // Generate diagnostic feedback (only if userProfile is available)
-  const diagnosticFeedback = userProfile 
-    ? generateDiagnosticFeedback(questionForFeedback, userAnswer, isCorrect, userProfile, engine)
-    : null;
+  let diagnosticFeedback = null;
+  if (userProfile) {
+    try {
+      diagnosticFeedback = generateDiagnosticFeedback(questionForFeedback, userAnswer, isCorrect, userProfile, engine);
+    } catch (error) {
+      console.error('[ExplanationPanel] Failed to generate diagnostic feedback:', error);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -62,6 +74,28 @@ export default function ExplanationPanel({
             </h4>
             <p className="text-slate-300 text-sm leading-relaxed">{rationale}</p>
             
+            {/* Extended Bank Fields (Static Questions) */}
+            {question.correctExplanation && question.correctExplanation !== rationale && (
+              <div className="mt-4 pt-4 border-t border-slate-700/50">
+                <p className="text-xs text-slate-500 mb-2">CORRECT EXPLANATION:</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{question.correctExplanation}</p>
+              </div>
+            )}
+            
+            {(question as any).contentLimit && (
+              <div className="mt-4 pt-4 border-t border-slate-700/50">
+                <p className="text-xs text-slate-500 mb-2">CONTENT RULE:</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{(question as any).contentLimit}</p>
+              </div>
+            )}
+
+            {(question as any).complexityRationale && (
+              <div className="mt-4 pt-4 border-t border-slate-700/50">
+                <p className="text-xs text-slate-500 mb-2">COMPLEXITY:</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{(question as any).complexityRationale}</p>
+              </div>
+            )}
+
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
               <div className="mt-4 pt-4 border-t border-slate-700/50">

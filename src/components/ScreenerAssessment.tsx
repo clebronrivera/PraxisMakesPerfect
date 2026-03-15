@@ -2,24 +2,28 @@ import { useState, useEffect, useMemo } from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import { UserResponse } from '../brain/weakness-detector';
-import { saveSession, loadSession, clearSession, AssessmentSession } from '../utils/sessionStorage';
-import { getCurrentUser, getCurrentSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
-import { AnalyzedQuestion } from '../brain/question-analyzer';
+import { clearSession } from '../utils/sessionStorage';
+import { deleteUserSession, loadUserSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
+import { AnalyzedQuestion, getQuestionCorrectAnswers } from '../brain/question-analyzer';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
+import type { ResponseAssessmentType, SessionMode } from '../types/assessment';
+import type { SkillId } from '../brain/skill-map';
+import { isStoredScreenerSessionType } from '../utils/sessionTypes';
 
 // Local type definition removed in favor of imported AnalyzedQuestion
 
 
-interface PreAssessmentProps {
+interface ScreenerAssessmentProps {
   questions: AnalyzedQuestion[];
   onComplete: (responses: UserResponse[]) => void;
   showTimer?: boolean;
   sessionId?: string;
+  currentUserName?: string | null;
   logResponse?: (response: {
     questionId: string;
     skillId?: string;
     domainIds?: number[];
-    assessmentType: 'diagnostic' | 'full' | 'practice';
+    assessmentType: ResponseAssessmentType;
     sessionId: string;
     isCorrect: boolean;
     confidence: 'low' | 'medium' | 'high';
@@ -30,22 +34,39 @@ interface PreAssessmentProps {
     correctAnswers: string[];
     distractorPatternId?: string;
   }) => Promise<void>;
-  updateLastSession?: (sessionId: string, mode: 'practice' | 'full' | 'diagnostic', questionIndex: number, elapsedSeconds?: number) => Promise<void>;
+  saveScreenerResponse?: (response: {
+    question_id: string;
+    skill_id: string;
+    domain_id: number;
+    selected_answer: string;
+    correct_answer: string;
+    is_correct: boolean;
+    confidence: string;
+    timestamp: number;
+  }, totalQuestions?: number) => Promise<void>;
+  updateSkillProgress?: (
+    skillId: SkillId,
+    isCorrect: boolean,
+    confidence?: 'low' | 'medium' | 'high',
+    questionId?: string,
+    timeSpent?: number
+  ) => Promise<void>;
+  updateLastSession?: (sessionId: string, mode: SessionMode, questionIndex: number, elapsedSeconds?: number) => Promise<void>;
 }
 
-export default function PreAssessment({
+export default function ScreenerAssessment({
   questions,
   onComplete,
   sessionId,
+  currentUserName,
   logResponse,
+  saveScreenerResponse,
+  updateSkillProgress,
   updateLastSession
-}: PreAssessmentProps) {
-  const currentUser = getCurrentUser();
-  const userSession = currentUser && sessionId ? getCurrentSession(currentUser) : null;
-  
-  // Try to load saved session (prefer user session, fallback to old system)
-  const savedSession = userSession || loadSession();
-  const isResuming = savedSession?.type === 'pre-assessment' && 
+}: ScreenerAssessmentProps) {
+  const savedSession = sessionId ? loadUserSession(sessionId) : null;
+  const isResuming = savedSession !== null &&
+    isStoredScreenerSessionType(savedSession.type) &&
     savedSession.questionIds.length === questions.length &&
     savedSession.questionIds.every((id: string, idx: number) => questions[idx]?.id === id);
 
@@ -54,6 +75,7 @@ export default function PreAssessment({
   const [confidence, setConfidence] = useState<'low' | 'medium' | 'high'>(isResuming ? savedSession!.confidence : 'medium');
   const [startTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const currentQuestion = questions[currentIndex];
 
   const [isSubmitted, setIsSubmitted] = useState(isResuming && savedSession!.responses.some(r => r.questionId === currentQuestion?.id));
@@ -74,18 +96,18 @@ export default function PreAssessment({
     initialElapsedSeconds: savedSession?.elapsedSeconds || 0,
     onAutoPause: () => {
       // Logic for persistent save on auto-pause if needed
-      console.log('[PreAssessment] Auto-paused due to inactivity');
+      console.log('[ScreenerAssessment] Auto-paused due to inactivity');
     }
   });
 
   // Save session whenever state changes (store IDs and timestamps only, no full objects)
   useEffect(() => {
-    if (currentUser && sessionId) {
-      // Save to user session system
+    if (currentUserName && sessionId) {
       const userSession: UserSession = {
-        userName: currentUser,
+        userName: currentUserName,
         sessionId: sessionId,
-        type: 'pre-assessment',
+        type: 'screener-assessment',
+        assessmentFlow: 'screener',
         questionIds: questions.map(q => q.id),
         currentIndex,
         responses,
@@ -98,37 +120,25 @@ export default function PreAssessment({
         elapsedSeconds // Save current elapsed time
       };
       saveUserSession(userSession);
-    } else {
-      // Fallback to old session system
-      const session: AssessmentSession = {
-        type: 'pre-assessment',
-        questionIds: questions.map(q => q.id),
-        currentIndex,
-        responses,
-        selectedAnswers,
-        showFeedback: false,
-        confidence,
-        startTime,
-        lastUpdated: Date.now(),
-        elapsedSeconds // Save current elapsed time
-      };
-      saveSession(session);
     }
-  }, [currentIndex, responses, selectedAnswers, confidence, startTime, questions, currentUser, sessionId, isPaused, elapsedSeconds]);
+  }, [currentIndex, responses, selectedAnswers, confidence, startTime, questions, currentUserName, sessionId, elapsedSeconds]);
   
   // Save to Firestore on pause
   useEffect(() => {
     if (isPaused && updateLastSession && sessionId) {
-      updateLastSession(sessionId, 'diagnostic', currentIndex, elapsedSeconds);
+      updateLastSession(sessionId, 'screener', currentIndex, elapsedSeconds);
     }
   }, [isPaused, updateLastSession, sessionId, currentIndex, elapsedSeconds]);
 
   // Clear session when assessment is complete
   useEffect(() => {
     if (currentIndex >= questions.length && responses.length === questions.length) {
+      if (currentUserName && sessionId) {
+        deleteUserSession(currentUserName, sessionId);
+      }
       clearSession();
     }
-  }, [currentIndex, questions.length, responses.length]);
+  }, [currentIndex, currentUserName, questions.length, responses.length, sessionId]);
 
   const pacingMessage = useMemo(() => {
     const targetSecPerQuest = 45; // 30 min for 40 questions
@@ -152,7 +162,7 @@ export default function PreAssessment({
   const toggleAnswer = (letter: string) => {
     if (isSubmitted) return;
     
-    const correctList = currentQuestion?.correct_answer || currentQuestion?.correctAnswers || [];
+    const correctList = currentQuestion ? getQuestionCorrectAnswers(currentQuestion) : [];
     const maxAnswers = correctList.length || 1;
     
     setSelectedAnswers((prev: string[]) => {
@@ -169,54 +179,73 @@ export default function PreAssessment({
   };
 
   const submitAnswer = async () => {
-    if (selectedAnswers.length === 0) return;
+    if (selectedAnswers.length === 0 || isSubmitting) return;
 
-    // Calculate time spent on THIS question specifically
-    const timeSpent = resetQuestionTimer();
-    const now = Date.now();
-    const timestamp = now;
-    const correctList = currentQuestion.correct_answer || currentQuestion.correctAnswers || [];
-    const isCorrect = 
-      selectedAnswers.every(a => correctList.includes(a)) &&
-      selectedAnswers.length === correctList.length;
+    setIsSubmitting(true);
+    try {
+      const timeSpent = resetQuestionTimer();
+      const timestamp = Date.now();
+      const correctList = getQuestionCorrectAnswers(currentQuestion);
+      const isCorrect =
+        selectedAnswers.every(a => correctList.includes(a)) &&
+        selectedAnswers.length === correctList.length;
 
-    // Log response to Firestore (single response event schema)
-    if (logResponse && sessionId) {
-      await logResponse({
+      if (saveScreenerResponse) {
+        await saveScreenerResponse({
+          question_id: currentQuestion.id,
+          skill_id: currentQuestion.skillId || '',
+          domain_id: currentQuestion.domains?.[0] || 0,
+          selected_answer: selectedAnswers.join(','),
+          correct_answer: correctList.join(','),
+          is_correct: isCorrect,
+          confidence,
+          timestamp
+        }, questions.length);
+      }
+
+      if (logResponse && sessionId) {
+        await logResponse({
+          questionId: currentQuestion.id,
+          skillId: currentQuestion.skillId || '',
+          domainIds: currentQuestion.domains || [],
+          assessmentType: 'screener',
+          sessionId,
+          isCorrect,
+          confidence,
+          timeSpent,
+          time_on_item_seconds: timeSpent,
+          timestamp,
+          selectedAnswers,
+          correctAnswers: correctList
+        });
+      }
+
+      if (updateLastSession && sessionId) {
+        await updateLastSession(sessionId, 'screener', currentIndex, elapsedSeconds);
+      }
+
+      if (currentQuestion.skillId && updateSkillProgress) {
+        await updateSkillProgress(currentQuestion.skillId, isCorrect, confidence, currentQuestion.id, timeSpent);
+      }
+
+      const response: UserResponse = {
         questionId: currentQuestion.id,
-        skillId: currentQuestion.skillId || '',
-        domainIds: currentQuestion.domains || [],
-        assessmentType: 'diagnostic',
-        sessionId,
-        isCorrect,
-        confidence,
-        timeSpent,
-        time_on_item_seconds: timeSpent, // Verification field
-        timestamp,
         selectedAnswers,
-        correctAnswers: correctList
-      });
+        correctAnswers: correctList,
+        isCorrect,
+        timeSpent,
+        confidence,
+        timestamp
+      };
+
+      const updatedResponses = [...responses, response];
+      setResponses(updatedResponses);
+      nextQuestion(updatedResponses);
+    } catch (error) {
+      console.error('[ScreenerAssessment] Failed to submit answer:', error);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Update lastSession pointer
-    if (updateLastSession && sessionId) {
-      await updateLastSession(sessionId, 'diagnostic', currentIndex, elapsedSeconds);
-    }
-
-    const response: UserResponse = {
-      questionId: currentQuestion.id,
-      selectedAnswers,
-      correctAnswers: correctList,
-      isCorrect,
-      timeSpent,
-      confidence,
-      timestamp
-    };
-
-    const updatedResponses = [...responses, response];
-    setResponses(updatedResponses);
-    // Transition immediately to the next question in diagnostic mode
-    nextQuestion(updatedResponses);
   };
 
   const nextQuestion = (updatedResponses?: UserResponse[]) => {
@@ -225,6 +254,9 @@ export default function PreAssessment({
     
     if (nextIndex >= questions.length) {
       // Pre-assessment complete
+      if (currentUserName && sessionId) {
+        deleteUserSession(currentUserName, sessionId);
+      }
       clearSession();
       onComplete(currentResponses);
     } else {
@@ -351,6 +383,7 @@ export default function PreAssessment({
             confidence={confidence}
             onConfidenceChange={setConfidence}
             disabled={isSubmitted}
+            isSubmitting={isSubmitting}
             showFeedback={false}
             assessmentType="pre"
             hideFooterControls={isSubmitted}
@@ -360,7 +393,7 @@ export default function PreAssessment({
 
       {/* Post-submit continuation removed to allow direct transition */}
 
-      {/* Feedback Panel REMOVED for diagnostic */}
+      {/* Post-submit feedback panel intentionally omitted here. */}
     </div>
   );
 }

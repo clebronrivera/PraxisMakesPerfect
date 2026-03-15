@@ -1,5 +1,6 @@
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { sanitizeForFirestore } from './firestore';
 
 // Constants for weighting
 const SCREENER_WEIGHT = 0.20;
@@ -22,7 +23,7 @@ export interface ScreenerScoreInput {
 }
 
 export interface ResponseScoreInput {
-  assessmentType?: 'diagnostic' | 'full' | 'practice' | string;
+  assessmentType?: 'screener' | 'diagnostic' | 'full' | 'practice' | string;
   domainIds?: Array<number | string>;
   domainId?: number | string;
   skillId?: string;
@@ -42,11 +43,34 @@ export async function fetchGlobalScoreInputs(userId: string): Promise<GlobalScor
 
   const screenerRef = collection(db, 'responses', userId, 'screener');
   const screenerSnap = await getDocs(screenerRef);
-  const screenerResponses = screenerSnap.docs.map(d => d.data() as ScreenerScoreInput);
+  const legacyScreenerResponses = screenerSnap.docs.map(d => d.data() as ScreenerScoreInput);
 
   const responsesRef = collection(db, 'users', userId, 'responses');
   const responsesSnap = await getDocs(responsesRef);
-  const responseLogs = responsesSnap.docs.map(d => d.data() as ResponseScoreInput);
+  const allResponseLogs = responsesSnap.docs.map(d => d.data() as ResponseScoreInput);
+
+  const sharedScreenerResponses: ScreenerScoreInput[] = allResponseLogs
+    .filter(log => log.assessmentType === 'screener')
+    .flatMap((log) => {
+      const domainIds = Array.isArray(log.domainIds)
+        ? log.domainIds
+        : (log.domainId !== undefined && log.domainId !== null ? [log.domainId] : []);
+      const normalizedDomains = domainIds
+        .map(domainId => Number(domainId))
+        .filter(domainId => Number.isFinite(domainId));
+
+      return normalizedDomains.map(domainId => ({
+        domain_id: domainId,
+        skill_id: log.skillId,
+        is_correct: log.isCorrect,
+        confidence: log.confidence
+      }));
+    });
+
+  const responseLogs = allResponseLogs.filter(log => log.assessmentType !== 'screener');
+  const screenerResponses = sharedScreenerResponses.length > 0
+    ? sharedScreenerResponses
+    : legacyScreenerResponses;
 
   return {
     screenerResponses,
@@ -100,15 +124,19 @@ export function calculateGlobalScoresFromData({
   otherDocs.forEach(r => {
     // Determine type: it's in assessmentType property
     const type = r.assessmentType === 'diagnostic' || r.assessmentType === 'full' ? 'diagnostic' : 'practice';
-    
-    // Some logs might have multiple domains or single domain
-    const domainIds: number[] = r.domainIds || (r.domainId ? [r.domainId] : []);
+
+    // Some logs might have multiple domains or a single domain.
+    const rawDomainIds = Array.isArray(r.domainIds)
+      ? r.domainIds
+      : (r.domainId !== undefined && r.domainId !== null ? [r.domainId] : []);
+    const domainIds = rawDomainIds
+      .map(domainId => Number(domainId))
+      .filter(domainId => Number.isFinite(domainId));
     const skillId = String(r.skillId || 'unknown');
     const isCorrect = Boolean(r.isCorrect);
     const conf = r.confidence;
 
-    domainIds.forEach(domainIdStr => {
-      const domainId = Number(domainIdStr);
+    domainIds.forEach(domainId => {
       if (!stats[type].domains[domainId]) stats[type].domains[domainId] = { correct: 0, total: 0 };
       stats[type].domains[domainId].total++;
       if (isCorrect) stats[type].domains[domainId].correct++;
@@ -225,7 +253,7 @@ export function calculateGlobalScoresFromData({
 
 async function saveGlobalScores(userId: string, result: GlobalScoreResult): Promise<void> {
   const docRef = doc(db, 'userProgress', userId, 'globalScores', 'latest');
-  await setDoc(docRef, result);
+  await setDoc(docRef, sanitizeForFirestore(result));
 }
 
 export async function calculateAndSaveGlobalScores(userId: string): Promise<GlobalScoreResult> {
