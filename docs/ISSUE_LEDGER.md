@@ -34,6 +34,19 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-16 - Netlify deployment shows blank white page when Supabase env vars missing
+
+- Status: resolved
+- Area: deployment / Netlify
+- Summary: The app threw during module load when `VITE_SUPABASE_URL` or `VITE_SUPABASE_ANON_KEY` were missing, causing a blank white page with no visible error. Vite inlines env vars at build time, so vars must be set in Netlify before deploy.
+- Source of truth: [src/config/supabase.ts](/workspace/src/config/supabase.ts), [src/main.tsx](/workspace/src/main.tsx)
+- Code anchors:
+  [src/config/supabase.ts](/workspace/src/config/supabase.ts)
+  [src/main.tsx](/workspace/src/main.tsx)
+- Resolution / next step: Added pre-render env check in main.tsx that shows a visible configuration error instead of crashing. Netlify requirements: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Site settings → Environment variables, then trigger a new deploy (build must run with vars present).
+
+---
+
 ## 2026-03-14 - Final full assessment unlock flow is defined but not yet implemented
 
 - Status: open
