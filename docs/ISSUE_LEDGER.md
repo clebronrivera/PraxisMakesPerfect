@@ -34,6 +34,47 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-18 - Study guide generation: four compounding bugs (all resolved)
+
+All four were diagnosed in one session using live Supabase data for Carlos Rivera (`puppyheavenllc@gmail.com`) and production endpoint smoke-tests.
+
+### A — Wrong Netlify function export format (fatal bug)
+- Status: resolved
+- Area: `api/study-plan.ts`
+- Summary: Used Express-style `export default function handler(req, res)`. Netlify Lambda calls `handler(event, context)` so `req.method` was always `undefined` and `res.status()` threw a TypeError. Every call returned 500.
+- How to detect next time: Netlify function returns 500 on a simple unauthenticated POST → check the export format first.
+- Resolution: Rewrote to Lambda format — `export const handler = async (event) => ({ statusCode, headers, body })`. Headers arrive as `event.headers['authorization']` (lowercase). Body is a string requiring `JSON.parse`.
+- Code anchors: `api/study-plan.ts`, `api/study-plan-background.ts`
+
+### B — SPA wildcard swallowing `/api/*` routes
+- Status: resolved
+- Area: `netlify.toml`
+- Summary: `/*` → `index.html` matched before any `/api/*` rule. POST `/api/study-plan` returned 200 HTML, which the client failed to parse silently.
+- How to detect next time: If an `/api/` fetch response body starts with `<!DOCTYPE`, the SPA redirect is winning. Verify `/api/*` rule appears above `/*` in `netlify.toml`.
+- Resolution: Added `[[redirects]] from = "/api/*" to = "/.netlify/functions/:splat" status = 200` above the wildcard.
+- Code anchors: `netlify.toml`
+
+### C — Sync function 30-second gateway timeout
+- Status: resolved
+- Area: `api/study-plan.ts` → `api/study-plan-background.ts`
+- Summary: Even with correct format, Claude generation (10k-token prompt + 8000 max_tokens) takes 45–90s. Netlify sync function gateway ceiling is 30s → HTTP 504.
+- How to detect next time: HTTP 504 after ~30s. Any function calling an external AI API should be a background function unless generation is provably under 10s.
+- Resolution: Converted to Netlify Background Function (`-background` filename suffix). Netlify returns 202 immediately; function runs up to 15 min. Client polls `study_plans` WHERE `created_at > requestedAt` at 4-second intervals (4-minute timeout ceiling). Background function saves the complete `StudyPlanDocument` to `study_plans` including pre-computed `masteryChecklist` and `finalAssessmentGate` sent in the request body.
+- Code anchors: `api/study-plan-background.ts`, `src/services/studyPlanService.ts`, `src/types/studyPlanApi.ts`
+
+### D — `study_plans` table and session columns never applied to production DB
+- Status: resolved
+- Area: `supabase/migrations/`
+- Summary: `study_plans` was in `0000_initial_schema.sql` but never applied. `last_full_assessment_session_id` and `last_screener_session_id` written in App.tsx did not exist in the DB schema.
+- How to detect next time: Supabase error `PGRST205 Could not find the table` or `column X does not exist` = migration not applied. Check `supabase/migrations/` against live schema.
+- Resolution: Created `supabase/migrations/0001_study_plans_and_session_columns.sql` and applied via Supabase Dashboard → SQL Editor.
+
+### Key findings for future sessions
+- Carlos Rivera (`puppyheavenllc@gmail.com`): screener 100q/34%, full assessment 125q/44%. Both `screener_complete` and `full_assessment_complete` = true. Fully eligible to generate a study guide.
+- New Supabase `sb_secret_` / `sb_publishable_` key format works with the JS client but NOT with direct REST API calls or the admin CLI outside Docker. To query user data programmatically: sign in as the user with the anon key (RLS allows self-queries), or use Supabase Dashboard SQL Editor.
+- Netlify CLI installed globally, project linked (`netlify link --name praxismakesperfect`). Use `netlify deploy --prod` for immediate production deploys without waiting for GitHub auto-build.
+- Direct Postgres (`SUPABASE_DB_URL`) is blocked from developer machines — accessible only from Netlify function runtime and Supabase-trusted IPs.
+
 ## 2026-03-18 - Active docs and repo root still carried stale Firebase operational remnants after the Supabase migration
 
 - Status: resolved

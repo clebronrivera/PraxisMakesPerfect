@@ -149,30 +149,61 @@ Do not use it for:
 
 ### 3.8 Study guide API contract
 
-- The study-guide generation API is `POST /api/study-plan`.
-- The request must include:
-  - bearer auth for the signed-in Supabase user
-  - `userId`
-  - `prompt`
-  - `sourceSummary` counts describing the grounded inputs used to build the guide
-- The API must verify that the bearer token user matches the `userId` in the request body before calling the model.
-- The API response should return:
-  - generated text content
-  - model identifier
-  - generation timestamp
-  - API version
-- The client is responsible for:
-  - assembling grounded study inputs from response data and skill metadata
-  - building the prompt
-  - calling the API
-  - validating/parsing the returned content into the persisted study-plan document
-  - saving the latest plan to `studyPlans/{uid}/plans/latest`
-- The user page should load the latest persisted study plan for the signed-in user and replace it immediately in local state after a successful regeneration so the display feels dynamic without requiring a refresh.
-  Code anchors:
+**Active architecture (as of 2026-03-18): Background Function + Polling**
+
+Generation takes 45–90 seconds (large prompt + 8000 max_tokens). Netlify sync functions have a 30-second gateway ceiling. The implementation uses a Netlify Background Function.
+
+**Background function endpoint:** `POST /api/study-plan-background`
+- Netlify returns 202 immediately to the client.
+- The function runs to completion (up to 15 min): calls Claude, parses the response, saves a complete `StudyPlanDocument` to the `study_plans` Supabase table.
+- The client polls `study_plans` (`created_at > requestedAt`) at 4-second intervals with a 4-minute timeout ceiling.
+
+**Request body** (`StudyPlanApiRequest`):
+- `userId` — must match the bearer token user
+- `prompt` — built client-side from response data + skill metadata
+- `sourceSummary` — counts describing the grounded inputs
+- `requestedAt` — ISO timestamp so the client knows what "new" means when polling
+- `preComputedAddons` (optional) — `{ masteryChecklist, finalAssessmentGate }` computed client-side and forwarded so the background function can persist a complete document
+
+**What the background function saves to `study_plans`:**
+A complete `StudyPlanDocument` with all sections including pre-computed `masteryChecklist` and `finalAssessmentGate`. The `plan_document` column stores the full JSON.
+
+**Rules that must not change without updating this doc:**
+- The `/api/*` → `/.netlify/functions/:splat` rewrite in `netlify.toml` must stay above the `/*` SPA wildcard or `/api/study-plan-background` will never reach the function.
+- The function must verify the bearer token (`supabase.auth.getUser(idToken)`) before calling the model.
+- `preComputedAddons` is optional; if absent the background function saves empty `masteryChecklist: []` and `finalAssessmentGate: null`. The display layer should gracefully handle both.
+- The `study_plans` table requires RLS policy `auth.uid() = user_id` for INSERT and SELECT.
+
+**The sync function `api/study-plan.ts` still exists** as a reference but is no longer called by `generateStudyPlan`. Do not remove it until the background path is proven stable in production.
+
+Code anchors:
+  [api/study-plan-background.ts](/Users/lebron/Documents/PraxisMakesPerfect/api/study-plan-background.ts)
   [api/study-plan.ts](/Users/lebron/Documents/PraxisMakesPerfect/api/study-plan.ts)
   [src/types/studyPlanApi.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/types/studyPlanApi.ts)
   [src/services/studyPlanService.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/services/studyPlanService.ts)
   [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+
+### 3.8.1 Netlify function format rules
+
+**Always use Lambda format for Netlify functions:**
+```ts
+export const handler = async (event: any) => {
+  return { statusCode: 200, headers: { ... }, body: JSON.stringify(...) };
+};
+```
+**Never use Express format** (`export default function handler(req, res)`). Express format compiles but Netlify calls it as `handler(event, context)` where `req` = event, `res` = context. `req.method` is `undefined`; `res.status()` throws.
+
+**Background functions:** suffix the filename with `-background` (e.g., `api/study-plan-background.ts`). Netlify sends 202 to the caller immediately. The function runs to completion up to 15 minutes.
+
+**Header access:** headers arrive as lowercase in `event.headers`. Use `event.headers['authorization']`, not `event.headers['Authorization']` — check both as a safety measure.
+
+### 3.8.2 Supabase operational notes
+
+- **Key format (2025+):** `sb_publishable_*` = anon key, `sb_secret_*` = service role key. These work with the Supabase JS client. They do NOT work as JWT bearer tokens in direct REST API calls (they're opaque, not JWTs). The service-role key works in Netlify functions via `createClient()` + `supabase.auth.getUser()`.
+- **Admin API from local machine:** `supabase.auth.admin.listUsers()` with the service role key returns 401 from a developer machine. This may be IP-restricted. To inspect user data, sign in as the user with the anon key and query their own tables (RLS allows self-queries), or use Supabase Dashboard → SQL Editor.
+- **Direct Postgres:** `SUPABASE_DB_URL` is blocked from developer machines. It works from Netlify function runtime.
+- **Applying migrations:** Supabase CLI requires Docker for local use. Apply production migrations via Supabase Dashboard → SQL Editor. Migration files live in `supabase/migrations/` for version history.
+- **`study_plans` table:** created in migration `0001`. Stores `{ plan_document: JSONB }` per user. RLS restricts insert/select to the owning user. `getLatestStudyPlan(userId)` fetches the most recent row ordered by `created_at DESC`.
 
 ### 3.9 Question-bank rewrite and audit handoff
 

@@ -9,6 +9,38 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ## 2026-03-18
 
+### Bug Fixes — Study Guide Generation (full diagnostic + root-cause session)
+
+Four separate bugs were discovered and fixed in the same session after investigating the live failure on Carlos Rivera's account:
+
+- **[Critical — Function Format]** `api/study-plan.ts` used Express-style `export default function handler(req, res)` with `res.status().json()`. Netlify Lambda functions require `export const handler = async (event) => ({ statusCode, body })`. The Express format caused every invocation to fail at runtime (`req.method` was undefined, `res.status()` threw). Rewrote `api/study-plan.ts` to proper Lambda format. — `api/study-plan.ts`
+
+- **[Critical — SPA Route Swallow]** `netlify.toml` was missing the `/api/*` → `/.netlify/functions/:splat` redirect. The SPA wildcard `/*` → `index.html` was catching `/api/study-plan` first and returning the React HTML page instead of invoking the function. Added the redirect. — `netlify.toml`
+
+- **[Critical — Function Timeout]** Netlify sync functions have a hard 30-second gateway timeout. A real study-plan generation (large prompt + `max_tokens 8000`) takes 45–90 seconds. Converted to a Netlify Background Function (`api/study-plan-background.ts`): Netlify returns 202 immediately, the function runs Claude and saves a complete `StudyPlanDocument` to `study_plans`, the client polls `study_plans` (4s interval, 4-min ceiling). Removed the now-unused sync `requestStudyPlanApi()` helper. — `api/study-plan-background.ts`, `src/services/studyPlanService.ts`
+
+- **[Bug — Token Truncation]** `max_tokens` was 3000, which is insufficient for the 7-section study plan JSON (regularly 4000–6000 output tokens). Raised to 8000. — `api/study-plan-background.ts`
+
+- **[Bug — Missing DB Table]** `study_plans` table was defined in migration `0000_initial_schema.sql` but never applied to the production database. Added migration `0001_study_plans_and_session_columns.sql` and applied it via Supabase SQL Editor. — `supabase/migrations/0001_study_plans_and_session_columns.sql`
+
+- **[Bug — Missing Columns]** `user_progress.last_full_assessment_session_id` and `last_screener_session_id` were referenced in code but not in the database schema. Added both columns in migration 0001.
+
+### Feature Additions
+
+- **[Practice]** Question retirement system: first-pass gating, `times_seen`/`times_correct` tracking, per-user localStorage store (`pmp-qretire-{userId}`), pool reset on exhaustion — `src/components/PracticeSession.tsx`
+- **[Practice]** Cumulative all-time accuracy % in session header; updates dynamically on each answer by snapshotting baseline at mount and adding running `sessionStats` on top
+- **[Practice]** Consecutive correct streak with 8-tier tiered motivational phrase pools; avoids repetition via `lastStreakPhraseRef`; "HW" label renamed to "Overconfident" with tooltip
+- **[Practice]** 15-minute inactivity auto-logout (saves all data before signing out)
+- **[Practice]** Domain and skill context both shown on every question card
+- **[Navigation]** Skill practice back button returns to Results → Skills tab; domain/general practice returns to home
+- **[Home]** Continue Session card split into Practice card (shows skill name, Resume + Select New Skill) vs Assessment card (Resume + Start New Attempt)
+- **[Home]** StudyModesSection: Domain Review (unlocks after Screener) and Skill Review (unlocks after Full Assessment) with live % scores and lock states
+
+### Infrastructure
+
+- **[Netlify CLI]** Installed globally (`npm install -g netlify-cli`) and linked to `praxismakesperfect` project for deploy management and function log access
+- **[Supabase]** Confirmed `sb_secret_` / `sb_publishable_` key format (new Supabase 2025 key format) works with the JS client but NOT with direct REST API calls or the Supabase admin CLI in non-Docker environments
+
 ### Cleanup
 
 - **[Docs]** Archived stale Firebase operational guides from the repo root to `archive/docs-legacy-2026-03-18/` and rewrote the active root docs to reflect the current Supabase-backed runtime
