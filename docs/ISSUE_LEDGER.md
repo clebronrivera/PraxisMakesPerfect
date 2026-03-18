@@ -34,6 +34,55 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-18 - Active docs and repo root still carried stale Firebase operational remnants after the Supabase migration
+
+- Status: resolved
+- Area: documentation / repository cleanup
+- Summary: After the Firebase-to-Supabase migration was complete, the repo still exposed Firebase operational docs in the root, kept Firebase-only Firestore scripts in the active `scripts/` directory, retained root Firebase config/cache files, and described the live app as Firebase-backed in several canonical docs. This made the active documentation system contradict the current code.
+- Source of truth: current Supabase-backed code paths and the deployment/schema audit
+- Code anchors:
+  [README.md](/Users/lebron/Documents/PraxisMakesPerfect/README.md)
+  [CODEBASE_OVERVIEW.md](/Users/lebron/Documents/PraxisMakesPerfect/CODEBASE_OVERVIEW.md)
+  [ASSESSMENT_DATA_FLOW_ANALYSIS.md](/Users/lebron/Documents/PraxisMakesPerfect/ASSESSMENT_DATA_FLOW_ANALYSIS.md)
+  [docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md)
+- Resolution / next step: Archived the Firebase-only docs and scripts under dated `archive/` folders, moved the root Firebase config/cache out of the active workspace, removed the leftover Firebase Vite chunk rule, and updated the active docs to point to Supabase as the current backend. Remaining Firebase mentions in active docs are historical references only.
+
+## 2026-03-15 - Rebuilt answer-choice delta merged cleanly; explanation sanity check found only low-risk drift
+
+- Status: resolved
+- Area: question bank / audit merge verification
+- Summary: The rebuilt answer-choice delta was merged into the canonical question bank as a content-only patch. Structural verification passed for all `403` delta records and `735` changed answer-choice fields. A post-merge sanity check on the `223` rewritten correct options found low-risk wording-drift candidates, but no critical explanation mismatches or answer-key problems.
+- Source of truth: canonical bank after merge plus the audit delta and audit report
+- Code anchors:
+  [src/data/questions.json](/Users/lebron/Documents/PraxisMakesPerfect/src/data/questions.json)
+  [output/delta_answer_choices.json](/Users/lebron/Documents/PraxisMakesPerfect/output/delta_answer_choices.json)
+  [output/AUDIT_SUMMARY.md](/Users/lebron/Documents/PraxisMakesPerfect/output/AUDIT_SUMMARY.md)
+  [output/length_cuing_audit_report.csv](/Users/lebron/Documents/PraxisMakesPerfect/output/length_cuing_audit_report.csv)
+- Resolution / next step: Keep the merge. Treat the `40` heuristic watch-list items as optional polish review rather than blockers. Future audits should preserve this workflow: validate structure first, merge the delta, then run a targeted semantic sanity check on rewritten correct options.
+
+## 2026-03-15 - Question-audit workflow lacked durable handoff rules and could introduce new cueing patterns
+
+- Status: resolved
+- Area: question bank / audit workflow
+- Summary: Large-scale answer-choice audits can be safely merged when they arrive as `UNIQUEID`-keyed delta patches, but the repo did not yet have a durable rule for that handoff. This made it easy to fix one issue such as length cueing while accidentally introducing another issue such as repetitive boilerplate distractors that may themselves become answer cues.
+- Source of truth: canonical question bank plus the audited delta outputs and audit logs
+- Code anchors:
+  [src/data/questions.json](/Users/lebron/Documents/PraxisMakesPerfect/src/data/questions.json)
+  [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
+- Resolution / next step: Added a durable workflow-grounding rule for question-bank rewrite/audit handoff. Future audits should be delivered as `UNIQUEID`-keyed deltas, preserve identity/metadata unless explicitly changed, keep before/after audit logs, and avoid formulaic distractor wording that creates new style cueing.
+
+## 2026-03-15 - Firebase removed; Backend migrated to Supabase
+
+- Status: resolved
+- Area: infrastructure / database / auth
+- Summary: The entire backend structure was migrated from Firebase to Supabase. This involved removing all `firebase` and `firebase-admin` dependencies, transitioning authentication to strictly Email/Password via Supabase, translating Firestore collections to Supabase PostgreSQL schemas with RLS, and refactoring API routes to verify Supabase JWTs.
+- Source of truth: `user_progress` and `responses` tables in Supabase
+- Code anchors:
+  [src/config/supabase.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/config/supabase.ts)
+  [supabase/migrations/0000_initial_schema.sql](/Users/lebron/Documents/PraxisMakesPerfect/supabase/migrations/0000_initial_schema.sql)
+  [api/study-plan.ts](/Users/lebron/Documents/PraxisMakesPerfect/api/study-plan.ts)
+- Resolution / next step: Migration is complete. The application is now fully running on Supabase with defined SQL tables and RLS policies.
+
 ## 2026-03-14 - Final full assessment unlock flow is defined but not yet implemented
 
 - Status: open

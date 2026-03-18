@@ -1,6 +1,5 @@
 // src/hooks/useBetaFeedback.ts
-// Hook for submitting and managing beta feedback
-// Re-implemented to use Supabase instead of Firestore
+// Hook for submitting and managing beta feedback — backed by Supabase.
 
 import { useCallback, useState } from 'react';
 import { supabase } from '../config/supabase';

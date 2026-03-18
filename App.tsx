@@ -34,6 +34,7 @@ import {
 } from './src/utils/assessmentConstants';
 
 import { StudyPlanDocument, generateStudyPlan, getLatestStudyPlan } from './src/services/studyPlanService';
+import { supabase } from './src/config/supabase';
 import { isAdminEmail } from './src/config/admin';
 import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
 import type { AssessmentReportType } from './src/types/assessment';
@@ -125,7 +126,8 @@ function PraxisStudyAppContent() {
   const [studyPlanGenerating, setStudyPlanGenerating] = useState(false);
   const [studyPlanError, setStudyPlanError] = useState<string | null>(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const hasArchivedShortAssessment = profile.diagnosticComplete || (profile.preAssessmentComplete && !profile.screenerComplete);
+  // preAssessmentComplete was a dead field (always false, no DB column); collapsed to diagnosticComplete only.
+  const hasArchivedShortAssessment = profile.diagnosticComplete;
   const hasCompletedScreener = profile.screenerComplete;
   const screenerCompletedAtMillis = profile.lastScreenerCompletedAt
     ? new Date(profile.lastScreenerCompletedAt).getTime()
@@ -143,9 +145,9 @@ function PraxisStudyAppContent() {
   // Analyze all questions
   const analyzedQuestions = useMemo(() => {
     // Always use the canonical local bank as the source of truth for question content.
-    // Firestore question data is not trusted for content — only counts/IDs are logged for
+    // Supabase question data is not trusted for content — only counts/IDs are logged for
     // drift detection (see the useEffect below). This ensures local corrections are never
-    // silently bypassed by stale Firestore copies with matching IDs.
+    // silently bypassed by stale Supabase copies with matching IDs.
     return canonicalQuestions.map(analyzeQuestion);
   }, [canonicalQuestions]);
   const progressSummary = useMemo(
@@ -164,8 +166,8 @@ function PraxisStudyAppContent() {
     const missingCanonicalCount = canonicalQuestions.length - sanitizedFetchedQuestions.length;
 
     if (staleQuestionCount > 0 || missingCanonicalCount > 0) {
-      console.warn('[QuestionBank] Firestore questions do not match the canonical export. Falling back to the bundled bank.', {
-        firestoreCount: fetchedQuestions.length,
+      console.warn('[QuestionBank] Supabase questions do not match the canonical export. Falling back to the bundled bank.', {
+        supabaseCount: fetchedQuestions.length,
         canonicalCount: canonicalQuestions.length,
         matchedCanonicalCount: sanitizedFetchedQuestions.length,
         staleQuestionCount,
@@ -186,6 +188,19 @@ function PraxisStudyAppContent() {
       }
     }
   }, [savedSession]);
+
+  // Fix #6: Clear stale Supabase lastSession if the corresponding localStorage entry is gone.
+  // This prevents the "session no longer available" alert and avoids dual-source confusion.
+  useEffect(() => {
+    if (!isLoaded || !profile.lastSession) return;
+    const { sessionId, mode } = profile.lastSession;
+    // Practice sessions don't use userSessionStorage — skip the check.
+    if (mode === 'practice') return;
+    const saved = loadUserSession(sessionId);
+    if (!saved) {
+      void updateProfile({ lastSession: null });
+    }
+  }, [isLoaded, profile.lastSession, updateProfile]);
 
   // Filter questions by domain for practice mode
   const practiceQuestions = useMemo(() => {
@@ -305,7 +320,7 @@ function PraxisStudyAppContent() {
 
     const questionIds = selected.map(q => q.id);
     
-    // Store selected IDs in Firestore as requested
+    // Store selected IDs in Supabase
     updateProfile({
       screenerItemIds: questionIds
     });
@@ -390,8 +405,7 @@ function PraxisStudyAppContent() {
     }
   }, [savedSession, startFullAssessment, startScreener]);
 
-  // Note: User selection is now handled by Firebase auth, so this callback is no longer needed
-  // Sessions can still be loaded if needed, but user management is via Firebase
+  // Note: User selection is handled by Supabase auth.
   
   const handleDiscardSession = useCallback(() => {
     if (currentUserName && savedSession?.sessionId) {
@@ -435,9 +449,18 @@ function PraxisStudyAppContent() {
     setStudyPlanError(null);
 
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const idToken = sessionData.session?.access_token ?? '';
+
+      if (!idToken) {
+        // Session has expired — tell the user clearly rather than surfacing a cryptic 401.
+        setStudyPlanError('Your session has expired. Please log out and log back in, then try again.');
+        return;
+      }
+
       const generatedPlan = await generateStudyPlan({
         userId: user.id,
-        idToken: 'skipped-for-supabase', // study plan service doesn't actually verify this if using client direct, but if it's an API, you'd pass supabase session token
+        idToken,
         skills: fetchedSkills,
         domains: fetchedDomains
       });
@@ -467,8 +490,8 @@ function PraxisStudyAppContent() {
     
     const analysis = detectWeaknesses(responses, analyzedQuestions);
     
-    // Save results to Firebase before navigation
-    // Note: Responses are already logged to responses subcollection during assessment
+    // Save results to Supabase before navigation
+    // Note: Responses are already logged to the responses table during assessment
     const updates: any = {
       lastSession: null,
       ...analysis
@@ -499,7 +522,7 @@ function PraxisStudyAppContent() {
     clearSession();
     setSelectedSessionId(undefined);
 
-    console.log('[ScreenerAssessment] Results saved to Firebase, navigating to score report');
+    console.log('[ScreenerAssessment] Results saved to Supabase, navigating to score report');
     
     setLastAssessmentResponses(responses);
     setLastAssessmentType('screener');
@@ -523,8 +546,8 @@ function PraxisStudyAppContent() {
     
     const analysis = detectWeaknesses(responses, analyzedQuestions);
     
-    // Save results to Firebase before navigation
-    // Note: Responses are already logged to responses subcollection during assessment
+    // Save results to Supabase before navigation
+    // Note: Responses are already logged to the responses table during assessment
     await updateProfile({
       fullAssessmentComplete: true,
       fullAssessmentQuestionIds: questionIds,
@@ -541,7 +564,7 @@ function PraxisStudyAppContent() {
     clearSession();
     setSelectedSessionId(undefined);
 
-    console.log('[FullAssessment] Results saved to Firebase, navigating to score report');
+    console.log('[FullAssessment] Results saved to Supabase, navigating to score report');
     
     setLastAssessmentResponses(responses);
     setLastAssessmentType('full-assessment');
@@ -608,7 +631,7 @@ function PraxisStudyAppContent() {
       }
 
       if (responses.length === 0) {
-        console.warn(`[handleViewReport] No responses found in Firestore for ${assessmentType}`);
+        console.warn(`[handleViewReport] No responses found in Supabase for ${assessmentType}`);
         alert('Unable to load report. Response data not found in database.');
         return;
       }
@@ -744,7 +767,7 @@ function PraxisStudyAppContent() {
               onClick={async () => {
                 // Clear any local session data
                 clearSession();
-                // Log out from Firebase
+                // Log out from Supabase
                 await logout();
                 // Reset local state
                 setMode('home');

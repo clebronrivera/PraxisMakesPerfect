@@ -1,175 +1,112 @@
 # Assessment Data Flow Analysis
 
-> Status: Canonical source. Reviewed during documentation consolidation on 2026-03-14. This document remains authoritative for assessment and report persistence risks unless superseded by current code and newer changelog entries.
+> Status: Canonical source. Reviewed during documentation consolidation on 2026-03-14. Updated on 2026-03-18 to reflect the Supabase-backed assessment flow now used in the live app.
 
 ## Current Setup Overview
 
-### 1. **Assessment Completion Tracking**
+### 1. Assessment Completion Tracking
 
-**Location:** Firestore `users/{uid}` document
+**Location:** Supabase `user_progress` row for the signed-in user
 
-**Fields:**
-- `preAssessmentComplete: boolean` - Tracks if pre-assessment (practice assessment) is completed
-- `fullAssessmentComplete: boolean` - Tracks if full assessment is completed
-- `preAssessmentQuestionIds: string[]` - Question IDs used in pre-assessment
-- `fullAssessmentQuestionIds: string[]` - Question IDs used in full assessment
+**Key fields:**
+- `screener_complete`
+- `full_assessment_complete`
+- `screener_item_ids`
+- `full_assessment_question_ids`
+- `last_screener_session_id`
+- `last_full_assessment_session_id`
+- `last_session`
+- `domain_scores`
+- `skill_scores`
 
-**Code Location:** 
-- Set in `App.tsx` lines 293-322 (`handlePreAssessmentComplete`)
-- Set in `App.tsx` lines 324-350 (`handleFullAssessmentComplete`)
-- Stored via `useFirebaseProgress.ts` hook
+**Code anchors:**
+- `App.tsx` assessment completion handlers
+- `src/hooks/useFirebaseProgress.ts` (`saveProfile`, `updateProfile`, `updateLastSession`)
 
-### 2. **Response Data Storage**
+### 2. Response Data Storage
 
-**Location:** Firestore `users/{uid}/responses` subcollection
+**Location:** Supabase `responses` table
 
-**Structure:** Each response document contains:
+**Structure:** Each response row includes the current assessment metadata needed to rebuild reports:
+
 ```typescript
 {
-  questionId: string;
-  skillId?: string;
-  domainId?: number;
-  assessmentType: 'diagnostic' | 'full' | 'practice';
-  sessionId: string;
-  isCorrect: boolean;
+  user_id: string;
+  session_id: string;
+  question_id: string;
+  skill_id?: string;
+  domain_id?: number;
+  domain_ids?: number[];
+  assessment_type: 'screener' | 'full' | 'practice' | 'diagnostic';
+  is_correct: boolean;
   confidence: 'low' | 'medium' | 'high';
-  timeSpent: number;
-  timestamp: number;
-  selectedAnswer?: string;
-  distractorPatternId?: string;
-  createdAt: Timestamp;
+  time_spent: number;
+  selected_answers: string[];
+  correct_answers: string[];
+  distractor_pattern_id?: string;
+  created_at: string;
 }
 ```
 
-**Code Location:** 
-- Logged via `logResponse()` function in `useFirebaseProgress.ts` (lines 194-214)
-- Called during assessment in `PreAssessment.tsx` (line 200) and `FullAssessment.tsx`
+**Code anchors:**
+- `src/hooks/useFirebaseProgress.ts` (`logResponse`, `saveScreenerResponse`)
+- `src/components/ScreenerAssessment.tsx`
+- `src/components/FullAssessment.tsx`
+- `src/components/PracticeSession.tsx`
 
-### 3. **Preventing Retakes**
+### 3. Report Retrieval After Completion
 
-**Current Implementation:**
-- ✅ **Pre-Assessment:** UI checks `profile.preAssessmentComplete` 
-  - If `true`, the "Start New" button is hidden (line 569 in `App.tsx`)
-  - User cannot retake pre-assessment once completed
-  
-- ⚠️ **Full Assessment:** Currently ALWAYS available
-  - Button is always shown regardless of `fullAssessmentComplete` status (line 622 in `App.tsx`)
-  - Users CAN retake full assessment even after completion
+**Current state:** Implemented
 
-**Code Location:**
-- `App.tsx` lines 569-602 (pre-assessment conditional rendering)
-- `App.tsx` lines 622-635 (full assessment - always available)
+Reports are no longer limited to in-memory completion state. The app now:
+- stores response events in `responses`
+- stores the latest relevant session IDs in `user_progress`
+- rebuilds reports with `getAssessmentResponses(sessionId, assessmentTypes, questions)`
+- falls back to `getLatestAssessmentResponses(assessmentTypes, questions)` if a saved session pointer is stale
 
-### 4. **Report Access After Completion**
+**Code anchors:**
+- `src/hooks/useFirebaseProgress.ts` (`getAssessmentResponses`, `getLatestAssessmentResponses`)
+- `App.tsx` (`handleViewReport`)
 
-**Current State:** ❌ **NOT IMPLEMENTED**
+### 4. Data Flow Summary
 
-**Problem:**
-- Reports are only shown immediately after completion via component state (`lastAssessmentResponses`)
-- Data is stored in Firestore but NOT retrieved to rebuild reports
-- If user refreshes page or logs out/in, report data is lost
-- No UI to view past assessment results
-
-**Code Location:**
-- Reports displayed in `App.tsx` lines 762-806 (`score-report` mode)
-- Uses `lastAssessmentResponses` state (line 764) which is only set during completion
-- No Firestore query to retrieve past responses
-
-### 5. **Data Flow Summary**
-
-```
-Assessment Taken
+```text
+Assessment taken
     ↓
-Responses logged to Firestore (users/{uid}/responses)
+Responses inserted into Supabase `responses`
     ↓
-Assessment completion handler called
+Profile/session metadata upserted into `user_progress`
     ↓
-Profile updated (preAssessmentComplete: true)
-    ↓
-Responses stored in component state (lastAssessmentResponses)
+Completion handler stores current responses in local state
     ↓
 Report shown immediately
     ↓
-[User logs out/refreshes]
+[User refreshes or returns later]
     ↓
-Report data LOST (not retrievable)
+App rebuilds the report from Supabase responses
 ```
 
-## Issues Identified
+## Current Risks And Watch Items
 
-### Issue 1: Reports Not Persisted/Retrievable
-- **Problem:** Assessment reports cannot be viewed after page refresh or re-login
-- **Impact:** Users lose access to their assessment results and feedback
-- **Solution Needed:** Query Firestore responses subcollection to rebuild reports
+### 1. Legacy hook naming
 
-### Issue 2: Full Assessment Can Be Retaken
-- **Problem:** Full assessment button is always available, even after completion
-- **Impact:** Users can retake full assessment (may or may not be desired)
-- **Solution Needed:** Add conditional check similar to pre-assessment
+- `src/hooks/useFirebaseProgress.ts` is still the active hook name even though it is fully Supabase-backed.
+- This is a compatibility name, not evidence of active Firebase runtime usage.
 
-### Issue 3: No Historical Report View
-- **Problem:** No way to view past assessment results
-- **Impact:** Users cannot review previous assessment performance
-- **Solution Needed:** Add "View Past Reports" feature that queries Firestore
+### 2. Archived short-assessment compatibility
 
-## Recommended Solutions
+- The profile still carries some compatibility fields for older short-assessment data (`diagnostic_complete`, `last_pre_assessment_session_id`, related timestamps).
+- These support legacy report recovery but should not be treated as the active product model.
 
-### Solution 1: Retrieve Responses from Firestore for Reports
-Create a function to query `users/{uid}/responses` subcollection filtered by:
-- `assessmentType: 'diagnostic'` for pre-assessment
-- `assessmentType: 'full'` for full assessment
-- Order by `timestamp` or `createdAt`
+### 3. Practice dual-write complexity
 
-### Solution 2: Store Assessment Metadata
-Add to user profile:
-- `lastPreAssessmentSessionId: string` - Session ID of last completed pre-assessment
-- `lastFullAssessmentSessionId: string` - Session ID of last completed full assessment
-- `lastPreAssessmentCompletedAt: Timestamp` - When pre-assessment was completed
-- `lastFullAssessmentCompletedAt: Timestamp` - When full assessment was completed
+- Practice writes to both the shared `responses` table and `practice_responses`.
+- `responses` is the table currently used for report rebuilding and downstream analytics.
+- `practice_responses` remains underused and should be revisited before adding more practice-specific reporting.
 
-### Solution 3: Add Report Retrieval Function
-Create `getAssessmentResponses(sessionId: string)` function that:
-1. Queries responses subcollection filtered by `sessionId`
-2. Retrieves question details from question IDs
-3. Rebuilds `UserResponse[]` array
-4. Returns data for ScoreReport component
+## Recommended Verification Points
 
-### Solution 4: Add "View Report" Button
-On home screen, if assessment is completed:
-- Show "View Last Pre-Assessment Report" button
-- Show "View Last Full Assessment Report" button
-- These buttons retrieve and display past reports
-
-## Firestore Structure
-
-```
-users/
-  {uid}/
-    - preAssessmentComplete: boolean
-    - fullAssessmentComplete: boolean
-    - preAssessmentQuestionIds: string[]
-    - fullAssessmentQuestionIds: string[]
-    - domainScores: {...}
-    - skillScores: {...}
-    - lastSession: {...}
-    responses/  (subcollection)
-      {responseId}/
-        - questionId: string
-        - assessmentType: 'diagnostic' | 'full' | 'practice'
-        - sessionId: string
-        - isCorrect: boolean
-        - confidence: 'low' | 'medium' | 'high'
-        - timeSpent: number
-        - timestamp: number
-        - selectedAnswer?: string
-        - createdAt: Timestamp
-```
-
-## Next Steps
-
-1. ✅ **Verify:** Check Firestore console to confirm data structure matches
-2. 🔧 **Implement:** Add function to retrieve responses from Firestore
-3. 🔧 **Implement:** Store last assessment session IDs in user profile
-4. 🔧 **Implement:** Add "View Report" buttons on home screen
-5. 🔧 **Fix:** Prevent full assessment retake if `fullAssessmentComplete: true`
-6. ✅ **Test:** Verify reports are accessible after logout/login
+1. Confirm new assessment/report features continue to derive from `responses` rather than cached profile summaries.
+2. Keep session-pointer recovery (`getLatestAssessmentResponses`) in place when changing report-loading logic.
+3. Update this document whenever assessment persistence or report reconstruction changes materially.
+4. Cross-check `docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md` before changing schema, auth wiring, or table ownership.

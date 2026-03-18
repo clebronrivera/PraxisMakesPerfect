@@ -21,9 +21,9 @@ Do not use it for:
 
 ## 1. Source Of Truth Model
 
-- `users/{uid}/responses` in Firestore is the source of truth for answered items.
+- `responses` and `user_progress` tables in Supabase PostgreSQL are the sources of truth for answered items and auth tracking.
 - `profile` is a cached summary layer, not the deepest source of truth.
-- Assessment and reporting views should derive from actual response data whenever practical.
+- Assessment and reporting views should derive from actual Supabase response data whenever practical.
 - If a summary field and response events disagree, response events win and the cache should be repaired.
 
 ## 2. Where To Put Rules
@@ -151,7 +151,7 @@ Do not use it for:
 
 - The study-guide generation API is `POST /api/study-plan`.
 - The request must include:
-  - bearer auth for the signed-in Firebase user
+  - bearer auth for the signed-in Supabase user
   - `userId`
   - `prompt`
   - `sourceSummary` counts describing the grounded inputs used to build the guide
@@ -174,14 +174,46 @@ Do not use it for:
   [src/services/studyPlanService.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/services/studyPlanService.ts)
   [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
 
+### 3.9 Question-bank rewrite and audit handoff
+
+- When question text is audited or rewritten without changing question identity, treat the result as a `delta patch`, not a new bank.
+- The preferred handoff artifact is a machine-mergeable file keyed by `UNIQUEID` that includes only the changed fields.
+  For answer-choice edits, that usually means only the changed option columns (`A`-`F`) and, if applicable, updated `correct_answers` or `CORRECT_Explanation`.
+- Preserve these fields unless there is an explicit approved change:
+  - `UNIQUEID`
+  - skill/category mappings
+  - domain/category metadata
+  - question counts
+- When an audit edits answer-choice wording to reduce cueing, avoid replacing one cue with another.
+  In particular, do not overuse repeated boilerplate phrases that make wrong answers sound uniformly machine-written or obviously incorrect.
+- If the currently correct option text is rewritten, verify that:
+  - the correct answer letter still points to the intended option
+  - the explanation still matches the revised wording
+- Keep a separate before/after audit log when available so future reviewers can trace why a change was made.
+- If an automated or LLM-assisted audit leaves a set of still-flagged items, keep that list with the audit output rather than silently blending those unresolved items into the main bank.
+- When a delta is merged into `src/data/questions.json`, record the outcome in the existing doc system:
+  - durable workflow lessons in this file
+  - the concrete merge and verification result in `docs/ISSUE_LEDGER.md`
+  - the historical note in `CHANGELOG.md`
+- Prior knowledge from the 2026-03-15 answer-choice audit and merge:
+  - fixing length cueing can accidentally create style cueing if distractors all sound like the same disclaimer engine
+  - rotating only the final phrase is not enough if distractors still share one generic evidence/clinical voice
+  - stronger distractor rewrites come from error-type-aware completions such as overgeneralization, wrong action, partial-factor reasoning, category confusion, or premature conclusion
+  - explanation sanity checks after correct-option trims should evaluate semantic agreement, not exact phrase reuse
+  - remaining flagged items should be triaged by domain difficulty; legal/statute-heavy and research-methodology items may benefit most from expert manual review
+  Code anchors:
+  [src/data/questions.json](/Users/lebron/Documents/PraxisMakesPerfect/src/data/questions.json)
+  [scripts/export-question-csv.cjs](/Users/lebron/Documents/PraxisMakesPerfect/scripts/export-question-csv.cjs)
+  [output/AUDIT_SUMMARY.md](/Users/lebron/Documents/PraxisMakesPerfect/output/AUDIT_SUMMARY.md)
+
 ## 4. Current Code Anchors
 
 - Assessment building:
   [src/utils/assessment-builder.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessment-builder.ts)
 - Assessment constants:
   [src/utils/assessmentConstants.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentConstants.ts)
-- Firebase progress and response retrieval:
-  [src/hooks/useFirebaseProgress.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useFirebaseProgress.ts)
+- Supabase progress and response retrieval:
+  [src/hooks/useFirebaseProgress.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useFirebaseProgress.ts) (Note: internally refactored to use Supabase)
 - Adaptive practice selection:
   [src/hooks/useAdaptiveLearning.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useAdaptiveLearning.ts)
 - Shared assessment report derivation:

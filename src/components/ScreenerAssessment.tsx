@@ -123,7 +123,7 @@ export default function ScreenerAssessment({
     }
   }, [currentIndex, responses, selectedAnswers, confidence, startTime, questions, currentUserName, sessionId, elapsedSeconds]);
   
-  // Save to Firestore on pause
+  // Save to Supabase on pause
   useEffect(() => {
     if (isPaused && updateLastSession && sessionId) {
       updateLastSession(sessionId, 'screener', currentIndex, elapsedSeconds);

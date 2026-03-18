@@ -261,15 +261,15 @@ export function calculateGlobalScoresFromData({
   return result;
 }
 
-async function saveGlobalScores(_userId: string, result: GlobalScoreResult): Promise<void> {
-  // If we wanted to store the global scores persistently in Supabase:
-  /*
+async function saveGlobalScores(userId: string, result: GlobalScoreResult): Promise<void> {
   const { error } = await supabase
     .from('user_progress')
     .update({ global_scores: result })
-    .eq('user_id', _userId);
-  */
-  console.log('[saveGlobalScores] Supabase Global Scores calculation produced:', result);
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('[saveGlobalScores] Failed to persist global scores:', error);
+  }
 }
 
 export async function calculateAndSaveGlobalScores(userId: string): Promise<GlobalScoreResult> {

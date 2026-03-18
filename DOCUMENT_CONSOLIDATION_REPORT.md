@@ -1,6 +1,7 @@
 # Documentation Consolidation Report
 
 Reviewed on 2026-03-14.
+Updated on 2026-03-18 after archiving stale Firebase operational docs left over from the Supabase migration.
 
 This report is the authoritative summary of the root-level documentation cleanup. It replaces root-level documentation sprawl with one master report, one registry, and a small canonical set of active references.
 
@@ -15,8 +16,8 @@ This report is the authoritative summary of the root-level documentation cleanup
 ## Consolidation Outcome
 
 - Root-level docs reviewed: 46
-- Canonical docs retained in root: 11
-- Superseded docs moved to archive: 35
+- Canonical docs retained in root after the 2026-03-18 cleanup: 7
+- Historical docs archived across the consolidation passes: 39
 - Canonical root set:
   - `README.md`
   - `DOCUMENT_CONSOLIDATION_REPORT.md`
@@ -25,10 +26,6 @@ This report is the authoritative summary of the root-level documentation cleanup
   - `CODEBASE_OVERVIEW.md`
   - `ASSESSMENT_DATA_FLOW_ANALYSIS.md`
   - `CHANGELOG.md`
-  - `FIREBASE_AUTH_SETUP.md`
-  - `DEPLOY_FIREBASE_RULES.md`
-  - `FIREBASE_SECURITY_TESTING.md`
-  - `FIX_UNAUTHORIZED_DOMAIN.md`
 
 ## Retained Findings
 
@@ -36,7 +33,7 @@ This report is the authoritative summary of the root-level documentation cleanup
 
 - `REWRITE_DEVELOPMENT_GUIDE.md` is the architectural authority. It explicitly establishes Praxis-first structure, taxonomy-driven classification, and `skillId`-based domain resolution.
 - `CODEBASE_OVERVIEW.md` remains the best current implementation snapshot for app structure, dependencies, and known legacy/dead-code risks.
-- `README.md` has been rewritten to match the current Firebase-backed app instead of the older local-only framing.
+- `README.md` has been rewritten to match the current Supabase-backed app instead of the older local-only framing.
 
 ### Assessment And Data Flow
 
@@ -59,8 +56,8 @@ This report is the authoritative summary of the root-level documentation cleanup
 
 ### Operational Setup
 
-- Firebase setup and troubleshooting docs remain useful as standalone operational references because they map directly to active scripts and current runtime behavior.
-- Short duplicates and “setup complete” status docs were archived to stop them from competing with the canonical operational guides.
+- The active operational reference is now `docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md` plus the current code and changelog.
+- Firebase setup and Firestore rules docs were archived on 2026-03-18 because they no longer match the active runtime or root scripts.
 
 ## Contradictions Resolved
 
@@ -108,7 +105,7 @@ This report is the authoritative summary of the root-level documentation cleanup
 
 ## Archive Policy Applied
 
-- Default action for non-canonical root docs: move to `archive/docs-legacy-2026-03-14/`.
+- Default action for non-canonical root docs: move to a dated folder under `archive/`.
 - Archive rather than delete when a file has historical reasoning, provenance value, or could explain a past migration or cleanup decision.
 - Keep generated or prompt-oriented files out of root even when preserved for history.
 - Use `DOCUMENT_REGISTRY.md` as the lookup table for why each file was kept or archived.

@@ -7,6 +7,31 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-03-18
+
+### Cleanup
+
+- **[Docs]** Archived stale Firebase operational guides from the repo root to `archive/docs-legacy-2026-03-18/` and rewrote the active root docs to reflect the current Supabase-backed runtime
+- **[Scripts]** Moved Firebase-only Firestore/admin utility scripts out of `scripts/` into `archive/scripts-legacy-2026-03-18/` so active tooling matches the live backend
+- **[Config]** Archived the leftover root `.firebaserc` and `.firebase/` cache and removed the stale Firebase chunk rule from `vite.config.ts`
+
+## 2026-03-15
+
+### Backend Migration
+
+- **[Architecture]** Migrated backend service completely from Firebase to Supabase.
+- **[Auth]** Replaced Firebase Authentication with Supabase Email/Password Authentication (Google Auth removed).
+- **[Database]** Replaced Firestore with Supabase PostgreSQL (via Supabase JS Client).
+- **[Database]** Implemented Row Level Security (RLS) in Supabase to secure user data at the database level.
+- **[API]** Refactored `/api/study-plan` to verify JWTs using Supabase `auth.getUser()` rather than Firebase Admin.
+- **[Cleanup]** Removed all `firebase` and `firebase-admin` dependencies, types, and setup files (`src/config/firebase.ts`).
+- **[Schema]** Established rigorous SQL schemas (`supabase/migrations/0000_initial_schema.sql`) for `user_progress`, `responses`, `practice_responses`, `question_reports`, and `beta_feedback`.
+
+### Docs
+
+- **[Docs]** Added a durable question-bank audit handoff rule to `docs/WORKFLOW_GROUNDING.md` so future LLM-assisted rewrites are delivered as `UNIQUEID`-keyed deltas, preserve question identity/metadata, keep before/after audit logs, and avoid replacing length cueing with repetitive boilerplate cueing
+- **[Question Bank]** Merged the rebuilt answer-choice delta into `src/data/questions.json`, refreshed the audit handoff package in `output/AUDIT_SUMMARY.md`, and recorded the post-merge verification result: structural validation passed for `403` records / `735` fields, with only low-risk explanation-drift watch items among the `223` trimmed-correct entries
+
 ## 2026-03-14
 
 ### Docs
@@ -62,7 +87,7 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
-## Prior Work (pre-2026-03-11, from git history)
+## Prior Work (pre-2026-03-15, from git history)
 
 - `d4c3ace` — Add deployment guide
 - `03a428a` — Add Firebase authentication: email/password, Google OAuth, password reset

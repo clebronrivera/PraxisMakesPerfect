@@ -1,27 +1,39 @@
 // src/components/LoginScreen.tsx
 // Enhanced login screen with email, Google, and password reset
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Chrome, ArrowLeft, Loader2, Shield } from 'lucide-react';
+import { Mail, ArrowLeft, Loader2, Shield } from 'lucide-react';
 import { PRIMARY_ADMIN_EMAIL } from '../config/admin';
 
 export default function LoginScreen() {
-  const { 
-    signInWithEmail, 
-    signUpWithEmail, 
-    signInWithGoogle, 
+  const {
+    signInWithEmail,
+    signUpWithEmail,
     resetPassword,
-    error, 
+    error,
     loading,
-    clearError 
+    clearError
   } = useAuth();
-  
+
   const [mode, setMode] = useState<'login' | 'signup' | 'reset'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  // Admin entry point is hidden by default; revealed by Ctrl+Shift+A so it doesn't
+  // expose the admin email to casual visitors on the login page.
+  const [showAdminEntry, setShowAdminEntry] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        setShowAdminEntry(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,14 +61,6 @@ export default function LoginScreen() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    clearError();
-    try {
-      await signInWithGoogle();
-    } catch (err) {
-      // Error is handled in context
-    }
-  };
 
   const switchToReset = () => {
     clearError();
@@ -84,27 +88,6 @@ export default function LoginScreen() {
             {mode === 'reset' && 'Reset your password'}
           </p>
         </div>
-
-        {mode === 'login' && (
-          <div className="mb-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4 text-sm text-cyan-100">
-            <div className="flex items-start gap-3">
-              <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-cyan-300" />
-              <div className="flex-1">
-                <p className="font-medium text-cyan-200">Admin sign-in</p>
-                <p className="mt-1 text-cyan-100/80">
-                  Admin dashboard access is enabled for <strong>{PRIMARY_ADMIN_EMAIL}</strong>.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
-                  className="mt-3 rounded-lg border border-cyan-400/30 px-3 py-1.5 text-xs font-medium text-cyan-100 transition-colors hover:bg-cyan-500/10"
-                >
-                  Use admin email
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Success Message */}
         {resetEmailSent && !error && (
@@ -278,38 +261,26 @@ export default function LoginScreen() {
             </>
           )}
 
-          {/* Social Sign-In - Only show when not in reset mode */}
-          {mode !== 'reset' && (
-            <>
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-slate-700"></div>
-                <span className="text-sm text-slate-500">or</span>
-                <div className="flex-1 h-px bg-slate-700"></div>
-              </div>
 
-              <div className="space-y-3">
-                <button
-                  type="button"
-                  onClick={handleGoogleSignIn}
-                  disabled={loading}
-                  className="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-medium text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Chrome className="w-4 h-4" />
-                  )}
-                  Continue with Google
-                </button>
-              </div>
-            </>
-          )}
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-slate-500 mt-6">
-          An account is required. Your progress will be saved and synced across devices.
-        </p>
+        <footer className="mt-6 flex flex-col items-center gap-2">
+          <p className="text-center text-xs text-slate-500">
+            An account is required. Your progress will be saved and synced across devices.
+          </p>
+          {mode === 'login' && showAdminEntry && (
+            <button
+              type="button"
+              onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
+              className="inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs text-slate-500 hover:text-slate-400 transition-colors"
+              title="Admin sign in"
+            >
+              <Shield className="w-3 h-3" />
+              Admin sign in
+            </button>
+          )}
+        </footer>
       </div>
     </div>
   );

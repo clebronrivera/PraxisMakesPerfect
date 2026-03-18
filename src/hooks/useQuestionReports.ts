@@ -1,6 +1,5 @@
 // src/hooks/useQuestionReports.ts
-// Hook for submitting and managing question reports
-// Re-implemented to use Supabase instead of Firestore
+// Hook for submitting and managing question reports — backed by Supabase.
 
 import { useState, useCallback } from 'react';
 import { supabase } from '../config/supabase';

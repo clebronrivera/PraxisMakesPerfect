@@ -1,7 +1,7 @@
 // src/hooks/useFirebaseProgress.ts
-// Re-implemented to use Supabase instead of Firestore
-// Keeping filename the same to avoid breaking 10+ imports across the app, 
-// but internals are fully Supabase now
+// Supabase-backed progress hook.
+// The filename is kept as-is to avoid updating 10+ imports across the app,
+// but all internals use Supabase exclusively — Firebase/Firestore is not used.
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
@@ -25,7 +25,8 @@ import type {
 } from '../types/assessment';
 
 export interface UserProfile {
-  preAssessmentComplete: boolean;
+  // preAssessmentComplete was removed — it had no DB column and was always false.
+  // Use diagnosticComplete for archived short-assessment state instead.
   fullAssessmentComplete?: boolean;
   domainScores: Record<number, { correct: number; total: number }>;
   skillScores: Record<SkillId, SkillPerformance>;
@@ -91,7 +92,6 @@ interface AssessmentResponseBundle {
 }
 
 const defaultProfile: UserProfile = {
-  preAssessmentComplete: false,
   domainScores: {},
   skillScores: {},
   weakestDomains: [],
@@ -657,18 +657,22 @@ export function useFirebaseProgress() {
     ) => {
       if (!user) return;
       try {
-        await supabase.from('practice_responses').insert([{
+        // Write to the canonical `responses` table (assessment_type = 'practice') so that
+        // global-score calculation and history queries can actually read this data.
+        // The separate `practice_responses` table is intentionally NOT written here because
+        // it was write-only (never queried), causing orphaned data (issue #7).
+        await supabase.from('responses').insert([{
           user_id: user.id,
           session_id: sessionId,
           question_id: questionId,
           skill_id: response.skill_id,
           domain_id: response.domain_id,
-          selected_answer: response.selected_answer,
-          correct_answer: response.correct_answer,
+          assessment_type: 'practice',
           is_correct: response.is_correct,
           confidence: response.confidence,
           time_on_item_seconds: response.time_on_item_seconds,
-          shuffled_order: response.shuffled_order
+          selected_answers: [response.selected_answer],
+          correct_answers: [response.correct_answer]
         }]);
       } catch (error) {
         console.error('[savePracticeResponse] Error saving response:', error);

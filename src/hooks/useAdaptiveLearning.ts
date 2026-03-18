@@ -3,6 +3,7 @@ import type { SkillPerformance } from '../brain/learning-state';
 import { UserProfile } from './useFirebaseProgress';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import { CONTENT_POLICY } from '../config/content-policy';
+import { ACTIVE_LAUNCH_FEATURES } from '../utils/launchConfig';
 
 export function useAdaptiveLearning() {
   // Question history is managed by components, not the hook
@@ -85,42 +86,47 @@ export function useAdaptiveLearning() {
     // Filter out excluded questions (assessment + recent practice + session history)
     // CRITICAL POLICY ENFORCEMENT: Ensure we only pick statically generated questions
     const available = questions.filter(q => !excludeIds.has(q.id) && !q.isGenerated);
-    
+
     if (available.length === 0) {
       // Reset history if we've seen all available questions within our content policy constraint
       const allStaticQuestions = questions.filter(q => !q.isGenerated);
       if (allStaticQuestions.length === 0) return null;
       return allStaticQuestions[Math.floor(Math.random() * allStaticQuestions.length)];
     }
-    
+
+    // When adaptive practice is disabled, return a simple random question from the pool.
+    if (!ACTIVE_LAUNCH_FEATURES.adaptivePractice) {
+      return available[Math.floor(Math.random() * available.length)];
+    }
+
     // Target weakest domains
     const activeDomainIds = [...new Set(questions.flatMap(q => q.domains || []))].filter(d => d <= 4);
-    const weakestDomains = profile.weakestDomains.length > 0 
-      ? profile.weakestDomains 
+    const weakestDomains = profile.weakestDomains.length > 0
+      ? profile.weakestDomains
       : activeDomainIds;
-    
+
     // 70% chance to pick from weakest domains
     const targetWeak = Math.random() < 0.7;
     const candidates = targetWeak
       ? available.filter(q => (q.domains || []).some(d => weakestDomains.includes(d)))
       : available;
-    
+
     if (candidates.length === 0) {
       // Fallback to any available static question
       return available[Math.floor(Math.random() * available.length)];
     }
-    
+
     // Also consider skill-level weaknesses
     if (weakestSkills.length > 0) {
-      const skillCandidates = candidates.filter(q => 
+      const skillCandidates = candidates.filter(q =>
         q.skillId && weakestSkills.includes(q.skillId)
       );
-      
+
       if (skillCandidates.length > 0) {
         return skillCandidates[Math.floor(Math.random() * skillCandidates.length)];
       }
     }
-    
+
     // Random selection from candidates
     return candidates[Math.floor(Math.random() * candidates.length)];
   }, [getWeakestSkills]);

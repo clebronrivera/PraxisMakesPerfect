@@ -64,6 +64,12 @@ If you are not sure where something belongs:
 - Use it for: tracing how assessment state and results move through the app
 - Update when: data flow materially changes and the analysis would otherwise become misleading
 
+### [docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md)
+
+- Purpose: one-time audit of Supabase schema usage, data flow, onboarding, cleanup, and Netlify alignment
+- Use it for: grounded architecture decisions before changing schema, auth, or deployment
+- Update when: re-auditing after major schema or deployment changes
+
 ## 3. Quick Placement Rules
 
 Put information in these places:

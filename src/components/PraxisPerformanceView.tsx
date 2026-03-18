@@ -393,7 +393,7 @@ export default function PraxisPerformanceView({
       </div>
 
       {/* Summary Stats */}
-      {(userProfile.screenerComplete || userProfile.preAssessmentComplete || userProfile.fullAssessmentComplete) && (
+      {(userProfile.screenerComplete || userProfile.diagnosticComplete || userProfile.fullAssessmentComplete) && (
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-800">
           <div className="p-4 bg-slate-800/50 rounded-xl text-center">
             <p className="text-2xl font-bold text-amber-400">

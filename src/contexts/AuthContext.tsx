@@ -8,7 +8,6 @@ interface AuthContextType {
   error: string | null;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, displayName?: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
@@ -143,28 +142,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Sign in with Google
-  const signInWithGoogle = async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-        },
-      });
-      if (error) throw error;
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google. Please try again.');
-      setLoading(false);
-      throw err;
-    }
-  };
-
   // Reset password
   const resetPassword = async (email: string) => {
     try {
@@ -206,7 +183,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     error,
     signInWithEmail,
     signUpWithEmail,
-    signInWithGoogle,
     resetPassword,
     logout,
     clearError

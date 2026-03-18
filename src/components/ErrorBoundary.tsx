@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, Home, RotateCcw } from 'lucide-react';
+import { clearSession } from '../utils/sessionStorage';
 
 interface Props {
   children: ReactNode;
@@ -70,7 +71,6 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => {
-                  const { clearSession } = require('../utils/sessionStorage');
                   clearSession();
                   window.location.href = '/';
                 }}

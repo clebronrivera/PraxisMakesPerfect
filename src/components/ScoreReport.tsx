@@ -6,6 +6,7 @@ import { getDomainColor } from '../utils/domainColors';
 import { getDomainLabel } from '../utils/domainLabels';
 import { useFirebaseProgress } from '../hooks/useFirebaseProgress';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
+import { loadSession, clearSession } from '../utils/sessionStorage';
 
 interface ScoreReportProps {
   responses: UserResponse[];
@@ -41,7 +42,6 @@ export default function ScoreReport({
   if (!responses || responses.length === 0 || !questions || questions.length === 0) {
     // Try to recover from session storage if available
     const tryRecalculate = () => {
-      const { loadSession } = require('../utils/sessionStorage');
       const session = loadSession();
       if (session && session.responses && session.responses.length > 0) {
         // If we have raw responses, we could potentially recalculate
@@ -49,7 +49,6 @@ export default function ScoreReport({
         window.location.reload();
       } else {
         // No recovery possible, reset and go home
-        const { clearSession } = require('../utils/sessionStorage');
         clearSession();
         onGoHome();
       }
@@ -81,7 +80,6 @@ export default function ScoreReport({
             </button>
             <button
               onClick={() => {
-                const { clearSession } = require('../utils/sessionStorage');
                 clearSession();
                 onGoHome();
               }}

@@ -12,10 +12,6 @@ export default defineConfig({
             return 'react-vendor'
           }
 
-          if (id.includes('node_modules/firebase')) {
-            return 'firebase-vendor'
-          }
-
           if (id.includes('node_modules/lucide-react')) {
             return 'icons-vendor'
           }
