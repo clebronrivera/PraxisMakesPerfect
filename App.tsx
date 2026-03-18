@@ -32,6 +32,8 @@ import { buildFullAssessment, buildScreener } from './src/utils/assessment-build
 import {
   isScreenerQuestionCount
 } from './src/utils/assessmentConstants';
+import { getSkillById } from './src/brain/skill-map';
+import { PROGRESS_DOMAINS } from './src/utils/progressTaxonomy';
 
 import { StudyPlanDocument, generateStudyPlan, getLatestStudyPlan } from './src/services/studyPlanService';
 import { supabase } from './src/config/supabase';
@@ -127,6 +129,15 @@ function PraxisStudyAppContent() {
   const [studyPlanError, setStudyPlanError] = useState<string | null>(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [resultsDefaultView, setResultsDefaultView] = useState<'domain' | 'skill'>('domain');
+
+  // Practice context: tracks the last skill or domain practiced so the
+  // "Continue Where You Left Off" card can name it and resume correctly.
+  interface PracticeContext {
+    type: 'skill' | 'domain' | 'general';
+    skillId?: string;
+    domainId?: number;
+  }
+  const [lastPracticeContext, setLastPracticeContext] = useState<PracticeContext | null>(null);
   // preAssessmentComplete was a dead field (always false, no DB column); collapsed to diagnosticComplete only.
   const hasArchivedShortAssessment = profile.diagnosticComplete;
   const hasCompletedScreener = profile.screenerComplete;
@@ -189,6 +200,15 @@ function PraxisStudyAppContent() {
       }
     }
   }, [savedSession]);
+
+  // Load last practice context from localStorage when user is known
+  useEffect(() => {
+    if (!user?.id) return;
+    try {
+      const stored = localStorage.getItem(`pmp-practice-context-${user.id}`);
+      if (stored) setLastPracticeContext(JSON.parse(stored));
+    } catch { /* ignore corrupt data */ }
+  }, [user?.id]);
 
   // Fix #6: Clear stale Supabase lastSession if the corresponding localStorage entry is gone.
   // This prevents the "session no longer available" alert and avoids dual-source confusion.
@@ -573,17 +593,27 @@ function PraxisStudyAppContent() {
     setMode('score-report');
   }, [analyzedQuestions, currentUserName, updateProfile, assessmentStartTime, fullAssessmentQuestions, selectedSessionId]);
   
+  // Save which skill/domain is being practiced so the home screen card can name it
+  const savePracticeContext = useCallback((ctx: { type: 'skill' | 'domain' | 'general'; skillId?: string; domainId?: number }) => {
+    setLastPracticeContext(ctx);
+    if (user?.id) {
+      try { localStorage.setItem(`pmp-practice-context-${user.id}`, JSON.stringify(ctx)); } catch {}
+    }
+  }, [user?.id]);
+
   const startPractice = useCallback((domainId?: number) => {
     setPracticeSkillFilter(null);
     setPracticeDomainFilter(domainId || null);
+    savePracticeContext(domainId ? { type: 'domain', domainId } : { type: 'general' });
     setMode('practice');
-  }, []);
+  }, [savePracticeContext]);
 
   const startSkillPractice = useCallback((skillId: string) => {
     setPracticeDomainFilter(null);
     setPracticeSkillFilter(skillId);
+    savePracticeContext({ type: 'skill', skillId });
     setMode('practice');
-  }, []);
+  }, [savePracticeContext]);
 
   // Handler to view past assessment reports
   const handleViewReport = useCallback(async (
@@ -874,103 +904,147 @@ function PraxisStudyAppContent() {
               </div>
             </div>
 
-            {/* Unified Continue Session */}
-            {(profile.lastSession || (hasSession && savedSession)) && (
-              <div className="p-6 bg-blue-500/20 border border-blue-500/30 rounded-2xl">
-                <div className="flex items-start justify-between mb-4">
+            {/* ── Practice: Continue Where You Left Off ── */}
+            {profile.lastSession?.mode === 'practice' && (() => {
+              const ctx = lastPracticeContext;
+              const skillName = ctx?.skillId ? (getSkillById(ctx.skillId)?.name ?? ctx.skillId) : null;
+              const domainInfo = ctx?.domainId ? PROGRESS_DOMAINS.find(d => d.id === ctx.domainId) : null;
+              const contextLabel = skillName
+                ? skillName
+                : domainInfo
+                  ? `Domain ${domainInfo.id}: ${domainInfo.name}`
+                  : 'a practice session';
+              return (
+                <div className="p-6 bg-blue-500/20 border border-blue-500/30 rounded-2xl space-y-4">
                   <div>
-                    <h3 className="font-semibold text-blue-300 mb-1">Continue Session</h3>
+                    <h3 className="font-semibold text-blue-300 mb-1">Continue Where You Left Off</h3>
                     <p className="text-sm text-blue-200/80">
-                      {profile.lastSession ? (
-                        <>
-                          {profile.lastSession.mode === 'practice' && 'Practice mode'}
-                          {profile.lastSession.mode === 'full' && 'Full assessment'}
-                          {profile.lastSession.mode === 'screener' && 'Screener'}
-                          {profile.lastSession.mode === 'diagnostic' && 'Archived short assessment'}
-                          {profile.lastSession.questionIndex > 0 && ` • Question ${profile.lastSession.questionIndex + 1}`}
-                        </>
-                      ) : savedSession ? (
-                        <>
-                          {savedSessionLabel} session
-                          {savedSession.responses.length > 0 && ` • ${savedSession.responses.length} questions completed`}
-                        </>
-                      ) : null}
+                      Continue working on:{' '}
+                      <span className="font-semibold text-blue-100">{contextLabel}</span>
                     </p>
-                    {profile.lastSession?.mode === 'practice' && (
-                      <p className="text-xs text-blue-200/60 mt-1">
-                        Resume practice where you left off
-                      </p>
-                    )}
                     {profile.lastSession?.updatedAt && (
                       <p className="text-xs text-blue-300/60 mt-1">
-                        Last updated: {new Date(profile.lastSession.updatedAt.seconds * 1000 || profile.lastSession.updatedAt).toLocaleString()}
+                        Last active: {new Date(profile.lastSession.updatedAt.seconds * 1000 || profile.lastSession.updatedAt).toLocaleString()}
                       </p>
                     )}
                   </div>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => {
-                      if (profile.lastSession) {
-                        const lastSession = profile.lastSession;
-                        if (lastSession.mode === 'practice') {
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        if (ctx?.type === 'skill' && ctx.skillId) {
+                          startSkillPractice(ctx.skillId);
+                        } else if (ctx?.type === 'domain' && ctx.domainId) {
+                          startPractice(ctx.domainId);
+                        } else {
                           startPractice();
-                        } else if (lastSession.mode === 'screener') {
-                          const saved = loadUserSession(lastSession.sessionId);
-                          if (!saved) {
-                            updateProfile({ lastSession: null });
-                            alert('That saved screener session is no longer available. Start a new screener from the home screen.');
-                            return;
-                          }
-                          startScreener(saved);
-                        } else if (lastSession.mode === 'diagnostic') {
-                          const saved = loadUserSession(lastSession.sessionId);
-                          if (saved && isStoredScreenerSessionType(saved.type) && (
-                            saved.assessmentFlow === 'screener' ||
-                            isScreenerQuestionCount(saved.questionIds.length)
-                          )) {
-                            void updateProfile({
-                              lastSession: {
-                                ...lastSession,
-                                mode: 'screener'
-                              }
-                            });
-                            startScreener(saved);
-                            return;
-                          }
-
-                          updateProfile({ lastSession: null });
-                          alert('That archived short-assessment session can no longer be resumed. Start a new screener from the home screen.');
-                        } else if (lastSession.mode === 'full') {
-                          const saved = loadUserSession(lastSession.sessionId);
-                          if (!saved) {
-                            updateProfile({ lastSession: null });
-                            alert('That saved full assessment session is no longer available. Start a new full assessment from the home screen.');
-                            return;
-                          }
-                          startFullAssessment(saved);
                         }
-                      } else if (savedSession) {
-                        handleResumeAssessment();
-                      }
-                    }}
-                    className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
-                  >
-                    Resume
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (profile.lastSession) {
-                        updateProfile({ lastSession: null });
-                      }
-                      if (savedSession) {
-                        handleDiscardSession();
-                      }
-                    }}
-                    className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
-                  >
-                    Discard Saved Run
-                  </button>
+                      }}
+                      className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                    >
+                      Resume
+                    </button>
+                    <button
+                      onClick={() => {
+                        setResultsDefaultView('skill');
+                        setMode('results');
+                      }}
+                      className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                    >
+                      Select a New Skill
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* ── Assessment: Continue Where You Left Off ── */}
+            {(profile.lastSession?.mode === 'screener' ||
+              profile.lastSession?.mode === 'full' ||
+              profile.lastSession?.mode === 'diagnostic' ||
+              (!profile.lastSession && hasSession && savedSession)) && (
+              <div className="p-6 bg-blue-500/20 border border-blue-500/30 rounded-2xl space-y-4">
+                <div>
+                  <h3 className="font-semibold text-blue-300 mb-1">Continue Where You Left Off</h3>
+                  <p className="text-sm text-blue-200/80">
+                    {profile.lastSession ? (
+                      <>
+                        {profile.lastSession.mode === 'full' && 'Full assessment'}
+                        {profile.lastSession.mode === 'screener' && 'Screener'}
+                        {profile.lastSession.mode === 'diagnostic' && 'Archived short assessment'}
+                        {profile.lastSession.questionIndex > 0 && ` • Question ${profile.lastSession.questionIndex + 1}`}
+                      </>
+                    ) : savedSession ? (
+                      <>
+                        {savedSessionLabel} session
+                        {savedSession.responses.length > 0 && ` • ${savedSession.responses.length} questions completed`}
+                      </>
+                    ) : null}
+                  </p>
+                  <p className="text-xs text-blue-200/70 mt-1">
+                    Resume the last assessment you were working on.
+                  </p>
+                  {profile.lastSession?.updatedAt && (
+                    <p className="text-xs text-blue-300/60 mt-1">
+                      Last updated: {new Date(profile.lastSession.updatedAt.seconds * 1000 || profile.lastSession.updatedAt).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        if (profile.lastSession) {
+                          const lastSession = profile.lastSession;
+                          if (lastSession.mode === 'screener') {
+                            const saved = loadUserSession(lastSession.sessionId);
+                            if (!saved) {
+                              updateProfile({ lastSession: null });
+                              alert('That saved screener session is no longer available. Start a new screener from the home screen.');
+                              return;
+                            }
+                            startScreener(saved);
+                          } else if (lastSession.mode === 'diagnostic') {
+                            const saved = loadUserSession(lastSession.sessionId);
+                            if (saved && isStoredScreenerSessionType(saved.type) && (
+                              saved.assessmentFlow === 'screener' ||
+                              isScreenerQuestionCount(saved.questionIds.length)
+                            )) {
+                              void updateProfile({ lastSession: { ...lastSession, mode: 'screener' } });
+                              startScreener(saved);
+                              return;
+                            }
+                            updateProfile({ lastSession: null });
+                            alert('That archived short-assessment session can no longer be resumed. Start a new screener from the home screen.');
+                          } else if (lastSession.mode === 'full') {
+                            const saved = loadUserSession(lastSession.sessionId);
+                            if (!saved) {
+                              updateProfile({ lastSession: null });
+                              alert('That saved full assessment session is no longer available. Start a new full assessment from the home screen.');
+                              return;
+                            }
+                            startFullAssessment(saved);
+                          }
+                        } else if (savedSession) {
+                          handleResumeAssessment();
+                        }
+                      }}
+                      className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                    >
+                      Resume
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (profile.lastSession) updateProfile({ lastSession: null });
+                        if (savedSession) handleDiscardSession();
+                      }}
+                      className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                    >
+                      Start New Attempt
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 text-center">
+                    Your scores and progress history are not affected.
+                  </p>
                 </div>
               </div>
             )}
@@ -1167,7 +1241,11 @@ function PraxisStudyAppContent() {
                   questions={fullAssessmentQuestions}
                   totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
                   onStartPractice={startPractice}
-                  onRetakeAssessment={() => startFullAssessment(undefined)}
+                  onRetakeAssessment={() => {
+                    // After the user completes both assessments, do not allow any retake path.
+                    if (profile.screenerComplete && profile.fullAssessmentComplete) return;
+                    startFullAssessment(undefined);
+                  }}
                   onGoHome={() => setMode('home')}
                 />
               )
@@ -1210,9 +1288,16 @@ function PraxisStudyAppContent() {
             practiceDomain={practiceDomainFilter}
             practiceSkillId={practiceSkillFilter}
             onExitPractice={() => {
+              const wasSkillPractice = Boolean(practiceSkillFilter);
               setPracticeDomainFilter(null);
               setPracticeSkillFilter(null);
-              setMode('home');
+              if (wasSkillPractice) {
+                // Return to the skills tab in Results so the user can pick another skill
+                setResultsDefaultView('skill');
+                setMode('results');
+              } else {
+                setMode('home');
+              }
             }}
           />
         )}
@@ -1235,7 +1320,11 @@ function PraxisStudyAppContent() {
             onStartPractice={startPractice}
             onStartSkillPractice={startSkillPractice}
             fullAssessmentUnlocked={Boolean(profile.fullAssessmentComplete)}
-            onRetakeAssessment={() => startScreener(undefined)}
+            onRetakeAssessment={() => {
+              // After the user completes both assessments, do not allow any retake path.
+              if (profile.screenerComplete && profile.fullAssessmentComplete) return;
+              startScreener(undefined);
+            }}
             onResetProgress={handleResetProgress}
             defaultView={resultsDefaultView}
           />
