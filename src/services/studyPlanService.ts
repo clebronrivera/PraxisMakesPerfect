@@ -6,11 +6,18 @@ import {
   fetchGlobalScoreInputs
 } from '../utils/globalScoreCalculator';
 import { getSkillById } from '../brain/skill-map';
-import type { StudyPlanApiRequest, StudyPlanApiResponse } from '../types/studyPlanApi';
+import {
+  StudyPlanApiResponseSchema,
+  type StudyPlanApiRequest,
+  type StudyPlanApiResponse
+} from '../types/studyPlanApi';
 
 const STUDY_PLAN_MODEL = 'claude-sonnet-4-20250514';
 const FINAL_FULL_ASSESSMENT_UNLOCK_THRESHOLD = 60;
 const FOUNDATIONAL_REVIEW_TARGET = 70;
+const STUDY_PLAN_API_PATHS = ['/api/study-plan', '/.netlify/functions/study-plan'] as const;
+const STUDY_PLAN_API_UNAVAILABLE_MESSAGE =
+  'Study plan API route is unavailable. On Netlify, verify the /api rewrite. In local development, run the app with Netlify dev so the study-plan function is available.';
 
 const FALLBACK_DOMAIN_NAMES: Record<number, string> = {
   1: 'Professional Practices',
@@ -615,6 +622,84 @@ function asStringArray(value: unknown, path: string): string[] {
   return value.map((item, index) => asString(item, `${path}[${index}]`));
 }
 
+function looksLikeHtmlDocument(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return normalized.startsWith('<!doctype html') || normalized.startsWith('<html');
+}
+
+function parseStudyPlanApiPayload(
+  rawBody: string
+): (Partial<StudyPlanApiResponse> & { error?: string }) | null {
+  const trimmed = rawBody.trim();
+
+  if (!trimmed) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return null;
+    }
+
+    return parsed as Partial<StudyPlanApiResponse> & { error?: string };
+  } catch {
+    return null;
+  }
+}
+
+async function requestStudyPlanApi(
+  requestBody: StudyPlanApiRequest,
+  idToken: string
+): Promise<StudyPlanApiResponse> {
+  const endpoints = [...new Set(STUDY_PLAN_API_PATHS)];
+  let lastError: string | null = null;
+
+  for (const endpoint of endpoints) {
+    let response: Response;
+
+    try {
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : 'Study plan generation failed. Please retry.';
+      continue;
+    }
+
+    const rawBody = await response.text();
+    const payload = parseStudyPlanApiPayload(rawBody);
+    const routeUnavailable =
+      response.status === 404 ||
+      response.status === 405 ||
+      looksLikeHtmlDocument(rawBody);
+
+    if (response.ok && payload && typeof payload.content === 'string') {
+      return StudyPlanApiResponseSchema.parse(payload);
+    }
+
+    if (routeUnavailable) {
+      lastError = STUDY_PLAN_API_UNAVAILABLE_MESSAGE;
+      continue;
+    }
+
+    if (payload?.error) {
+      throw new Error(payload.error);
+    }
+
+    throw new Error('Study plan generation failed. Please retry.');
+  }
+
+  throw new Error(
+    lastError || STUDY_PLAN_API_UNAVAILABLE_MESSAGE
+  );
+}
+
 function parseStudyPlanContent(rawContent: string): StudyPlanContent {
   const parsed = JSON.parse(extractJsonObject(rawContent)) as Record<string, unknown>;
   const summary = asObject(parsed.summary, 'summary');
@@ -863,20 +948,7 @@ export async function generateStudyPlan({
     requestedAt: new Date().toISOString()
   };
 
-  const response = await fetch('/api/study-plan', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`
-    },
-    body: JSON.stringify(requestBody)
-  });
-
-  const responseBody = (await response.json().catch(() => ({}))) as Partial<StudyPlanApiResponse> & { error?: string };
-
-  if (!response.ok || typeof responseBody.content !== 'string') {
-    throw new Error(responseBody.error || 'Study plan generation failed. Please retry.');
-  }
+  const responseBody = await requestStudyPlanApi(requestBody, idToken);
 
   const parsedPlan = parseStudyPlanContent(responseBody.content);
   const plan: StudyPlanContent = {

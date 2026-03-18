@@ -7,6 +7,16 @@ import {
 
 const MODEL = 'claude-sonnet-4-20250514';
 
+const JSON_HEADERS = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+};
+
+function json(statusCode: number, body: unknown) {
+  return { statusCode, headers: JSON_HEADERS, body: JSON.stringify(body) };
+}
+
 function getSupabaseClient() {
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -15,7 +25,6 @@ function getSupabaseClient() {
     throw new Error('Supabase Service Role credentials are not configured.');
   }
 
-  // Using service role to bypass RLS, primarily for verification and admin actions
   return createClient(supabaseUrl, supabaseServiceKey);
 }
 
@@ -28,7 +37,7 @@ function getBearerToken(authorizationHeader?: string): string | null {
   return scheme === 'Bearer' && token ? token : null;
 }
 
-function getParsedRequestBody(body: unknown) {
+function getParsedRequestBody(body: string | null | undefined) {
   if (!body) {
     throw new Error('Request body is missing.');
   }
@@ -37,31 +46,38 @@ function getParsedRequestBody(body: unknown) {
   return StudyPlanApiRequestSchema.parse(parsedBody);
 }
 
-export default async function handler(req: any, res: any) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method not allowed.' });
+// Netlify Lambda format: export const handler = async (event) => ({ statusCode, body })
+export const handler = async (event: any) => {
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers: JSON_HEADERS, body: '' };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return json(405, { error: 'Method not allowed.' });
   }
 
   try {
-    const idToken = getBearerToken(req.headers.authorization);
+    // Netlify lowercases all header keys
+    const authHeader = event.headers?.['authorization'] || event.headers?.['Authorization'];
+    const idToken = getBearerToken(authHeader);
     if (!idToken) {
-      return res.status(401).json({ error: 'Missing authentication token.' });
+      return json(401, { error: 'Missing authentication token.' });
     }
 
     const supabase = getSupabaseClient();
-    
+
     // Verify the JWT by getting the user. Supabase's `getUser(jwt)` verifies it securely.
     const { data: { user }, error: authError } = await supabase.auth.getUser(idToken);
 
     if (authError || !user) {
       console.error('[study-plan api] Supabase Auth Error:', authError);
-      return res.status(401).json({ error: 'Invalid authentication token.' });
+      return json(401, { error: 'Invalid authentication token.' });
     }
 
-    const requestBody = getParsedRequestBody(req.body);
+    const requestBody = getParsedRequestBody(event.body);
     if (user.id !== requestBody.userId) {
-      return res.status(403).json({ error: 'Authenticated user does not match requested study guide owner.' });
+      return json(403, { error: 'Authenticated user does not match requested study guide owner.' });
     }
 
     const prompt = requestBody.prompt;
@@ -95,7 +111,7 @@ export default async function handler(req: any, res: any) {
 
     if (!anthropicResponse.ok) {
       console.error('[study-plan api] Anthropic request failed:', anthropicBody);
-      return res.status(502).json({ error: 'Study plan generation failed upstream. Please retry.' });
+      return json(502, { error: 'Study plan generation failed upstream. Please retry.' });
     }
 
     const content = Array.isArray(anthropicBody?.content)
@@ -106,7 +122,7 @@ export default async function handler(req: any, res: any) {
       : '';
 
     if (!content) {
-      return res.status(502).json({ error: 'Study plan generation returned an empty response.' });
+      return json(502, { error: 'Study plan generation returned an empty response.' });
     }
 
     const responseBody = StudyPlanApiResponseSchema.parse({
@@ -116,11 +132,11 @@ export default async function handler(req: any, res: any) {
       apiVersion: STUDY_PLAN_API_VERSION
     });
 
-    return res.status(200).json(responseBody);
+    return json(200, responseBody);
   } catch (error) {
     console.error('[study-plan api] Request failed:', error);
-    return res.status(500).json({
+    return json(500, {
       error: error instanceof Error ? error.message : 'Study plan generation failed.'
     });
   }
-}
+};
