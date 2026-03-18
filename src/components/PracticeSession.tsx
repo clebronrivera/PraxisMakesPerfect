@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Zap, Pause, Home } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Zap, Pause, Home, Flame } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
@@ -15,6 +15,61 @@ import { normalizeDistractorPatterns } from '../utils/distractorPatterns';
 import type { SessionMode } from '../types/assessment';
 import { getProgressDomainDefinition } from '../utils/progressTaxonomy';
 import { getSkillById, type SkillId } from '../brain/skill-map';
+import { useAuth } from '../contexts/AuthContext';
+
+// ─── Streak message pools ────────────────────────────────────────────────────
+
+const STREAK_TIERS: Array<{ min: number; pool: string[] }> = [
+  {
+    min: 10,
+    pool: [
+      'You are farming points now.',
+      'At this point, it is personal.',
+      'At this point, you are just showing off.',
+    ],
+  },
+  {
+    min: 8,
+    pool: ['Praxis is in trouble.', 'Praxis catching a beating.'],
+  },
+  {
+    min: 7,
+    pool: ['Absolutely shameless.', 'Different level right now.'],
+  },
+  {
+    min: 6,
+    pool: ['This is getting disrespectful.', 'This streak is getting loud.'],
+  },
+  {
+    min: 5,
+    pool: ['You are locked in.', 'You are kind of cooking right now.'],
+  },
+  {
+    min: 4,
+    pool: ['That was clean.', 'That was not luck.'],
+  },
+  {
+    min: 3,
+    pool: ['Okay, now we are cooking.', 'Okay streak, I see you.', 'On a little run now.'],
+  },
+  {
+    min: 2,
+    pool: ['Nice. Keep it going.', 'Nice. Momentum started.'],
+  },
+];
+
+/** Pick a random phrase from the correct tier, avoiding immediate repetition. */
+function pickStreakMessage(streak: number, lastPhrase: string | null): string | null {
+  const tier = STREAK_TIERS.find((t) => streak >= t.min);
+  if (!tier) return null;
+  const pool =
+    tier.pool.length > 1 ? tier.pool.filter((p) => p !== lastPhrase) : tier.pool;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+const INACTIVITY_MS = 15 * 60 * 1000; // 15 minutes
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 interface PracticeSessionProps {
   userProfile: UserProfile;
@@ -39,9 +94,10 @@ export default function PracticeSession({
   selectNextQuestion,
   practiceDomain,
   practiceSkillId,
-  onExitPractice
+  onExitPractice,
 }: PracticeSessionProps) {
   const engine = useEngine();
+  const { logout } = useAuth();
 
   const [currentQuestion, setCurrentQuestion] = useState<AnalyzedQuestion | null>(null);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
@@ -52,12 +108,26 @@ export default function PracticeSession({
   const [shuffledOrder, setShuffledOrder] = useState<string[]>([]);
   const [currentDistractorNote, setCurrentDistractorNote] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const { 
-    formattedTime, 
-    timerLabel, 
-    isPaused, 
-    resume, 
+
+  // ── Streak state ────────────────────────────────────────────────────────────
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
+  const [streakMessage, setStreakMessage] = useState<string | null>(null);
+  const lastStreakPhraseRef = useRef<string | null>(null);
+
+  // ── All-time cumulative accuracy ────────────────────────────────────────────
+  const allTimePct = useMemo(() => {
+    const totals = Object.values(userProfile.domainScores ?? {}).reduce(
+      (acc, d) => ({ correct: acc.correct + (d?.correct ?? 0), total: acc.total + (d?.total ?? 0) }),
+      { correct: 0, total: 0 }
+    );
+    return totals.total > 0 ? Math.round((totals.correct / totals.total) * 100) : null;
+  }, [userProfile.domainScores]);
+
+  const {
+    formattedTime,
+    timerLabel,
+    isPaused,
+    resume,
     resetQuestionTimer,
     recordInteraction
   } = useElapsedTimer({
@@ -71,6 +141,27 @@ export default function PracticeSession({
     }
     return `practice-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   });
+
+  // ── Inactivity auto-logout ──────────────────────────────────────────────────
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        void logout();
+      }, INACTIVITY_MS);
+    };
+
+    const activityEvents = ['mousemove', 'keydown', 'touchstart', 'click'] as const;
+    activityEvents.forEach((e) => window.addEventListener(e, resetTimer, { passive: true }));
+    resetTimer(); // start the clock immediately
+
+    return () => {
+      clearTimeout(timer);
+      activityEvents.forEach((e) => window.removeEventListener(e, resetTimer));
+    };
+  }, [logout]);
 
   // Load session stats from localStorage on mount if resuming same session
   useEffect(() => {
@@ -135,6 +226,17 @@ export default function PracticeSession({
 
       if (isCorrect) {
         setSessionStats(prev => ({ ...prev, correct: prev.correct + 1 }));
+
+        // ── Streak logic ──────────────────────────────────────────────────────
+        setConsecutiveCorrect(prev => {
+          const newStreak = prev + 1;
+          const phrase = pickStreakMessage(newStreak, lastStreakPhraseRef.current);
+          if (phrase) {
+            lastStreakPhraseRef.current = phrase;
+            setStreakMessage(phrase);
+          }
+          return newStreak;
+        });
       } else {
         setSessionStats(prev => ({
           ...prev,
@@ -142,12 +244,17 @@ export default function PracticeSession({
           highConfidenceWrong: prev.highConfidenceWrong + (confidence === 'high' ? 1 : 0)
         }));
 
+        // Reset streak on wrong answer
+        setConsecutiveCorrect(0);
+        setStreakMessage(null);
+        lastStreakPhraseRef.current = null;
+
         const wrongAnswer = selectedAnswers.find(a => !correctList.includes(a));
         if (wrongAnswer) {
           try {
             const distractorText = getQuestionChoiceText(currentQuestion, wrongAnswer);
             let distractorNote = null;
-            
+
             // 1. Check for structured distractor explanation (generated items)
             if (currentQuestion.distractors && currentQuestion.distractors.length > 0) {
               const matchedDistractor = currentQuestion.distractors.find(d => d.text === distractorText);
@@ -155,7 +262,7 @@ export default function PracticeSession({
                 distractorNote = matchedDistractor.explanation;
               }
             }
-            
+
             // 2. Fallback to generic pattern matching
             if (!distractorNote) {
               const correctAnswerText = correctList.map(a => getQuestionChoiceText(currentQuestion, a)).join(' ');
@@ -163,7 +270,7 @@ export default function PracticeSession({
               const pattern = normalizeDistractorPatterns(engine.distractorPatterns).find((entry) => entry.id === patternId);
               distractorNote = `You selected ${wrongAnswer}. This is a common confusion because ${pattern?.description || 'these concepts are often mixed up.'}`;
             }
-            
+
             setCurrentDistractorNote(distractorNote);
           } catch (error) {
             console.error('[PracticeSession] Failed to build distractor note:', error);
@@ -238,7 +345,7 @@ export default function PracticeSession({
             <h3 className="text-xl font-bold text-slate-200">No Questions Found</h3>
             <p className="text-slate-400 mt-2">We couldn't find any questions matching your current filters or progress. Try choosing a different domain or resetting your progress.</p>
           </div>
-          <button 
+          <button
             onClick={onExitPractice}
             className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
           >
@@ -258,9 +365,16 @@ export default function PracticeSession({
   const contextSkillId = currentQuestion.skillId ?? practiceSkillId ?? null;
   const skillInfo = contextSkillId ? getSkillById(contextSkillId) : null;
 
+  // Accuracy % color
+  const pctColor =
+    allTimePct === null ? ''
+    : allTimePct >= 80 ? 'text-emerald-400'
+    : allTimePct >= 60 ? 'text-amber-400'
+    : 'text-rose-400';
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Session Header */}
+      {/* ── Session Header ──────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between bg-slate-800/40 p-4 rounded-2xl border border-slate-700/50">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
@@ -269,6 +383,8 @@ export default function PracticeSession({
               {practiceSkillId ? `Skill Review: ${practiceSkillId}` : practiceDomain ? 'Domain Review' : 'Practice Session'}
             </span>
           </div>
+
+          {/* Session correct / wrong counts */}
           <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
             <span className="text-emerald-400">Correct: {sessionStats.correct}</span>
             <span className="text-rose-400">Wrong: {sessionStats.wrong}</span>
@@ -276,11 +392,20 @@ export default function PracticeSession({
               <span className="text-orange-400">HW: {sessionStats.highConfidenceWrong}</span>
             )}
           </div>
+
+          {/* All-time cumulative accuracy — visible once at least 1 question answered */}
+          {allTimePct !== null && (
+            <div className="hidden sm:flex items-center gap-1.5 pl-4 border-l border-slate-700/60">
+              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">All-time</span>
+              <span className={`text-sm font-bold ${pctColor}`}>{allTimePct}%</span>
+            </div>
+          )}
         </div>
+
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-end">
-             <span className="text-[10px] text-slate-500 uppercase font-bold">{timerLabel}</span>
-             <span className="text-sm font-mono text-slate-300">{formattedTime}</span>
+            <span className="text-[10px] text-slate-500 uppercase font-bold">{timerLabel}</span>
+            <span className="text-sm font-mono text-slate-300">{formattedTime}</span>
           </div>
           <button
             onClick={onExitPractice}
@@ -292,7 +417,19 @@ export default function PracticeSession({
         </div>
       </div>
 
-      {/* Practice Context Box — always shows Domain + Skill for the current question */}
+      {/* ── Streak Banner ───────────────────────────────────────────────────── */}
+      {streakMessage && consecutiveCorrect >= 2 && (
+        <div
+          key={streakMessage}
+          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 animate-in fade-in slide-in-from-top-2 duration-300"
+        >
+          <Flame className="w-4 h-4 text-amber-400 flex-shrink-0" />
+          <span className="text-sm font-semibold text-amber-300">{streakMessage}</span>
+          <span className="ml-auto text-xs text-amber-500/70 font-medium">{consecutiveCorrect} in a row</span>
+        </div>
+      )}
+
+      {/* ── Practice Context Box — always shows Domain + Skill ─────────────── */}
       {(domainInfo || skillInfo) && (
         <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5 space-y-4">
           {/* Domain row */}
@@ -336,7 +473,7 @@ export default function PracticeSession({
         </div>
       )}
 
-      {/* Main Question view */}
+      {/* ── Main Question view ──────────────────────────────────────────────── */}
       <QuestionCard
         question={(() => {
           const qCopy = { ...currentQuestion };
@@ -371,7 +508,7 @@ export default function PracticeSession({
         assessmentType="practice"
       />
 
-      {/* Feedback Area */}
+      {/* ── Feedback Area ───────────────────────────────────────────────────── */}
       {showFeedback && (
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <ExplanationPanel
@@ -381,7 +518,7 @@ export default function PracticeSession({
             rationale={currentQuestion.rationale || ''}
             userProfile={userProfile}
           />
-          
+
           {currentDistractorNote && (
             <div className="bg-amber-500/10 border border-amber-500/30 p-6 rounded-2xl">
               <h4 className="text-amber-500 font-bold mb-2 uppercase tracking-tight text-sm">Distractor Note</h4>
@@ -395,7 +532,7 @@ export default function PracticeSession({
         </div>
       )}
 
-      {/* Pause Overlay */}
+      {/* ── Pause Overlay ───────────────────────────────────────────────────── */}
       {isPaused && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center">
           <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl text-center space-y-6 max-w-sm mx-4">
