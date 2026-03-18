@@ -251,8 +251,12 @@ export default function PracticeSession({
     return <div className="p-8 text-center text-slate-400">Finding relevant questions...</div>;
   }
 
-  const domainInfo = practiceDomain ? getProgressDomainDefinition(practiceDomain) : null;
-  const skillInfo = practiceSkillId ? getSkillById(practiceSkillId) : null;
+  // Always derive context from the CURRENT QUESTION so domain + skill are shown
+  // regardless of which filter (domain, skill, or none) launched this session.
+  const contextDomainId = currentQuestion.domains?.[0] ?? practiceDomain ?? null;
+  const domainInfo = contextDomainId != null ? getProgressDomainDefinition(contextDomainId) : null;
+  const contextSkillId = currentQuestion.skillId ?? practiceSkillId ?? null;
+  const skillInfo = contextSkillId ? getSkillById(contextSkillId) : null;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -278,8 +282,8 @@ export default function PracticeSession({
              <span className="text-[10px] text-slate-500 uppercase font-bold">{timerLabel}</span>
              <span className="text-sm font-mono text-slate-300">{formattedTime}</span>
           </div>
-          <button 
-            onClick={onExitPractice} 
+          <button
+            onClick={onExitPractice}
             className="p-2 hover:bg-slate-700 rounded-lg text-slate-400 transition-colors"
             title="Exit Practice"
           >
@@ -288,42 +292,49 @@ export default function PracticeSession({
         </div>
       </div>
 
-      {/* Practice Context Box (Domain / Skill meaning) */}
-      {(practiceSkillId && skillInfo) || (practiceDomain && domainInfo) ? (
-        <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5">
-          {skillInfo ? (
-            <div className="space-y-2">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Skill</p>
-                  <h3 className="text-lg font-bold text-slate-100 leading-snug">{skillInfo.name}</h3>
-                </div>
-                <div className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900/50 border border-slate-700/50 text-slate-300">
-                  {practiceSkillId}
-                </div>
+      {/* Practice Context Box — always shows Domain + Skill for the current question */}
+      {(domainInfo || skillInfo) && (
+        <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5 space-y-4">
+          {/* Domain row */}
+          {domainInfo && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Domain</p>
+                <span className="flex-shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-900/60 border border-slate-700/50 text-slate-400">
+                  {contextDomainId}
+                </span>
               </div>
-
-              <p className="text-sm text-slate-300 leading-relaxed">{skillInfo.description}</p>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                What it looks like in answers: <span className="text-slate-300">{skillInfo.decisionRule}</span>
-              </p>
+              <h3 className="text-base font-bold text-slate-100 leading-snug">{domainInfo.name}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{domainInfo.subtitle}</p>
             </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Domain</p>
-                  <h3 className="text-lg font-bold text-slate-100 leading-snug">{domainInfo?.name}</h3>
-                </div>
-                <div className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900/50 border border-slate-700/50 text-slate-300">
-                  {practiceDomain}
-                </div>
+          )}
+
+          {/* Divider only when both sections present */}
+          {domainInfo && skillInfo && (
+            <div className="border-t border-slate-700/40" />
+          )}
+
+          {/* Skill row */}
+          {skillInfo && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Skill</p>
+                <span className="flex-shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-900/60 border border-slate-700/50 text-slate-400">
+                  {contextSkillId}
+                </span>
               </div>
-              <p className="text-sm text-slate-300 leading-relaxed">{domainInfo?.subtitle}</p>
+              <h3 className="text-base font-bold text-slate-100 leading-snug">{skillInfo.name}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{skillInfo.description}</p>
+              {skillInfo.decisionRule && (
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  What it looks like in answers:{' '}
+                  <span className="text-slate-300">{skillInfo.decisionRule}</span>
+                </p>
+              )}
             </div>
           )}
         </div>
-      ) : null}
+      )}
 
       {/* Main Question view */}
       <QuestionCard
