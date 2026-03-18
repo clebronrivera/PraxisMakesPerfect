@@ -7,17 +7,20 @@ import {
 } from '../utils/globalScoreCalculator';
 import { getSkillById } from '../brain/skill-map';
 import {
-  StudyPlanApiResponseSchema,
-  type StudyPlanApiRequest,
-  type StudyPlanApiResponse
+  type StudyPlanApiRequest
 } from '../types/studyPlanApi';
 
-const STUDY_PLAN_MODEL = 'claude-sonnet-4-20250514';
 const FINAL_FULL_ASSESSMENT_UNLOCK_THRESHOLD = 60;
 const FOUNDATIONAL_REVIEW_TARGET = 70;
-const STUDY_PLAN_API_PATHS = ['/api/study-plan', '/.netlify/functions/study-plan'] as const;
+// Background function endpoint — Netlify returns 202 immediately, runs async
+const STUDY_PLAN_BACKGROUND_PATHS = [
+  '/api/study-plan-background',
+  '/.netlify/functions/study-plan-background'
+] as const;
 const STUDY_PLAN_API_UNAVAILABLE_MESSAGE =
   'Study plan API route is unavailable. On Netlify, verify the /api rewrite. In local development, run the app with Netlify dev so the study-plan function is available.';
+const BACKGROUND_POLL_INTERVAL_MS = 4000;
+const BACKGROUND_POLL_TIMEOUT_MS  = 240_000; // 4 minutes
 
 const FALLBACK_DOMAIN_NAMES: Record<number, string> = {
   1: 'Professional Practices',
@@ -622,82 +625,79 @@ function asStringArray(value: unknown, path: string): string[] {
   return value.map((item, index) => asString(item, `${path}[${index}]`));
 }
 
-function looksLikeHtmlDocument(value: string): boolean {
-  const normalized = value.trim().toLowerCase();
-  return normalized.startsWith('<!doctype html') || normalized.startsWith('<html');
-}
 
-function parseStudyPlanApiPayload(
-  rawBody: string
-): (Partial<StudyPlanApiResponse> & { error?: string }) | null {
-  const trimmed = rawBody.trim();
-
-  if (!trimmed) {
-    return {};
-  }
-
-  try {
-    const parsed = JSON.parse(trimmed);
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      return null;
-    }
-
-    return parsed as Partial<StudyPlanApiResponse> & { error?: string };
-  } catch {
-    return null;
-  }
-}
-
-async function requestStudyPlanApi(
+/**
+ * Trigger the background Netlify function, then poll study_plans until
+ * a new row appears (created after requestedAt). Returns the complete
+ * StudyPlanDocument assembled from the DB row.
+ *
+ * The background function calls Claude, saves the full plan to study_plans,
+ * and exits. The 202 the client receives is Netlify's acknowledgment —
+ * NOT the plan itself.
+ */
+async function requestStudyPlanBackground(
   requestBody: StudyPlanApiRequest,
-  idToken: string
-): Promise<StudyPlanApiResponse> {
-  const endpoints = [...new Set(STUDY_PLAN_API_PATHS)];
-  let lastError: string | null = null;
+  idToken: string,
+  userId: string,
+  masteryChecklist: StudyPlanChecklistItem[],
+  finalAssessmentGate: FinalAssessmentGateStatus
+): Promise<StudyPlanDocument> {
+  const requestedAt = requestBody.requestedAt ?? new Date().toISOString();
 
-  for (const endpoint of endpoints) {
-    let response: Response;
-
+  // POST to background function; expect 202 (Netlify background) or fall back
+  let triggered = false;
+  for (const endpoint of STUDY_PLAN_BACKGROUND_PATHS) {
+    let res: Response;
     try {
-      response = await fetch(endpoint, {
+      res = await fetch(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`
-        },
-        body: JSON.stringify(requestBody)
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
+        body: JSON.stringify({ ...requestBody, preComputedAddons: { masteryChecklist, finalAssessmentGate } })
       });
-    } catch (error) {
-      lastError = error instanceof Error ? error.message : 'Study plan generation failed. Please retry.';
+    } catch {
       continue;
     }
 
-    const rawBody = await response.text();
-    const payload = parseStudyPlanApiPayload(rawBody);
-    const routeUnavailable =
-      response.status === 404 ||
-      response.status === 405 ||
-      looksLikeHtmlDocument(rawBody);
-
-    if (response.ok && payload && typeof payload.content === 'string') {
-      return StudyPlanApiResponseSchema.parse(payload);
-    }
-
-    if (routeUnavailable) {
-      lastError = STUDY_PLAN_API_UNAVAILABLE_MESSAGE;
-      continue;
-    }
-
-    if (payload?.error) {
-      throw new Error(payload.error);
-    }
-
-    throw new Error('Study plan generation failed. Please retry.');
+    if (res.status === 202 || res.ok) { triggered = true; break; }
+    // 404/405/HTML → try next path
+    const rawBody = await res.text().catch(() => '');
+    const isUnavailable = res.status === 404 || res.status === 405 || rawBody.trim().toLowerCase().startsWith('<!doctype');
+    if (isUnavailable) continue;
+    // Explicit error from the function
+    const payload = (() => { try { return JSON.parse(rawBody); } catch { return null; } })();
+    throw new Error(payload?.error ?? 'Background study plan request failed.');
   }
 
-  throw new Error(
-    lastError || STUDY_PLAN_API_UNAVAILABLE_MESSAGE
-  );
+  if (!triggered) {
+    throw new Error(STUDY_PLAN_API_UNAVAILABLE_MESSAGE);
+  }
+
+  // Poll study_plans for the new row
+  const deadline = Date.now() + BACKGROUND_POLL_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, BACKGROUND_POLL_INTERVAL_MS));
+
+    const { data, error } = await supabase
+      .from('study_plans')
+      .select('*')
+      .eq('user_id', userId)
+      .gt('created_at', requestedAt)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error || !data) continue;
+
+    const rawDocument = data.plan_document as Record<string, unknown>;
+    try {
+      return normalizeStudyPlanDocument(rawDocument);
+    } catch (parseErr) {
+      console.error('[StudyPlan] Failed to parse polled plan:', parseErr);
+      throw new Error('Study plan data could not be parsed after generation. Please try again.');
+    }
+  }
+
+  throw new Error('Study plan generation timed out after 4 minutes. Please try again.');
 }
 
 function parseStudyPlanContent(rawContent: string): StudyPlanContent {
@@ -941,32 +941,21 @@ export async function generateStudyPlan({
     skillLookup
   });
 
+  const requestedAt = new Date().toISOString();
   const requestBody: StudyPlanApiRequest = {
     userId,
     prompt,
     sourceSummary,
-    requestedAt: new Date().toISOString()
+    requestedAt
   };
 
-  const responseBody = await requestStudyPlanApi(requestBody, idToken);
-
-  const parsedPlan = parseStudyPlanContent(responseBody.content);
-  const plan: StudyPlanContent = {
-    ...parsedPlan,
+  // Use the background function (no sync timeout risk).
+  // It calls Claude, saves the complete plan to study_plans, and we poll.
+  return await requestStudyPlanBackground(
+    requestBody,
+    idToken,
+    userId,
     masteryChecklist,
     finalAssessmentGate
-  };
-  const studyPlanDocument: StudyPlanDocument = {
-    plan,
-    generatedAt: responseBody.generatedAt || new Date().toISOString(),
-    model: responseBody.model || STUDY_PLAN_MODEL,
-    sourceSummary
-  };
-
-  await supabase.from('study_plans').insert([{
-    user_id: userId,
-    plan_document: studyPlanDocument
-  }]);
-
-  return studyPlanDocument;
+  );
 }

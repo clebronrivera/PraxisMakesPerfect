@@ -10,11 +10,21 @@ export const StudyPlanApiSourceSummarySchema = z.object({
   deficitSkillCount: z.number().int().nonnegative()
 });
 
+// Pre-computed values sent by the client so the background function can save
+// a complete StudyPlanDocument without needing to re-fetch assessment data.
+export const StudyPlanApiPreComputedAddonsSchema = z.object({
+  masteryChecklist: z.array(z.any()),
+  finalAssessmentGate: z.any().nullable()
+});
+
 export const StudyPlanApiRequestSchema = z.object({
   userId: z.string().min(1),
   prompt: z.string().min(1).max(200000),
   sourceSummary: StudyPlanApiSourceSummarySchema,
-  requestedAt: z.string().datetime().optional()
+  requestedAt: z.string().datetime().optional(),
+  /** Passed when using the background function endpoint so it can persist a
+   *  complete StudyPlanDocument without re-fetching scores on the server. */
+  preComputedAddons: StudyPlanApiPreComputedAddonsSchema.optional()
 });
 
 export const StudyPlanApiResponseSchema = z.object({
