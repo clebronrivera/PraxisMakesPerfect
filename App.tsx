@@ -6,7 +6,7 @@ import { analyzeQuestion, AnalyzedQuestion } from './src/brain/question-analyzer
 import { detectWeaknesses, UserResponse } from './src/brain/weakness-detector';
 
 // Import components
-import DomainTiles from './src/components/DomainTiles';
+import StudyModesSection from './src/components/StudyModesSection';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 import FeedbackModal from './src/components/FeedbackModal';
 const ResultsDashboard = lazy(() => import('./src/components/ResultsDashboard'));
@@ -126,6 +126,7 @@ function PraxisStudyAppContent() {
   const [studyPlanGenerating, setStudyPlanGenerating] = useState(false);
   const [studyPlanError, setStudyPlanError] = useState<string | null>(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [resultsDefaultView, setResultsDefaultView] = useState<'domain' | 'skill'>('domain');
   // preAssessmentComplete was a dead field (always false, no DB column); collapsed to diagnosticComplete only.
   const hasArchivedShortAssessment = profile.diagnosticComplete;
   const hasCompletedScreener = profile.screenerComplete;
@@ -1069,7 +1070,10 @@ function PraxisStudyAppContent() {
                   )}
                   
                   <button
-                    onClick={() => setMode('results')}
+                    onClick={() => {
+                      setResultsDefaultView('domain');
+                      setMode('results');
+                    }}
                     className="w-full p-6 bg-slate-800/50 border border-slate-700 rounded-2xl flex items-center justify-between group hover:bg-slate-800 transition-all"
                   >
                     <div className="flex items-center gap-4">
@@ -1099,12 +1103,14 @@ function PraxisStudyAppContent() {
               onGenerate={handleGenerateStudyPlan}
             />
             
-            {/* Domain Tiles Section */}
+            {/* Study Modes Section — Domain Review + Skill Review with unlock gating */}
             <div className="pt-8 border-t border-slate-800">
-              <DomainTiles 
-                onDomainSelect={(domainId) => {
-                  // Start practice filtered to this domain
-                  startPractice(domainId);
+              <StudyModesSection
+                profile={profile}
+                onDomainSelect={(domainId) => startPractice(domainId)}
+                onSkillReviewOpen={() => {
+                  setResultsDefaultView('skill');
+                  setMode('results');
                 }}
               />
             </div>
@@ -1231,6 +1237,7 @@ function PraxisStudyAppContent() {
             fullAssessmentUnlocked={Boolean(profile.fullAssessmentComplete)}
             onRetakeAssessment={() => startScreener(undefined)}
             onResetProgress={handleResetProgress}
+            defaultView={resultsDefaultView}
           />
         )}
         

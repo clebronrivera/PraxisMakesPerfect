@@ -13,6 +13,8 @@ interface ResultsDashboardProps {
   fullAssessmentUnlocked: boolean;
   onRetakeAssessment: () => void;
   onResetProgress: () => void;
+  /** Open the dashboard directly on this tab. Defaults to 'domain'. */
+  defaultView?: 'domain' | 'skill';
 }
 
 function formatPercent(score: number | null): string {
@@ -57,9 +59,10 @@ export default function ResultsDashboard({
   onStartSkillPractice,
   fullAssessmentUnlocked,
   onRetakeAssessment,
-  onResetProgress
+  onResetProgress,
+  defaultView = 'domain',
 }: ResultsDashboardProps) {
-  const [viewMode, setViewMode] = useState<'domain' | 'skill'>('domain');
+  const [viewMode, setViewMode] = useState<'domain' | 'skill'>(defaultView);
   const [expandedDomainId, setExpandedDomainId] = useState<number | null>(1);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
 

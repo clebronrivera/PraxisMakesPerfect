@@ -5,7 +5,6 @@ import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
 import { matchDistractorPattern } from '../brain/distractor-matcher';
 import { UserProfile } from '../hooks/useFirebaseProgress';
-import { SkillId } from '../brain/skill-map';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
 import {
   AnalyzedQuestion,
@@ -14,6 +13,8 @@ import {
 } from '../brain/question-analyzer';
 import { normalizeDistractorPatterns } from '../utils/distractorPatterns';
 import type { SessionMode } from '../types/assessment';
+import { getProgressDomainDefinition } from '../utils/progressTaxonomy';
+import { getSkillById, type SkillId } from '../brain/skill-map';
 
 interface PracticeSessionProps {
   userProfile: UserProfile;
@@ -250,6 +251,9 @@ export default function PracticeSession({
     return <div className="p-8 text-center text-slate-400">Finding relevant questions...</div>;
   }
 
+  const domainInfo = practiceDomain ? getProgressDomainDefinition(practiceDomain) : null;
+  const skillInfo = practiceSkillId ? getSkillById(practiceSkillId) : null;
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Session Header */}
@@ -283,6 +287,43 @@ export default function PracticeSession({
           </button>
         </div>
       </div>
+
+      {/* Practice Context Box (Domain / Skill meaning) */}
+      {(practiceSkillId && skillInfo) || (practiceDomain && domainInfo) ? (
+        <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5">
+          {skillInfo ? (
+            <div className="space-y-2">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Skill</p>
+                  <h3 className="text-lg font-bold text-slate-100 leading-snug">{skillInfo.name}</h3>
+                </div>
+                <div className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900/50 border border-slate-700/50 text-slate-300">
+                  {practiceSkillId}
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-300 leading-relaxed">{skillInfo.description}</p>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                What it looks like in answers: <span className="text-slate-300">{skillInfo.decisionRule}</span>
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Domain</p>
+                  <h3 className="text-lg font-bold text-slate-100 leading-snug">{domainInfo?.name}</h3>
+                </div>
+                <div className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900/50 border border-slate-700/50 text-slate-300">
+                  {practiceDomain}
+                </div>
+              </div>
+              <p className="text-sm text-slate-300 leading-relaxed">{domainInfo?.subtitle}</p>
+            </div>
+          )}
+        </div>
+      ) : null}
 
       {/* Main Question view */}
       <QuestionCard
