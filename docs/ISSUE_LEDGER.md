@@ -34,6 +34,24 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-18 - Home screen "0 Questions / 0 Current Streak" for users with existing responses
+
+- Status: resolved
+- Area: `src/hooks/useFirebaseProgress.ts`, `src/components/PracticeSession.tsx`
+- Summary: The home screen "Questions" and "Current Streak" tiles showed 0 for Carlos Rivera despite 341 actual responses in the DB. Two root causes:
+  1. `total_questions_seen` and `practice_response_count` were denormalised counters in `user_progress` that were **never written** — not by screener/full-assessment completion handlers, not by practice response saves. They were only read.
+  2. `streak` (consecutive-correct count) is tracked locally in `PracticeSession` as `consecutiveCorrect` state but was **never persisted** to `user_progress.streak`.
+- How to detect next time: Home screen counters show 0 while the user clearly has history. Check the `responses` table count directly. If responses exist but `user_progress.total_questions_seen` is 0, this bug has regressed.
+- Resolution:
+  1. **`loadProfile` now computes real counts from the `responses` table** using two parallel Supabase COUNT queries (total + practice-only). These values override whatever stale value is in `user_progress`. Self-healing for all existing users — no SQL migration required.
+  2. **`savePracticeResponse` now persists streak** — accepts optional `consecutive_correct` field and runs a `.update()` on `user_progress.streak` after each practice save.
+  3. **`PracticeSession` computes `newStreak` synchronously** before `setConsecutiveCorrect` fires, and passes it to `savePracticeResponse`.
+- Code anchors:
+  - `src/hooks/useFirebaseProgress.ts` — `loadProfile` (parallel COUNT queries), `savePracticeResponse` (streak upsert)
+  - `src/components/PracticeSession.tsx` — `submitAnswer` (`newStreak` computed synchronously, passed to `savePracticeResponse`)
+
+---
+
 ## 2026-03-18 - Study guide generation: four compounding bugs (all resolved)
 
 All four were diagnosed in one session using live Supabase data for Carlos Rivera (`puppyheavenllc@gmail.com`) and production endpoint smoke-tests.

@@ -299,14 +299,15 @@ export default function PracticeSession({
       // Update retirement tracking (uses firstPassComplete captured at render time)
       applyRetirement(currentQuestion.id, isCorrect, firstPassComplete);
 
+      // Compute the new streak value synchronously so it can be passed to
+      // savePracticeResponse before the async setState fires.
+      const newStreak = isCorrect ? consecutiveCorrect + 1 : 0;
+
       if (isCorrect) {
         setSessionStats(prev => ({ ...prev, correct: prev.correct + 1 }));
-        setConsecutiveCorrect(prev => {
-          const newStreak = prev + 1;
-          const phrase = pickStreakMessage(newStreak, lastStreakPhraseRef.current);
-          if (phrase) { lastStreakPhraseRef.current = phrase; setStreakMessage(phrase); }
-          return newStreak;
-        });
+        setConsecutiveCorrect(newStreak);
+        const phrase = pickStreakMessage(newStreak, lastStreakPhraseRef.current);
+        if (phrase) { lastStreakPhraseRef.current = phrase; setStreakMessage(phrase); }
       } else {
         setSessionStats(prev => ({
           ...prev,
@@ -350,6 +351,7 @@ export default function PracticeSession({
           confidence,
           time_on_item_seconds: timeSpent,
           shuffled_order: shuffledOrder,
+          consecutive_correct: newStreak,
         });
       }
 

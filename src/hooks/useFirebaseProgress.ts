@@ -179,11 +179,19 @@ export function useFirebaseProgress() {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+      // Fetch user_progress row and response counts in parallel.
+      // The counts are computed from the canonical `responses` table so they are
+      // always accurate — even for users whose denormalised counters were never
+      // written (e.g. accounts created before the write-path was implemented).
+      const [
+        { data, error },
+        { count: totalCount },
+        { count: practiceCount }
+      ] = await Promise.all([
+        supabase.from('user_progress').select('*').eq('user_id', user.id).single(),
+        supabase.from('responses').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('responses').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('assessment_type', 'practice')
+      ]);
 
       if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
         console.error('Error fetching Supabase profile:', error);
@@ -192,11 +200,11 @@ export function useFirebaseProgress() {
       if (data) {
         setProfileState({
           ...defaultProfile,
-          
+
           screenerComplete: data.screener_complete ?? false,
           diagnosticComplete: data.diagnostic_complete ?? false,
           fullAssessmentComplete: data.full_assessment_complete ?? false,
-          
+
           domainScores: data.domain_scores ?? {},
           skillScores: data.skill_scores ?? {},
           weakestDomains: data.weakest_domains ?? [],
@@ -205,20 +213,22 @@ export function useFirebaseProgress() {
           flaggedQuestions: data.flagged_questions ?? {},
           distractorErrors: data.distractor_errors ?? {},
           skillDistractorErrors: data.skill_distractor_errors ?? {},
-          
+
           screenerResults: data.screener_results ?? {},
-          
+
           preAssessmentQuestionIds: data.pre_assessment_question_ids ?? [],
           fullAssessmentQuestionIds: data.full_assessment_question_ids ?? [],
           recentPracticeQuestionIds: data.recent_practice_question_ids ?? [],
           screenerItemIds: data.screener_item_ids ?? [],
-          
-          totalQuestionsSeen: data.total_questions_seen ?? 0,
-          practiceResponseCount: data.practice_response_count ?? 0,
+
+          // Use live counts from the responses table; fall back to the stored
+          // counter only if the count query itself fails.
+          totalQuestionsSeen: totalCount ?? data.total_questions_seen ?? 0,
+          practiceResponseCount: practiceCount ?? data.practice_response_count ?? 0,
           streak: data.streak ?? 0,
           lastSession: data.last_session,
           migrationVersion: data.migration_version ?? 1,
-          
+
           lastUpdated: data.updated_at
         });
       } else {
@@ -653,6 +663,8 @@ export function useFirebaseProgress() {
         confidence: string;
         time_on_item_seconds: number;
         shuffled_order: string[];
+        /** Current consecutive-correct streak after this answer (0 on wrong). */
+        consecutive_correct?: number;
       }
     ) => {
       if (!user) return;
@@ -674,6 +686,15 @@ export function useFirebaseProgress() {
           selected_answers: [response.selected_answer],
           correct_answers: [response.correct_answer]
         }]);
+
+        // Persist the live streak so the home-screen "Current Streak" tile
+        // always reflects the user's latest run of correct answers.
+        if (typeof response.consecutive_correct === 'number') {
+          await supabase
+            .from('user_progress')
+            .update({ streak: response.consecutive_correct, updated_at: new Date().toISOString() })
+            .eq('user_id', user.id);
+        }
       } catch (error) {
         console.error('[savePracticeResponse] Error saving response:', error);
       }

@@ -35,6 +35,7 @@ export default function QuestionCard({
   hideFooterControls = false
 }: QuestionCardProps) {
   const [showReportModal, setShowReportModal] = useState(false);
+  const isConfidenceVisible = !hideFooterControls && !showFeedback && selectedAnswers.length > 0;
 
   // Determine source display
   const getSourceDisplay = () => {
@@ -155,8 +156,8 @@ export default function QuestionCard({
       </div>
       
       {/* Confidence Selection (before submit) */}
-      {!hideFooterControls && !showFeedback && selectedAnswers.length > 0 && (
-        <div className="flex items-center justify-center gap-4">
+      {isConfidenceVisible && (
+        <div className="flex items-center justify-center gap-4 mt-8">
           <span className="text-sm text-slate-500">Confidence:</span>
           {(['low', 'medium', 'high'] as const).map(level => (
             <button
@@ -176,7 +177,7 @@ export default function QuestionCard({
       
       {/* Submit / Next Button */}
       {!hideFooterControls && (
-        <div className="flex justify-center">
+        <div className={`flex justify-center ${isConfidenceVisible ? 'mt-12' : 'mt-8'}`}>
           {!showFeedback ? (
             <button
               onClick={onSubmit}

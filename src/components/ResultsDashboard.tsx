@@ -68,6 +68,7 @@ export default function ResultsDashboard({
 
   const progress = useMemo(() => buildProgressSummary(userProfile.skillScores, skills), [skills, userProfile.skillScores]);
   const selectedSkill = progress.skills.find((skill) => skill.skillId === selectedSkillId) || null;
+  const hideRetake = Boolean(userProfile.screenerComplete && userProfile.fullAssessmentComplete);
   const weakestDomain = progress.domains
     .filter((domain) => domain.attempted > 0 && domain.score !== null)
     .sort((a, b) => {
@@ -256,12 +257,14 @@ export default function ResultsDashboard({
             Start Domain Review in {weakestDomain.domainName}
           </button>
         )}
-        <button
-          onClick={onRetakeAssessment}
-          className="w-full rounded-2xl border border-slate-600 bg-slate-700/50 p-4 text-slate-300 transition-all hover:bg-slate-700"
-        >
-          Retake Screener
-        </button>
+        {!hideRetake && (
+          <button
+            onClick={onRetakeAssessment}
+            className="w-full rounded-2xl border border-slate-600 bg-slate-700/50 p-4 text-slate-300 transition-all hover:bg-slate-700"
+          >
+            Retake Screener
+          </button>
+        )}
       </div>
 
       <div className="pt-8 border-t border-slate-700/50">

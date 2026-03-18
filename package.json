@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:netlify": "netlify dev",
     "build": "npm run scan:types && vite build",
     "preview": "vite preview",
     "generate:practice": "npx tsx scripts/generate-practice.ts",

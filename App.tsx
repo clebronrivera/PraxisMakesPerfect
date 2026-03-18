@@ -35,7 +35,7 @@ import {
 import { getSkillById } from './src/brain/skill-map';
 import { PROGRESS_DOMAINS } from './src/utils/progressTaxonomy';
 
-import { StudyPlanDocument, generateStudyPlan, getLatestStudyPlan } from './src/services/studyPlanService';
+import { StudyConstraints, StudyPlanHistoryEntry, generateStudyPlan, getStudyPlanHistory } from './src/services/studyPlanService';
 import { supabase } from './src/config/supabase';
 import { isAdminEmail } from './src/config/admin';
 import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
@@ -123,7 +123,7 @@ function PraxisStudyAppContent() {
   const [practiceDomainFilter, setPracticeDomainFilter] = useState<number | null>(null);
   const [practiceSkillFilter, setPracticeSkillFilter] = useState<string | null>(null);
   const [teachModeDomains] = useState<number[] | undefined>(undefined);
-  const [studyPlan, setStudyPlan] = useState<StudyPlanDocument | null>(null);
+  const [studyPlanHistory, setStudyPlanHistory] = useState<StudyPlanHistoryEntry[]>([]);
   const [studyPlanLoading, setStudyPlanLoading] = useState(false);
   const [studyPlanGenerating, setStudyPlanGenerating] = useState(false);
   const [studyPlanError, setStudyPlanError] = useState<string | null>(null);
@@ -166,6 +166,18 @@ function PraxisStudyAppContent() {
     () => buildProgressSummary(profile.skillScores, fetchedSkills),
     [fetchedSkills, profile.skillScores]
   );
+
+  // Count questions retired from practice (stored in localStorage per user).
+  // Recomputed each time the user navigates to the home screen.
+  const retiredQuestionsCount = useMemo(() => {
+    if (!user?.id) return 0;
+    try {
+      const stored = localStorage.getItem(`pmp-qretire-${user.id}`);
+      if (!stored) return 0;
+      const map = JSON.parse(stored) as Record<string, { retired?: boolean }>;
+      return Object.values(map).filter(v => v.retired === true).length;
+    } catch { return 0; }
+  }, [user?.id, mode]);
 
   const isAdmin = isAdminEmail(user?.email);
 
@@ -245,7 +257,7 @@ function PraxisStudyAppContent() {
 
   useEffect(() => {
     if (!user) {
-      setStudyPlan(null);
+      setStudyPlanHistory([]);
       setStudyPlanError(null);
       setStudyPlanLoading(false);
       return;
@@ -258,9 +270,9 @@ function PraxisStudyAppContent() {
       setStudyPlanError(null);
 
       try {
-        const latestPlan = await getLatestStudyPlan(user.id);
+        const history = await getStudyPlanHistory(user.id);
         if (!isCancelled) {
-          setStudyPlan(latestPlan);
+          setStudyPlanHistory(history);
           setStudyPlanError(null);
         }
       } catch (error) {
@@ -461,7 +473,7 @@ function PraxisStudyAppContent() {
     }
   }, [resetProgress, currentUserName]);
 
-  const handleGenerateStudyPlan = useCallback(async () => {
+  const handleGenerateStudyPlan = useCallback(async (constraints?: StudyConstraints) => {
     if (!user) {
       return;
     }
@@ -483,10 +495,13 @@ function PraxisStudyAppContent() {
         userId: user.id,
         idToken,
         skills: fetchedSkills,
-        domains: fetchedDomains
+        domains: fetchedDomains,
+        studyConstraints: constraints,
       });
 
-      setStudyPlan(generatedPlan);
+      // Reload full history so the new plan appears at the top of the list
+      const updatedHistory = await getStudyPlanHistory(user.id);
+      setStudyPlanHistory(updatedHistory.length > 0 ? updatedHistory : [{ id: 'new', createdAt: generatedPlan.generatedAt, plan: generatedPlan }]);
     } catch (error) {
       console.error('[StudyPlan] Generation failed:', error);
       setStudyPlanError(error instanceof Error ? error.message : 'Study guide generation failed. Please retry.');
@@ -831,32 +846,31 @@ function PraxisStudyAppContent() {
                 {hasReadinessData ? 'Welcome Back!' : 'Ready to Study?'}
               </h2>
               <p className="text-slate-400 max-w-md mx-auto">
-                {hasReadinessData 
-                  ? `You've completed ${profile.totalQuestionsSeen} questions. Let's keep building your knowledge.`
+                {hasReadinessData
+                  ? `${profile.totalQuestionsSeen} questions answered${retiredQuestionsCount > 0 ? `, ${retiredQuestionsCount} retired` : ''}. Keep building your mastery.`
                   : 'Start with the skills screener, then use domain review and the full assessment to build your plan.'}
               </p>
             </div>
-            
+
             {/* Quick Stats (if has history) */}
             {hasReadinessData && (
               <div className="grid grid-cols-3 gap-4">
                 <div className="p-4 bg-slate-800/50 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-amber-400">{profile.totalQuestionsSeen}</p>
-                  <p className="text-xs text-slate-500">Questions</p>
+                  <p className="text-2xl font-bold text-amber-400">{retiredQuestionsCount}</p>
+                  <p className="text-xs font-medium text-slate-400 mt-0.5">Retired Questions</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Secured and removed from practice</p>
                 </div>
                 <div className="p-4 bg-slate-800/50 rounded-xl text-center">
                   <p className="text-2xl font-bold text-emerald-400">{profile.streak}</p>
-                  <p className="text-xs text-slate-500">Current Streak</p>
+                  <p className="text-xs font-medium text-slate-400 mt-0.5">Current Streak</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Correct in a row this session</p>
                 </div>
                 <div className="p-4 bg-slate-800/50 rounded-xl text-center">
                   <p className="text-2xl font-bold text-purple-400">
                     {progressSummary.skills.filter(s => s.score !== null && s.score < 0.6).length}
                   </p>
-                  <p className="text-xs text-slate-500">Skills &lt; 60%</p>
-                  <div className="mt-2 flex justify-center gap-3 text-[10px] text-slate-400">
-                    <span>Mastered: {progressSummary.skills.filter(s => s.score !== null && s.score >= 0.8).length}</span>
-                    <span>In Progress: {progressSummary.skills.filter(s => s.attempted > 0 && (s.score === null || s.score < 0.8)).length}</span>
-                  </div>
+                  <p className="text-xs font-medium text-slate-400 mt-0.5">Skills to Strengthen</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Below 60% mastery</p>
                 </div>
               </div>
             )}
@@ -1169,7 +1183,7 @@ function PraxisStudyAppContent() {
 
 
             <StudyPlanCard
-              plan={studyPlan}
+              history={studyPlanHistory}
               isGenerating={studyPlanGenerating}
               isLoading={studyPlanLoading}
               error={studyPlanError}

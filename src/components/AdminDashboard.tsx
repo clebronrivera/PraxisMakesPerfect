@@ -7,6 +7,7 @@ import {
   Bug,
   CheckCircle2,
   ClipboardList,
+  Download,
   MessageSquare,
   RefreshCw,
   Shield,
@@ -19,10 +20,17 @@ import {
   BetaFeedbackStatus,
   useBetaFeedback
 } from '../hooks/useBetaFeedback';
+import {
+  buildAuditCsv,
+  buildAuditSummaryMarkdown,
+  buildFeedbackAudit,
+  ConsolidatedAuditIssue,
+  FeedbackAuditBundle
+} from '../utils/feedbackAudit';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
 
-type AdminTab = 'overview' | 'feedback' | 'reports' | 'users';
+type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users';
 
 interface UserAnalyticsDoc {
   id: string;
@@ -32,6 +40,7 @@ interface UserAnalyticsDoc {
   diagnosticComplete?: boolean;
   fullAssessmentComplete?: boolean;
   lastUpdated?: any;
+  flaggedQuestions?: Record<string, string>;
   authMetrics?: {
     email?: string | null;
     displayName?: string | null;
@@ -153,6 +162,7 @@ export default function AdminDashboard({
         diagnosticComplete: row.diagnostic_complete,
         fullAssessmentComplete: row.full_assessment_complete,
         lastUpdated: row.updated_at,
+        flaggedQuestions: row.flagged_questions || {},
         authMetrics: {
           email: row.email,
           displayName: row.display_name,
@@ -225,6 +235,12 @@ export default function AdminDashboard({
     [reports]
   );
 
+  const auditBundle = useMemo<FeedbackAuditBundle>(() => buildFeedbackAudit({
+    reports,
+    feedback,
+    users
+  }), [feedback, reports, users]);
+
   const handleFeedbackStatusChange = async (feedbackId: string, status: BetaFeedbackStatus) => {
     await updateFeedbackStatus(feedbackId, status);
     setFeedback((current) => current.map((item) => (
@@ -241,6 +257,18 @@ export default function AdminDashboard({
       item.id === reportId ? { ...item, status } : item
     )));
   };
+
+  const downloadBlob = useCallback((filename: string, contents: string, mimeType: string) => {
+    const blob = new Blob([contents], { type: mimeType });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  }, []);
 
   if (!user || !isAdminEmail(user.email)) {
     return (
@@ -326,6 +354,7 @@ export default function AdminDashboard({
       <div className="flex flex-wrap gap-3 border-b border-slate-800 pb-3">
         {([
           ['overview', 'Overview'],
+          ['audit', 'Audit'],
           ['feedback', 'Beta Feedback'],
           ['reports', 'Question Reports'],
           ['users', 'Users']
@@ -445,6 +474,220 @@ export default function AdminDashboard({
                   emptyLabel="No question reports yet."
                 />
               </div>
+            </div>
+          )}
+
+          {activeTab === 'audit' && (
+            <div className="space-y-6">
+              <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Feedback Audit</p>
+                    <p className="mt-2 text-sm text-emerald-50/80">
+                      Consolidates live `question_reports`, `beta_feedback`, and Teach Mode `flagged_questions` into one audit view with snapshot comparison against the current bundled question bank.
+                    </p>
+                    <p className="mt-2 text-xs text-emerald-100/70">
+                      Generated: {formatDate(auditBundle.generatedAt)} • Window: {auditBundle.auditWindow.firstSeenAt ? formatDate(auditBundle.auditWindow.firstSeenAt) : 'Unknown'} to {auditBundle.auditWindow.lastSeenAt ? formatDate(auditBundle.auditWindow.lastSeenAt) : 'Unknown'}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      onClick={() => downloadBlob(`feedback-audit-${auditBundle.generatedAt}.json`, JSON.stringify(auditBundle, null, 2), 'application/json')}
+                      className="inline-flex items-center gap-2 rounded-xl bg-slate-950/70 px-4 py-2 text-sm font-medium text-slate-100 transition-colors hover:bg-slate-800"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download JSON
+                    </button>
+                    <button
+                      onClick={() => downloadBlob(`feedback-audit-${auditBundle.generatedAt}.csv`, buildAuditCsv(auditBundle.consolidatedIssues), 'text/csv;charset=utf-8')}
+                      className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 px-4 py-2 text-sm font-medium text-slate-950 transition-colors hover:bg-emerald-300"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download CSV
+                    </button>
+                    <button
+                      onClick={() => downloadBlob(`feedback-audit-summary-${auditBundle.generatedAt}.md`, buildAuditSummaryMarkdown(auditBundle), 'text/markdown;charset=utf-8')}
+                      className="inline-flex items-center gap-2 rounded-xl bg-slate-950/70 px-4 py-2 text-sm font-medium text-slate-100 transition-colors hover:bg-slate-800"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download Summary
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <MetricCard
+                  icon={<ClipboardList className="h-5 w-5" />}
+                  label="Consolidated Issues"
+                  value={auditBundle.summary.totalConsolidatedIssues}
+                  detail={`${auditBundle.rawRecords.length} raw records in audit window`}
+                />
+                <MetricCard
+                  icon={<AlertTriangle className="h-5 w-5" />}
+                  label="Still Present"
+                  value={auditBundle.summary.verificationCounts['still present']}
+                  detail={`${auditBundle.summary.verificationCounts['cannot verify from current evidence']} need manual verification`}
+                />
+                <MetricCard
+                  icon={<CheckCircle2 className="h-5 w-5" />}
+                  label="Likely Resolved"
+                  value={auditBundle.summary.verificationCounts['likely already resolved']}
+                  detail={`${auditBundle.summary.verificationCounts['non-actionable / too vague']} low-signal items`}
+                />
+                <MetricCard
+                  icon={<MessageSquare className="h-5 w-5" />}
+                  label="Teach Mode Signals"
+                  value={auditBundle.summary.sourceCounts.teach_mode_flags}
+                  detail={`${auditBundle.summary.sourceCounts.question_reports} question reports`}
+                />
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-100">Top Themes</h3>
+                  <div className="space-y-3">
+                    {auditBundle.summary.topThemes.map((theme) => (
+                      <div key={theme.bucket} className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm text-slate-200">{theme.bucket}</p>
+                          <span className="text-sm font-semibold text-cyan-300">{theme.count}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {auditBundle.summary.topThemes.length === 0 && (
+                      <p className="text-sm text-slate-500">No audit issues yet.</p>
+                    )}
+                  </div>
+                </section>
+
+                <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-100">Top Recurring Questions</h3>
+                  <div className="space-y-3">
+                    {auditBundle.summary.topRecurringQuestions.map((item) => (
+                      <div key={item.questionId} className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="font-medium text-slate-100">{item.questionId}</p>
+                          <span className="text-sm font-semibold text-amber-300">{item.count}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {auditBundle.summary.topRecurringQuestions.length === 0 && (
+                      <p className="text-sm text-slate-500">No recurring question ids in the current audit window.</p>
+                    )}
+                  </div>
+                </section>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <AuditIssuePanel
+                  title="Unresolved Highlights"
+                  emptyLabel="No issues currently classified as still present."
+                  issues={auditBundle.summary.unresolvedHighlights}
+                />
+                <AuditIssuePanel
+                  title="Likely Resolved Highlights"
+                  emptyLabel="No issues currently classified as likely resolved."
+                  issues={auditBundle.summary.likelyResolvedHighlights}
+                />
+              </div>
+
+              <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
+                <h3 className="mb-4 text-lg font-semibold text-slate-100">Instrumentation Gaps</h3>
+                <div className="space-y-3">
+                  {auditBundle.summary.instrumentationGaps.map((gap) => (
+                    <div key={gap} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm text-slate-300">
+                      {gap}
+                    </div>
+                  ))}
+                  {auditBundle.summary.instrumentationGaps.length === 0 && (
+                    <p className="text-sm text-slate-500">No obvious instrumentation gaps detected from the current dataset.</p>
+                  )}
+                </div>
+              </section>
+
+              <section className="rounded-3xl border border-slate-700 bg-slate-900/60">
+                <div className="border-b border-slate-800 px-6 py-4">
+                  <h3 className="text-lg font-semibold text-slate-100">Row-Level Audit Table</h3>
+                  <p className="text-sm text-slate-400">
+                    One row per consolidated issue cluster. Use the CSV export for spreadsheet work.
+                  </p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-800 text-left">
+                    <thead className="bg-slate-950/70 text-xs uppercase tracking-wide text-slate-500">
+                      <tr>
+                        <th className="px-6 py-4">Issue</th>
+                        <th className="px-6 py-4">Bucket</th>
+                        <th className="px-6 py-4">Counts</th>
+                        <th className="px-6 py-4">Verification</th>
+                        <th className="px-6 py-4">Signals</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/70 text-sm">
+                      {auditBundle.consolidatedIssues.map((issue) => (
+                        <tr key={issue.issueId} className="align-top text-slate-300">
+                          <td className="px-6 py-4">
+                            <p className="font-medium text-slate-100">{issue.questionId || issue.issueId}</p>
+                            <p className="mt-1 text-xs text-slate-500">
+                              {issue.sourceTypes.join(', ')}
+                              {issue.displayAssessmentTypes.length > 0 && ` • ${issue.displayAssessmentTypes.join(', ')}`}
+                            </p>
+                            {issue.representativeNotes.length > 0 && (
+                              <p className="mt-2 text-slate-300">{issue.representativeNotes[0]}</p>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="space-y-2">
+                              <DecisionPill label={issue.bucket} tone="info" />
+                              {issue.highestSeverity && (
+                                <DecisionPill label={issue.highestSeverity} tone={issue.highestSeverity === 'critical' ? 'danger' : issue.highestSeverity === 'major' ? 'warn' : 'neutral'} />
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-slate-200">
+                            <p>{issue.reportCount} records</p>
+                            <p className="text-slate-500">{issue.uniqueReporterCount} reporters</p>
+                            <p className="mt-2 text-xs text-slate-500">
+                              {issue.firstSeenAt ? formatDate(issue.firstSeenAt) : 'Unknown'} to {issue.lastSeenAt ? formatDate(issue.lastSeenAt) : 'Unknown'}
+                            </p>
+                          </td>
+                          <td className="px-6 py-4">
+                            <DecisionPill
+                              label={issue.verificationDecision}
+                              tone={issue.verificationDecision === 'still present'
+                                ? 'danger'
+                                : issue.verificationDecision === 'likely already resolved'
+                                  ? 'success'
+                                  : issue.verificationDecision === 'non-actionable / too vague'
+                                    ? 'neutral'
+                                    : 'warn'}
+                            />
+                            <p className="mt-3 text-sm text-slate-300">{issue.verificationReason}</p>
+                          </td>
+                          <td className="px-6 py-4 text-slate-300">
+                            <p>Snapshot changed: {issue.snapshotChanged ? 'Yes' : 'No'}</p>
+                            <p>Current question: {issue.currentQuestionExists ? 'Present' : 'Missing'}</p>
+                            {issue.changedFields.length > 0 && (
+                              <p className="mt-2 text-xs text-slate-500">Changed: {issue.changedFields.join(', ')}</p>
+                            )}
+                            {issue.exactDuplicateStemCount > 1 && (
+                              <p className="mt-2 text-xs text-slate-500">Duplicate stems: {issue.exactDuplicateStemCount}</p>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                      {auditBundle.consolidatedIssues.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                            No audit records available yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
             </div>
           )}
 
@@ -710,6 +953,61 @@ function QueuePanel({
             <p className="mt-3 line-clamp-3 text-sm text-slate-300">{item.body}</p>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function DecisionPill({
+  label,
+  tone
+}: {
+  label: string;
+  tone: 'info' | 'success' | 'warn' | 'danger' | 'neutral';
+}) {
+  const styles = {
+    info: 'bg-cyan-500/15 text-cyan-300',
+    success: 'bg-emerald-500/15 text-emerald-300',
+    warn: 'bg-amber-500/15 text-amber-300',
+    danger: 'bg-red-500/15 text-red-300',
+    neutral: 'bg-slate-800 text-slate-300'
+  } as const;
+
+  return (
+    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${styles[tone]}`}>
+      {label}
+    </span>
+  );
+}
+
+function AuditIssuePanel({
+  title,
+  issues,
+  emptyLabel
+}: {
+  title: string;
+  issues: ConsolidatedAuditIssue[];
+  emptyLabel: string;
+}) {
+  return (
+    <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
+      <h3 className="mb-4 text-lg font-semibold text-slate-100">{title}</h3>
+      <div className="space-y-3">
+        {issues.map((issue) => (
+          <div key={issue.issueId} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-medium text-slate-100">{issue.questionId || issue.issueId}</p>
+                <p className="mt-1 text-sm text-slate-400">{issue.bucket}</p>
+              </div>
+              <span className="text-sm font-semibold text-slate-200">{issue.reportCount}</span>
+            </div>
+            <p className="mt-3 text-sm text-slate-300">{issue.verificationReason}</p>
+          </div>
+        ))}
+        {issues.length === 0 && (
+          <p className="text-sm text-slate-500">{emptyLabel}</p>
+        )}
       </div>
     </section>
   );

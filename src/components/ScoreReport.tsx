@@ -37,6 +37,7 @@ export default function ScoreReport({
 
 
   const { profile } = useFirebaseProgress();
+  const hideRetake = Boolean(profile.screenerComplete && profile.fullAssessmentComplete);
 
   // Safety check: Handle missing or corrupted data
   if (!responses || responses.length === 0 || !questions || questions.length === 0) {
@@ -359,15 +360,17 @@ export default function ScoreReport({
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={onRetakeAssessment}
-            className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all"
-          >
-            Retake Assessment
-          </button>
+          {!hideRetake && (
+            <button
+              onClick={onRetakeAssessment}
+              className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all"
+            >
+              Retake Assessment
+            </button>
+          )}
           <button
             onClick={onGoHome}
-            className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+            className={`p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all flex items-center justify-center gap-2 ${hideRetake ? 'col-span-2' : ''}`}
           >
             <Home className="w-4 h-4" />
             Home

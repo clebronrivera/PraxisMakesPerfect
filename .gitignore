@@ -65,3 +65,18 @@ distractor-regeneration.log
 
 # Secrets
 serviceAccountKey.json
+
+# Local Netlify folder
+.netlify
+
+# Supabase CLI temp dir
+supabase/.temp/
+
+# One-off admin SQL scripts
+supabase/migrations/admin_*.sql
+
+# Temp admin scripts
+scripts/delete-carlos-plans.ts
+
+# Deno lockfile (not needed for Node project)
+deno.lock
