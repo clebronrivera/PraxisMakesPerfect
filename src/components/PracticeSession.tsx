@@ -115,13 +115,22 @@ export default function PracticeSession({
   const lastStreakPhraseRef = useRef<string | null>(null);
 
   // ── All-time cumulative accuracy ────────────────────────────────────────────
-  const allTimePct = useMemo(() => {
-    const totals = Object.values(userProfile.domainScores ?? {}).reduce(
+  // Snapshot the profile totals at session start so we have a stable baseline,
+  // then layer the current session's answers on top for instant updates.
+  const baselineTotalsRef = useRef<{ correct: number; total: number } | null>(null);
+  if (baselineTotalsRef.current === null) {
+    baselineTotalsRef.current = Object.values(userProfile.domainScores ?? {}).reduce(
       (acc, d) => ({ correct: acc.correct + (d?.correct ?? 0), total: acc.total + (d?.total ?? 0) }),
       { correct: 0, total: 0 }
     );
-    return totals.total > 0 ? Math.round((totals.correct / totals.total) * 100) : null;
-  }, [userProfile.domainScores]);
+  }
+
+  const allTimePct = useMemo(() => {
+    const base = baselineTotalsRef.current ?? { correct: 0, total: 0 };
+    const totalCorrect = base.correct + sessionStats.correct;
+    const totalAnswered = base.total + sessionStats.correct + sessionStats.wrong;
+    return totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : null;
+  }, [sessionStats]);
 
   const {
     formattedTime,
@@ -389,7 +398,12 @@ export default function PracticeSession({
             <span className="text-emerald-400">Correct: {sessionStats.correct}</span>
             <span className="text-rose-400">Wrong: {sessionStats.wrong}</span>
             {sessionStats.highConfidenceWrong > 0 && (
-              <span className="text-orange-400">HW: {sessionStats.highConfidenceWrong}</span>
+              <span
+                className="text-orange-400"
+                title="Answered wrong despite selecting High confidence — worth extra review"
+              >
+                Overconfident: {sessionStats.highConfidenceWrong}
+              </span>
             )}
           </div>
 
