@@ -11,9 +11,9 @@ const C = {
   GRAY_BAR: "E2E8F0",
   TEXT_DARK: "2D3748",
   TEXT_LIGHT: "718096",
-  RED: "E53E3E",     // < 60% Need Review
-  YELLOW: "D69E2E",  // 60-79% Progressing
-  GREEN: "38A169"    // 80%+ Proficient
+  RED: "E53E3E",     // < 60% Emerging
+  YELLOW: "D69E2E",  // 60-79% Approaching
+  GREEN: "38A169"    // 80%+ Demonstrating
 };
 
 function getStatusColor(pct: number) {
@@ -213,43 +213,43 @@ export function buildDocument(responses: UserResponse[], scoreData: Record<strin
   ];
 
   // Group skill performances
-  const needsReview: { skill: SkillStudyGuide, pct: number }[] = [];
-  const progressing: { skill: SkillStudyGuide, pct: number }[] = [];
-  const proficient: { skill: SkillStudyGuide, pct: number }[] = [];
+  const emerging: { skill: SkillStudyGuide, pct: number }[] = [];
+  const approaching: { skill: SkillStudyGuide, pct: number }[] = [];
+  const demonstrating: { skill: SkillStudyGuide, pct: number }[] = [];
 
   Object.entries(scoreData).forEach(([skillId, stats]) => {
     if (stats.total > 0 && skillStudyGuide[skillId]) {
       const pct = Math.round((stats.correct / stats.total) * 100);
       const entry = { skill: skillStudyGuide[skillId], pct };
-      if (pct >= 80) proficient.push(entry);
-      else if (pct >= 60) progressing.push(entry);
-      else needsReview.push(entry);
+      if (pct >= 80) demonstrating.push(entry);
+      else if (pct >= 60) approaching.push(entry);
+      else emerging.push(entry);
     }
   });
 
-  if (needsReview.length > 0) {
+  if (emerging.length > 0) {
     children.push(
-      new Paragraph({ text: "High Priority Areas (Needs Review)", heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 200 } })
+      new Paragraph({ text: "Emerging Skills", heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 200 } })
     );
-    needsReview.forEach(item => {
+    emerging.forEach(item => {
       children.push(...createSkillBlock(item.skill, item.pct));
     });
   }
 
-  if (progressing.length > 0) {
+  if (approaching.length > 0) {
     children.push(
-      new Paragraph({ text: "Developing Skills (Progressing)", heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 200 } })
+      new Paragraph({ text: "Approaching Skills", heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 200 } })
     );
-    progressing.forEach(item => {
+    approaching.forEach(item => {
       children.push(...createSkillBlock(item.skill, item.pct));
     });
   }
 
-  if (proficient.length > 0) {
+  if (demonstrating.length > 0) {
     children.push(
-      new Paragraph({ text: "Mastered Skills (Proficient)", heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 200 } })
+      new Paragraph({ text: "Demonstrating Skills", heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 200 } })
     );
-    proficient.forEach(item => {
+    demonstrating.forEach(item => {
       children.push(...createSkillBlock(item.skill, item.pct));
     });
   }

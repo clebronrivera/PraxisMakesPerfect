@@ -52,6 +52,12 @@ If you are not sure where something belongs:
 - Use it for: enduring product and system constraints
 - Update when: architectural direction changes in a durable way
 
+### [docs/HOW_THE_APP_WORKS.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/HOW_THE_APP_WORKS.md)
+
+- Purpose: canonical plain-language description of the product — how features work, what numbers are correct, what conditions gate each feature
+- Use it for: marketing copy, onboarding guides, how-to documentation, user-facing explanations
+- Update when: **any feature is added, changed, or removed** — including thresholds, counts, labels, unlock conditions, study guide behavior, or anything shown on the login/marketing page. This doc must be updated in the same commit as the code change.
+
 ### [CODEBASE_OVERVIEW.md](/Users/lebron/Documents/PraxisMakesPerfect/CODEBASE_OVERVIEW.md)
 
 - Purpose: high-level codebase map
@@ -69,6 +75,12 @@ If you are not sure where something belongs:
 - Purpose: one-time audit of Supabase schema usage, data flow, onboarding, cleanup, and Netlify alignment
 - Use it for: grounded architecture decisions before changing schema, auth, or deployment
 - Update when: re-auditing after major schema or deployment changes
+
+### [docs/ANALYTICS_DATA_INVENTORY.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/ANALYTICS_DATA_INVENTORY.md)
+
+- Purpose: map of analytics-relevant data — Supabase tables, join keys to content and auth, browser-only stores, and how aggregates relate to raw events
+- Use it for: BI exports, warehouse modeling, and knowing which fields cross-reference each other
+- Update when: schema, logging paths, local-only metrics, or taxonomy linkage changes
 
 ## 3. Quick Placement Rules
 

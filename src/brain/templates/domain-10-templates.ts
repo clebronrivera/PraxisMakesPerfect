@@ -111,6 +111,37 @@ export const domain10Templates: QuestionTemplate[] = [
     exampleSlotValues: {}
   },
 
+  // NEW-10-EthicalProblemSolving: Ethical Problem-Solving Model
+  {
+    templateId: "LEG-T12",
+    skillId: "NEW-10-EthicalProblemSolving",
+    templateType: "first-step-scenario",
+    stem: "A school psychologist is facing {ethical_scenario}. According to an ethical problem-solving model, what should the psychologist do first?",
+    slots: {
+      ethical_scenario: {
+        name: "ethical_scenario",
+        description: "The ethical dilemma being evaluated",
+        possibleValues: [
+          "competing obligations between student confidentiality and a parent's request for information",
+          "concern that a colleague may be practicing outside their scope of competence",
+          "uncertainty about whether a dual relationship could affect professional judgment",
+          "conflicting ethical principles related to student welfare and family preferences"
+        ]
+      }
+    },
+    correctAnswerLogic: {
+      evaluate: () => {
+        return "Identify the ethical principles in conflict before selecting a course of action";
+      },
+      description: "Ethical problem-solving starts by identifying competing principles before choosing a response"
+    },
+    allowedDistractorPatterns: ["absolute-rules", "context-mismatch", "legal-overreach"],
+    keyPrinciple: "Ethical problem-solving starts with identifying the principles in conflict, then considering options, consulting when needed, and choosing the response that best protects student welfare.",
+    exampleSlotValues: {
+      ethical_scenario: "competing obligations between student confidentiality and a parent's request for information"
+    }
+  },
+
   // NEW-10-EducationLaw: Section 504 vs. IDEA
   {
     templateId: "LEG-T07",
@@ -202,7 +233,7 @@ export const domain10Templates: QuestionTemplate[] = [
       },
       description: "Safety first, then require consent for ongoing services"
     },
-    allowedDistractorPatterns: ["no-consent-needed", "refuse-contact", "auto-inform-parents"],
+    allowedDistractorPatterns: ["context-mismatch", "legal-overreach", "absolute-rules"],
     keyPrinciple: "Ensure student safety first when student requests counseling. Inform student that parental consent is required for ongoing counseling services. Cannot provide ongoing counseling without parental consent, regardless of student age.",
     exampleSlotValues: {
       student_age: "high school"

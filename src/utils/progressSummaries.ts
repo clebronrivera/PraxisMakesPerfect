@@ -7,6 +7,7 @@ import {
   PROGRESS_DOMAINS,
   type PraxisDomainId
 } from './progressTaxonomy';
+import { getSkillProficiency, PROFICIENCY_META } from './skillProficiency';
 
 export type SkillColorState = 'gray' | 'red' | 'yellow' | 'green';
 
@@ -47,33 +48,32 @@ export interface ProgressSummary {
 }
 
 function getColorState(score: number | null, attempted: number): SkillColorState {
-  if (attempted === 0 || score === null) {
-    return 'gray';
-  }
+  const tier = getSkillProficiency(score ?? 0, attempted);
 
-  if (score < 0.6) {
-    return 'red';
+  switch (tier) {
+    case 'unstarted':
+      return 'gray';
+    case 'emerging':
+      return 'red';
+    case 'approaching':
+      return 'yellow';
+    case 'proficient':
+      return 'green';
   }
-
-  if (score < 0.8) {
-    return 'yellow';
-  }
-
-  return 'green';
 }
 
 function getStatusLabel(colorState: SkillColorState): string {
   switch (colorState) {
     case 'gray':
-      return 'Not assessed';
+      return PROFICIENCY_META.unstarted.label;
     case 'red':
-      return 'Priority review';
+      return PROFICIENCY_META.emerging.label;
     case 'yellow':
-      return 'Developing';
+      return PROFICIENCY_META.approaching.label;
     case 'green':
-      return 'Stronger';
+      return PROFICIENCY_META.proficient.label;
     default:
-      return 'Not assessed';
+      return PROFICIENCY_META.unstarted.label;
   }
 }
 

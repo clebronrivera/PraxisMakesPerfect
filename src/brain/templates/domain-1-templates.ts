@@ -97,8 +97,19 @@ export const domain1Templates: QuestionTemplate[] = [
     templateId: "DBDM-T02",
     skillId: "DBDM-S02",
     templateType: "definition-recognition",
-    stem: "A school psychologist is establishing validity for a new assessment by {validity_method}. Which type of validity is being established?",
+    stem: "A school psychologist is establishing validity for {assessment_format} by {validity_method}. Which type of validity is being established?",
     slots: {
+      assessment_format: {
+        name: "assessment_format",
+        description: "The type of assessment being validated",
+        possibleValues: [
+          "a new behavior rating scale",
+          "a brief reading screener",
+          "a social-emotional questionnaire",
+          "a curriculum-based writing measure",
+          "an executive functioning checklist"
+        ]
+      },
       validity_method: {
         name: "validity_method",
         description: "How validity is being established",
@@ -212,8 +223,18 @@ export const domain1Templates: QuestionTemplate[] = [
     templateId: "DBDM-T04",
     skillId: "DBDM-S04",
     templateType: "definition-recognition",
-    stem: "A screening tool correctly identifies {sensitivity_value} of students who have reading difficulties and correctly identifies {specificity_value} of students who do not have reading difficulties. Which of the following best describes these statistics?",
+    stem: "A {screening_context} correctly identifies {sensitivity_value} of students who have reading difficulties and correctly identifies {specificity_value} of students who do not have reading difficulties. Which of the following best describes these statistics?",
     slots: {
+      screening_context: {
+        name: "screening_context",
+        description: "The type of screening tool being described",
+        possibleValues: [
+          "brief reading screener",
+          "behavior risk screener",
+          "early numeracy screener",
+          "social-emotional screening measure"
+        ]
+      },
       sensitivity_value: {
         name: "sensitivity_value",
         description: "True positive rate (sensitivity)",
@@ -292,7 +313,7 @@ export const domain1Templates: QuestionTemplate[] = [
     templateId: "DBDM-T06",
     skillId: "DBDM-S06",
     templateType: "definition-recognition",
-    stem: "An assessment that compares a student's performance to a predetermined mastery standard is best described as:",
+    stem: "An assessment that compares a student's performance to {assessment_characteristic} is best described as:",
     slots: {
       assessment_characteristic: {
         name: "assessment_characteristic",
@@ -380,7 +401,7 @@ export const domain1Templates: QuestionTemplate[] = [
     templateId: "DBDM-T08",
     skillId: "DBDM-S08",
     templateType: "characteristic-identification",
-    stem: "Which of the following is a characteristic of valid progress monitoring?",
+    stem: "Which of the following best describes the {characteristic_type} characteristic of valid progress monitoring?",
     slots: {
       characteristic_type: {
         name: "characteristic_type",
@@ -426,16 +447,16 @@ export const domain1Templates: QuestionTemplate[] = [
     templateId: "DBDM-T09",
     skillId: "DBDM-S09",
     templateType: "definition-recognition",
-    stem: "The primary purpose of universal screening is to:",
+    stem: "When considering the {screening_aspect} of universal screening, the best description is that it is used to:",
     slots: {
       screening_aspect: {
         name: "screening_aspect",
         description: "What aspect of screening is being asked about",
         possibleValues: [
-          "purpose",
-          "timing",
-          "administration",
-          "interpretation"
+          "primary purpose",
+          "main goal",
+          "core function",
+          "intended use"
         ]
       }
     },

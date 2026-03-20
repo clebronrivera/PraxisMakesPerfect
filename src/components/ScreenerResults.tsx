@@ -12,6 +12,7 @@ import {
   OVERALL_READY_THRESHOLD,
   type ReadinessTone
 } from '../utils/assessmentReport';
+import { PROFICIENCY_META } from '../utils/skillProficiency';
 
 interface ScreenerResultsProps {
   responses: UserResponse[];
@@ -34,22 +35,22 @@ function formatPercent(score: number): string {
 
 function domainStatusLabel(score: number): string {
   if (score >= DOMAIN_READY_THRESHOLD) {
-    return 'Ready';
+    return PROFICIENCY_META.proficient.label;
   }
   if (score >= DOMAIN_BUILDING_THRESHOLD) {
-    return 'Building';
+    return PROFICIENCY_META.approaching.label;
   }
-  return 'Priority';
+  return PROFICIENCY_META.emerging.label;
 }
 
 function overallMeaning(score: number): string {
   if (score >= OVERALL_READY_THRESHOLD) {
-    return 'You have a solid starting point. Keep your strongest areas steady and focus practice on the few domains still dragging.';
+    return 'You are meeting the threshold overall. Keep your strongest areas steady and tighten the domains that still lag.';
   }
   if (score >= OVERALL_BUILDING_THRESHOLD) {
-    return 'You know part of the content, but weak spots are still large enough to slow you down on a mixed assessment.';
+    return 'You are approaching the threshold overall, but some weak spots are still large enough to slow you down on a mixed assessment.';
   }
-  return 'The biggest gain will come from rebuilding core concepts before you spend time on harder mixed sets.';
+  return 'The biggest gain will come from remediating foundational concepts before you spend time on harder mixed sets.';
 }
 
 export default function ScreenerResults({

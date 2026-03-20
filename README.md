@@ -11,6 +11,7 @@ Use these files as the active documentation set:
 - [REWRITE_DEVELOPMENT_GUIDE.md](/Users/lebron/Documents/PraxisMakesPerfect/REWRITE_DEVELOPMENT_GUIDE.md)
 - [CODEBASE_OVERVIEW.md](/Users/lebron/Documents/PraxisMakesPerfect/CODEBASE_OVERVIEW.md)
 - [ASSESSMENT_DATA_FLOW_ANALYSIS.md](/Users/lebron/Documents/PraxisMakesPerfect/ASSESSMENT_DATA_FLOW_ANALYSIS.md)
+- [docs/ANALYTICS_DATA_INVENTORY.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/ANALYTICS_DATA_INVENTORY.md)
 - [docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md)
 
 Working grounding docs:

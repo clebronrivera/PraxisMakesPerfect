@@ -726,25 +726,24 @@ export async function generateStudyPlan({
   if (!idToken) throw new Error('idToken is required');
 
   // ── Rate limit: 1 generation per 7 days ─────────────────────────────────
-  // TODO: Re-enable before production. Disabled for testing.
-  // const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  // const { data: recentPlan } = await supabase
-  //   .from('study_plans')
-  //   .select('created_at')
-  //   .eq('user_id', userId)
-  //   .gt('created_at', oneWeekAgo)
-  //   .order('created_at', { ascending: false })
-  //   .limit(1)
-  //   .maybeSingle();
-  //
-  // if (recentPlan) {
-  //   const nextAvailable = new Date(
-  //     new Date(recentPlan.created_at as string).getTime() + 7 * 24 * 60 * 60 * 1000
-  //   );
-  //   throw new Error(
-  //     `Study guide already generated this week. Next generation available ${nextAvailable.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}.`
-  //   );
-  // }
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentPlan } = await supabase
+    .from('study_plans')
+    .select('created_at')
+    .eq('user_id', userId)
+    .gt('created_at', oneWeekAgo)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (recentPlan) {
+    const nextAvailable = new Date(
+      new Date(recentPlan.created_at as string).getTime() + 7 * 24 * 60 * 60 * 1000
+    );
+    throw new Error(
+      `Study guide already generated this week. Next generation available ${nextAvailable.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}.`
+    );
+  }
 
   // ── Load user profile ────────────────────────────────────────────────────
   const { data: profileRow } = await supabase

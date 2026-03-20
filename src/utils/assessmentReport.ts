@@ -1,11 +1,12 @@
 import type { Domain, Skill } from '../types/content';
 import type { UserResponse } from '../brain/weakness-detector';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
+import { APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD, PROFICIENCY_META } from './skillProficiency';
 
-export const DOMAIN_READY_THRESHOLD = 0.7;
-export const DOMAIN_BUILDING_THRESHOLD = 0.55;
-export const OVERALL_READY_THRESHOLD = 0.75;
-export const OVERALL_BUILDING_THRESHOLD = 0.6;
+export const DOMAIN_READY_THRESHOLD = DEMONSTRATING_THRESHOLD;
+export const DOMAIN_BUILDING_THRESHOLD = APPROACHING_THRESHOLD;
+export const OVERALL_READY_THRESHOLD = DEMONSTRATING_THRESHOLD;
+export const OVERALL_BUILDING_THRESHOLD = APPROACHING_THRESHOLD;
 
 export type ReadinessTone = 'ready' | 'building' | 'priority';
 
@@ -90,26 +91,26 @@ function summarizeReadiness(
 
   if (overallScore >= OVERALL_READY_THRESHOLD) {
     return {
-      label: 'On Track',
+      label: PROFICIENCY_META.proficient.label,
       tone: 'ready',
-      description: `You have a workable base. Tighten up ${focusText} and keep building with targeted practice.`,
+      description: `You are meeting the threshold overall. Keep reinforcing ${focusText} so strong performance stays consistent across mixed practice.`,
       nextAction: `Start mixed review and focus first on ${focusText}.`
     };
   }
 
   if (overallScore >= OVERALL_BUILDING_THRESHOLD) {
     return {
-      label: 'Building',
+      label: PROFICIENCY_META.approaching.label,
       tone: 'building',
-      description: `You have partial coverage, but gaps in ${focusText} are likely holding your score back.`,
+      description: `You are nearing the threshold overall, but gaps in ${focusText} are still limiting consistent application.`,
       nextAction: `Review the weakest areas below, then use mixed review to reinforce them.`
     };
   }
 
   return {
-    label: 'Needs Attention',
+    label: PROFICIENCY_META.emerging.label,
     tone: 'priority',
-    description: `Your results show foundational gaps, especially in ${focusText}. Start with the basics before pushing into harder mixed practice.`,
+    description: `Your results show foundational gaps, especially in ${focusText}. Start with remediation and core concepts before pushing into harder mixed practice.`,
     nextAction: `Review foundational concepts first, then begin mixed review in your weakest domain.`
   };
 }

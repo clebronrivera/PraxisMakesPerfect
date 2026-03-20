@@ -1,4 +1,3 @@
-import questionsBank from '../data/questions.json';
 import type { Question } from '../brain/question-analyzer';
 import type { QuestionReport } from '../hooks/useQuestionReports';
 import type { BetaFeedback } from '../hooks/useBetaFeedback';
@@ -127,20 +126,47 @@ interface QuestionSnapshotComparable {
   rationale?: string;
 }
 
-const QUESTIONS = questionsBank as unknown as Question[];
+interface AuditQuestionContext {
+  questionLookup: Map<string, Question>;
+  normalizedStemCounts: Map<string, number>;
+}
 
-const QUESTION_LOOKUP = new Map(
-  QUESTIONS.map((question) => [question.UNIQUEID || question.id || 'unknown-question', question])
-);
+const QUESTIONS_URL = new URL('../data/questions.json', import.meta.url).href;
 
-const NORMALIZED_STEM_COUNTS = QUESTIONS.reduce<Map<string, number>>((acc, question) => {
-  const prompt = normalizeText(getQuestionPrompt(question));
-  if (!prompt) {
-    return acc;
+let auditQuestionContextPromise: Promise<AuditQuestionContext> | null = null;
+
+async function getAuditQuestionContext(): Promise<AuditQuestionContext> {
+  if (!auditQuestionContextPromise) {
+    auditQuestionContextPromise = fetch(QUESTIONS_URL)
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load audit question bank (${response.status})`);
+        }
+        return response.json() as Promise<Question[]>;
+      })
+      .then((questions) => {
+        const questionLookup = new Map(
+          questions.map((question) => [question.UNIQUEID || question.id || 'unknown-question', question])
+        );
+
+        const normalizedStemCounts = questions.reduce<Map<string, number>>((acc, question) => {
+          const prompt = normalizeText(getQuestionPrompt(question));
+          if (!prompt) {
+            return acc;
+          }
+          acc.set(prompt, (acc.get(prompt) || 0) + 1);
+          return acc;
+        }, new Map());
+
+        return {
+          questionLookup,
+          normalizedStemCounts
+        };
+      });
   }
-  acc.set(prompt, (acc.get(prompt) || 0) + 1);
-  return acc;
-}, new Map());
+
+  return auditQuestionContextPromise;
+}
 
 const SEVERITY_RANK: Record<string, number> = {
   critical: 3,
@@ -326,18 +352,24 @@ function uniqueNonEmpty(values: Array<string | null | undefined>): string[] {
   return [...new Set(values.map((value) => normalizeText(value)).filter(Boolean))];
 }
 
-function exactDuplicateStemCount(questionId?: string | null): number {
+function exactDuplicateStemCount(
+  questionId: string | null | undefined,
+  auditQuestionContext: AuditQuestionContext
+): number {
   if (!questionId) {
     return 0;
   }
-  const question = QUESTION_LOOKUP.get(questionId);
+  const question = auditQuestionContext.questionLookup.get(questionId);
   if (!question) {
     return 0;
   }
-  return NORMALIZED_STEM_COUNTS.get(normalizeText(getQuestionPrompt(question))) || 0;
+  return auditQuestionContext.normalizedStemCounts.get(normalizeText(getQuestionPrompt(question))) || 0;
 }
 
-function consolidateVerification(records: AuditRawRecord[]): {
+function consolidateVerification(
+  records: AuditRawRecord[],
+  auditQuestionContext: AuditQuestionContext
+): {
   verificationDecision: VerificationDecision;
   verificationReason: string;
   currentQuestionExists: boolean;
@@ -346,13 +378,13 @@ function consolidateVerification(records: AuditRawRecord[]): {
   exactDuplicateCount: number;
 } {
   const questionId = records.find((record) => record.questionId)?.questionId || null;
-  const currentQuestion = questionId ? QUESTION_LOOKUP.get(questionId) : undefined;
+  const currentQuestion = questionId ? auditQuestionContext.questionLookup.get(questionId) : undefined;
   const firstSnapshot = records.find((record) => record.questionSnapshot)?.questionSnapshot;
   const comparison = compareSnapshotToCurrent(firstSnapshot || undefined, currentQuestion);
   const bucket = records[0]?.bucket;
   const latestStatus = pickLatestStatus(records);
   const notes = uniqueNonEmpty(records.flatMap((record) => record.notes));
-  const duplicateCount = exactDuplicateStemCount(questionId);
+  const duplicateCount = exactDuplicateStemCount(questionId, auditQuestionContext);
 
   if (records.every((record) => record.source === 'teach_mode_flag')) {
     return {
@@ -627,12 +659,13 @@ function buildInstrumentationGaps(rawRecords: AuditRawRecord[]): string[] {
   return [...gaps];
 }
 
-export function buildFeedbackAudit(args: {
+export async function buildFeedbackAudit(args: {
   reports: Array<QuestionReport & { id: string }>;
   feedback: BetaFeedback[];
   users: FeedbackAuditUser[];
-}): FeedbackAuditBundle {
+}): Promise<FeedbackAuditBundle> {
   const generatedAt = new Date().toISOString();
+  const auditQuestionContext = await getAuditQuestionContext();
   const rawRecords = [
     ...buildQuestionReportRecords(args.reports),
     ...buildBetaFeedbackRecords(args.feedback),
@@ -648,7 +681,7 @@ export function buildFeedbackAudit(args: {
   }, new Map());
 
   const consolidatedIssues = sortIssues([...clusterMap.entries()].map(([key, records]) => {
-    const verification = consolidateVerification(records);
+    const verification = consolidateVerification(records, auditQuestionContext);
     const sourceTypes = [...new Set(records.map((record) => record.source))];
     const questionId = records.find((record) => record.questionId)?.questionId || null;
     const createdTimes = records.map((record) => record.createdAt).filter((value): value is string => Boolean(value)).sort();

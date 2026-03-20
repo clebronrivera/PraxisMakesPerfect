@@ -97,3 +97,4 @@ scripts/delete-carlos-plans.ts
 
 # Deno lockfile (not needed for Node project)
 deno.lock
+vite.config.ts.timestamp-*

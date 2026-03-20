@@ -4,6 +4,29 @@ This file captures hard-won context so Claude doesn't have to rediscover it.
 
 ---
 
+## HOW_THE_APP_WORKS.md — Mandatory Update Rule
+
+`docs/HOW_THE_APP_WORKS.md` is the canonical plain-language description of the product.
+
+**Any time you make a code change that affects any of the following, you MUST update `docs/HOW_THE_APP_WORKS.md` in the same change:**
+
+- Number of domains or skills
+- Screener or full assessment question counts
+- Skill status label names or thresholds (unlearned / misconception / unstable / developing / near_mastery / mastered)
+- User-facing proficiency level names or thresholds (Emerging / Approaching / Demonstrating)
+- Readiness level names or definitions (Early / Developing / Approaching / Ready)
+- Readiness target percentage or skill count
+- Study guide unlock conditions
+- Study guide rate limit
+- Study guide section names, tab layout, or side rail content
+- Practice mode unlock conditions (Domain Review, Skill Review)
+- Question retirement behavior
+- Any stat or copy shown on the login/marketing page
+
+Do not treat this as optional. The document exists to keep marketing, onboarding, and how-to materials accurate. Stale information in it creates user-facing confusion.
+
+---
+
 ## Local Development
 
 ### Running the App Locally
@@ -113,6 +136,8 @@ The study plan system is a 3-layer pipeline:
 
 ### Status Labels (Hard Thresholds)
 
+These are **internal AI/preprocessor labels** used by `studyPlanPreprocessor.ts` and the study plan prompt. Do not rename them — they are not user-facing.
+
 | Status | Rule |
 |---|---|
 | `unlearned` | < 3 attempts |
@@ -123,6 +148,43 @@ The study plan system is a 3-layer pipeline:
 | `unstable` | everything else |
 
 Trend requires ≥ 6 attempts. Improving/declining = ±15pp between first-half and last-half accuracy.
+
+---
+
+## Skill Proficiency Levels (UI-Facing Labels)
+
+These are the **user-facing** proficiency labels shown throughout the practice tab, skill panels, and domain cards. Skills and domains must use the same labels and the same explanatory language. Defined in `src/utils/skillProficiency.ts`.
+
+| Level | Threshold | Meaning | Helper text |
+|---|---|---|---|
+| **Demonstrating** | score ≥ 0.80 (≥ 80%) | Meeting the threshold and applying foundational knowledge consistently in practice | "Meeting the threshold and applying foundational knowledge consistently in practice." |
+| **Approaching** | 0.60 ≤ score < 0.80 (60–79%) | Near the threshold, with opportunities to strengthen foundational knowledge and apply it more consistently | "Near the threshold, with opportunities to strengthen foundational knowledge and apply it more consistently." |
+| **Emerging** | score < 0.60 (< 60%) | Foundational gaps are still getting in the way, so targeted remediation is needed before performance is consistent | "Foundational gaps are still getting in the way, so targeted remediation is needed before performance is consistent." |
+| **Not started** | 0 attempts | No data yet | — |
+
+These thresholds align with the internal AI labels: `Demonstrating` = `mastered`, `Approaching` = `near_mastery`, `Emerging` = `misconception`/`developing`/`unstable`.
+
+**All UI-facing labels and thresholds are aligned to this single source of truth:**
+- `src/utils/skillProficiency.ts` — canonical definition
+- `src/utils/assessmentReport.ts` — DOMAIN_READY/BUILDING use 0.8/0.6
+- `src/utils/progressSummaries.ts` — `getStatusLabel()` returns Emerging/Approaching/Demonstrating
+- `src/components/ResultsDashboard.tsx` — domain badges use Emerging/Approaching/Demonstrating
+- `src/components/ScreenerResults.tsx` — `domainStatusLabel()` returns Emerging/Approaching/Demonstrating
+- `src/components/StudyModesSection.tsx` — domain tier badges use Emerging/Approaching/Demonstrating
+
+**Readiness threshold (separate dimension):** 70% of all 45 skills must reach Demonstrating (≥80%). Defined in `App.tsx` as `readinessTarget = Math.ceil(totalSkills * 0.7)`. This is a **count** threshold (how many skills), not an accuracy threshold (how well a skill was answered).
+
+**Key file:** `src/utils/skillProficiency.ts` — exports `getSkillProficiency()` and `PROFICIENCY_META`.
+
+---
+
+## Feeling Spicy — Cycle Recalibration
+
+Spicy mode cycles through all 45 skills in a shuffled order, one question per skill. After completing a full cycle of all 45 skills, the cycle **reshuffles** automatically into a new random order and starts again from skill 1. This means every subsequent round of 45 creates new signal for skill recalibration.
+
+State is persisted in `localStorage` under key `pmp-spicy-cycle-${userId}` as `{ ids: string[]; index: number }`.
+
+Logic in `src/components/PracticeSession.tsx` — `advanceSpicyCycle()`.
 
 ### Schema Version
 

@@ -34,7 +34,80 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
-## 2026-03-20 - Public repo included local-only reference files and generated exports
+## 2026-03-20 - Skill and domain proficiency labels drifted apart
+
+- Status: resolved
+- Area: reporting vocabulary / practice UI / screener report / docs
+- Summary: User-facing proficiency language had drifted across the app and docs. Some surfaces still used `Mastered`, `In Progress`, `Priority`, or `Proficient`, and domain explanations were not guaranteed to match skill explanations. Threshold documentation had also drifted from the source utility.
+- Source of truth: skills and domains now share one vocabulary and one explanation set: `Emerging`, `Approaching`, and `Demonstrating`, with `Not started` reserved for zero-attempt skill states. Shared thresholds are `< 60%`, `60–79%`, and `>= 80%`.
+- Code anchors:
+  [src/utils/skillProficiency.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/skillProficiency.ts)
+  [src/utils/assessmentReport.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentReport.ts)
+  [src/utils/progressSummaries.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/progressSummaries.ts)
+  [src/components/StudyModesSection.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/StudyModesSection.tsx)
+  [src/components/ResultsDashboard.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ResultsDashboard.tsx)
+  [src/components/ScreenerResults.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ScreenerResults.tsx)
+- Resolution / next step: Resolved. Centralized the shared labels and descriptions, aligned the assessment-report thresholds to the same scale, updated marketing/reporting copy, and recorded the durable rule in `docs/WORKFLOW_GROUNDING.md` plus the plain-language product explanation in `docs/HOW_THE_APP_WORKS.md`.
+
+## 2026-03-20 - Competing CTAs when assessment is in progress
+
+- Status: resolved
+- Area: home screen / assessment flow / `App.tsx`
+- Summary: When a user paused a screener or full diagnostic and returned to the dashboard, both the "Resume" card and the corresponding start button ("Take the screener" / "Take the full diagnostic") were visible at the same time. Clicking the start button launched a fresh assessment instead of resuming, risking data loss and confusing the user about their in-progress session.
+- Source of truth: only one CTA per assessment type should be actionable at a time. While a session is in progress, the resume card is the only visible action; the start button is suppressed.
+- Code anchors:
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx) — `screenerSessionInProgress` and `fullAssessmentSessionInProgress` flags, computed before the home screen JSX renders
+- Resolution / next step: Resolved. Added `screenerSessionInProgress` and `fullAssessmentSessionInProgress` booleans derived from `profile.lastSession` and `savedSession`. Each corresponding start button is conditionally rendered only when its flag is false.
+
+## 2026-03-20 - Study guide buried mid-page; no completion notification; dark-theme print failure
+
+- Status: resolved
+- Area: study guide UX / print / `App.tsx`, `src/components/StudyPlanViewer.tsx`
+- Summary: Three related UX issues: (1) The full AI Study Guide was embedded inline on the home page, requiring users to scroll past several other cards to find it; (2) When generation completed (after ~1 minute of background processing), there was no notification — users had to switch tabs and return to notice the guide had appeared; (3) The guide's print CSS only targeted a handful of class names and did not override Tailwind's per-element dark utility classes, so printing produced dark backgrounds with white text.
+- Source of truth: the study guide should live in its own view, navigate to automatically on completion, and print cleanly as black-on-white.
+- Code anchors:
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx) — `studyguide` AppMode, compact home nav card, auto-navigate after generation
+  [src/components/StudyPlanViewer.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/StudyPlanViewer.tsx) — `@media print` blanket override
+- Resolution / next step: Resolved. Added `studyguide` mode; home page replaced with a compact card; app auto-navigates to the guide on generation success or error; print CSS now uses a `*` blanket override inside `.study-plan-viewer`.
+
+## 2026-03-20 - Login page showed incorrect domain count (10 instead of 4)
+
+- Status: resolved
+- Area: marketing / login page / `src/components/LoginScreen.tsx`
+- Summary: The "Adaptive Practice" feature card description and the stats row on the login/sign-up page both displayed "10 domains" instead of the correct 4 Praxis 5403 domains.
+- Source of truth: `docs/HOW_THE_APP_WORKS.md` — 4 domains, 45 skills.
+- Code anchors:
+  [src/components/LoginScreen.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/LoginScreen.tsx) lines 180, 204
+- Resolution / next step: Resolved. Both instances corrected to "4 domains" / `'4'`.
+
+## 2026-03-20 - Onboarding program fields needed normalized school-psych dropdowns
+
+- Status: resolved
+- Area: onboarding / profile capture / `src/components/OnboardingFlow.tsx`
+- Summary: Graduate-student onboarding used open text fields for `university` and `program_state`, which made school psychology program names inconsistent and harder to analyze later. Product direction is to guide users through a real school psychology program list rather than free typing.
+- Source of truth: the official NASP School Psychology Program Information directory is now the selector source for graduate-student program options; persisted fields remain `user_progress.university` and `user_progress.program_state`.
+- Code anchors:
+  [src/components/OnboardingFlow.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/OnboardingFlow.tsx)
+  [src/data/naspSchoolPsychPrograms.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/data/naspSchoolPsychPrograms.ts)
+  [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
+- Resolution / next step: Added a checked-in NASP-backed program dataset, replaced graduate-student free-text program entry with state and program dropdowns, and normalized certification-state capture to a dropdown as well. Refresh the NASP-derived data file when the directory changes materially.
+
+## 2026-03-20 - Health check flagged a dead-zone template gap and oversized build chunks
+
+- Status: resolved
+- Area: diagnostics / generated-template coverage / build bundling / admin audit
+- Summary: `npm run verify:health` was passing tests but still surfacing non-fatal follow-ups: `NEW-10-EthicalProblemSolving` had no generated template coverage, several Domain 1 templates declared slots without using them in stems, and Vite was warning about oversized `index`, `questions`, and admin chunks because the app shell and audit tooling were bundling more code/data than needed up front.
+- Source of truth: the canonical question bank remains `src/data/questions.json`; build-size fixes should prefer code-splitting and asset loading over creating parallel data sources or raising Vite warning limits.
+- Code anchors:
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+  [vite.config.ts](/Users/lebron/Documents/PraxisMakesPerfect/vite.config.ts)
+  [src/brain/templates/domain-1-templates.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/brain/templates/domain-1-templates.ts)
+  [src/brain/templates/domain-10-templates.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/brain/templates/domain-10-templates.ts)
+  [src/components/AdminDashboard.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/AdminDashboard.tsx)
+  [src/utils/feedbackAudit.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/feedbackAudit.ts)
+- Resolution / next step: Added the missing ethical problem-solving template, expanded top-priority DBDM slot coverage, removed noisy invalid/unused template definitions, lazy-split login/onboarding/home-only UI imports, loaded the canonical question bank as a JSON asset instead of a giant JS chunk, and moved the admin audit’s question-bank read to runtime so it no longer bloats the admin bundle. `verify:health` now completes without the old Vite chunk warnings; broader blueprint/capacity/distractor-quality follow-ups remain legitimate content work and were intentionally left as future tasks.
+
+## 2026-03-19 - Public repo included local-only reference files and generated exports
 
 - Status: resolved
 - Area: repo hygiene / `.gitignore` / `README.md` / `local/` workspace / generated `output/` artifacts
@@ -46,6 +119,45 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
   [local/README.md](/Users/lebron/Documents/PraxisMakesPerfect/local/README.md)
   [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
 - Resolution / next step: Added a durable `local/` workspace convention, ignored root-level reference documents and generated `output/` exports by default, and prepared the repo for keeping local-only materials on disk without keeping them in GitHub. `output/AUDIT_SUMMARY.md` remains the explicit tracked exception.
+
+## 2026-03-19 - Confidence selector terminology drifted from learner-facing wording
+
+- Status: resolved
+- Area: `src/components/QuestionCard.tsx`, `src/components/PracticeSession.tsx`, `src/utils/confidenceLabels.ts`
+- Summary: The live assessment/practice UI still surfaced the internal confidence terms `High`, `Medium`, and `Low`. Product-facing terminology now uses `Sure`, `Unsure`, and `Guess` in that display order, while preserving the existing stored `high` / `medium` / `low` values and all downstream weighting semantics.
+- Source of truth: learner-facing labels are presentation only; internal scoring and persistence remain keyed to `low` / `medium` / `high`.
+- Code anchors:
+  [src/utils/confidenceLabels.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/confidenceLabels.ts)
+  [src/components/QuestionCard.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/QuestionCard.tsx)
+  [src/components/PracticeSession.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/PracticeSession.tsx)
+  [src/brain/learning-state.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/brain/learning-state.ts)
+- Resolution / next step: Centralized the display mapping, updated the shared question-card selector to render `Guess | Unsure | Sure`, and updated practice-session copy that referenced `High confidence`. Durable rule recorded in `docs/WORKFLOW_GROUNDING.md`.
+
+## 2026-03-19 - Practice UI: missing option letters / merged choices (question bank export corruption)
+
+- Status: resolved
+- Area: `src/data/questions.json`, `praxis_5403_practice_questions_900q.json` (derived CSVs under `output/` may still show old text until regenerated)
+- Summary: Four items displayed broken MCQ layouts: empty **C**, the real **C** text concatenated onto **B** (often with a stray ` C)` token), and **`**Correct Answer:**` / explanation prose leaked into **D**. The UI looked like a “missing letter,” wrong option order, or answer key visible in a choice. Root cause was corrupt source records, not React rendering.
+- How to detect next time: Grep choice fields for `\*\*Correct Answer:`; grep for `"C": ""` on `option_count_expected: "4"` rows; look for ` C)` inside `A`/`B` text. Run a small validation: every four-option row must have non-empty trimmed `A`–`D`.
+- Affected `UNIQUEID`s (all repaired in JSON sources): `PQ_SWP-02_11`, `PQ_DBD-09_20`, `PQ_SAF-01_18`, `PQ_ETH-03_17`.
+- Resolution: Split merged strings into proper `B`/`C`, moved metadata out of `D` into existing `correct_answers` / `CORRECT_Explanation` (already correct), mirrored the same fixes in `praxis_5403_practice_questions_900q.json`. See durable prevention notes in `docs/WORKFLOW_GROUNDING.md` §3.9.1.
+- Code anchors:
+  - [src/data/questions.json](/Users/lebron/Documents/PraxisMakesPerfect/src/data/questions.json)
+  - [praxis_5403_practice_questions_900q.json](/Users/lebron/Documents/PraxisMakesPerfect/praxis_5403_practice_questions_900q.json)
+
+---
+
+## 2026-03-19 - Practice feedback used unstable answer letters after choice reordering
+
+- Status: resolved
+- Area: `src/components/PracticeSession.tsx`, `src/components/ExplanationPanel.tsx`, `src/utils/feedbackText.ts`
+- Summary: Practice mode reorders answer choices for display, but explanation copy and distractor notes were still surfacing stored answer letters. This produced mismatches such as rationale text referring to `Option B` when the user saw that response in a different visual position. The deeper content issue was that many current-bank explanations were letter-coupled in the first place.
+- Source of truth: user-visible feedback should align to the answer text shown on screen, not just the internal answer key.
+- Code anchors:
+  [src/components/PracticeSession.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/PracticeSession.tsx)
+  [src/components/ExplanationPanel.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ExplanationPanel.tsx)
+  [src/utils/feedbackText.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/feedbackText.ts)
+- Resolution / next step: Added a shared feedback-text utility that formats answer references from choice text, sanitized rationale copy before rendering, and changed practice distractor notes to reference the selected answer text instead of the internal letter. If future replay/report views need to reconstruct the exact displayed order, persist and consume the shuffle mapping there too.
 
 ## 2026-03-18 - Home screen "0 Questions / 0 Current Streak" for users with existing responses
 

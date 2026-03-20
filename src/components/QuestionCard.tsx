@@ -2,6 +2,10 @@ import { CheckCircle, XCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import ReportQuestionModal from './ReportQuestionModal';
 import { AnalyzedQuestion, getQuestionPrompt } from '../brain/question-analyzer';
+import {
+  CONFIDENCE_DISPLAY_ORDER,
+  getConfidenceDisplayLabel
+} from '../utils/confidenceLabels';
 
 // Local AnalyzedQuestion interface removed
 
@@ -159,7 +163,7 @@ export default function QuestionCard({
       {isConfidenceVisible && (
         <div className="flex items-center justify-center gap-4 mt-8">
           <span className="text-sm text-slate-500">Confidence:</span>
-          {(['low', 'medium', 'high'] as const).map(level => (
+          {CONFIDENCE_DISPLAY_ORDER.map(level => (
             <button
               key={level}
               onClick={() => onConfidenceChange(level)}
@@ -169,7 +173,7 @@ export default function QuestionCard({
                   : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              {level.charAt(0).toUpperCase() + level.slice(1)}
+              {getConfidenceDisplayLabel(level)}
             </button>
           ))}
         </div>

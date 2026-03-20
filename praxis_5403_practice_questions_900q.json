@@ -2556,8 +2556,9 @@
       "question_stem": "Comprehensive ecological assessment leads to intervention recommendation. Likely type?",
       "options": {
         "A": "Only individual counseling",
-        "B": "Combination addressing student, classroom environment, instruction, peer dynamics, teacher-student relationship C) Medication",
-        "D": "Removal from regular class  **Correct Answer: B**  **Explanation:** Ecological assessment informs ecological interventions targeting multiple levels (student skills, classroom structure, instruction). Comprehensive approach matches comprehensive assessment. Options A, C, D are narrow or inappropriate.  ---"
+        "B": "Combination addressing student, classroom environment, instruction, peer dynamics, teacher-student relationship",
+        "C": "Medication",
+        "D": "Removal from regular class"
       },
       "correct_answer": "B",
       "explanation": "Ecological assessment informs ecological interventions targeting multiple levels (student skills, classroom structure, instruction). Comprehensive approach matches comprehensive assessment. Options A, C, D are narrow or inappropriate.\n\n---",
@@ -8923,8 +8924,9 @@
       "question_stem": "A student who is frequently bullied begins demonstrating aggressive behavior toward younger students. The school psychologist should:",
       "options": {
         "A": "Focus intervention exclusively on the aggressive behavior without addressing the underlying bullying",
-        "B": "Address both the victimization and the emerging aggression, recognizing that peer victimization is a risk factor for later aggression C) Assume the student is \"bad\" and increase consequences",
-        "D": "Exclude the student from school to protect younger students  **Correct Answer: B**  **Explanation:** Research shows bullying victims are at elevated risk for perpetuating aggression; comprehensive intervention must address both victimization and aggression. Option A is incomplete. Option C is incorrect; understanding precursors improves intervention. Option D is incorrect and harmful."
+        "B": "Address both the victimization and the emerging aggression, recognizing that peer victimization is a risk factor for later aggression",
+        "C": "Assume the student is \"bad\" and increase consequences",
+        "D": "Exclude the student from school to protect younger students"
       },
       "correct_answer": "B",
       "explanation": "Research shows bullying victims are at elevated risk for perpetuating aggression; comprehensive intervention must address both victimization and aggression. Option A is incomplete. Option C is incorrect; understanding precursors improves intervention. Option D is incorrect and harmful.",
@@ -9770,8 +9772,9 @@
       "question_stem": "A student is recommended for retention. Which information is most critical for the parent-school decision?",
       "options": {
         "A": "The student's grade average",
-        "B": "Research on retention effectiveness, specific intervention history, student's readiness for next grade, and evidence-based alternatives C) The number of students retained by the teacher",
-        "D": "Whether the student is younger than peers  **Correct Answer: B**  **Explanation:** Informed decision requires understanding retention research, the student's specific situation, and available alternatives. Option A is insufficient. Option C is irrelevant. Option D is one factor among many."
+        "B": "Research on retention effectiveness, specific intervention history, student's readiness for next grade, and evidence-based alternatives",
+        "C": "The number of students retained by the teacher",
+        "D": "Whether the student is younger than peers"
       },
       "correct_answer": "B",
       "explanation": "Informed decision requires understanding retention research, the student's specific situation, and available alternatives. Option A is insufficient. Option C is irrelevant. Option D is one factor among many.",
@@ -12425,8 +12428,9 @@
       "question_stem": "Peer consultation as a professional development practice involves:",
       "options": {
         "A": "Isolated individual practice",
-        "B": "Discussing cases and dilemmas with trusted colleagues to gain perspectives, reduce isolation, and refine decision-making C) Only seeking supervision when required",
-        "D": "Depending entirely on peer input for final decisions  **Correct Answer: B**  **Explanation:** Peer consultation provides collegial support and diverse perspectives. Option A avoids collaborative learning. Option C limits consultation. Option D abdicates personal responsibility."
+        "B": "Discussing cases and dilemmas with trusted colleagues to gain perspectives, reduce isolation, and refine decision-making",
+        "C": "Only seeking supervision when required",
+        "D": "Depending entirely on peer input for final decisions"
       },
       "correct_answer": "B",
       "explanation": "Peer consultation provides collegial support and diverse perspectives. Option A avoids collaborative learning. Option C limits consultation. Option D abdicates personal responsibility.",

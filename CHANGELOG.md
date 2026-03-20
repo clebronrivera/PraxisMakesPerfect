@@ -9,6 +9,41 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ## 2026-03-20
 
+### Reporting / Vocabulary
+
+- **[UI + Docs — Shared proficiency scale]** Aligned learner-facing skill and domain labels to one shared scale: `Emerging`, `Approaching`, and `Demonstrating`, with the same explanatory language used across badges, dashboard summaries, screener reporting, and marketing copy. Also reconciled the source-of-truth thresholds to `>=80% / 60–79% / <60%` and updated the durable docs accordingly. — `src/utils/skillProficiency.ts`, `src/utils/assessmentReport.ts`, `src/utils/progressSummaries.ts`, `src/components/StudyModesSection.tsx`, `src/components/ResultsDashboard.tsx`, `src/components/ScreenerResults.tsx`, `src/components/LoginScreen.tsx`, `src/utils/scoreReportGenerator.ts`, `docs/HOW_THE_APP_WORKS.md`, `docs/WORKFLOW_GROUNDING.md`, `docs/ISSUE_LEDGER.md`, `CLAUDE.md`
+
+### Bug Fixes — Competing CTAs During In-Progress Assessments
+
+- **[Bug — Screener CTA conflict]** When a screener session was in progress and the user returned to the dashboard, the "Take the screener" button remained visible alongside the "Resume" card, allowing users to accidentally start a fresh screener instead of resuming. Fixed by computing `screenerSessionInProgress` before the home screen JSX renders and suppressing the "Take the screener" button whenever a screener or diagnostic session is active. — `App.tsx`
+- **[Bug — Full diagnostic CTA conflict]** Same issue existed for the full diagnostic: "Take the full diagnostic" button was visible alongside the "Resume" card when a full assessment was in progress. Fixed with a parallel `fullAssessmentSessionInProgress` flag that suppresses the start button while a full assessment session is active. — `App.tsx`
+
+### Study Guide — UX & Print
+
+- **[UX — Dedicated study guide view]** Moved the full AI Study Guide out of the home page (where it was buried mid-scroll) into a dedicated `studyguide` app mode. The home page now shows a compact nav card (readiness level + date, or a generate prompt) that navigates to the full guide. — `App.tsx`
+- **[UX — Auto-navigate on completion]** After generation finishes (success or error), the app automatically switches to the `studyguide` mode so the user sees the result without having to scroll back and notice it. Previously required switching tabs and returning to detect that the guide had appeared. — `App.tsx`
+- **[Print — Dark theme override]** Replaced the minimal `@media print` CSS in `StudyPlanViewer` with a blanket `.study-plan-viewer, .study-plan-viewer * { background-color: white !important; color: black !important; ... }` override. The old rules targeted specific class names but did not override Tailwind's per-element dark utility classes, so the page printed with dark backgrounds. — `src/components/StudyPlanViewer.tsx`
+
+### Content / Marketing
+
+- **[Bug — Incorrect domain count on login page]** The "Adaptive Practice" feature card and the stats row on the login/sign-up page both showed "10 domains" instead of the correct "4 domains". Fixed in both locations. — `src/components/LoginScreen.tsx`
+
+### Documentation
+
+- **[New doc — ANALYTICS_DATA_INVENTORY.md]** Added `docs/ANALYTICS_DATA_INVENTORY.md`: Supabase tables and join keys (`auth.users`, content, events), browser-only metrics, static taxonomy sources, and notes on `responses` vs aggregates. Linked from `docs/DOCS_SYSTEM.md` and `README.md`. — `docs/ANALYTICS_DATA_INVENTORY.md`, `docs/DOCS_SYSTEM.md`, `README.md`
+- **[New doc — HOW_THE_APP_WORKS.md]** Created `docs/HOW_THE_APP_WORKS.md` as the canonical plain-language description of the product — how features work, correct numbers, unlock conditions, and the AI study guide pipeline. Intended as the source of truth for marketing copy, onboarding guides, and how-to documentation. Added a mandatory update rule to `CLAUDE.md` requiring this file to be updated in the same commit as any feature change. Registered in `docs/DOCS_SYSTEM.md`. — `docs/HOW_THE_APP_WORKS.md`, `CLAUDE.md`, `docs/DOCS_SYSTEM.md`
+
+### Onboarding
+
+- **[Profile UX]** Replaced graduate-student free-text program entry with NASP-backed dropdowns: users now choose a program state first and then a NASP-listed school psychology program, while certification-only users choose certification state from a normalized state dropdown. Kept the existing persisted profile fields (`university`, `program_state`, `certification_state`) unchanged and checked in the NASP-derived source data for future refreshes. — `src/components/OnboardingFlow.tsx`, `src/data/naspSchoolPsychPrograms.ts`, `docs/HOW_THE_APP_WORKS.md`, `docs/WORKFLOW_GROUNDING.md`, `docs/ISSUE_LEDGER.md`
+
+### Diagnostics / Build
+
+- **[Health Check]** Cleared the `verify:health` dead-zone coverage warning for `NEW-10-EthicalProblemSolving`, expanded top-priority Domain 1 template slot variety, and removed noisy invalid/unused template definitions that were polluting diagnostics output. — `src/brain/templates/domain-1-templates.ts`, `src/brain/templates/domain-10-templates.ts`
+- **[Build]** Reduced initial bundle pressure by lazy-splitting login/onboarding/home-only UI, loading the canonical question bank as a JSON asset instead of a giant JS module, splitting Supabase into its own vendor chunk, and moving the admin feedback-audit question-bank read to runtime so the admin chunk no longer bundles the full bank. — `App.tsx`, `vite.config.ts`, `src/components/AdminDashboard.tsx`, `src/utils/feedbackAudit.ts`, `docs/ISSUE_LEDGER.md`
+
+## 2026-03-19
+
 ### Repo Hygiene
 
 - **[Cleanup]** Added a `local/` workspace convention for private reference material and scratch files, updated ignore rules so root-level reference docs and generated `output/` CSV/JSON artifacts stay local by default, and documented `output/AUDIT_SUMMARY.md` as the current tracked handoff exception. — `.gitignore`, `README.md`, `local/README.md`, `docs/WORKFLOW_GROUNDING.md`, `docs/ISSUE_LEDGER.md`
@@ -16,6 +51,14 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 ### Tooling / Security
 
 - **[Dependencies]** Upgraded `vite` from the vulnerable v4 line to the latest patched v6 line compatible with the existing React plugin, clearing the current `npm audit` findings for Vite and transitive `esbuild` without requiring a broader React or Tailwind migration. — `package.json`
+
+### Data / Question Bank
+
+- **[Bug — Corrupt MCQ rows]** Four practice items had merged choices and export metadata in `D` (empty `C`, ` C)` concatenated onto `B`, `**Correct Answer:**` / explanation text inside a choice). Fixed in `src/data/questions.json` and mirrored in `praxis_5403_practice_questions_900q.json` for: `PQ_SWP-02_11`, `PQ_DBD-09_20`, `PQ_SAF-01_18`, `PQ_ETH-03_17`. Documented in `docs/ISSUE_LEDGER.md` and prevention checks in `docs/WORKFLOW_GROUNDING.md` §3.9.1. — `src/data/questions.json`, `praxis_5403_practice_questions_900q.json`, `docs/ISSUE_LEDGER.md`, `docs/WORKFLOW_GROUNDING.md`
+
+### UI / Reporting
+
+- **[Labeling]** Renamed learner-facing confidence choices from `High / Medium / Low` to `Sure / Unsure / Guess`, rendered them in `Guess | Unsure | Sure` order, and kept the underlying stored `high` / `medium` / `low` values plus existing weighting semantics unchanged. Centralized the mapping in `src/utils/confidenceLabels.ts` and updated the shared question card plus practice-session copy. — `src/utils/confidenceLabels.ts`, `src/components/QuestionCard.tsx`, `src/components/PracticeSession.tsx`, `docs/ISSUE_LEDGER.md`, `docs/WORKFLOW_GROUNDING.md`
 
 ## 2026-03-18
 

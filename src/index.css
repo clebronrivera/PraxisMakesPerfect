@@ -1,3 +1,141 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    background-color: #060d1a;
+  }
+
+  body {
+    background-color: #060d1a;
+    color: #f1f5f9;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* ── Surface cards ─────────────────────────────────────── */
+  .card {
+    @apply bg-slate-900/60 border border-slate-800/60 rounded-2xl;
+  }
+
+  .card-elevated {
+    @apply bg-slate-800/60 border border-slate-700/50 rounded-2xl;
+  }
+
+  .card-focus {
+    @apply bg-white/[0.04] border border-white/10 rounded-2xl;
+  }
+
+  .card-accent-cyan {
+    @apply bg-cyan-500/8 border border-cyan-500/20 rounded-2xl;
+  }
+
+  .card-accent-coral {
+    @apply bg-rose-500/8 border border-rose-500/20 rounded-2xl;
+  }
+
+  .card-accent-mint {
+    @apply bg-emerald-500/8 border border-emerald-500/20 rounded-2xl;
+  }
+
+  /* ── Stat cards ───────────────────────────────────────── */
+  .stat-card {
+    @apply p-4 bg-navy-900/80 border border-navy-700/60 rounded-2xl;
+  }
+
+  /* ── Buttons ──────────────────────────────────────────── */
+  .btn-primary {
+    @apply px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-xl transition-all active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700/60 text-slate-200 font-medium rounded-xl transition-all;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl transition-colors;
+  }
+
+  /* ── Section overline ─────────────────────────────────── */
+  .overline {
+    @apply text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-500;
+  }
+
+  /* ── Tabs ─────────────────────────────────────────────── */
+  .tab-bar {
+    @apply flex items-center gap-1 p-1 bg-slate-900/60 border border-slate-800/50 rounded-xl;
+  }
+
+  .tab-item {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-colors text-slate-500 hover:text-slate-300;
+  }
+
+  .tab-item-active {
+    @apply px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-100;
+  }
+
+  /* ── Badge / pill ─────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border;
+  }
+
+  .badge-cyan {
+    @apply badge bg-cyan-500/15 text-cyan-300 border-cyan-500/25;
+  }
+
+  .badge-coral {
+    @apply badge bg-rose-500/15 text-rose-300 border-rose-500/25;
+  }
+
+  .badge-mint {
+    @apply badge bg-emerald-500/15 text-emerald-300 border-emerald-500/25;
+  }
+
+  .badge-amber {
+    @apply badge bg-amber-500/15 text-amber-300 border-amber-500/25;
+  }
+
+  .badge-violet {
+    @apply badge bg-violet-500/15 text-violet-300 border-violet-500/25;
+  }
+
+  .badge-slate {
+    @apply badge bg-slate-700/60 text-slate-400 border-slate-600/50;
+  }
+
+  /* ── Progress bar ─────────────────────────────────────── */
+  .progress-track {
+    @apply w-full h-1.5 bg-slate-800 rounded-full overflow-hidden;
+  }
+
+  .progress-fill-cyan {
+    @apply h-full bg-cyan-500 rounded-full transition-all duration-500;
+  }
+
+  .progress-fill-mint {
+    @apply h-full bg-emerald-500 rounded-full transition-all duration-500;
+  }
+
+  .progress-fill-coral {
+    @apply h-full bg-rose-500 rounded-full transition-all duration-500;
+  }
+
+  .progress-fill-amber {
+    @apply h-full bg-amber-500 rounded-full transition-all duration-500;
+  }
+}
+
+@layer utilities {
+  /* Tighter letter-spacing for numbers */
+  .tabular-num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Subtle gradient overlays */
+  .gradient-fade-b {
+    background: linear-gradient(to bottom, transparent, rgba(6, 13, 26, 0.9));
+  }
+}

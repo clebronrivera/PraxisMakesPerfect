@@ -39,6 +39,16 @@ Do not use it for:
 - Maintained map of active docs and how to use them:
   `docs/DOCS_SYSTEM.md`
 
+## 2.1 Onboarding Profile Source Rules
+
+- Graduate-student onboarding should use the official NASP School Psychology Program Information directory as the source for the school psychology program selector.
+- The onboarding UI should present the graduate-student program flow as:
+  - `program_state` selected from a dropdown of NASP-listed jurisdictions
+  - `university` selected from a dropdown filtered to the chosen state
+- Store the selected program name in `user_progress.university` and the human-readable state name in `user_progress.program_state` so the existing profile schema remains stable.
+- Certification-state selection should use a normalized dropdown of U.S. states and supported jurisdictions rather than free-text entry.
+- If the NASP directory source is refreshed or the selector wiring changes, update this doc and keep the source URL current in the checked-in data file.
+
 ## 3. Assessment And Reporting Rules
 
 ### 3.1 Assessment and bank terminology
@@ -93,6 +103,65 @@ Do not use it for:
   [src/utils/assessmentReport.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentReport.ts)
 - The post-screener report should be based on the current assessment attempt first.
   Do not silently mix in cumulative practice data unless the UI is explicitly labeled as cumulative.
+
+### 3.2.1 Shared proficiency vocabulary for skills and domains
+
+- User-facing proficiency vocabulary is shared across skills and domains. Do not use different explanatory copy for domain badges versus skill badges.
+- The canonical user-facing levels are:
+  - `Emerging`
+  - `Approaching`
+  - `Demonstrating`
+  - `Not started` for zero-attempt skill states only
+- Canonical meaning:
+  - `Emerging` = foundational gaps are still getting in the way, so targeted remediation is needed before performance is consistent
+  - `Approaching` = performance is near the threshold, with opportunities to strengthen foundational knowledge and apply it more consistently
+  - `Demonstrating` = performance is meeting the threshold and shows the ability to apply foundational knowledge consistently in practice
+- Current shared thresholds:
+  - `Demonstrating` = `>= 80%`
+  - `Approaching` = `60%–79%`
+  - `Emerging` = `< 60%`
+- Overall exam readiness remains a separate metric: `70%` of the `45` tracked skills must reach `Demonstrating` for the readiness target.
+- If this vocabulary, its meanings, or the thresholds change, update the code and [docs/HOW_THE_APP_WORKS.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/HOW_THE_APP_WORKS.md) in the same change.
+  Code anchors:
+  [src/utils/skillProficiency.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/skillProficiency.ts)
+  [src/utils/assessmentReport.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentReport.ts)
+  [src/utils/progressSummaries.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/progressSummaries.ts)
+
+### 3.2.2 Answer-feedback references
+
+- User-facing feedback must not rely on unstable answer letters when answer order can change in the UI.
+- If answer order is shuffled or re-labeled for display, rationale copy and distractor notes should reference:
+  - the answer text itself
+  - a short quoted excerpt of the answer text
+  - or a structured `Correct answer` / `Your selection` block
+- Internal identifiers such as `A`-`F` may still be used for scoring and storage, but they should not be surfaced in explanation copy unless the displayed labels are guaranteed to match the stored labels.
+- Practice feedback and explanation rendering should stay aligned with the user-visible answer text, not just the internal answer key.
+  Code anchors:
+  [src/components/ExplanationPanel.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ExplanationPanel.tsx)
+  [src/components/PracticeSession.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/PracticeSession.tsx)
+  [src/utils/feedbackText.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/feedbackText.ts)
+
+### 3.2.3 Confidence response labels
+
+- User-facing confidence choices must be shown in this order:
+  - `Guess`
+  - `Unsure`
+  - `Sure`
+- Internal stored values remain:
+  - `low`
+  - `medium`
+  - `high`
+- The display mapping is fixed as:
+  - `low` -> `Guess`
+  - `medium` -> `Unsure`
+  - `high` -> `Sure`
+- Renaming these labels must not change their scoring meaning, persistence shape, weighting, or any downstream analysis keyed off `low` / `medium` / `high`.
+- Confidence terminology should be centralized in:
+  [src/utils/confidenceLabels.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/confidenceLabels.ts)
+  Code anchors:
+  [src/components/QuestionCard.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/QuestionCard.tsx)
+  [src/components/PracticeSession.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/PracticeSession.tsx)
+  [src/brain/learning-state.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/brain/learning-state.ts)
 
 ### 3.3 Foundational gaps
 
@@ -236,6 +305,37 @@ export const handler = async (event: any) => {
   [src/data/questions.json](/Users/lebron/Documents/PraxisMakesPerfect/src/data/questions.json)
   [scripts/export-question-csv.cjs](/Users/lebron/Documents/PraxisMakesPerfect/scripts/export-question-csv.cjs)
   [output/AUDIT_SUMMARY.md](/Users/lebron/Documents/PraxisMakesPerfect/output/AUDIT_SUMMARY.md)
+
+### 3.9.1 Question bank data integrity (merged options / leaked keys)
+
+Some historical exports or merges produced **structurally invalid MCQ rows** without failing JSON parse. Symptoms in the app:
+
+- An option letter appears “missing,” or the explanation references a letter that does not match what users see.
+- Choice **B** contains a fragment like ` … C) …` (two answers glued together).
+- **C** is empty while `option_count_expected` is `4`.
+- Any choice text contains export artifacts: `**Correct Answer:` or `**Explanation:**` (those belong only in `correct_answers` / `CORRECT_Explanation`, never in `A`–`F`).
+
+**Canonical runtime bank:** `src/data/questions.json`. **Parallel 900q bundle:** `praxis_5403_practice_questions_900q.json` — keep them aligned when correcting content.
+
+**Before merging or publishing question edits**, spot-check:
+
+1. `rg '\*\*Correct Answer:' src/data/questions.json` → should be **no hits** inside choice columns (explanations may still mention “Option C” in prose).
+2. For every item with `option_count_expected: "4"`, all of `A`–`D` must be non-empty after trim.
+3. CSVs and reports under `output/` are **not** source of truth; regenerate them after JSON fixes or they will retain stale corrupted strings.
+
+**Incident (2026-03-19):** Four IDs had this corruption and were repaired: `PQ_SWP-02_11`, `PQ_DBD-09_20`, `PQ_SAF-01_18`, `PQ_ETH-03_17`. Details: [ISSUE_LEDGER.md](./ISSUE_LEDGER.md) (entry dated 2026-03-19).
+
+### 3.10 Repo hygiene for local-only artifacts
+
+- Canonical runtime inputs belong in tracked source locations such as `src/data/`, `src/brain/`, `scripts/`, and the active docs set.
+- Private or reference materials that are not consumed by the app or build, such as PDFs, DOCX deliverables, scratch mapping notes, and one-off local scripts, belong under `local/` and should remain untracked.
+- Generated CSV/JSON exports under `output/` are local working artifacts by default and should not be treated as canonical or public repo assets.
+- If a generated artifact must remain tracked as an intentional handoff package, document the exception explicitly. Current kept exception: `output/AUDIT_SUMMARY.md`.
+- When non-runtime local artifacts are found in tracked repo content, remove them from tracking while preserving the local copy, then record the cleanup in `docs/ISSUE_LEDGER.md` and `CHANGELOG.md`.
+  Code anchors:
+  [/.gitignore](/Users/lebron/Documents/PraxisMakesPerfect/.gitignore)
+  [README.md](/Users/lebron/Documents/PraxisMakesPerfect/README.md)
+  [local/README.md](/Users/lebron/Documents/PraxisMakesPerfect/local/README.md)
 
 ## 4. Current Code Anchors
 

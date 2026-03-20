@@ -11,6 +11,10 @@ import {
 import { UserProfile } from '../hooks/useFirebaseProgress';
 import DiagnosticFeedback from './DiagnosticFeedback';
 import { useEngine } from '../hooks/useEngine';
+import {
+  formatChoiceReferenceList,
+  sanitizeFeedbackText
+} from '../utils/feedbackText';
 
 interface ExplanationPanelProps {
   question: AnalyzedQuestion;
@@ -18,6 +22,7 @@ interface ExplanationPanelProps {
   isCorrect: boolean;
   rationale: string;
   userProfile?: UserProfile; // Optional - only available in practice sessions
+  distractorNote?: string; // Optional - specific explanation of the wrong answer chosen
 }
 
 export default function ExplanationPanel({
@@ -25,9 +30,20 @@ export default function ExplanationPanel({
   userAnswer,
   isCorrect,
   rationale,
-  userProfile
+  userProfile,
+  distractorNote
 }: ExplanationPanelProps) {
   const engine = useEngine();
+  const correctAnswerSummary = formatChoiceReferenceList(
+    question,
+    getQuestionCorrectAnswers(question)
+  );
+  const userAnswerSummary = formatChoiceReferenceList(question, userAnswer);
+  const displayRationale = sanitizeFeedbackText(question, rationale);
+  const displayCorrectExplanation = question.correctExplanation
+    ? sanitizeFeedbackText(question, question.correctExplanation)
+    : '';
+
   // Convert AnalyzedQuestion to Question type for diagnostic feedback
   const questionForFeedback: Question = {
     id: question.id,
@@ -72,13 +88,29 @@ export default function ExplanationPanel({
             }`}>
               {isCorrect ? 'Correct!' : 'Not quite right'}
             </h4>
-            <p className="text-slate-300 text-sm leading-relaxed">{rationale}</p>
+            <div className="space-y-2 mb-3">
+              {!isCorrect && userAnswerSummary && (
+                <p className="text-slate-200 text-sm leading-relaxed">
+                  <span className="font-semibold text-slate-100">Your selection:</span>{' '}
+                  {userAnswerSummary}
+                </p>
+              )}
+              {correctAnswerSummary && (
+                <p className="text-slate-200 text-sm leading-relaxed">
+                  <span className="font-semibold text-slate-100">
+                    {getQuestionCorrectAnswers(question).length > 1 ? 'Correct responses:' : 'Correct answer:'}
+                  </span>{' '}
+                  {correctAnswerSummary}
+                </p>
+              )}
+            </div>
+            <p className="text-slate-300 text-sm leading-relaxed">{displayRationale}</p>
             
             {/* Extended Bank Fields (Static Questions) */}
-            {question.correctExplanation && question.correctExplanation !== rationale && (
+            {displayCorrectExplanation && displayCorrectExplanation !== displayRationale && (
               <div className="mt-4 pt-4 border-t border-slate-700/50">
                 <p className="text-xs text-slate-500 mb-2">CORRECT EXPLANATION:</p>
-                <p className="text-slate-300 text-sm leading-relaxed">{question.correctExplanation}</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{displayCorrectExplanation}</p>
               </div>
             )}
             
@@ -115,7 +147,7 @@ export default function ExplanationPanel({
 
       {/* Diagnostic Feedback (only if userProfile is available) */}
       {diagnosticFeedback && (
-        <DiagnosticFeedback feedback={diagnosticFeedback} />
+        <DiagnosticFeedback feedback={diagnosticFeedback} distractorNote={distractorNote} />
       )}
     </div>
   );

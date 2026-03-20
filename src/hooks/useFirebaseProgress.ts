@@ -64,6 +64,31 @@ export interface UserProfile {
   };
   diagnosticComplete?: boolean;
   lastUpdated?: any;
+
+  // Extended profile / onboarding fields
+  onboardingComplete?: boolean;
+  accountRole?: string;
+  fullName?: string;
+  preferredDisplayName?: string;
+  university?: string;
+  programType?: string;
+  programState?: string;
+  deliveryMode?: string;
+  trainingStage?: string;
+  certificationState?: string;
+  currentRole?: string;
+  certificationRoute?: string;
+  primaryExam?: string;
+  plannedTestDate?: string;
+  retakeStatus?: string;
+  numberOfPriorAttempts?: number;
+  targetScore?: number;
+  studyGoals?: string[];
+  weeklyStudyHours?: string;
+  biggestChallenge?: string[];
+  usedOtherResources?: boolean;
+  otherResourcesList?: string[];
+  whatWasMissing?: string;
 }
 
 export interface ResponseLog {
@@ -109,7 +134,9 @@ const defaultProfile: UserProfile = {
   practiceResponseCount: 0,
   migrationVersion: 1,
   screenerComplete: false,
-  diagnosticComplete: false
+  diagnosticComplete: false,
+  onboardingComplete: false,
+  studyGoals: []
 };
 
 export function useFirebaseProgress() {
@@ -229,7 +256,32 @@ export function useFirebaseProgress() {
           lastSession: data.last_session,
           migrationVersion: data.migration_version ?? 1,
 
-          lastUpdated: data.updated_at
+          lastUpdated: data.updated_at,
+
+          // Extended profile / onboarding fields
+          onboardingComplete: data.onboarding_complete ?? false,
+          accountRole: data.account_role ?? undefined,
+          fullName: data.full_name ?? undefined,
+          preferredDisplayName: data.preferred_display_name ?? undefined,
+          university: data.university ?? undefined,
+          programType: data.program_type ?? undefined,
+          programState: data.program_state ?? undefined,
+          deliveryMode: data.delivery_mode ?? undefined,
+          trainingStage: data.training_stage ?? undefined,
+          certificationState: data.certification_state ?? undefined,
+          currentRole: data.current_role ?? undefined,
+          certificationRoute: data.certification_route ?? undefined,
+          primaryExam: data.primary_exam ?? undefined,
+          plannedTestDate: data.planned_test_date ?? undefined,
+          retakeStatus: data.retake_status ?? undefined,
+          numberOfPriorAttempts: data.number_of_prior_attempts ?? undefined,
+          targetScore: data.target_score ?? undefined,
+          studyGoals: data.study_goals ?? [],
+          weeklyStudyHours: data.weekly_study_hours ?? undefined,
+          biggestChallenge: data.biggest_challenge ?? [],
+          usedOtherResources: data.used_other_resources ?? undefined,
+          otherResourcesList: data.other_resources_list ?? [],
+          whatWasMissing: data.what_was_missing ?? undefined,
         });
       } else {
         setProfileState(defaultProfile);
@@ -297,6 +349,81 @@ export function useFirebaseProgress() {
     setProfileState(newProfile);
     await saveProfile(newProfile);
   }, [saveProfile, setProfileState]);
+
+  // Save onboarding / extended profile data directly (upserts only the new columns)
+  const saveOnboardingData = useCallback(async (data: {
+    account_role?: string;
+    full_name?: string;
+    preferred_display_name?: string;
+    university?: string;
+    program_type?: string;
+    program_state?: string;
+    delivery_mode?: string;
+    training_stage?: string;
+    certification_state?: string;
+    current_role?: string;
+    certification_route?: string;
+    primary_exam?: string;
+    planned_test_date?: string;
+    retake_status?: string;
+    number_of_prior_attempts?: number | null;
+    target_score?: number | null;
+    study_goals?: string[];
+    weekly_study_hours?: string;
+    biggest_challenge?: string[];
+    used_other_resources?: boolean | null;
+    other_resources_list?: string[];
+    what_was_missing?: string;
+  }) => {
+    if (!user) return;
+    try {
+      const updates = {
+        user_id: user.id,
+        ...data,
+        onboarding_complete: true,
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = await supabase
+        .from('user_progress')
+        .upsert(updates, { onConflict: 'user_id' });
+
+      if (error) {
+        console.error('[saveOnboardingData] Supabase error:', error);
+        throw error;
+      }
+
+      // Mirror into local profile state
+      setProfileState({
+        ...profileRef.current,
+        onboardingComplete: true,
+        accountRole: data.account_role,
+        fullName: data.full_name,
+        preferredDisplayName: data.preferred_display_name,
+        university: data.university,
+        programType: data.program_type,
+        programState: data.program_state,
+        deliveryMode: data.delivery_mode,
+        trainingStage: data.training_stage,
+        certificationState: data.certification_state,
+        currentRole: data.current_role,
+        certificationRoute: data.certification_route,
+        primaryExam: data.primary_exam,
+        plannedTestDate: data.planned_test_date,
+        retakeStatus: data.retake_status,
+        numberOfPriorAttempts: data.number_of_prior_attempts ?? undefined,
+        targetScore: data.target_score ?? undefined,
+        studyGoals: data.study_goals ?? [],
+        weeklyStudyHours: data.weekly_study_hours,
+        biggestChallenge: data.biggest_challenge ?? [],
+        usedOtherResources: data.used_other_resources ?? undefined,
+        otherResourcesList: data.other_resources_list ?? [],
+        whatWasMissing: data.what_was_missing,
+      });
+    } catch (err) {
+      console.error('[saveOnboardingData] Error:', err);
+      throw err;
+    }
+  }, [user, setProfileState]);
 
   const migrateDomainSchema = useCallback(async () => {
     if (!user || !isLoaded) return;
@@ -643,6 +770,7 @@ export function useFirebaseProgress() {
   return {
     profile,
     updateProfile,
+    saveOnboardingData,
     updateSkillProgress,
     resetProgress,
     migrateDomainSchema,
