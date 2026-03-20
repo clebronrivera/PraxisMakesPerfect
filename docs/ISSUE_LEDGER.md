@@ -34,6 +34,19 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-20 - Public repo included local-only reference files and generated exports
+
+- Status: resolved
+- Area: repo hygiene / `.gitignore` / `README.md` / `local/` workspace / generated `output/` artifacts
+- Summary: The repo was mixing canonical code and data with non-runtime materials: root-level reference files (`PDF` / `TXT`), generated export files under `output/`, and loose private mapping work in the root. That made the public repo noisier than the live app required and increased the chance of accidentally publishing local materials.
+- Source of truth: runtime code and maintained docs stay tracked; private reference/source documents and generated exports stay local unless explicitly designated as a tracked handoff artifact.
+- Code anchors:
+  [/.gitignore](/Users/lebron/Documents/PraxisMakesPerfect/.gitignore)
+  [README.md](/Users/lebron/Documents/PraxisMakesPerfect/README.md)
+  [local/README.md](/Users/lebron/Documents/PraxisMakesPerfect/local/README.md)
+  [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
+- Resolution / next step: Added a durable `local/` workspace convention, ignored root-level reference documents and generated `output/` exports by default, and prepared the repo for keeping local-only materials on disk without keeping them in GitHub. `output/AUDIT_SUMMARY.md` remains the explicit tracked exception.
+
 ## 2026-03-18 - Home screen "0 Questions / 0 Current Streak" for users with existing responses
 
 - Status: resolved

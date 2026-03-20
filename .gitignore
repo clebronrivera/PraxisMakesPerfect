@@ -78,5 +78,22 @@ supabase/migrations/admin_*.sql
 # Temp admin scripts
 scripts/delete-carlos-plans.ts
 
+# Local-only workspace
+/local/**
+!/local/
+!/local/README.md
+!/local/.gitkeep
+
+# Root-level local reference files
+/*.pdf
+/*.docx
+/Questions.txt
+/HEALTH_CHECK_REPORT.txt
+
+# Generated local exports
+/output/archive/
+/output/*.csv
+/output/*.json
+
 # Deno lockfile (not needed for Node project)
 deno.lock

@@ -75,6 +75,7 @@ npm run verify:health
 ```text
 PraxisMakesPerfect/
 ├── App.tsx
+├── local/
 ├── knowledge-base.ts
 ├── scripts/
 ├── src/
@@ -89,3 +90,5 @@ PraxisMakesPerfect/
 
 - Older quick-start, implementation-plan, and audit files are retained only as historical artifacts under `archive/`.
 - Root-level planning and audit sprawl is no longer authoritative unless it is listed above.
+- `local/` is the intentionally ignored workspace for private PDFs, DOCX deliverables, scratch mapping files, and other local-only materials that should not land on GitHub.
+- Generated CSV/JSON exports under `output/` are local working artifacts by default, not canonical tracked assets; the current explicit tracked exception is `output/AUDIT_SUMMARY.md`.

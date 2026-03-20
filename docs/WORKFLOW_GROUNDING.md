@@ -252,6 +252,18 @@ export const handler = async (event: any) => {
 - Post-assessment screener UI:
   [src/components/ScreenerResults.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ScreenerResults.tsx)
 
+## 4. Repo Hygiene For Local-Only Artifacts
+
+- Canonical runtime inputs belong in tracked source locations such as `src/data/`, `src/brain/`, `scripts/`, and the active docs set.
+- Private or reference materials that are not consumed by the app or build, such as PDFs, DOCX deliverables, scratch mapping notes, and one-off local scripts, belong under `local/` and should remain untracked.
+- Generated CSV/JSON exports under `output/` are local working artifacts by default and should not be treated as canonical or public repo assets.
+- If a generated artifact must remain tracked as an intentional handoff package, document the exception explicitly. Current kept exception: `output/AUDIT_SUMMARY.md`.
+- When non-runtime local artifacts are found in tracked repo content, remove them from tracking while preserving the local copy, then record the cleanup in `docs/ISSUE_LEDGER.md` and `CHANGELOG.md`.
+  Code anchors:
+  [/.gitignore](/Users/lebron/Documents/PraxisMakesPerfect/.gitignore)
+  [README.md](/Users/lebron/Documents/PraxisMakesPerfect/README.md)
+  [local/README.md](/Users/lebron/Documents/PraxisMakesPerfect/local/README.md)
+
 ## 5. Change Checklist
 
 When changing reporting, readiness, or assessment wiring:
