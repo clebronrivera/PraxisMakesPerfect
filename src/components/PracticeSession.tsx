@@ -1,5 +1,7 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw, BookOpen } from 'lucide-react';
+import SkillHelpDrawer from './SkillHelpDrawer';
+import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
@@ -12,10 +14,15 @@ import {
   getQuestionCorrectAnswers
 } from '../brain/question-analyzer';
 import { normalizeDistractorPatterns } from '../utils/distractorPatterns';
+import { formatChoiceReference, sanitizeFeedbackText } from '../utils/feedbackText';
+import { getConfidenceDisplayLabel } from '../utils/confidenceLabels';
 import type { SessionMode } from '../types/assessment';
 import { getProgressDomainDefinition } from '../utils/progressTaxonomy';
 import { getSkillById, type SkillId } from '../brain/skill-map';
 import { useAuth } from '../contexts/AuthContext';
+import { incrementDailyQuestionCount } from '../hooks/useDailyQuestionCount';
+import { addDailyStudySeconds } from '../hooks/useDailyStudyTime';
+import { SKILL_MAP } from '../brain/skill-map';
 
 // ─── Question retirement ──────────────────────────────────────────────────────
 //
@@ -81,6 +88,10 @@ interface PracticeSessionProps {
   practiceDomain?: number | null;
   practiceSkillId?: string | null;
   onExitPractice?: () => void;
+  /** Hide the session stats bar (correct/wrong totals). Used for new-user spicy sessions. */
+  hideSummary?: boolean;
+  /** Spicy cycle mode: cycles one question per skill through all skills in sequence. */
+  spicyCycleMode?: boolean;
 }
 
 export default function PracticeSession({
@@ -94,10 +105,103 @@ export default function PracticeSession({
   practiceDomain,
   practiceSkillId,
   onExitPractice,
+  hideSummary = false,
+  spicyCycleMode = false,
 }: PracticeSessionProps) {
   const engine = useEngine();
   const { logout, user } = useAuth();
   const userId = user?.id ?? 'anon';
+
+  // ── Skill Help Drawer (shown during By Skill practice) ─────────────────────
+  const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
+  const skillLabel = practiceSkillId
+    ? (getProgressSkillDefinition(practiceSkillId)?.fullLabel ?? 'Skill Help')
+    : '';
+
+  // ── Daily study time tracking ────────────────────────────────────────────────
+  // Record session start time so we can compute elapsed seconds on unmount.
+  const sessionStartRef = useRef<number>(Date.now());
+  useEffect(() => {
+    sessionStartRef.current = Date.now();
+    return () => {
+      if (user?.id) {
+        const elapsed = Math.round((Date.now() - sessionStartRef.current) / 1000);
+        addDailyStudySeconds(user.id, elapsed);
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  // ── Spicy cycle: one question per skill, all 45 skills in sequence ──────────
+  // State stored in localStorage so it survives navigation away and back.
+  const spicyCycleKey = `pmp-spicy-cycle-${userId}`;
+
+  const [spicySkillIds, setSpicySkillIds] = useState<string[]>(() => {
+    if (!spicyCycleMode) return [];
+    try {
+      const stored = localStorage.getItem(spicyCycleKey);
+      if (stored) {
+        const parsed = JSON.parse(stored) as { ids: string[]; index: number };
+        if (Array.isArray(parsed.ids) && parsed.ids.length > 0) return parsed.ids;
+      }
+    } catch { /* ignore */ }
+    // Build a fresh shuffled list from the skill map
+    const all: string[] = [];
+    for (const domain of Object.values(SKILL_MAP)) {
+      for (const cluster of domain.clusters) {
+        for (const skill of cluster.skills) all.push(skill.skillId);
+      }
+    }
+    // Fisher-Yates shuffle
+    for (let i = all.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [all[i], all[j]] = [all[j], all[i]];
+    }
+    return all;
+  });
+
+  const [spicyCycleIndex, setSpicyCycleIndex] = useState<number>(() => {
+    if (!spicyCycleMode) return 0;
+    try {
+      const stored = localStorage.getItem(spicyCycleKey);
+      if (stored) {
+        const parsed = JSON.parse(stored) as { ids: string[]; index: number };
+        return typeof parsed.index === 'number' ? parsed.index : 0;
+      }
+    } catch { /* ignore */ }
+    return 0;
+  });
+
+  // Persist spicy cycle state whenever it changes
+  useEffect(() => {
+    if (!spicyCycleMode || spicySkillIds.length === 0) return;
+    try {
+      localStorage.setItem(spicyCycleKey, JSON.stringify({ ids: spicySkillIds, index: spicyCycleIndex }));
+    } catch { /* ignore */ }
+  }, [spicyCycleMode, spicyCycleKey, spicySkillIds, spicyCycleIndex]);
+
+  // Current skill ID to filter for in spicy mode
+  const currentSpicySkillId = spicyCycleMode && spicySkillIds.length > 0
+    ? spicySkillIds[spicyCycleIndex % spicySkillIds.length]
+    : null;
+
+  // Advance to next skill after each answered question in spicy mode.
+  // When the cycle completes (all 45 skills answered once), reshuffle for the next round.
+  const advanceSpicyCycle = useCallback(() => {
+    const next = spicyCycleIndex + 1;
+    if (next >= spicySkillIds.length) {
+      // Completed a full cycle — reshuffle skill order for the next round
+      const reshuffled = [...spicySkillIds];
+      for (let i = reshuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [reshuffled[i], reshuffled[j]] = [reshuffled[j], reshuffled[i]];
+      }
+      setSpicySkillIds(reshuffled);
+      setSpicyCycleIndex(0);
+    } else {
+      setSpicyCycleIndex(next);
+    }
+  }, [spicyCycleIndex, spicySkillIds]);
 
   // ── Stable practice-progress key (per user + context) ──────────────────────
   // Using a stable key means the question history and retire map reload
@@ -188,12 +292,18 @@ export default function PracticeSession({
   }, [analyzedQuestions, retireMap]);
 
   // ── Active pool (exclude retired questions, only after first pass) ───────────
+  // In spicy cycle mode, the pool is narrowed to one skill at a time.
   const activePool = useMemo(() => {
-    if (!firstPassComplete) return analyzedQuestions;
-    const active = analyzedQuestions.filter(q => !retireMap[q.id]?.retired);
-    // Fall back to full pool if all retired (pool reset effect handles the reset)
-    return active.length > 0 ? active : analyzedQuestions;
-  }, [analyzedQuestions, retireMap, firstPassComplete]);
+    let base = analyzedQuestions;
+    if (spicyCycleMode && currentSpicySkillId) {
+      const skillPool = analyzedQuestions.filter(q => q.skillId === currentSpicySkillId);
+      // If no questions exist for this skill, skip it gracefully by using the full pool
+      base = skillPool.length > 0 ? skillPool : analyzedQuestions;
+    }
+    if (!firstPassComplete) return base;
+    const active = base.filter(q => !retireMap[q.id]?.retired);
+    return active.length > 0 ? active : base;
+  }, [analyzedQuestions, retireMap, firstPassComplete, spicyCycleMode, currentSpicySkillId]);
 
   // ── Pool exhaustion: reset when every question in the pool is retired ────────
   useEffect(() => {
@@ -303,6 +413,9 @@ export default function PracticeSession({
       // savePracticeResponse before the async setState fires.
       const newStreak = isCorrect ? consecutiveCorrect + 1 : 0;
 
+      // Track daily question count for dashboard goal bar.
+      if (user?.id) incrementDailyQuestionCount(user.id);
+
       if (isCorrect) {
         setSessionStats(prev => ({ ...prev, correct: prev.correct + 1 }));
         setConsecutiveCorrect(newStreak);
@@ -325,13 +438,17 @@ export default function PracticeSession({
             let distractorNote: string | null = null;
             if (currentQuestion.distractors?.length) {
               const matched = currentQuestion.distractors.find(d => d.text === distractorText);
-              if (matched) distractorNote = matched.explanation;
+              if (matched) {
+                distractorNote = `You selected ${formatChoiceReference(currentQuestion, wrongAnswer)}. ${
+                  sanitizeFeedbackText(currentQuestion, matched.explanation)
+                }`;
+              }
             }
             if (!distractorNote) {
               const correctAnswerText = correctList.map(a => getQuestionChoiceText(currentQuestion, a)).join(' ');
               const patternId = matchDistractorPattern(distractorText, correctAnswerText, engine.distractorPatterns);
               const pattern = normalizeDistractorPatterns(engine.distractorPatterns).find(e => e.id === patternId);
-              distractorNote = `You selected ${wrongAnswer}. This is a common confusion because ${pattern?.description || 'these concepts are often mixed up.'}`;
+              distractorNote = `You selected ${formatChoiceReference(currentQuestion, wrongAnswer)}. This is a common confusion because ${pattern?.description || 'these concepts are often mixed up.'}`;
             }
             setCurrentDistractorNote(distractorNote);
           } catch (err) {
@@ -356,6 +473,7 @@ export default function PracticeSession({
       }
 
       setQuestionHistory(prev => [...prev, currentQuestion.id]);
+      if (spicyCycleMode) advanceSpicyCycle();
       setShowFeedback(true);
 
       if (logResponse) {
@@ -445,22 +563,32 @@ export default function PracticeSession({
             </span>
           </div>
 
-          {/* Correct / Wrong / Overconfident */}
-          <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
-            <span className="text-emerald-400">Correct: {sessionStats.correct}</span>
-            <span className="text-rose-400">Wrong: {sessionStats.wrong}</span>
-            {sessionStats.highConfidenceWrong > 0 && (
-              <span
-                className="text-orange-400"
-                title="Answered wrong despite selecting High confidence — worth extra review"
-              >
-                Overconfident: {sessionStats.highConfidenceWrong}
-              </span>
-            )}
-          </div>
+          {/* Correct / Wrong / Overconfident — hidden in spicy new-user mode */}
+          {!hideSummary && (
+            <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
+              <span className="text-emerald-400">Correct: {sessionStats.correct}</span>
+              <span className="text-rose-400">Wrong: {sessionStats.wrong}</span>
+              {sessionStats.highConfidenceWrong > 0 && (
+                <span
+                  className="text-orange-400"
+                  title={`Answered wrong despite selecting ${getConfidenceDisplayLabel('high')} - worth extra review`}
+                >
+                  Overconfident: {sessionStats.highConfidenceWrong}
+                </span>
+              )}
+            </div>
+          )}
 
-          {/* All-time cumulative % */}
-          {allTimePct !== null && (
+          {/* Spicy mode indicator */}
+          {spicyCycleMode && (
+            <div className="flex items-center gap-2 text-xs text-rose-400/80">
+              <span>🌶</span>
+              <span className="font-medium">Skill {(spicyCycleIndex % spicySkillIds.length) + 1} of {spicySkillIds.length}</span>
+            </div>
+          )}
+
+          {/* All-time cumulative % — hidden in hideSummary mode */}
+          {!hideSummary && allTimePct !== null && (
             <div className="hidden sm:flex items-center gap-1.5 pl-4 border-l border-slate-700/60">
               <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">All-time</span>
               <span className={`text-sm font-bold ${pctColor}`}>{allTimePct}%</span>
@@ -476,22 +604,48 @@ export default function PracticeSession({
           )}
         </div>
 
-        {/* Exit button — "← Skills" for skill practice, Home icon otherwise */}
-        <button
-          onClick={onExitPractice}
-          className="flex items-center gap-1.5 px-3 py-2 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-200 transition-colors text-sm flex-shrink-0"
-          title={practiceSkillId ? 'Back to Skills' : 'Exit Practice'}
-        >
-          {practiceSkillId ? (
-            <>
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Skills</span>
-            </>
-          ) : (
-            <Home className="w-5 h-5" />
+        {/* Right side: Help button (skill practice only) + Exit */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Help button — opens SkillHelpDrawer when in skill practice mode */}
+          {practiceSkillId && (
+            <button
+              onClick={() => setHelpDrawerOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/20 rounded-lg text-slate-400 hover:text-cyan-400 transition-colors text-sm"
+              title="Open skill lesson for help"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="hidden sm:inline text-xs font-semibold">Help</span>
+            </button>
           )}
-        </button>
+
+          {/* Exit button — "← Skills" for skill practice, Home icon otherwise */}
+          <button
+            onClick={onExitPractice}
+            className="flex items-center gap-1.5 px-3 py-2 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-200 transition-colors text-sm"
+            title={practiceSkillId ? 'Back to Skills' : 'Exit Practice'}
+          >
+            {practiceSkillId ? (
+              <>
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Skills</span>
+              </>
+            ) : (
+              <Home className="w-5 h-5" />
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* ── Skill Help Drawer ─────────────────────────────────────────────────── */}
+      {practiceSkillId && (
+        <SkillHelpDrawer
+          skillId={practiceSkillId}
+          skillLabel={skillLabel}
+          isOpen={helpDrawerOpen}
+          onClose={() => setHelpDrawerOpen(false)}
+          userId={user?.id ?? null}
+        />
+      )}
 
       {/* ── Pool Reset Notice ────────────────────────────────────────────────── */}
       {poolResetMessage && (
@@ -599,13 +753,8 @@ export default function PracticeSession({
             }
             rationale={currentQuestion.rationale || ''}
             userProfile={userProfile}
+            distractorNote={currentDistractorNote ?? undefined}
           />
-          {currentDistractorNote && (
-            <div className="bg-amber-500/10 border border-amber-500/30 p-6 rounded-2xl">
-              <h4 className="text-amber-500 font-bold mb-2 uppercase tracking-tight text-sm">Distractor Note</h4>
-              <p className="text-slate-300 text-sm leading-relaxed">{currentDistractorNote}</p>
-            </div>
-          )}
           <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-700/30 text-center">
             <p className="text-sm text-slate-400 italic">You will see this feedback again in your report</p>
           </div>

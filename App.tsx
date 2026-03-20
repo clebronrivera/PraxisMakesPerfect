@@ -1,20 +1,24 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare } from 'lucide-react';
+import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, CheckCircle, Lock, Sparkles, Crosshair } from 'lucide-react';
+import { useDailyStudyTime, formatStudyTime } from './src/hooks/useDailyStudyTime';
+import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 
 // Import questions and analysis
 import { analyzeQuestion, AnalyzedQuestion } from './src/brain/question-analyzer';
 import { detectWeaknesses, UserResponse } from './src/brain/weakness-detector';
 
 // Import components
-import StudyModesSection from './src/components/StudyModesSection';
+const DailyGoalBar = lazy(() => import('./src/components/DailyGoalBar'));
+const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
 import { ErrorBoundary } from './src/components/ErrorBoundary';
-import FeedbackModal from './src/components/FeedbackModal';
+const FeedbackModal = lazy(() => import('./src/components/FeedbackModal'));
 const ResultsDashboard = lazy(() => import('./src/components/ResultsDashboard'));
 const ScreenerAssessment = lazy(() => import('./src/components/ScreenerAssessment'));
 const FullAssessment = lazy(() => import('./src/components/FullAssessment'));
 const ScoreReport = lazy(() => import('./src/components/ScoreReport'));
 const ScreenerResults = lazy(() => import('./src/components/ScreenerResults'));
 const PracticeSession = lazy(() => import('./src/components/PracticeSession'));
+const LearningPathModulePage = lazy(() => import('./src/components/LearningPathModulePage'));
 const TeachMode = lazy(() => import('./src/components/TeachMode'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
@@ -27,7 +31,7 @@ import { createUserSession, deleteUserSession, getCurrentSession, loadUserSessio
 import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { useContent } from './src/context/ContentContext';
-import LoginScreen from './src/components/LoginScreen';
+import type { UserProfileData } from './src/components/OnboardingFlow';
 import { buildFullAssessment, buildScreener } from './src/utils/assessment-builder';
 import {
   isScreenerQuestionCount
@@ -42,6 +46,10 @@ import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
 import type { AssessmentReportType } from './src/types/assessment';
 import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
 import { buildProgressSummary } from './src/utils/progressSummaries';
+const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
+const OnboardingFlow = lazy(() => import('./src/components/OnboardingFlow'));
+
+const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.meta.url).href;
 
 // ============================================
 // TYPE DEFINITIONS
@@ -52,13 +60,13 @@ import { buildProgressSummary } from './src/utils/progressSummaries';
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'review' | 'teach' | 'admin';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'learning-path-module';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();
   const { questions: fetchedQuestions, isLoading: contentLoading, domains: fetchedDomains, skills: fetchedSkills } = useContent();
-  const { profile, updateProfile, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, isLoaded } = useFirebaseProgress();
+  const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, isLoaded } = useFirebaseProgress();
   const { selectNextQuestion } = useAdaptiveLearning();
   const [canonicalQuestions, setCanonicalQuestions] = useState<any[]>([]);
   const [canonicalLoading, setCanonicalLoading] = useState(true);
@@ -73,14 +81,23 @@ function PraxisStudyAppContent() {
 
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
 
-    import('./src/data/questions.json')
-      .then(module => {
+    fetch(CANONICAL_QUESTION_BANK_URL, { signal: controller.signal })
+      .then(async response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load question bank (${response.status})`);
+        }
+        return response.json() as Promise<any[]>;
+      })
+      .then(loadedQuestions => {
         if (!active) return;
-        const loadedQuestions = module.default as any[];
         setCanonicalQuestions(loadedQuestions);
       })
       .catch(error => {
+        if (controller.signal.aborted) {
+          return;
+        }
         console.error('[QuestionBank] Failed to load canonical question bank:', error);
       })
       .finally(() => {
@@ -91,6 +108,7 @@ function PraxisStudyAppContent() {
 
     return () => {
       active = false;
+      controller.abort();
     };
   }, []);
   
@@ -104,11 +122,6 @@ function PraxisStudyAppContent() {
   
   const savedSession = currentUserName ? getCurrentSession(currentUserName) : null;
   const hasSession = Boolean(savedSession);
-  const savedSessionLabel = savedSession && isStoredScreenerSessionType(savedSession.type)
-    ? ((savedSession.assessmentFlow === 'screener' || isScreenerQuestionCount(savedSession.questionIds.length))
-        ? 'screener'
-        : 'archived short assessment')
-    : 'full assessment';
   
   // App state
   const [activeAssessmentType, setActiveAssessmentType] = useState<'screener' | null>(null);
@@ -128,7 +141,9 @@ function PraxisStudyAppContent() {
   const [studyPlanGenerating, setStudyPlanGenerating] = useState(false);
   const [studyPlanError, setStudyPlanError] = useState<string | null>(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [resultsDefaultView, setResultsDefaultView] = useState<'domain' | 'skill'>('domain');
+  const [isSpicyMode, setIsSpicyMode] = useState(false);
+  /** SkillId currently open in the Learning Path module page */
+  const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
 
   // Practice context: tracks the last skill or domain practiced so the
   // "Continue Where You Left Off" card can name it and resume correctly.
@@ -141,13 +156,7 @@ function PraxisStudyAppContent() {
   // preAssessmentComplete was a dead field (always false, no DB column); collapsed to diagnosticComplete only.
   const hasArchivedShortAssessment = profile.diagnosticComplete;
   const hasCompletedScreener = profile.screenerComplete;
-  const screenerCompletedAtMillis = profile.lastScreenerCompletedAt
-    ? new Date(profile.lastScreenerCompletedAt).getTime()
-    : (profile.screenerResults?.completed_at ? new Date(profile.screenerResults.completed_at).getTime() : 0);
-  const archivedShortAssessmentCompletedAtMillis = profile.lastPreAssessmentCompletedAt
-    ? new Date(profile.lastPreAssessmentCompletedAt).getTime()
-    : 0;
-  const latestShortAssessmentIsScreener = hasCompletedScreener && screenerCompletedAtMillis >= archivedShortAssessmentCompletedAtMillis;
+
   const hasReadinessData = hasArchivedShortAssessment || hasCompletedScreener || profile.fullAssessmentComplete;
   const hasShortAssessmentReport = Boolean(
     (hasCompletedScreener && (profile.lastScreenerSessionId || profile.screenerItemIds?.length)) ||
@@ -169,17 +178,35 @@ function PraxisStudyAppContent() {
 
   // Count questions retired from practice (stored in localStorage per user).
   // Recomputed each time the user navigates to the home screen.
-  const retiredQuestionsCount = useMemo(() => {
-    if (!user?.id) return 0;
-    try {
-      const stored = localStorage.getItem(`pmp-qretire-${user.id}`);
-      if (!stored) return 0;
-      const map = JSON.parse(stored) as Record<string, { retired?: boolean }>;
-      return Object.values(map).filter(v => v.retired === true).length;
-    } catch { return 0; }
-  }, [user?.id, mode]);
 
   const isAdmin = isAdminEmail(user?.email);
+
+  // ── Interactive dashboard hooks ──────────────────────────────────────────────
+  const dailyStudySeconds = useDailyStudyTime(user?.id);
+  const dailyQuestionCount = useDailyQuestionCount(user?.id);
+
+  // Build 7-day activity data from localStorage daily keys for RecentActivityFeed
+  const recentActivityDays = useMemo(() => {
+    if (!user?.id) return [];
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      try {
+        const q = parseInt(localStorage.getItem(`pmp-daily-q-${user.id}-${ymd}`) ?? '0', 10) || 0;
+        const s = parseInt(localStorage.getItem(`pmp-daily-time-${user.id}-${ymd}`) ?? '0', 10) || 0;
+        return { date: ymd, questions: q, seconds: s };
+      } catch { return { date: ymd, questions: 0, seconds: 0 }; }
+    });
+  // Recompute when mode changes so returning from practice updates the feed
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, mode]);
+
+  const weeklyAvgSeconds = useMemo(() => {
+    const weeklyTotalSeconds = recentActivityDays.reduce((s, d) => s + d.seconds, 0);
+    const activeDaysThisWeek = recentActivityDays.filter(d => d.seconds > 0).length;
+    return activeDaysThisWeek > 0 ? Math.round(weeklyTotalSeconds / activeDaysThisWeek) : 0;
+  }, [recentActivityDays]);
 
   useEffect(() => {
     if (canonicalLoading || contentLoading || canonicalQuestions.length === 0 || fetchedQuestions.length === 0) {
@@ -630,6 +657,19 @@ function PraxisStudyAppContent() {
     setMode('practice');
   }, [savePracticeContext]);
 
+  const startSpicyPractice = useCallback(() => {
+    setPracticeDomainFilter(null);
+    setPracticeSkillFilter(null);
+    savePracticeContext({ type: 'general' });
+    setIsSpicyMode(true);
+    setMode('practice');
+  }, [savePracticeContext]);
+
+  const openLearningPathModule = useCallback((skillId: string) => {
+    setLearningPathSkillId(skillId);
+    setMode('learning-path-module');
+  }, []);
+
   // Handler to view past assessment reports
   const handleViewReport = useCallback(async (
     assessmentType: 'screener' | 'full-assessment'
@@ -752,86 +792,177 @@ function PraxisStudyAppContent() {
   // Show loading while checking auth, loading profile, or fetching content
   if (authLoading || !isLoaded || contentLoading || canonicalLoading || canonicalQuestions.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-400">Loading...</div>
+      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-glow-cyan animate-pulse">
+            <Brain className="w-5 h-5 text-white" />
+          </div>
+          <p className="text-sm text-slate-500">Loading...</p>
+        </div>
       </div>
     );
   }
   
   // Show login screen if not authenticated
   if (!user) {
-    return <LoginScreen />;
+    return (
+      <Suspense fallback={null}>
+        <LoginScreen />
+      </Suspense>
+    );
   }
 
+  // Show onboarding flow for new users who haven't completed profile setup
+  if (!profile.onboardingComplete) {
+    const handleOnboardingComplete = async (data: UserProfileData) => {
+      await saveOnboardingData({
+        account_role: data.account_role || undefined,
+        full_name: data.full_name || undefined,
+        preferred_display_name: data.preferred_display_name || undefined,
+        university: data.university || undefined,
+        program_type: data.program_type || undefined,
+        program_state: data.program_state || undefined,
+        delivery_mode: data.delivery_mode || undefined,
+        training_stage: data.training_stage || undefined,
+        certification_state: data.certification_state || undefined,
+        current_role: data.current_role || undefined,
+        certification_route: data.certification_route || undefined,
+        primary_exam: data.primary_exam || undefined,
+        planned_test_date: data.planned_test_date || undefined,
+        retake_status: data.retake_status || undefined,
+        number_of_prior_attempts: data.number_of_prior_attempts ? parseInt(data.number_of_prior_attempts, 10) : null,
+        target_score: data.target_score ? parseInt(data.target_score, 10) : null,
+        study_goals: data.study_goals,
+        weekly_study_hours: data.weekly_study_hours || undefined,
+        biggest_challenge: data.biggest_challenge,
+        used_other_resources: data.used_other_resources ?? null,
+        other_resources_list: data.other_resources_list,
+        what_was_missing: data.what_was_missing || undefined,
+      });
+    };
+
+    const handleOnboardingSkip = async () => {
+      await saveOnboardingData({});
+    };
+
+    return (
+      <Suspense fallback={null}>
+        <OnboardingFlow
+          displayName={currentUserName}
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      </Suspense>
+    );
+  }
+
+  const firstName = currentUserName?.split(' ')[0] || null;
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
-      
+    <div className="min-h-screen bg-navy-900 text-slate-100" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
+
       {/* Header */}
-      <header className="border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-slate-800/40 bg-navy-900/90 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Brain className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-glow-cyan">
+              <Brain className="w-4.5 h-4.5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-lg bg-gradient-to-r from-amber-200 to-orange-200 bg-clip-text text-transparent">
-                Praxis Study
-              </h1>
-              <p className="text-xs text-slate-500">School Psychology 5403</p>
+              <h1 className="font-bold text-base text-slate-100 leading-tight">Praxis Study</h1>
+              <p className="text-[10px] text-slate-600 leading-tight">School Psychology 5403</p>
             </div>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-500">User: <span className="text-slate-300">{currentUserName}</span></span>
-            {hasReadinessData && mode !== 'home' && (
-              <button
-                onClick={() => setMode('home')}
-                className="px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
-              >
-                ← Home
-              </button>
-            )}
+
+          <nav className="flex items-center gap-0.5">
+            {/* Primary tabs */}
+            {(() => {
+              const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
+              type NavTab = { label: string; icon: React.ReactNode; onClick: () => void; active: boolean; show: boolean };
+              const tabs: NavTab[] = [
+                {
+                  label: 'Dashboard',
+                  icon: <Brain className="w-3.5 h-3.5" />,
+                  onClick: () => setMode('home'),
+                  active: mode === 'home',
+                  show: true,
+                },
+                {
+                  label: 'Practice',
+                  icon: <Zap className="w-3.5 h-3.5" />,
+                  onClick: () => setMode('practice-hub'),
+                  active: isActivePractice,
+                  show: true,
+                },
+                {
+                  label: 'Progress',
+                  icon: <BarChart3 className="w-3.5 h-3.5" />,
+                  onClick: () => setMode('results'),
+                  active: mode === 'results',
+                  show: Boolean(hasReadinessData),
+                },
+                {
+                  label: 'Study Plan',
+                  icon: <BookOpen className="w-3.5 h-3.5" />,
+                  onClick: () => setMode('study-guide'),
+                  active: mode === 'study-guide',
+                  show: true,
+                },
+              ];
+              return tabs.filter(t => t.show).map(tab => (
+                <button
+                  key={tab.label}
+                  onClick={tab.onClick}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                    tab.active
+                      ? 'text-cyan-400 bg-slate-800/70 font-medium'
+                      : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800/40'
+                  }`}
+                >
+                  {tab.icon}
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </button>
+              ));
+            })()}
+
+            <div className="w-px h-4 bg-slate-800 mx-1.5" />
+
+            {/* Utility actions */}
             <button
               onClick={() => setIsFeedbackModalOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-cyan-300 hover:bg-slate-800/50 rounded-lg transition-colors"
+              className="p-1.5 text-slate-600 hover:text-slate-400 rounded-lg transition-colors"
               title="Send feedback"
             >
-              <MessageSquare className="w-4 h-4" />
-              <span>Feedback</span>
+              <MessageSquare className="w-3.5 h-3.5" />
             </button>
             {isAdmin && mode !== 'admin' && (
               <button
                 onClick={openAdminDashboard}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-amber-400 hover:bg-slate-800/50 rounded-lg transition-colors"
-                title="Admin Dashboard"
+                className="p-1.5 text-slate-600 hover:text-amber-400 rounded-lg transition-colors"
+                title="Admin"
               >
-                <Shield className="w-4 h-4" />
-                <span>Admin</span>
+                <Shield className="w-3.5 h-3.5" />
               </button>
             )}
             <button
               onClick={async () => {
-                // Clear any local session data
                 clearSession();
-                // Log out from Supabase
                 await logout();
-                // Reset local state
                 setMode('home');
                 setScreenerQuestions([]);
                 setFullAssessmentQuestions([]);
                 setLastAssessmentResponses([]);
               }}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-lg transition-colors"
+              className="p-1.5 text-slate-600 hover:text-slate-300 rounded-lg transition-colors"
               title="Log out"
             >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
+              <LogOut className="w-3.5 h-3.5" />
             </button>
-          </div>
+          </nav>
         </div>
       </header>
-      
-      <main className="max-w-4xl mx-auto px-6 py-8">
+
+      <main className="max-w-5xl mx-auto px-6 py-8">
         <Suspense fallback={
           <div className="min-h-[240px] flex items-center justify-center">
             <div className="text-slate-400">Loading section...</div>
@@ -839,374 +970,556 @@ function PraxisStudyAppContent() {
         }>
         
         {/* HOME SCREEN */}
-        {mode === 'home' && (
-          <div className="space-y-8">
-            <div className="text-center space-y-4 pt-8">
-              <h2 className="text-3xl font-bold text-slate-100">
-                {hasReadinessData ? 'Welcome Back!' : 'Ready to Study?'}
-              </h2>
-              <p className="text-slate-400 max-w-md mx-auto">
-                {hasReadinessData
-                  ? `${profile.totalQuestionsSeen} questions answered${retiredQuestionsCount > 0 ? `, ${retiredQuestionsCount} retired` : ''}. Keep building your mastery.`
-                  : 'Start with the skills screener, then use domain review and the full assessment to build your plan.'}
-              </p>
-            </div>
+        {mode === 'home' && (() => {
+          // ── Derived state ────────────────────────────────────────────────────
+          const isNewUser = !hasCompletedScreener && !profile.fullAssessmentComplete;
+          const isScreenerDone = hasCompletedScreener && !profile.fullAssessmentComplete;
+          const isFullyUnlocked = Boolean(profile.fullAssessmentComplete);
 
-            {/* Quick Stats (if has history) */}
-            {hasReadinessData && (
-              <div className="grid grid-cols-3 gap-4">
-                <div className="p-4 bg-slate-800/50 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-amber-400">{retiredQuestionsCount}</p>
-                  <p className="text-xs font-medium text-slate-400 mt-0.5">Retired Questions</p>
-                  <p className="text-[10px] text-slate-500 mt-1">Secured and removed from practice</p>
-                </div>
-                <div className="p-4 bg-slate-800/50 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-emerald-400">{profile.streak}</p>
-                  <p className="text-xs font-medium text-slate-400 mt-0.5">Current Streak</p>
-                  <p className="text-[10px] text-slate-500 mt-1">Correct in a row this session</p>
-                </div>
-                <div className="p-4 bg-slate-800/50 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-purple-400">
-                    {progressSummary.skills.filter(s => s.score !== null && s.score < 0.6).length}
-                  </p>
-                  <p className="text-xs font-medium text-slate-400 mt-0.5">Skills to Strengthen</p>
-                  <p className="text-[10px] text-slate-500 mt-1">Below 60% mastery</p>
-                </div>
-              </div>
-            )}
+          // Stats for State 3
+          const totalSkills = progressSummary.skills.length;
+          const masteredSkills = progressSummary.skills.filter(s => s.score !== null && s.score >= 0.7).length;
+          const readinessTarget = Math.ceil(totalSkills * 0.7);
+          const skillsToReadiness = Math.max(0, readinessTarget - masteredSkills);
 
-            {/* View Report Buttons */}
-            {hasShortAssessmentReport && (
-              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
-                <button
-                  onClick={() => handleViewReport('screener')}
-                  className="w-full flex items-center justify-between p-4 bg-amber-500/20 hover:bg-amber-500/30 rounded-lg transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <BarChart3 className="w-5 h-5 text-amber-400" />
-                    <div className="text-left">
-                      <p className="font-semibold text-amber-300">
-                        {latestShortAssessmentIsScreener ? 'View Screener Report' : 'View Archived Short-Assessment Report'}
-                      </p>
-                      <p className="text-xs text-amber-200/80">
-                        {latestShortAssessmentIsScreener
-                          ? 'Review your screener results and study guidance'
-                          : 'Review an earlier short-assessment report from before the screener became the active flow'}
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-amber-400" />
-                </button>
-              </div>
-            )}
+          // Top 5 developing skills (worst-performing with ≥1 attempt)
+          const top5Target = Object.entries(profile.skillScores)
+            .filter(([, p]) => p.attempts >= 1 && p.score < 0.7)
+            .sort((a, b) => a[1].score - b[1].score)
+            .slice(0, 5);
 
-            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">Beta Feedback</p>
-                  <h3 className="mt-1 text-lg font-semibold text-slate-100">Keep the reporting flow simple for testers</h3>
-                  <p className="mt-2 text-sm text-cyan-50/80">
-                    Use the feedback button in the header for feature and workflow notes. On any question, use the warning icon to report issues in the stem, answer choices, key, rationale, or question length.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setIsFeedbackModalOpen(true)}
-                  className="rounded-xl bg-cyan-400 px-4 py-2.5 font-medium text-slate-950 transition-colors hover:bg-cyan-300"
-                >
-                  Send beta feedback
-                </button>
-              </div>
-            </div>
+          // Days until weekly stats reset (next Monday)
+          const _todayDay = new Date().getDay();
+          const daysUntilReset = _todayDay === 1 ? 7 : (8 - _todayDay) % 7;
 
-            {/* ── Practice: Continue Where You Left Off ── */}
-            {profile.lastSession?.mode === 'practice' && (() => {
+          // Session resume helper (used in all states)
+          const sessionResumeCard = (() => {
+            const hasAssessmentInProgress =
+              profile.lastSession?.mode === 'screener' ||
+              profile.lastSession?.mode === 'full' ||
+              profile.lastSession?.mode === 'diagnostic' ||
+              (!profile.lastSession && hasSession && savedSession);
+            const hasPracticeInProgress = profile.lastSession?.mode === 'practice';
+            if (!hasAssessmentInProgress && !hasPracticeInProgress) return null;
+
+            if (hasPracticeInProgress) {
               const ctx = lastPracticeContext;
               const skillName = ctx?.skillId ? (getSkillById(ctx.skillId)?.name ?? ctx.skillId) : null;
               const domainInfo = ctx?.domainId ? PROGRESS_DOMAINS.find(d => d.id === ctx.domainId) : null;
-              const contextLabel = skillName
-                ? skillName
-                : domainInfo
-                  ? `Domain ${domainInfo.id}: ${domainInfo.name}`
-                  : 'a practice session';
+              const contextLabel = skillName ?? (domainInfo ? `Domain ${domainInfo.id}: ${domainInfo.name}` : 'practice session');
               return (
-                <div className="p-6 bg-blue-500/20 border border-blue-500/30 rounded-2xl space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-blue-300 mb-1">Continue Where You Left Off</h3>
-                    <p className="text-sm text-blue-200/80">
-                      Continue working on:{' '}
-                      <span className="font-semibold text-blue-100">{contextLabel}</span>
-                    </p>
-                    {profile.lastSession?.updatedAt && (
-                      <p className="text-xs text-blue-300/60 mt-1">
-                        Last active: {new Date(profile.lastSession.updatedAt.seconds * 1000 || profile.lastSession.updatedAt).toLocaleString()}
-                      </p>
-                    )}
+                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-blue-300">Practice in progress</p>
+                    <p className="text-xs text-blue-200/60 mt-0.5 truncate">{contextLabel}</p>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 shrink-0">
                     <button
                       onClick={() => {
-                        if (ctx?.type === 'skill' && ctx.skillId) {
-                          startSkillPractice(ctx.skillId);
-                        } else if (ctx?.type === 'domain' && ctx.domainId) {
-                          startPractice(ctx.domainId);
-                        } else {
-                          startPractice();
-                        }
+                        if (ctx?.type === 'skill' && ctx.skillId) startSkillPractice(ctx.skillId);
+                        else if (ctx?.type === 'domain' && ctx.domainId) startPractice(ctx.domainId);
+                        else startPractice();
                       }}
-                      className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
-                    >
-                      Resume
-                    </button>
-                    <button
-                      onClick={() => {
-                        setResultsDefaultView('skill');
-                        setMode('results');
-                      }}
-                      className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
-                    >
-                      Select a New Skill
-                    </button>
+                      className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+                    >Resume</button>
                   </div>
                 </div>
               );
-            })()}
+            }
 
-            {/* ── Assessment: Continue Where You Left Off ── */}
-            {(profile.lastSession?.mode === 'screener' ||
-              profile.lastSession?.mode === 'full' ||
-              profile.lastSession?.mode === 'diagnostic' ||
-              (!profile.lastSession && hasSession && savedSession)) && (
-              <div className="p-6 bg-blue-500/20 border border-blue-500/30 rounded-2xl space-y-4">
-                <div>
-                  <h3 className="font-semibold text-blue-300 mb-1">Continue Where You Left Off</h3>
-                  <p className="text-sm text-blue-200/80">
-                    {profile.lastSession ? (
-                      <>
-                        {profile.lastSession.mode === 'full' && 'Full assessment'}
-                        {profile.lastSession.mode === 'screener' && 'Screener'}
-                        {profile.lastSession.mode === 'diagnostic' && 'Archived short assessment'}
-                        {profile.lastSession.questionIndex > 0 && ` • Question ${profile.lastSession.questionIndex + 1}`}
-                      </>
-                    ) : savedSession ? (
-                      <>
-                        {savedSessionLabel} session
-                        {savedSession.responses.length > 0 && ` • ${savedSession.responses.length} questions completed`}
-                      </>
-                    ) : null}
+            return (
+              <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-blue-300">
+                    {profile.lastSession?.mode === 'full' ? 'Full diagnostic' : 'Screener'} in progress
                   </p>
-                  <p className="text-xs text-blue-200/70 mt-1">
-                    Resume the last assessment you were working on.
+                  <p className="text-xs text-blue-200/60 mt-0.5">
+                    {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex > 0
+                      ? `Question ${profile.lastSession.questionIndex + 1} · ` : ''}
+                    Resume where you left off
                   </p>
-                  {profile.lastSession?.updatedAt && (
-                    <p className="text-xs text-blue-300/60 mt-1">
-                      Last updated: {new Date(profile.lastSession.updatedAt.seconds * 1000 || profile.lastSession.updatedAt).toLocaleString()}
-                    </p>
-                  )}
                 </div>
-                <div className="space-y-2">
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => {
-                        if (profile.lastSession) {
-                          const lastSession = profile.lastSession;
-                          if (lastSession.mode === 'screener') {
-                            const saved = loadUserSession(lastSession.sessionId);
-                            if (!saved) {
-                              updateProfile({ lastSession: null });
-                              alert('That saved screener session is no longer available. Start a new screener from the home screen.');
-                              return;
-                            }
-                            startScreener(saved);
-                          } else if (lastSession.mode === 'diagnostic') {
-                            const saved = loadUserSession(lastSession.sessionId);
-                            if (saved && isStoredScreenerSessionType(saved.type) && (
-                              saved.assessmentFlow === 'screener' ||
-                              isScreenerQuestionCount(saved.questionIds.length)
-                            )) {
-                              void updateProfile({ lastSession: { ...lastSession, mode: 'screener' } });
-                              startScreener(saved);
-                              return;
-                            }
-                            updateProfile({ lastSession: null });
-                            alert('That archived short-assessment session can no longer be resumed. Start a new screener from the home screen.');
-                          } else if (lastSession.mode === 'full') {
-                            const saved = loadUserSession(lastSession.sessionId);
-                            if (!saved) {
-                              updateProfile({ lastSession: null });
-                              alert('That saved full assessment session is no longer available. Start a new full assessment from the home screen.');
-                              return;
-                            }
-                            startFullAssessment(saved);
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      if (profile.lastSession) {
+                        const ls = profile.lastSession;
+                        if (ls.mode === 'screener') {
+                          const saved = loadUserSession(ls.sessionId);
+                          if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
+                          startScreener(saved);
+                        } else if (ls.mode === 'diagnostic') {
+                          const saved = loadUserSession(ls.sessionId);
+                          if (saved && isStoredScreenerSessionType(saved.type) && (saved.assessmentFlow === 'screener' || isScreenerQuestionCount(saved.questionIds.length))) {
+                            void updateProfile({ lastSession: { ...ls, mode: 'screener' } });
+                            startScreener(saved); return;
                           }
-                        } else if (savedSession) {
-                          handleResumeAssessment();
+                          updateProfile({ lastSession: null });
+                          alert('That session can no longer be resumed. Start a new screener.');
+                        } else if (ls.mode === 'full') {
+                          const saved = loadUserSession(ls.sessionId);
+                          if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
+                          startFullAssessment(saved);
                         }
-                      }}
-                      className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
-                    >
-                      Resume
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (profile.lastSession) updateProfile({ lastSession: null });
-                        if (savedSession) handleDiscardSession();
-                      }}
-                      className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
-                    >
-                      Start New Attempt
-                    </button>
-                  </div>
-                  <p className="text-xs text-slate-500 text-center">
-                    Your scores and progress history are not affected.
+                      } else if (savedSession) { handleResumeAssessment(); }
+                    }}
+                    className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+                  >Resume</button>
+                  <button
+                    onClick={() => {
+                      if (profile.lastSession) updateProfile({ lastSession: null });
+                      if (savedSession) handleDiscardSession();
+                    }}
+                    className="px-3 py-1.5 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 text-slate-400 rounded-lg text-sm transition-colors"
+                  >Discard</button>
+                </div>
+              </div>
+            );
+          })();
+
+          // True when an in-progress screener (or diagnostic-type) session exists.
+          // Used to suppress the "Take the screener" CTA while the resume card is shown.
+          const screenerSessionInProgress =
+            profile.lastSession?.mode === 'screener' ||
+            profile.lastSession?.mode === 'diagnostic' ||
+            (!profile.lastSession && hasSession && savedSession && isStoredScreenerSessionType((savedSession as any).type));
+
+          // True when an in-progress full assessment session exists.
+          // Used to suppress the "Take the full diagnostic" CTA while the resume card is shown.
+          const fullAssessmentSessionInProgress =
+            profile.lastSession?.mode === 'full' ||
+            (!profile.lastSession && hasSession && savedSession && (savedSession as any).type === 'full-assessment');
+
+          // ── Feeling Spicy card (shared across states 1 & 2) ─────────────────
+          const spicyCard = (
+            <div className="p-5 bg-navy-800/60 border border-navy-600/40 rounded-2xl">
+              <div className="flex items-start gap-3 mb-3">
+                <span className="text-xl leading-none mt-0.5">🌶</span>
+                <div>
+                  <p className="font-semibold text-slate-200 text-sm">Feeling spicy?</p>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Jump straight into questions. Each spicy session cycles through one question per skill — all 45 skills in sequence — giving you broad exposure without repeating a skill until every one has been covered. Your responses still count toward your skill data and feed precision into your AI Study Plan.
                   </p>
                 </div>
               </div>
-            )}
-            
-            {/* Action Buttons */}
-            {!savedSession && !profile.lastSession && (
-              <div className="space-y-4">
-              {!hasReadinessData ? (
+              <button
+                onClick={startSpicyPractice}
+                className="w-full px-4 py-2.5 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/25 text-rose-300 rounded-xl text-sm font-semibold transition-colors"
+              >
+                Let's go →
+              </button>
+            </div>
+          );
 
+          return (
+            <div className="space-y-8 pb-16">
+
+              {/* ══════════════════════════════════════════════════════════════ */}
+              {/* STATE 1: NEW USER                                              */}
+              {/* ══════════════════════════════════════════════════════════════ */}
+              {isNewUser && (
                 <>
-                  {!profile.screenerComplete && (
-                    <button
-                      onClick={() => startScreener(undefined)}
-                      className="w-full p-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-purple-500/20 transition-all"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                          <Zap className="w-6 h-6 text-white" />
+                  {/* Hero */}
+                  <div className="pt-4">
+                    <p className="overline mb-1.5">Dashboard</p>
+                    <h2 className="text-3xl font-bold text-slate-50 leading-tight">Welcome to Praxis Study</h2>
+                    <p className="text-slate-400 mt-2 max-w-lg leading-relaxed">
+                      Two steps to unlock your personalized experience. Start with the screener to get your baseline, then complete the full diagnostic to unlock everything.
+                    </p>
+                  </div>
+
+                  {/* Session in progress (if they started something) */}
+                  {sessionResumeCard}
+
+                  {/* Two-step unlock card */}
+                  <div className="border border-navy-600/50 rounded-2xl overflow-hidden">
+                    {/* Step 1 — Primary CTA */}
+                    <div className="p-6 bg-gradient-to-br from-violet-600/20 to-indigo-600/10 border-b border-navy-600/40">
+                      <div className="flex items-start gap-4">
+                        <div className="w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-sm font-bold text-violet-300">1</span>
                         </div>
-                        <div className="text-left">
-                          <p className="font-bold text-white text-lg">Skills Screener (50Q)</p>
-                          <p className="text-purple-100 text-sm">50 questions • broad skill coverage</p>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-100">Complete the screener</p>
+                          <p className="text-sm text-slate-400 mt-1.5 leading-relaxed">
+                            50 questions across all four Praxis sections. Gets you a quick baseline and unlocks domain-based practice so you can start drilling by subject area.
+                          </p>
+                          {!screenerSessionInProgress && (
+                            <button
+                              onClick={() => startScreener(undefined)}
+                              className="mt-4 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2"
+                            >
+                              <Zap className="w-4 h-4" />
+                              Take the screener
+                            </button>
+                          )}
                         </div>
-                      </div>
-                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => startFullAssessment(undefined)}
-                    className="w-full p-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-blue-500/20 transition-all"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="text-left">
-                        <p className="font-bold text-white text-lg">Start Full Assessment</p>
-                        <p className="text-blue-100 text-sm">125 questions • ~2-3 hours</p>
                       </div>
                     </div>
-                    <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </>
-              ) : (
-                <>
-                  {!profile.screenerComplete && (
-                    <button
-                      onClick={() => startScreener(undefined)}
-                      className="w-full p-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-purple-500/20 transition-all"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                          <Zap className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="text-left">
-                          <p className="font-bold text-white text-lg">Skills Screener (50Q)</p>
-                          <p className="text-purple-100 text-sm">50 questions • broad skill coverage</p>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  )}
 
-                  {!profile.fullAssessmentComplete ? (
-                    <button
-                      onClick={() => startFullAssessment(undefined)}
-                      className="w-full p-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-blue-500/20 transition-all"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                          <BarChart3 className="w-6 h-6 text-white" />
+                    {/* Step 2 — Locked */}
+                    <div className="p-6 bg-navy-800/40 opacity-60">
+                      <div className="flex items-start gap-4">
+                        <div className="w-8 h-8 rounded-full bg-slate-700/60 border border-slate-600/40 flex items-center justify-center shrink-0 mt-0.5">
+                          <Lock className="w-3.5 h-3.5 text-slate-500" />
                         </div>
-                        <div className="text-left">
-                          <p className="font-bold text-white text-lg">Full Assessment</p>
-                          <p className="text-blue-100 text-sm">125 questions • Complete exam simulation</p>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-400">Complete the full diagnostic</p>
+                          <p className="text-sm text-slate-500 mt-1.5 leading-relaxed">
+                            Unlocks: Practice by Skill, personalized AI Study Plan, and a custom learning path built around your still-developing areas.
+                          </p>
+                          <p className="text-xs text-slate-600 mt-2">Complete Step 1 first</p>
                         </div>
-                      </div>
-                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleViewReport('full-assessment')}
-                      className="w-full p-6 bg-gradient-to-r from-blue-500/50 to-indigo-500/50 rounded-2xl flex items-center justify-between group hover:shadow-lg hover:shadow-blue-500/20 transition-all border border-blue-500/30"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                          <BarChart3 className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="text-left">
-                          <p className="font-bold text-white text-lg">View Full Assessment Report</p>
-                          <p className="text-blue-100 text-sm">Review your completed assessment</p>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => {
-                      setResultsDefaultView('domain');
-                      setMode('results');
-                    }}
-                    className="w-full p-6 bg-slate-800/50 border border-slate-700 rounded-2xl flex items-center justify-between group hover:bg-slate-800 transition-all"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-6 h-6 text-slate-300" />
-                      </div>
-                      <div className="text-left">
-                        <p className="font-semibold text-slate-200">View Progress</p>
-                        <p className="text-slate-500 text-sm">See your domain and skill progress</p>
                       </div>
                     </div>
-                    <ChevronRight className="w-6 h-6 text-slate-500 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                  </div>
+
+                  {/* AI study guide teaser */}
+                  <div className="p-5 bg-navy-800/40 border border-cyan-500/10 rounded-2xl">
+                    <div className="flex items-start gap-3">
+                      <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-cyan-300">Unlock personalized study guidance</p>
+                        <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                          Complete the screener and full diagnostic to unlock a personalized study plan, targeted practice, and a custom learning path based on your developing areas.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Feeling spicy */}
+                  {spicyCard}
                 </>
               )}
+
+              {/* ══════════════════════════════════════════════════════════════ */}
+              {/* STATE 2: SCREENER DONE, AWAITING FULL DIAGNOSTIC               */}
+              {/* ══════════════════════════════════════════════════════════════ */}
+              {isScreenerDone && (
+                <>
+                  {/* Hero */}
+                  <div className="pt-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div>
+                      <p className="overline mb-1.5">Dashboard</p>
+                      <h2 className="text-3xl font-bold text-slate-50 leading-tight">
+                        {firstName ? `Nice work, ${firstName}.` : 'Screener complete.'}
+                      </h2>
+                      <p className="text-slate-400 mt-2 max-w-md leading-relaxed">
+                        One more step to unlock the full personalized experience.
+                      </p>
+                    </div>
+                    {(profile.streak ?? 0) > 0 && (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full self-start shrink-0">
+                        <Flame className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-sm font-semibold text-emerald-300">{profile.streak} streak</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Session in progress */}
+                  {sessionResumeCard}
+
+                  {/* Two-step card — Step 1 done */}
+                  <div className="border border-navy-600/50 rounded-2xl overflow-hidden">
+                    {/* Step 1 — Complete */}
+                    <div className="px-6 py-4 bg-emerald-500/5 border-b border-navy-600/40 flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-emerald-300">Step 1 — Screener complete</p>
+                        <p className="text-xs text-slate-500 mt-0.5">Domain-based practice is now active. Head to Practice to drill by subject.</p>
+                      </div>
+                    </div>
+
+                    {/* Step 2 — Primary CTA */}
+                    <div className="p-6 bg-gradient-to-br from-blue-600/20 to-indigo-600/10">
+                      <div className="flex items-start gap-4">
+                        <div className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-sm font-bold text-blue-300">2</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-100">Take the full diagnostic</p>
+                          <p className="text-sm text-slate-400 mt-1.5 leading-relaxed">
+                            Unlocks everything: Practice by Skill, your personalized AI Study Plan, and a custom learning path built around the skills you are still developing — not the ones you already have down.
+                          </p>
+                          <ul className="mt-3 space-y-1">
+                            {['Practice by Skill', 'Personalized AI Study Plan', 'Custom learning path for developing areas'].map(item => (
+                              <li key={item} className="flex items-center gap-2 text-xs text-blue-200/70">
+                                <span className="w-1 h-1 rounded-full bg-blue-400 shrink-0" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                          {!fullAssessmentSessionInProgress && (
+                            <button
+                              onClick={() => startFullAssessment(undefined)}
+                              className="mt-5 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2"
+                            >
+                              <BarChart3 className="w-4 h-4" />
+                              Take the full diagnostic
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AI study guide unlock message */}
+                  <div className="p-5 bg-cyan-500/5 border border-cyan-500/15 rounded-2xl">
+                    <div className="flex items-start gap-3">
+                      <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-cyan-300">Unlock your personalized study guide</p>
+                        <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                          Take the full diagnostic to unlock targeted practice, your highest-priority focus areas, and a customized study path based on the skills you are still developing.
+                          You can also customize your plan around how many weeks you have until the exam and how much daily study time you want to commit.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Feeling spicy */}
+                  {spicyCard}
+                </>
+              )}
+
+              {/* ══════════════════════════════════════════════════════════════ */}
+              {/* STATE 3: FULL DIAGNOSTIC COMPLETE — REAL DASHBOARD             */}
+              {/* ══════════════════════════════════════════════════════════════ */}
+              {isFullyUnlocked && (
+                <>
+                  {/* Hero */}
+                  <div className="pt-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div>
+                      <p className="overline mb-1.5">Dashboard</p>
+                      <h2 className="text-3xl font-bold text-slate-50 leading-tight">
+                        {firstName ? `Welcome back, ${firstName}.` : 'Welcome back.'}
+                      </h2>
+                    </div>
+                    {(profile.streak ?? 0) > 0 && (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full self-start shrink-0">
+                        <Flame className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-sm font-semibold text-emerald-300">{profile.streak} streak</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Session resume */}
+                  {sessionResumeCard}
+
+                  {/* Stat cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {[
+                      { label: 'Questions completed', value: profile.totalQuestionsSeen ?? 0, color: 'text-cyan-400', desc: 'Total responses' },
+                      { label: 'Skills till readiness', value: skillsToReadiness, color: 'text-rose-400', desc: `${masteredSkills}/${readinessTarget} skills mastered` },
+                      { label: 'Avg time this week', value: weeklyAvgSeconds > 0 ? formatStudyTime(weeklyAvgSeconds) : '—', color: 'text-violet-400', desc: `Resets in ${daysUntilReset} day${daysUntilReset === 1 ? '' : 's'}` },
+                      { label: 'Daily goal', value: `${dailyQuestionCount}/${DAILY_GOAL}`, color: dailyQuestionCount >= DAILY_GOAL ? 'text-emerald-400' : 'text-amber-400', desc: 'Questions today' },
+                    ].map(stat => (
+                      <div key={stat.label} className="p-4 bg-navy-800/70 border border-navy-600/40 rounded-2xl">
+                        <p className={`text-2xl font-bold tabular-nums ${stat.color}`}>{stat.value}</p>
+                        <p className="text-xs font-semibold text-slate-300 mt-1 leading-tight">{stat.label}</p>
+                        <p className="text-[10px] text-slate-600 mt-0.5">{stat.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Daily goal bar */}
+                  <DailyGoalBar count={dailyQuestionCount} studySeconds={dailyStudySeconds} />
+
+                  {/* Personalized Focus */}
+                  {top5Target.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-1.5">
+                        <Crosshair className="w-3.5 h-3.5 text-slate-500" />
+                        <p className="overline">Personalized focus</p>
+                      </div>
+                      <div className="space-y-2">
+                        {top5Target.map(([skillId, perf]) => {
+                          const skill = getSkillById(skillId as any);
+                          const pct = Math.round(perf.score * 100);
+                          return (
+                            <div key={skillId} className="flex items-center justify-between gap-3 p-3.5 bg-navy-800/60 border border-navy-600/40 rounded-xl">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-semibold text-slate-200 truncate">{skill?.name ?? skillId}</p>
+                                <p className={`text-xs mt-0.5 font-medium tabular-nums ${pct < 60 ? 'text-rose-400' : pct < 80 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                  {pct}% accuracy
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => startSkillPractice(skillId as any)}
+                                className="shrink-0 px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/20 text-cyan-300 rounded-lg text-xs font-semibold transition-colors"
+                              >
+                                Practice
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Study plan CTA or compact card */}
+                  {canGenerateStudyPlan && studyPlanHistory.length === 0 && !studyPlanLoading && (
+                    <div className="p-6 bg-gradient-to-br from-cyan-500/10 to-blue-500/5 border border-cyan-500/20 rounded-2xl">
+                      <div className="flex items-start gap-3 mb-4">
+                        <Sparkles className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-semibold text-slate-100">Generate your personalized study plan</p>
+                          <p className="text-sm text-slate-400 mt-1.5 leading-relaxed">
+                            We will identify your highest-priority developing skills, organize a custom study path, and unlock targeted mini lessons based on your results. Your plan is built around the skills you are still developing — as you master them, your path updates and new priorities take their place.
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          handleGenerateStudyPlan();
+                          setMode('study-guide');
+                        }}
+                        className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-navy-950 font-semibold rounded-xl text-sm transition-colors inline-flex items-center gap-2"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        Generate study plan →
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Compact study plan card — plan already exists */}
+                  {studyPlanHistory.length > 0 && (() => {
+                    const latest = studyPlanHistory[0];
+                    const planDate = latest.createdAt
+                      ? new Date(latest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                      : null;
+                    const snapshot = latest.plan?.readinessSnapshot;
+                    const level = snapshot?.readinessLevel;
+                    const levelColors: Record<string, string> = {
+                      developing: 'bg-amber-500/15 text-amber-300',
+                      near_mastery: 'bg-cyan-500/15 text-cyan-300',
+                      mastered: 'bg-emerald-500/15 text-emerald-300',
+                    };
+                    const levelBadge = levelColors[level ?? ''] ?? 'bg-slate-700/50 text-slate-400';
+                    return (
+                      <button
+                        onClick={() => setMode('study-guide')}
+                        className="w-full text-left p-5 bg-navy-800/60 border border-navy-600/40 hover:border-cyan-500/30 rounded-2xl transition-all group"
+                      >
+                        <div className="flex items-start justify-between gap-3 mb-2">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-cyan-400" />
+                            <p className="text-sm font-semibold text-slate-200">AI Study Guide</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {level && (
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${levelBadge}`}>
+                                {level.replace('_', ' ')}
+                              </span>
+                            )}
+                            <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
+                          </div>
+                        </div>
+                        {planDate && (
+                          <p className="text-[10px] text-slate-600 mb-2">Generated {planDate}</p>
+                        )}
+                        {top5Target.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-2">
+                            {top5Target.map(([skillId]) => {
+                              const skill = getSkillById(skillId as any);
+                              return (
+                                <span key={skillId} className="text-[10px] px-2 py-0.5 bg-navy-700/60 border border-navy-600/40 text-slate-400 rounded-full">
+                                  {skill?.name ?? skillId}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+                        <p className="text-xs text-cyan-500 mt-2.5 font-medium">View full study guide →</p>
+                      </button>
+                    );
+                  })()}
+
+                  {/* Progress link */}
+                  {hasShortAssessmentReport && (
+                    <button
+                      onClick={() => handleViewReport('screener')}
+                      className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                    >
+                      View your progress →
+                    </button>
+                  )}
+                </>
+              )}
+
             </div>
-            )}
-            
-
-
-            <StudyPlanCard
-              history={studyPlanHistory}
-              isGenerating={studyPlanGenerating}
-              isLoading={studyPlanLoading}
-              error={studyPlanError}
-              canGenerate={canGenerateStudyPlan}
-              onGenerate={handleGenerateStudyPlan}
+          );
+        })()}
+        
+        {/* PRACTICE HUB */}
+        {mode === 'practice-hub' && (
+          <div className="space-y-6 pb-16">
+            <div className="pt-4">
+              <p className="overline mb-1.5">Practice</p>
+              <h2 className="text-3xl font-bold text-slate-50 leading-tight">Choose your focus</h2>
+              <p className="text-slate-400 mt-2">Practice by domain, by skill, or follow your personalized learning path.</p>
+            </div>
+            <StudyModesSection
+              profile={profile}
+              userId={user?.id ?? null}
+              weeklyAvgSeconds={weeklyAvgSeconds}
+              totalQuestionsSeen={profile.totalQuestionsSeen}
+              onDomainSelect={(domainId) => startPractice(domainId)}
+              onStartSkillPractice={(skillId) => startSkillPractice(skillId)}
+              onNodeClick={openLearningPathModule}
+              onSkillReviewOpen={() => setMode('results')}
+              onLearningPathOpen={() => setMode('study-guide')}
+              onGenerateStudyPlan={() => {
+                handleGenerateStudyPlan();
+                setMode('study-guide');
+              }}
+              onStartSpicyPractice={startSpicyPractice}
+              studyPlanExists={studyPlanHistory.length > 0}
             />
-            
-            {/* Study Modes Section — Domain Review + Skill Review with unlock gating */}
-            <div className="pt-8 border-t border-slate-800">
-              <StudyModesSection
-                profile={profile}
-                onDomainSelect={(domainId) => startPractice(domainId)}
-                onSkillReviewOpen={() => {
-                  setResultsDefaultView('skill');
-                  setMode('results');
-                }}
-              />
-            </div>
-            
-
           </div>
         )}
-        
+
+        {/* LEARNING PATH MODULE PAGE */}
+        {mode === 'learning-path-module' && learningPathSkillId && (
+          <div className="space-y-6 pb-16">
+            <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-400 text-sm">Loading module…</div>}>
+              <LearningPathModulePage
+                skillId={learningPathSkillId}
+                userId={user?.id ?? null}
+                profile={profile}
+                analyzedQuestions={analyzedQuestions}
+                onSkillProgressUpdate={(skillId, isCorrect) => {
+                  updateSkillProgress(skillId as any, isCorrect, 'medium');
+                }}
+                onBack={() => {
+                  setLearningPathSkillId(null);
+                  setMode('practice-hub');
+                }}
+              />
+            </Suspense>
+          </div>
+        )}
+
+        {/* STUDY GUIDE PAGE */}
+        {mode === 'study-guide' && (
+          <div className="space-y-6 pb-16">
+            <div className="pt-4">
+              <p className="overline mb-1.5">Study Plan</p>
+              <h2 className="text-3xl font-bold text-slate-50 leading-tight">AI Study Guide</h2>
+            </div>
+            <Suspense fallback={<div className="text-slate-500 text-sm">Loading study guide...</div>}>
+              <StudyPlanCard
+                history={studyPlanHistory}
+                isGenerating={studyPlanGenerating}
+                isLoading={studyPlanLoading}
+                error={studyPlanError}
+                canGenerate={canGenerateStudyPlan}
+                onGenerate={handleGenerateStudyPlan}
+              />
+            </Suspense>
+          </div>
+        )}
+
         {/* SCREENER MODE */}
         {mode === 'screener' && screenerQuestions.length > 0 && (
           <ScreenerAssessment
@@ -1301,16 +1614,20 @@ function PraxisStudyAppContent() {
             selectNextQuestion={selectNextQuestion}
             practiceDomain={practiceDomainFilter}
             practiceSkillId={practiceSkillFilter}
+            hideSummary={isSpicyMode && !profile.fullAssessmentComplete}
+            spicyCycleMode={isSpicyMode}
             onExitPractice={() => {
               const wasSkillPractice = Boolean(practiceSkillFilter);
+              const wasSpicy = isSpicyMode;
               setPracticeDomainFilter(null);
               setPracticeSkillFilter(null);
+              setIsSpicyMode(false);
               if (wasSkillPractice) {
-                // Return to the skills tab in Results so the user can pick another skill
-                setResultsDefaultView('skill');
                 setMode('results');
-              } else {
+              } else if (wasSpicy) {
                 setMode('home');
+              } else {
+                setMode('practice-hub');
               }
             }}
           />
@@ -1334,13 +1651,14 @@ function PraxisStudyAppContent() {
             onStartPractice={startPractice}
             onStartSkillPractice={startSkillPractice}
             fullAssessmentUnlocked={Boolean(profile.fullAssessmentComplete)}
+            hasScreenerReport={hasShortAssessmentReport}
+            onViewScreenerReport={() => handleViewReport('screener')}
             onRetakeAssessment={() => {
               // After the user completes both assessments, do not allow any retake path.
               if (profile.screenerComplete && profile.fullAssessmentComplete) return;
               startScreener(undefined);
             }}
             onResetProgress={handleResetProgress}
-            defaultView={resultsDefaultView}
           />
         )}
         
@@ -1360,10 +1678,12 @@ function PraxisStudyAppContent() {
         )}
         </Suspense>
       </main>
-      <FeedbackModal
-        isOpen={isFeedbackModalOpen}
-        onClose={() => setIsFeedbackModalOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <FeedbackModal
+          isOpen={isFeedbackModalOpen}
+          onClose={() => setIsFeedbackModalOpen(false)}
+        />
+      </Suspense>
     </div>
   );
 }
