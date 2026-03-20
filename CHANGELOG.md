@@ -13,6 +13,10 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 - **[Cleanup]** Added a `local/` workspace convention for private reference material and scratch files, updated ignore rules so root-level reference docs and generated `output/` CSV/JSON artifacts stay local by default, and documented `output/AUDIT_SUMMARY.md` as the current tracked handoff exception. — `.gitignore`, `README.md`, `local/README.md`, `docs/WORKFLOW_GROUNDING.md`, `docs/ISSUE_LEDGER.md`
 
+### Tooling / Security
+
+- **[Dependencies]** Upgraded `vite` from the vulnerable v4 line to the latest patched v6 line compatible with the existing React plugin, clearing the current `npm audit` findings for Vite and transitive `esbuild` without requiring a broader React or Tailwind migration. — `package.json`
+
 ## 2026-03-18
 
 ### Bug Fixes — Study Guide Generation (full diagnostic + root-cause session)
