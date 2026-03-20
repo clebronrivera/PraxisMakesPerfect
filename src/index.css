@@ -4,18 +4,129 @@
 
 @layer base {
   html {
-    background-color: #060d1a;
+    background-color: #f7f6f2;
+    font-size: 16px;
   }
 
   body {
-    background-color: #060d1a;
-    color: #f1f5f9;
+    background-color: #f7f6f2;
+    color: #1a1a1a;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer components {
+  .editorial-shell {
+    @apply min-h-screen text-slate-900;
+    background-color: #f7f6f2;
+  }
+
+  .editorial-surface {
+    @apply border bg-white;
+    border-color: #e6dfd4;
+    border-radius: 2rem;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  }
+
+  .editorial-surface-soft {
+    @apply border;
+    background-color: #fbfaf7;
+    border-color: #ece4d7;
+    border-radius: 1.75rem;
+  }
+
+  .editorial-panel-dark {
+    @apply text-white;
+    background-color: #0f172a;
+    border-radius: 2.5rem;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+  }
+
+  .editorial-sidebar-item {
+    @apply w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5;
+  }
+
+  .editorial-sidebar-item-active {
+    @apply bg-amber-500 text-slate-900 shadow-lg;
+    box-shadow: 0 14px 28px rgba(120, 53, 15, 0.18);
+  }
+
+  .editorial-topbar-button {
+    @apply rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-200;
+  }
+
+  .editorial-pill {
+    @apply inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-[0.22em] border shadow-sm;
+    background-color: rgba(251, 191, 36, 0.14);
+    border-color: rgba(251, 191, 36, 0.22);
+    color: #b45309;
+  }
+
+  .editorial-overline {
+    @apply text-[11px] font-black uppercase tracking-[0.24em] text-slate-400;
+  }
+
+  .editorial-heading {
+    @apply font-bold tracking-tight text-slate-900;
+  }
+
+  .editorial-copy {
+    @apply text-[15px] leading-relaxed text-slate-500;
+  }
+
+  .editorial-stat-card {
+    @apply editorial-surface p-5 flex flex-col gap-4;
+  }
+
+  .editorial-button-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all;
+    background-color: #f59e0b;
+    color: #1a1a1a;
+  }
+
+  .editorial-button-primary:hover {
+    background-color: #d97706;
+    color: white;
+  }
+
+  .editorial-button-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border text-sm font-semibold transition-all;
+    background-color: #fffaf0;
+    border-color: #f0d7a7;
+    color: #b45309;
+  }
+
+  .editorial-button-secondary:hover {
+    background-color: #f59e0b;
+    border-color: #d97706;
+    color: white;
+  }
+
+  .editorial-button-dark {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all text-white;
+    background-color: #1a1a1a;
+  }
+
+  .editorial-button-dark:hover {
+    background-color: #0f172a;
+  }
+
+  .editorial-button-ghost {
+    @apply inline-flex items-center gap-2 text-sm font-semibold transition-colors text-amber-700 hover:text-amber-800;
+  }
+
+  .editorial-progress-track {
+    @apply h-2 rounded-full overflow-hidden;
+    background-color: #ece8df;
+  }
+
+  .editorial-progress-fill {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%);
+  }
+
   /* ── Surface cards ─────────────────────────────────────── */
   .card {
     @apply bg-slate-900/60 border border-slate-800/60 rounded-2xl;
@@ -61,7 +172,7 @@
 
   /* ── Section overline ─────────────────────────────────── */
   .overline {
-    @apply text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-500;
+    @apply text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-400;
   }
 
   /* ── Tabs ─────────────────────────────────────────────── */

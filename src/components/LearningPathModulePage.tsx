@@ -83,42 +83,42 @@ function SectionHeader({
       onClick={isLocked ? undefined : onToggle}
       disabled={isLocked}
       className={`
-        w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl border text-left transition-all
+        flex w-full items-center gap-3 rounded-[1.75rem] border px-4 py-3.5 text-left transition-all
         ${isLocked
-          ? 'bg-navy-800/30 border-navy-700/20 cursor-not-allowed opacity-50'
+          ? 'cursor-not-allowed border-slate-200 bg-[#fbfaf7] opacity-60'
           : isOpen
-            ? 'bg-navy-800/80 border-cyan-500/30'
-            : 'bg-navy-800/50 border-navy-700/40 hover:border-navy-600/60'}
+            ? 'border-amber-300 bg-amber-50'
+            : 'border-slate-200 bg-white hover:border-amber-200'}
       `}
     >
       {/* Number badge */}
       <div className={`
-        w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0
+        flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-bold
         ${isComplete
-          ? 'bg-emerald-500/20 text-emerald-400'
+          ? 'bg-emerald-100 text-emerald-700'
           : isLocked
-            ? 'bg-navy-700/60 text-slate-600'
-            : 'bg-cyan-500/15 text-cyan-400'}
+            ? 'bg-slate-100 text-slate-400'
+            : 'bg-amber-100 text-amber-700'}
       `}>
         {isComplete ? <CheckCircle className="w-4 h-4" /> : isLocked ? <Lock className="w-3.5 h-3.5" /> : number}
       </div>
 
       {/* Label */}
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-semibold leading-tight ${isLocked ? 'text-slate-600' : 'text-slate-200'}`}>
+        <p className={`text-sm font-semibold leading-tight ${isLocked ? 'text-slate-500' : 'text-slate-900'}`}>
           {title}
         </p>
         {isLocked && (
-          <p className="text-[10px] text-slate-700 mt-0.5">Complete Section {number - 1} to unlock</p>
+          <p className="mt-0.5 text-[10px] text-slate-400">Complete Section {number - 1} to unlock</p>
         )}
         {isComplete && !isLocked && (
-          <p className="text-[10px] text-emerald-600 mt-0.5">Completed ✓</p>
+          <p className="mt-0.5 text-[10px] text-emerald-700">Completed ✓</p>
         )}
       </div>
 
       {/* Chevron */}
       {!isLocked && (
-        <span className="shrink-0 text-slate-500">
+        <span className="shrink-0 text-slate-400">
           {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </span>
       )}
@@ -153,7 +153,7 @@ function MiniQuiz({
         <p className="text-sm text-slate-500">No practice questions available for this skill yet.</p>
         <button
           onClick={() => onComplete([])}
-          className="mt-4 px-4 py-2 rounded-xl bg-navy-700 border border-navy-500/40 text-slate-200 text-sm font-semibold hover:bg-navy-600 transition-colors"
+          className="editorial-button-secondary mt-4"
         >
           Continue anyway
         </button>
@@ -202,9 +202,9 @@ function MiniQuiz({
           </p>
         )}
       </div>
-      <div className="h-1 bg-navy-700 rounded-full overflow-hidden">
+      <div className="editorial-progress-track">
         <div
-          className="h-full bg-cyan-500 rounded-full transition-all duration-500"
+          className="editorial-progress-fill transition-all duration-500"
           style={{ width: `${((currentIdx) / questions.length) * 100}%` }}
         />
       </div>
@@ -244,26 +244,26 @@ function QuizResults({
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
   const tier = pct >= 80 ? 'demonstrating' : pct >= 60 ? 'approaching' : 'emerging';
   const tierConfig = {
-    demonstrating: { color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', label: 'Demonstrating', msg: 'Excellent work — you\'re meeting the threshold for this skill.' },
-    approaching: { color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20', label: 'Approaching', msg: 'Getting closer — keep practicing to reach Demonstrating.' },
-    emerging: { color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20', label: 'Emerging', msg: 'Review the lesson content and try again to build fluency.' },
+    demonstrating: { color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Demonstrating', msg: 'Excellent work — you\'re meeting the threshold for this skill.' },
+    approaching: { color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', label: 'Approaching', msg: 'Getting closer — keep practicing to reach Demonstrating.' },
+    emerging: { color: 'text-rose-700', bg: 'bg-rose-50 border-rose-200', label: 'Emerging', msg: 'Review the lesson content and try again to build fluency.' },
   }[tier];
 
   return (
     <div className="space-y-4 py-2">
-      <div className={`p-4 rounded-2xl border text-center ${tierConfig.bg}`}>
+      <div className={`rounded-[1.75rem] border p-5 text-center ${tierConfig.bg}`}>
         <Trophy className={`w-8 h-8 mx-auto mb-2 ${tierConfig.color}`} />
         <p className={`text-2xl font-bold tabular-nums ${tierConfig.color}`}>{pct}%</p>
-        <p className="text-xs text-slate-400 mt-1">{correct} of {total} correct</p>
-        <span className={`inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${tierConfig.bg} ${tierConfig.color} border`}>
+        <p className="mt-1 text-xs text-slate-500">{correct} of {total} correct</p>
+        <span className={`mt-2 inline-block rounded-full border bg-white px-2.5 py-0.5 text-[10px] font-bold ${tierConfig.color}`}>
           {tierConfig.label}
         </span>
-        <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">{tierConfig.msg}</p>
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-600">{tierConfig.msg}</p>
       </div>
 
       <button
         onClick={onReturnToPath}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-sm font-semibold hover:bg-cyan-500/20 transition-colors"
+        className="editorial-button-secondary w-full justify-center"
       >
         <ArrowLeft className="w-4 h-4" />
         Return to Learning Path
@@ -370,27 +370,27 @@ export default function LearningPathModulePage({
     <div className="space-y-6 pb-16">
 
       {/* ── Back nav + header ─────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="editorial-surface flex items-center gap-3 p-5">
         <button
           onClick={onBack}
-          className="p-2 rounded-xl hover:bg-navy-800/60 text-slate-400 hover:text-slate-200 transition-colors shrink-0"
+          className="editorial-button-secondary shrink-0 px-3 py-2"
           aria-label="Back to Learning Path"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="min-w-0">
-          <p className="text-[10px] text-slate-600 uppercase tracking-widest font-medium">Learning Path</p>
-          <h2 className="text-lg font-bold text-slate-100 leading-tight truncate">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Learning Path</p>
+          <h2 className="truncate text-lg font-bold leading-tight text-slate-900">
             {skillDef?.fullLabel ?? skillId}
           </h2>
           {primaryModule && (
-            <p className="text-[10px] font-mono text-slate-600">{primaryModule.id}</p>
+            <p className="text-[10px] font-mono text-slate-500">{primaryModule.id}</p>
           )}
         </div>
       </div>
 
       {/* ── Progress pills ────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="editorial-surface-soft flex flex-wrap items-center gap-2 px-4 py-3">
         {[
           { label: 'Lesson', done: s1Complete },
           { label: 'Practice', done: s2Complete },
@@ -399,12 +399,12 @@ export default function LearningPathModulePage({
           <div
             key={step.label}
             className={`
-              flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-semibold
+              flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold
               ${step.done
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
                 : step.locked
-                  ? 'bg-navy-800/30 border-navy-700/20 text-slate-600'
-                  : 'bg-navy-800/50 border-navy-700/30 text-slate-500'}
+                  ? 'border-slate-200 bg-white text-slate-400'
+                  : 'border-amber-200 bg-amber-50 text-amber-700'}
             `}
           >
             {step.done ? (
@@ -412,7 +412,7 @@ export default function LearningPathModulePage({
             ) : step.locked ? (
               <Lock className="w-3 h-3" />
             ) : (
-              <span className="w-4 h-4 rounded-full bg-navy-700 flex items-center justify-center text-[8px] font-bold text-slate-500">{i + 1}</span>
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[8px] font-bold text-amber-700">{i + 1}</span>
             )}
             {step.label}
           </div>
@@ -448,14 +448,14 @@ export default function LearningPathModulePage({
                     key={m.id}
                     onClick={() => setActiveModuleIdx(i)}
                     className={`
-                      shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-semibold transition-all
+                      flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-semibold transition-all
                       ${activeModuleIdx === i
-                        ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300'
-                        : 'bg-navy-800/40 border-navy-700/30 text-slate-500 hover:text-slate-300'}
+                        ? 'border-amber-300 bg-amber-50 text-amber-700'
+                        : 'border-slate-200 bg-white text-slate-500 hover:border-amber-200 hover:text-slate-900'}
                     `}
                   >
                     {lpLocal.isViewed(m.id) && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
                     )}
                     Lesson {i + 1}
                   </button>
@@ -474,30 +474,30 @@ export default function LearningPathModulePage({
             )}
 
             {/* ⚙  Interactive visual placeholder */}
-            <div className="rounded-2xl border border-dashed border-navy-600/50 bg-navy-800/20 p-5 text-center space-y-2">
-              <Settings className="w-6 h-6 text-slate-700 mx-auto" />
-              <p className="text-xs text-slate-600 font-semibold">Interactive Visual</p>
-              <p className="text-[10px] text-slate-700 leading-relaxed">
+            <div className="space-y-2 rounded-[1.75rem] border border-dashed border-slate-300 bg-[#fbfaf7] p-5 text-center">
+              <Settings className="mx-auto h-6 w-6 text-amber-700" />
+              <p className="text-xs font-semibold text-slate-700">Interactive Visual</p>
+              <p className="text-[10px] leading-relaxed text-slate-500">
                 ⚙  A visual/diagram component for <span className="font-mono">{primaryModule?.id ?? skillId}</span> will be embedded here.
               </p>
             </div>
 
             {/* 🎮 Interactive activity placeholder */}
-            <div className="rounded-2xl border border-dashed border-navy-600/50 bg-navy-800/20 p-5 text-center space-y-2">
-              <Gamepad2 className="w-6 h-6 text-slate-700 mx-auto" />
-              <p className="text-xs text-slate-600 font-semibold">Interactive Activity</p>
-              <p className="text-[10px] text-slate-700 leading-relaxed">
+            <div className="space-y-2 rounded-[1.75rem] border border-dashed border-slate-300 bg-[#fbfaf7] p-5 text-center">
+              <Gamepad2 className="mx-auto h-6 w-6 text-amber-700" />
+              <p className="text-xs font-semibold text-slate-700">Interactive Activity</p>
+              <p className="text-[10px] leading-relaxed text-slate-500">
                 🎮  A hands-on activity for this skill will be embedded here.
               </p>
             </div>
 
             {/* Timer + Mark Complete */}
             <div className="flex items-center justify-between gap-3 pt-1">
-              <p className="text-[10px] text-slate-600">
+              <p className="text-[10px] text-slate-500">
                 Time in lesson: {Math.floor(s1ElapsedSec / 60)}m {s1ElapsedSec % 60}s
               </p>
               {s1Complete ? (
-                <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-semibold">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
                   <CheckCircle className="w-4 h-4" />
                   Lesson complete
                 </div>
@@ -505,7 +505,7 @@ export default function LearningPathModulePage({
                 <button
                   onClick={handleMarkLessonComplete}
                   disabled={s1Submitting}
-                  className="px-4 py-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-bold hover:bg-cyan-500/20 transition-colors disabled:opacity-60"
+                  className="editorial-button-primary px-4 py-2 text-xs disabled:opacity-60"
                 >
                   {s1Submitting ? 'Saving…' : 'Mark Lesson Complete →'}
                 </button>
@@ -533,7 +533,7 @@ export default function LearningPathModulePage({
 
             {s2Submitting ? (
               <div className="py-8 text-center">
-                <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
                 <p className="text-sm text-slate-500">Saving your results…</p>
               </div>
             ) : quizDone ? (
@@ -545,7 +545,7 @@ export default function LearningPathModulePage({
             ) : (
               <>
                 <div className="px-1">
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Answer {skillQuestions.length} practice question{skillQuestions.length !== 1 ? 's' : ''} for this skill.
                     Your results will update your Learning Path status.
                   </p>
@@ -576,10 +576,10 @@ export default function LearningPathModulePage({
 
         {openSection === 3 && s2Complete && (
           <div className="mt-2 px-1">
-            <div className="rounded-2xl border border-dashed border-navy-600/50 bg-navy-800/20 p-6 text-center space-y-2">
-              <RotateCcw className="w-6 h-6 text-slate-700 mx-auto" />
-              <p className="text-xs text-slate-600 font-semibold">Coming Soon</p>
-              <p className="text-[10px] text-slate-700 leading-relaxed">
+            <div className="space-y-2 rounded-[1.75rem] border border-dashed border-slate-300 bg-[#fbfaf7] p-6 text-center">
+              <RotateCcw className="mx-auto h-6 w-6 text-amber-700" />
+              <p className="text-xs font-semibold text-slate-700">Coming Soon</p>
+              <p className="text-[10px] leading-relaxed text-slate-500">
                 Extended learning activities for this skill will appear here in a future update.
               </p>
             </div>

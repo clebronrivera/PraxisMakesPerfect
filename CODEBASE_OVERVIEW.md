@@ -9,7 +9,7 @@ This document summarizes all components, hooks, utilities, brain modules, and da
 ## 1. Entry and shell
 
 - **`src/main.tsx`** – Renders `App`, imports `index.css`, and wraps the app in `ContentProvider`.
-- **`App.tsx`** – Root UI. Wraps content in `AuthProvider`. If no `user`, renders `LoginScreen`; otherwise `PraxisStudyAppContent` with header and main content. Owns app `mode`, assessment question lists, `lastAssessmentResponses`, and handlers for starting/resuming assessments, viewing reports, practice, teach, and reset.
+- **`App.tsx`** – Root UI. Wraps content in `AuthProvider`. If no `user`, renders `LoginScreen`; otherwise `PraxisStudyAppContent` inside the shared signed-in shell. The live shell now uses a light editorial layout: desktop sidebar, sticky top bar, warm background, and shared surface/button classes from `src/index.css`. `App.tsx` owns app `mode`, assessment question lists, `lastAssessmentResponses`, the Home dashboard composition, and handlers for starting/resuming assessments, viewing reports, practice, teach, and reset.
 
 ---
 
@@ -17,13 +17,16 @@ This document summarizes all components, hooks, utilities, brain modules, and da
 
 | Mode             | Purpose |
 |------------------|--------|
-| `home`           | Dashboard: stats, View Report buttons, Resume session, Start Screener / Full Assessment / Practice / Teach / View Progress, Domain Tiles, Reset Progress. |
+| `home`           | Main dashboard: greeting hero, resume cards, screener/full-assessment entry states, spicy practice CTA, metric cards, daily-goal rail, and High-Impact Skills actions. |
 | `screener`       | Skills screener. Uses `ScreenerAssessment` with `screenerQuestions`. |
 | `fullassessment` | Full assessment (125Q). Uses `FullAssessment` with `fullAssessmentQuestions`. |
 | `score-report`   | Post-assessment report. Uses `ScoreReport` with `lastAssessmentResponses` or data from `getAssessmentResponses(sessionId)`. |
 | `practice`       | Adaptive practice. Uses `PracticeSession`. |
+| `practice-hub`   | Practice destination wrapper. Uses `StudyModesSection` for By Domain / By Skill / Learning Path entry. |
+| `learning-path-module` | Skill-specific Learning Path lesson/module view. |
 | `teach`          | Teach mode (review wrong answers with explanations). Uses `TeachMode`. |
 | `results`        | Progress dashboard (domain/skill view). Uses `ResultsDashboard`. |
+| `study-guide`    | Study Guide destination. Uses `StudyPlanCard` / `StudyPlanViewer`. |
 | `admin`          | Admin analytics and moderation view. Uses `AdminDashboard`. |
 
 ---
@@ -40,7 +43,9 @@ This document summarizes all components, hooks, utilities, brain modules, and da
 | **ScoreReport**  | Post-assessment report: overall score, domain breakdown, weakest domains, time metrics, “Start Practice” / “Retake” / “Go Home” / “Teach Mode” / “Practice with domains”. Handles missing data with recovery UI. | NASP_DOMAINS, UserResponse, AnalyzedQuestion |
 | **PracticeSession** | Adaptive practice: intro, goal picker, `selectNextQuestion(profile, questions, history)`, per-question feedback, `updateSkillProgress`, `logResponse`, `updateLastSession`, local weakness updates. Can filter by `practiceDomain`. | QuestionCard, ExplanationPanel, useFirebaseProgress (profile), useAdaptiveLearning, detectWeaknesses, distractor-matcher |
 | **TeachMode**    | Review mode: questions from full assessment (wrong or all), teaching context, explanations. Updates `flaggedQuestions` and **writes `practiceHistory`** (legacy field – see Issues). | QuestionCard, ExplanationPanel, NASP_DOMAINS, UserProfile |
-| **ResultsDashboard** | “View Progress”: toggles Praxis sections vs NASP domains; shows domain scores and focus areas. **Reads `userProfile.practiceHistory.length`** (removed from profile – see Issues). | PraxisPerformanceView, NASP_DOMAINS, UserProfile |
+| **ResultsDashboard** | “View Progress”: toggles Praxis sections vs NASP domains; shows domain scores and focus areas inside the shared light-shell visual treatment. **Reads `userProfile.practiceHistory.length`** (removed from profile – see Issues). | PraxisPerformanceView, NASP_DOMAINS, UserProfile |
+| **StudyModesSection** | Practice hub: By Domain / By Skill / Learning Path entry, readiness strip, lock states, skill actions, and lesson-help entry points. | PROFICIENCY_META, skill-map, learning-path data |
+| **StudyPlanCard** | Study Guide destination card: generation settings, generation status, plan history chips, and entry to the full viewer. | StudyConstraintsForm, StudyPlanViewer |
 
 ### 3.2 Shared UI
 

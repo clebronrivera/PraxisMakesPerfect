@@ -36,15 +36,15 @@ export default function DiagnosticFeedback({
   if (feedback.isCorrect) {
     const meaningfulTips = feedback.remediationTips.filter(t => !GENERIC_TIPS.has(t));
     return (
-      <div className="p-6 rounded-2xl border bg-emerald-500/10 border-emerald-500/30">
-        <p className="text-sm leading-relaxed text-emerald-200 mb-0">
+      <div className="rounded-[2rem] border border-emerald-200 bg-white p-6">
+        <p className="mb-0 text-sm leading-relaxed text-slate-700">
           {feedback.generalExplanation}
         </p>
         {meaningfulTips.length > 0 && (
           <ul className="mt-3 space-y-1.5">
             {meaningfulTips.map((tip, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                <span className="text-emerald-400 mt-0.5">•</span>
+              <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                <span className="mt-0.5 text-emerald-600">•</span>
                 <span>{tip}</span>
               </li>
             ))}
@@ -53,7 +53,7 @@ export default function DiagnosticFeedback({
         {onDismiss && (
           <button
             onClick={onDismiss}
-            className="mt-4 w-full px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-all"
+            className="mt-4 w-full rounded-xl border border-slate-200 bg-[#fbfaf7] px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:border-amber-300 hover:text-slate-900"
           >
             Dismiss
           </button>
@@ -82,22 +82,22 @@ export default function DiagnosticFeedback({
   }
 
   return (
-    <div className="p-6 rounded-2xl border bg-slate-800/50 border-slate-700/50">
+    <div className="rounded-[2rem] border border-slate-200 bg-white p-6">
       {/* Leading explanation — distractor-specific or non-generic pattern explanation */}
       {(hasDistractorNote || hasNonGenericExplanation) && (
-        <p className="text-sm leading-relaxed text-slate-300 mb-4">
+        <p className="mb-4 text-sm leading-relaxed text-slate-700">
           {distractorNote || feedback.generalExplanation}
         </p>
       )}
 
       {/* Prerequisite Warning */}
       {hasPrerequisites && (
-        <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+        <div className="mb-4 rounded-[1.5rem] border border-rose-200 bg-rose-50 p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-rose-500" />
             <div>
-              <h5 className="text-sm font-semibold text-red-300 mb-1">Prerequisites Not Met</h5>
-              <p className="text-xs text-red-200/80">
+              <h5 className="mb-1 text-sm font-semibold text-rose-800">Prerequisites Not Met</h5>
+              <p className="text-xs text-rose-700">
                 Review foundational skills first:{' '}
                 <span className="font-medium">
                   {feedback.skillGuidance!.prerequisiteCheck.missingNames.join(', ')}
@@ -112,13 +112,13 @@ export default function DiagnosticFeedback({
       {meaningfulTips.length > 0 && (
         <div className={hasFramework ? 'mb-4' : ''}>
           <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="w-4 h-4 text-amber-400" />
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">What to do next</span>
+            <Lightbulb className="h-4 w-4 text-amber-600" />
+            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">What to do next</span>
           </div>
           <ul className="space-y-1.5">
             {meaningfulTips.map((tip, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                <span className="text-amber-400 mt-0.5">•</span>
+              <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                <span className="mt-0.5 text-amber-600">•</span>
                 <span>{tip}</span>
               </li>
             ))}
@@ -131,47 +131,47 @@ export default function DiagnosticFeedback({
         <div>
           <button
             onClick={() => setFrameworkOpen(o => !o)}
-            className="w-full flex items-center justify-between p-3 bg-slate-700/40 hover:bg-slate-700/60 rounded-xl transition-all"
+            className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-[#fbfaf7] p-3 transition-all hover:border-amber-300"
           >
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-slate-400" />
-              <span className="text-sm font-medium text-slate-300">
+              <BookOpen className="h-4 w-4 text-amber-700" />
+              <span className="text-sm font-medium text-slate-700">
                 Framework Context
                 {feedback.frameworkGuidance!.currentStepName && (
-                  <span className="text-slate-500 ml-2">
+                  <span className="ml-2 text-slate-500">
                     ({feedback.frameworkGuidance!.currentStepName})
                   </span>
                 )}
               </span>
             </div>
             {frameworkOpen ? (
-              <ChevronUp className="w-4 h-4 text-slate-400" />
+              <ChevronUp className="h-4 w-4 text-slate-400" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-slate-400" />
+              <ChevronDown className="h-4 w-4 text-slate-400" />
             )}
           </button>
 
           {frameworkOpen && (
-            <div className="mt-2 p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
-              <p className="text-xs text-slate-400 mb-1">How this relates to the framework:</p>
-              <p className="text-sm text-slate-300 leading-relaxed mb-3">
+            <div className="mt-2 rounded-[1.5rem] border border-slate-200 bg-[#fbfaf7] p-4">
+              <p className="mb-1 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">How this relates to the framework</p>
+              <p className="mb-3 text-sm leading-relaxed text-slate-700">
                 {feedback.frameworkGuidance!.relationship}
               </p>
 
               {feedback.frameworkGuidance!.userSelectedStep && (
-                <div className="mb-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-                  <p className="text-xs text-amber-300 font-medium mb-1">You may have jumped to:</p>
-                  <p className="text-sm text-amber-200">{feedback.frameworkGuidance!.userSelectedStep}</p>
+                <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
+                  <p className="mb-1 text-xs font-medium text-amber-700">You may have jumped to:</p>
+                  <p className="text-sm text-amber-900">{feedback.frameworkGuidance!.userSelectedStep}</p>
                 </div>
               )}
 
               {feedback.frameworkGuidance!.nextSteps.length > 0 && (
                 <div>
-                  <p className="text-xs text-slate-400 mb-2">Next steps:</p>
+                  <p className="mb-2 text-xs font-medium text-slate-500">Next steps:</p>
                   <ul className="space-y-1.5">
                     {feedback.frameworkGuidance!.nextSteps.map((step, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                        <span className="text-amber-400 mt-0.5">•</span>
+                      <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                        <span className="mt-0.5 text-amber-600">•</span>
                         <span>{step}</span>
                       </li>
                     ))}
@@ -184,10 +184,10 @@ export default function DiagnosticFeedback({
       )}
 
       {onDismiss && (
-        <div className="mt-4 pt-4 border-t border-slate-700/50">
+        <div className="mt-4 border-t border-slate-200 pt-4">
           <button
             onClick={onDismiss}
-            className="w-full px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-all"
+            className="w-full rounded-xl border border-slate-200 bg-[#fbfaf7] px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:border-amber-300 hover:text-slate-900"
           >
             Dismiss
           </button>

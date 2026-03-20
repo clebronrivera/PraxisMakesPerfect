@@ -67,74 +67,74 @@ export default function ExplanationPanel({
   return (
     <div className="space-y-4">
       {/* Original Rationale Panel */}
-      <div className={`p-6 rounded-2xl border ${
+      <div className={`rounded-[2rem] border p-6 ${
         isCorrect
-          ? 'bg-emerald-500/10 border-emerald-500/30'
-          : 'bg-red-500/10 border-red-500/30'
+          ? 'border-emerald-200 bg-emerald-50'
+          : 'border-rose-200 bg-rose-50'
       }`}>
         <div className="flex items-start gap-4">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-            isCorrect ? 'bg-emerald-500/20' : 'bg-red-500/20'
+          <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+            isCorrect ? 'bg-emerald-100' : 'bg-rose-100'
           }`}>
             {isCorrect ? (
-              <CheckCircle className="w-5 h-5 text-emerald-400" />
+              <CheckCircle className="h-5 w-5 text-emerald-600" />
             ) : (
-              <XCircle className="w-5 h-5 text-red-400" />
+              <XCircle className="h-5 w-5 text-rose-500" />
             )}
           </div>
           <div className="flex-1">
             <h4 className={`font-semibold mb-2 ${
-              isCorrect ? 'text-emerald-300' : 'text-red-300'
+              isCorrect ? 'text-emerald-800' : 'text-rose-800'
             }`}>
               {isCorrect ? 'Correct!' : 'Not quite right'}
             </h4>
             <div className="space-y-2 mb-3">
               {!isCorrect && userAnswerSummary && (
-                <p className="text-slate-200 text-sm leading-relaxed">
-                  <span className="font-semibold text-slate-100">Your selection:</span>{' '}
+                <p className="text-sm leading-relaxed text-slate-700">
+                  <span className="font-semibold text-slate-900">Your selection:</span>{' '}
                   {userAnswerSummary}
                 </p>
               )}
               {correctAnswerSummary && (
-                <p className="text-slate-200 text-sm leading-relaxed">
-                  <span className="font-semibold text-slate-100">
+                <p className="text-sm leading-relaxed text-slate-700">
+                  <span className="font-semibold text-slate-900">
                     {getQuestionCorrectAnswers(question).length > 1 ? 'Correct responses:' : 'Correct answer:'}
                   </span>{' '}
                   {correctAnswerSummary}
                 </p>
               )}
             </div>
-            <p className="text-slate-300 text-sm leading-relaxed">{displayRationale}</p>
+            <p className="text-sm leading-relaxed text-slate-700">{displayRationale}</p>
             
             {/* Extended Bank Fields (Static Questions) */}
             {displayCorrectExplanation && displayCorrectExplanation !== displayRationale && (
-              <div className="mt-4 pt-4 border-t border-slate-700/50">
-                <p className="text-xs text-slate-500 mb-2">CORRECT EXPLANATION:</p>
-                <p className="text-slate-300 text-sm leading-relaxed">{displayCorrectExplanation}</p>
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Correct explanation</p>
+                <p className="text-sm leading-relaxed text-slate-700">{displayCorrectExplanation}</p>
               </div>
             )}
             
             {(question as any).contentLimit && (
-              <div className="mt-4 pt-4 border-t border-slate-700/50">
-                <p className="text-xs text-slate-500 mb-2">CONTENT RULE:</p>
-                <p className="text-slate-300 text-sm leading-relaxed">{(question as any).contentLimit}</p>
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Content rule</p>
+                <p className="text-sm leading-relaxed text-slate-700">{(question as any).contentLimit}</p>
               </div>
             )}
 
             {(question as any).complexityRationale && (
-              <div className="mt-4 pt-4 border-t border-slate-700/50">
-                <p className="text-xs text-slate-500 mb-2">COMPLEXITY:</p>
-                <p className="text-slate-300 text-sm leading-relaxed">{(question as any).complexityRationale}</p>
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Complexity</p>
+                <p className="text-sm leading-relaxed text-slate-700">{(question as any).complexityRationale}</p>
               </div>
             )}
 
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-slate-700/50">
-                <p className="text-xs text-slate-500 mb-2">KEY CONCEPTS:</p>
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Key concepts</p>
                 <div className="flex flex-wrap gap-2">
                   {question.keyConcepts.map((concept, i) => (
-                    <span key={i} className="px-2 py-1 bg-slate-700/50 rounded text-xs text-slate-300">
+                    <span key={i} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
                       {concept}
                     </span>
                   ))}

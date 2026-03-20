@@ -82,22 +82,18 @@ export default function SkillHelpDrawer({
 
   return (
     <>
-      {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Drawer — slides up from bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex flex-col max-h-[85vh] bg-navy-900 border-t border-navy-700/60 rounded-t-3xl shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[85vh] flex-col rounded-t-[2rem] border-t border-slate-200 bg-white shadow-2xl">
 
-        {/* Handle bar */}
         <div className="flex justify-center pt-3 pb-1 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-navy-600" />
+          <div className="h-1 w-10 rounded-full bg-slate-300" />
         </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-navy-700/40 shrink-0">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-3">
           <div className="flex items-center gap-2.5 min-w-0">
             {activeModule && activeModuleId !== primaryModule?.id && (
               <button
@@ -106,32 +102,31 @@ export default function SkillHelpDrawer({
                   setActiveModuleId(primaryModule?.id ?? null);
                   if (primaryModule) progress.onOpenModule(primaryModule.id);
                 }}
-                className="p-1 rounded-lg hover:bg-navy-700/50 transition-colors text-slate-400 shrink-0"
+                className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-[#fbfaf7] hover:text-slate-700"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
             )}
-            <BookOpen className="w-4 h-4 text-cyan-400 shrink-0" />
+            <BookOpen className="h-4 w-4 shrink-0 text-amber-700" />
             <div className="min-w-0">
-              <p className="text-xs font-bold text-slate-100 truncate">
+              <p className="truncate text-xs font-bold text-slate-900">
                 {skillLabel ?? 'Skill Help'}
               </p>
-              <p className="text-[10px] text-slate-500 truncate">
+              <p className="truncate text-[10px] text-slate-500">
                 {modules.length} {modules.length === 1 ? 'lesson' : 'lessons'} available — scroll to find what you need
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-navy-700/50 transition-colors text-slate-400 shrink-0"
+            className="shrink-0 rounded-xl p-2 text-slate-400 transition-colors hover:bg-[#fbfaf7] hover:text-slate-700"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Module tab pills (if multiple modules) */}
         {modules.length > 1 && (
-          <div className="flex gap-2 px-5 py-2.5 overflow-x-auto shrink-0 border-b border-navy-700/30">
+          <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-slate-200 px-5 py-2.5">
             {modules.map((m, i) => (
               <button
                 key={m.id}
@@ -140,14 +135,14 @@ export default function SkillHelpDrawer({
                   setActiveModuleId(m.id);
                   progress.onOpenModule(m.id);
                 }}
-                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-semibold transition-all ${
+                className={`shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-semibold transition-all ${
                   activeModuleId === m.id
-                    ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300'
-                    : 'bg-navy-800/40 border-navy-700/30 text-slate-500 hover:text-slate-300'
+                    ? 'border-amber-300 bg-amber-50 text-amber-800'
+                    : 'border-slate-200 bg-white text-slate-500 hover:border-amber-200 hover:text-slate-900'
                 }`}
               >
                 {progress.isViewed(m.id) && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
                 )}
                 {i === 0 ? 'Primary' : `Extra ${i}`} · {m.id}
               </button>
@@ -155,17 +150,15 @@ export default function SkillHelpDrawer({
           </div>
         )}
 
-        {/* No content state */}
         {!activeModule && (
-          <div className="flex-1 flex items-center justify-center text-center px-6 py-12">
+          <div className="flex flex-1 items-center justify-center px-6 py-12 text-center">
             <div>
-              <BookOpen className="w-8 h-8 text-slate-700 mx-auto mb-3" />
+              <BookOpen className="mx-auto mb-3 h-8 w-8 text-amber-700" />
               <p className="text-sm text-slate-500">No lesson content found for this skill.</p>
             </div>
           </div>
         )}
 
-        {/* Lesson content */}
         {activeModule && (
           <div className="flex-1 overflow-y-auto px-5 py-4">
             <ModuleLessonViewer
@@ -184,7 +177,6 @@ export default function SkillHelpDrawer({
                 progress.onOpenModule(id);
               }}
             />
-            {/* Bottom padding for iOS safe area */}
             <div className="h-6" />
           </div>
         )}

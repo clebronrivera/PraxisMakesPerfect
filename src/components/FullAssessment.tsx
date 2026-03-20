@@ -285,8 +285,8 @@ export default function FullAssessment({
     <div className="space-y-6">
       {/* Resume Notice */}
       {isResuming && currentIndex > 0 && (
-        <div className="p-4 bg-blue-500/20 border border-blue-500/30 rounded-xl">
-          <p className="text-sm text-blue-300">
+        <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-4">
+          <p className="text-sm text-sky-800">
             📍 Resumed from question {currentIndex + 1}. Your progress has been saved.
           </p>
         </div>
@@ -298,7 +298,7 @@ export default function FullAssessment({
           <span>Full Assessment</span>
           <span>{currentIndex + 1} of {questions.length}</span>
         </div>
-        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div 
             className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
             style={{ width: `${progress}%` }}
@@ -307,55 +307,55 @@ export default function FullAssessment({
       </div>
       
       {/* Timer, Pause, and Pacing */}
-      <div className="flex items-center justify-between bg-slate-800/30 p-4 rounded-2xl border border-slate-700/30">
+      <div className="editorial-surface-soft flex items-center justify-between gap-4 p-4">
         <div className="flex items-center gap-6">
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">{timerLabel}</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{timerLabel}</span>
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-400" />
-              <span className="text-xl font-mono text-slate-200">{formattedTime}</span>
+              <Clock className="w-4 h-4 text-amber-700" />
+              <span className="text-xl font-mono text-slate-900">{formattedTime}</span>
             </div>
           </div>
-          <div className="h-8 w-px bg-slate-700/50" />
+          <div className="h-8 w-px bg-slate-200" />
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Pacing</span>
-            <span className="text-sm text-slate-300 font-medium">{pacingMessage}</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Pacing</span>
+            <span className="text-sm font-medium text-slate-700">{pacingMessage}</span>
           </div>
         </div>
         
         <button
           onClick={handlePauseToggle}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-xl transition-all border border-slate-600/30"
+          className="editorial-button-secondary"
         >
-          {isPaused ? <Play className="w-4 h-4 text-emerald-400" /> : <Pause className="w-4 h-4" />}
+          {isPaused ? <Play className="w-4 h-4 text-emerald-600" /> : <Pause className="w-4 h-4" />}
           <span>{isPaused ? 'Resume' : 'Pause'}</span>
         </button>
       </div>
 
       {/* Inactivity Warning */}
       {showInactivityWarning && !isPaused && (
-        <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-4 animate-pulse">
-          <div className="bg-amber-500/20 p-2 rounded-lg">
-            <Clock className="w-5 h-5 text-amber-400" />
+        <div className="flex items-center gap-4 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4 animate-pulse">
+          <div className="rounded-xl bg-amber-100 p-2">
+            <Clock className="w-5 h-5 text-amber-700" />
           </div>
           <div>
-            <p className="text-sm font-bold text-amber-300">Still there? Your test will pause soon.</p>
+            <p className="text-sm font-bold text-amber-900">Still there? Your test will pause soon.</p>
           </div>
         </div>
       )}
       
       {/* Pause Overlay */}
       {isPaused && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-slate-800 border border-slate-700 rounded-3xl p-8 text-center space-y-6 max-w-md mx-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-sm">
+          <div className="mx-4 max-w-md space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl">
             <div className="flex justify-center">
-              <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center">
-                <Pause className="w-10 h-10 text-slate-400" />
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fbfaf7]">
+                <Pause className="w-10 h-10 text-amber-700" />
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-slate-100 uppercase tracking-tight">{isAutoPaused ? 'Session Paused' : 'Test Paused'}</h3>
-              <p className="text-slate-400 leading-relaxed text-sm">
+              <h3 className="text-2xl font-bold uppercase tracking-tight text-slate-900">{isAutoPaused ? 'Session Paused' : 'Test Paused'}</h3>
+              <p className="text-sm leading-relaxed text-slate-500">
                 {isAutoPaused 
                   ? 'Your session was paused due to inactivity. Resume when ready.' 
                   : 'Your progress is securely saved. You can resume at any time or return to the home screen.'}
@@ -364,14 +364,14 @@ export default function FullAssessment({
             <div className="space-y-3 pt-4">
               <button
                 onClick={resume}
-                className="w-full px-6 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                className="editorial-button-primary w-full justify-center px-6 py-4"
               >
                 <Play className="w-5 h-5" />
                 Resume Assessment
               </button>
               <button
                 onClick={() => window.location.reload()} // Simple reload to go back to home/dashboard
-                className="w-full px-6 py-4 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-2xl font-bold transition-all border border-slate-600"
+                className="editorial-button-secondary w-full justify-center px-6 py-4"
               >
                 Save & Exit to Home
               </button>

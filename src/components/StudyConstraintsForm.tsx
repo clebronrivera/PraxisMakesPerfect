@@ -50,15 +50,15 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
     : null;
 
   return (
-    <div className="border border-slate-700/50 rounded-2xl overflow-hidden">
+    <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-[#fbfaf7]">
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
-        className="w-full px-4 py-3 flex items-center justify-between gap-3 text-left hover:bg-slate-800/40 transition-colors"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-amber-50"
       >
         <div className="flex items-center gap-2">
-          <Settings2 className="w-4 h-4 text-slate-400" />
-          <span className="text-sm font-medium text-slate-300">Study Settings</span>
+          <Settings2 className="w-4 h-4 text-amber-700" />
+          <span className="text-sm font-medium text-slate-900">Study Settings</span>
           <span className="text-xs text-slate-500">(optional — improves scheduling)</span>
         </div>
         {isOpen
@@ -68,7 +68,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 space-y-5 border-t border-slate-700/40">
+        <div className="space-y-5 border-t border-slate-200 bg-white px-4 pb-4">
 
           {/* Test date */}
           <div className="pt-4 space-y-2">
@@ -82,7 +82,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                 value={value.testDate ?? ''}
                 min={new Date().toISOString().split('T')[0]}
                 onChange={e => update({ testDate: e.target.value || undefined })}
-                className="px-3 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/60 transition-colors"
+                className="rounded-xl border border-slate-200 bg-[#fbfaf7] px-3 py-2 text-sm text-slate-700 transition-colors focus:border-amber-300 focus:outline-none"
               />
               {weeksUntilTest !== null && (
                 <span className="text-sm text-slate-400">
@@ -108,8 +108,8 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                   onClick={() => update({ studyDaysPerWeek: days })}
                   className={`w-9 h-9 rounded-xl text-sm font-semibold transition-all ${
                     (value.studyDaysPerWeek ?? 5) === days
-                      ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/30'
-                      : 'bg-slate-800/70 text-slate-300 hover:bg-slate-700/70'
+                      ? 'bg-amber-500 text-white shadow-md shadow-amber-200/60'
+                      : 'bg-[#fbfaf7] text-slate-600 hover:bg-amber-50'
                   }`}
                 >
                   {days}
@@ -131,8 +131,8 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                   onClick={() => update({ minutesPerSession: opt.value })}
                   className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                     (value.minutesPerSession ?? 45) === opt.value
-                      ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/30'
-                      : 'bg-slate-800/70 text-slate-300 hover:bg-slate-700/70'
+                      ? 'bg-amber-500 text-white shadow-md shadow-amber-200/60'
+                      : 'bg-[#fbfaf7] text-slate-600 hover:bg-amber-50'
                   }`}
                 >
                   {opt.label}
@@ -154,8 +154,8 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                   onClick={() => update({ weekendMinutes: opt.value })}
                   className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                     (value.weekendMinutes ?? 60) === opt.value
-                      ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/30'
-                      : 'bg-slate-800/70 text-slate-300 hover:bg-slate-700/70'
+                      ? 'bg-amber-500 text-white shadow-md shadow-amber-200/60'
+                      : 'bg-[#fbfaf7] text-slate-600 hover:bg-amber-50'
                   }`}
                 >
                   {opt.label}
@@ -177,8 +177,8 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                   onClick={() => update({ intensity: opt.value })}
                   className={`px-3 py-2.5 rounded-xl text-left transition-all border ${
                     (value.intensity ?? 'moderate') === opt.value
-                      ? 'bg-cyan-500/15 border-cyan-500/50 text-slate-100'
-                      : 'bg-slate-800/60 border-slate-700/40 text-slate-400 hover:border-slate-600/60'
+                      ? 'border-amber-300 bg-amber-50 text-slate-900'
+                      : 'border-slate-200 bg-[#fbfaf7] text-slate-500 hover:border-amber-200 hover:text-slate-900'
                   }`}
                 >
                   <p className="text-sm font-semibold">{opt.label}</p>

@@ -161,12 +161,12 @@ function DomainPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-3 text-center">
-        <div className="w-10 h-10 rounded-2xl bg-slate-800/60 flex items-center justify-center">
-          <Lock className="w-4 h-4 text-slate-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
+          <Lock className="w-4 h-4 text-amber-700" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-400">Unlocks after the screener</p>
-          <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the screener</p>
+          <p className="mt-1 max-w-xs mx-auto text-xs leading-relaxed text-slate-500">
             Complete the 50-question screener to unlock domain-based practice across all four Praxis sections.
           </p>
         </div>
@@ -178,8 +178,8 @@ function DomainPanel({
 
   return (
     <div className="space-y-3">
-      <p className="overline flex items-center gap-1.5">
-        <TrendingUp className="w-3 h-3 text-slate-500" />
+      <p className="editorial-overline flex items-center gap-1.5">
+        <TrendingUp className="w-3 h-3 text-amber-700" />
         Domain overview — most concern first
       </p>
       <div className="space-y-2.5">
@@ -192,51 +192,51 @@ function DomainPanel({
           return (
             <div
               key={stat.domain.id}
-              className="p-4 bg-navy-800/60 border border-navy-600/40 rounded-2xl overflow-hidden relative"
+              className="editorial-surface relative overflow-hidden p-4"
             >
               <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl" style={{ backgroundColor: color }} />
               <div className="flex items-start justify-between gap-3 mb-3 pl-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-slate-100 leading-tight">{stat.domain.name}</p>
-                  <p className="text-[10px] text-slate-600 mt-0.5">{stat.totalSkills} skills</p>
+                  <p className="text-base font-semibold leading-tight text-slate-900">{stat.domain.name}</p>
+                  <p className="mt-0.5 text-[11px] text-slate-500">{stat.totalSkills} skills</p>
                 </div>
                 <button
                   onClick={() => onDomainSelect(stat.domain.id)}
-                  className="shrink-0 px-3 py-1.5 bg-navy-700/60 hover:bg-navy-600/60 border border-navy-500/40 text-slate-200 rounded-lg text-xs font-semibold transition-colors"
+                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
                 >
                   Practice
                 </button>
               </div>
               <div className="relative h-1.5 mb-2" style={{ overflow: 'visible' }}>
-                <div className="absolute inset-0 bg-navy-700 rounded-full overflow-hidden">
+                <div className="absolute inset-0 overflow-hidden rounded-full bg-slate-100">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ${barColor}`}
                     style={{ width: `${barPct}%` }}
                   />
                 </div>
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-0.5 h-4 bg-cyan-400/70 rounded-full"
+                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-amber-500/70"
                   style={{ left: '70%' }}
                   title="70% mastery goal"
                 />
               </div>
               <div className="flex items-center justify-between pl-2">
-                <p className={`text-xs font-semibold ${labelColor}`}>
+                <p className={`text-sm font-semibold ${labelColor}`}>
                   {stat.demonstratingCount} of {stat.totalSkills} skills {PROFICIENCY_META.proficient.label}
                 </p>
                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
                   {stat.emergingCount > 0 && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 font-medium">
+                    <span className="rounded-full bg-rose-500/15 px-1.5 py-0.5 text-[11px] font-medium text-rose-300">
                       {stat.emergingCount} {PROFICIENCY_META.emerging.label}
                     </span>
                   )}
                   {stat.approachingCount > 0 && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-medium">
+                    <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[11px] font-medium text-amber-300">
                       {stat.approachingCount} {PROFICIENCY_META.approaching.label}
                     </span>
                   )}
                   {stat.demonstratingCount > 0 && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-medium">
+                    <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[11px] font-medium text-emerald-300">
                       {stat.demonstratingCount} {PROFICIENCY_META.proficient.label}
                     </span>
                   )}
@@ -270,12 +270,12 @@ function SkillPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-3 text-center">
-        <div className="w-10 h-10 rounded-2xl bg-slate-800/60 flex items-center justify-center">
-          <Lock className="w-4 h-4 text-slate-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
+          <Lock className="w-4 h-4 text-amber-700" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-400">Unlocks after the full diagnostic</p>
-          <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the full diagnostic</p>
+          <p className="mt-1 max-w-xs mx-auto text-xs leading-relaxed text-slate-500">
             Complete the 125-question full diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
           </p>
         </div>
@@ -292,7 +292,7 @@ function SkillPanel({
   const displayed = filter === 'all' ? allRows : allRows.filter(r => r.tier === filter);
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
-    { id: 'all', label: 'All', count: allRows.length, css: 'text-slate-400 border-navy-600/40', activeCss: 'bg-navy-700 border-navy-500/60 text-slate-200' },
+    { id: 'all', label: 'All', count: allRows.length, css: 'text-slate-500 border-slate-200', activeCss: 'bg-amber-50 border-amber-300 text-slate-900' },
     { id: 'emerging', label: PROFICIENCY_META.emerging.label, count: emergingCount, css: 'text-rose-400 border-rose-500/20', activeCss: 'bg-rose-500/15 border-rose-500/30 text-rose-300' },
     { id: 'approaching', label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-400 border-amber-500/20', activeCss: 'bg-amber-500/15 border-amber-500/30 text-amber-300' },
     { id: 'proficient', label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-400 border-emerald-500/20', activeCss: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300' },
@@ -301,26 +301,26 @@ function SkillPanel({
   return (
     <div className="space-y-4">
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-1.5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
-          { label: 'Assessed', value: assessedRows.length, css: 'text-slate-200' },
-          { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-rose-400' },
-          { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-amber-400' },
-          { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-emerald-400' },
+          { label: 'Assessed', value: assessedRows.length, css: 'text-slate-900' },
+          { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-rose-600' },
+          { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-amber-700' },
+          { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-emerald-600' },
         ].map(stat => (
           <div
             key={stat.label}
-            className="bg-navy-800/60 rounded-xl px-1.5 py-2 text-center border border-navy-600/30"
+            className="editorial-surface px-3 py-3 text-center"
           >
-            <p className={`text-sm font-bold tabular-nums ${stat.css}`}>{stat.value}</p>
-            <p className="text-[9px] text-slate-600 mt-0.5 leading-tight">{stat.label}</p>
+            <p className={`text-lg font-bold tabular-nums ${stat.css}`}>{stat.value}</p>
+            <p className="mt-0.5 text-[11px] leading-tight text-slate-500">{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* Usage hint */}
-      <p className="text-[10px] text-slate-600 flex items-center gap-1.5">
-        <HelpCircle className="w-3 h-3 shrink-0 text-slate-700" />
+      <p className="flex items-center gap-1.5 text-sm text-slate-500">
+        <HelpCircle className="w-3 h-3 shrink-0 text-amber-700" />
         Tap Practice for questions · tap the help icon to open the skill lesson
       </p>
 
@@ -330,7 +330,7 @@ function SkillPanel({
           <button
             key={btn.id}
             onClick={() => setFilter(btn.id)}
-            className={`px-2.5 py-1 rounded-lg border text-[10px] font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all ${
               filter === btn.id ? btn.activeCss : `bg-transparent ${btn.css} hover:opacity-80`
             }`}
           >
@@ -340,9 +340,9 @@ function SkillPanel({
       </div>
 
       {/* Skill grid */}
-      <div className="space-y-1.5 max-h-[480px] overflow-y-auto pr-0.5">
+      <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-0.5">
         {displayed.length === 0 ? (
-          <p className="text-[11px] text-slate-600 italic py-4 text-center">No skills in this level yet.</p>
+          <p className="py-4 text-center text-sm italic text-slate-500">No skills in this level yet.</p>
         ) : (
           displayed.map(row => {
             const meta = PROFICIENCY_META[row.tier];
@@ -352,32 +352,32 @@ function SkillPanel({
             return (
               <div
                 key={row.skillId}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-navy-800/50 border border-navy-700/30"
+                className="editorial-surface flex items-center gap-3 px-3 py-3"
               >
                 {/* Skill label + module code */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] text-slate-300 leading-snug truncate">
+                  <p className="truncate text-sm leading-snug text-slate-700">
                     {row.fullLabel}
                   </p>
                   {primaryModule && (
-                    <p className="text-[9px] font-mono text-slate-600 mt-0.5">{primaryModule.id}</p>
+                    <p className="mt-0.5 text-[11px] font-mono text-slate-500">{primaryModule.id}</p>
                   )}
                 </div>
 
                 {/* Proficiency + score */}
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${meta.badgeCss}`}>
+                  <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${meta.badgeCss}`}>
                     {meta.label}
                   </span>
                   {pct !== null && (
-                    <span className={`text-[9px] font-bold tabular-nums ${meta.textCss}`}>{pct}%</span>
+                    <span className={`text-[11px] font-bold tabular-nums ${meta.textCss}`}>{pct}%</span>
                   )}
                 </div>
 
                 {/* Help button — opens SkillHelpDrawer */}
                 <button
                   onClick={() => onOpenHelp(row.skillId, row.fullLabel)}
-                  className="shrink-0 p-1.5 rounded-lg hover:bg-navy-700/50 text-slate-500 hover:text-cyan-400 transition-colors"
+                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-amber-50 hover:text-amber-700"
                   title="View skill lesson"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
@@ -386,7 +386,7 @@ function SkillPanel({
                 {/* Practice button — launches question practice */}
                 <button
                   onClick={() => onStartSkillPractice(row.skillId)}
-                  className="shrink-0 px-2.5 py-1.5 bg-navy-700/60 hover:bg-navy-600/60 border border-navy-500/40 text-slate-200 rounded-lg text-[10px] font-semibold transition-colors"
+                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
                 >
                   Practice
                 </button>
@@ -421,12 +421,12 @@ function LearningPathPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-3 text-center">
-        <div className="w-10 h-10 rounded-2xl bg-slate-800/60 flex items-center justify-center">
-          <Lock className="w-4 h-4 text-slate-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
+          <Lock className="w-4 h-4 text-amber-700" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-400">Unlocks after the full diagnostic</p>
-          <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the full diagnostic</p>
+          <p className="mt-1 max-w-xs mx-auto text-xs leading-relaxed text-slate-500">
             Complete the full diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
           </p>
         </div>
@@ -514,7 +514,7 @@ export default function StudyModesSection({
     <section className="space-y-4">
 
       {/* ── Stats strip ─────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         {[
           {
             label: 'Questions answered',
@@ -536,32 +536,32 @@ export default function StudyModesSection({
                 : 'text-rose-400',
           },
         ].map(stat => (
-          <div key={stat.label} className="p-3 bg-navy-800/60 border border-navy-600/40 rounded-xl text-center">
+          <div key={stat.label} className="editorial-surface p-3 text-center">
             <p className={`text-lg font-bold tabular-nums ${stat.css}`}>{stat.value}</p>
-            <p className="text-[9px] text-slate-600 mt-0.5 leading-tight">{stat.label}</p>
+            <p className="mt-0.5 text-[11px] leading-tight text-slate-500">{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* ── Readiness bar ───────────────────────────────────────────────── */}
-      <div className="p-3.5 bg-navy-800/60 border border-navy-600/40 rounded-xl">
+      <div className="editorial-surface p-3.5">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-slate-300">Praxis Readiness</p>
-          <p className={`text-xs font-bold tabular-nums ${demonstratingCount >= READINESS_TARGET ? 'text-emerald-400' : 'text-slate-400'}`}>
+          <p className="text-sm font-semibold text-slate-700">Praxis Readiness</p>
+          <p className={`text-sm font-bold tabular-nums ${demonstratingCount >= READINESS_TARGET ? 'text-emerald-600' : 'text-slate-500'}`}>
             {demonstratingCount} / {READINESS_TARGET} {PROFICIENCY_META.proficient.label}
           </p>
         </div>
-        <div className="h-2 bg-navy-700 rounded-full overflow-hidden">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div
-            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-400' : 'bg-cyan-500'}`}
+            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-500' : 'bg-amber-500'}`}
             style={{ width: `${readinessBarPct}%` }}
           />
         </div>
-        <p className="text-[9px] text-slate-600 mt-1.5">Goal: {READINESS_TARGET} of {TOTAL_SKILLS} skills {PROFICIENCY_META.proficient.label}</p>
+        <p className="mt-1.5 text-[11px] text-slate-500">Goal: {READINESS_TARGET} of {TOTAL_SKILLS} skills {PROFICIENCY_META.proficient.label}</p>
       </div>
 
       {/* ── Tab selector ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
         {tabs.map((tab) => {
           const isActive = selectedMode === tab.id;
           return (
@@ -571,23 +571,23 @@ export default function StudyModesSection({
               className={`
                 p-3 rounded-xl border text-left transition-all
                 ${isActive
-                  ? 'bg-navy-700/80 border-cyan-500/30 shadow-sm'
-                  : 'bg-navy-800/40 border-navy-700/40 hover:border-navy-600/60'}
+                  ? 'bg-amber-50 border-amber-300 shadow-sm'
+                  : 'bg-white border-slate-200 hover:border-amber-200'}
               `}
             >
               <div className={`flex items-center gap-1.5 mb-1 ${
-                isActive ? 'text-cyan-400' : tab.locked ? 'text-slate-600' : 'text-slate-400'
+                isActive ? 'text-amber-700' : tab.locked ? 'text-slate-400' : 'text-slate-500'
               }`}>
                 {tab.locked ? <Lock className="w-3 h-3" /> : tab.icon}
-                <p className={`text-xs font-semibold truncate ${
-                  isActive ? 'text-slate-100' : tab.locked ? 'text-slate-500' : 'text-slate-300'
+                <p className={`text-sm font-semibold truncate ${
+                  isActive ? 'text-slate-900' : tab.locked ? 'text-slate-500' : 'text-slate-700'
                 }`}>
                   {tab.label}
                 </p>
               </div>
-              <p className="text-[10px] text-slate-600 truncate leading-tight">{tab.sublabel}</p>
+              <p className="truncate text-[11px] leading-tight text-slate-500">{tab.sublabel}</p>
               {tab.locked && (
-                <p className="text-[9px] text-slate-700 mt-0.5 truncate">{tab.lockReason}</p>
+                <p className="mt-0.5 truncate text-[11px] text-slate-400">{tab.lockReason}</p>
               )}
             </button>
           );

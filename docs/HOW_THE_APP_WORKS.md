@@ -97,6 +97,32 @@ Once you complete both the screener and the full assessment, **everything unlock
 ### Step 4: Study, Practice, and Track
 From this point on, every session and every question feeds back into your profile. The system keeps learning about you as you go.
 
+### The Main App Layout
+Once a user is signed in, the main destinations share one consistent app shell:
+- A left sidebar on desktop for Dashboard, Practice, Progress, and Study Plan
+- A sticky top bar with lightweight encouragement and utility actions
+- A warm, light visual system with white study surfaces and amber accents
+
+The sidebar profile card shows the user's display name and, when available, a secondary onboarding-derived identity line such as Graduate Student, Teacher, Certification Route, or training-stage language like Early Program.
+
+### The Home Dashboard
+The Home dashboard is the most guided page in the app. It is designed to help users see what to do next without changing the underlying product rules.
+
+Depending on the user's state, Home can show:
+- A screener-first start state for brand-new users
+- A full-assessment unlock state after the screener is complete
+- A fully unlocked dashboard after both assessments are complete
+
+On the fully unlocked dashboard, the main sections are:
+- A greeting hero with a spicy-practice call to action
+- Four summary cards: Number of questions answered, Readiness phase, Skills to reach goal, and Weekly usage
+- A Daily goal card showing progress toward the daily question target
+- A High-Impact Skills list showing the current lowest-performing skills
+
+The High-Impact Skills list is intentionally action-oriented. On Home, each row uses a simple **Practice** button instead of exposing raw accuracy percentages. Those buttons drop the user into the existing skill-focused learning path or practice flow for that skill.
+
+Practice, Progress, and Study Plan keep their existing behaviors and unlock rules. In this release, those pages were restyled to match the same shell and color system as Home rather than being redesigned from scratch.
+
 ---
 
 ## How Tracking Works — The Intelligence Layer

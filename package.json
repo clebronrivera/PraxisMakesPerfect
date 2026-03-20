@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:mock": "VITE_PREVIEW_HOME_DASHBOARD=true vite --open '/?mock=home-dashboard'",
     "dev:netlify": "netlify dev",
     "build": "npm run scan:types && vite build",
     "preview": "vite preview",

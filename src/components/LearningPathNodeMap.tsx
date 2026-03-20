@@ -1,144 +1,125 @@
 // src/components/LearningPathNodeMap.tsx
 //
-// Visual node-based Learning Path map.
+// Responsive snake-grid Learning Path map.
 //
 // ─── Visual design ───────────────────────────────────────────────────────────
-//   • Winding vertical road: nodes alternate left / right along a central
-//     dotted SVG path, creating an S-curve "road" effect.
-//   • Each node is a circular card showing skill name, status badge,
-//     accuracy %, and a lock icon when inactive.
-//   • Color rules:
-//       Mastered      → emerald (green), inactive / non-clickable
-//       Demonstrating → emerald, clickable
-//       Approaching   → amber, clickable
-//       Emerging      → rose, clickable
-//       Not started   → slate (grey), clickable
+//   • Compact skill tiles arranged in a left-to-right snake that reverses every
+//     other row to keep the path visually continuous.
+//   • Tiles communicate state primarily through color and status chips rather
+//     than raw mastery percentages.
+//   • Mastered / demonstrating skills sink to the end and become inactive.
 //
 // ─── Ordering rule ───────────────────────────────────────────────────────────
-//   Nodes are sorted by accuracy ascending (lowest = top = first priority).
-//   Mastered skills sink to the bottom and are inactive (cannot open module).
+//   Tiles are sorted by overall deficit first (lowest scores first, then
+//   unstarted), with already-demonstrating/mastered skills at the bottom.
 //
 // ─── Interaction ─────────────────────────────────────────────────────────────
-//   Clicking a non-mastered node calls onNodeClick(skillId).
+//   Clicking a non-mastered tile opens that skill's learning-path module.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useLayoutEffect, useRef, useState } from 'react';
-import { Lock, CheckCircle, BookOpen } from 'lucide-react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { BookOpen, CheckCircle, Lock } from 'lucide-react';
 import type { LearningPathSkillRecord, LearningPathStatus } from '../hooks/useLearningPathSupabase';
 import { getPrimaryModuleForSkill } from '../data/learningModules';
 import { getSkillProficiency, PROFICIENCY_META } from '../utils/skillProficiency';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
 import type { UserProfile } from '../hooks/useFirebaseProgress';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 interface SkillNode {
   skillId: string;
   fullLabel: string;
   shortLabel: string;
   moduleId: string | null;
-  // From user_progress.skill_scores (overall accuracy, all practice modes)
   overallScore: number | null;
-  overallAttempts: number;
   overallTier: ReturnType<typeof getSkillProficiency>;
-  // From learning_path_progress (lesson-specific progress)
   lpStatus: LearningPathStatus;
-  lpAccuracy: number | null;
   lpLessonViewed: boolean;
 }
 
 interface LearningPathNodeMapProps {
   profile: UserProfile;
-  /** Per-skill learning path progress from Supabase hook */
   lpProgress: Record<string, LearningPathSkillRecord>;
-  /** Called when user taps a non-mastered node */
   onNodeClick: (skillId: string) => void;
 }
-
-// ─── Node color config ────────────────────────────────────────────────────────
 
 interface NodeStyle {
   ring: string;
   bg: string;
   badge: string;
   label: string;
-  connector: string; // SVG stroke color
+  connector: string;
 }
 
+const MIN_COLUMNS = 2;
+const MAX_COLUMNS = 6;
+const TILE_MIN_WIDTH = 150;
+const TILE_GAP_PX = 16;
+
 function getNodeStyle(lpStatus: LearningPathStatus, overallTier: ReturnType<typeof getSkillProficiency>): NodeStyle {
-  // If LP status is mastered, always green-inactive
   if (lpStatus === 'mastered' || overallTier === 'proficient') {
     return {
-      ring: 'ring-emerald-500/50',
-      bg: 'bg-emerald-950/60',
-      badge: 'bg-emerald-500/20 text-emerald-400',
-      label: 'text-emerald-400',
+      ring: 'border-emerald-300',
+      bg: 'bg-emerald-50',
+      badge: 'bg-emerald-100 text-emerald-700',
+      label: 'text-emerald-800',
       connector: '#10b981',
     };
   }
+
   if (lpStatus === 'demonstrating') {
     return {
-      ring: 'ring-emerald-400/70',
-      bg: 'bg-emerald-900/50',
-      badge: 'bg-emerald-500/20 text-emerald-300',
-      label: 'text-emerald-300',
+      ring: 'border-emerald-300',
+      bg: 'bg-emerald-50',
+      badge: 'bg-emerald-100 text-emerald-700',
+      label: 'text-emerald-800',
       connector: '#34d399',
     };
   }
-  if (lpStatus === 'approaching') {
+
+  if (lpStatus === 'approaching' || overallTier === 'approaching') {
     return {
-      ring: 'ring-amber-400/70',
-      bg: 'bg-amber-950/50',
-      badge: 'bg-amber-500/20 text-amber-300',
-      label: 'text-amber-300',
+      ring: 'border-amber-300',
+      bg: 'bg-amber-50',
+      badge: 'bg-amber-100 text-amber-700',
+      label: 'text-amber-800',
       connector: '#fbbf24',
     };
   }
-  // Map overall tier when no LP questions submitted yet
-  if (overallTier === 'approaching') {
-    return {
-      ring: 'ring-amber-400/60',
-      bg: 'bg-amber-950/40',
-      badge: 'bg-amber-500/15 text-amber-300',
-      label: 'text-amber-300',
-      connector: '#fbbf24',
-    };
-  }
+
   if (lpStatus === 'emerging' || overallTier === 'emerging') {
     return {
-      ring: 'ring-rose-400/70',
-      bg: 'bg-rose-950/50',
-      badge: 'bg-rose-500/20 text-rose-300',
-      label: 'text-rose-300',
+      ring: 'border-rose-300',
+      bg: 'bg-rose-50',
+      badge: 'bg-rose-100 text-rose-700',
+      label: 'text-rose-800',
       connector: '#fb7185',
     };
   }
-  // not_started / unstarted
+
   return {
-    ring: 'ring-slate-600/60',
-    bg: 'bg-navy-800/60',
-    badge: 'bg-slate-700/50 text-slate-400',
-    label: 'text-slate-400',
-    connector: '#475569',
+    ring: 'border-slate-200',
+    bg: 'bg-white',
+    badge: 'bg-slate-100 text-slate-500',
+    label: 'text-slate-600',
+    connector: '#94a3b8',
   };
 }
 
 function statusLabel(lpStatus: LearningPathStatus, overallTier: ReturnType<typeof getSkillProficiency>): string {
   if (lpStatus !== 'not_started') {
     const map: Record<LearningPathStatus, string> = {
-      not_started: 'Not Started',
+      not_started: PROFICIENCY_META.unstarted.label,
       emerging: PROFICIENCY_META.emerging.label,
       approaching: PROFICIENCY_META.approaching.label,
       demonstrating: PROFICIENCY_META.proficient.label,
       mastered: 'Mastered',
     };
+
     return map[lpStatus];
   }
-  // Fall back to overall practice tier label
+
   return PROFICIENCY_META[overallTier].label;
 }
-
-// ─── Build node list ──────────────────────────────────────────────────────────
 
 function buildNodes(
   profile: UserProfile,
@@ -147,39 +128,36 @@ function buildNodes(
   const nodes: SkillNode[] = [];
 
   for (const domain of PROGRESS_DOMAINS) {
-    for (const s of getProgressSkillsForDomain(domain.id)) {
-      const perf = profile.skillScores?.[s.skillId];
+    for (const skill of getProgressSkillsForDomain(domain.id)) {
+      const perf = profile.skillScores?.[skill.skillId];
       const attempts = perf?.attempts ?? 0;
       const score = attempts > 0 ? (perf?.score ?? 0) : null;
-      const tier = getSkillProficiency(score ?? 0, attempts);
-      const lp = lpProgress[s.skillId];
-      const primaryModule = getPrimaryModuleForSkill(s.skillId);
+      const overallTier = getSkillProficiency(score ?? 0, attempts);
+      const lp = lpProgress[skill.skillId];
+      const primaryModule = getPrimaryModuleForSkill(skill.skillId);
 
       nodes.push({
-        skillId: s.skillId,
-        fullLabel: s.fullLabel,
-        shortLabel: s.shortLabel,
+        skillId: skill.skillId,
+        fullLabel: skill.fullLabel,
+        shortLabel: skill.shortLabel,
         moduleId: primaryModule?.id ?? null,
         overallScore: score,
-        overallAttempts: attempts,
-        overallTier: tier,
+        overallTier,
         lpStatus: lp?.status ?? 'not_started',
-        lpAccuracy: lp?.accuracy ?? null,
         lpLessonViewed: lp?.lessonViewed ?? false,
       });
     }
   }
 
-  // Sort: mastered/demonstrating last (they sink); others by lowest accuracy first
-  const isMastered = (n: SkillNode) =>
-    n.lpStatus === 'mastered' || n.overallTier === 'proficient';
+  const isMastered = (node: SkillNode) =>
+    node.lpStatus === 'mastered' || node.overallTier === 'proficient';
 
   return nodes.sort((a, b) => {
     const aMastered = isMastered(a);
     const bMastered = isMastered(b);
+
     if (aMastered && !bMastered) return 1;
     if (!aMastered && bMastered) return -1;
-    // Within active: lowest overall score first (null/unstarted last)
     if (a.overallScore === null && b.overallScore === null) return a.skillId.localeCompare(b.skillId);
     if (a.overallScore === null) return 1;
     if (b.overallScore === null) return -1;
@@ -187,245 +165,248 @@ function buildNodes(
   });
 }
 
-// ─── SVG connector path ───────────────────────────────────────────────────────
-// Per-segment bezier paths are computed inline in useLayoutEffect above.
-// This helper is kept for reference but individual segments are built there.
+function arrangeSnake(nodes: SkillNode[], columns: number): SkillNode[] {
+  const rows: SkillNode[][] = [];
 
-// ─── Single node card ─────────────────────────────────────────────────────────
+  for (let index = 0; index < nodes.length; index += columns) {
+    const slice = nodes.slice(index, index + columns);
+    rows.push(rows.length % 2 === 1 ? slice.reverse() : slice);
+  }
+
+  return rows.flat();
+}
 
 function NodeCard({
   node,
   index,
-  isActive,
   onClick,
 }: {
   node: SkillNode;
   index: number;
-  isActive: boolean;
   onClick: () => void;
 }) {
   const style = getNodeStyle(node.lpStatus, node.overallTier);
   const isMastered = node.lpStatus === 'mastered' || node.overallTier === 'proficient';
-  const displayAccuracy =
-    node.lpAccuracy !== null
-      ? `${Math.round(node.lpAccuracy * 100)}%`
-      : node.overallScore !== null
-        ? `${Math.round(node.overallScore * 100)}%`
-        : null;
+  const tileStatus = statusLabel(node.lpStatus, node.overallTier);
 
   return (
     <button
+      type="button"
       onClick={isMastered ? undefined : onClick}
       disabled={isMastered}
+      title={node.fullLabel}
       className={`
-        relative flex flex-col items-center text-center w-full
-        p-3 rounded-2xl ring-2 transition-all duration-200
+        relative flex min-h-[120px] w-full flex-col items-start gap-3 rounded-[1.6rem] border p-3.5 text-left shadow-sm transition-all duration-200 sm:min-h-[128px]
         ${style.ring} ${style.bg}
-        ${isMastered ? 'cursor-not-allowed opacity-60' : 'hover:scale-[1.02] active:scale-[0.98] hover:brightness-110'}
-        ${isActive ? 'shadow-lg shadow-cyan-500/20' : ''}
+        ${isMastered ? 'cursor-not-allowed opacity-70' : 'hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]'}
       `}
     >
-      {/* Lesson-viewed dot */}
-      {node.lpLessonViewed && !isMastered && (
-        <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-cyan-400" title="Lesson viewed" />
-      )}
+      <div className="flex w-full items-start justify-between gap-2">
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${style.ring} bg-white/70`}>
+          {isMastered ? (
+            <CheckCircle className="h-4 w-4 text-emerald-700" />
+          ) : (
+            <BookOpen className={`h-4 w-4 ${style.label}`} />
+          )}
+        </div>
 
-      {/* Node icon circle */}
-      <div className={`
-        w-10 h-10 rounded-full ring-2 flex items-center justify-center mb-2 shrink-0
-        ${style.ring} ${style.bg}
-      `}>
-        {isMastered ? (
-          <CheckCircle className="w-5 h-5 text-emerald-400" />
-        ) : (
-          <BookOpen className={`w-4 h-4 ${style.label}`} />
+        <div className="flex items-center gap-2">
+          {node.lpLessonViewed && !isMastered && (
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-500" title="Lesson viewed" />
+          )}
+          {!isMastered && (
+            <div className="flex h-7 min-w-[1.75rem] items-center justify-center rounded-full border border-amber-200 bg-white px-1.5 shadow-sm">
+              <span className="text-[11px] font-bold tabular-nums text-amber-700">{index + 1}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="min-w-0">
+        <p className={`line-clamp-2 text-sm font-semibold leading-snug sm:text-[15px] ${style.label}`}>
+          {node.shortLabel}
+        </p>
+        {node.moduleId && (
+          <p className="mt-1 text-[11px] font-mono text-slate-500">{node.moduleId}</p>
         )}
       </div>
 
-      {/* Skill label */}
-      <p className={`text-[10px] font-semibold leading-snug mb-1.5 line-clamp-2 ${style.label}`}>
-        {node.fullLabel}
-      </p>
-
-      {/* Module code */}
-      {node.moduleId && (
-        <p className="text-[8px] font-mono text-slate-600 mb-1.5">{node.moduleId}</p>
-      )}
-
-      {/* Status badge + accuracy */}
-      <div className="flex items-center gap-1 flex-wrap justify-center">
-        <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold ${style.badge}`}>
-          {statusLabel(node.lpStatus, node.overallTier)}
+      <div className="mt-auto flex w-full items-end justify-between gap-2">
+        <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${style.badge}`}>
+          {tileStatus}
         </span>
-        {displayAccuracy && (
-          <span className={`text-[8px] font-bold tabular-nums ${style.label}`}>
-            {displayAccuracy}
-          </span>
-        )}
+        {isMastered && <Lock className="h-3.5 w-3.5 text-emerald-700" />}
       </div>
-
-      {/* Lock overlay for mastered */}
-      {isMastered && (
-        <div className="absolute inset-0 flex items-end justify-end p-2 pointer-events-none">
-          <Lock className="w-3 h-3 text-emerald-700" />
-        </div>
-      )}
-
-      {/* Rank badge */}
-      {!isMastered && (
-        <div className="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-navy-900 border border-navy-600/60 flex items-center justify-center">
-          <span className="text-[7px] font-bold text-slate-500 tabular-nums">{index + 1}</span>
-        </div>
-      )}
     </button>
   );
 }
-
-// ─── Main component ───────────────────────────────────────────────────────────
-
-const NODE_H = 140;     // approximate node card height
-const V_GAP  = 48;      // vertical gap between node rows
 
 export default function LearningPathNodeMap({
   profile,
   lpProgress,
   onNodeClick,
 }: LearningPathNodeMapProps) {
-  const nodes = buildNodes(profile, lpProgress);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [svgPaths, setSvgPaths] = useState<Array<{ d: string; color: string }>>([]);
+  const nodes = useMemo(() => buildNodes(profile, lpProgress), [profile, lpProgress]);
+  const gridRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [columnCount, setColumnCount] = useState(4);
+  const [svgPaths, setSvgPaths] = useState<Array<{ d: string; color: string }>>([]);
   const [containerH, setContainerH] = useState(0);
 
-  // After layout, measure node positions and compute SVG connector paths
+  const orderedNodes = useMemo(
+    () => arrangeSnake(nodes, columnCount),
+    [nodes, columnCount]
+  );
+
   useLayoutEffect(() => {
-    if (!containerRef.current) return;
+    const element = gridRef.current;
+    if (!element) return;
 
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const positions: Array<{ x: number; y: number }> = [];
+    const updateColumns = () => {
+      const width = element.clientWidth;
+      const next = Math.max(
+        MIN_COLUMNS,
+        Math.min(
+          MAX_COLUMNS,
+          Math.floor((width + TILE_GAP_PX) / (TILE_MIN_WIDTH + TILE_GAP_PX)) || MIN_COLUMNS
+        )
+      );
+      setColumnCount(current => (current === next ? current : next));
+    };
 
-    for (let i = 0; i < nodeRefs.current.length; i++) {
-      const el = nodeRefs.current[i];
-      if (!el) continue;
-      const rect = el.getBoundingClientRect();
-      positions.push({
-        x: rect.left - containerRect.left + rect.width / 2,
-        y: rect.top - containerRect.top + rect.height / 2,
-      });
+    updateColumns();
+
+    const observer = new ResizeObserver(updateColumns);
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const nodeSignature = useMemo(
+    () => orderedNodes
+      .map(node => `${node.skillId}:${node.lpStatus}:${node.overallTier}:${node.lpLessonViewed ? 1 : 0}`)
+      .join('|'),
+    [orderedNodes]
+  );
+
+  useLayoutEffect(() => {
+    const container = gridRef.current;
+    if (!container) return;
+
+    const positions = nodeRefs.current
+      .slice(0, orderedNodes.length)
+      .map(element => {
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        return {
+          x: rect.left - containerRect.left + rect.width / 2,
+          y: rect.top - containerRect.top + rect.height / 2,
+        };
+      })
+      .filter((position): position is { x: number; y: number } => position !== null);
+
+    if (positions.length < 2) {
+      setSvgPaths([]);
+      setContainerH(container.offsetHeight);
+      return;
     }
 
-    if (positions.length < 2) return;
-
-    // Build one compound path for all nodes, plus extract colors per segment
-    const paths: Array<{ d: string; color: string }> = [];
-    for (let i = 0; i < positions.length - 1; i++) {
-      const from = positions[i];
-      const to = positions[i + 1];
+    const nextPaths = positions.slice(0, -1).map((from, index) => {
+      const to = positions[index + 1];
       const midY = (from.y + to.y) / 2;
-      const d = `M ${from.x} ${from.y} C ${from.x} ${midY}, ${to.x} ${midY}, ${to.x} ${to.y}`;
-      const style = getNodeStyle(nodes[i + 1].lpStatus, nodes[i + 1].overallTier);
-      paths.push({ d, color: style.connector });
-    }
+      const style = getNodeStyle(orderedNodes[index + 1].lpStatus, orderedNodes[index + 1].overallTier);
 
-    setSvgPaths(paths);
-    setContainerH(containerRect.height);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes.length, JSON.stringify(Object.keys(lpProgress))]);
+      return {
+        d: `M ${from.x} ${from.y} C ${from.x} ${midY}, ${to.x} ${midY}, ${to.x} ${to.y}`,
+        color: style.connector,
+      };
+    });
+
+    setSvgPaths(nextPaths);
+    setContainerH(container.offsetHeight);
+  }, [columnCount, nodeSignature, orderedNodes]);
 
   const activeCount = nodes.filter(
-    n => n.lpStatus !== 'mastered' && n.overallTier !== 'proficient'
+    node => node.lpStatus !== 'mastered' && node.overallTier !== 'proficient'
   ).length;
   const masteredCount = nodes.length - activeCount;
 
   return (
-    <div className="space-y-3">
-      {/* Legend + count */}
-      <div className="flex items-center justify-between px-1">
-        <p className="text-[10px] text-slate-600 leading-relaxed">
+    <div className="space-y-4">
+      <div className="editorial-surface-soft flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm leading-relaxed text-slate-600">
           {activeCount} skills to strengthen · {masteredCount} mastered
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
           {[
-            { color: 'bg-rose-500', label: 'Emerging' },
-            { color: 'bg-amber-400', label: 'Approaching' },
-            { color: 'bg-emerald-400', label: 'Demonstrating' },
-          ].map(l => (
-            <span key={l.label} className="flex items-center gap-1 text-[8px] text-slate-500">
-              <span className={`w-2 h-2 rounded-full ${l.color}`} />
-              {l.label}
+            { color: 'bg-rose-500', label: PROFICIENCY_META.emerging.label },
+            { color: 'bg-amber-400', label: PROFICIENCY_META.approaching.label },
+            { color: 'bg-emerald-400', label: PROFICIENCY_META.proficient.label },
+            { color: 'bg-slate-400', label: PROFICIENCY_META.unstarted.label },
+          ].map(item => (
+            <span key={item.label} className="flex items-center gap-1.5 text-xs text-slate-500">
+              <span className={`h-2.5 w-2.5 rounded-full ${item.color}`} />
+              {item.label}
             </span>
           ))}
         </div>
       </div>
 
-      {/* Scrollable node map container */}
-      <div className="overflow-y-auto max-h-[70vh] rounded-2xl">
-        <div ref={containerRef} className="relative" style={{ minHeight: nodes.length * (NODE_H + V_GAP) }}>
-
-          {/* SVG overlay — connector lines */}
+      <div className="max-h-[72vh] overflow-y-auto rounded-[2rem] border border-slate-200 bg-[#fbfaf7] p-3 sm:p-4">
+        <div ref={gridRef} className="relative">
           {svgPaths.length > 0 && (
             <svg
-              className="absolute inset-0 pointer-events-none"
+              className="pointer-events-none absolute inset-0"
               width="100%"
-              height={containerH || nodes.length * (NODE_H + V_GAP)}
+              height={containerH}
               style={{ overflow: 'visible' }}
             >
-              {/* Shadow layer for depth */}
-              {svgPaths.map((p, i) => (
+              {svgPaths.map((path, index) => (
                 <path
-                  key={`shadow-${i}`}
-                  d={p.d}
+                  key={`shadow-${index}`}
+                  d={path.d}
                   fill="none"
-                  stroke="rgba(0,0,0,0.4)"
-                  strokeWidth={5}
+                  stroke="rgba(251, 191, 36, 0.10)"
+                  strokeWidth={6}
                   strokeLinecap="round"
                 />
               ))}
-              {/* Main connector lines — dashed "road" */}
-              {svgPaths.map((p, i) => (
+              {svgPaths.map((path, index) => (
                 <path
-                  key={`line-${i}`}
-                  d={p.d}
+                  key={`path-${index}`}
+                  d={path.d}
                   fill="none"
-                  stroke={p.color}
+                  stroke={path.color}
                   strokeWidth={2}
-                  strokeDasharray="6 5"
+                  strokeDasharray="7 6"
                   strokeLinecap="round"
-                  opacity={0.6}
+                  opacity={0.75}
                 />
               ))}
             </svg>
           )}
 
-          {/* Node cards, alternating left/right */}
-          {nodes.map((node, i) => {
-            const isLeft = i % 2 === 0;
-            // Alternating position: left nodes at ~5%, right nodes at ~55%
-            const leftPct = isLeft ? '3%' : '53%';
-
-            return (
+          <div
+            className="relative grid gap-3 sm:gap-4"
+            style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
+          >
+            {orderedNodes.map((node, index) => (
               <div
                 key={node.skillId}
-                ref={el => { nodeRefs.current[i] = el; }}
-                style={{
-                  position: 'absolute',
-                  top: i * (NODE_H + V_GAP),
-                  left: leftPct,
-                  width: '44%',
+                ref={element => {
+                  nodeRefs.current[index] = element;
                 }}
               >
                 <NodeCard
                   node={node}
-                  index={i}
-                  isActive={false}
+                  index={index}
                   onClick={() => onNodeClick(node.skillId)}
                 />
               </div>
-            );
-          })}
-
-          {/* Spacer to ensure container height includes last node */}
-          <div style={{ height: nodes.length * (NODE_H + V_GAP) + NODE_H }} />
+            ))}
+          </div>
         </div>
       </div>
     </div>

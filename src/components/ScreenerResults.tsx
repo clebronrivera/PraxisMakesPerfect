@@ -24,9 +24,9 @@ interface ScreenerResultsProps {
 }
 
 const toneStyles: Record<ReadinessTone, string> = {
-  ready: 'text-emerald-300 bg-emerald-500/15 border-emerald-500/30',
-  building: 'text-amber-300 bg-amber-500/15 border-amber-500/30',
-  priority: 'text-rose-300 bg-rose-500/15 border-rose-500/30'
+  ready: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  building: 'border-amber-200 bg-amber-50 text-amber-700',
+  priority: 'border-rose-200 bg-rose-50 text-rose-700'
 };
 
 function formatPercent(score: number): string {
@@ -69,15 +69,19 @@ export default function ScreenerResults({
 
   if (report.totalQuestions === 0 || report.domainSummaries.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
-        <AlertTriangle className="w-12 h-12 text-slate-500" />
-        <p className="text-slate-300">Result data is not available for this assessment yet.</p>
-        <p className="text-sm text-slate-500">Try returning home and reopening the report, or continue with practice.</p>
+      <div className="editorial-surface flex min-h-[400px] flex-col items-center justify-center space-y-4 p-10 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50">
+          <AlertTriangle className="h-7 w-7 text-amber-700" />
+        </div>
+        <p className="text-lg font-semibold text-slate-900">Result data is not available for this assessment yet.</p>
+        <p className="max-w-xl text-sm text-slate-500">
+          Try returning home and reopening the report, or continue with practice.
+        </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
           {onStartPractice && (
             <button
               onClick={() => onStartPractice()}
-              className="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold transition-all"
+              className="editorial-button-primary"
             >
               Start Domain Review
             </button>
@@ -91,7 +95,7 @@ export default function ScreenerResults({
 
               window.location.reload();
             }}
-            className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-semibold transition-all border border-slate-700"
+            className="editorial-button-secondary"
           >
             Return Home
           </button>
@@ -107,57 +111,57 @@ export default function ScreenerResults({
     : `Completed an archived short assessment (${report.totalQuestions} questions).`;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 py-8 px-4">
-      <div className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300">
+    <div className="mx-auto max-w-6xl space-y-8 px-1 py-2 sm:px-0">
+      <div className="space-y-2 px-1">
+        <p className="editorial-overline">
           Practical Study Guidance
         </p>
-        <h2 className="text-3xl font-bold text-white tracking-tight">{title}</h2>
-        <p className="text-slate-400">{subtitle}</p>
+        <h2 className="editorial-heading text-3xl sm:text-4xl">{title}</h2>
+        <p className="editorial-copy">{subtitle}</p>
       </div>
 
-      <section className="rounded-[2rem] border border-slate-800 bg-slate-900/80 p-6 shadow-2xl">
+      <section className="editorial-panel-dark overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-3">
               <span className={`inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-semibold ${toneStyles[report.readiness.tone]}`}>
                 {report.readiness.label}
               </span>
-              <span className="text-sm text-slate-400">
+              <span className="text-sm text-slate-300">
                 {report.correctAnswers} correct out of {report.totalQuestions}
               </span>
             </div>
             <div className="space-y-2">
               <p className="text-5xl font-bold text-white">{formatPercent(report.overallScore)}</p>
-              <p className="text-slate-300">{report.readiness.description}</p>
-              <p className="text-sm text-slate-500">{overallMeaning(report.overallScore)}</p>
+              <p className="text-slate-200">{report.readiness.description}</p>
+              <p className="text-sm text-slate-400">{overallMeaning(report.overallScore)}</p>
             </div>
-            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Best Next Step</p>
-              <p className="mt-2 text-sm text-cyan-50">{report.readiness.nextAction}</p>
+            <div className="rounded-[1.5rem] border border-amber-500/20 bg-white/5 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300">Best Next Step</p>
+              <p className="mt-2 text-sm text-slate-100">{report.readiness.nextAction}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Highest-Need Domains</p>
+            <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Highest-Need Domains</p>
               <div className="mt-4 space-y-3">
                 {report.highestNeedDomains.map((domain) => (
-                  <div key={domain.id} className="rounded-xl border border-slate-800 bg-slate-900/80 p-3">
+                  <div key={domain.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm font-semibold text-slate-100">{domain.name}</p>
                       <span className="text-sm font-bold" style={{ color: getDomainColor(domain.id) }}>
                         {formatPercent(domain.score)}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">{domain.correct} correct out of {domain.total} attempted</p>
+                    <p className="mt-1 text-xs text-slate-400">{domain.correct} correct out of {domain.total} attempted</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Foundational Concepts To Review</p>
+            <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Foundational Concepts To Review</p>
               <div className="mt-4 space-y-3">
                 {report.foundationalGaps.length > 0 ? (
                   report.foundationalGaps.map((gap) => (
@@ -169,7 +173,7 @@ export default function ScreenerResults({
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-slate-300">
                     No prerequisite links were surfaced from this attempt, so start with your weakest domains below.
                   </p>
                 )}
@@ -180,20 +184,20 @@ export default function ScreenerResults({
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+        <div className="editorial-surface p-6">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-cyan-300" />
-            <h3 className="text-lg font-semibold text-slate-100">Performance by Domain</h3>
+            <BarChart3 className="h-5 w-5 text-amber-700" />
+            <h3 className="text-lg font-semibold text-slate-900">Performance by Domain</h3>
           </div>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-slate-500">
             These percentages are based on the questions you actually saw in each domain for this assessment.
           </p>
           <div className="mt-6 space-y-4">
             {report.domainSummaries.map((domain) => (
-              <div key={domain.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <div key={domain.id} className="editorial-surface-soft p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-slate-100">{domain.name}</p>
+                    <p className="font-semibold text-slate-900">{domain.name}</p>
                     <p className="mt-1 text-sm text-slate-500">{domain.correct} correct out of {domain.total} attempted</p>
                   </div>
                   <div className="text-right">
@@ -205,7 +209,7 @@ export default function ScreenerResults({
                     </span>
                   </div>
                 </div>
-                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-800">
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
@@ -220,61 +224,63 @@ export default function ScreenerResults({
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+          <div className="editorial-surface p-6">
             <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-rose-300" />
-              <h3 className="text-lg font-semibold text-slate-100">Study Next</h3>
+              <Target className="h-5 w-5 text-amber-700" />
+              <h3 className="text-lg font-semibold text-slate-900">Study Next</h3>
             </div>
             <div className="mt-5 space-y-3">
-            {report.highestNeedDomains.map((domain) => (
-              <button
-                key={domain.id}
-                onClick={() => onStartPractice?.(domain.id)}
-                className="w-full rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-left transition-colors hover:border-slate-700 hover:bg-slate-900"
+              {report.highestNeedDomains.map((domain) => (
+                <button
+                  key={domain.id}
+                  onClick={() => onStartPractice?.(domain.id)}
+                  className="editorial-surface-soft w-full p-4 text-left transition-colors hover:border-amber-200"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-slate-100">{domain.name}</p>
-                      <p className="mt-1 text-sm text-slate-400">
+                      <p className="font-semibold text-slate-900">{domain.name}</p>
+                      <p className="mt-1 text-sm text-slate-500">
                         Start mixed review here first to address the biggest score drag.
                       </p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500" />
+                    <ChevronRight className="h-5 w-5 text-slate-400" />
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+          <div className="editorial-surface p-6">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-300" />
-              <h3 className="text-lg font-semibold text-slate-100">Current Strengths</h3>
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              <h3 className="text-lg font-semibold text-slate-900">Current Strengths</h3>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
               {report.strengths.length > 0 ? (
                 report.strengths.map((skill) => (
                   <span
                     key={skill.skillId}
-                    className="inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-sm text-emerald-100"
+                    className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm text-emerald-700"
                   >
                     {skill.skillName}
                   </span>
                 ))
               ) : (
-                <p className="text-sm text-slate-400">This attempt did not surface strong repeat signals yet. Use a few more practice items to sharpen the picture.</p>
+                <p className="text-sm text-slate-500">
+                  This attempt did not surface strong repeat signals yet. Use a few more practice items to sharpen the picture.
+                </p>
               )}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+      <section className="editorial-surface p-6">
         <div className="flex items-center gap-2">
-          <Layers className="w-5 h-5 text-violet-300" />
-          <h3 className="text-lg font-semibold text-slate-100">Domain Drilldown</h3>
+          <Layers className="h-5 w-5 text-amber-700" />
+          <h3 className="text-lg font-semibold text-slate-900">Domain Drilldown</h3>
         </div>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-slate-500">
           Open a domain to see strengths, likely gaps, linked prerequisites, and the clearest next focus.
         </p>
         <div className="mt-6 space-y-4">
@@ -282,11 +288,11 @@ export default function ScreenerResults({
             <details
               key={domain.id}
               open={index === 0}
-              className="group rounded-2xl border border-slate-800 bg-slate-950/70 p-4"
+              className="group rounded-[1.5rem] border border-slate-200 bg-[#fbfaf7] p-4"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
                 <div>
-                  <p className="font-semibold text-slate-100">{domain.name}</p>
+                  <p className="font-semibold text-slate-900">{domain.name}</p>
                   <p className="mt-1 text-sm text-slate-500">
                     {formatPercent(domain.score)} • {domain.correct}/{domain.total} correct
                   </p>
@@ -305,13 +311,13 @@ export default function ScreenerResults({
                         domain.strengths.map((skill) => (
                           <span
                             key={skill.skillId}
-                            className="inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-sm text-emerald-100"
+                            className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm text-emerald-700"
                           >
                             {skill.skillName}
                           </span>
                         ))
                       ) : (
-                        <p className="text-sm text-slate-400">No clear strengths surfaced in this domain yet.</p>
+                        <p className="text-sm text-slate-500">No clear strengths surfaced in this domain yet.</p>
                       )}
                     </div>
                   </div>
@@ -321,15 +327,15 @@ export default function ScreenerResults({
                     <div className="mt-3 space-y-2">
                       {domain.weaknesses.length > 0 ? (
                         domain.weaknesses.map((skill) => (
-                          <div key={skill.skillId} className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3">
-                            <p className="text-sm font-semibold text-rose-100">{skill.skillName}</p>
-                            <p className="mt-1 text-xs text-rose-50/80">
+                          <div key={skill.skillId} className="rounded-xl border border-rose-200 bg-rose-50 p-3">
+                            <p className="text-sm font-semibold text-rose-700">{skill.skillName}</p>
+                            <p className="mt-1 text-xs text-rose-600">
                               Missed {skill.incorrect} time{skill.incorrect === 1 ? '' : 's'} in this assessment.
                             </p>
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-slate-400">No repeated misses surfaced in this domain.</p>
+                        <p className="text-sm text-slate-500">No repeated misses surfaced in this domain.</p>
                       )}
                     </div>
                   </div>
@@ -341,15 +347,15 @@ export default function ScreenerResults({
                     <div className="mt-3 space-y-2">
                       {domain.foundationalGaps.length > 0 ? (
                         domain.foundationalGaps.map((gap) => (
-                          <div key={gap.skillId} className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-3">
-                            <p className="text-sm font-semibold text-amber-100">{gap.skillName}</p>
-                            <p className="mt-1 text-xs text-amber-50/80">
+                          <div key={gap.skillId} className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+                            <p className="text-sm font-semibold text-amber-700">{gap.skillName}</p>
+                            <p className="mt-1 text-xs text-amber-700">
                               Review this before harder work in {gap.triggeredBy.slice(0, 2).join(' and ')}.
                             </p>
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-slate-400">No prerequisite-linked refresh areas were surfaced here.</p>
+                        <p className="text-sm text-slate-500">No prerequisite-linked refresh areas were surfaced here.</p>
                       )}
                     </div>
                   </div>
@@ -358,14 +364,14 @@ export default function ScreenerResults({
                     <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Recommended Focus</p>
                     <div className="mt-3 space-y-2">
                       {domain.recommendations.map((recommendation) => (
-                        <div key={recommendation} className="rounded-xl border border-cyan-500/20 bg-cyan-500/10 p-3 text-sm text-cyan-50">
+                        <div key={recommendation} className="rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
                           {recommendation}
                         </div>
                       ))}
                     </div>
                     <button
                       onClick={() => onStartPractice?.(domain.id)}
-                      className="mt-4 inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
+                      className="editorial-button-secondary mt-4"
                     >
                       Practice This Domain
                     </button>
@@ -381,7 +387,7 @@ export default function ScreenerResults({
         {onStartPractice && (
           <button
             onClick={() => onStartPractice(primaryDomain?.id)}
-            className="flex-1 rounded-2xl bg-emerald-500 px-6 py-4 font-bold text-white transition-colors hover:bg-emerald-600"
+            className="editorial-button-primary flex-1"
           >
             Start Domain Review
           </button>
@@ -389,7 +395,7 @@ export default function ScreenerResults({
         {onTakeFullAssessment && (
           <button
             onClick={onTakeFullAssessment}
-            className="flex-1 rounded-2xl border border-slate-700 bg-slate-900 px-6 py-4 font-bold text-slate-100 transition-colors hover:bg-slate-800"
+            className="editorial-button-dark flex-1"
           >
             Take Full Assessment
           </button>
@@ -403,15 +409,15 @@ export default function ScreenerResults({
 
             window.location.reload();
           }}
-          className="rounded-2xl bg-white px-6 py-4 font-bold text-slate-950 transition-colors hover:bg-slate-100"
+          className="editorial-button-secondary"
         >
           Return Home
         </button>
       </div>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4 text-sm text-slate-500">
+      <div className="editorial-surface-soft p-4 text-sm text-slate-500">
         <div className="flex items-start gap-3">
-          <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500" />
+          <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-700" />
           <p>
             Domain readiness here is a practical study signal, not a formal scaled score. Each domain uses the questions you actually saw in this assessment, and prerequisite review is only surfaced when linked metadata exists for the missed skill.
           </p>

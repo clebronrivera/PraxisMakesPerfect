@@ -19,9 +19,9 @@ interface ScoreReportProps {
 
 
 const getScoreColor = (score: number) => {
-  if (score >= 0.8) return { text: 'text-emerald-400', bg: 'bg-emerald-500/20', border: 'border-emerald-500/30' };
-  if (score >= 0.6) return { text: 'text-amber-400', bg: 'bg-amber-500/20', border: 'border-amber-500/30' };
-  return { text: 'text-red-400', bg: 'bg-red-500/20', border: 'border-red-500/30' };
+  if (score >= 0.8) return { text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' };
+  if (score >= 0.6) return { text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' };
+  return { text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' };
 };
 
 export default function ScoreReport({
@@ -57,16 +57,16 @@ export default function ScoreReport({
 
     return (
       <div className="space-y-8">
-        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center space-y-6">
+        <div className="editorial-surface space-y-6 p-8 text-center">
           <div className="flex justify-center">
-            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
-              <AlertTriangle className="w-8 h-8 text-red-400" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
+              <AlertTriangle className="h-8 w-8 text-rose-700" />
             </div>
           </div>
           
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-slate-100">Results Missing or Corrupted</h2>
-            <p className="text-slate-400">
+            <h2 className="text-2xl font-bold text-slate-900">Results Missing or Corrupted</h2>
+            <p className="text-slate-500">
               We couldn't find your assessment results. This may happen if you refreshed the page or your session expired.
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function ScoreReport({
           <div className="flex flex-col gap-3 pt-4">
             <button
               onClick={tryRecalculate}
-              className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="editorial-button-primary w-full"
             >
               <RotateCcw className="w-4 h-4" />
               Try to Recalculate
@@ -84,7 +84,7 @@ export default function ScoreReport({
                 clearSession();
                 onGoHome();
               }}
-              className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="editorial-button-secondary w-full"
             >
               <Home className="w-4 h-4" />
               Reset Attempt & Go Home
@@ -172,14 +172,14 @@ export default function ScoreReport({
   const scoreStyle = getScoreColor(overallScore);
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-6xl space-y-8 px-1 py-2 sm:px-0">
       {/* Header */}
-      <div className="text-center space-y-4">
+      <div className="space-y-4 text-center">
         <div className="flex items-center justify-center gap-3">
           <Trophy className={`w-10 h-10 ${scoreStyle.text}`} />
-          <h2 className="text-3xl font-bold text-slate-100">Full Assessment Complete!</h2>
+          <h2 className="editorial-heading text-3xl sm:text-4xl">Full Assessment Complete!</h2>
         </div>
-        <p className="text-slate-400">
+        <p className="editorial-copy">
           {`You completed all ${responses.length} questions`}
         </p>
         <button
@@ -187,17 +187,17 @@ export default function ScoreReport({
             const { currentSkillScores } = detectWeaknesses(responses, questions);
             downloadScoreReport(responses, profile, currentSkillScores);
           }}
-          className="mx-auto px-6 py-2 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-200 rounded-full font-medium transition-colors flex items-center justify-center gap-2"
+          className="editorial-button-secondary mx-auto"
         >
           Download Detailed Report
         </button>
       </div>
 
       {/* Overall Score Card */}
-      <div className={`bg-gradient-to-br ${scoreStyle.bg} border ${scoreStyle.border} rounded-2xl p-8 text-center`}>
+      <div className="editorial-panel-dark p-8 text-center">
         <div className="space-y-4">
           <div>
-            <p className="text-slate-400 text-sm mb-2">Overall Score</p>
+            <p className="mb-2 text-sm text-slate-300">Overall Score</p>
             <p className={`text-6xl font-bold ${scoreStyle.text}`}>
               {scorePercentage}%
             </p>
@@ -205,11 +205,11 @@ export default function ScoreReport({
           <div className="flex items-center justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span className="text-slate-300">{correctAnswers} Correct</span>
+              <span className="text-slate-200">{correctAnswers} Correct</span>
             </div>
             <div className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-400" />
-              <span className="text-slate-300">{totalQuestions - correctAnswers} Incorrect</span>
+              <XCircle className="w-5 h-5 text-rose-400" />
+              <span className="text-slate-200">{totalQuestions - correctAnswers} Incorrect</span>
             </div>
           </div>
         </div>
@@ -217,27 +217,27 @@ export default function ScoreReport({
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+        <div className="editorial-stat-card">
           <div className="flex items-center gap-3 mb-2">
-            <Clock className="w-5 h-5 text-blue-400" />
-            <p className="text-sm text-slate-400">Total Time</p>
+            <Clock className="w-5 h-5 text-amber-700" />
+            <p className="text-sm text-slate-500">Total Time</p>
           </div>
-          <p className="text-2xl font-bold text-slate-200">{formatTime(totalTime)}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatTime(totalTime)}</p>
         </div>
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+        <div className="editorial-stat-card">
           <div className="flex items-center gap-3 mb-2">
-            <Timer className="w-5 h-5 text-purple-400" />
-            <p className="text-sm text-slate-400">Avg Time/Question</p>
+            <Timer className="w-5 h-5 text-amber-700" />
+            <p className="text-sm text-slate-500">Avg Time/Question</p>
           </div>
-          <p className="text-2xl font-bold text-slate-200">{formatTime(avgTimePerQuestion)}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatTime(avgTimePerQuestion)}</p>
         </div>
       </div>
 
       {/* Longest Questions */}
       {longestQuestions.length > 0 && (
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
-          <h3 className="font-semibold text-slate-200 mb-4 flex items-center gap-2">
-            <Timer className="w-5 h-5 text-purple-400" />
+        <div className="editorial-surface p-6">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
+            <Timer className="w-5 h-5 text-amber-700" />
             Questions That Took the Longest
           </h3>
           <div className="space-y-3">
@@ -246,16 +246,16 @@ export default function ScoreReport({
                 key={item.questionId} 
                 className={`p-4 rounded-xl border ${
                   item.isCorrect 
-                    ? 'bg-emerald-500/10 border-emerald-500/30' 
-                    : 'bg-red-500/10 border-red-500/30'
+                    ? 'bg-emerald-50 border-emerald-200' 
+                    : 'bg-rose-50 border-rose-200'
                 }`}
               >
                 <div className="flex items-start justify-between gap-4 mb-2">
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-200">
+                    <p className="text-sm font-semibold text-slate-900">
                       {index + 1}. {item.questionLabel}
                     </p>
-                    <p className="mt-1 text-sm text-slate-400 line-clamp-2">
+                    <p className="mt-1 text-sm text-slate-500 line-clamp-2">
                       {item.prompt
                         ? `${item.prompt.substring(0, 100)}${item.prompt.length > 100 ? '...' : ''}`
                         : 'Question text unavailable for this report.'}
@@ -263,11 +263,11 @@ export default function ScoreReport({
                   </div>
                   <div className="flex items-center gap-2">
                     {item.isCorrect ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                     ) : (
-                      <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                      <XCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                     )}
-                    <span className="text-sm font-semibold text-slate-300 whitespace-nowrap">
+                    <span className="text-sm font-semibold text-slate-700 whitespace-nowrap">
                       {formatTime(item.timeSpent)}
                     </span>
                   </div>
@@ -279,9 +279,9 @@ export default function ScoreReport({
       )}
 
       {/* Domain Scores */}
-      <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
-        <h3 className="font-semibold text-slate-200 mb-6 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-amber-500" />
+      <div className="editorial-surface p-6">
+        <h3 className="mb-6 flex items-center gap-2 font-semibold text-slate-900">
+          <BarChart3 className="w-5 h-5 text-amber-700" />
           Performance by Domain
         </h3>
         <div className="space-y-4">
@@ -291,16 +291,16 @@ export default function ScoreReport({
             const domainInfo = NASP_DOMAINS[domain as keyof typeof NASP_DOMAINS];
             
             return (
-              <div key={domain} className="space-y-2">
+              <div key={domain} className="editorial-surface-soft space-y-2 p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-300">
+                  <span className="text-sm text-slate-700">
                     {getDomainLabel(domainInfo)}
                   </span>
                   <span className={`text-sm font-bold ${domainStyle.text}`}>
                     {pct}%
                   </span>
                 </div>
-                <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full rounded-full transition-all"
                     style={{ 
@@ -320,8 +320,8 @@ export default function ScoreReport({
 
       {/* Weakest Areas */}
       {weakestDomains.length > 0 && (
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6">
-          <h3 className="font-semibold text-amber-300 mb-4 flex items-center gap-2">
+        <div className="editorial-surface p-6">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold text-amber-700">
             <AlertTriangle className="w-5 h-5" />
             Areas for Improvement
           </h3>
@@ -330,14 +330,14 @@ export default function ScoreReport({
               const domainInfo = NASP_DOMAINS[domain as keyof typeof NASP_DOMAINS];
               const domainScore = domainArray.find(d => d.domain === domain);
               return (
-                <div key={domain} className="p-4 bg-slate-800/50 rounded-xl">
+                <div key={domain} className="editorial-surface-soft p-4">
                   <div className="flex justify-between items-start mb-2">
-                    <p className="font-medium text-slate-200">{domainInfo?.name}</p>
-                    <span className="text-sm text-amber-400 font-semibold">
+                    <p className="font-medium text-slate-900">{domainInfo?.name}</p>
+                    <span className="text-sm text-amber-700 font-semibold">
                       {Math.round((domainScore?.score || 0) * 100)}%
                     </span>
                   </div>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-slate-500">
                     {domainInfo?.keyConcepts?.slice(0, 3).join(', ')}
                   </p>
                 </div>
@@ -352,7 +352,7 @@ export default function ScoreReport({
         <div className="space-y-3">
           <button
             onClick={() => onStartPractice(weakestDomains[0])}
-            className="w-full p-6 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center gap-3 font-semibold text-white hover:shadow-lg hover:shadow-emerald-500/20 transition-all"
+            className="editorial-button-primary w-full p-6"
           >
             <Zap className="w-5 h-5" />
             Start Domain Review in Weakest Domain
@@ -363,14 +363,14 @@ export default function ScoreReport({
           {!hideRetake && (
             <button
               onClick={onRetakeAssessment}
-              className="p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all"
+              className="editorial-button-dark p-4"
             >
               Retake Assessment
             </button>
           )}
           <button
             onClick={onGoHome}
-            className={`p-4 bg-slate-700/50 border border-slate-600 rounded-2xl text-slate-300 hover:bg-slate-700 transition-all flex items-center justify-center gap-2 ${hideRetake ? 'col-span-2' : ''}`}
+            className={`editorial-button-secondary p-4 ${hideRetake ? 'col-span-2' : ''}`}
           >
             <Home className="w-4 h-4" />
             Home

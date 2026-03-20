@@ -40,6 +40,7 @@ export default function QuestionCard({
 }: QuestionCardProps) {
   const [showReportModal, setShowReportModal] = useState(false);
   const isConfidenceVisible = !hideFooterControls && !showFeedback && selectedAnswers.length > 0;
+  const correctAnswersList = question.correct_answer || question.correctAnswers || [];
 
   // Determine source display
   const getSourceDisplay = () => {
@@ -52,20 +53,56 @@ export default function QuestionCard({
     }
   };
 
+  const getChoiceTone = (isSelected: boolean, isCorrect: boolean) => {
+    if (showFeedback && isCorrect) {
+      return {
+        container: 'border-emerald-300 bg-emerald-50',
+        chip: 'bg-emerald-600 text-white',
+        text: 'text-emerald-900',
+        icon: 'text-emerald-600',
+      };
+    }
+
+    if (showFeedback && isSelected && !isCorrect) {
+      return {
+        container: 'border-rose-300 bg-rose-50',
+        chip: 'bg-rose-500 text-white',
+        text: 'text-rose-900',
+        icon: 'text-rose-500',
+      };
+    }
+
+    if (isSelected) {
+      return {
+        container: 'border-amber-300 bg-amber-50 shadow-sm',
+        chip: 'bg-amber-500 text-white',
+        text: 'text-slate-900',
+        icon: 'text-amber-600',
+      };
+    }
+
+    return {
+      container: 'border-slate-200 bg-[#fbfaf7] hover:border-amber-300 hover:bg-amber-50/70',
+      chip: 'border border-slate-200 bg-white text-slate-500',
+      text: 'text-slate-700',
+      icon: 'text-slate-300',
+    };
+  };
+
   return (
     <>
       {/* Question Card */}
-      <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden">
+      <div className="editorial-surface overflow-hidden">
         {/* Header with source and flag */}
-        <div className="px-6 pt-6 pb-2 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 px-2 py-1 rounded bg-slate-900/50">
+            <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700">
               {getSourceDisplay()}
             </span>
           </div>
           <button
             onClick={() => setShowReportModal(true)}
-            className="p-2 rounded-lg transition-all text-slate-500 hover:text-amber-400 hover:bg-slate-700/50"
+            className="rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
             title="Report this question"
           >
             <AlertTriangle className="w-4 h-4" />
@@ -73,32 +110,32 @@ export default function QuestionCard({
         </div>
         
         {question.hasCaseVignette && question.caseText && (
-          <div className="p-6 pt-2 pb-0">
-            <div className="bg-slate-700/30 p-4 rounded-xl border border-slate-600/30">
-              <h4 className="text-amber-500 font-medium text-sm mb-2 uppercase tracking-wide">Case Vignette</h4>
-              <p className="text-sm text-slate-300 leading-relaxed italic">{question.caseText}</p>
+          <div className="px-6 pt-6">
+            <div className="rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5">
+              <h4 className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700">Case Vignette</h4>
+              <p className="text-sm leading-relaxed italic text-slate-700">{question.caseText}</p>
             </div>
           </div>
         )}
         
-        <div className="p-6 pt-4">
-          <p className="text-lg text-slate-200 leading-relaxed">{getQuestionPrompt(question)}</p>
+        <div className="px-6 pb-2 pt-6">
+          <p className="text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]">
+            {getQuestionPrompt(question)}
+          </p>
         </div>
         
         {/* Answer Format Indicator */}
-        {(question.correct_answer || question.correctAnswers || []).length > 1 && (
+        {correctAnswersList.length > 1 && (
           <div className="px-6 pb-2">
-            <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
-              Select {(question.correct_answer || question.correctAnswers || []).length}
+            <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+              Select {correctAnswersList.length}
             </span>
           </div>
         )}
         
         {/* Answer Choices */}
-        <div className="p-4 space-y-2">
+        <div className="space-y-3 p-6 pt-4">
           {(() => {
-            const correctAnswersList = question.correct_answer || question.correctAnswers || [];
-            
             // Handle new array of objects or old record of strings
             const optionsList = question.options 
               ? question.options.map(opt => [opt.letter, opt.text] as [string, string])
@@ -110,47 +147,26 @@ export default function QuestionCard({
                 const isSelected = selectedAnswers.includes(letter);
                 const isCorrect = correctAnswersList.includes(letter);
                 const displayLabel = String.fromCharCode(65 + index);
-                
-                let bgColor = 'bg-slate-700/50 hover:bg-slate-700';
-                let borderColor = 'border-transparent';
-                let textColor = 'text-slate-300';
-                
-                if (showFeedback) {
-                  if (isCorrect) {
-                    bgColor = 'bg-emerald-500/20';
-                    borderColor = 'border-emerald-500/50';
-                    textColor = 'text-emerald-200';
-                  } else if (isSelected && !isCorrect) {
-                    bgColor = 'bg-red-500/20';
-                    borderColor = 'border-red-500/50';
-                    textColor = 'text-red-200';
-                  }
-                } else if (isSelected) {
-                  bgColor = 'bg-amber-500/20';
-                  borderColor = 'border-amber-500/50';
-                  textColor = 'text-amber-200';
-                }
+                const tone = getChoiceTone(isSelected, isCorrect);
                 
                 return (
                   <button
                     key={letter}
                     onClick={() => onSelectAnswer(letter)}
                     disabled={disabled || showFeedback || isSubmitting}
-                    className={`w-full p-4 rounded-xl border ${bgColor} ${borderColor} text-left transition-all flex items-start gap-4`}
+                    className={`flex w-full items-start gap-4 rounded-[1.5rem] border px-4 py-4 text-left transition-all ${tone.container} ${
+                      disabled || showFeedback || isSubmitting ? '' : 'hover:-translate-y-0.5'
+                    }`}
                   >
-                    <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
-                      showFeedback && isCorrect ? 'bg-emerald-500 text-white' :
-                      showFeedback && isSelected && !isCorrect ? 'bg-red-500 text-white' :
-                      isSelected ? 'bg-amber-500 text-white' : 'bg-slate-600 text-slate-300'
-                    }`}>
+                    <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-bold ${tone.chip}`}>
                       {displayLabel}
                     </span>
-                    <span className={textColor}>{text}</span>
+                    <span className={`flex-1 pt-0.5 text-sm leading-relaxed ${tone.text}`}>{text}</span>
                     {showFeedback && isCorrect && (
-                      <CheckCircle className="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" />
+                      <CheckCircle className={`ml-auto mt-0.5 h-5 w-5 flex-shrink-0 ${tone.icon}`} />
                     )}
                     {showFeedback && isSelected && !isCorrect && (
-                      <XCircle className="w-5 h-5 text-red-500 ml-auto flex-shrink-0" />
+                      <XCircle className={`ml-auto mt-0.5 h-5 w-5 flex-shrink-0 ${tone.icon}`} />
                     )}
                   </button>
                 );
@@ -161,21 +177,23 @@ export default function QuestionCard({
       
       {/* Confidence Selection (before submit) */}
       {isConfidenceVisible && (
-        <div className="flex items-center justify-center gap-4 mt-8">
-          <span className="text-sm text-slate-500">Confidence:</span>
+        <div className="editorial-surface-soft mt-8 flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+          <span className="text-sm font-semibold text-slate-700">Confidence</span>
+          <div className="flex flex-wrap items-center gap-2">
           {CONFIDENCE_DISPLAY_ORDER.map(level => (
             <button
               key={level}
               onClick={() => onConfidenceChange(level)}
-              className={`px-4 py-2 rounded-lg text-sm transition-all ${
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
                 confidence === level 
-                  ? 'bg-slate-700 text-slate-200' 
-                  : 'text-slate-500 hover:text-slate-300'
+                    ? 'border-slate-900 bg-slate-900 text-white'
+                    : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900'
               }`}
             >
               {getConfidenceDisplayLabel(level)}
             </button>
           ))}
+          </div>
         </div>
       )}
       
@@ -186,14 +204,14 @@ export default function QuestionCard({
             <button
               onClick={onSubmit}
               disabled={selectedAnswers.length === 0 || isSubmitting}
-              className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-amber-500/20 transition-all"
+              className="editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Answer'}
             </button>
           ) : (
             <button
               onClick={onNext}
-              className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-emerald-500/20 transition-all flex items-center gap-2"
+              className="editorial-button-dark min-w-[12rem]"
             >
               Next Question
               <ArrowRight className="w-5 h-5" />

@@ -34,6 +34,73 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-20 - Health check still reports known content-quality warnings
+
+- Status: watch
+- Area: diagnostics / generated content coverage / distractor quality / blueprint alignment
+- Summary: `npm run verify:health` now completes successfully after the UI sizing pass, but the diagnostics stage still reports the pre-existing content warnings: `Generation Capacity` warn, `Distractor Audit` warn, and `Blueprint Alignment` warn. The summary still ends with `OVERALL: NEEDS ATTENTION`, even though tests and the production build pass.
+- Source of truth: health-check warnings that come from content generation quality should be tracked explicitly so UI-only passes do not accidentally imply those content issues were fixed.
+- Code anchors:
+  [src/scripts/run-all-diagnostics.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/scripts/run-all-diagnostics.ts)
+  [src/scripts/bottleneck-finder.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/scripts/bottleneck-finder.ts)
+  [src/scripts/distractor-audit.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/scripts/distractor-audit.ts)
+  [src/scripts/blueprint-alignment.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/scripts/blueprint-alignment.ts)
+- Resolution / next step: No new regression was introduced in this pass. Keep these warnings tracked as active follow-up content work while treating the current UI/layout pass as health-check clean on tests and build. If we want the diagnostics summary itself to become all-green, the next work should target template coverage, distractor tuning, and blueprint-gap remediation rather than shell/layout code.
+
+## 2026-03-20 - Dashboard and practice surfaces mixed tiny text with oversized layout blocks
+
+- Status: resolved
+- Area: signed-in shell / dashboard / progress / practice layout density
+- Summary: The refreshed editorial UI was still using several sub-11px labels and very large hero/tile spacing at the same time. In practice that made the main tabs feel awkwardly scaled: text looked too small while cards and path visuals felt too large, and the learning-path map was still using the older tall alternating-card road instead of a tighter skill-tile layout.
+- Source of truth: signed-in learner surfaces should fit comfortably in a typical laptop viewport without requiring browser zoom changes, and learning-path skills should render as compact tiles that communicate development through shared proficiency color/state rather than raw mastery percentages.
+- Code anchors:
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+  [src/index.css](/Users/lebron/Documents/PraxisMakesPerfect/src/index.css)
+  [src/components/ResultsDashboard.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ResultsDashboard.tsx)
+  [src/components/StudyModesSection.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/StudyModesSection.tsx)
+  [src/components/LearningPathNodeMap.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/LearningPathNodeMap.tsx)
+- Resolution / next step: Resolved. Tightened the shared shell and home dashboard spacing, raised micro-type on progress/practice surfaces, made the domain skill dots distribute responsively with screen width, and rebuilt the learning-path view as a compact responsive snake-grid of skill tiles. Durable layout guidance is recorded in `docs/WORKFLOW_GROUNDING.md`.
+
+## 2026-03-20 - Full diagnostic report still rendered in the pre-rollout dark theme
+
+- Status: resolved
+- Area: full-assessment reporting UI / shared layout consistency
+- Summary: The full diagnostic results page was still using the older dark report styling after the rest of the signed-in experience had moved to the warm editorial system. Users finishing the 125-question assessment were landing on a report surface that no longer matched Home, Practice, Progress, Study Guide, or the updated screener report.
+- Source of truth: post-assessment results pages should use the same shared light-shell visual language as the current signed-in app unless the product intentionally defines a separate report system.
+- Code anchors:
+  [src/components/ScoreReport.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ScoreReport.tsx)
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+- Resolution / next step: Resolved. Restyled `ScoreReport` to the editorial system while keeping the existing calculations, weakest-domain logic, download action, and retake/home behavior intact. If we later want a more specialized reporting design, that should be an intentional redesign rather than a leftover dark-theme holdover.
+
+## 2026-03-20 - Screener report still rendered in the pre-rollout dark theme
+
+- Status: resolved
+- Area: screener reporting UI / shared layout consistency
+- Summary: After the main shell, Home dashboard, Practice hub, Progress dashboard, and Study Guide were moved into the warm editorial system, the screener results page was still rendering with the older dark slate card stack. That made the app feel visually inconsistent right after a user finished the screener.
+- Source of truth: the screener report should use the same shared light-shell visual language as the rest of the signed-in app unless the product intentionally calls for a distinct report treatment.
+- Code anchors:
+  [src/components/ScreenerResults.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ScreenerResults.tsx)
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+- Resolution / next step: Resolved. Restyled `ScreenerResults` to the editorial system while keeping the underlying readiness, domain-summary, and recommendation logic unchanged. Full-assessment reporting can be reviewed separately if we want the entire report layer to match this treatment.
+
+## 2026-03-20 - Editorial restyle had not propagated into question and learning-path flows
+
+- Status: resolved
+- Area: practice UI / assessment UI / learning path / shared question rendering
+- Summary: The dashboard, progress, and study-guide surfaces had moved to the newer warm editorial visual system, but the actual question-taking flow and learning-path lesson flow were still using the older dark slate treatment. That created a visible style break when users moved from the updated home/practice hub into practice questions, assessment questions, explanations, and learning-path modules.
+- Source of truth: the current home/dashboard editorial shell is the active visual direction for learner-facing surfaces, so shared question rendering and learning-path rendering should use the same warm background, white card surfaces, amber accents, and softer border/shadow treatment unless a surface intentionally opts into a different system.
+- Code anchors:
+  [src/components/QuestionCard.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/QuestionCard.tsx)
+  [src/components/PracticeSession.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/PracticeSession.tsx)
+  [src/components/ExplanationPanel.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ExplanationPanel.tsx)
+  [src/components/DiagnosticFeedback.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/DiagnosticFeedback.tsx)
+  [src/components/ScreenerAssessment.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ScreenerAssessment.tsx)
+  [src/components/FullAssessment.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/FullAssessment.tsx)
+  [src/components/LearningPathNodeMap.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/LearningPathNodeMap.tsx)
+  [src/components/LearningPathModulePage.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/LearningPathModulePage.tsx)
+  [src/components/ModuleLessonViewer.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ModuleLessonViewer.tsx)
+- Resolution / next step: Resolved. Restyled the shared question card, practice-session wrapper, assessment wrappers, explanation cards, learning-path node map, module page, and lesson viewer to the editorial system so the learner-facing flow no longer snaps back to the older dark theme. Remaining older-theme surfaces outside this pass should be reviewed opportunistically, especially legacy report and auth/admin screens that were not part of this learner-flow update.
+
 ## 2026-03-20 - Skill and domain proficiency labels drifted apart
 
 - Status: resolved

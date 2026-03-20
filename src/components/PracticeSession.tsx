@@ -511,17 +511,17 @@ export default function PracticeSession({
   if (!currentQuestion) {
     if (analyzedQuestions.length === 0) {
       return (
-        <div className="max-w-md mx-auto p-12 bg-slate-800/50 border border-slate-700/50 rounded-3xl text-center space-y-6">
-          <div className="w-16 h-16 bg-slate-700/50 rounded-2xl flex items-center justify-center mx-auto">
-            <Zap className="w-8 h-8 text-slate-500" />
+        <div className="editorial-surface mx-auto max-w-md p-12 text-center space-y-6">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-amber-50">
+            <Zap className="h-8 w-8 text-amber-700" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-200">No Questions Found</h3>
-            <p className="text-slate-400 mt-2">We couldn't find any questions matching your filters. Try choosing a different domain or skill.</p>
+            <h3 className="text-xl font-bold text-slate-900">No Questions Found</h3>
+            <p className="mt-2 text-slate-500">We couldn&apos;t find any questions matching your filters. Try choosing a different domain or skill.</p>
           </div>
           <button
             onClick={onExitPractice}
-            className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+            className="editorial-button-secondary w-full"
           >
             <Home className="w-4 h-4" />
             Back to Home
@@ -529,7 +529,7 @@ export default function PracticeSession({
         </div>
       );
     }
-    return <div className="p-8 text-center text-slate-400">Finding relevant questions...</div>;
+    return <div className="p-8 text-center text-slate-500">Finding relevant questions...</div>;
   }
 
   // ── Context derived from the current question ────────────────────────────────
@@ -540,9 +540,9 @@ export default function PracticeSession({
 
   const pctColor =
     allTimePct === null ? '' :
-    allTimePct >= 80 ? 'text-emerald-400' :
-    allTimePct >= 60 ? 'text-amber-400' :
-    'text-rose-400';
+    allTimePct >= 80 ? 'text-emerald-700' :
+    allTimePct >= 60 ? 'text-amber-700' :
+    'text-rose-600';
 
   // Retirement progress for this pool (shown as a subtle pill when first pass is done)
   const retiredCount = firstPassComplete
@@ -551,14 +551,14 @@ export default function PracticeSession({
   const totalPool = analyzedQuestions.length;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6">
 
       {/* ── Session Header ────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between bg-slate-800/40 p-4 rounded-2xl border border-slate-700/50">
+      <div className="editorial-surface flex items-center justify-between gap-4 p-5">
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-amber-500" />
-            <span className="text-sm font-medium text-slate-300">
+            <Zap className="h-5 w-5 text-amber-700" />
+            <span className="text-sm font-semibold text-slate-700">
               {practiceSkillId ? `Skill Practice` : practiceDomain ? 'Domain Review' : 'Practice'}
             </span>
           </div>
@@ -566,11 +566,11 @@ export default function PracticeSession({
           {/* Correct / Wrong / Overconfident — hidden in spicy new-user mode */}
           {!hideSummary && (
             <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
-              <span className="text-emerald-400">Correct: {sessionStats.correct}</span>
-              <span className="text-rose-400">Wrong: {sessionStats.wrong}</span>
+              <span className="text-emerald-700">Correct: {sessionStats.correct}</span>
+              <span className="text-rose-600">Wrong: {sessionStats.wrong}</span>
               {sessionStats.highConfidenceWrong > 0 && (
                 <span
-                  className="text-orange-400"
+                  className="text-amber-700"
                   title={`Answered wrong despite selecting ${getConfidenceDisplayLabel('high')} - worth extra review`}
                 >
                   Overconfident: {sessionStats.highConfidenceWrong}
@@ -581,25 +581,25 @@ export default function PracticeSession({
 
           {/* Spicy mode indicator */}
           {spicyCycleMode && (
-            <div className="flex items-center gap-2 text-xs text-rose-400/80">
-              <span>🌶</span>
+            <div className="flex items-center gap-2 text-xs text-amber-700">
+              <Flame className="h-3.5 w-3.5" />
               <span className="font-medium">Skill {(spicyCycleIndex % spicySkillIds.length) + 1} of {spicySkillIds.length}</span>
             </div>
           )}
 
           {/* All-time cumulative % — hidden in hideSummary mode */}
           {!hideSummary && allTimePct !== null && (
-            <div className="hidden sm:flex items-center gap-1.5 pl-4 border-l border-slate-700/60">
-              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">All-time</span>
+            <div className="hidden items-center gap-1.5 border-l border-slate-200 pl-4 sm:flex">
+              <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">All-time</span>
               <span className={`text-sm font-bold ${pctColor}`}>{allTimePct}%</span>
             </div>
           )}
 
           {/* Retirement progress pill — only after first pass */}
           {firstPassComplete && retiredCount > 0 && (
-            <div className="hidden sm:flex items-center gap-1.5 pl-4 border-l border-slate-700/60">
-              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Retired</span>
-              <span className="text-xs font-semibold text-slate-400">{retiredCount}/{totalPool}</span>
+            <div className="hidden items-center gap-1.5 border-l border-slate-200 pl-4 sm:flex">
+              <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Retired</span>
+              <span className="text-xs font-semibold text-slate-500">{retiredCount}/{totalPool}</span>
             </div>
           )}
         </div>
@@ -610,7 +610,7 @@ export default function PracticeSession({
           {practiceSkillId && (
             <button
               onClick={() => setHelpDrawerOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/20 rounded-lg text-slate-400 hover:text-cyan-400 transition-colors text-sm"
+              className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
               title="Open skill lesson for help"
             >
               <BookOpen className="w-4 h-4" />
@@ -621,7 +621,7 @@ export default function PracticeSession({
           {/* Exit button — "← Skills" for skill practice, Home icon otherwise */}
           <button
             onClick={onExitPractice}
-            className="flex items-center gap-1.5 px-3 py-2 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-200 transition-colors text-sm"
+            className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-slate-200 hover:bg-[#fbfaf7] hover:text-slate-900"
             title={practiceSkillId ? 'Back to Skills' : 'Exit Practice'}
           >
             {practiceSkillId ? (
@@ -649,9 +649,9 @@ export default function PracticeSession({
 
       {/* ── Pool Reset Notice ────────────────────────────────────────────────── */}
       {poolResetMessage && (
-        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/25 animate-in fade-in slide-in-from-top-2 duration-300">
-          <RotateCcw className="w-4 h-4 text-blue-400 flex-shrink-0" />
-          <span className="text-sm text-blue-300">
+        <div className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-sky-200 bg-sky-50 px-4 py-3 duration-300">
+          <RotateCcw className="h-4 w-4 flex-shrink-0 text-sky-600" />
+          <span className="text-sm text-sky-800">
             You've worked through all available questions in this skill. Restarting the pool for continued practice.
           </span>
         </div>
@@ -661,44 +661,44 @@ export default function PracticeSession({
       {streakMessage && consecutiveCorrect >= 2 && (
         <div
           key={streakMessage}
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 animate-in fade-in slide-in-from-top-2 duration-300"
+          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 duration-300"
         >
-          <Flame className="w-4 h-4 text-amber-400 flex-shrink-0" />
-          <span className="text-sm font-semibold text-amber-300">{streakMessage}</span>
-          <span className="ml-auto text-xs text-amber-500/70 font-medium">{consecutiveCorrect} in a row</span>
+          <Flame className="h-4 w-4 flex-shrink-0 text-amber-600" />
+          <span className="text-sm font-semibold text-amber-900">{streakMessage}</span>
+          <span className="ml-auto text-xs font-medium text-amber-700">{consecutiveCorrect} in a row</span>
         </div>
       )}
 
       {/* ── Practice Context Box — always shows Domain + Skill ───────────────── */}
       {(domainInfo || skillInfo) && (
-        <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5 space-y-4">
+        <div className="editorial-surface-soft space-y-4 p-5">
           {domainInfo && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
-                <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Domain</p>
-                <span className="flex-shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-900/60 border border-slate-700/50 text-slate-400">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Domain</p>
+                <span className="flex-shrink-0 rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-semibold text-slate-500">
                   {contextDomainId}
                 </span>
               </div>
-              <h3 className="text-base font-bold text-slate-100 leading-snug">{domainInfo.name}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">{domainInfo.subtitle}</p>
+              <h3 className="text-base font-bold leading-snug text-slate-900">{domainInfo.name}</h3>
+              <p className="text-sm leading-relaxed text-slate-500">{domainInfo.subtitle}</p>
             </div>
           )}
-          {domainInfo && skillInfo && <div className="border-t border-slate-700/40" />}
+          {domainInfo && skillInfo && <div className="border-t border-slate-200" />}
           {skillInfo && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
-                <p className="text-xs uppercase tracking-wide font-bold text-slate-500">Skill</p>
-                <span className="flex-shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-900/60 border border-slate-700/50 text-slate-400">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Skill</p>
+                <span className="flex-shrink-0 rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-semibold text-slate-500">
                   {contextSkillId}
                 </span>
               </div>
-              <h3 className="text-base font-bold text-slate-100 leading-snug">{skillInfo.name}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">{skillInfo.description}</p>
+              <h3 className="text-base font-bold leading-snug text-slate-900">{skillInfo.name}</h3>
+              <p className="text-sm leading-relaxed text-slate-500">{skillInfo.description}</p>
               {skillInfo.decisionRule && (
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs leading-relaxed text-slate-500">
                   What it looks like in answers:{' '}
-                  <span className="text-slate-300">{skillInfo.decisionRule}</span>
+                  <span className="text-slate-700">{skillInfo.decisionRule}</span>
                 </p>
               )}
             </div>
@@ -755,24 +755,24 @@ export default function PracticeSession({
             userProfile={userProfile}
             distractorNote={currentDistractorNote ?? undefined}
           />
-          <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-700/30 text-center">
-            <p className="text-sm text-slate-400 italic">You will see this feedback again in your report</p>
+          <div className="editorial-surface-soft rounded-[1.5rem] border px-4 py-4 text-center">
+            <p className="text-sm italic text-slate-500">You will see this feedback again in your report</p>
           </div>
         </div>
       )}
 
       {/* ── Pause Overlay ────────────────────────────────────────────────────── */}
       {isPaused && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center">
-          <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl text-center space-y-6 max-w-sm mx-4">
-            <Pause className="w-12 h-12 text-slate-500 mx-auto" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-md">
+          <div className="mx-4 max-w-sm space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl">
+            <Pause className="mx-auto h-12 w-12 text-amber-700" />
             <div>
-              <h3 className="text-xl font-bold text-slate-100">Session Paused</h3>
-              <p className="text-slate-400 mt-2 text-sm">Your progress is safely stored. Resume when you're ready.</p>
+              <h3 className="text-xl font-bold text-slate-900">Session Paused</h3>
+              <p className="mt-2 text-sm text-slate-500">Your progress is safely stored. Resume when you&apos;re ready.</p>
             </div>
             <button
               onClick={resume}
-              className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold transition-all"
+              className="editorial-button-primary w-full"
             >
               Resume Session
             </button>

@@ -197,6 +197,21 @@ Do not use it for:
   - they should clearly communicate whether they are based on current attempt, cumulative history, or a recent rolling window
   - collapsible domain details should summarize strengths, weaknesses, and growth opportunities rather than raw analytics dumps
 
+### 3.6.1 Main app shell and home dashboard wiring
+
+- The signed-in main destinations should share one shell in `App.tsx`: Dashboard, Practice, Progress, and Study Guide all render inside the same sidebar/top-bar layout and light editorial color system defined in `src/index.css`.
+- Home is allowed to be more substantially recomposed than the other main destinations, but Practice, Progress, and Study Guide should preserve their existing handlers, unlock rules, and business logic when the shell or styling changes.
+- Signed-in learner surfaces should avoid sub-`11px` informational text except for truly decorative microcopy such as compact module codes. If the UI feels like it needs browser zoom changes to read core labels, fix the component scale instead.
+- Prefer compact, responsive card/tile layouts that fit a typical laptop viewport over tall single-column stacks with large empty gaps. When tightening a surface, reduce decorative spacing before shrinking readable text.
+- The sidebar profile card should show the user's display name plus one onboarding-derived secondary line when available. Field precedence is:
+  - `currentRole`
+  - `accountRole`
+  - `trainingStage`
+- If none of those fields are present, omit the secondary line instead of inventing placeholder identity text.
+- Home-page readiness and progress summaries should stay grounded in shared derived data such as `buildProgressSummary()` and the shared proficiency vocabulary utilities rather than one-off page-local thresholds.
+- The Home `High-Impact Skills` list is an action list, not a report table. On that surface, use a `Practice` action without exposing raw accuracy percentages in the row UI. Buttons should route into existing skill-focused destinations rather than creating a parallel practice workflow.
+- The Practice `Learning Path` surface should render skills as compact responsive tiles in a snake-style grid, and those tiles should communicate state through shared proficiency color/status rather than raw mastery percentages.
+
 ### 3.7 AI study guide grounding
 
 - The AI study guide should be grounded in:

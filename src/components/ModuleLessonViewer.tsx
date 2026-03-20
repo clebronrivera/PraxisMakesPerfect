@@ -34,20 +34,20 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
   switch (section.type) {
     case 'paragraph':
       return (
-        <p className="text-sm text-slate-300 leading-relaxed">
+        <p className="text-sm leading-relaxed text-slate-700">
           {section.text}
         </p>
       );
 
     case 'anchor':
       return (
-        <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3 space-y-1">
+        <div className="space-y-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3">
           {section.label && (
-            <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-500">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700">
               {section.label}
             </p>
           )}
-          <p className="text-sm text-slate-300 leading-relaxed">{section.text}</p>
+          <p className="text-sm leading-relaxed text-slate-700">{section.text}</p>
         </div>
       );
 
@@ -55,15 +55,15 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
       return (
         <div className="space-y-1.5">
           {section.label && (
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
               {section.label}
             </p>
           )}
           <ul className="space-y-2">
             {(section.items ?? []).map((item, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-500" />
-                <span className="text-sm text-slate-300 leading-relaxed">{item}</span>
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                <span className="text-sm leading-relaxed text-slate-700">{item}</span>
               </li>
             ))}
           </ul>
@@ -74,32 +74,32 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
       return (
         <div className="space-y-2">
           {section.label && (
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
               {section.label}
             </p>
           )}
-          <div className="rounded-xl overflow-hidden border border-navy-600/40">
+          <div className="overflow-hidden rounded-[1.5rem] border border-slate-200">
             {/* Headers */}
-            <div className="grid grid-cols-2 bg-navy-700/60">
-              <div className="px-3 py-2 border-r border-navy-600/40">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+            <div className="grid grid-cols-2 bg-[#fbfaf7]">
+              <div className="border-r border-slate-200 px-3 py-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                   {section.leftHeader}
                 </p>
               </div>
               <div className="px-3 py-2">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                   {section.rightHeader}
                 </p>
               </div>
             </div>
             {/* Rows */}
             {(section.rows ?? []).map((row, i) => (
-              <div key={i} className="grid grid-cols-2 border-t border-navy-600/30">
-                <div className="px-3 py-2.5 border-r border-navy-600/30 bg-navy-800/40">
-                  <p className="text-xs text-slate-300 leading-relaxed">{row.left}</p>
+              <div key={i} className="grid grid-cols-2 border-t border-slate-200">
+                <div className="border-r border-slate-200 bg-white px-3 py-2.5">
+                  <p className="text-xs leading-relaxed text-slate-700">{row.left}</p>
                 </div>
-                <div className="px-3 py-2.5 bg-navy-800/20">
-                  <p className="text-xs text-slate-300 leading-relaxed">{row.right}</p>
+                <div className="bg-[#fbfaf7] px-3 py-2.5">
+                  <p className="text-xs leading-relaxed text-slate-700">{row.right}</p>
                 </div>
               </div>
             ))}
@@ -124,7 +124,7 @@ export default function ModuleLessonViewer({
     <div className="space-y-5">
       {/* Module ID badge + time spent */}
       <div className="flex items-center justify-between">
-        <span className="inline-flex items-center px-2 py-1 rounded-lg bg-navy-700/80 border border-navy-600/40 text-[10px] font-mono font-bold text-cyan-400">
+        <span className="inline-flex items-center rounded-xl border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-mono font-bold text-amber-700">
           {module.id}
         </span>
         {secondsSpent > 0 && (
@@ -136,7 +136,7 @@ export default function ModuleLessonViewer({
       </div>
 
       {/* Title */}
-      <h3 className="text-base font-bold text-slate-100 leading-snug">
+      <h3 className="text-base font-bold leading-snug text-slate-900">
         {module.title}
       </h3>
 
@@ -149,8 +149,8 @@ export default function ModuleLessonViewer({
 
       {/* Related modules */}
       {relatedModules && relatedModules.length > 0 && onOpenRelated && (
-        <div className="pt-2 border-t border-navy-700/50 space-y-2">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">
+        <div className="space-y-2 border-t border-slate-200 pt-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
             See also
           </p>
           <div className="space-y-1.5">
@@ -158,10 +158,10 @@ export default function ModuleLessonViewer({
               <button
                 key={m.id}
                 onClick={() => onOpenRelated(m.id)}
-                className="w-full text-left px-3 py-2 rounded-xl bg-navy-800/40 border border-navy-700/30 hover:border-cyan-500/20 transition-colors"
+                className="w-full rounded-[1.25rem] border border-slate-200 bg-white px-3 py-2 text-left transition-colors hover:border-amber-300 hover:bg-amber-50"
               >
-                <span className="text-[10px] font-mono text-cyan-500 mr-2">{m.id}</span>
-                <span className="text-xs text-slate-400">{m.title}</span>
+                <span className="mr-2 text-[10px] font-mono text-amber-700">{m.id}</span>
+                <span className="text-xs text-slate-600">{m.title}</span>
               </button>
             ))}
           </div>
@@ -169,13 +169,13 @@ export default function ModuleLessonViewer({
       )}
 
       {/* Mark as viewed */}
-      <div className="pt-3 border-t border-navy-700/50">
+      <div className="border-t border-slate-200 pt-3">
         <button
           onClick={() => onSetViewed(!isViewed)}
-          className={`w-full flex items-center justify-center gap-2.5 py-3 rounded-xl border transition-all text-sm font-semibold ${
+          className={`flex w-full items-center justify-center gap-2.5 rounded-[1.5rem] border py-3 text-sm font-semibold transition-all ${
             isViewed
-              ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/15'
-              : 'bg-navy-800/60 border-navy-600/40 text-slate-400 hover:border-cyan-500/25 hover:text-slate-300'
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100/70'
+              : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900'
           }`}
         >
           {isViewed ? (
