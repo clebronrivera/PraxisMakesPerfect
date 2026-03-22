@@ -39,6 +39,7 @@ import {
 import LearningPathNodeMap from './LearningPathNodeMap';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
 import type { UserProfile } from '../hooks/useFirebaseProgress';
+import { getLastPracticedDaysAgo, isReviewDue, formatDaysAgo } from '../utils/practiceRecency';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -366,6 +367,9 @@ function SkillPanel({
             const pct = row.score !== null ? Math.round(row.score * 100) : null;
             const primaryModule = getPrimaryModuleForSkill(row.skillId);
             const barColor = skillPriorityColor(row.score);
+            const perf = profile.skillScores?.[row.skillId];
+            const daysAgo = getLastPracticedDaysAgo(perf);
+            const reviewDue = isReviewDue(perf);
 
             return (
               <button
@@ -379,13 +383,18 @@ function SkillPanel({
                   style={{ backgroundColor: barColor, minHeight: '2rem' }}
                 />
 
-                {/* Skill label + module code */}
+                {/* Skill label + module code + recency */}
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-sm font-medium leading-snug text-slate-800">
                     {row.fullLabel}
                   </p>
                   {primaryModule && (
                     <p className="mt-0.5 text-[10px] font-mono text-slate-400">{primaryModule.id}</p>
+                  )}
+                  {daysAgo !== null && (
+                    reviewDue
+                      ? <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold text-amber-700">Review Due</span>
+                      : <span className="mt-0.5 block text-[9px] text-slate-400">{formatDaysAgo(daysAgo)}</span>
                   )}
                 </div>
 

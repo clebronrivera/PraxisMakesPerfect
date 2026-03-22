@@ -92,6 +92,10 @@ interface PracticeSessionProps {
   hideSummary?: boolean;
   /** Spicy cycle mode: cycles one question per skill through all skills in sequence. */
   spicyCycleMode?: boolean;
+  /** Called when user bookmarks a question for later review */
+  onBookmarkQuestion?: (questionId: string) => void;
+  /** Called when user taps "Review this skill's lesson" after a wrong answer */
+  onReviewSkill?: (skillId: string) => void;
 }
 
 export default function PracticeSession({
@@ -107,6 +111,8 @@ export default function PracticeSession({
   onExitPractice,
   hideSummary = false,
   spicyCycleMode = false,
+  onBookmarkQuestion,
+  onReviewSkill,
 }: PracticeSessionProps) {
   const engine = useEngine();
   const { logout, user } = useAuth();
@@ -754,6 +760,10 @@ export default function PracticeSession({
             rationale={currentQuestion.rationale || ''}
             userProfile={userProfile}
             distractorNote={currentDistractorNote ?? undefined}
+            confidence={confidence}
+            assessmentType="practice"
+            onBookmark={onBookmarkQuestion}
+            onReviewSkill={onReviewSkill}
           />
           <div className="editorial-surface-soft rounded-[1.5rem] border px-4 py-4 text-center">
             <p className="text-sm italic text-slate-500">You will see this feedback again in your report</p>

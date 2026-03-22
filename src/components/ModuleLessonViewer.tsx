@@ -10,7 +10,8 @@
 //   - No storage logic here — parent passes callbacks
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { CheckCircle, Circle, Clock } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle, Circle, Clock, ChevronDown, ChevronRight } from 'lucide-react';
 import type { LearningModule, ModuleSection } from '../data/learningModules';
 
 interface ModuleLessonViewerProps {
@@ -28,6 +29,80 @@ function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return s > 0 ? `${m}m ${s}s` : `${m}m`;
+}
+
+/** Returns true for list sections whose label contains "key term" */
+function isKeyTermList(section: ModuleSection): boolean {
+  return section.type === 'list' && /key\s*term/i.test(section.label ?? '');
+}
+
+/** Splits a key-term item string into { term, definition }.
+ *  Splits on first " — " (em-dash with spaces) or first ": " */
+function splitKeyTerm(item: string): { term: string; definition: string } | null {
+  const emDashIdx = item.indexOf(' — ');
+  if (emDashIdx !== -1) {
+    return { term: item.slice(0, emDashIdx).trim(), definition: item.slice(emDashIdx + 3).trim() };
+  }
+  const colonIdx = item.indexOf(': ');
+  if (colonIdx !== -1) {
+    return { term: item.slice(0, colonIdx).trim(), definition: item.slice(colonIdx + 2).trim() };
+  }
+  return null;
+}
+
+/** Collapsible key-term list — each row shows the term; tapping reveals the definition. */
+function KeyTermList({ section }: { section: ModuleSection }) {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const items = section.items ?? [];
+
+  return (
+    <div className="space-y-1.5">
+      {section.label && (
+        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
+          {section.label}
+        </p>
+      )}
+      <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200 overflow-hidden">
+        {items.map((item, i) => {
+          const parts = splitKeyTerm(item);
+          const isOpen = openIdx === i;
+
+          // If we can't split, fall back to a plain bullet
+          if (!parts) {
+            return (
+              <div key={i} className="flex items-start gap-2 bg-white px-3 py-2.5">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                <span className="text-sm leading-relaxed text-slate-700">{item}</span>
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={i}
+              onClick={() => setOpenIdx(isOpen ? null : i)}
+              className="w-full text-left bg-white px-3 py-2.5 transition-colors hover:bg-amber-50/60"
+            >
+              <div className="flex items-center gap-2">
+                {isOpen
+                  ? <ChevronDown className="w-3.5 h-3.5 shrink-0 text-amber-500" />
+                  : <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />}
+                <span className="text-sm font-semibold text-slate-800">{parts.term}</span>
+                {!isOpen && (
+                  <span className="ml-auto text-[10px] text-slate-400 shrink-0">tap to reveal</span>
+                )}
+              </div>
+              {isOpen && (
+                <p className="mt-1.5 pl-5 text-sm leading-relaxed text-slate-600">
+                  {parts.definition}
+                </p>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function SectionRenderer({ section }: { section: ModuleSection }) {
@@ -52,6 +127,7 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
       );
 
     case 'list':
+      if (isKeyTermList(section)) return <KeyTermList section={section} />;
       return (
         <div className="space-y-1.5">
           {section.label && (

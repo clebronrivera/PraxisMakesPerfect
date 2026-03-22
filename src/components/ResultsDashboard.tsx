@@ -2,7 +2,7 @@
 // Progress page — pure analytics. No practice entry points.
 
 import { useMemo, useState } from 'react';
-import { Check, ChevronDown, ChevronUp, Clock } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Clock, Bookmark, BookmarkX, BookOpen } from 'lucide-react';
 import type { Skill } from '../types/content';
 import type { UserProfile } from '../hooks/useFirebaseProgress';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
@@ -37,6 +37,12 @@ interface ResultsDashboardProps {
   onRetakeAssessment?: () => void;
   onResetProgress?: () => void;
   defaultView?: 'domain' | 'skill';
+  /** Opens skill module page for a given skill (used by Saved for Review) */
+  onOpenSkillModule?: (skillId: string) => void;
+  /** Removes a question from the saved list */
+  onUnbookmarkQuestion?: (questionId: string) => void;
+  /** All analyzed questions — used to look up saved question text */
+  analyzedQuestions?: import('../brain/question-analyzer').AnalyzedQuestion[];
 }
 
 interface TimeStats {
@@ -163,6 +169,9 @@ export default function ResultsDashboard({
   fullAssessmentUnlocked,
   hasScreenerReport,
   onViewScreenerReport,
+  onOpenSkillModule,
+  onUnbookmarkQuestion,
+  analyzedQuestions,
 }: ResultsDashboardProps) {
   const [expandedDomains, setExpandedDomains] = useState<Set<number>>(new Set()); // all collapsed by default
   const [advancedExpanded, setAdvancedExpanded] = useState(false);
@@ -550,6 +559,64 @@ export default function ResultsDashboard({
           </div>
         )}
       </div>
+
+      {/* ── Saved for Review (Feature F) ────────────────────────────────── */}
+      {Object.keys(userProfile.flaggedQuestions ?? {}).length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Bookmark className="w-3.5 h-3.5 text-amber-600" />
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
+              Saved for review ({Object.keys(userProfile.flaggedQuestions ?? {}).length})
+            </p>
+          </div>
+          <div className="space-y-2">
+            {Object.keys(userProfile.flaggedQuestions ?? {}).map((questionId) => {
+              const q = analyzedQuestions?.find(aq => aq.id === questionId);
+              const skillDef = q?.skillId ? getProgressSkillDefinition(q.skillId) : null;
+              return (
+                <div
+                  key={questionId}
+                  className="flex items-start gap-3 rounded-[1.5rem] border border-amber-100 bg-amber-50/60 px-4 py-3"
+                >
+                  <Bookmark className="mt-0.5 w-3.5 h-3.5 shrink-0 text-amber-500" />
+                  <div className="flex-1 min-w-0">
+                    {q ? (
+                      <p className="text-[11px] leading-relaxed text-slate-700 line-clamp-2">
+                        {typeof q.question === 'string' ? q.question : (q as any).question_text ?? questionId}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] font-mono text-slate-400">{questionId}</p>
+                    )}
+                    {skillDef && (
+                      <p className="mt-0.5 text-[10px] text-slate-400">{skillDef.shortLabel}</p>
+                    )}
+                  </div>
+                  <div className="flex shrink-0 gap-1.5">
+                    {q?.skillId && onOpenSkillModule && (
+                      <button
+                        onClick={() => onOpenSkillModule(q.skillId!)}
+                        title="Review skill lesson"
+                        className="rounded-lg p-1.5 text-slate-400 hover:bg-amber-100 hover:text-amber-700 transition-colors"
+                      >
+                        <BookOpen className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                    {onUnbookmarkQuestion && (
+                      <button
+                        onClick={() => onUnbookmarkQuestion(questionId)}
+                        title="Remove bookmark"
+                        className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors"
+                      >
+                        <BookmarkX className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
     </div>
   );

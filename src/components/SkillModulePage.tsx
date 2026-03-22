@@ -38,6 +38,7 @@ import {
   getProgressSkillsForDomain,
 } from '../utils/progressTaxonomy';
 import { getSkillProficiency } from '../utils/skillProficiency';
+import { getLastPracticedDaysAgo, isReviewDue, formatDaysAgo } from '../utils/practiceRecency';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
 import type { UserProfile } from '../hooks/useFirebaseProgress';
@@ -275,6 +276,43 @@ function PracticeQuiz({
   );
 }
 
+// ─── Self-explanation prompt ──────────────────────────────────────────────────
+//
+// Local-state-only textarea shown below the lesson content.
+// Encourages retrieval practice before moving to questions.
+// Resets are handled by the parent (component is remounted on skill change).
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SelfExplanationPrompt({ onStartPractice }: { onStartPractice: () => void }) {
+  const [text, setText] = useState('');
+
+  return (
+    <div className="rounded-2xl border border-dashed border-amber-200 bg-amber-50/50 p-4 space-y-3">
+      <p className="text-[11px] font-semibold text-amber-800 uppercase tracking-wide">
+        Before you practice
+      </p>
+      <p className="text-xs text-amber-700">
+        What's the core idea in your own words?
+      </p>
+      <textarea
+        value={text}
+        onChange={e => setText(e.target.value)}
+        rows={3}
+        placeholder="Type a quick summary…"
+        className="w-full resize-none rounded-xl border border-amber-200 bg-white px-3 py-2 text-[13px] text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
+      />
+      <button
+        onClick={onStartPractice}
+        className="flex items-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-amber-700"
+      >
+        <Zap className="w-3.5 h-3.5" />
+        Start Practice →
+      </button>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function SkillModulePage({
@@ -426,6 +464,26 @@ export default function SkillModulePage({
             </div>
           )}
 
+          {/* Last practiced recency */}
+          {(() => {
+            const daysAgo = getLastPracticedDaysAgo(skillPerf);
+            if (daysAgo === null) return null;
+            const reviewDue = isReviewDue(skillPerf);
+            return reviewDue
+              ? <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-200 px-3 py-1.5 text-[11px] font-bold text-amber-700">Review Due</span>
+              : <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] text-slate-500">Last practiced: {formatDaysAgo(daysAgo)}</span>;
+          })()}
+
+          {/* False confidence chip */}
+          {(skillPerf?.confidenceFlags ?? 0) >= 2 && (
+            <span
+              className="inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-200 px-3 py-1.5 text-[11px] font-bold text-amber-700"
+              title="Multiple high-confidence wrong answers — check your mental model"
+            >
+              ⚠ False confidence detected
+            </span>
+          )}
+
           {/* Time in lesson */}
           {lessonElapsedSec > 0 && (
             <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] text-slate-500">
@@ -482,19 +540,8 @@ export default function SkillModulePage({
               />
             )}
 
-            {/* Prompt to move to practice */}
-            <div className="rounded-2xl border border-dashed border-amber-200 bg-amber-50/50 p-4 text-center">
-              <p className="text-[11px] text-amber-700 font-medium">
-                Ready to apply what you learned?
-              </p>
-              <button
-                onClick={openPractice}
-                className="mt-2 flex items-center gap-1.5 mx-auto rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-amber-700"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                Open Practice Questions
-              </button>
-            </div>
+            {/* Self-explanation prompt before practice (Feature B) */}
+            <SelfExplanationPrompt onStartPractice={openPractice} />
           </div>
         )}
       </div>

@@ -47,6 +47,9 @@ import type { AssessmentReportType } from './src/types/assessment';
 import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
 import { buildProgressSummary } from './src/utils/progressSummaries';
 import { PROFICIENCY_META } from './src/utils/skillProficiency';
+import { checkDomainMilestones } from './src/utils/domainMilestones';
+import type { MilestoneEvent } from './src/utils/domainMilestones';
+const MilestoneToast = lazy(() => import('./src/components/MilestoneToast'));
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
 const OnboardingFlow = lazy(() => import('./src/components/OnboardingFlow'));
 
@@ -147,6 +150,8 @@ function PraxisStudyAppContent() {
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
   /** SkillId currently open in the By Skill Learning Module page */
   const [skillModuleSkillId, setSkillModuleSkillId] = useState<string | null>(null);
+  /** Queue of domain milestone events to show as toasts */
+  const [milestoneQueue, setMilestoneQueue] = useState<MilestoneEvent[]>([]);
 
   // Practice context: tracks the last skill or domain practiced so the
   // "Continue Where You Left Off" card can name it and resume correctly.
@@ -681,6 +686,27 @@ function PraxisStudyAppContent() {
     setSkillModuleSkillId(skillId);
     setMode('skill-module');
   }, []);
+
+  /**
+   * Wraps updateSkillProgress and fires a domain milestone toast
+   * if the answered question pushes a domain across a new threshold.
+   */
+  const handleSkillProgressWithMilestone = useCallback(
+    (skillId: Parameters<typeof updateSkillProgress>[0], isCorrect: boolean, confidence: Parameters<typeof updateSkillProgress>[2]) => {
+      updateSkillProgress(skillId, isCorrect, confidence);
+      if (user?.id) {
+        // profile.skillScores reflects the pre-update state here; check after a tick
+        // so the profile has a chance to update in-memory.
+        setTimeout(() => {
+          const events = checkDomainMilestones(profile, user.id!);
+          if (events.length > 0) {
+            setMilestoneQueue(q => [...q, ...events]);
+          }
+        }, 300);
+      }
+    },
+    [updateSkillProgress, profile, user?.id],
+  );
 
   // Handler to view past assessment reports
   const handleViewReport = useCallback(async (
@@ -1590,7 +1616,7 @@ function PraxisStudyAppContent() {
                 profile={profile}
                 analyzedQuestions={analyzedQuestions}
                 onSkillProgressUpdate={(skillId, isCorrect) => {
-                  updateSkillProgress(skillId as any, isCorrect, 'medium');
+                  handleSkillProgressWithMilestone(skillId as any, isCorrect, 'medium');
                 }}
                 onBack={() => {
                   setLearningPathSkillId(null);
@@ -1610,7 +1636,7 @@ function PraxisStudyAppContent() {
               profile={profile}
               analyzedQuestions={analyzedQuestions}
               onSkillProgressUpdate={(skillId, isCorrect) => {
-                updateSkillProgress(skillId as any, isCorrect, 'medium');
+                handleSkillProgressWithMilestone(skillId as any, isCorrect, 'medium');
               }}
               onBack={() => {
                 setSkillModuleSkillId(null);
@@ -1726,7 +1752,7 @@ function PraxisStudyAppContent() {
         {mode === 'practice' && (
           <PracticeSession
             userProfile={profile}
-            updateSkillProgress={updateSkillProgress}
+            updateSkillProgress={handleSkillProgressWithMilestone}
             logResponse={logResponse}
             updateLastSession={updateLastSession}
             savePracticeResponse={savePracticeResponse}
@@ -1736,6 +1762,15 @@ function PraxisStudyAppContent() {
             practiceSkillId={practiceSkillFilter}
             hideSummary={isSpicyMode && !profile.fullAssessmentComplete}
             spicyCycleMode={isSpicyMode}
+            onBookmarkQuestion={(questionId) => {
+              updateProfile({
+                flaggedQuestions: {
+                  ...profile.flaggedQuestions,
+                  [questionId]: 'Saved for review',
+                },
+              });
+            }}
+            onReviewSkill={(skillId) => openSkillModule(skillId)}
             onExitPractice={() => {
               const wasSkillPractice = Boolean(practiceSkillFilter);
               const wasSpicy = isSpicyMode;
@@ -1779,9 +1814,16 @@ function PraxisStudyAppContent() {
               startScreener(undefined);
             }}
             onResetProgress={handleResetProgress}
+            onOpenSkillModule={openSkillModule}
+            analyzedQuestions={analyzedQuestions}
+            onUnbookmarkQuestion={(questionId) => {
+              const updated = { ...(profile.flaggedQuestions ?? {}) };
+              delete updated[questionId];
+              updateProfile({ flaggedQuestions: updated });
+            }}
           />
         )}
-        
+
         {/* ADMIN DASHBOARD */}
         {mode === 'admin' && (
           <AdminDashboard
@@ -1805,6 +1847,16 @@ function PraxisStudyAppContent() {
           onClose={() => setIsFeedbackModalOpen(false)}
         />
       </Suspense>
+
+      {/* Domain milestone toast — renders the first queued event */}
+      {milestoneQueue.length > 0 && (
+        <Suspense fallback={null}>
+          <MilestoneToast
+            event={milestoneQueue[0]}
+            onDismiss={() => setMilestoneQueue(q => q.slice(1))}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

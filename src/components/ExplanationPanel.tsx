@@ -1,4 +1,5 @@
-import { CheckCircle, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle, XCircle, Bookmark, BookmarkCheck, BookOpen, AlertTriangle } from 'lucide-react';
 import { generateDiagnosticFeedback } from '../brain/diagnostic-feedback';
 import {
   AnalyzedQuestion,
@@ -15,6 +16,7 @@ import {
   formatChoiceReferenceList,
   sanitizeFeedbackText
 } from '../utils/feedbackText';
+import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 
 interface ExplanationPanelProps {
   question: AnalyzedQuestion;
@@ -23,6 +25,14 @@ interface ExplanationPanelProps {
   rationale: string;
   userProfile?: UserProfile; // Optional - only available in practice sessions
   distractorNote?: string; // Optional - specific explanation of the wrong answer chosen
+  /** Confidence level at the time of answering — used for false-confidence callout */
+  confidence?: 'low' | 'medium' | 'high';
+  /** Called when user bookmarks this question for later review (practice mode only) */
+  onBookmark?: (questionId: string) => void;
+  /** Called when user taps "Review this skill's lesson" (practice mode only) */
+  onReviewSkill?: (skillId: string) => void;
+  /** Whether this is in practice mode (controls bookmark + review links) */
+  assessmentType?: 'pre' | 'full' | 'practice';
 }
 
 export default function ExplanationPanel({
@@ -31,8 +41,13 @@ export default function ExplanationPanel({
   isCorrect,
   rationale,
   userProfile,
-  distractorNote
+  distractorNote,
+  confidence,
+  onBookmark,
+  onReviewSkill,
+  assessmentType,
 }: ExplanationPanelProps) {
+  const [bookmarked, setBookmarked] = useState(false);
   const engine = useEngine();
   const correctAnswerSummary = formatChoiceReferenceList(
     question,
@@ -141,9 +156,60 @@ export default function ExplanationPanel({
                 </div>
               </div>
             )}
+
+            {/* ── False confidence callout (Feature E) ───────────────────── */}
+            {!isCorrect && confidence === 'high' && (
+              <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <p className="text-[11px] leading-relaxed text-amber-800">
+                  <span className="font-bold">High confidence, wrong answer.</span>{' '}
+                  This is a blind spot — you were sure but the reasoning didn't hold. Review the lesson for this skill before it costs you on the exam.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* ── Practice-mode actions row (Features D + F) ─────────────────────── */}
+      {assessmentType === 'practice' && (
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Bookmark button (Feature F) */}
+          {onBookmark && (
+            <button
+              onClick={() => {
+                if (!bookmarked) {
+                  onBookmark(question.id);
+                  setBookmarked(true);
+                }
+              }}
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-semibold transition-all ${
+                bookmarked
+                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900'
+              }`}
+            >
+              {bookmarked ? (
+                <><BookmarkCheck className="w-3.5 h-3.5" /> Saved for review</>
+              ) : (
+                <><Bookmark className="w-3.5 h-3.5" /> Save for review</>
+              )}
+            </button>
+          )}
+
+          {/* Review this skill (Feature D) — only on wrong answers */}
+          {!isCorrect && onReviewSkill && question.skillId && (
+            <button
+              onClick={() => onReviewSkill(question.skillId!)}
+              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-semibold text-slate-600 transition-all hover:border-amber-300 hover:text-slate-900"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              Review lesson for{' '}
+              {getProgressSkillDefinition(question.skillId)?.shortLabel ?? 'this skill'}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Diagnostic Feedback (only if userProfile is available) */}
       {diagnosticFeedback && (
