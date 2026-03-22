@@ -233,14 +233,46 @@ function getSkillGuidance(
   };
 }
 
+// ─── Correct-answer message pools ────────────────────────────────────────────
+// Keyed by LearningState. Rotated by (skillCorrectCount % pool.length) so the
+// same state never shows the same phrase two questions in a row.
+const CORRECT_MESSAGE_POOLS: Record<string, string[]> = {
+  mastery: [
+    "You've mastered this skill. Keep applying it across different contexts.",
+    "Mastery level — this one is locked in.",
+    "Consistent and correct. That is what mastery looks like.",
+    "This skill is yours. Now help it stay sharp.",
+  ],
+  proficient: [
+    "Strong understanding showing here. Keep building on it.",
+    "Solid. You're demonstrating real command of this concept.",
+    "That is proficient-level performance. Keep the pressure on.",
+    "You're above the threshold on this one. Push to make it permanent.",
+  ],
+  developing: [
+    "Good progress — you're developing your understanding here.",
+    "Getting sharper on this skill. Stay consistent.",
+    "You're on the right side of this one. Keep going.",
+    "That is developing-level work. One more layer and this clicks fully.",
+  ],
+  emerging: [
+    "Correct. You're building foundational knowledge here — keep going.",
+    "Right answer. Stay in it and the pattern will solidify.",
+    "Correct. Repetition is what locks foundational skills in.",
+    "That's one more brick. Foundation skills take reps — you're putting them in.",
+    "Correct. Even if it felt uncertain, the answer was right.",
+  ],
+};
+
 /**
- * Generate diagnostic feedback for a question response
- * Provides framework-guided, learning-state-aware feedback
- * 
+ * Generate diagnostic feedback for a question response.
+ * Provides framework-guided, learning-state-aware feedback.
+ *
  * @param question - The question that was answered
  * @param selectedAnswers - Array of selected answer letters (e.g., ["A"])
  * @param isCorrect - Whether the answer was correct
  * @param userProfile - User's learning profile with skill scores and learning states
+ * @param engineConfig - Engine configuration (distractor patterns, framework steps, etc.)
  * @returns DiagnosticFeedback object with detailed feedback
  */
 export function generateDiagnosticFeedback(
@@ -260,7 +292,7 @@ export function generateDiagnosticFeedback(
 
   // Handle correct answers
   if (isCorrect) {
-    const skillGuidance = question.skillId 
+    const skillGuidance = question.skillId
       ? getSkillGuidance(question.skillId as SkillId, userProfile, engineConfig)
       : undefined;
 
@@ -268,13 +300,15 @@ export function generateDiagnosticFeedback(
       ? `Current mastery: ${skillGuidance.currentState}`
       : 'Keep practicing to build mastery';
 
-    const encouragingMessage = skillGuidance?.currentState === 'mastery'
-      ? 'Excellent! You\'ve mastered this skill. Continue applying it consistently.'
-      : skillGuidance?.currentState === 'proficient'
-      ? 'Great work! You\'re demonstrating strong understanding of this concept.'
-      : skillGuidance?.currentState === 'developing'
-      ? 'Good progress! You\'re developing your understanding. Keep practicing.'
-      : 'Correct! You\'re building foundational knowledge. Keep learning.';
+    const state = skillGuidance?.currentState ?? 'emerging';
+    const pool = CORRECT_MESSAGE_POOLS[state] ?? CORRECT_MESSAGE_POOLS.emerging;
+
+    // Use total correct attempts on this skill (if available) as a simple seed
+    // so consecutive questions don't repeat the same phrase.
+    const skillAttempts = question.skillId
+      ? (userProfile.skillScores[question.skillId]?.correct ?? 0)
+      : 0;
+    const encouragingMessage = pool[skillAttempts % pool.length];
 
     return {
       isCorrect: true,

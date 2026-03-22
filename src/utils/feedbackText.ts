@@ -70,8 +70,20 @@ export function sanitizeFeedbackText(question: FeedbackQuestion, rawText: string
   const replaceSelectedAnswer = (_match: string, letter: string): string =>
     `you selected ${formatChoiceReference(question, letter)}`;
 
+  // Handle “Options A and C” / “Options A, B, and C” (plural, multiple letters in one phrase)
   text = text.replace(
-    /\b(?:answer choice|choice|option|answer)\s*[“"']?\(?([A-F])\)?[.”"”']*/gi,
+    /\boptions?\s+([A-F])(?:\s*,\s*([A-F]))*\s+and\s+([A-F])\b/gi,
+    (_match, ...args) => {
+      // args contains captured groups followed by offset and string
+      const letters = args.filter((a): a is string => typeof a === 'string' && /^[A-F]$/.test(a));
+      const parts = letters.map(l => formatChoiceReference(question, l));
+      if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+      return `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`;
+    }
+  );
+
+  text = text.replace(
+    /\b(?:answer choice|choice|options?|answer)\s*[“”']?\(?([A-F])\)?[.”””']*/gi,
     replaceChoiceMention
   );
 

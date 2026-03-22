@@ -78,12 +78,18 @@ export interface SkillPerformance {
  * Check if all prerequisites for a skill are met (mastery state)
  * @param skillId The skill to check prerequisites for
  * @param skillPerformance Lookup function to get performance data for a skill
+ * @param visited Set of skill IDs already visited in this traversal (cycle guard)
  * @returns true if all prerequisites are mastered, false otherwise
  */
 export function checkPrerequisitesMet(
   skillId: SkillId,
-  skillPerformance: (id: SkillId) => SkillPerformance | undefined
+  skillPerformance: (id: SkillId) => SkillPerformance | undefined,
+  visited: Set<SkillId> = new Set()
 ): boolean {
+  // Cycle / depth guard — if we've already visited this node, skip it
+  if (visited.has(skillId)) return true;
+  visited.add(skillId);
+
   const skill = getSkillById(skillId);
   if (!skill || !skill.prerequisites || skill.prerequisites.length === 0) {
     return true; // No prerequisites, so they're all met
@@ -95,9 +101,9 @@ export function checkPrerequisitesMet(
     if (!prereqPerf || prereqPerf.learningState !== 'mastery') {
       return false; // At least one prerequisite is not mastered
     }
-    
+
     // Recursively check prerequisites of prerequisites
-    if (!checkPrerequisitesMet(prereqId, skillPerformance)) {
+    if (!checkPrerequisitesMet(prereqId, skillPerformance, visited)) {
       return false;
     }
   }
@@ -161,4 +167,3 @@ export function calculateLearningState(
   // Emerging: Default state for new or struggling skills
   return 'emerging';
 }
-

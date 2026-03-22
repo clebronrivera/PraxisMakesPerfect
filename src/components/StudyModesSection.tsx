@@ -522,7 +522,7 @@ export default function StudyModesSection({
             css: 'text-cyan-400',
           },
           {
-            label: 'Avg time this week',
+            label: 'Daily avg this week',
             value: weeklyAvgSeconds > 0 ? formatStudyTime(weeklyAvgSeconds) : '—',
             css: 'text-violet-400',
           },

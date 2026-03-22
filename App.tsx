@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target } from 'lucide-react';
+import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User } from 'lucide-react';
 import { formatStudyTime } from './src/hooks/useDailyStudyTime';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 
@@ -36,7 +36,7 @@ import {
   isScreenerQuestionCount
 } from './src/utils/assessmentConstants';
 import { getSkillById } from './src/brain/skill-map';
-import { PROGRESS_DOMAINS } from './src/utils/progressTaxonomy';
+import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progressTaxonomy';
 
 import { StudyConstraints, StudyPlanHistoryEntry, generateStudyPlan, getStudyPlanHistory } from './src/services/studyPlanService';
 import { supabase } from './src/config/supabase';
@@ -46,8 +46,11 @@ import type { AssessmentReportType } from './src/types/assessment';
 import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
 import { buildProgressSummary } from './src/utils/progressSummaries';
 import { PROFICIENCY_META } from './src/utils/skillProficiency';
+import { onboardingFormToSavePayload } from './src/utils/onboardingFormToSavePayload';
+import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
 const OnboardingFlow = lazy(() => import('./src/components/OnboardingFlow'));
+const ProfileEditorPanel = lazy(() => import('./src/components/ProfileEditorPanel'));
 
 const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.meta.url).href;
 
@@ -144,6 +147,18 @@ function PraxisStudyAppContent() {
   const [isSpicyMode, setIsSpicyMode] = useState(false);
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
+  const [profileEditorOpen, setProfileEditorOpen] = useState(false);
+  const [profileEditorInitial, setProfileEditorInitial] = useState<UserProfileData | null>(null);
+
+  const openProfileEditor = useCallback(() => {
+    setProfileEditorInitial(userProfileToFormData(profile));
+    setProfileEditorOpen(true);
+  }, [profile]);
+
+  const closeProfileEditor = useCallback(() => {
+    setProfileEditorOpen(false);
+    setProfileEditorInitial(null);
+  }, []);
 
   // Practice context: tracks the last skill or domain practiced so the
   // "Continue Where You Left Off" card can name it and resume correctly.
@@ -206,6 +221,23 @@ function PraxisStudyAppContent() {
     const activeDaysThisWeek = recentActivityDays.filter(d => d.seconds > 0).length;
     return activeDaysThisWeek > 0 ? Math.round(weeklyTotalSeconds / activeDaysThisWeek) : 0;
   }, [recentActivityDays]);
+
+  // Rotate affirmation pills in the top bar based on cumulative activity.
+  // Seed changes as the user answers more questions or builds a streak, so
+  // returning users see different phrases over time without any state management.
+  const headerAffirmations = useMemo(() => {
+    const PAIRS: [string, string][] = [
+      ['Keep going', 'One step at a time'],
+      ['Stay consistent', 'Small reps compound'],
+      ['Show up again', 'That is the whole job'],
+      ['You are building something', 'Keep the reps going'],
+      ['Progress is quiet', 'Keep practicing'],
+      ['Earn it every day', 'No shortcuts here'],
+      ['Trust the process', 'You are closer than you think'],
+    ];
+    const seed = (profile.totalQuestionsSeen ?? 0) + (profile.streak ?? 0);
+    return PAIRS[seed % PAIRS.length];
+  }, [profile.totalQuestionsSeen, profile.streak]);
 
   const weeklyUsageSeconds = useMemo(
     () => recentActivityDays.reduce((total, day) => total + day.seconds, 0),
@@ -819,30 +851,7 @@ function PraxisStudyAppContent() {
   // Show onboarding flow for new users who haven't completed profile setup
   if (!profile.onboardingComplete) {
     const handleOnboardingComplete = async (data: UserProfileData) => {
-      await saveOnboardingData({
-        account_role: data.account_role || undefined,
-        full_name: data.full_name || undefined,
-        preferred_display_name: data.preferred_display_name || undefined,
-        university: data.university || undefined,
-        program_type: data.program_type || undefined,
-        program_state: data.program_state || undefined,
-        delivery_mode: data.delivery_mode || undefined,
-        training_stage: data.training_stage || undefined,
-        certification_state: data.certification_state || undefined,
-        current_role: data.current_role || undefined,
-        certification_route: data.certification_route || undefined,
-        primary_exam: data.primary_exam || undefined,
-        planned_test_date: data.planned_test_date || undefined,
-        retake_status: data.retake_status || undefined,
-        number_of_prior_attempts: data.number_of_prior_attempts ? parseInt(data.number_of_prior_attempts, 10) : null,
-        target_score: data.target_score ? parseInt(data.target_score, 10) : null,
-        study_goals: data.study_goals,
-        weekly_study_hours: data.weekly_study_hours || undefined,
-        biggest_challenge: data.biggest_challenge,
-        used_other_resources: data.used_other_resources ?? null,
-        other_resources_list: data.other_resources_list,
-        what_was_missing: data.what_was_missing || undefined,
-      });
+      await saveOnboardingData(onboardingFormToSavePayload(data));
     };
 
     const handleOnboardingSkip = async () => {
@@ -937,19 +946,24 @@ function PraxisStudyAppContent() {
         </div>
 
         <div className="mt-auto border-t border-white/5 bg-black/20 p-6">
-          <div className="rounded-[1.75rem] border border-white/5 bg-white/5 p-4">
+          <button
+            type="button"
+            onClick={openProfileEditor}
+            className="w-full rounded-[1.75rem] border border-white/5 bg-white/5 p-4 text-left transition hover:border-white/15 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60"
+          >
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/20">
-                <Brain className="h-4 w-4 text-amber-300" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/20">
+                <User className="h-4 w-4 text-amber-300" />
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-white">{displayName}</p>
                 {profileRoleLabel && (
                   <p className="truncate text-[11px] font-black uppercase tracking-[0.18em] text-amber-500">{profileRoleLabel}</p>
                 )}
+                <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-slate-500">Profile &amp; onboarding</p>
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </aside>
 
@@ -968,8 +982,8 @@ function PraxisStudyAppContent() {
               </div>
 
               <div className="hidden md:flex flex-wrap items-center gap-2">
-                <span className="editorial-pill">Keep going</span>
-                <span className="editorial-pill">One step at a time</span>
+                <span className="editorial-pill">{headerAffirmations[0]}</span>
+                <span className="editorial-pill">{headerAffirmations[1]}</span>
                 {(profile.streak ?? 0) > 0 && (
                   <span className="editorial-pill">
                     <Flame className="h-3.5 w-3.5" />
@@ -979,6 +993,14 @@ function PraxisStudyAppContent() {
               </div>
 
               <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={openProfileEditor}
+                  className="editorial-topbar-button lg:hidden"
+                  title="Profile and onboarding"
+                >
+                  <User className="w-4 h-4" />
+                </button>
                 <button
                   onClick={() => setIsFeedbackModalOpen(true)}
                   className="editorial-topbar-button"
@@ -1178,15 +1200,18 @@ function PraxisStudyAppContent() {
             const spicyButton = (
               <button
                 onClick={startSpicyPractice}
-                className="group relative flex flex-col items-center gap-2 rounded-[2.25rem] bg-[#1a1a1a] px-7 py-5 text-[11px] font-black uppercase tracking-[0.18em] text-white shadow-2xl transition-all hover:scale-[1.03] active:scale-95"
+                className="editorial-button-dark flex min-h-[4.25rem] w-full items-center justify-between rounded-[1.75rem] px-5 py-4 text-left"
               >
-                <span className="flex items-center gap-2 text-lg italic text-amber-500">I&apos;m Feeling Spicy!</span>
-                <span className="text-[11px] font-bold lowercase tracking-normal text-white/80">
-                  Jump into a full 45-question cycle
+                <span>
+                  <span className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-amber-400">
+                    <Flame className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    Spicy Mode
+                  </span>
+                  <span className="mt-2 block text-sm font-medium leading-relaxed text-slate-300">
+                    Jump into a full 45-question cycle.
+                  </span>
                 </span>
-                <div className="absolute -right-3 -top-3 rounded-full border-4 border-white bg-amber-500 p-3 shadow-lg animate-bounce">
-                  <Flame className="h-4 w-4 fill-white text-white" />
-                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-amber-300" />
               </button>
             );
 
@@ -1196,67 +1221,67 @@ function PraxisStudyAppContent() {
 
                 {isNewUser && (
                   <>
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_21rem]">
-                      <div className="editorial-surface p-7 lg:p-8">
+                    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
+                      <div className="editorial-surface p-6 lg:p-7">
                         <p className="editorial-overline">Dashboard</p>
-                        <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 lg:text-4xl">Welcome to Praxis Study</h2>
-                        <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-slate-500">
+                        <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to Praxis Study</h2>
+                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
                           Start with the screener to establish your baseline, then complete the full diagnostic to unlock the full personalized study experience.
                         </p>
-                        <div className="mt-7 grid gap-4 md:grid-cols-2">
-                          <div className="editorial-surface-soft p-5">
+                        <div className="mt-6 grid gap-3 md:grid-cols-2">
+                          <div className="editorial-surface-soft p-4">
                             <p className="editorial-overline">Step 1</p>
-                            <p className="mt-2 text-lg font-bold text-slate-900">Complete the screener</p>
+                            <p className="mt-2 text-base font-bold text-slate-900">Complete the screener</p>
                             <p className="mt-2 text-sm text-slate-500">50 questions across all four Praxis sections to establish your starting point.</p>
                             {!screenerSessionInProgress && (
-                              <button onClick={() => startScreener(undefined)} className="editorial-button-primary mt-5">
+                              <button onClick={() => startScreener(undefined)} className="editorial-button-primary mt-4">
                                 <Zap className="h-4 w-4" />
                                 Take the screener
                               </button>
                             )}
                           </div>
-                          <div className="editorial-surface-soft p-5 opacity-80">
+                          <div className="editorial-surface-soft p-4 opacity-90">
                             <p className="editorial-overline">Step 2</p>
-                            <p className="mt-2 text-lg font-bold text-slate-700">Complete the full diagnostic</p>
+                            <p className="mt-2 text-base font-bold text-slate-700">Complete the full diagnostic</p>
                             <p className="mt-2 text-sm text-slate-500">Unlock Practice by Skill, the Study Guide, and your personalized learning path.</p>
                             <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Available after the screener</p>
                           </div>
                         </div>
                       </div>
-                      <div className="editorial-panel-dark p-6 lg:p-7">
-                        <p className="editorial-overline text-slate-500">Quick start</p>
-                        <p className="mt-3 text-2xl font-bold tracking-tight text-white">Want extra exposure first?</p>
-                        <p className="mt-3 text-sm leading-relaxed text-slate-400">
+                      <div className="editorial-surface-soft p-5 lg:p-6">
+                        <p className="editorial-overline">Quick start</p>
+                        <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Want extra exposure first?</p>
+                        <p className="mt-3 text-sm leading-relaxed text-slate-500">
                           Spicy mode cycles one question per skill so you can see the full question bank before generating a bigger plan.
                         </p>
-                        <div className="mt-6">{spicyButton}</div>
+                        <div className="mt-5">{spicyButton}</div>
                       </div>
                     </div>
                   </>
                 )}
 
                 {isScreenerDone && (
-                  <div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_21rem]">
-                    <div className="editorial-surface p-7 lg:p-8">
+                  <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
+                    <div className="editorial-surface p-6 lg:p-7">
                       <p className="editorial-overline">Dashboard</p>
-                      <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 lg:text-4xl">
+                      <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">
                         {firstName ? `Nice work, ${firstName}.` : 'Screener complete.'}
                       </h2>
-                      <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-slate-500">
+                      <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
                         Domain practice is now active. One more step unlocks the full personalized experience.
                       </p>
-                      <div className="mt-7 grid gap-4 md:grid-cols-2">
-                        <div className="editorial-surface-soft p-5 border-emerald-200 bg-emerald-50/60">
+                      <div className="mt-6 grid gap-3 md:grid-cols-2">
+                        <div className="editorial-surface-soft border-emerald-200 bg-emerald-50/60 p-4">
                           <p className="editorial-overline text-emerald-700">Complete</p>
-                          <p className="mt-2 text-lg font-bold text-slate-900">Screener finished</p>
+                          <p className="mt-2 text-base font-bold text-slate-900">Screener finished</p>
                           <p className="mt-2 text-sm text-slate-600">You can already jump into domain-based practice and keep building momentum.</p>
                         </div>
-                        <div className="editorial-surface-soft p-5">
+                        <div className="editorial-surface-soft p-4">
                           <p className="editorial-overline">Next step</p>
-                          <p className="mt-2 text-lg font-bold text-slate-900">Take the full diagnostic</p>
+                          <p className="mt-2 text-base font-bold text-slate-900">Take the full diagnostic</p>
                           <p className="mt-2 text-sm text-slate-500">Unlock Practice by Skill, your Study Guide, and a custom learning path built around your developing areas.</p>
                           {!fullAssessmentSessionInProgress && (
-                            <button onClick={() => startFullAssessment(undefined)} className="editorial-button-primary mt-5">
+                            <button onClick={() => startFullAssessment(undefined)} className="editorial-button-primary mt-4">
                               <BarChart3 className="h-4 w-4" />
                               Take the full diagnostic
                             </button>
@@ -1264,41 +1289,41 @@ function PraxisStudyAppContent() {
                         </div>
                       </div>
                     </div>
-                    <div className="editorial-panel-dark p-6 lg:p-7">
-                      <p className="editorial-overline text-slate-500">Optional</p>
-                      <p className="mt-3 text-2xl font-bold tracking-tight text-white">Keep calibrating if you want.</p>
-                      <p className="mt-3 text-sm leading-relaxed text-slate-400">
+                    <div className="editorial-surface-soft p-5 lg:p-6">
+                      <p className="editorial-overline">Optional</p>
+                      <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Keep calibrating if you want.</p>
+                      <p className="mt-3 text-sm leading-relaxed text-slate-500">
                         Another spicy cycle can give you broader exposure while you build toward the full diagnostic.
                       </p>
-                      <div className="mt-6">{spicyButton}</div>
+                      <div className="mt-5">{spicyButton}</div>
                     </div>
                   </div>
                 )}
 
                 {isFullyUnlocked && (
                   <>
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_21rem]">
-                      <div className="editorial-surface p-7 lg:p-8">
+                    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
+                      <div className="editorial-surface p-6 lg:p-7">
                         <p className="editorial-overline">Dashboard</p>
-                        <h2 className="mt-4 text-4xl font-bold tracking-tight text-slate-900 lg:text-[2.75rem]">
+                        <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">
                           {firstName ? `Greetings, ${firstName}.` : 'Welcome back.'}
                         </h2>
-                        <p className="mt-5 max-w-2xl text-base font-medium leading-relaxed text-slate-500">
+                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
                           Keep building your skill bank with focused practice. Your Study Guide is there whenever you want a bigger view of what to work on next.
                         </p>
-                        <div className="mt-7 grid gap-4 md:grid-cols-2">
-                          <div className="editorial-surface-soft p-5">
+                        <div className="mt-6 grid gap-3 md:grid-cols-2">
+                          <div className="editorial-surface-soft p-4">
                             <p className="editorial-overline">Readiness</p>
-                            <p className="mt-2 text-lg font-bold text-slate-900">{readinessPhase}</p>
+                            <p className="mt-2 text-base font-bold text-slate-900">{readinessPhase}</p>
                             <p className="mt-2 text-sm text-slate-500">
                               {skillsToReadiness === 0
                                 ? `You have reached the current goal of ${readinessTarget} skills ${PROFICIENCY_META.proficient.label}.`
                                 : `${skillsToReadiness} more skills to reach your current goal.`}
                             </p>
                           </div>
-                          <div className="editorial-surface-soft p-5">
+                          <div className="editorial-surface-soft p-4">
                             <p className="editorial-overline">Next focus</p>
-                            <p className="mt-2 text-lg font-bold text-slate-900">
+                            <p className="mt-2 text-base font-bold text-slate-900">
                               {weakestDomain ? weakestDomain.name : 'Follow your learning path'}
                             </p>
                             <p className="mt-2 text-sm text-slate-500">
@@ -1308,8 +1333,8 @@ function PraxisStudyAppContent() {
                             </p>
                           </div>
                         </div>
-                        <div className="mt-7 flex flex-wrap gap-3">
-                          {spicyButton}
+                        <div className="mt-6 flex flex-wrap gap-3">
+                          <div className="w-full sm:w-auto sm:min-w-[18rem]">{spicyButton}</div>
                           {hasShortAssessmentReport && (
                             <button onClick={() => handleViewReport('screener')} className="editorial-button-secondary">
                               View progress
@@ -1318,46 +1343,53 @@ function PraxisStudyAppContent() {
                         </div>
                       </div>
 
-                      <div className="editorial-panel-dark p-6 lg:p-7">
+                      <div className="editorial-surface-soft p-5 lg:p-6">
                         <div className="flex items-center justify-between">
-                          <p className="editorial-overline text-slate-500">Daily goal</p>
-                          <span className="text-sm font-black italic text-amber-500">{dailyQuestionCount} / {DAILY_GOAL}</span>
+                          <p className="editorial-overline">Daily goal</p>
+                          <span className="text-sm font-black italic text-amber-700">{dailyQuestionCount} / {DAILY_GOAL}</span>
                         </div>
-                        <div className="mt-5 editorial-progress-track bg-white/10 border border-white/5 p-0.5 shadow-inner">
+                        <div className="mt-4 editorial-progress-track border border-amber-100 p-0.5 shadow-inner">
                           <div
                             className="editorial-progress-fill"
                             style={{ width: `${Math.min((dailyQuestionCount / DAILY_GOAL) * 100, 100)}%` }}
                           />
                         </div>
-                        <p className="mt-5 text-sm leading-relaxed text-slate-400">
+                        <p className="mt-4 text-sm leading-relaxed text-slate-500">
                           Keep moving toward today&apos;s question goal while leaving room to read the lesson content and explanations that support it.
                         </p>
-                        <div className="mt-5 rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
-                          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Weekly usage</p>
-                          <p className="mt-2 text-sm font-bold text-white">
+                        <div className="mt-4 rounded-[1.5rem] border border-amber-100 bg-white p-4">
+                          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Weekly usage</p>
+                          <p className="mt-2 text-sm font-bold text-slate-900">
                             {weeklyUsageSeconds > 0 ? formatStudyTime(weeklyUsageSeconds) : '0m'} this week
                           </p>
-                          <p className="mt-1 text-xs font-medium text-slate-400">Stay steady and keep showing up.</p>
+                          <p className="mt-1 text-xs font-medium text-slate-500">Stay steady and keep showing up.</p>
                         </div>
 
-                        <div className="mt-8 flex flex-col gap-3 border-t border-white/5 pt-8">
+                        <div className="mt-6 flex flex-col gap-3 border-t border-slate-200 pt-6">
                           <button
                             onClick={() => {
                               if (top5Target[0]) openLearningPathModule(top5Target[0][0]);
                               else setMode('practice-hub');
                             }}
-                            className="group flex flex-col items-center gap-2 rounded-[2rem] border border-white bg-white p-5 shadow-xl shadow-black/20 transition-all hover:bg-amber-50 active:scale-95"
+                            className="group flex items-center justify-between rounded-[1.5rem] border border-amber-100 bg-white px-4 py-4 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50 active:scale-95"
                           >
-                            <MapIcon className="mb-1 h-6 w-6 text-amber-600" />
-                            <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-900">Go directly to learning path</span>
-                            <span className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-700/60">Pick up your next skill</span>
+                            <span className="flex items-center gap-3">
+                              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50 text-amber-700">
+                                <MapIcon className="h-5 w-5" />
+                              </span>
+                              <span>
+                                <span className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Learning path</span>
+                                <span className="mt-1 block text-sm font-bold text-slate-900">Pick up your next skill</span>
+                              </span>
+                            </span>
+                            <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
                           </button>
                           <button
                             onClick={() => {
                               if (weakestDomain) startPractice(weakestDomain.id);
                               else setMode('practice-hub');
                             }}
-                            className="flex items-center justify-center gap-4 rounded-[2rem] border border-white/10 bg-white/5 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 transition-all hover:bg-white/10 hover:text-white"
+                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
                           >
                             <Layers className="h-4 w-4" />
                             Go directly to domain practice
@@ -1367,7 +1399,7 @@ function PraxisStudyAppContent() {
                               if (top5Target[0]) startSkillPractice(top5Target[0][0]);
                               else setMode('practice-hub');
                             }}
-                            className="flex items-center justify-center gap-4 rounded-[2rem] border border-white/10 bg-white/5 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 transition-all hover:bg-white/10 hover:text-white"
+                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
                           >
                             <Target className="h-4 w-4" />
                             Go directly to skill practice
@@ -1407,25 +1439,25 @@ function PraxisStudyAppContent() {
                           accent: 'bg-blue-50 text-blue-700',
                         },
                       ].map(stat => (
-                        <div key={stat.label} className="editorial-stat-card">
+                        <div key={stat.label} className="editorial-stat-card p-4">
                           <div className="flex items-center justify-between">
-                            <div className={`rounded-2xl border border-white p-3 shadow-sm ${stat.accent}`}>
-                              <stat.icon className="h-5 w-5" />
+                            <div className={`rounded-2xl border border-white p-2.5 shadow-sm ${stat.accent}`}>
+                              <stat.icon className="h-4.5 w-4.5" />
                             </div>
                             <ChevronRight className="h-4 w-4 text-slate-300" />
                           </div>
                           <div>
                             <p className="mb-2 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">{stat.label}</p>
-                            <p className="text-2xl font-black italic tracking-tighter text-slate-900 sm:text-[1.75rem]">{stat.value}</p>
+                            <p className="text-xl font-black italic tracking-tighter text-slate-900 sm:text-[1.6rem]">{stat.value}</p>
                             <p className="mt-2 text-[13px] font-medium leading-relaxed text-slate-500">{stat.supporting}</p>
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_21rem]">
+                    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
                       <div className="space-y-6">
-                        <div className="px-2 sm:px-3">
+                        <div className="px-1 sm:px-2">
                           <div className="flex items-center gap-3">
                             <h3 className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">High-Impact Skills</h3>
                             <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)] animate-pulse" />
@@ -1438,19 +1470,21 @@ function PraxisStudyAppContent() {
                         <div className="editorial-surface overflow-hidden">
                           {top5Target.length > 0 ? top5Target.map(([skillId]) => {
                             const skill = getSkillById(skillId as any);
+                            const progressDef = getProgressSkillDefinition(skillId);
+                            const displayName = skill?.name ?? progressDef?.fullLabel ?? skillId;
                             return (
                               <div
                                 key={skillId}
-                                className="group flex items-center justify-between border-b border-slate-100 p-4 sm:p-5 transition-all last:border-0 hover:bg-[#fbfaf7]"
+                                className="group flex items-center justify-between gap-4 border-b border-slate-100 p-4 transition-all last:border-0 hover:bg-[#fbfaf7]"
                               >
-                                <div className="flex items-center gap-6">
-                                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 transition-colors group-hover:border-amber-300">
+                                <div className="flex min-w-0 items-center gap-4">
+                                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 transition-colors group-hover:border-amber-300">
                                     <span className="text-xs font-black italic tracking-tighter text-slate-400 transition-colors group-hover:text-amber-600">
                                       {skillId.split('-')[0]}
                                     </span>
                                   </div>
-                                  <div>
-                                    <h4 className="text-base font-bold text-slate-900 transition-colors group-hover:text-amber-700">{skill?.name ?? skillId}</h4>
+                                  <div className="min-w-0">
+                                    <h4 className="truncate text-[15px] font-bold text-slate-900 transition-colors group-hover:text-amber-700">{displayName}</h4>
                                     <p className="mt-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 italic">
                                       {skillId}
                                     </p>
@@ -1458,7 +1492,7 @@ function PraxisStudyAppContent() {
                                 </div>
                                 <button
                                   onClick={() => openLearningPathModule(skillId)}
-                                  className="editorial-button-secondary"
+                                  className="editorial-button-secondary shrink-0"
                                 >
                                   Practice
                                 </button>
@@ -1472,7 +1506,7 @@ function PraxisStudyAppContent() {
 
                       <div className="space-y-5">
                         {canGenerateStudyPlan && studyPlanHistory.length === 0 && !studyPlanLoading && (
-                          <div className="editorial-surface p-5">
+                          <div className="editorial-surface-soft p-5">
                             <div className="flex items-start gap-3">
                               <Sparkles className="mt-0.5 h-5 w-5 text-amber-600" />
                               <div>
@@ -1504,7 +1538,7 @@ function PraxisStudyAppContent() {
                           return (
                             <button
                               onClick={() => setMode('study-guide')}
-                              className="editorial-surface w-full p-5 text-left transition-all hover:border-amber-300"
+                              className="editorial-surface-soft w-full p-5 text-left transition-all hover:border-amber-300"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div>
@@ -1777,6 +1811,18 @@ function PraxisStudyAppContent() {
           onClose={() => setIsFeedbackModalOpen(false)}
         />
       </Suspense>
+      {profileEditorOpen && profileEditorInitial && (
+        <Suspense fallback={null}>
+          <ProfileEditorPanel
+            initialData={profileEditorInitial}
+            onClose={closeProfileEditor}
+            displayName={profile.preferredDisplayName || profile.fullName || currentUserName}
+            onSaveComplete={async (data) => {
+              await saveOnboardingData(onboardingFormToSavePayload(data));
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

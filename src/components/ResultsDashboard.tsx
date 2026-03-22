@@ -186,6 +186,32 @@ export default function ResultsDashboard({
   // ── Time stats ──────────────────────────────────────────────────────────────
   const timeStats = useMemo(() => computeTimeStats(userProfile), [userProfile]);
 
+  // ── Confidence-weighted accuracy ─────────────────────────────────────────────
+  const confidenceStats = useMemo(() => {
+    let rawCorrect = 0;
+    let rawAttempts = 0;
+    let weightedCorrectSum = 0;
+    let weightedTotalSum = 0;
+    let highWrong = 0; // misconceptions: answered "Sure" but wrong
+
+    for (const perf of Object.values(userProfile.skillScores ?? {})) {
+      rawCorrect += perf.correct ?? 0;
+      rawAttempts += perf.attempts ?? 0;
+      highWrong += perf.confidenceFlags ?? 0;
+      if (perf.weightedAccuracy !== undefined && perf.attempts > 0) {
+        // Reconstruct weighted sums using stored weightedAccuracy × attempts as proxy
+        weightedCorrectSum += perf.weightedAccuracy * perf.attempts;
+        weightedTotalSum += perf.attempts;
+      }
+    }
+
+    const rawPct = rawAttempts > 0 ? Math.round((rawCorrect / rawAttempts) * 100) : null;
+    const weightedPct = weightedTotalSum > 0 ? Math.round((weightedCorrectSum / weightedTotalSum) * 100) : null;
+    const delta = rawPct !== null && weightedPct !== null ? weightedPct - rawPct : null;
+
+    return { rawPct, weightedPct, delta, highWrong };
+  }, [userProfile.skillScores]);
+
   // ── Timeline steps ──────────────────────────────────────────────────────────
   const timelineSteps: TimelineStep[] = [
     { label: 'Screener done', done: Boolean(userProfile.screenerComplete) },
@@ -226,7 +252,7 @@ export default function ResultsDashboard({
         <p className="editorial-overline mb-2">Progress</p>
         <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Your progress.</h2>
         <p className="mt-2 text-[15px] text-slate-500">
-          Based on {(userProfile.totalQuestionsSeen ?? totalAttempts).toLocaleString()} answered exposures across {assessedCount} of {TOTAL_SKILLS} skills.
+          {(userProfile.totalQuestionsSeen ?? totalAttempts).toLocaleString()} total exposures logged · accuracy measured across {totalAttempts.toLocaleString()} skill attempts · {assessedCount} of {TOTAL_SKILLS} skills touched.
         </p>
       </div>
 
@@ -263,7 +289,8 @@ export default function ResultsDashboard({
             label: 'Overall accuracy',
             value: overallAccuracy !== null ? `${overallAccuracy}%` : '—',
             color: overallAccuracy !== null && overallAccuracy >= 80 ? 'text-emerald-400' : overallAccuracy !== null && overallAccuracy >= 60 ? 'text-amber-400' : 'text-rose-400',
-            desc: `${totalCorrect.toLocaleString()} correct`,
+            desc: `${totalCorrect.toLocaleString()} correct / ${totalAttempts.toLocaleString()} skill attempts`,
+            title: 'Accuracy is measured across skill practice attempts only, not total exposures.',
           },
         ].map(stat => (
           <div
@@ -510,6 +537,42 @@ export default function ResultsDashboard({
                   </div>
                 )}
               </>
+            )}
+
+            {/* Confidence-weighted accuracy */}
+            {confidenceStats.rawPct !== null && (
+              <div>
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Confidence-adjusted accuracy</p>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm text-slate-500">Raw accuracy</p>
+                    <span className="text-sm font-bold tabular-nums text-slate-700">{confidenceStats.rawPct}%</span>
+                  </div>
+                  {confidenceStats.weightedPct !== null && (
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm text-slate-500">
+                        Confidence-weighted
+                        <span className="ml-1.5 text-[11px] text-slate-400">(Sure×1.2, Guess×0.8, Sure+wrong×0.5)</span>
+                      </p>
+                      <span className={`text-sm font-bold tabular-nums ${
+                        confidenceStats.delta !== null && confidenceStats.delta > 0 ? 'text-emerald-600' :
+                        confidenceStats.delta !== null && confidenceStats.delta < 0 ? 'text-rose-500' : 'text-slate-700'
+                      }`}>
+                        {confidenceStats.weightedPct}%
+                        {confidenceStats.delta !== null && confidenceStats.delta !== 0 && (
+                          <span className="ml-1 text-[11px]">({confidenceStats.delta > 0 ? '+' : ''}{confidenceStats.delta})</span>
+                        )}
+                      </span>
+                    </div>
+                  )}
+                  {confidenceStats.highWrong > 0 && (
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm text-rose-600">Misconception flags <span className="text-[11px] text-rose-400">(answered Sure, got wrong)</span></p>
+                      <span className="text-sm font-bold tabular-nums text-rose-600">{confidenceStats.highWrong}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
 
             {/* Repeated incorrect patterns */}
