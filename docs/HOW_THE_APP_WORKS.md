@@ -172,6 +172,22 @@ Consecutive correct answers build a streak. Shown on the dashboard; resets when 
 
 ---
 
+## Vocabulary: Learning Modules
+
+All lesson content in the app is organized into **Learning Modules**. Each module is a self-contained teaching unit tied to one or more of the 45 skills. Modules follow the naming convention `MOD-D{content_domain}-{sequence}` (e.g. `MOD-D1-01`). These IDs are **stable and must never be renamed** — they are used for code linkage and progress tracking.
+
+Each module includes:
+- Core concept prose
+- Memory anchor or clinical logic callout
+- Comparison tables where applicable
+- Bulleted lists of key terms or sequences
+
+A skill may map to 1–4 modules. The first module in the mapping is the **primary module** and is shown by default. If a skill maps to multiple modules, tab pills let the user switch between them.
+
+Module IDs use the format `MOD-D{N}-{NN}` where `N` is the content domain (1–10, a grouping distinct from the 4 app progress domains) and `NN` is the zero-padded sequence within that content domain.
+
+---
+
 ## The Three Practice Modes
 
 The Practice Hub offers three distinct modes. All three live under the **Practice** tab and are accessible from the same screen via a three-tab selector: **By Domain / By Skill / Learning Path**.
@@ -186,13 +202,38 @@ Practice by Praxis section. Choose from the 4 domains and work through questions
 ---
 
 ### By Skill
-Practice on a specific skill — any of the 45 individual competency areas. The skill list is sorted from lowest-performing to highest-performing. Each skill row shows:
-- The skill name and its primary module code (e.g. `MOD-D1-03`)
-- The user's current proficiency level (Emerging / Approaching / Demonstrating / Not started)
-- A **Practice** button — launches question practice for that skill
-- A **Help icon** — opens a slide-up lesson drawer with the micro-lesson content for that skill
+A list of all 45 skills, sorted **highest priority first** (lowest accuracy at the top). Each skill card shows:
+- A **colored left bar** grading from rose (high priority, low accuracy) → amber → emerald (low priority, high accuracy)
+- The skill name and primary module code (e.g. `MOD-D1-03`)
+- Accuracy % (no proficiency label on the card — just the number)
 
-**The Help drawer (Skill lesson during practice):** When a user is answering questions in By Skill mode, tapping **Help** in the session header opens the same lesson drawer. This drawer shows the full micro-lesson so users can review concept content while practicing — but does not reveal answers. Users must scroll through the lesson to find what they need.
+**Tapping a skill card** opens that skill's **Learning Module** — a combined lesson-and-practice page.
+
+**Filter buttons** let users narrow the list by: All / High Priority / In Progress / Strong.
+
+**Unlocks after:** completing both the screener and the full assessment.
+
+---
+
+#### By Skill — Learning Module Page
+
+Opened when a student taps a skill card in the By Skill panel. This is the primary study interface for targeted skill work. The page has a **light warm background** for eye comfort and two accordion sections:
+
+**Section 1 — Let's Explore** *(opens first)*
+- Renders the full Learning Module content via `ModuleLessonViewer`
+- If a skill maps to multiple modules, tab pills allow switching between them
+- Local timer shows time spent on lesson content (display only — no backend save)
+- A "Open Practice Questions" prompt button at the bottom of the content
+
+**Section 2 — Practice Questions** *(starts closed)*
+- Opens when the student is ready; closing Section 2 opens Section 1
+- When the student opens Section 1 while questions are active, the quiz enters a **paused** state — question progress is preserved (component stays mounted)
+- A "Paused" badge on the section header and a resume prompt are shown in the lesson view
+- Questions are drawn from the skill's question pool, shuffled, and loop continuously (no retirement in this context)
+- Each answered question calls `updateSkillProgress` — streak and skill scores update exactly as in normal practice
+- Stats strip at the top of the page shows this-skill accuracy and domain accuracy from the user profile
+
+**No data is stored** for the lesson content interaction (time is local/display only). Only the question answers update the backend skill scores.
 
 **Unlocks after:** completing both the screener and the full assessment.
 
@@ -218,7 +259,7 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 #### Learning Path Module Page — 3 Sections
 
 **Section 1 — Lesson**
-- Renders the full micro-lesson content (all modules for the skill, with tab pills if multiple)
+- Renders the full Learning Module content (all modules for the skill, with tab pills if multiple)
 - ⚙ placeholder for a future interactive visual/diagram component
 - 🎮 placeholder for a future interactive activity
 - Live timer tracks time spent reading
@@ -236,14 +277,6 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 
 ---
 
-**Lesson content structure:** Each lesson is a self-contained micro-lesson covering one testable exam concept. Lessons follow the naming convention `MOD-D{content_domain}-{sequence}` (e.g. `MOD-D1-01`). Each lesson includes:
-- Core concept prose
-- Memory anchor or clinical logic callout
-- Comparison tables where applicable
-- Bulleted lists of key terms or sequences
-
-**Lesson naming convention:** Module IDs use the format `MOD-D{N}-{NN}` where `N` is the content domain (1–10, a content grouping distinct from the 4 app progress domains) and `NN` is the zero-padded sequence within that content domain. These IDs are **stable and must never be renamed** because they are used for code linkage and progress tracking.
-
 **Learning Path progress tracking (Supabase):** Lesson completion, time spent, question results, and derived LP status are stored in the `learning_path_progress` table in Supabase, keyed to `(user_id, skill_id)`. This syncs across devices.
 
 **LP status labels** (stored in `learning_path_progress.status`, separate from the main skill proficiency levels):
@@ -257,8 +290,6 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 | `mastered` | Demonstrating on two or more separate sessions |
 
 **Local tracking (localStorage):** Individual module viewed/time data is also stored in `localStorage` (`pmp-lp-{userId}`) for quick UI consistency. This is supplementary to the Supabase record — Supabase is the source of truth for node colors and status.
-
-**The Learning Path is separate from By Skill Practice.** By Skill takes users into question practice. The Learning Path takes users into lesson content with a structured 3-section completion flow. These are intentionally distinct.
 
 **Unlocks after:** completing both the screener and the full assessment.
 
@@ -362,6 +393,7 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 |------|--------|
 | Exam domains | 4 |
 | Tracked skills | 45 |
+| Learning Modules | 58 (mapped to 45 skills; some skills have multiple modules) |
 | Screener length | 50 questions |
 | Full assessment length | 125 questions |
 | Skill status categories | 6 (internal AI/preprocessor labels) |
@@ -403,6 +435,9 @@ When any of the following change, update this document in the same pull request 
 - [ ] Study guide rate limit
 - [ ] Study guide section names or tab layout
 - [ ] Practice mode unlock conditions
+- [ ] Learning Module count or module-to-skill mapping
+- [ ] By Skill card design, sort order, or filter labels
+- [ ] Skill Module Page section names or behavior (Let's Explore / Practice Questions)
 - [ ] Question retirement behavior
 - [ ] Any stat shown on the login/marketing page
 - [ ] Onboarding wizard step count, field names, or answer options

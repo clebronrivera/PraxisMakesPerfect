@@ -18,6 +18,7 @@ const ScoreReport = lazy(() => import('./src/components/ScoreReport'));
 const ScreenerResults = lazy(() => import('./src/components/ScreenerResults'));
 const PracticeSession = lazy(() => import('./src/components/PracticeSession'));
 const LearningPathModulePage = lazy(() => import('./src/components/LearningPathModulePage'));
+const SkillModulePage = lazy(() => import('./src/components/SkillModulePage'));
 const TeachMode = lazy(() => import('./src/components/TeachMode'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
@@ -60,7 +61,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'learning-path-module';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'learning-path-module' | 'skill-module';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -144,6 +145,8 @@ function PraxisStudyAppContent() {
   const [isSpicyMode, setIsSpicyMode] = useState(false);
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
+  /** SkillId currently open in the By Skill Learning Module page */
+  const [skillModuleSkillId, setSkillModuleSkillId] = useState<string | null>(null);
 
   // Practice context: tracks the last skill or domain practiced so the
   // "Continue Where You Left Off" card can name it and resume correctly.
@@ -674,6 +677,11 @@ function PraxisStudyAppContent() {
     setMode('learning-path-module');
   }, []);
 
+  const openSkillModule = useCallback((skillId: string) => {
+    setSkillModuleSkillId(skillId);
+    setMode('skill-module');
+  }, []);
+
   // Handler to view past assessment reports
   const handleViewReport = useCallback(async (
     assessmentType: 'screener' | 'full-assessment'
@@ -915,7 +923,7 @@ function PraxisStudyAppContent() {
 
           <nav className="space-y-1.5">
             {(() => {
-              const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
+              const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module' || mode === 'skill-module';
               const tabs = [
                 { label: 'Dashboard', icon: <Brain className="w-4 h-4" />, onClick: () => setMode('home'), active: mode === 'home', show: true },
                 { label: 'Practice', icon: <Zap className="w-4 h-4" />, onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
@@ -1014,7 +1022,7 @@ function PraxisStudyAppContent() {
 
             <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
               {(() => {
-                const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
+                const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module' || mode === 'skill-module';
                 const tabs = [
                   { label: 'Dashboard', onClick: () => setMode('home'), active: mode === 'home', show: true },
                   { label: 'Practice', onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
@@ -1557,6 +1565,7 @@ function PraxisStudyAppContent() {
               weeklyAvgSeconds={weeklyAvgSeconds}
               totalQuestionsSeen={profile.totalQuestionsSeen}
               onDomainSelect={(domainId) => startPractice(domainId)}
+              onOpenSkillModule={openSkillModule}
               onStartSkillPractice={(skillId) => startSkillPractice(skillId)}
               onNodeClick={openLearningPathModule}
               onSkillReviewOpen={() => setMode('results')}
@@ -1590,6 +1599,25 @@ function PraxisStudyAppContent() {
               />
             </Suspense>
           </div>
+        )}
+
+        {/* BY SKILL — LEARNING MODULE PAGE */}
+        {mode === 'skill-module' && skillModuleSkillId && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading module…</div>}>
+            <SkillModulePage
+              skillId={skillModuleSkillId}
+              userId={user?.id ?? null}
+              profile={profile}
+              analyzedQuestions={analyzedQuestions}
+              onSkillProgressUpdate={(skillId, isCorrect) => {
+                updateSkillProgress(skillId as any, isCorrect, 'medium');
+              }}
+              onBack={() => {
+                setSkillModuleSkillId(null);
+                setMode('practice-hub');
+              }}
+            />
+          </Suspense>
         )}
 
         {/* STUDY GUIDE PAGE */}

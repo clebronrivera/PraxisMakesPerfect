@@ -27,7 +27,7 @@
 import { useState } from 'react';
 import {
   BookOpen, Layers, Lock, Target, TrendingUp,
-  HelpCircle,
+  ChevronRight,
 } from 'lucide-react';
 import { getDomainColor } from '../utils/domainColors';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
@@ -36,7 +36,6 @@ import { formatStudyTime } from '../hooks/useDailyStudyTime';
 import {
   getPrimaryModuleForSkill,
 } from '../data/learningModules';
-import SkillHelpDrawer from './SkillHelpDrawer';
 import LearningPathNodeMap from './LearningPathNodeMap';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
 import type { UserProfile } from '../hooks/useFirebaseProgress';
@@ -54,8 +53,10 @@ interface StudyModesSectionProps {
   weeklyAvgSeconds?: number;
   totalQuestionsSeen?: number;
   onDomainSelect: (domainId: number) => void;
-  /** Launches By Skill question practice for a specific skill */
-  onStartSkillPractice: (skillId: string) => void;
+  /** Opens the skill's Learning Module page (lesson + practice) */
+  onOpenSkillModule: (skillId: string) => void;
+  /** Launches By Skill question practice for a specific skill (legacy fallback) */
+  onStartSkillPractice?: (skillId: string) => void;
   /** Opens the full Learning Path module page for a skill node */
   onNodeClick?: (skillId: string) => void;
   /** Legacy props kept for App.tsx compatibility — no longer used in this panel */
@@ -251,19 +252,36 @@ function DomainPanel({
 }
 
 // ─── Skill Panel ─────────────────────────────────────────────────────────────
+//
+// Each skill card shows:
+//   • A colored left bar that grades from rose (low accuracy) → amber → emerald
+//   • The skill name prominently
+//   • Accuracy % (no proficiency label — just the number)
+//   • Module ID in mono below
+//   • A chevron to indicate the card is tappable
+//
+// Tapping the card opens the skill's Learning Module page (lesson + questions).
+//
+// ─────────────────────────────────────────────────────────────────────────────
 
 type SkillFilter = 'all' | 'proficient' | 'approaching' | 'emerging' | 'unstarted';
+
+/** Returns a CSS hex color string interpolated red→amber→green by score 0–1 */
+function skillPriorityColor(score: number | null): string {
+  if (score === null) return '#94a3b8'; // slate-400 — unstarted
+  if (score >= 0.8) return '#10b981';  // emerald-500 — low priority
+  if (score >= 0.6) return '#f59e0b';  // amber-500 — medium priority
+  return '#f43f5e';                     // rose-500 — high priority (most urgent)
+}
 
 function SkillPanel({
   profile,
   isLocked,
-  onStartSkillPractice,
-  onOpenHelp,
+  onOpenSkillModule,
 }: {
   profile: UserProfile;
   isLocked: boolean;
-  onStartSkillPractice: (skillId: string) => void;
-  onOpenHelp: (skillId: string, skillLabel: string) => void;
+  onOpenSkillModule: (skillId: string) => void;
 }) {
   const [filter, setFilter] = useState<SkillFilter>('all');
 
@@ -293,9 +311,9 @@ function SkillPanel({
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
     { id: 'all', label: 'All', count: allRows.length, css: 'text-slate-500 border-slate-200', activeCss: 'bg-amber-50 border-amber-300 text-slate-900' },
-    { id: 'emerging', label: PROFICIENCY_META.emerging.label, count: emergingCount, css: 'text-rose-400 border-rose-500/20', activeCss: 'bg-rose-500/15 border-rose-500/30 text-rose-300' },
-    { id: 'approaching', label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-400 border-amber-500/20', activeCss: 'bg-amber-500/15 border-amber-500/30 text-amber-300' },
-    { id: 'proficient', label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-400 border-emerald-500/20', activeCss: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300' },
+    { id: 'emerging', label: 'High Priority', count: emergingCount, css: 'text-rose-400 border-rose-500/20', activeCss: 'bg-rose-500/15 border-rose-500/30 text-rose-300' },
+    { id: 'approaching', label: 'In Progress', count: approachingCount, css: 'text-amber-400 border-amber-500/20', activeCss: 'bg-amber-500/15 border-amber-500/30 text-amber-300' },
+    { id: 'proficient', label: 'Strong', count: demonstratingCount, css: 'text-emerald-400 border-emerald-500/20', activeCss: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300' },
   ];
 
   return (
@@ -304,9 +322,9 @@ function SkillPanel({
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
           { label: 'Assessed', value: assessedRows.length, css: 'text-slate-900' },
-          { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-rose-600' },
-          { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-amber-700' },
-          { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-emerald-600' },
+          { label: 'High Priority', value: emergingCount, css: 'text-rose-600' },
+          { label: 'In Progress', value: approachingCount, css: 'text-amber-700' },
+          { label: 'Strong', value: demonstratingCount, css: 'text-emerald-600' },
         ].map(stat => (
           <div
             key={stat.label}
@@ -319,9 +337,9 @@ function SkillPanel({
       </div>
 
       {/* Usage hint */}
-      <p className="flex items-center gap-1.5 text-sm text-slate-500">
-        <HelpCircle className="w-3 h-3 shrink-0 text-amber-700" />
-        Tap Practice for questions · tap the help icon to open the skill lesson
+      <p className="text-[11px] text-slate-400">
+        Tap a skill to open its Learning Module — lesson content and practice questions together.
+        Skills are ordered highest priority first (lowest accuracy at the top).
       </p>
 
       {/* Filter buttons */}
@@ -339,58 +357,55 @@ function SkillPanel({
         ))}
       </div>
 
-      {/* Skill grid */}
+      {/* Skill cards — color-coded by priority, fully tappable */}
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-0.5">
         {displayed.length === 0 ? (
-          <p className="py-4 text-center text-sm italic text-slate-500">No skills in this level yet.</p>
+          <p className="py-4 text-center text-sm italic text-slate-500">No skills in this category yet.</p>
         ) : (
           displayed.map(row => {
-            const meta = PROFICIENCY_META[row.tier];
             const pct = row.score !== null ? Math.round(row.score * 100) : null;
             const primaryModule = getPrimaryModuleForSkill(row.skillId);
+            const barColor = skillPriorityColor(row.score);
 
             return (
-              <div
+              <button
                 key={row.skillId}
-                className="editorial-surface flex items-center gap-3 px-3 py-3"
+                onClick={() => onOpenSkillModule(row.skillId)}
+                className="editorial-surface w-full flex items-center gap-3 px-3 py-3 text-left transition-all hover:border-amber-200 hover:shadow-sm active:scale-[0.99]"
               >
+                {/* Priority color bar */}
+                <div
+                  className="w-1 self-stretch rounded-full shrink-0"
+                  style={{ backgroundColor: barColor, minHeight: '2rem' }}
+                />
+
                 {/* Skill label + module code */}
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm leading-snug text-slate-700">
+                  <p className="truncate text-sm font-medium leading-snug text-slate-800">
                     {row.fullLabel}
                   </p>
                   {primaryModule && (
-                    <p className="mt-0.5 text-[11px] font-mono text-slate-500">{primaryModule.id}</p>
+                    <p className="mt-0.5 text-[10px] font-mono text-slate-400">{primaryModule.id}</p>
                   )}
                 </div>
 
-                {/* Proficiency + score */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${meta.badgeCss}`}>
-                    {meta.label}
-                  </span>
-                  {pct !== null && (
-                    <span className={`text-[11px] font-bold tabular-nums ${meta.textCss}`}>{pct}%</span>
+                {/* Accuracy % */}
+                <div className="shrink-0 text-right">
+                  {pct !== null ? (
+                    <span
+                      className="text-sm font-bold tabular-nums"
+                      style={{ color: barColor }}
+                    >
+                      {pct}%
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-slate-400">—</span>
                   )}
                 </div>
 
-                {/* Help button — opens SkillHelpDrawer */}
-                <button
-                  onClick={() => onOpenHelp(row.skillId, row.fullLabel)}
-                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-amber-50 hover:text-amber-700"
-                  title="View skill lesson"
-                >
-                  <HelpCircle className="w-3.5 h-3.5" />
-                </button>
-
-                {/* Practice button — launches question practice */}
-                <button
-                  onClick={() => onStartSkillPractice(row.skillId)}
-                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
-                >
-                  Practice
-                </button>
-              </div>
+                {/* Navigation chevron */}
+                <ChevronRight className="w-4 h-4 shrink-0 text-slate-300" />
+              </button>
             );
           })
         )}
@@ -451,15 +466,10 @@ export default function StudyModesSection({
   weeklyAvgSeconds = 0,
   totalQuestionsSeen,
   onDomainSelect,
-  onStartSkillPractice,
+  onOpenSkillModule,
   onNodeClick,
 }: StudyModesSectionProps) {
   const [selectedMode, setSelectedMode] = useState<PracticeMode>('domain');
-
-  // Skill Help Drawer state (By Skill tab → help icon)
-  const [helpSkillId, setHelpSkillId] = useState<string | null>(null);
-  const [helpSkillLabel, setHelpSkillLabel] = useState<string>('');
-  const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
 
   const screenerComplete = Boolean(profile.screenerComplete);
   const fullAssessmentComplete = Boolean(profile.fullAssessmentComplete);
@@ -607,12 +617,7 @@ export default function StudyModesSection({
           <SkillPanel
             profile={profile}
             isLocked={!fullAssessmentComplete}
-            onStartSkillPractice={onStartSkillPractice}
-            onOpenHelp={(skillId, skillLabel) => {
-              setHelpSkillId(skillId);
-              setHelpSkillLabel(skillLabel);
-              setHelpDrawerOpen(true);
-            }}
+            onOpenSkillModule={onOpenSkillModule}
           />
         )}
         {selectedMode === 'path' && (
@@ -624,15 +629,6 @@ export default function StudyModesSection({
           />
         )}
       </div>
-
-      {/* ── Skill Help Drawer (By Skill tab) ─────────────────────────────── */}
-      <SkillHelpDrawer
-        skillId={helpSkillId}
-        skillLabel={helpSkillLabel}
-        isOpen={helpDrawerOpen}
-        onClose={() => setHelpDrawerOpen(false)}
-        userId={userId}
-      />
     </section>
   );
 }
