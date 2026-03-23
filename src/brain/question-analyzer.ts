@@ -47,6 +47,7 @@ export interface AnalyzedQuestion extends Question {
   keyConcepts?: string[];
   skillId?: string;
   isGenerated?: boolean;
+  isFoundational?: boolean; // true for vetted anchor questions (entry-point priority)
   source?: 'bank' | 'generated';
   templateId?: string; // For generated questions, shows which template was used
   isMultiSelect?: boolean;
@@ -241,6 +242,7 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
     keyConcepts,
     isMultiSelect: q.isMultiSelect ?? String(q.is_multi_select).toLowerCase() === 'true',
     cognitiveComplexity: q.cognitiveComplexity || q.cognitive_complexity,
+    isFoundational: (q as any).is_foundational === true || (q as any).is_foundational === 'true',
     source: 'bank' // Questions from questions.json are from the bank
   };
 }

@@ -123,8 +123,35 @@ export function useAdaptiveLearning() {
       );
 
       if (skillCandidates.length > 0) {
+        // Prefer foundational (anchor) questions for skills the user has seen fewer than 3 times.
+        // This surfaces vetted entry-point questions before the full pool opens up.
+        const lowAttemptSkills = new Set(
+          Object.entries(profile.skillScores)
+            .filter(([, s]) => s.attempts < 3)
+            .map(([skillId]) => skillId)
+        );
+        const foundationalCandidates = skillCandidates.filter(
+          q => q.isFoundational && q.skillId && lowAttemptSkills.has(q.skillId)
+        );
+        if (foundationalCandidates.length > 0) {
+          return foundationalCandidates[Math.floor(Math.random() * foundationalCandidates.length)];
+        }
         return skillCandidates[Math.floor(Math.random() * skillCandidates.length)];
       }
+    }
+
+    // For candidates outside the weakest-skill pool, still prefer foundational
+    // questions on skills the user hasn't yet encountered (0 attempts).
+    const unseenSkills = new Set(
+      Object.entries(profile.skillScores)
+        .filter(([, s]) => s.attempts === 0)
+        .map(([skillId]) => skillId)
+    );
+    const unseenFoundational = candidates.filter(
+      q => q.isFoundational && q.skillId && unseenSkills.has(q.skillId)
+    );
+    if (unseenFoundational.length > 0) {
+      return unseenFoundational[Math.floor(Math.random() * unseenFoundational.length)];
     }
 
     // Random selection from candidates
