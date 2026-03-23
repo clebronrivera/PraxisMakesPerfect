@@ -95,6 +95,19 @@ scripts/delete-carlos-plans.ts
 /output/*.csv
 /output/*.json
 
+# LibreOffice lock files
+.~lock.*#
+
+# Generated question files (from enhance scripts)
+questions-enhanced.json
+questions-mobile-optimized.json
+
+# Working docs & one-off artifacts
+AUDIT_FIX_PLAN.md
+QUESTION_ENHANCEMENT_REPORT.md
+Praxis_5403_Skill_Distribution.xlsx
+scripts/enhance_questions.py
+
 # Deno lockfile (not needed for Node project)
 deno.lock
 vite.config.ts.timestamp-*
