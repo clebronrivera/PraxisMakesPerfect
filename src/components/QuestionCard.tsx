@@ -142,7 +142,7 @@ export default function QuestionCard({
               : Object.entries(question.choices || {});
               
             return optionsList
-              .filter(([_, v]) => v && v.trim())
+              .filter(([_, v]) => v && v.trim() && v.trim().toUpperCase() !== 'UNUSED')
               .map(([letter, text], index) => {
                 const isSelected = selectedAnswers.includes(letter);
                 const isCorrect = correctAnswersList.includes(letter);

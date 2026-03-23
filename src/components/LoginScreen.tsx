@@ -335,7 +335,7 @@ export default function LoginScreen() {
       </div>
 
       <div className="relative z-10 flex h-full flex-col lg:flex-row">
-        <aside className="hidden lg:flex lg:w-72 lg:flex-shrink-0 lg:flex-col lg:bg-[#0f172a] lg:shadow-2xl">
+        <aside className="hidden lg:flex lg:w-72 lg:flex-shrink-0 lg:flex-col lg:overflow-y-auto lg:bg-[#0f172a] lg:shadow-2xl">
           <div className="p-8">
             <div className="group flex items-center gap-3">
               <div className="relative">
@@ -352,7 +352,7 @@ export default function LoginScreen() {
               </div>
             </div>
 
-            <div className="mt-12 space-y-6">
+            <div className="mt-8 space-y-5">
               <div>
                 <p className="editorial-overline text-slate-500">Why learners use it</p>
                 <p className="mt-3 text-3xl font-bold tracking-tight text-white">
@@ -384,10 +384,10 @@ export default function LoginScreen() {
 
           <div className="mt-auto border-t border-white/5 bg-black/20 p-6">
             <div className="rounded-[1.75rem] border border-white/5 bg-white/5 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">What unlocks next</p>
-              <p className="mt-3 text-sm font-bold text-white">Screener first, then full diagnostic, then the rest of the product opens up.</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">How it opens up</p>
+              <p className="mt-3 text-sm font-bold text-white">Create an account, take the adaptive diagnostic, and everything unlocks immediately.</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                The signed-in experience stays on one design system across Dashboard, Practice, Progress, and Study Plan.
+                Dashboard, Practice, Progress, and Study Guide all share one readiness view so you always know where to focus.
               </p>
             </div>
           </div>
@@ -536,7 +536,7 @@ export default function LoginScreen() {
                 </section>
               </div>
 
-              <aside id="account-panel" className="xl:sticky xl:top-28 xl:self-start">
+              <aside id="account-panel" className="xl:sticky xl:top-[4.5rem] xl:self-start">
                 <div className="editorial-surface p-6 sm:p-7">
                   <div>
                     <p className="editorial-overline">Account</p>
