@@ -7,11 +7,30 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-03-21
+
+### Documentation
+
+- **[Docs — Praxis 5403 complete reference]** Added `docs/Praxis_5403_Complete_Reference.md` as the maintained anchor for four reporting domains, forty-five progress skill IDs, NASP skill-map vs progress taxonomy, and question-bank / 900q bundle roles; registered it in `docs/DOCS_SYSTEM.md` and `README.md`. — `docs/Praxis_5403_Complete_Reference.md`, `docs/DOCS_SYSTEM.md`, `README.md`
+
+### UI / Shell
+
+- **[Bug — Home dashboard style mismatch]** Tightened the live home dashboard so it stays inside one visual system instead of mixing the shared light editorial shell with oversized dark promo-style rails. Compressed the hero scale, restyled the home CTA/daily-goal rail into the lighter dashboard language, and reduced the size of stat and skill rows for a more normal laptop fit. — `App.tsx`, `docs/ISSUE_LEDGER.md`
+
 ## 2026-03-20
+
+### Profile / Onboarding
+
+- **[Feature — Edit profile from sidebar]** The desktop sidebar identity card (and a profile icon on mobile) opens a slide-over **Profile & onboarding** panel with the full onboarding flow pre-filled so learners can review answers and update nickname, program, exam, and goals. — `App.tsx`, `src/components/ProfileEditorPanel.tsx`, `src/components/OnboardingFlow.tsx`, `src/utils/onboardingProfileMapping.ts`, `src/utils/onboardingFormToSavePayload.ts`, `docs/HOW_THE_APP_WORKS.md`
+
+### Admin — Assessment reset + archive
+
+- **[Feature — Admin reset screener / full diagnostic]** Added `assessment_reset_archive` table (migration `0004`), Netlify handler `api/admin-reset-assessment.ts` (archives rows, deletes scoped `responses`, rebuilds `skill_scores` / `domain_scores` / `global_scores` from remaining data), and Users tab actions in `AdminDashboard.tsx`. Requires `SUPABASE_SERVICE_ROLE_KEY` on Netlify and `npm run dev:netlify` for local API. — `supabase/migrations/0004_assessment_reset_archive.sql`, `api/admin-reset-assessment.ts`, `src/utils/rebuildProgressFromResponses.ts`, `src/utils/globalScoreCalculator.ts`, `src/components/AdminDashboard.tsx`, `docs/ANALYTICS_DATA_INVENTORY.md`, `CLAUDE.md`
 
 ### UI / Shell
 
 - **[Layout — Shared editorial shell]** Replaced the signed-in dark shell with a shared light editorial layout across the main destinations: desktop sidebar, sticky top bar, warm background, white surfaces, amber accents, and shared shell/button/surface utility classes. The live shell now covers Home, Practice, Progress, and Study Guide without introducing new routes or feature systems. — `App.tsx`, `src/index.css`, `docs/HOW_THE_APP_WORKS.md`, `docs/WORKFLOW_GROUNDING.md`, `CODEBASE_OVERVIEW.md`
+- **[Marketing — Stronger public hero]** Reworked the signed-out `LoginScreen` hero to sell the product more clearly: sharper Praxis 5403 promise, direct account CTAs, outcome-focused proof points, and a simple three-step path from screener to targeted practice to study guide. Kept the existing auth flow and preview panels intact. — `src/components/LoginScreen.tsx`, `docs/HOW_THE_APP_WORKS.md`
 - **[Home — Dashboard redesign]** Rebuilt the live Home dashboard around the approved mock direction while keeping existing app logic intact. Added the tighter greeting hero, spicy CTA styling, updated metric cards (`Number of questions answered`, `Readiness phase`, `Skills to reach goal`, `Weekly usage`), a `Daily goal` rail, and an action-oriented `High-Impact Skills` list that uses `Practice` buttons without exposing raw accuracy percentages. Those buttons route into existing skill-focused flows. — `App.tsx`, `docs/HOW_THE_APP_WORKS.md`, `docs/WORKFLOW_GROUNDING.md`, `CODEBASE_OVERVIEW.md`
 - **[Profile UI]** Updated the sidebar identity card so the secondary line under the user's name comes from existing onboarding fields rather than placeholder text. Field precedence is `currentRole` → `accountRole` → `trainingStage`. — `App.tsx`, `docs/WORKFLOW_GROUNDING.md`
 - **[Restyle — Practice, Progress, Study Guide]** Applied the Home mock's light-shell palette and surface treatment to the existing Practice hub, Progress dashboard, and Study Guide destination while intentionally preserving their current handlers, unlock rules, and data behavior. — `src/components/StudyModesSection.tsx`, `src/components/ResultsDashboard.tsx`, `src/components/StudyPlanCard.tsx`, `src/index.css`, `CODEBASE_OVERVIEW.md`

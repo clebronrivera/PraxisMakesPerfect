@@ -34,6 +34,43 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-21 - Production build blocked by learning-module interactive type drift
+
+- Status: open
+- Area: learning modules / module lesson viewer / interactive lesson components
+- Summary: `npm run verify:health` currently fails at the production build step because the new interactive lesson rendering in `ModuleLessonViewer.tsx` expects `interactive` and `visual` section variants plus related fields (`interactiveType`, `prompt`, `scenarios`, `categories`, `pairs`, `options`, `cards`, `visualType`), but `src/data/learningModules.ts` still types `ModuleSection` as only `paragraph | anchor | comparison | list`. `ScenarioSorter.tsx` also imports an `InteractiveScenario` type that is not exported from `learningModules.ts`.
+- Source of truth: the build must pass `tsc -p tsconfig.json --noEmit` and the learning-module content model must match the UI renderer and interactive component contracts.
+- Code anchors:
+  [src/data/learningModules.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/data/learningModules.ts)
+  [src/components/ModuleLessonViewer.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ModuleLessonViewer.tsx)
+  [src/components/ModuleInteractives/ScenarioSorter.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/ModuleInteractives/ScenarioSorter.tsx)
+- Resolution / next step: Add the missing interactive/visual discriminated-union types to `learningModules.ts` or temporarily remove unsupported render branches until the content model is ready, then rerun `npm run verify:health`.
+
+## 2026-03-21 - Home dashboard mixed promo styling with oversized learner cards
+
+- Status: resolved
+- Area: signed-in home dashboard / `App.tsx`
+- Summary: The live home dashboard was still mixing the warm editorial shell with darker promo-style home panels and oversized CTA/card treatments. That made the page feel like two different design systems at once and pushed the main dashboard content larger than it needed to be on a normal laptop viewport.
+- Source of truth: the signed-in home dashboard should read as one learner surface inside the shared shell, using compact responsive cards and the same editorial treatment as the rest of the signed-in experience.
+- Code anchors:
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+  [src/index.css](/Users/lebron/Documents/PraxisMakesPerfect/src/index.css)
+  [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
+- Resolution / next step: Resolved. Reworked the home-only hero rail, spicy CTA, daily-goal panel, Study Guide prompt cards, and high-impact skill rows to stay within the shared light editorial system and tightened their spacing and type scale. If the dashboard is revisited again, keep new home experiments inside the existing shell language instead of reintroducing a separate promo treatment.
+
+## 2026-03-21 - Public sign-in screen still used the retired dark marketing layout
+
+- Status: resolved
+- Area: auth UI / public home shell / `src/components/LoginScreen.tsx`
+- Summary: The signed-out home and auth screen was still rendered as a separate dark marketing page even though the signed-in learner experience had already moved to the warm editorial shell. That made the first screen feel like a different product from Dashboard, Practice, Progress, and Study Plan.
+- Source of truth: the public sign-in / sign-up entry should follow the same editorial shell language as the signed-in app unless the product intentionally defines a different public visual system.
+- Code anchors:
+  [src/components/LoginScreen.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/LoginScreen.tsx)
+  [src/index.css](/Users/lebron/Documents/PraxisMakesPerfect/src/index.css)
+  [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
+  [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
+- Resolution / next step: Resolved. Rebuilt the public auth page on the same warm editorial shell with shared amber accents, card surfaces, and preview language while keeping sign-in, sign-up, reset-password, and admin-entry behavior intact. If onboarding is revisited later, review it against the same shell-consistency rule.
+
 ## 2026-03-20 - Health check still reports known content-quality warnings
 
 - Status: watch

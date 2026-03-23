@@ -46,6 +46,14 @@ Open **http://localhost:8888** — not 5173 — when using `netlify dev`.
 
 The background function is at `api/study-plan-background.ts`. Netlify loads it in Lambda compatibility mode. The app calls it at `/api/study-plan-background` (rewritten by `netlify.toml`) or falls back to `/.netlify/functions/study-plan-background`.
 
+### Admin — reset screener / full diagnostic
+
+The **Users** tab in the admin dashboard calls `POST /api/admin-reset-assessment` to archive deleted rows into `assessment_reset_archive`, remove matching `responses`, and rebuild aggregates.
+
+- **Requires** Netlify env `SUPABASE_SERVICE_ROLE_KEY` (JWT `eyJ...` from Supabase → Settings → API → `service_role`).
+- **Requires** migration `0004_assessment_reset_archive.sql` applied in Supabase.
+- Admin allowlist is **`src/config/admin.ts`** (`isAdminEmail`), not only the SQL `is_admin_email` helper used for RLS elsewhere.
+
 ---
 
 ## Supabase Credentials

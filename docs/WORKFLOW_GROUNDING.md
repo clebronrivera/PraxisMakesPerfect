@@ -200,6 +200,7 @@ Do not use it for:
 ### 3.6.1 Main app shell and home dashboard wiring
 
 - The signed-in main destinations should share one shell in `App.tsx`: Dashboard, Practice, Progress, and Study Guide all render inside the same sidebar/top-bar layout and light editorial color system defined in `src/index.css`.
+- The signed-out sign-in / sign-up entry in `src/components/LoginScreen.tsx` should use the same warm editorial shell, shared surface treatment, and amber accent language as the signed-in learner shell rather than reverting to the retired dark-slate marketing layout.
 - Home is allowed to be more substantially recomposed than the other main destinations, but Practice, Progress, and Study Guide should preserve their existing handlers, unlock rules, and business logic when the shell or styling changes.
 - Signed-in learner surfaces should avoid sub-`11px` informational text except for truly decorative microcopy such as compact module codes. If the UI feels like it needs browser zoom changes to read core labels, fix the component scale instead.
 - Prefer compact, responsive card/tile layouts that fit a typical laptop viewport over tall single-column stacks with large empty gaps. When tightening a surface, reduce decorative spacing before shrinking readable text.

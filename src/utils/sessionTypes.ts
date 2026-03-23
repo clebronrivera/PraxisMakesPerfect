@@ -6,7 +6,7 @@
 import { UserResponse } from '../brain/weakness-detector';
 import type { SessionAssessmentFlow } from '../types/assessment';
 
-export type ActiveSessionStorageType = 'screener-assessment' | 'full-assessment';
+export type ActiveSessionStorageType = 'screener-assessment' | 'full-assessment' | 'adaptive-diagnostic';
 export type LegacySessionStorageType = 'pre-assessment';
 export type StoredSessionStorageType = ActiveSessionStorageType | LegacySessionStorageType;
 
@@ -29,6 +29,8 @@ export interface SessionPayload {
   lastUpdated: number;
   totalPausedTime?: number;
   elapsedSeconds?: number;
+  /** Adaptive diagnostic: remaining follow-up question IDs keyed by skillId */
+  followUpPoolRemaining?: Record<string, string[]>;
 }
 
 /** Completed session metadata (for "view report" and listing past assessments) */

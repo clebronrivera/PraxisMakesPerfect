@@ -79,13 +79,17 @@ export interface SkillPerformance {
  * @param skillId The skill to check prerequisites for
  * @param skillPerformance Lookup function to get performance data for a skill
  * @param visited Set of skill IDs already visited in this traversal (cycle guard)
+ * @param maxDepth Maximum recursion depth to prevent call stack limits
  * @returns true if all prerequisites are mastered, false otherwise
  */
 export function checkPrerequisitesMet(
   skillId: SkillId,
   skillPerformance: (id: SkillId) => SkillPerformance | undefined,
-  visited: Set<SkillId> = new Set()
+  visited: Set<SkillId> = new Set(),
+  maxDepth: number = 10
 ): boolean {
+  if (maxDepth <= 0) return true; // Assume met if chain is too deep
+
   // Cycle / depth guard — if we've already visited this node, skip it
   if (visited.has(skillId)) return true;
   visited.add(skillId);
@@ -103,7 +107,7 @@ export function checkPrerequisitesMet(
     }
 
     // Recursively check prerequisites of prerequisites
-    if (!checkPrerequisitesMet(prereqId, skillPerformance, visited)) {
+    if (!checkPrerequisitesMet(prereqId, skillPerformance, visited, maxDepth - 1)) {
       return false;
     }
   }

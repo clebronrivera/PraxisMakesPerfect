@@ -1890,4 +1890,15 @@ export function getSkillById(skillId: SkillId): Skill | null {
   return null;
 }
 
+export function getDomainBySkillId(skillId: SkillId): Domain | null {
+  for (const domain of Object.values(SKILL_MAP)) {
+    for (const cluster of domain.clusters) {
+      if (cluster.skills.some(s => s.skillId === skillId)) {
+        return domain;
+      }
+    }
+  }
+  return null;
+}
+
 // Helper function to get all skills for a domain

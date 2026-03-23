@@ -11,7 +11,7 @@ import { AnalyzedQuestion } from '../brain/question-analyzer';
 
 interface ReportQuestionModalProps {
   question: AnalyzedQuestion;
-  assessmentType: 'pre' | 'full' | 'practice';
+  assessmentType: 'pre' | 'full' | 'adaptive' | 'practice';
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;

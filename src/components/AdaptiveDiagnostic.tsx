@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import { UserResponse } from '../brain/weakness-detector';
@@ -12,22 +12,21 @@ import {
 import { matchDistractorPattern } from '../brain/distractor-matcher';
 import { useEngine } from '../hooks/useEngine';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
-import type { ResponseAssessmentType, SessionMode } from '../types/assessment';
+import type { SessionMode } from '../types/assessment';
 import type { SkillId } from '../brain/skill-map';
 
-// Local AnalyzedQuestion interface removed
-
-interface FullAssessmentProps {
-  questions: AnalyzedQuestion[];
+interface AdaptiveDiagnosticProps {
+  initialQueue: AnalyzedQuestion[];
+  followUpPool: Record<string, AnalyzedQuestion[]>;
   onComplete: (responses: UserResponse[]) => void;
-  showTimer?: boolean;
+  onPauseExit: () => void;
   sessionId?: string;
   currentUserName?: string | null;
   logResponse?: (response: {
     questionId: string;
     skillId?: string;
     domainIds?: number[];
-    assessmentType: ResponseAssessmentType;
+    assessmentType: 'adaptive';
     sessionId: string;
     isCorrect: boolean;
     confidence: 'low' | 'medium' | 'high';
@@ -48,20 +47,82 @@ interface FullAssessmentProps {
   updateLastSession?: (sessionId: string, mode: SessionMode, questionIndex: number, elapsedSeconds?: number) => Promise<void>;
 }
 
-export default function FullAssessment({
-  questions,
+export default function AdaptiveDiagnostic({
+  initialQueue,
+  followUpPool: initialFollowUpPool,
   onComplete,
+  onPauseExit,
   sessionId,
   currentUserName,
   logResponse,
   updateSkillProgress,
   updateLastSession
-}: FullAssessmentProps) {
+}: AdaptiveDiagnosticProps) {
   const engine = useEngine();
+
+  // Attempt to resume a saved adaptive-diagnostic session
   const savedSession = sessionId ? loadUserSession(sessionId) : null;
-  const isResuming = savedSession?.type === 'full-assessment' && 
-    savedSession.questionIds.length === questions.length &&
-    savedSession.questionIds.every((id, idx) => questions[idx]?.id === id);
+  const isResuming = savedSession?.type === 'adaptive-diagnostic' &&
+    savedSession.questionIds.length > 0;
+
+  // Dynamic queue: starts with initialQueue, grows when wrong answers trigger follow-ups
+  const [queue, setQueue] = useState<AnalyzedQuestion[]>(() => {
+    if (isResuming) {
+      // Rebuild queue from saved questionIds
+      const allQuestions = new Map<string, AnalyzedQuestion>();
+      for (const q of initialQueue) allQuestions.set(q.id, q);
+      for (const questions of Object.values(initialFollowUpPool)) {
+        for (const q of questions) allQuestions.set(q.id, q);
+      }
+      return savedSession!.questionIds
+        .map(id => allQuestions.get(id))
+        .filter((q): q is AnalyzedQuestion => q !== undefined);
+    }
+    return [...initialQueue];
+  });
+
+  // Follow-up pool: mutable copy, keyed by skillId
+  const [followUpPool, setFollowUpPool] = useState<Record<string, AnalyzedQuestion[]>>(() => {
+    if (isResuming && savedSession!.followUpPoolRemaining) {
+      // Rebuild from saved IDs
+      const allQuestions = new Map<string, AnalyzedQuestion>();
+      for (const questions of Object.values(initialFollowUpPool)) {
+        for (const q of questions) allQuestions.set(q.id, q);
+      }
+      const restored: Record<string, AnalyzedQuestion[]> = {};
+      for (const [skillId, ids] of Object.entries(savedSession!.followUpPoolRemaining)) {
+        restored[skillId] = ids
+          .map(id => allQuestions.get(id))
+          .filter((q): q is AnalyzedQuestion => q !== undefined);
+      }
+      return restored;
+    }
+    // Deep copy so we can mutate
+    const copy: Record<string, AnalyzedQuestion[]> = {};
+    for (const [skillId, questions] of Object.entries(initialFollowUpPool)) {
+      copy[skillId] = [...questions];
+    }
+    return copy;
+  });
+
+  // Track how many questions per skill (to enforce max 3)
+  const [skillQuestionCount, setSkillQuestionCount] = useState<Record<string, number>>(() => {
+    if (isResuming) {
+      const counts: Record<string, number> = {};
+      for (const q of queue) {
+        if (!q.skillId) continue;
+        // Count all questions in queue for this skill (answered or pending)
+        counts[q.skillId] = (counts[q.skillId] || 0) + 1;
+      }
+      return counts;
+    }
+    // Initial: 1 per skill
+    const counts: Record<string, number> = {};
+    for (const q of initialQueue) {
+      if (q.skillId) counts[q.skillId] = 1;
+    }
+    return counts;
+  });
 
   const [currentIndex, setCurrentIndex] = useState(isResuming ? savedSession!.currentIndex : 0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>(isResuming ? savedSession!.selectedAnswers : []);
@@ -69,101 +130,112 @@ export default function FullAssessment({
   const [startTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const currentQuestion = questions[currentIndex];
-  const [isSubmitted, setIsSubmitted] = useState(isResuming && savedSession!.responses.some(r => r.questionId === currentQuestion?.id));
 
-  // Use the new centralized timer hook
-  const { 
-    formattedTime, 
-    timerLabel, 
-    isPaused, 
-    showInactivityWarning, 
+  const currentQuestion = queue[currentIndex];
+  const [isSubmitted, setIsSubmitted] = useState(
+    isResuming && savedSession!.responses.some(r => r.questionId === currentQuestion?.id)
+  );
+
+  const {
+    formattedTime,
+    timerLabel,
+    isPaused,
+    showInactivityWarning,
     isAutoPaused,
-    pause, 
-    resume, 
+    pause,
+    resume,
     resetQuestionTimer,
     elapsedSeconds,
     recordInteraction
   } = useElapsedTimer({
     initialElapsedSeconds: savedSession?.elapsedSeconds || 0,
-    onAutoPause: () => { /* assessment auto-paused due to inactivity */ }
+    onAutoPause: () => { /* auto-paused */ }
   });
-
-  // Use the new centralized timer hook
 
   // Save session whenever state changes
   useEffect(() => {
     if (currentUserName && sessionId) {
+      // Serialize follow-up pool as IDs
+      const poolRemaining: Record<string, string[]> = {};
+      for (const [skillId, questions] of Object.entries(followUpPool)) {
+        if (questions.length > 0) {
+          poolRemaining[skillId] = questions.map(q => q.id);
+        }
+      }
+
       const userSession: UserSession = {
         userName: currentUserName,
-        sessionId: sessionId,
-        type: 'full-assessment',
-        assessmentFlow: 'full',
-        questionIds: questions.map(q => q.id),
+        sessionId,
+        type: 'adaptive-diagnostic',
+        assessmentFlow: 'adaptive-diagnostic',
+        questionIds: queue.map(q => q.id),
         currentIndex,
         responses,
         selectedAnswers,
-        showFeedback: false, // Immediate feedback disabled for full assessment
+        showFeedback: false,
         confidence,
         startTime,
         lastUpdated: Date.now(),
         createdAt: Date.now(),
-        elapsedSeconds // Save current elapsed time
+        elapsedSeconds,
+        followUpPoolRemaining: poolRemaining,
       };
       saveUserSession(userSession);
     }
-  }, [currentIndex, responses, selectedAnswers, confidence, startTime, questions, currentUserName, sessionId, elapsedSeconds]);
-  
+  }, [currentIndex, responses, selectedAnswers, confidence, startTime, queue, followUpPool, currentUserName, sessionId, elapsedSeconds]);
+
   // Save to Supabase on pause
   useEffect(() => {
     if (isPaused && updateLastSession && sessionId) {
-      updateLastSession(sessionId, 'full', currentIndex, elapsedSeconds);
+      updateLastSession(sessionId, 'adaptive', currentIndex, elapsedSeconds);
     }
   }, [isPaused, updateLastSession, sessionId, currentIndex, elapsedSeconds]);
 
-  // Clear session when assessment is complete
+  // Cleanup on completion
   useEffect(() => {
-    if (currentIndex >= questions.length && responses.length === questions.length) {
+    if (currentIndex >= queue.length && responses.length > 0 && currentIndex > 0) {
       if (currentUserName && sessionId) {
         deleteUserSession(currentUserName, sessionId);
       }
       clearSession();
     }
-  }, [currentIndex, currentUserName, questions.length, responses.length, sessionId]);
+  }, [currentIndex, currentUserName, queue.length, responses.length, sessionId]);
 
   const pacingMessage = useMemo(() => {
-    const targetSecPerQuest = 60; // Target 60 seconds per question for 125 questions
+    const targetSecPerQuest = 50; // ~50 sec target for adaptive diagnostic
     const expectedTime = (currentIndex + 1) * targetSecPerQuest;
     const diff = elapsedSeconds - expectedTime;
-    
-    if (diff < -120) return "🚀 Efficient pace - ahead of schedule.";
-    if (diff > 120) return "⚠️ Behind pace - try to move slightly faster.";
-    return "✅ On track - steady pacing maintained.";
+
+    if (diff < -90) return "Efficient pace - ahead of schedule.";
+    if (diff > 90) return "Behind pace - try to move slightly faster.";
+    return "On track - steady pacing maintained.";
   }, [currentIndex, elapsedSeconds]);
-  
-  // Handle pause/resume
-  const handlePauseToggle = () => {
+
+  const handlePauseToggle = useCallback(() => {
     if (isPaused) {
       resume();
     } else {
       pause();
     }
-  };
+  }, [isPaused, pause, resume]);
+
+  const handlePauseExit = useCallback(() => {
+    // Save state before exiting
+    if (updateLastSession && sessionId) {
+      updateLastSession(sessionId, 'adaptive', currentIndex, elapsedSeconds);
+    }
+    onPauseExit();
+  }, [updateLastSession, sessionId, currentIndex, elapsedSeconds, onPauseExit]);
 
   const toggleAnswer = (letter: string) => {
-    if (isSubmitted) return; // Prevent changing answers after submission
-    
+    if (isSubmitted) return;
+
     const correctList = currentQuestion ? getQuestionCorrectAnswers(currentQuestion) : [];
     const maxAnswers = correctList.length || 1;
-    
+
     setSelectedAnswers((prev: string[]) => {
-      if (prev.includes(letter)) {
-        return prev.filter(a => a !== letter);
-      }
-      if (prev.length < maxAnswers) {
-        return [...prev, letter];
-      }
+      if (prev.includes(letter)) return prev.filter(a => a !== letter);
+      if (prev.length < maxAnswers) return [...prev, letter];
       return prev;
     });
 
@@ -182,8 +254,8 @@ export default function FullAssessment({
         selectedAnswers.every(a => correctAnswersList.includes(a)) &&
         selectedAnswers.length === correctAnswersList.length;
 
-      let selectedDistractor: { letter: string; text: string; patternId?: any } | undefined;
       let distractorPatternId: string | undefined;
+      let selectedDistractor: { letter: string; text: string; patternId?: any } | undefined;
       if (!isCorrect && selectedAnswers.length > 0) {
         const wrongAnswer = selectedAnswers.find(a => !correctAnswersList.includes(a));
         if (wrongAnswer) {
@@ -193,15 +265,10 @@ export default function FullAssessment({
               .map(a => getQuestionChoiceText(currentQuestion, a))
               .join(' ');
             const patternId = matchDistractorPattern(distractorText, correctAnswerText, engine.distractorPatterns);
-
-            selectedDistractor = {
-              letter: wrongAnswer,
-              text: distractorText,
-              patternId: patternId || undefined
-            };
+            selectedDistractor = { letter: wrongAnswer, text: distractorText, patternId: patternId || undefined };
             distractorPatternId = patternId || undefined;
           } catch (error) {
-            console.error('[FullAssessment] Failed to analyze distractor:', error);
+            console.error('[AdaptiveDiagnostic] Failed to analyze distractor:', error);
           }
         }
       }
@@ -211,7 +278,7 @@ export default function FullAssessment({
           questionId: currentQuestion.id,
           skillId: currentQuestion.skillId || '',
           domainIds: currentQuestion.domains || [],
-          assessmentType: 'full',
+          assessmentType: 'adaptive',
           sessionId,
           isCorrect,
           confidence,
@@ -225,7 +292,7 @@ export default function FullAssessment({
       }
 
       if (updateLastSession && sessionId) {
-        await updateLastSession(sessionId, 'full', currentIndex, elapsedSeconds);
+        await updateLastSession(sessionId, 'adaptive', currentIndex, elapsedSeconds);
       }
 
       if (currentQuestion.skillId && updateSkillProgress) {
@@ -245,9 +312,27 @@ export default function FullAssessment({
 
       const updatedResponses = [...responses, response];
       setResponses(updatedResponses);
+
+      // ADAPTIVE LOGIC: if wrong, queue a follow-up for this skill
+      if (!isCorrect && currentQuestion.skillId) {
+        const skillId = currentQuestion.skillId;
+        const count = skillQuestionCount[skillId] || 1;
+
+        if (count < 3) {
+          const pool = followUpPool[skillId];
+          if (pool && pool.length > 0) {
+            const followUp = pool[0];
+            const updatedPool = { ...followUpPool, [skillId]: pool.slice(1) };
+            setFollowUpPool(updatedPool);
+            setQueue(prev => [...prev, followUp]);
+            setSkillQuestionCount(prev => ({ ...prev, [skillId]: count + 1 }));
+          }
+        }
+      }
+
       nextQuestion(updatedResponses);
     } catch (error) {
-      console.error('[FullAssessment] Failed to submit answer:', error);
+      console.error('[AdaptiveDiagnostic] Failed to submit answer:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -256,9 +341,9 @@ export default function FullAssessment({
   const nextQuestion = (updatedResponses?: UserResponse[]) => {
     const nextIndex = currentIndex + 1;
     const currentResponses = updatedResponses || responses;
-    
-    if (nextIndex >= questions.length) {
-      // Full assessment complete
+
+    if (nextIndex >= queue.length) {
+      // Diagnostic complete
       if (currentUserName && sessionId) {
         deleteUserSession(currentUserName, sessionId);
       }
@@ -273,11 +358,11 @@ export default function FullAssessment({
     recordInteraction();
   };
 
-  if (!currentQuestion) {
-    return null;
-  }
+  if (!currentQuestion) return null;
 
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+  // Estimate remaining: current queue length is the real count
+  const totalInQueue = queue.length;
+  const progress = ((currentIndex + 1) / totalInQueue) * 100;
 
   return (
     <div className="space-y-6">
@@ -285,25 +370,25 @@ export default function FullAssessment({
       {isResuming && currentIndex > 0 && (
         <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-4">
           <p className="text-sm text-sky-800">
-            📍 Resumed from question {currentIndex + 1}. Your progress has been saved.
+            Resumed from question {currentIndex + 1}. Your progress has been saved.
           </p>
         </div>
       )}
-      
+
       {/* Progress Bar */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-slate-500">
-          <span>Full Assessment</span>
-          <span>{currentIndex + 1} of {questions.length}</span>
+          <span>Adaptive Diagnostic</span>
+          <span>Question {currentIndex + 1}{totalInQueue > initialQueue.length ? ` of ~${totalInQueue}` : ` of ${totalInQueue}`}</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-          <div 
+          <div
             className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
       </div>
-      
+
       {/* Timer, Pause, and Pacing */}
       <div className="editorial-surface-soft flex items-center justify-between gap-4 p-4">
         <div className="flex items-center gap-6">
@@ -320,7 +405,7 @@ export default function FullAssessment({
             <span className="text-sm font-medium text-slate-700">{pacingMessage}</span>
           </div>
         </div>
-        
+
         <button
           onClick={handlePauseToggle}
           className="editorial-button-secondary"
@@ -341,7 +426,7 @@ export default function FullAssessment({
           </div>
         </div>
       )}
-      
+
       {/* Pause Overlay */}
       {isPaused && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-sm">
@@ -352,11 +437,13 @@ export default function FullAssessment({
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold uppercase tracking-tight text-slate-900">{isAutoPaused ? 'Session Paused' : 'Test Paused'}</h3>
+              <h3 className="text-2xl font-bold uppercase tracking-tight text-slate-900">
+                {isAutoPaused ? 'Session Paused' : 'Diagnostic Paused'}
+              </h3>
               <p className="text-sm leading-relaxed text-slate-500">
-                {isAutoPaused 
-                  ? 'Your session was paused due to inactivity. Resume when ready.' 
-                  : 'Your progress is securely saved. You can resume at any time or return to the home screen.'}
+                {isAutoPaused
+                  ? 'Your session was paused due to inactivity. Resume when ready.'
+                  : 'Your progress is saved. Resume any time, or head to the dashboard to practice.'}
               </p>
             </div>
             <div className="space-y-3 pt-4">
@@ -365,13 +452,13 @@ export default function FullAssessment({
                 className="editorial-button-primary w-full justify-center px-6 py-4"
               >
                 <Play className="w-5 h-5" />
-                Resume Assessment
+                Resume Diagnostic
               </button>
               <button
-                onClick={() => window.location.reload()} // Simple reload to go back to home/dashboard
+                onClick={handlePauseExit}
                 className="editorial-button-secondary w-full justify-center px-6 py-4"
               >
-                Save & Exit to Home
+                Save & Exit to Dashboard
               </button>
             </div>
           </div>
@@ -389,18 +476,14 @@ export default function FullAssessment({
             onNext={nextQuestion}
             confidence={confidence}
             onConfidenceChange={setConfidence}
-            disabled={isSubmitted} // Disable interaction after submission
+            disabled={isSubmitted}
             isSubmitting={isSubmitting}
-            showFeedback={false} // No immediate feedback
-            assessmentType="full"
+            showFeedback={false}
+            assessmentType="adaptive"
             hideFooterControls={isSubmitted}
           />
         </div>
       )}
-
-      {/* Post-submit continuation removed to allow direct transition */}
-
-      {/* Post-submit feedback panel intentionally omitted here. */}
     </div>
   );
 }

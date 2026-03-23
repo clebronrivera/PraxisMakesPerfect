@@ -12,7 +12,7 @@ export interface QuestionReport {
   userId: string;
   userEmail?: string | null;
   userDisplayName?: string | null;
-  assessmentType: 'pre' | 'full' | 'practice';
+  assessmentType: 'pre' | 'full' | 'adaptive' | 'practice';
   targets: string[]; 
   issueTypes: string[]; 
   severity: 'minor' | 'major' | 'critical';

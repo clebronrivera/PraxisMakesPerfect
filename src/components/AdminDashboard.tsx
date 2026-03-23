@@ -10,6 +10,7 @@ import {
   Download,
   MessageSquare,
   RefreshCw,
+  RotateCcw,
   Shield,
   Users
 } from 'lucide-react';
@@ -140,6 +141,8 @@ export default function AdminDashboard({
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isAuditLoading, setIsAuditLoading] = useState(false);
+  const [resettingUserId, setResettingUserId] = useState<string | null>(null);
+  const [resetNotice, setResetNotice] = useState<{ tone: 'ok' | 'err'; text: string } | null>(null);
 
   const loadAdminData = useCallback(async () => {
     if (!user || !isAdminEmail(user.email)) {
@@ -191,6 +194,66 @@ export default function AdminDashboard({
   useEffect(() => {
     loadAdminData();
   }, [loadAdminData]);
+
+  const runAssessmentReset = useCallback(
+    async (targetUserId: string, scope: 'screener' | 'full_diagnostic') => {
+      const label =
+        scope === 'screener'
+          ? 'screener (all screener responses will be archived, then deleted)'
+          : 'full / short diagnostic (all full and diagnostic responses will be archived, then deleted)';
+      if (
+        !window.confirm(
+          `Reset ${label} for this learner?\n\nA row will be saved to assessment_reset_archive with their prior responses and profile snapshot. Practice data is not removed.`
+        )
+      ) {
+        return;
+      }
+
+      setResetNotice(null);
+      setResettingUserId(targetUserId);
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) {
+          setResetNotice({ tone: 'err', text: 'No active session — sign in again.' });
+          return;
+        }
+
+        const res = await fetch('/api/admin-reset-assessment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ targetUserId, scope })
+        });
+
+        const body = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          deletedResponseCount?: number;
+          detail?: string;
+        };
+
+        if (!res.ok) {
+          throw new Error(body.error || body.detail || res.statusText || 'Request failed');
+        }
+
+        setResetNotice({
+          tone: 'ok',
+          text: `Reset complete — removed ${body.deletedResponseCount ?? 0} response row(s); aggregates rebuilt from remaining data.`
+        });
+        await loadAdminData();
+      } catch (err) {
+        setResetNotice({
+          tone: 'err',
+          text: err instanceof Error ? err.message : String(err)
+        });
+      } finally {
+        setResettingUserId(null);
+      }
+    },
+    [loadAdminData]
+  );
 
   const overview = useMemo<OverviewStats>(() => {
     const now = Date.now();
@@ -864,8 +927,20 @@ export default function AdminDashboard({
               <div className="border-b border-slate-800 px-6 py-4">
                 <h3 className="text-lg font-semibold text-slate-100">User Usage</h3>
                 <p className="text-sm text-slate-400">
-                  Login counts are tracked as authenticated app sessions for beta analytics.
+                  Login counts are tracked as authenticated app sessions for beta analytics. Use the actions column to
+                  archive and clear screener or full/diagnostic data for a learner (requires{' '}
+                  <code className="rounded bg-slate-800 px-1 text-xs text-cyan-200">SUPABASE_SERVICE_ROLE_KEY</code> on
+                  Netlify for the admin-reset API).
                 </p>
+                {resetNotice && (
+                  <p
+                    className={`mt-3 text-sm ${
+                      resetNotice.tone === 'ok' ? 'text-emerald-300' : 'text-red-300'
+                    }`}
+                  >
+                    {resetNotice.text}
+                  </p>
+                )}
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-800 text-left">
@@ -877,6 +952,7 @@ export default function AdminDashboard({
                       <th className="px-6 py-4">Login Count</th>
                       <th className="px-6 py-4">Questions Seen</th>
                       <th className="px-6 py-4">Progress</th>
+                      <th className="px-6 py-4">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/70 text-sm">
@@ -889,6 +965,7 @@ export default function AdminDashboard({
                           <p className="text-slate-500">
                             {entry.authMetrics?.email || 'No email'}
                           </p>
+                          <p className="mt-1 font-mono text-xs text-slate-600">{entry.id}</p>
                         </td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.createdAt || entry.lastUpdated)}</td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.lastLoginAt || entry.lastUpdated)}</td>
@@ -913,6 +990,28 @@ export default function AdminDashboard({
                             {!entry.screenerComplete && !entry.diagnosticComplete && !entry.fullAssessmentComplete && (entry.practiceResponseCount ?? 0) === 0 && (
                               <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-400">Not started</span>
                             )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            <button
+                              type="button"
+                              disabled={resettingUserId === entry.id}
+                              onClick={() => void runAssessmentReset(entry.id, 'screener')}
+                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-blue-500/40 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-200 hover:bg-blue-500/20 disabled:opacity-50"
+                            >
+                              <RotateCcw className="h-3.5 w-3.5" />
+                              Reset screener
+                            </button>
+                            <button
+                              type="button"
+                              disabled={resettingUserId === entry.id}
+                              onClick={() => void runAssessmentReset(entry.id, 'full_diagnostic')}
+                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-500/20 disabled:opacity-50"
+                            >
+                              <RotateCcw className="h-3.5 w-3.5" />
+                              Reset full / diagnostic
+                            </button>
                           </div>
                         </td>
                       </tr>

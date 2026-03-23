@@ -108,9 +108,17 @@ export default function StudyPlanCard({
 
         {/* Unlock notice */}
         {!canGenerate && (
-          <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
-            Complete the screener and at least one full assessment to unlock this guide.
-          </p>
+          <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 space-y-2">
+            <p className="font-semibold">Complete the screener + full diagnostic to unlock your guide.</p>
+            <p className="text-amber-700 leading-relaxed">Once unlocked, Claude analyzes your performance data and builds a fully personalized plan that includes:</p>
+            <ul className="mt-1 space-y-1 text-amber-700">
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />Readiness snapshot with your current level (Early → Ready)</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />Priority skill clusters ranked by urgency</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />Domain-by-domain study maps with targeted tactics</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />Weekly study schedule based on your time budget</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />Key vocabulary, case patterns, and checkpoint logic</li>
+            </ul>
+          </div>
         )}
 
         {/* Generating status */}

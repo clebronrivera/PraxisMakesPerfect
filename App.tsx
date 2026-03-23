@@ -2,8 +2,8 @@ import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react
 import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User } from 'lucide-react';
 import { formatStudyTime } from './src/hooks/useDailyStudyTime';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
-
 // Import questions and analysis
+import { getRandomAffirmation } from './src/data/affirmations';
 import { analyzeQuestion, AnalyzedQuestion } from './src/brain/question-analyzer';
 import { detectWeaknesses, UserResponse } from './src/brain/weakness-detector';
 
@@ -31,7 +31,8 @@ import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { useContent } from './src/context/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
-import { buildFullAssessment, buildScreener } from './src/utils/assessment-builder';
+import { buildFullAssessment, buildScreener, buildAdaptiveDiagnostic, AdaptiveDiagnosticResult } from './src/utils/assessment-builder';
+const AdaptiveDiagnostic = lazy(() => import('./src/components/AdaptiveDiagnostic'));
 import {
   isScreenerQuestionCount
 } from './src/utils/assessmentConstants';
@@ -63,7 +64,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'learning-path-module';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'learning-path-module';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -132,6 +133,7 @@ function PraxisStudyAppContent() {
   const [lastNonAdminMode, setLastNonAdminMode] = useState<NonAdminAppMode>('home');
   const [screenerQuestions, setScreenerQuestions] = useState<AnalyzedQuestion[]>([]);
   const [fullAssessmentQuestions, setFullAssessmentQuestions] = useState<AnalyzedQuestion[]>([]);
+  const [adaptiveDiagnosticData, setAdaptiveDiagnosticData] = useState<AdaptiveDiagnosticResult | null>(null);
   const [assessmentStartTime, setAssessmentStartTime] = useState<number>(savedSession?.startTime || 0);
   const [lastAssessmentResponses, setLastAssessmentResponses] = useState<UserResponse[]>([]);
   const [lastAssessmentType, setLastAssessmentType] = useState<'screener' | 'full-assessment'>('screener');
@@ -311,12 +313,13 @@ function PraxisStudyAppContent() {
   }, [analyzedQuestions, practiceDomainFilter, practiceSkillFilter]);
 
   const canGenerateStudyPlan = useMemo(() => {
-    if (!user || !profile.screenerComplete) {
-      return false;
-    }
-
+    if (!user) return false;
+    // New adaptive diagnostic path
+    if ((profile as any).adaptiveDiagnosticComplete) return true;
+    // Legacy two-step path
+    if (!profile.screenerComplete) return false;
     return Boolean(profile.lastFullAssessmentSessionId || profile.fullAssessmentComplete);
-  }, [profile.fullAssessmentComplete, profile.lastFullAssessmentSessionId, profile.screenerComplete, user]);
+  }, [profile, user]);
 
   useEffect(() => {
     if (!user) {
@@ -488,18 +491,104 @@ function PraxisStudyAppContent() {
     setAssessmentStartTime(Date.now());
     setMode('fullassessment');
   }, [analyzedQuestions, currentUserName, profile.preAssessmentQuestionIds, profile.screenerItemIds]);
-  
+
+  const startAdaptiveDiagnostic = useCallback((resumeSession?: UserSession) => {
+    if (resumeSession && resumeSession.type === 'adaptive-diagnostic') {
+      // Resume — the component handles restoring from localStorage
+      setSelectedSessionId(resumeSession.sessionId);
+      // We still need the builder result so follow-up pool is available
+      const excludeIds = [
+        ...(profile.preAssessmentQuestionIds || []),
+        ...(profile.screenerItemIds || []),
+      ];
+      const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
+      setAdaptiveDiagnosticData(result);
+      setAssessmentStartTime(resumeSession.startTime);
+      setMode('adaptive-diagnostic');
+      return;
+    }
+
+    // Start new adaptive diagnostic
+    const excludeIds = [
+      ...(profile.preAssessmentQuestionIds || []),
+      ...(profile.screenerItemIds || []),
+      ...(profile.fullAssessmentQuestionIds || []),
+    ];
+    const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
+
+    if (result.initialQueue.length === 0) {
+      alert('Not enough questions available to build a diagnostic.');
+      return;
+    }
+
+    const allQuestionIds = [
+      ...result.initialQueue.map(q => q.id),
+      ...Object.values(result.followUpPool).flat().map(q => q.id),
+    ];
+
+    // Save diagnostic question IDs to profile
+    updateProfile({ diagnosticQuestionIds: allQuestionIds } as any);
+
+    setAdaptiveDiagnosticData(result);
+    setAssessmentStartTime(Date.now());
+    setMode('adaptive-diagnostic');
+
+    if (currentUserName) {
+      try {
+        const newSession = createUserSession(
+          currentUserName,
+          'adaptive-diagnostic',
+          result.initialQueue.map(q => q.id),
+          'adaptive-diagnostic'
+        );
+        setSelectedSessionId(newSession.sessionId);
+      } catch (error) {
+        console.error('Error creating adaptive diagnostic session:', error);
+      }
+    }
+  }, [analyzedQuestions, profile, updateProfile, currentUserName]);
+
+  const handleAdaptiveDiagnosticComplete = useCallback(async (responses: UserResponse[]) => {
+    const questionIds = responses.map(r => r.questionId);
+    const analysis = detectWeaknesses(responses, analyzedQuestions);
+
+    await updateProfile({
+      // Set both new and legacy flags for maximum compatibility
+      screenerComplete: true,
+      fullAssessmentComplete: true,
+      adaptiveDiagnosticComplete: true,
+      diagnosticQuestionIds: questionIds,
+      lastDiagnosticSessionId: selectedSessionId,
+      lastDiagnosticCompletedAt: new Date().toISOString(),
+      lastSession: null,
+      ...analysis,
+    } as any);
+
+    if (currentUserName && selectedSessionId) {
+      deleteUserSession(currentUserName, selectedSessionId);
+    }
+    clearSession();
+    setSelectedSessionId(undefined);
+
+    setLastAssessmentResponses(responses);
+    setLastAssessmentType('full-assessment');
+    setLastAssessmentFlow('full');
+    setMode('score-report');
+  }, [analyzedQuestions, currentUserName, updateProfile, selectedSessionId]);
+
   const handleResumeAssessment = useCallback(() => {
     if (!savedSession) {
       return;
     }
 
-    if (isStoredScreenerSessionType(savedSession.type)) {
+    if (savedSession.type === 'adaptive-diagnostic') {
+      startAdaptiveDiagnostic(savedSession as UserSession);
+    } else if (isStoredScreenerSessionType(savedSession.type)) {
       startScreener(savedSession);
     } else if (savedSession.type === 'full-assessment') {
       startFullAssessment(savedSession);
     }
-  }, [savedSession, startFullAssessment, startScreener]);
+  }, [savedSession, startAdaptiveDiagnostic, startFullAssessment, startScreener]);
 
   // Note: User selection is handled by Supabase auth.
   
@@ -929,7 +1018,7 @@ function PraxisStudyAppContent() {
                 { label: 'Dashboard', icon: <Brain className="w-4 h-4" />, onClick: () => setMode('home'), active: mode === 'home', show: true },
                 { label: 'Practice', icon: <Zap className="w-4 h-4" />, onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                 { label: 'Progress', icon: <BarChart3 className="w-4 h-4" />, onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
-                { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: true },
+                { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
               ];
               return tabs.filter(tab => tab.show).map(tab => (
                 <button
@@ -1041,7 +1130,7 @@ function PraxisStudyAppContent() {
                   { label: 'Dashboard', onClick: () => setMode('home'), active: mode === 'home', show: true },
                   { label: 'Practice', onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                   { label: 'Progress', onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
-                  { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: true },
+                  { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
                 ];
                 return tabs.filter(tab => tab.show).map(tab => (
                   <button
@@ -1098,6 +1187,7 @@ function PraxisStudyAppContent() {
               profile.lastSession?.mode === 'screener' ||
               profile.lastSession?.mode === 'full' ||
               profile.lastSession?.mode === 'diagnostic' ||
+              profile.lastSession?.mode === 'adaptive' ||
               (!profile.lastSession && hasSession && savedSession);
             const hasPracticeInProgress = profile.lastSession?.mode === 'practice';
 
@@ -1135,7 +1225,9 @@ function PraxisStudyAppContent() {
                   <div>
                     <p className="editorial-overline">Resume</p>
                     <p className="mt-2 text-lg font-bold text-slate-900">
-                      {profile.lastSession?.mode === 'full' ? 'Full diagnostic in progress' : 'Screener in progress'}
+                      {profile.lastSession?.mode === 'adaptive' ? 'Diagnostic in progress'
+                        : profile.lastSession?.mode === 'full' ? 'Full diagnostic in progress'
+                        : 'Screener in progress'}
                     </p>
                     <p className="mt-1 text-sm text-slate-500">
                       {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex > 0
@@ -1149,7 +1241,11 @@ function PraxisStudyAppContent() {
                       onClick={() => {
                         if (profile.lastSession) {
                           const ls = profile.lastSession;
-                          if (ls.mode === 'screener') {
+                          if (ls.mode === 'adaptive') {
+                            const saved = loadUserSession(ls.sessionId);
+                            if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
+                            startAdaptiveDiagnostic(saved);
+                          } else if (ls.mode === 'screener') {
                             const saved = loadUserSession(ls.sessionId);
                             if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
                             startScreener(saved);
@@ -1188,14 +1284,8 @@ function PraxisStudyAppContent() {
               );
             })();
 
-            const screenerSessionInProgress =
-              profile.lastSession?.mode === 'screener' ||
-              profile.lastSession?.mode === 'diagnostic' ||
-              (!profile.lastSession && hasSession && savedSession && isStoredScreenerSessionType((savedSession as any).type));
-
-            const fullAssessmentSessionInProgress =
-              profile.lastSession?.mode === 'full' ||
-              (!profile.lastSession && hasSession && savedSession && (savedSession as any).type === 'full-assessment');
+            // Legacy session-in-progress checks (kept for backward compat)
+            void (profile.lastSession); // referenced above in hasAssessmentInProgress
 
             const spicyButton = (
               <button
@@ -1226,25 +1316,36 @@ function PraxisStudyAppContent() {
                         <p className="editorial-overline">Dashboard</p>
                         <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to Praxis Study</h2>
                         <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
-                          Start with the screener to establish your baseline, then complete the full diagnostic to unlock the full personalized study experience.
+                          Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.
                         </p>
                         <div className="mt-6 grid gap-3 md:grid-cols-2">
                           <div className="editorial-surface-soft p-4">
-                            <p className="editorial-overline">Step 1</p>
-                            <p className="mt-2 text-base font-bold text-slate-900">Complete the screener</p>
-                            <p className="mt-2 text-sm text-slate-500">50 questions across all four Praxis sections to establish your starting point.</p>
-                            {!screenerSessionInProgress && (
-                              <button onClick={() => startScreener(undefined)} className="editorial-button-primary mt-4">
-                                <Zap className="h-4 w-4" />
-                                Take the screener
-                              </button>
-                            )}
+                            <p className="editorial-overline">Diagnostic</p>
+                            <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
+                            <p className="mt-2 text-sm text-slate-500">Starting with 45 questions (one per skill), it adapts based on your answers. Pause any time and come back without penalty.</p>
+                            <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
+                              <Zap className="h-4 w-4" />
+                              Start diagnostic
+                            </button>
                           </div>
-                          <div className="editorial-surface-soft p-4 opacity-90">
-                            <p className="editorial-overline">Step 2</p>
-                            <p className="mt-2 text-base font-bold text-slate-700">Complete the full diagnostic</p>
-                            <p className="mt-2 text-sm text-slate-500">Unlock Practice by Skill, the Study Guide, and your personalized learning path.</p>
-                            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Available after the screener</p>
+                          <div className="editorial-surface-soft p-4">
+                            <p className="editorial-overline">Practice</p>
+                            <p className="mt-2 text-base font-bold text-slate-900">Start practicing right away</p>
+                            <p className="mt-2 text-sm text-slate-500">No need to wait — jump into practice immediately. The diagnostic gives deeper insights, but you can practice any time.</p>
+                            <ul className="mt-3 space-y-1.5">
+                              <li className="flex items-center gap-2 text-xs text-slate-500">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
+                                Spicy mode — cycle through all 45 skills
+                              </li>
+                              <li className="flex items-center gap-2 text-xs text-slate-500">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
+                                Domain practice — focus on one section
+                              </li>
+                              <li className="flex items-center gap-2 text-xs text-slate-500">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
+                                Learning path — ordered by your gaps
+                              </li>
+                            </ul>
                           </div>
                         </div>
                       </div>
@@ -1252,7 +1353,7 @@ function PraxisStudyAppContent() {
                         <p className="editorial-overline">Quick start</p>
                         <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Want extra exposure first?</p>
                         <p className="mt-3 text-sm leading-relaxed text-slate-500">
-                          Spicy mode cycles one question per skill so you can see the full question bank before generating a bigger plan.
+                          Spicy mode cycles one question per skill so you can see the full question bank before diving into the diagnostic.
                         </p>
                         <div className="mt-5">{spicyButton}</div>
                       </div>
@@ -1265,35 +1366,33 @@ function PraxisStudyAppContent() {
                     <div className="editorial-surface p-6 lg:p-7">
                       <p className="editorial-overline">Dashboard</p>
                       <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">
-                        {firstName ? `Nice work, ${firstName}.` : 'Screener complete.'}
+                        {firstName ? `Nice work, ${firstName}.` : 'Baseline complete.'}
                       </h2>
                       <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
-                        Domain practice is now active. One more step unlocks the full personalized experience.
+                        Your initial baseline is recorded. Take the adaptive diagnostic for deeper skill-level insights, or jump straight into practice.
                       </p>
                       <div className="mt-6 grid gap-3 md:grid-cols-2">
                         <div className="editorial-surface-soft border-emerald-200 bg-emerald-50/60 p-4">
                           <p className="editorial-overline text-emerald-700">Complete</p>
-                          <p className="mt-2 text-base font-bold text-slate-900">Screener finished</p>
-                          <p className="mt-2 text-sm text-slate-600">You can already jump into domain-based practice and keep building momentum.</p>
+                          <p className="mt-2 text-base font-bold text-slate-900">Baseline recorded</p>
+                          <p className="mt-2 text-sm text-slate-600">You can already jump into practice and keep building momentum.</p>
                         </div>
                         <div className="editorial-surface-soft p-4">
-                          <p className="editorial-overline">Next step</p>
-                          <p className="mt-2 text-base font-bold text-slate-900">Take the full diagnostic</p>
-                          <p className="mt-2 text-sm text-slate-500">Unlock Practice by Skill, your Study Guide, and a custom learning path built around your developing areas.</p>
-                          {!fullAssessmentSessionInProgress && (
-                            <button onClick={() => startFullAssessment(undefined)} className="editorial-button-primary mt-4">
-                              <BarChart3 className="h-4 w-4" />
-                              Take the full diagnostic
-                            </button>
-                          )}
+                          <p className="editorial-overline">Recommended</p>
+                          <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
+                          <p className="mt-2 text-sm text-slate-500">Deeper skill-level data to unlock your personalized learning path. Adapts to your performance.</p>
+                          <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
+                            <BarChart3 className="h-4 w-4" />
+                            Start adaptive diagnostic
+                          </button>
                         </div>
                       </div>
                     </div>
                     <div className="editorial-surface-soft p-5 lg:p-6">
-                      <p className="editorial-overline">Optional</p>
-                      <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Keep calibrating if you want.</p>
+                      <p className="editorial-overline">Practice</p>
+                      <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Keep practicing in the meantime.</p>
                       <p className="mt-3 text-sm leading-relaxed text-slate-500">
-                        Another spicy cycle can give you broader exposure while you build toward the full diagnostic.
+                        Spicy mode cycles through all 45 skills for broader exposure.
                       </p>
                       <div className="mt-5">{spicyButton}</div>
                     </div>
@@ -1309,7 +1408,7 @@ function PraxisStudyAppContent() {
                           {firstName ? `Greetings, ${firstName}.` : 'Welcome back.'}
                         </h2>
                         <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
-                          Keep building your skill bank with focused practice. Your Study Guide is there whenever you want a bigger view of what to work on next.
+                          Keep building your skill bank with focused practice. Use the learning path and domain practice to zero in on your biggest gaps.
                         </p>
                         <div className="mt-6 grid gap-3 md:grid-cols-2">
                           <div className="editorial-surface-soft p-4">
@@ -1355,7 +1454,9 @@ function PraxisStudyAppContent() {
                           />
                         </div>
                         <p className="mt-4 text-sm leading-relaxed text-slate-500">
-                          Keep moving toward today&apos;s question goal while leaving room to read the lesson content and explanations that support it.
+                          {dailyQuestionCount >= DAILY_GOAL 
+                            ? <span className="italic">"{getRandomAffirmation()}"</span>
+                            : "Keep moving toward today's question goal while leaving room to read the lesson content and explanations that support it."}
                         </p>
                         <div className="mt-4 rounded-[1.5rem] border border-amber-100 bg-white p-4">
                           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Weekly usage</p>
@@ -1593,6 +1694,8 @@ function PraxisStudyAppContent() {
               onDomainSelect={(domainId) => startPractice(domainId)}
               onStartSkillPractice={(skillId) => startSkillPractice(skillId)}
               onNodeClick={openLearningPathModule}
+              onStartScreener={() => startScreener(undefined)}
+              onStartDiagnostic={() => startFullAssessment(undefined)}
               onSkillReviewOpen={() => setMode('results')}
               onLearningPathOpen={() => setMode('study-guide')}
               onGenerateStudyPlan={() => {
@@ -1674,7 +1777,22 @@ function PraxisStudyAppContent() {
             updateLastSession={updateLastSession}
           />
         )}
-        
+
+        {/* ADAPTIVE DIAGNOSTIC MODE */}
+        {mode === 'adaptive-diagnostic' && adaptiveDiagnosticData && (
+          <AdaptiveDiagnostic
+            initialQueue={adaptiveDiagnosticData.initialQueue}
+            followUpPool={adaptiveDiagnosticData.followUpPool}
+            onComplete={handleAdaptiveDiagnosticComplete}
+            onPauseExit={() => setMode('home')}
+            sessionId={selectedSessionId}
+            currentUserName={currentUserName}
+            logResponse={logResponse}
+            updateSkillProgress={updateSkillProgress}
+            updateLastSession={updateLastSession}
+          />
+        )}
+
         {/* SCORE REPORT / SCREENER RESULTS MODE */}
         {mode === 'score-report' && (
           <ErrorBoundary>

@@ -20,7 +20,7 @@ interface QuestionCardProps {
   disabled: boolean;
   showFeedback: boolean;
   isSubmitting?: boolean;
-  assessmentType?: 'pre' | 'full' | 'practice';
+  assessmentType?: 'pre' | 'full' | 'adaptive' | 'practice';
   hideFooterControls?: boolean;
 }
 
@@ -227,8 +227,7 @@ export default function QuestionCard({
         isOpen={showReportModal}
         onClose={() => setShowReportModal(false)}
         onSuccess={() => {
-          // Show toast notification (could use a toast library)
-          console.log('Report submitted successfully');
+          // Report submitted — surface a toast notification here if desired
         }}
       />
     </>

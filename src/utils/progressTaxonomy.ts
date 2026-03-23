@@ -1,3 +1,8 @@
+// src/utils/progressTaxonomy.ts
+// Canonical domain and skill definitions used by the Progress page and all
+// proficiency-tracking surfaces.  Covers all 4 Praxis 5403 domains and every
+// testable skill (IDs match skill-map.ts and Supabase skill_scores columns).
+
 export type PraxisDomainId = 1 | 2 | 3 | 4;
 
 export interface ProgressDomainDefinition {

@@ -128,6 +128,25 @@ Defined in **`0000_initial_schema.sql`**. Current **`savePracticeResponse`** int
 
 ---
 
+### 2.8 `assessment_reset_archive`
+
+Append-only style **admin archive** before a learner’s screener or full/diagnostic data is cleared.
+
+| Column | Meaning | Relates to |
+|--------|---------|------------|
+| `target_user_id` | Learner | `auth.users(id)` (nullable on user delete) |
+| `actor_email` | Admin who ran the reset | — |
+| `scope` | `screener` or `full_diagnostic` | Which `responses.assessment_type` rows were removed |
+| `user_progress_snapshot` | Full `user_progress` row JSON at reset time | Same keys as `user_progress` |
+| `responses_archived` | JSON array of deleted `responses` rows | `responses` |
+| `response_count` | Count of archived rows | — |
+
+**Code anchors:** `api/admin-reset-assessment.ts`, `supabase/migrations/0004_assessment_reset_archive.sql`, Admin **Users** tab in `AdminDashboard.tsx`.
+
+Inserts use the **service role** (Netlify `SUPABASE_SERVICE_ROLE_KEY`). Apply the migration in Supabase before using the feature.
+
+---
+
 ## 3. Browser-only data (not in Supabase)
 
 Per-device; **not** suitable for server-side cohort analytics without a future sync pipeline.

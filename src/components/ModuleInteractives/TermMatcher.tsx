@@ -1,0 +1,175 @@
+import React, { useState } from 'react';
+import { GripVertical, X } from 'lucide-react';
+
+interface TermDefinitionPair {
+  term: string;
+  definition: string;
+}
+
+interface TermMatcherProps {
+  pairs: TermDefinitionPair[];
+  prompt?: string;
+  onComplete?: (correctMatches: number) => void;
+}
+
+/**
+ * TermMatcher: Drag definitions to match with terms
+ * Used for: Vocabulary matching, term to concept pairing, assessment terminology
+ */
+export default function TermMatcher({
+  pairs,
+  prompt,
+  onComplete,
+}: TermMatcherProps) {
+  const [definitions] = useState<TermDefinitionPair[]>(
+    [...pairs].sort(() => Math.random() - 0.5) // Shuffle definitions
+  );
+  const [matches, setMatches] = useState<Map<number, number>>(new Map()); // term index -> definition index
+  const [draggedDefIndex, setDraggedDefIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedDefIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDropOnTerm = (termIndex: number) => {
+    if (draggedDefIndex === null) return;
+
+    const newMatches = new Map(matches);
+    newMatches.set(termIndex, draggedDefIndex);
+    setMatches(newMatches);
+    setDraggedDefIndex(null);
+  };
+
+  const removePairing = (termIndex: number) => {
+    const newMatches = new Map(matches);
+    newMatches.delete(termIndex);
+    setMatches(newMatches);
+  };
+
+  const usedDefinitions = new Set(matches.values());
+  const availableDefinitions = definitions.filter((_, i) => !usedDefinitions.has(i));
+
+  const correctMatches = Array.from(matches.entries()).filter(([termIdx, defIdx]) => {
+    return pairs[termIdx].definition === definitions[defIdx].definition;
+  }).length;
+
+  const allMatched = matches.size === pairs.length;
+  const allCorrect = correctMatches === pairs.length;
+
+  return (
+    <div className="space-y-4">
+      {prompt && (
+        <p className="text-sm text-slate-300 italic">
+          {prompt}
+        </p>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Terms (left) */}
+        <div className="space-y-3">
+          <p className="text-[10px] font-bold uppercase text-slate-500 mb-3">Terms</p>
+          {pairs.map((pair, termIdx) => {
+            const matchedDefIdx = matches.get(termIdx);
+            const matchedDef = matchedDefIdx !== undefined ? definitions[matchedDefIdx] : null;
+            const isCorrect =
+              matchedDef && matchedDef.definition === pair.definition;
+
+            return (
+              <div
+                key={termIdx}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDropOnTerm(termIdx)}
+                className={`rounded-lg border-2 border-dashed p-3 min-h-[80px] transition-colors ${
+                  matchedDefIdx !== undefined
+                    ? isCorrect
+                      ? 'border-emerald-500/50 bg-emerald-500/10'
+                      : 'border-amber-500/50 bg-amber-500/10'
+                    : 'border-slate-600/40 bg-slate-800/40 hover:border-cyan-500/30'
+                }`}
+              >
+                <p className="font-semibold text-slate-200 mb-2">{pair.term}</p>
+                {matchedDef ? (
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {matchedDef.definition}
+                    </p>
+                    <button
+                      onClick={() => removePairing(termIdx)}
+                      className="mt-0.5 text-slate-500 hover:text-red-400 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-500 italic">Drag definition here</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Definitions (right) */}
+        <div className="space-y-3">
+          <p className="text-[10px] font-bold uppercase text-slate-500 mb-3">Definitions</p>
+          <div className="space-y-2 min-h-[320px]">
+            {availableDefinitions.map((def) => {
+              const actualIdx = definitions.indexOf(def);
+              return (
+                <div
+                  key={actualIdx}
+                  draggable
+                  onDragStart={e => handleDragStart(e, actualIdx)}
+                  className={`flex items-start gap-2.5 p-3 rounded-lg cursor-move transition-colors ${
+                    draggedDefIndex === actualIdx
+                      ? 'bg-cyan-600/20 border border-cyan-500/40 opacity-75'
+                      : 'bg-slate-800/60 border border-slate-600/40 hover:border-cyan-500/30'
+                  }`}
+                >
+                  <GripVertical className="w-3.5 h-3.5 mt-0.5 text-slate-600 flex-shrink-0" />
+                  <p className="text-xs text-slate-300 leading-relaxed">{def.definition}</p>
+                </div>
+              );
+            })}
+            {availableDefinitions.length === 0 && (
+              <p className="text-xs text-slate-500 italic">All definitions matched</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {allMatched && (
+        <div className={`rounded-lg px-4 py-3 ${
+          allCorrect
+            ? 'bg-emerald-500/10 border border-emerald-500/20'
+            : 'bg-amber-500/10 border border-amber-500/20'
+        }`}>
+          <p className={`text-sm font-semibold ${
+            allCorrect ? 'text-emerald-300' : 'text-amber-300'
+          }`}>
+            {allCorrect ? '✓ Perfect match!' : `${correctMatches}/${pairs.length} correct`}
+          </p>
+        </div>
+      )}
+
+      {onComplete && (
+        <button
+          onClick={() => onComplete(correctMatches)}
+          disabled={!allMatched}
+          className={`w-full py-2 rounded-lg font-semibold text-sm transition-colors ${
+            allMatched
+              ? 'bg-cyan-600/20 border border-cyan-500/40 hover:bg-cyan-600/30 text-cyan-300'
+              : 'bg-slate-800/40 border border-slate-700/40 text-slate-500 cursor-not-allowed'
+          }`}
+        >
+          Complete activity
+        </button>
+      )}
+    </div>
+  );
+}

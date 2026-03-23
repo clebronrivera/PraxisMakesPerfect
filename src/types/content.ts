@@ -1,3 +1,8 @@
+// src/types/content.ts
+// Core content model types: Domain, Skill, Question, and answer Option.
+// These are the structural contracts shared between the content bank,
+// question engine, and all UI surfaces.
+
 export interface Domain {
   id: string; // e.g., '1', '2', '3' or generic ID
   name: string; // e.g., 'Data-Based Decision Making'

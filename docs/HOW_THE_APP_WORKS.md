@@ -34,6 +34,13 @@ Within those 4 domains there are **45 distinct skills** — specific competency 
 ### Step 1: Create an Account
 Sign in with an email and password. All data lives in the cloud, so you can pick up exactly where you left off on any device.
 
+Before sign-in, the public entry page leads with an outcome-first hero for Praxis 5403 candidates. It frames the product around three promises:
+- take an adaptive diagnostic that adjusts to your performance across all 45 skills
+- start practicing immediately — no gates or waiting required
+- track your readiness with a structured learning path
+
+That page also previews the signed-in practice and skill-tracking surfaces. A beta disclaimer is shown near the sign-up form: "Currently in beta. Not responsible for loss of data during the beta period."
+
 ### Step 1b: Complete Your Profile (Onboarding Wizard)
 Immediately after creating an account, new users are guided through a **4-step onboarding wizard** before reaching the main app. This is how the platform personalizes the experience from day one.
 
@@ -47,7 +54,6 @@ The user identifies which path they're on:
 Fields shown depend on the role selected.
 
 *Graduate students provide:*
-- Full name and preferred display name
 - Program state chosen from a dropdown of NASP-listed jurisdictions
 - School psychology program chosen from a NASP-backed dropdown filtered to that state
 - Program type (Ed.S., Ph.D., M.A./M.S., or Other)
@@ -77,22 +83,28 @@ Collected for everyone:
 - If Yes: which resources (ETS/Pearson study guide, YouTube/videos, Flashcards/Quizlet, Another prep app, Private tutoring, Other)
 - If Yes: what was missing from those resources (open text)
 
-All fields except Role, Primary exam, Study goals, and Weekly availability are optional. Users can also tap **Skip for now** on the first step to bypass the wizard entirely and go straight to the app. Profile data is stored in the user's account and can inform future study plan generation.
+**Required fields by step:**
+- Step 1: Role (required)
+- Step 2 — Graduate students: Program type, Delivery mode, Training stage (required); State, University (optional)
+- Step 2 — Certification candidates: Current role, Certification route (required); State (optional)
+- Step 3: Primary exam, Retake status (required); Test date, Prior attempts, Target score (optional)
+- Step 4: Study goals, Weekly availability (required); others optional
 
-### Step 2: Take the Skills Screener (50 Questions)
-The screener is your **baseline map**. It hits every domain broadly — 50 questions covering as many skill areas as possible. The goal isn't to pass or fail; it's to give the system enough data to know where you stand before you start studying.
+Users can also tap **Skip for now** on the first step to bypass the wizard entirely and go straight to the app. Profile data is stored in the user's account and can inform future study plan generation. The user's name is collected at sign-up (not repeated in onboarding).
 
-After finishing, you get a **Screener Report** — a breakdown of which domains and skills are strong and which need work.
+### Step 2: Take the Adaptive Diagnostic
+The adaptive diagnostic is your **baseline map**. It starts with one question per skill (45 questions total), interleaved across all four domains.
 
-> Why first? You can't get useful advice without data. The screener is the system learning who you are as a test-taker.
+**How it adapts:** When you answer a question incorrectly, the system queues a follow-up question for that skill — with alternating cognitive complexity (if the first was Recall, the follow-up is Application, and vice versa). A maximum of 3 questions per skill (1 initial + 2 follow-ups). This means:
+- Minimum: 45 questions (all correct)
+- Typical: ~60–70 questions
+- Maximum: ~90 questions (all wrong with follow-ups)
 
-### Step 3: Take the Full Assessment (125 Questions)
-A full exam simulation — 125 questions, roughly 2–3 hours, covering the entire exam scope in depth. This is the real thing under practice conditions.
+**Pause and resume:** You can pause the diagnostic at any time and return to the home dashboard. Your progress is saved. You can start practicing immediately — even before finishing the diagnostic. When you return, you pick up exactly where you left off.
 
-Once you complete both the screener and the full assessment, **everything unlocks**:
-- Domain Review (focused practice by section)
-- Skill Review (targeted practice on individual competencies)
-- The AI Study Guide
+After completing the diagnostic, you get a **Score Report** — a breakdown of which domains and skills are strong and which need work. Practice is available immediately, with no gates.
+
+> **Note:** The AI Study Guide feature is currently in development and will be available in a future release.
 
 ### Step 4: Study, Practice, and Track
 From this point on, every session and every question feeds back into your profile. The system keeps learning about you as you go.
@@ -103,15 +115,15 @@ Once a user is signed in, the main destinations share one consistent app shell:
 - A sticky top bar with lightweight encouragement and utility actions
 - A warm, light visual system with white study surfaces and amber accents
 
-The sidebar profile card shows the user's display name and, when available, a secondary onboarding-derived identity line such as Graduate Student, Teacher, Certification Route, or training-stage language like Early Program.
+The sidebar profile card shows the user's display name and, when available, a secondary onboarding-derived identity line such as Graduate Student, Teacher, Certification Route, or training-stage language like Early Program. Tapping the card opens **Profile & onboarding**, where the user can review every onboarding answer and edit fields such as preferred display name, program details, exam plans, and study goals (the same steps as the initial wizard). On smaller screens, a profile icon in the top bar opens the same panel.
 
 ### The Home Dashboard
 The Home dashboard is the most guided page in the app. It is designed to help users see what to do next without changing the underlying product rules.
 
 Depending on the user's state, Home can show:
-- A screener-first start state for brand-new users
-- A full-assessment unlock state after the screener is complete
-- A fully unlocked dashboard after both assessments are complete
+- A diagnostic-first start state for brand-new users (with practice always available)
+- A baseline-recorded state for users who completed a legacy screener
+- A fully unlocked dashboard after the adaptive diagnostic (or legacy screener + full assessment) is complete
 
 On the fully unlocked dashboard, the main sections are:
 - A greeting hero with a spicy-practice call to action
@@ -143,13 +155,13 @@ Each skill is assigned one of six status labels, calculated by hard rules — no
 | Status | Condition | What It Means |
 |--------|-----------|---------------|
 | **Unlearned** | Fewer than 3 attempts | Not enough data yet |
-| **Misconception** | ≥ 3 attempts, accuracy < 60%, and a repeated wrong-answer pattern | A specific incorrect belief — passive review won't fix it |
-| **Unstable** | Low accuracy, no clear misconception pattern | Shaky foundation |
-| **Developing** | 40–59% accuracy | In progress |
+| **Misconception** | ≥ 3 attempts, accuracy < 60%, AND a high-confidence wrong answer OR a repeated wrong-answer pattern | A specific incorrect belief — passive review won't fix it |
+| **Unstable** | ≥ 3 attempts, accuracy < 40%, no misconception signal | Shaky foundation — not enough right yet to establish any pattern |
+| **Developing** | 40–59% accuracy, no misconception signal | In progress |
 | **Near Mastery** | 60–79% accuracy | Close but not locked in |
 | **Mastered** | ≥ 80% accuracy | Solid |
 
-The **misconception** label is especially important: it means the system detected a *specific* wrong mental model, not random errors. That signals active correction is needed, not just more practice.
+The **misconception** label is especially important: it fires when the system detects *either* a high-confidence wrong answer (choosing incorrectly while marked "Sure") *or* the same wrong answer chosen at least twice. Both patterns signal a specific incorrect mental model — not random errors — and require active correction, not just more practice.
 
 ### User-Facing Proficiency Levels (UI Labels)
 Separate from the internal status labels, the app shows three simplified levels on skill panels, domain cards, and the progress dashboard. The same wording is used for both skills and domains.
@@ -161,14 +173,40 @@ Separate from the internal status labels, the app shows three simplified levels 
 | **Emerging** | < 60% | Foundational gaps are still getting in the way, so targeted remediation is needed before performance is consistent |
 | **Not started** | 0 attempts | No data yet |
 
+**Important:** Proficiency tiers (Emerging / Approaching / Demonstrating) are calculated from **raw accuracy only** — the simple percentage of correct answers. Confidence ratings do not affect these badges.
+
+A separate **confidence-adjusted accuracy** metric is available in the Advanced Statistics section of the Progress page. This score penalizes high-confidence wrong answers more heavily (answering "Sure" and getting it wrong counts against you more than a "Guess" that is wrong). A large gap between raw and confidence-adjusted accuracy is a signal that misconceptions — not just knowledge gaps — are present. This metric is supplemental and does not change the proficiency tier calculation.
+
 ### Readiness Target
 70% of all 45 skills must reach Demonstrating (≥ 80% accuracy) for overall exam readiness. That's 32 out of 45 skills.
 
 ### Question Retirement
-Once you've answered a question correctly enough times to demonstrate mastery, it gets **retired** — removed from your practice rotation. This prevents grinding questions you already know while skipping the ones you need. The retired count is shown on the dashboard.
+Once you've answered a question correctly at least **twice** and have seen every question in the pool at least once (completing the first pass), it gets **retired** — removed from your active practice rotation. Specific rules:
+
+- **First pass required**: No question is retired until you've seen every question in the pool at least once. This ensures nothing is skipped early.
+- **Retirement trigger**: `times_correct ≥ 2` once the first pass is complete.
+- **Weak questions stay**: Questions you've never answered correctly, or only answered correctly once, are never retired — they stay in your pool until you've demonstrated consistent accuracy.
+- **Pool reset**: If every question in your pool ends up retired, all retired questions are recycled back into the active pool so practice can continue.
+
+Retirement state is stored per user in the browser (`localStorage`) and is separate per skill context. The retired count is shown on the dashboard.
 
 ### Streak Tracking
 Consecutive correct answers build a streak. Shown on the dashboard; resets when you answer incorrectly.
+
+---
+
+## Feeling Spicy — Quick Recalibration Mode
+
+**Feeling Spicy** is a rapid-fire practice mode accessible from the Home dashboard hero. It is designed for quick daily recalibration across every skill — one question per skill, cycling through all 45 skills in a shuffled order.
+
+**How it works:**
+- The system picks a random order for all 45 skills and presents one question per skill.
+- After you answer all 45 (completing one full cycle), the order reshuffles automatically into a new random sequence and starts again from skill 1.
+- Every completed cycle generates fresh signal across the whole skill map, which improves the accuracy of status labels and study guide recommendations.
+
+**What it shows:** The session header displays which skill you're on (e.g. "Skill 7 of 45") instead of the standard correct/wrong counters. The answer experience uses the same question card and confidence selector as other practice modes.
+
+**State persistence:** Your position in the current cycle is saved in the browser (`localStorage`, keyed per user) so you can pick up exactly where you left off across sessions.
 
 ---
 

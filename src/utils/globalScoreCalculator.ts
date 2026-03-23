@@ -1,3 +1,9 @@
+// src/utils/globalScoreCalculator.ts
+// Computes and persists weighted domain / skill scores to Supabase after each
+// answered question.  Weights: screener 20 %, full-assessment 50 %, practice 30 %.
+// A skill is flagged when high-confidence wrong answers exceed 30 % of attempts.
+
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '../config/supabase';
 
 // Constants for weighting
@@ -34,6 +40,27 @@ export interface GlobalScoreInputs {
   responseLogs: ResponseScoreInput[];
 }
 
+export async function fetchGlobalScoreInputsWithClient(
+  client: SupabaseClient,
+  userId: string
+): Promise<GlobalScoreInputs> {
+  if (!userId) {
+    throw new Error('userId is required');
+  }
+
+  const { data: allResponseLogs, error } = await client
+    .from('responses')
+    .select('*')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('[fetchGlobalScoreInputsWithClient] Error fetching from Supabase:', error);
+    return { screenerResponses: [], responseLogs: [] };
+  }
+
+  return mapRawLogsToGlobalInputs(allResponseLogs || []);
+}
+
 export async function fetchGlobalScoreInputs(userId: string): Promise<GlobalScoreInputs> {
   if (!userId) {
     throw new Error('userId is required');
@@ -50,14 +77,24 @@ export async function fetchGlobalScoreInputs(userId: string): Promise<GlobalScor
      return { screenerResponses: [], responseLogs: [] };
   }
 
-  const rawLogs = allResponseLogs || [];
+  return mapRawLogsToGlobalInputs(allResponseLogs || []);
+}
+
+function mapRawLogsToGlobalInputs(rawLogs: Record<string, unknown>[]): GlobalScoreInputs {
 
   const sharedScreenerResponses: ScreenerScoreInput[] = rawLogs
-    .filter(log => log.assessment_type === 'screener')
+    .filter(log => (log as { assessment_type?: string }).assessment_type === 'screener')
     .flatMap((log) => {
-      const domainIds = Array.isArray(log.domain_ids) && log.domain_ids.length > 0
-        ? log.domain_ids
-        : (log.domain_id !== undefined && log.domain_id !== null ? [log.domain_id] : []);
+      const row = log as {
+        domain_ids?: unknown;
+        domain_id?: unknown;
+        skill_id?: string;
+        is_correct?: boolean;
+        confidence?: string;
+      };
+      const domainIds = Array.isArray(row.domain_ids) && row.domain_ids.length > 0
+        ? row.domain_ids
+        : (row.domain_id !== undefined && row.domain_id !== null ? [row.domain_id] : []);
         
       const normalizedDomains: number[] = domainIds
         .map((id: any) => Number(id))
@@ -65,22 +102,32 @@ export async function fetchGlobalScoreInputs(userId: string): Promise<GlobalScor
 
       return normalizedDomains.map((domain_id: number) => ({
         domain_id,
-        skill_id: log.skill_id,
-        is_correct: log.is_correct,
-        confidence: log.confidence
+        skill_id: row.skill_id,
+        is_correct: row.is_correct,
+        confidence: row.confidence
       }));
     });
 
   const responseLogs: ResponseScoreInput[] = rawLogs
-    .filter(log => log.assessment_type !== 'screener')
-    .map(log => ({
-       assessmentType: log.assessment_type,
-       domainIds: log.domain_ids,
-       domainId: log.domain_id,
-       skillId: log.skill_id,
-       isCorrect: log.is_correct,
-       confidence: log.confidence
-    }));
+    .filter(log => (log as { assessment_type?: string }).assessment_type !== 'screener')
+    .map(log => {
+      const row = log as {
+        assessment_type?: string;
+        domain_ids?: unknown;
+        domain_id?: unknown;
+        skill_id?: string;
+        is_correct?: boolean;
+        confidence?: string;
+      };
+      return {
+        assessmentType: row.assessment_type,
+        domainIds: row.domain_ids as ResponseScoreInput['domainIds'],
+        domainId: row.domain_id as ResponseScoreInput['domainId'],
+        skillId: row.skill_id,
+        isCorrect: row.is_correct,
+        confidence: row.confidence
+      };
+    });
 
   return {
     screenerResponses: sharedScreenerResponses,
@@ -272,9 +319,35 @@ async function saveGlobalScores(userId: string, result: GlobalScoreResult): Prom
   }
 }
 
+async function saveGlobalScoresWithClient(
+  client: SupabaseClient,
+  userId: string,
+  result: GlobalScoreResult
+): Promise<void> {
+  const { error } = await client
+    .from('user_progress')
+    .update({ global_scores: result })
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('[saveGlobalScoresWithClient] Failed to persist global scores:', error);
+  }
+}
+
 export async function calculateAndSaveGlobalScores(userId: string): Promise<GlobalScoreResult> {
   const inputs = await fetchGlobalScoreInputs(userId);
   const result = calculateGlobalScoresFromData(inputs);
   await saveGlobalScores(userId, result);
+  return result;
+}
+
+/** Server-side (e.g. Netlify admin) with a service-role or elevated client. */
+export async function calculateAndSaveGlobalScoresWithClient(
+  client: SupabaseClient,
+  userId: string
+): Promise<GlobalScoreResult> {
+  const inputs = await fetchGlobalScoreInputsWithClient(client, userId);
+  const result = calculateGlobalScoresFromData(inputs);
+  await saveGlobalScoresWithClient(client, userId, result);
   return result;
 }

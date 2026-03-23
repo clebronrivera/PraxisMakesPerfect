@@ -269,7 +269,8 @@ export default function ResultsDashboard({
             label: 'Questions answered',
             value: (userProfile.totalQuestionsSeen ?? totalAttempts).toLocaleString(),
             color: 'text-cyan-400',
-            desc: 'Total exposures',
+            desc: 'All exposures incl. screener',
+            title: 'Counts every question shown — screener, diagnostic, and skill practice. Skill accuracy is computed from skill practice attempts only, so the denominators differ.',
           },
           {
             label: PROFICIENCY_META.proficient.label,
@@ -542,7 +543,8 @@ export default function ResultsDashboard({
             {/* Confidence-weighted accuracy */}
             {confidenceStats.rawPct !== null && (
               <div>
-                <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Confidence-adjusted accuracy</p>
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Confidence-adjusted accuracy</p>
+                <p className="mb-2 text-[11px] text-slate-400 leading-snug">High-confidence wrong answers are penalized more heavily. A large gap between raw and adjusted accuracy suggests misconceptions worth targeting.</p>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm text-slate-500">Raw accuracy</p>

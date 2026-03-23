@@ -26,8 +26,8 @@ export interface UserProfileData {
   account_role: 'graduate_student' | 'certification_only' | 'other' | '';
 
   // Step 2 — Grad student fields
-  full_name?: string;
-  preferred_display_name?: string;
+  // full_name removed — collected at sign-up via displayName
+  preferred_display_name?: string; // kept for backward compat, not rendered in form
   university?: string;
   program_type?: 'eds' | 'phd' | 'ma' | 'other' | '';
   program_state?: string;
@@ -55,10 +55,35 @@ export interface UserProfileData {
   what_was_missing?: string;
 }
 
+function mergeWithEmptyProfileData(partial?: Partial<UserProfileData> | null): UserProfileData {
+  return {
+    account_role: '',
+    primary_exam: '',
+    study_goals: [],
+    training_stage: '',
+    current_role: '',
+    certification_route: '',
+    retake_status: '',
+    weekly_study_hours: '',
+    program_type: '',
+    delivery_mode: '',
+    biggest_challenge: [],
+    other_resources_list: [],
+    used_other_resources: null,
+    ...partial
+  };
+}
+
 interface OnboardingFlowProps {
   displayName?: string | null;
   onComplete: (data: UserProfileData) => Promise<void>;
   onSkip?: () => void;
+  /** When set (e.g. profile edit), form is pre-filled from saved answers */
+  initialData?: Partial<UserProfileData> | null;
+  mode?: 'onboarding' | 'edit';
+  variant?: 'fullscreen' | 'embedded';
+  /** Called when user closes edit UI from first step (replaces Skip) */
+  onCancel?: () => void;
 }
 
 // ─── Shared sub-components ──────────────────────────────────────────────────
@@ -240,27 +265,6 @@ function StepGradDetails({ data, setData }: { data: UserProfileData; setData: (d
 
   return (
     <div className="space-y-4">
-      <SectionDivider label="About you" />
-
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <FieldLabel optional>Full name</FieldLabel>
-          <TextInput
-            value={data.full_name ?? ''}
-            onChange={v => setData({ full_name: v })}
-            placeholder="Jane Smith"
-          />
-        </div>
-        <div>
-          <FieldLabel optional>Preferred display name</FieldLabel>
-          <TextInput
-            value={data.preferred_display_name ?? ''}
-            onChange={v => setData({ preferred_display_name: v })}
-            placeholder="Jane"
-          />
-        </div>
-      </div>
-
       <SectionDivider label="Your program" />
 
       <div>
@@ -693,22 +697,16 @@ function ProgressDots({ total, current }: { total: number; current: number }) {
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function OnboardingFlow({ displayName, onComplete, onSkip }: OnboardingFlowProps) {
-  const [data, setData] = useState<UserProfileData>({
-    account_role: '',
-    primary_exam: '',
-    study_goals: [],
-    training_stage: '',
-    current_role: '',
-    certification_route: '',
-    retake_status: '',
-    weekly_study_hours: '',
-    program_type: '',
-    delivery_mode: '',
-    biggest_challenge: [],
-    other_resources_list: [],
-    used_other_resources: null,
-  });
+export default function OnboardingFlow({
+  displayName,
+  onComplete,
+  onSkip,
+  initialData,
+  mode = 'onboarding',
+  variant = 'fullscreen',
+  onCancel
+}: OnboardingFlowProps) {
+  const [data, setData] = useState<UserProfileData>(() => mergeWithEmptyProfileData(initialData));
 
   const [stepIndex, setStepIndex] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -739,9 +737,18 @@ export default function OnboardingFlow({ displayName, onComplete, onSkip }: Onbo
   const canAdvance = (): boolean => {
     switch (currentStep) {
       case 'role': return data.account_role !== '';
-      case 'pathway': return true; // all fields optional
-      case 'exam': return data.primary_exam !== '';
-      case 'goals': return data.study_goals.length > 0 && Boolean(data.weekly_study_hours);
+      case 'pathway':
+        if (data.account_role === 'graduate_student') {
+          return Boolean(data.training_stage) && Boolean(data.program_type) && Boolean(data.delivery_mode);
+        }
+        if (data.account_role === 'certification_only') {
+          return Boolean(data.current_role) && Boolean(data.certification_route);
+        }
+        return true;
+      case 'exam': return data.primary_exam !== '' && Boolean(data.retake_status);
+      case 'goals':
+        if (mode === 'edit') return true;
+        return data.study_goals.length > 0 && Boolean(data.weekly_study_hours);
       default: return true;
     }
   };
@@ -767,30 +774,47 @@ export default function OnboardingFlow({ displayName, onComplete, onSkip }: Onbo
     setStepIndex(prev => Math.max(0, prev - 1));
   };
 
+  const rootShell =
+    variant === 'embedded'
+      ? 'flex min-h-full flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4'
+      : 'min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4';
+
+  const innerWrap = variant === 'embedded' ? 'flex w-full min-h-0 flex-1 flex-col' : 'w-full max-w-xl';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-xl">
+    <div className={rootShell}>
+      <div className={innerWrap}>
 
         {/* Top wordmark */}
-        <div className="flex items-center justify-center gap-2.5 mb-7">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
-            <Brain className="w-4 h-4 text-white" />
+        {variant !== 'embedded' && (
+          <div className="mb-7 flex items-center justify-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/30">
+              <Brain className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-sm font-semibold text-slate-300">Praxis Makes Perfect</span>
           </div>
-          <span className="text-sm font-semibold text-slate-300">Praxis Makes Perfect</span>
-        </div>
+        )}
 
         {/* Welcome */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-white mb-1">
-            Welcome{displayName ? `, ${displayName.split(' ')[0]}` : ''}! 👋
+        <div className={`text-center ${variant === 'embedded' ? 'mb-4' : 'mb-6'}`}>
+          <h2 className={`font-bold text-white ${variant === 'embedded' ? 'text-lg' : 'mb-1 text-2xl'}`}>
+            {mode === 'edit'
+              ? 'Your onboarding answers'
+              : <>Welcome{displayName ? `, ${displayName.split(' ')[0]}` : ''}! 👋</>}
           </h2>
-          <p className="text-slate-400 text-sm">
-            Let's set up your profile — {steps.length} quick steps so we can personalize everything.
+          <p className="text-sm text-slate-400">
+            {mode === 'edit'
+              ? 'Review how you answered, or change your display name, program, exam, and goals.'
+              : `Let's set up your profile — ${steps.length} quick steps so we can personalize everything.`}
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
+        <div
+          className={`overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/60 shadow-2xl ${
+            variant === 'embedded' ? 'flex min-h-0 flex-1 flex-col' : ''
+          }`}
+        >
 
           {/* Step header bar */}
           <div className="px-6 pt-5 pb-4 border-b border-slate-700/40">
@@ -809,7 +833,11 @@ export default function OnboardingFlow({ displayName, onComplete, onSkip }: Onbo
           </div>
 
           {/* Step content */}
-          <div className="px-6 py-5 max-h-[440px] overflow-y-auto">
+          <div
+            className={`overflow-y-auto px-6 py-5 ${
+              variant === 'embedded' ? 'min-h-0 max-h-[min(520px,calc(100vh-12rem))] flex-1' : 'max-h-[440px]'
+            }`}
+          >
             {currentStep === 'role' && (
               <StepRole data={data} setData={updateRole} />
             )}
@@ -839,13 +867,27 @@ export default function OnboardingFlow({ displayName, onComplete, onSkip }: Onbo
           <div className="px-6 py-4 border-t border-slate-700/40 flex items-center justify-between gap-4">
             <button
               type="button"
-              onClick={isFirst ? onSkip : handleBack}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors rounded-lg"
+              onClick={() => {
+                if (isFirst) {
+                  if (mode === 'edit' && onCancel) onCancel();
+                  else if (onSkip) void onSkip();
+                } else {
+                  handleBack();
+                }
+              }}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:text-slate-200"
             >
-              {isFirst
-                ? <span>Skip for now</span>
-                : <><ChevronLeft className="w-4 h-4" /> Back</>
-              }
+              {isFirst ? (
+                mode === 'edit' && onCancel ? (
+                  <span>Close</span>
+                ) : (
+                  <span>Skip for now</span>
+                )
+              ) : (
+                <>
+                  <ChevronLeft className="h-4 w-4" /> Back
+                </>
+              )}
             </button>
 
             <ProgressDots total={steps.length} current={stepIndex} />

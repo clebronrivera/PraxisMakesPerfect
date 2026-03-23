@@ -1,8 +1,65 @@
-// Assessment Builder - Single source for building the screener and full assessment from question bank.
-// Uses a skill-coverage screener blueprint plus Praxis distribution for the full assessment.
+// Assessment Builder - Single source for building screener, full assessment, and adaptive diagnostic.
+// Uses a skill-coverage blueprint plus Praxis distribution.
 // Content source: questions from question bank (analyzedQuestions); domain taxonomy from knowledge-base.
 
 import { AnalyzedQuestion } from '../brain/question-analyzer';
+
+// ─── Skill Blueprint (shared across screener & adaptive diagnostic) ─────────
+// Maps each of the 45 skills to its domain and slot count.
+export const SKILL_BLUEPRINT: Record<string, { domain: number; slots: number; recallTarget?: number }> = {
+  // Domain 1: 16 questions, 5 Recall + 11 Application (13 skills)
+  'CON-01': { domain: 1, slots: 2, recallTarget: 5 },
+  'DBD-01': { domain: 1, slots: 2, recallTarget: 5 },
+  'DBD-03': { domain: 1, slots: 2, recallTarget: 5 },
+  'DBD-05': { domain: 1, slots: 1, recallTarget: 5 },
+  'DBD-06': { domain: 1, slots: 1, recallTarget: 5 },
+  'DBD-07': { domain: 1, slots: 1, recallTarget: 5 },
+  'DBD-08': { domain: 1, slots: 1, recallTarget: 5 },
+  'DBD-09': { domain: 1, slots: 1, recallTarget: 5 },
+  'DBD-10': { domain: 1, slots: 1, recallTarget: 5 },
+  'PSY-01': { domain: 1, slots: 1, recallTarget: 5 },
+  'PSY-02': { domain: 1, slots: 1, recallTarget: 5 },
+  'PSY-03': { domain: 1, slots: 1, recallTarget: 5 },
+  'PSY-04': { domain: 1, slots: 1, recallTarget: 5 },
+
+  // Domain 2: 12 questions, 3 Recall + 9 Application (12 skills)
+  'ACA-02': { domain: 2, slots: 1, recallTarget: 3 },
+  'ACA-03': { domain: 2, slots: 1, recallTarget: 3 },
+  'ACA-04': { domain: 2, slots: 1, recallTarget: 3 },
+  'ACA-06': { domain: 2, slots: 1, recallTarget: 3 },
+  'ACA-07': { domain: 2, slots: 1, recallTarget: 3 },
+  'ACA-08': { domain: 2, slots: 1, recallTarget: 3 },
+  'ACA-09': { domain: 2, slots: 1, recallTarget: 3 },
+  'DEV-01': { domain: 2, slots: 1, recallTarget: 3 },
+  'MBH-02': { domain: 2, slots: 1, recallTarget: 3 },
+  'MBH-03': { domain: 2, slots: 1, recallTarget: 3 },
+  'MBH-04': { domain: 2, slots: 1, recallTarget: 3 },
+  'MBH-05': { domain: 2, slots: 1, recallTarget: 3 },
+
+  // Domain 3: 10 questions, 3 Recall + 7 Application (8 skills)
+  'SAF-01': { domain: 3, slots: 2, recallTarget: 3 },
+  'SWP-04': { domain: 3, slots: 2, recallTarget: 3 },
+  'FAM-02': { domain: 3, slots: 1, recallTarget: 3 },
+  'FAM-03': { domain: 3, slots: 1, recallTarget: 3 },
+  'SAF-03': { domain: 3, slots: 1, recallTarget: 3 },
+  'SAF-04': { domain: 3, slots: 1, recallTarget: 3 },
+  'SWP-02': { domain: 3, slots: 1, recallTarget: 3 },
+  'SWP-03': { domain: 3, slots: 1, recallTarget: 3 },
+
+  // Domain 4: 12 questions, 4 Recall + 8 Application (12 skills)
+  'DIV-01': { domain: 4, slots: 1, recallTarget: 4 },
+  'DIV-03': { domain: 4, slots: 1, recallTarget: 4 },
+  'DIV-05': { domain: 4, slots: 1, recallTarget: 4 },
+  'ETH-01': { domain: 4, slots: 1, recallTarget: 4 },
+  'ETH-02': { domain: 4, slots: 1, recallTarget: 4 },
+  'ETH-03': { domain: 4, slots: 1, recallTarget: 4 },
+  'LEG-01': { domain: 4, slots: 1, recallTarget: 4 },
+  'LEG-02': { domain: 4, slots: 1, recallTarget: 4 },
+  'LEG-03': { domain: 4, slots: 1, recallTarget: 4 },
+  'LEG-04': { domain: 4, slots: 1, recallTarget: 4 },
+  'RES-02': { domain: 4, slots: 1, recallTarget: 4 },
+  'RES-03': { domain: 4, slots: 1, recallTarget: 4 },
+};
 
 /**
  * Praxis test content area percentages and domain mappings
@@ -267,62 +324,6 @@ export function buildScreener(
   analyzedQuestions: AnalyzedQuestion[],
   excludeQuestionIds: string[] = []
 ): AnalyzedQuestion[] {
-  // Add a SKILL_BLUEPRINT constant at the top of the function
-  const SKILL_BLUEPRINT: Record<string, { domain: number; slots: number; recallTarget?: number }> = {
-    // Domain 1: 16 questions, 5 Recall + 11 Application (13 skills)
-    'CON-01': { domain: 1, slots: 2, recallTarget: 5 },
-    'DBD-01': { domain: 1, slots: 2, recallTarget: 5 },
-    'DBD-03': { domain: 1, slots: 2, recallTarget: 5 },
-    'DBD-05': { domain: 1, slots: 1, recallTarget: 5 },
-    'DBD-06': { domain: 1, slots: 1, recallTarget: 5 },
-    'DBD-07': { domain: 1, slots: 1, recallTarget: 5 },
-    'DBD-08': { domain: 1, slots: 1, recallTarget: 5 },
-    'DBD-09': { domain: 1, slots: 1, recallTarget: 5 },
-    'DBD-10': { domain: 1, slots: 1, recallTarget: 5 },
-    'PSY-01': { domain: 1, slots: 1, recallTarget: 5 },
-    'PSY-02': { domain: 1, slots: 1, recallTarget: 5 },
-    'PSY-03': { domain: 1, slots: 1, recallTarget: 5 },
-    'PSY-04': { domain: 1, slots: 1, recallTarget: 5 },
-
-    // Domain 2: 12 questions, 3 Recall + 9 Application (12 skills)
-    'ACA-02': { domain: 2, slots: 1, recallTarget: 3 },
-    'ACA-03': { domain: 2, slots: 1, recallTarget: 3 },
-    'ACA-04': { domain: 2, slots: 1, recallTarget: 3 },
-    'ACA-06': { domain: 2, slots: 1, recallTarget: 3 },
-    'ACA-07': { domain: 2, slots: 1, recallTarget: 3 },
-    'ACA-08': { domain: 2, slots: 1, recallTarget: 3 },
-    'ACA-09': { domain: 2, slots: 1, recallTarget: 3 },
-    'DEV-01': { domain: 2, slots: 1, recallTarget: 3 },
-    'MBH-02': { domain: 2, slots: 1, recallTarget: 3 },
-    'MBH-03': { domain: 2, slots: 1, recallTarget: 3 },
-    'MBH-04': { domain: 2, slots: 1, recallTarget: 3 },
-    'MBH-05': { domain: 2, slots: 1, recallTarget: 3 },
-
-    // Domain 3: 10 questions, 3 Recall + 7 Application (8 skills)
-    'SAF-01': { domain: 3, slots: 2, recallTarget: 3 },
-    'SWP-04': { domain: 3, slots: 2, recallTarget: 3 },
-    'FAM-02': { domain: 3, slots: 1, recallTarget: 3 },
-    'FAM-03': { domain: 3, slots: 1, recallTarget: 3 },
-    'SAF-03': { domain: 3, slots: 1, recallTarget: 3 },
-    'SAF-04': { domain: 3, slots: 1, recallTarget: 3 },
-    'SWP-02': { domain: 3, slots: 1, recallTarget: 3 },
-    'SWP-03': { domain: 3, slots: 1, recallTarget: 3 },
-
-    // Domain 4: 12 questions, 4 Recall + 8 Application (12 skills)
-    'DIV-01': { domain: 4, slots: 1, recallTarget: 4 },
-    'DIV-03': { domain: 4, slots: 1, recallTarget: 4 },
-    'DIV-05': { domain: 4, slots: 1, recallTarget: 4 },
-    'ETH-01': { domain: 4, slots: 1, recallTarget: 4 },
-    'ETH-02': { domain: 4, slots: 1, recallTarget: 4 },
-    'ETH-03': { domain: 4, slots: 1, recallTarget: 4 },
-    'LEG-01': { domain: 4, slots: 1, recallTarget: 4 },
-    'LEG-02': { domain: 4, slots: 1, recallTarget: 4 },
-    'LEG-03': { domain: 4, slots: 1, recallTarget: 4 },
-    'LEG-04': { domain: 4, slots: 1, recallTarget: 4 },
-    'RES-02': { domain: 4, slots: 1, recallTarget: 4 },
-    'RES-03': { domain: 4, slots: 1, recallTarget: 4 }
-  };
-
   const excludeSet = new Set(excludeQuestionIds);
 
   // 1. Filter: exclude IDs
@@ -433,4 +434,117 @@ export function buildScreener(
   }
 
   return result;
+}
+
+// ─── Adaptive Diagnostic ────────────────────────────────────────────────────
+
+/** Result returned by buildAdaptiveDiagnostic. */
+export interface AdaptiveDiagnosticResult {
+  /** 45 questions — one per skill, interleaved by domain. */
+  initialQueue: AnalyzedQuestion[];
+  /** 1-2 follow-up questions per skill keyed by skillId. */
+  followUpPool: Record<string, AnalyzedQuestion[]>;
+}
+
+/**
+ * Build an adaptive diagnostic: 1 initial question per skill (45 total),
+ * plus a pool of 1–2 follow-up questions per skill.
+ *
+ * The component uses the follow-up pool dynamically:
+ * - Wrong answer → append a follow-up for that skill to the queue.
+ * - Follow-ups alternate cognitive complexity (Recall ↔ Application).
+ * - Maximum 3 questions per skill (1 initial + 2 follow-ups).
+ *
+ * Result range: 45 (all correct) → ~90 max (all wrong with 2 follow-ups each).
+ */
+export function buildAdaptiveDiagnostic(
+  analyzedQuestions: AnalyzedQuestion[],
+  excludeQuestionIds: string[] = []
+): AdaptiveDiagnosticResult {
+  const excludeSet = new Set(excludeQuestionIds);
+
+  // 1. Filter and group by skill
+  const filtered = analyzedQuestions.filter(q => !excludeSet.has(q.id));
+  const poolBySkill = new Map<string, AnalyzedQuestion[]>();
+  for (const q of filtered) {
+    if (!q.skillId) continue;
+    if (!poolBySkill.has(q.skillId)) poolBySkill.set(q.skillId, []);
+    poolBySkill.get(q.skillId)!.push(q);
+  }
+
+  // 2. For each skill, select up to 3 questions: 1 initial + 2 follow-ups
+  const domainInitial: Record<number, AnalyzedQuestion[]> = { 1: [], 2: [], 3: [], 4: [] };
+  const followUpPool: Record<string, AnalyzedQuestion[]> = {};
+
+  for (const [skillId, config] of Object.entries(SKILL_BLUEPRINT)) {
+    const skillPool = poolBySkill.get(skillId) || [];
+    if (skillPool.length === 0) {
+      console.warn(`[AdaptiveDiagnostic] Skill ${skillId} has no available questions.`);
+      continue;
+    }
+
+    // Prioritize single-select, shuffle
+    const singleSelect = skillPool.filter(q => q.isMultiSelect !== true);
+    const multiSelect = skillPool.filter(q => q.isMultiSelect === true);
+    const shuffled = [
+      ...singleSelect.sort(() => Math.random() - 0.5),
+      ...multiSelect.sort(() => Math.random() - 0.5),
+    ];
+
+    // Take the first question as the initial
+    const initial = shuffled[0];
+    domainInitial[config.domain].push(initial);
+
+    // Build follow-ups: alternate cognitive complexity
+    const remaining = shuffled.slice(1);
+    const followUps: AnalyzedQuestion[] = [];
+
+    if (remaining.length > 0) {
+      // Prefer opposite complexity for first follow-up
+      const oppositeComplexity = initial.cognitiveComplexity === 'Recall' ? 'Application' : 'Recall';
+      const oppositeIdx = remaining.findIndex(q => q.cognitiveComplexity === oppositeComplexity);
+      if (oppositeIdx !== -1) {
+        followUps.push(remaining.splice(oppositeIdx, 1)[0]);
+      } else {
+        followUps.push(remaining.shift()!);
+      }
+    }
+
+    if (remaining.length > 0) {
+      // Second follow-up: prefer opposite of the first follow-up
+      const lastComplexity = followUps[followUps.length - 1]?.cognitiveComplexity;
+      const wantComplexity = lastComplexity === 'Recall' ? 'Application' : 'Recall';
+      const idx = remaining.findIndex(q => q.cognitiveComplexity === wantComplexity);
+      if (idx !== -1) {
+        followUps.push(remaining.splice(idx, 1)[0]);
+      } else {
+        followUps.push(remaining.shift()!);
+      }
+    }
+
+    if (followUps.length > 0) {
+      followUpPool[skillId] = followUps;
+    }
+  }
+
+  // 3. Interleave initial questions by domain (round-robin)
+  const d1 = [...domainInitial[1]].sort(() => Math.random() - 0.5);
+  const d2 = [...domainInitial[2]].sort(() => Math.random() - 0.5);
+  const d3 = [...domainInitial[3]].sort(() => Math.random() - 0.5);
+  const d4 = [...domainInitial[4]].sort(() => Math.random() - 0.5);
+
+  const initialQueue: AnalyzedQuestion[] = [];
+  const lists = [d1, d2, d3, d4];
+  let hasItems = true;
+  while (hasItems) {
+    hasItems = false;
+    for (const list of lists) {
+      if (list.length > 0) {
+        initialQueue.push(list.shift()!);
+        hasItems = true;
+      }
+    }
+  }
+
+  return { initialQueue, followUpPool };
 }

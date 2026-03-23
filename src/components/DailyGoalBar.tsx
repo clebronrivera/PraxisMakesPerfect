@@ -4,6 +4,7 @@
 import { Target, Clock } from 'lucide-react';
 import { DAILY_GOAL } from '../hooks/useDailyQuestionCount';
 import { formatStudyTime } from '../hooks/useDailyStudyTime';
+import { getRandomAffirmation } from '../data/affirmations';
 
 interface Props {
   count: number;        // questions answered today
@@ -42,8 +43,8 @@ export default function DailyGoalBar({ count, studySeconds }: Props) {
       </div>
 
       {done && (
-        <p className="text-[10px] text-emerald-400 mt-1.5 font-medium">
-          Daily goal reached! Keep going.
+        <p className="text-[10px] text-emerald-400 mt-1.5 font-medium italic">
+          "{getRandomAffirmation()}"
         </p>
       )}
       {!done && count > 0 && (

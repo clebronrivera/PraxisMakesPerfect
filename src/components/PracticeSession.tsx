@@ -260,7 +260,7 @@ export default function PracticeSession({
 
   // ── Timer (internal only — NOT shown; kept for per-question timeSpent analytics)
   const { isPaused, resume, resetQuestionTimer, recordInteraction } = useElapsedTimer({
-    onAutoPause: () => console.log('[PracticeSession] Auto-paused'),
+    onAutoPause: () => { /* session auto-paused due to inactivity */ },
   });
 
   // ── Stable session ID ────────────────────────────────────────────────────────

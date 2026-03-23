@@ -20,6 +20,7 @@ Working grounding docs:
 - [AGENTS.md](/Users/lebron/Documents/PraxisMakesPerfect/AGENTS.md)
 - [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
 - [docs/ISSUE_LEDGER.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/ISSUE_LEDGER.md)
+- [docs/Praxis_5403_Complete_Reference.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/Praxis_5403_Complete_Reference.md) — Praxis 5403 domains, 45 skills, bank files
 
 Historical and superseded documentation has been moved under `archive/`.
 Historical Firebase setup and Firestore operations docs now live under `archive/docs-legacy-2026-03-18/`.

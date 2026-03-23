@@ -58,6 +58,12 @@ If you are not sure where something belongs:
 - Use it for: marketing copy, onboarding guides, how-to documentation, user-facing explanations
 - Update when: **any feature is added, changed, or removed** — including thresholds, counts, labels, unlock conditions, study guide behavior, or anything shown on the login/marketing page. This doc must be updated in the same commit as the code change.
 
+### [docs/Praxis_5403_Complete_Reference.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/Praxis_5403_Complete_Reference.md)
+
+- Purpose: Praxis 5403 exam structure **as implemented in this repo** — four reporting domains, forty-five progress skills (with IDs), links to `progressTaxonomy.ts`, NASP skill-map vs progress taxonomy, and question-bank file roles (including 900q bundle lineage)
+- Use it for: a single developer-facing anchor for blueprint-aligned scope without rereading multiple files
+- Update when: `PROGRESS_DOMAINS` / `PROGRESS_SKILLS` change, bank paths or bundle roles change, or the NASP `skill-map.ts` structure changes in a way authors need documented
+
 ### [CODEBASE_OVERVIEW.md](/Users/lebron/Documents/PraxisMakesPerfect/CODEBASE_OVERVIEW.md)
 
 - Purpose: high-level codebase map

@@ -58,6 +58,10 @@ interface StudyModesSectionProps {
   onStartSkillPractice: (skillId: string) => void;
   /** Opens the full Learning Path module page for a skill node */
   onNodeClick?: (skillId: string) => void;
+  /** Called from locked panels to send the user to the screener */
+  onStartScreener?: () => void;
+  /** Called from locked panels to send the user to the full diagnostic */
+  onStartDiagnostic?: () => void;
   /** Legacy props kept for App.tsx compatibility — no longer used in this panel */
   onSkillReviewOpen?: () => void;
   onLearningPathOpen?: () => void;
@@ -153,14 +157,16 @@ function DomainPanel({
   profile,
   isLocked,
   onDomainSelect,
+  onStartScreener,
 }: {
   profile: UserProfile;
   isLocked: boolean;
   onDomainSelect: (domainId: number) => void;
+  onStartScreener?: () => void;
 }) {
   if (isLocked) {
     return (
-      <div className="py-10 flex flex-col items-center gap-3 text-center">
+      <div className="py-10 flex flex-col items-center gap-4 text-center">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
           <Lock className="w-4 h-4 text-amber-700" />
         </div>
@@ -170,6 +176,14 @@ function DomainPanel({
             Complete the 50-question screener to unlock domain-based practice across all four Praxis sections.
           </p>
         </div>
+        {onStartScreener && (
+          <button
+            onClick={onStartScreener}
+            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
+          >
+            Take the screener
+          </button>
+        )}
       </div>
     );
   }
@@ -259,17 +273,19 @@ function SkillPanel({
   isLocked,
   onStartSkillPractice,
   onOpenHelp,
+  onStartDiagnostic,
 }: {
   profile: UserProfile;
   isLocked: boolean;
   onStartSkillPractice: (skillId: string) => void;
   onOpenHelp: (skillId: string, skillLabel: string) => void;
+  onStartDiagnostic?: () => void;
 }) {
   const [filter, setFilter] = useState<SkillFilter>('all');
 
   if (isLocked) {
     return (
-      <div className="py-10 flex flex-col items-center gap-3 text-center">
+      <div className="py-10 flex flex-col items-center gap-4 text-center">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
           <Lock className="w-4 h-4 text-amber-700" />
         </div>
@@ -279,6 +295,14 @@ function SkillPanel({
             Complete the 125-question full diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
           </p>
         </div>
+        {onStartDiagnostic && (
+          <button
+            onClick={onStartDiagnostic}
+            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
+          >
+            Take the full diagnostic
+          </button>
+        )}
       </div>
     );
   }
@@ -410,17 +434,19 @@ function LearningPathPanel({
   userId,
   isLocked,
   onNodeClick,
+  onStartDiagnostic,
 }: {
   profile: UserProfile;
   userId: string | null;
   isLocked: boolean;
   onNodeClick: (skillId: string) => void;
+  onStartDiagnostic?: () => void;
 }) {
   const { progress: lpProgress } = useLearningPathSupabase(userId);
 
   if (isLocked) {
     return (
-      <div className="py-10 flex flex-col items-center gap-3 text-center">
+      <div className="py-10 flex flex-col items-center gap-4 text-center">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
           <Lock className="w-4 h-4 text-amber-700" />
         </div>
@@ -430,6 +456,14 @@ function LearningPathPanel({
             Complete the full diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
           </p>
         </div>
+        {onStartDiagnostic && (
+          <button
+            onClick={onStartDiagnostic}
+            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
+          >
+            Take the full diagnostic
+          </button>
+        )}
       </div>
     );
   }
@@ -453,6 +487,8 @@ export default function StudyModesSection({
   onDomainSelect,
   onStartSkillPractice,
   onNodeClick,
+  onStartScreener,
+  onStartDiagnostic,
 }: StudyModesSectionProps) {
   const [selectedMode, setSelectedMode] = useState<PracticeMode>('domain');
 
@@ -522,7 +558,7 @@ export default function StudyModesSection({
             css: 'text-cyan-400',
           },
           {
-            label: 'Daily avg this week',
+            label: 'Avg study time / day',
             value: weeklyAvgSeconds > 0 ? formatStudyTime(weeklyAvgSeconds) : '—',
             css: 'text-violet-400',
           },
@@ -542,6 +578,14 @@ export default function StudyModesSection({
           </div>
         ))}
       </div>
+
+      {/* ── Zero-data welcome nudge ─────────────────────────────────────── */}
+      {totalAttempts === 0 && (
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-relaxed">
+          No data yet — your stats will appear here as soon as you answer your first question.
+          Start with the screener on the Dashboard, or jump straight into Spicy mode to get going.
+        </div>
+      )}
 
       {/* ── Readiness bar ───────────────────────────────────────────────── */}
       <div className="editorial-surface p-3.5">
@@ -601,6 +645,7 @@ export default function StudyModesSection({
             profile={profile}
             isLocked={!screenerComplete}
             onDomainSelect={onDomainSelect}
+            onStartScreener={onStartScreener}
           />
         )}
         {selectedMode === 'skill' && (
@@ -608,6 +653,7 @@ export default function StudyModesSection({
             profile={profile}
             isLocked={!fullAssessmentComplete}
             onStartSkillPractice={onStartSkillPractice}
+            onStartDiagnostic={onStartDiagnostic}
             onOpenHelp={(skillId, skillLabel) => {
               setHelpSkillId(skillId);
               setHelpSkillLabel(skillLabel);
@@ -621,6 +667,7 @@ export default function StudyModesSection({
             userId={userId}
             isLocked={!fullAssessmentComplete}
             onNodeClick={onNodeClick ?? (() => {})}
+            onStartDiagnostic={onStartDiagnostic}
           />
         )}
       </div>
