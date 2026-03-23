@@ -1,11 +1,10 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User } from 'lucide-react';
+import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw } from 'lucide-react';
 import { formatStudyTime } from './src/hooks/useDailyStudyTime';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 // Import questions and analysis
 import { getRandomAffirmation } from './src/data/affirmations';
-import { analyzeQuestion, AnalyzedQuestion } from './src/brain/question-analyzer';
-import { detectWeaknesses, UserResponse } from './src/brain/weakness-detector';
+import { analyzeQuestion } from './src/brain/question-analyzer';
 
 // Import components
 const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
@@ -18,6 +17,8 @@ const ScoreReport = lazy(() => import('./src/components/ScoreReport'));
 const ScreenerResults = lazy(() => import('./src/components/ScreenerResults'));
 const PracticeSession = lazy(() => import('./src/components/PracticeSession'));
 const LearningPathModulePage = lazy(() => import('./src/components/LearningPathModulePage'));
+const StudyNotebookPage = lazy(() => import('./src/components/StudyNotebookPage'));
+const GlossaryPage = lazy(() => import('./src/components/GlossaryPage'));
 const TeachMode = lazy(() => import('./src/components/TeachMode'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
@@ -25,13 +26,15 @@ const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
 // Import hooks
 import { useFirebaseProgress } from './src/hooks/useFirebaseProgress';
 import { useAdaptiveLearning } from './src/hooks/useAdaptiveLearning';
-import { clearSession, AssessmentSession } from './src/utils/sessionStorage';
-import { createUserSession, deleteUserSession, getCurrentSession, loadUserSession, UserSession } from './src/utils/userSessionStorage';
+import { clearSession } from './src/utils/sessionStorage';
+import { getCurrentSession, loadUserSession } from './src/utils/userSessionStorage';
 import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { useContent } from './src/context/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
-import { buildFullAssessment, buildScreener, buildAdaptiveDiagnostic, AdaptiveDiagnosticResult } from './src/utils/assessment-builder';
+import { useStudyPlanManager } from './src/hooks/useStudyPlanManager';
+import { useAssessmentFlow } from './src/hooks/useAssessmentFlow';
+import { usePracticeFlow } from './src/hooks/usePracticeFlow';
 const AdaptiveDiagnostic = lazy(() => import('./src/components/AdaptiveDiagnostic'));
 import {
   isScreenerQuestionCount
@@ -39,11 +42,10 @@ import {
 import { getSkillById } from './src/brain/skill-map';
 import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progressTaxonomy';
 
-import { StudyConstraints, StudyPlanHistoryEntry, generateStudyPlan, getStudyPlanHistory } from './src/services/studyPlanService';
-import { supabase } from './src/config/supabase';
 import { isAdminEmail } from './src/config/admin';
+import { useRedemptionRounds } from './src/hooks/useRedemptionRounds';
+const RedemptionRoundSession = lazy(() => import('./src/components/RedemptionRoundSession'));
 import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
-import type { AssessmentReportType } from './src/types/assessment';
 import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
 import { buildProgressSummary } from './src/utils/progressSummaries';
 import { PROFICIENCY_META } from './src/utils/skillProficiency';
@@ -64,7 +66,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'learning-path-module';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -121,32 +123,99 @@ function PraxisStudyAppContent() {
   }, []);
   
   // User management
-  const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>();
   const currentUserName = user?.user_metadata?.full_name || user?.user_metadata?.displayName || user?.email || null;
-  
   const savedSession = currentUserName ? getCurrentSession(currentUserName) : null;
   const hasSession = Boolean(savedSession);
-  
-  // App state
-  const [activeAssessmentType, setActiveAssessmentType] = useState<'screener' | null>(null);
+
+  // App-level navigation state (not owned by any sub-hook)
   const [mode, setMode] = useState<AppMode>('home');
   const [lastNonAdminMode, setLastNonAdminMode] = useState<NonAdminAppMode>('home');
-  const [screenerQuestions, setScreenerQuestions] = useState<AnalyzedQuestion[]>([]);
-  const [fullAssessmentQuestions, setFullAssessmentQuestions] = useState<AnalyzedQuestion[]>([]);
-  const [adaptiveDiagnosticData, setAdaptiveDiagnosticData] = useState<AdaptiveDiagnosticResult | null>(null);
-  const [assessmentStartTime, setAssessmentStartTime] = useState<number>(savedSession?.startTime || 0);
-  const [lastAssessmentResponses, setLastAssessmentResponses] = useState<UserResponse[]>([]);
-  const [lastAssessmentType, setLastAssessmentType] = useState<'screener' | 'full-assessment'>('screener');
-  const [lastAssessmentFlow, setLastAssessmentFlow] = useState<'screener' | 'archived-short-assessment' | 'full'>('screener');
-  const [practiceDomainFilter, setPracticeDomainFilter] = useState<number | null>(null);
-  const [practiceSkillFilter, setPracticeSkillFilter] = useState<string | null>(null);
   const [teachModeDomains] = useState<number[] | undefined>(undefined);
-  const [studyPlanHistory, setStudyPlanHistory] = useState<StudyPlanHistoryEntry[]>([]);
-  const [studyPlanLoading, setStudyPlanLoading] = useState(false);
-  const [studyPlanGenerating, setStudyPlanGenerating] = useState(false);
-  const [studyPlanError, setStudyPlanError] = useState<string | null>(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [isSpicyMode, setIsSpicyMode] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Analyze all questions — declared here so it's available to the sub-hooks below.
+  // Always use the canonical local bank as the source of truth for question content.
+  // Supabase question data is not trusted for content — only counts/IDs are logged for
+  // drift detection (see the useEffect below). This ensures local corrections are never
+  // silently bypassed by stale Supabase copies with matching IDs.
+  const analyzedQuestions = useMemo(
+    () => canonicalQuestions.map(analyzeQuestion),
+    [canonicalQuestions],
+  );
+
+  // ── Study plan state & handlers ────────────────────────────────────────────
+  const {
+    studyPlanHistory,
+    studyPlanLoading,
+    studyPlanGenerating,
+    studyPlanError,
+    canGenerateStudyPlan,
+    handleGenerateStudyPlan,
+  } = useStudyPlanManager({
+    user,
+    profile,
+    fetchedSkills,
+    fetchedDomains,
+  });
+
+  // ── Practice session state & handlers ──────────────────────────────────────
+  const {
+    practiceDomainFilter,
+    practiceSkillFilter,
+    isSpicyMode,
+    lastPracticeContext,
+    practiceQuestions,
+    startPractice,
+    startSkillPractice,
+    startSpicyPractice,
+    resetPracticeFilters,
+  } = usePracticeFlow({
+    analyzedQuestions,
+    userId: user?.id,
+    onNavigate: (m: string) => setMode(m as AppMode),
+  });
+
+  // ── Assessment flow state & handlers ──────────────────────────────────────
+  const {
+    screenerQuestions,
+    fullAssessmentQuestions,
+    adaptiveDiagnosticData,
+    assessmentStartTime,
+    selectedSessionId,
+    lastAssessmentResponses,
+    lastAssessmentType,
+    lastAssessmentFlow,
+    startScreener,
+    startFullAssessment,
+    startAdaptiveDiagnostic,
+    handleScreenerComplete,
+    handleFullAssessmentComplete,
+    handleAdaptiveDiagnosticComplete,
+    handleResumeAssessment,
+    handleDiscardSession,
+    handleViewReport,
+  } = useAssessmentFlow({
+    analyzedQuestions,
+    profile,
+    updateProfile,
+    currentUserName,
+    isLoaded,
+    savedSession,
+    getAssessmentResponses,
+    getLatestAssessmentResponses,
+    onNavigate: (m: string) => setMode(m as AppMode),
+  });
+  // ── Redemption Rounds ──────────────────────────────────────────────────────
+  const redemption = useRedemptionRounds({
+    userId: user?.id ?? null,
+    profile,
+    updateProfile,
+  });
+  // Questions loaded for the active round (AnalyzedQuestion[])
+  const [redemptionQuestions, setRedemptionQuestions] = useState<any[]>([]);
+  const [redemptionMissedRows, setRedemptionMissedRows] = useState<any[]>([]);
+
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
   const [profileEditorOpen, setProfileEditorOpen] = useState(false);
@@ -162,14 +231,6 @@ function PraxisStudyAppContent() {
     setProfileEditorInitial(null);
   }, []);
 
-  // Practice context: tracks the last skill or domain practiced so the
-  // "Continue Where You Left Off" card can name it and resume correctly.
-  interface PracticeContext {
-    type: 'skill' | 'domain' | 'general';
-    skillId?: string;
-    domainId?: number;
-  }
-  const [lastPracticeContext, setLastPracticeContext] = useState<PracticeContext | null>(null);
   // preAssessmentComplete was a dead field (always false, no DB column); collapsed to diagnosticComplete only.
   const hasArchivedShortAssessment = profile.diagnosticComplete;
   const hasCompletedScreener = profile.screenerComplete;
@@ -180,14 +241,6 @@ function PraxisStudyAppContent() {
     (hasArchivedShortAssessment && profile.lastPreAssessmentSessionId)
   );
   
-  // Analyze all questions
-  const analyzedQuestions = useMemo(() => {
-    // Always use the canonical local bank as the source of truth for question content.
-    // Supabase question data is not trusted for content — only counts/IDs are logged for
-    // drift detection (see the useEffect below). This ensures local corrections are never
-    // silently bypassed by stale Supabase copies with matching IDs.
-    return canonicalQuestions.map(analyzeQuestion);
-  }, [canonicalQuestions]);
   const progressSummary = useMemo(
     () => buildProgressSummary(profile.skillScores, fetchedSkills),
     [fetchedSkills, profile.skillScores]
@@ -265,101 +318,6 @@ function PraxisStudyAppContent() {
     }
   }, [canonicalLoading, canonicalQuestions.length, contentLoading, fetchedQuestions, sanitizedFetchedQuestions.length]);
 
-  // Restore session ID and assessment type on mount
-  useEffect(() => {
-    if (savedSession) {
-      setSelectedSessionId((savedSession as any).sessionId);
-      if (isStoredScreenerSessionType(savedSession.type)) {
-        const isScreener = savedSession.assessmentFlow === 'screener' || isScreenerQuestionCount(savedSession.questionIds.length);
-        setActiveAssessmentType(isScreener ? 'screener' : null);
-      } else if (savedSession.type === 'full-assessment') {
-        setActiveAssessmentType(null);
-      }
-    }
-  }, [savedSession]);
-
-  // Load last practice context from localStorage when user is known
-  useEffect(() => {
-    if (!user?.id) return;
-    try {
-      const stored = localStorage.getItem(`pmp-practice-context-${user.id}`);
-      if (stored) setLastPracticeContext(JSON.parse(stored));
-    } catch { /* ignore corrupt data */ }
-  }, [user?.id]);
-
-  // Fix #6: Clear stale Supabase lastSession if the corresponding localStorage entry is gone.
-  // This prevents the "session no longer available" alert and avoids dual-source confusion.
-  useEffect(() => {
-    if (!isLoaded || !profile.lastSession) return;
-    const { sessionId, mode } = profile.lastSession;
-    // Practice sessions don't use userSessionStorage — skip the check.
-    if (mode === 'practice') return;
-    const saved = loadUserSession(sessionId);
-    if (!saved) {
-      void updateProfile({ lastSession: null });
-    }
-  }, [isLoaded, profile.lastSession, updateProfile]);
-
-  // Filter questions by domain for practice mode
-  const practiceQuestions = useMemo(() => {
-    if (practiceSkillFilter) {
-      return analyzedQuestions.filter(q => q.skillId === practiceSkillFilter);
-    }
-
-    if (practiceDomainFilter === null) {
-      return analyzedQuestions;
-    }
-    return analyzedQuestions.filter(q => (q.domains || []).includes(practiceDomainFilter!));
-  }, [analyzedQuestions, practiceDomainFilter, practiceSkillFilter]);
-
-  const canGenerateStudyPlan = useMemo(() => {
-    if (!user) return false;
-    // New adaptive diagnostic path
-    if ((profile as any).adaptiveDiagnosticComplete) return true;
-    // Legacy two-step path
-    if (!profile.screenerComplete) return false;
-    return Boolean(profile.lastFullAssessmentSessionId || profile.fullAssessmentComplete);
-  }, [profile, user]);
-
-  useEffect(() => {
-    if (!user) {
-      setStudyPlanHistory([]);
-      setStudyPlanError(null);
-      setStudyPlanLoading(false);
-      return;
-    }
-
-    let isCancelled = false;
-
-    const loadStudyPlan = async () => {
-      setStudyPlanLoading(true);
-      setStudyPlanError(null);
-
-      try {
-        const history = await getStudyPlanHistory(user.id);
-        if (!isCancelled) {
-          setStudyPlanHistory(history);
-          setStudyPlanError(null);
-        }
-      } catch (error) {
-        console.error('[StudyPlan] Failed to load latest study plan:', error);
-        if (!isCancelled) {
-          setStudyPlanError('Unable to load your saved study guide right now. You can regenerate it.');
-        }
-      } finally {
-        if (!isCancelled) {
-          setStudyPlanLoading(false);
-        }
-      }
-    };
-
-    loadStudyPlan();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [user]);
-  
   // ============================================
   // HANDLERS
   // ============================================
@@ -374,235 +332,6 @@ function PraxisStudyAppContent() {
   const returnFromAdmin = useCallback((targetMode?: NonAdminAppMode) => {
     setMode(targetMode ?? lastNonAdminMode);
   }, [lastNonAdminMode]);
-  
-  const startScreener = useCallback((resumeSession?: AssessmentSession | UserSession) => {
-    if (resumeSession && isStoredScreenerSessionType(resumeSession.type)) {
-      const isScreenerSession =
-        resumeSession.assessmentFlow === 'screener' ||
-        isScreenerQuestionCount(resumeSession.questionIds.length);
-
-      if (!isScreenerSession) {
-        alert('This archived short-assessment session can no longer be resumed. Start the screener instead.');
-        return;
-      }
-
-      // Resume from saved session - restore question order
-      const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
-      const restoredQuestions = resumeSession.questionIds
-        .map(id => questionMap.get(id))
-        .filter((q): q is AnalyzedQuestion => q !== undefined);
-      
-      if (restoredQuestions.length === resumeSession.questionIds.length) {
-        setScreenerQuestions(restoredQuestions);
-        setAssessmentStartTime(resumeSession.startTime);
-        setSelectedSessionId((resumeSession as any).sessionId);
-        setActiveAssessmentType('screener');
-        setMode('screener');
-        return;
-      }
-    }
-    
-    // Exclude all previously seen assessment questions
-    const excludeIds = [
-      ...(profile.preAssessmentQuestionIds || []),
-      ...(profile.fullAssessmentQuestionIds || []),
-      ...(profile.recentPracticeQuestionIds || []),
-      ...(profile.screenerItemIds || [])
-    ];
-    
-    const selected = buildScreener(analyzedQuestions, excludeIds);
-    
-    if (selected.length === 0) {
-      alert("Not enough questions available to build a new screener.");
-      return;
-    }
-
-    const questionIds = selected.map(q => q.id);
-    
-    // Store selected IDs in Supabase
-    updateProfile({
-      screenerItemIds: questionIds
-    });
-    
-    // The live short-assessment flow is the screener.
-    setScreenerQuestions(selected);
-    setAssessmentStartTime(Date.now());
-    setActiveAssessmentType('screener');
-    setMode('screener');
-    
-    // Create session for tracking
-    if (currentUserName) {
-      try {
-        const newSession = createUserSession(currentUserName, 'screener-assessment', questionIds, 'screener');
-        setSelectedSessionId(newSession.sessionId);
-      } catch (error) {
-        console.error('Error creating session:', error);
-      }
-    }
-  }, [analyzedQuestions, profile, updateProfile, currentUserName]);
-  
-  const startFullAssessment = useCallback((resumeSession?: AssessmentSession | UserSession) => {
-    if (resumeSession && resumeSession.type === 'full-assessment') {
-      // Resume from saved session - restore question order
-      const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
-      const restoredQuestions = resumeSession.questionIds
-        .map(id => questionMap.get(id))
-        .filter((q): q is AnalyzedQuestion => q !== undefined);
-      
-      if (restoredQuestions.length === resumeSession.questionIds.length) {
-        setFullAssessmentQuestions(restoredQuestions);
-        setAssessmentStartTime(resumeSession.startTime);
-        setSelectedSessionId((resumeSession as any).sessionId);
-        setMode('fullassessment');
-        return;
-      }
-    }
-    
-    // Start new assessment: Full Test (125Q) with Praxis-aligned distribution
-    // Use assessment builder to get exactly 125 questions distributed per Praxis percentages
-    const excludeIds = [
-      ...(profile.screenerItemIds ?? []),
-      ...(profile.preAssessmentQuestionIds ?? [])
-    ];
-    const selected = buildFullAssessment(analyzedQuestions, 125, excludeIds);
-    
-    if (selected.length === 0) {
-      console.error('[FullAssessment] Failed to build assessment - no questions selected');
-      return;
-    }
-    
-    if (selected.length !== 125) {
-      console.warn(`[FullAssessment] Expected 125 questions, got ${selected.length}`);
-    }
-    
-    const questionIds = selected.map(q => q.id);
-    
-    // Create new user session if we have a current user
-    if (currentUserName) {
-      try {
-        const newSession = createUserSession(currentUserName, 'full-assessment', questionIds, 'full');
-        setSelectedSessionId(newSession.sessionId);
-      } catch (error) {
-        console.error('Error creating session:', error);
-      }
-    }
-    
-    setFullAssessmentQuestions(selected);
-    setAssessmentStartTime(Date.now());
-    setMode('fullassessment');
-  }, [analyzedQuestions, currentUserName, profile.preAssessmentQuestionIds, profile.screenerItemIds]);
-
-  const startAdaptiveDiagnostic = useCallback((resumeSession?: UserSession) => {
-    if (resumeSession && resumeSession.type === 'adaptive-diagnostic') {
-      // Resume — the component handles restoring from localStorage
-      setSelectedSessionId(resumeSession.sessionId);
-      // We still need the builder result so follow-up pool is available
-      const excludeIds = [
-        ...(profile.preAssessmentQuestionIds || []),
-        ...(profile.screenerItemIds || []),
-      ];
-      const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
-      setAdaptiveDiagnosticData(result);
-      setAssessmentStartTime(resumeSession.startTime);
-      setMode('adaptive-diagnostic');
-      return;
-    }
-
-    // Start new adaptive diagnostic
-    const excludeIds = [
-      ...(profile.preAssessmentQuestionIds || []),
-      ...(profile.screenerItemIds || []),
-      ...(profile.fullAssessmentQuestionIds || []),
-    ];
-    const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
-
-    if (result.initialQueue.length === 0) {
-      alert('Not enough questions available to build a diagnostic.');
-      return;
-    }
-
-    const allQuestionIds = [
-      ...result.initialQueue.map(q => q.id),
-      ...Object.values(result.followUpPool).flat().map(q => q.id),
-    ];
-
-    // Save diagnostic question IDs to profile
-    updateProfile({ diagnosticQuestionIds: allQuestionIds } as any);
-
-    setAdaptiveDiagnosticData(result);
-    setAssessmentStartTime(Date.now());
-    setMode('adaptive-diagnostic');
-
-    if (currentUserName) {
-      try {
-        const newSession = createUserSession(
-          currentUserName,
-          'adaptive-diagnostic',
-          result.initialQueue.map(q => q.id),
-          'adaptive-diagnostic'
-        );
-        setSelectedSessionId(newSession.sessionId);
-      } catch (error) {
-        console.error('Error creating adaptive diagnostic session:', error);
-      }
-    }
-  }, [analyzedQuestions, profile, updateProfile, currentUserName]);
-
-  const handleAdaptiveDiagnosticComplete = useCallback(async (responses: UserResponse[]) => {
-    const questionIds = responses.map(r => r.questionId);
-    const analysis = detectWeaknesses(responses, analyzedQuestions);
-
-    await updateProfile({
-      // Set both new and legacy flags for maximum compatibility
-      screenerComplete: true,
-      fullAssessmentComplete: true,
-      adaptiveDiagnosticComplete: true,
-      diagnosticQuestionIds: questionIds,
-      lastDiagnosticSessionId: selectedSessionId,
-      lastDiagnosticCompletedAt: new Date().toISOString(),
-      lastSession: null,
-      ...analysis,
-    } as any);
-
-    if (currentUserName && selectedSessionId) {
-      deleteUserSession(currentUserName, selectedSessionId);
-    }
-    clearSession();
-    setSelectedSessionId(undefined);
-
-    setLastAssessmentResponses(responses);
-    setLastAssessmentType('full-assessment');
-    setLastAssessmentFlow('full');
-    setMode('score-report');
-  }, [analyzedQuestions, currentUserName, updateProfile, selectedSessionId]);
-
-  const handleResumeAssessment = useCallback(() => {
-    if (!savedSession) {
-      return;
-    }
-
-    if (savedSession.type === 'adaptive-diagnostic') {
-      startAdaptiveDiagnostic(savedSession as UserSession);
-    } else if (isStoredScreenerSessionType(savedSession.type)) {
-      startScreener(savedSession);
-    } else if (savedSession.type === 'full-assessment') {
-      startFullAssessment(savedSession);
-    }
-  }, [savedSession, startAdaptiveDiagnostic, startFullAssessment, startScreener]);
-
-  // Note: User selection is handled by Supabase auth.
-  
-  const handleDiscardSession = useCallback(() => {
-    if (currentUserName && savedSession?.sessionId) {
-      deleteUserSession(currentUserName, savedSession.sessionId);
-    }
-    if (profile.lastSession?.sessionId === savedSession?.sessionId) {
-      updateProfile({ lastSession: null });
-    }
-    clearSession();
-    setSelectedSessionId(undefined);
-    setMode('home');
-  }, [currentUserName, profile.lastSession, savedSession, updateProfile]);
   
   const handleResetProgress = useCallback(() => {
     if (window.confirm('Are you sure you want to reset all progress? This will clear all scores, history, and assessments. This cannot be undone.')) {
@@ -625,285 +354,11 @@ function PraxisStudyAppContent() {
     }
   }, [resetProgress, currentUserName]);
 
-  const handleGenerateStudyPlan = useCallback(async (constraints?: StudyConstraints) => {
-    if (!user) {
-      return;
-    }
-
-    setStudyPlanGenerating(true);
-    setStudyPlanError(null);
-
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const idToken = sessionData.session?.access_token ?? '';
-
-      if (!idToken) {
-        // Session has expired — tell the user clearly rather than surfacing a cryptic 401.
-        setStudyPlanError('Your session has expired. Please log out and log back in, then try again.');
-        return;
-      }
-
-      const generatedPlan = await generateStudyPlan({
-        userId: user.id,
-        idToken,
-        skills: fetchedSkills,
-        domains: fetchedDomains,
-        studyConstraints: constraints,
-      });
-
-      // Reload full history so the new plan appears at the top of the list
-      const updatedHistory = await getStudyPlanHistory(user.id);
-      setStudyPlanHistory(updatedHistory.length > 0 ? updatedHistory : [{ id: 'new', createdAt: generatedPlan.generatedAt, plan: generatedPlan }]);
-    } catch (error) {
-      console.error('[StudyPlan] Generation failed:', error);
-      setStudyPlanError(error instanceof Error ? error.message : 'Study guide generation failed. Please retry.');
-    } finally {
-      setStudyPlanGenerating(false);
-    }
-  }, [fetchedDomains, fetchedSkills, user]);
-  
-  const handleScreenerComplete = useCallback(async (responses: UserResponse[]) => {
-    const questionCount = responses.length;
-    const correctCount = responses.filter(r => r.isCorrect).length;
-    const durationMs = assessmentStartTime > 0 ? Date.now() - assessmentStartTime : 0;
-    const questionIds = screenerQuestions.map(q => q.id);
-    
-    console.log('[ScreenerAssessment] Complete', {
-      questionCount,
-      correctCount,
-      durationMs,
-      questionIds: questionIds.length,
-      responsesSaved: responses.length
-    });
-    
-    const analysis = detectWeaknesses(responses, analyzedQuestions);
-    
-    // Save results to Supabase before navigation
-    // Note: Responses are already logged to the responses table during assessment
-    const updates: any = {
-      lastSession: null,
-      ...analysis
-    };
-
-    if (activeAssessmentType === 'screener') {
-      updates.screenerItemIds = questionIds;
-      updates.lastScreenerSessionId = selectedSessionId;
-      updates.lastScreenerCompletedAt = new Date().toISOString();
-      updates.screenerComplete = true;
-      updates.screenerResults = {
-        domain_scores: Object.fromEntries(
-          Object.entries(analysis.domainScores).map(([id, stats]) => [
-            id, 
-            Math.round((stats.correct / stats.total) * 100)
-          ])
-        ),
-        completed_at: new Date().toISOString()
-      };
-    }
-    
-    await updateProfile(updates);
-    
-    // Clear local session storage on successful completion
-    if (currentUserName && selectedSessionId) {
-      deleteUserSession(currentUserName, selectedSessionId);
-    }
-    clearSession();
-    setSelectedSessionId(undefined);
-
-    console.log('[ScreenerAssessment] Results saved to Supabase, navigating to score report');
-    
-    setLastAssessmentResponses(responses);
-    setLastAssessmentType('screener');
-    setLastAssessmentFlow('screener');
-    setMode('score-report');
-  }, [activeAssessmentType, analyzedQuestions, currentUserName, updateProfile, assessmentStartTime, screenerQuestions, selectedSessionId]);
-  
-  const handleFullAssessmentComplete = useCallback(async (responses: UserResponse[]) => {
-    const questionCount = responses.length;
-    const correctCount = responses.filter(r => r.isCorrect).length;
-    const durationMs = assessmentStartTime > 0 ? Date.now() - assessmentStartTime : 0;
-    const questionIds = fullAssessmentQuestions.map(q => q.id);
-    
-    console.log('[FullAssessment] Complete', {
-      questionCount,
-      correctCount,
-      durationMs,
-      questionIds: questionIds.length,
-      responsesSaved: responses.length
-    });
-    
-    const analysis = detectWeaknesses(responses, analyzedQuestions);
-    
-    // Save results to Supabase before navigation
-    // Note: Responses are already logged to the responses table during assessment
-    await updateProfile({
-      fullAssessmentComplete: true,
-      fullAssessmentQuestionIds: questionIds,
-      lastFullAssessmentSessionId: selectedSessionId,
-      lastFullAssessmentCompletedAt: new Date().toISOString(),
-      lastSession: null,
-      ...analysis
-    });
-    
-    // Clear local session storage on successful completion
-    if (currentUserName && selectedSessionId) {
-      deleteUserSession(currentUserName, selectedSessionId);
-    }
-    clearSession();
-    setSelectedSessionId(undefined);
-
-    console.log('[FullAssessment] Results saved to Supabase, navigating to score report');
-    
-    setLastAssessmentResponses(responses);
-    setLastAssessmentType('full-assessment');
-    setLastAssessmentFlow('full');
-    setMode('score-report');
-  }, [analyzedQuestions, currentUserName, updateProfile, assessmentStartTime, fullAssessmentQuestions, selectedSessionId]);
-  
-  // Save which skill/domain is being practiced so the home screen card can name it
-  const savePracticeContext = useCallback((ctx: { type: 'skill' | 'domain' | 'general'; skillId?: string; domainId?: number }) => {
-    setLastPracticeContext(ctx);
-    if (user?.id) {
-      try { localStorage.setItem(`pmp-practice-context-${user.id}`, JSON.stringify(ctx)); } catch {}
-    }
-  }, [user?.id]);
-
-  const startPractice = useCallback((domainId?: number) => {
-    setPracticeSkillFilter(null);
-    setPracticeDomainFilter(domainId || null);
-    savePracticeContext(domainId ? { type: 'domain', domainId } : { type: 'general' });
-    setMode('practice');
-  }, [savePracticeContext]);
-
-  const startSkillPractice = useCallback((skillId: string) => {
-    setPracticeDomainFilter(null);
-    setPracticeSkillFilter(skillId);
-    savePracticeContext({ type: 'skill', skillId });
-    setMode('practice');
-  }, [savePracticeContext]);
-
-  const startSpicyPractice = useCallback(() => {
-    setPracticeDomainFilter(null);
-    setPracticeSkillFilter(null);
-    savePracticeContext({ type: 'general' });
-    setIsSpicyMode(true);
-    setMode('practice');
-  }, [savePracticeContext]);
-
   const openLearningPathModule = useCallback((skillId: string) => {
     setLearningPathSkillId(skillId);
     setMode('learning-path-module');
   }, []);
 
-  // Handler to view past assessment reports
-  const handleViewReport = useCallback(async (
-    assessmentType: 'screener' | 'full-assessment'
-  ) => {
-    const screenerTime = profile.lastScreenerCompletedAt
-      ? new Date(profile.lastScreenerCompletedAt).getTime()
-      : (profile.screenerResults?.completed_at ? new Date(profile.screenerResults.completed_at).getTime() : 0);
-    const archivedShortAssessmentTime = profile.lastPreAssessmentCompletedAt
-      ? new Date(profile.lastPreAssessmentCompletedAt).getTime()
-      : 0;
-    const isScreener =
-      assessmentType === 'screener' &&
-      profile.screenerComplete &&
-      screenerTime >= archivedShortAssessmentTime;
-
-    const responseTypes: AssessmentReportType[] = assessmentType === 'full-assessment'
-      ? ['full']
-      : (isScreener ? ['screener'] : ['diagnostic']);
-
-    const sessionId = assessmentType === 'screener'
-      ? (isScreener ? profile.lastScreenerSessionId || profile.lastPreAssessmentSessionId : profile.lastPreAssessmentSessionId)
-      : profile.lastFullAssessmentSessionId;
-
-    try {
-      let questionIds = assessmentType === 'screener'
-        ? (isScreener ? profile.screenerItemIds : profile.preAssessmentQuestionIds) || []
-        : profile.fullAssessmentQuestionIds || [];
-
-      // Match questions with analyzedQuestions
-      const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
-
-      let responses = sessionId
-        ? await getAssessmentResponses(sessionId, responseTypes, analyzedQuestions)
-        : [];
-      let resolvedSessionId = sessionId ?? null;
-
-      if (responses.length === 0) {
-        const fallback = await getLatestAssessmentResponses(responseTypes, analyzedQuestions);
-        responses = fallback.responses;
-        resolvedSessionId = fallback.sessionId ?? resolvedSessionId;
-
-        if (questionIds.length === 0) {
-          questionIds = fallback.questionIds;
-        }
-      }
-
-      if (responses.length === 0) {
-        console.warn(`[handleViewReport] No responses found in Supabase for ${assessmentType}`);
-        alert('Unable to load report. Response data not found in database.');
-        return;
-      }
-
-      if (questionIds.length === 0) {
-        questionIds = Array.from(new Set(responses.map(response => response.questionId)));
-      }
-
-      const questions = questionIds
-        .map(id => questionMap.get(id))
-        .filter((q): q is AnalyzedQuestion => q !== undefined);
-
-      if (questions.length === 0) {
-        console.error(`[handleViewReport] No matching questions found`);
-        alert('Unable to load report. Questions not found.');
-        return;
-      }
-
-      // Set state for ScoreReport component
-      // Reset start time — viewing a past report has no meaningful "time remaining"
-      setAssessmentStartTime(0);
-      setLastAssessmentResponses(responses);
-      setLastAssessmentType(assessmentType);
-      setLastAssessmentFlow(
-        assessmentType === 'screener'
-          ? (isScreenerQuestionCount(questionIds.length) ? 'screener' : 'archived-short-assessment')
-          : 'full'
-      );
-
-      if (resolvedSessionId && resolvedSessionId !== sessionId) {
-        void updateProfile(
-          assessmentType === 'screener'
-            ? (isScreener
-                ? {
-                    lastScreenerSessionId: resolvedSessionId,
-                    ...(profile.screenerItemIds?.length ? {} : { screenerItemIds: questionIds })
-                  }
-                : {
-                    lastPreAssessmentSessionId: resolvedSessionId,
-                    ...(profile.preAssessmentQuestionIds?.length ? {} : { preAssessmentQuestionIds: questionIds })
-                  })
-            : {
-                lastFullAssessmentSessionId: resolvedSessionId,
-                ...(profile.fullAssessmentQuestionIds?.length ? {} : { fullAssessmentQuestionIds: questionIds })
-              }
-        );
-      }
-
-      if (assessmentType === 'screener') {
-        setScreenerQuestions(questions);
-      } else {
-        setFullAssessmentQuestions(questions);
-      }
-
-      setMode('score-report');
-    } catch (error) {
-      console.error(`[handleViewReport] Error loading report:`, error);
-      alert('An error occurred while loading the report. Please try again.');
-    }
-  }, [profile, analyzedQuestions, getAssessmentResponses, getLatestAssessmentResponses, updateProfile]);
-  
   // ============================================
   // RENDER HELPERS
   // ============================================
@@ -994,63 +449,97 @@ function PraxisStudyAppContent() {
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-200/20 blur-3xl" />
       </div>
 
-      <aside className="hidden lg:flex lg:w-64 lg:flex-shrink-0 lg:flex-col lg:bg-[#0f172a] lg:shadow-2xl">
-        <div className="p-8">
-          <div className="group mb-10 flex items-center gap-3">
+      <aside className={`hidden lg:flex lg:flex-shrink-0 lg:flex-col lg:bg-[#0f172a] lg:shadow-2xl transition-all duration-300 ${sidebarCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-64'}`}>
+        <div className={`${sidebarCollapsed ? 'p-3 pt-6' : 'p-8'}`}>
+          {/* ── Logo ── */}
+          <div className={`group mb-10 flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
             <div className="relative">
               <div className="absolute inset-0 bg-amber-500 opacity-20 blur-lg transition-opacity group-hover:opacity-60" />
               <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
                 <Brain className="h-5 w-5 text-white" />
               </div>
             </div>
-            <div>
-              <p className="text-xl font-bold italic tracking-tight text-white">
-                Praxis<span className="text-amber-500">.</span>Ai
-              </p>
-              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">School Psychology 5403</p>
-            </div>
+            {!sidebarCollapsed && (
+              <div>
+                <p className="text-xl font-bold italic tracking-tight text-white">
+                  Praxis<span className="text-amber-500">.</span>Ai
+                </p>
+                <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">School Psychology 5403</p>
+              </div>
+            )}
           </div>
 
+          {/* ── Nav items ── */}
           <nav className="space-y-1.5">
             {(() => {
               const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
+              const notebookHasNew = studyPlanHistory.length > 0; // Show dot when study plan exists
               const tabs = [
                 { label: 'Dashboard', icon: <Brain className="w-4 h-4" />, onClick: () => setMode('home'), active: mode === 'home', show: true },
                 { label: 'Practice', icon: <Zap className="w-4 h-4" />, onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                 { label: 'Progress', icon: <BarChart3 className="w-4 h-4" />, onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
                 { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
+                { label: 'Study Notebook', icon: <BookMarked className="w-4 h-4" />, onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
+                { label: 'Glossary', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
               ];
               return tabs.filter(tab => tab.show).map(tab => (
                 <button
                   key={tab.label}
                   onClick={tab.onClick}
-                  className={`editorial-sidebar-item ${tab.active ? 'editorial-sidebar-item-active' : ''}`}
+                  className={`editorial-sidebar-item ${tab.active ? 'editorial-sidebar-item-active' : ''} ${sidebarCollapsed ? 'justify-center px-0' : ''} relative`}
+                  title={sidebarCollapsed ? tab.label : undefined}
                 >
-                  {tab.icon}
-                  {tab.label}
+                  <span className="relative shrink-0">
+                    {tab.icon}
+                    {tab.badge && !tab.active && (
+                      <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-500" />
+                    )}
+                  </span>
+                  {!sidebarCollapsed && tab.label}
                 </button>
               ));
             })()}
           </nav>
         </div>
 
-        <div className="mt-auto border-t border-white/5 bg-black/20 p-6">
+        {/* ── Collapse toggle ── */}
+        <div className={`px-3 pb-3 ${sidebarCollapsed ? '' : 'px-8'}`}>
+          <button
+            onClick={() => setSidebarCollapsed(prev => !prev)}
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all text-xs"
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? (
+              <PanelLeft className="w-4 h-4" />
+            ) : (
+              <>
+                <PanelLeftClose className="w-4 h-4" />
+                <span className="font-semibold">Collapse</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* ── Profile card ── */}
+        <div className={`mt-auto border-t border-white/5 bg-black/20 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
           <button
             type="button"
             onClick={openProfileEditor}
-            className="w-full rounded-[1.75rem] border border-white/5 bg-white/5 p-4 text-left transition hover:border-white/15 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60"
+            className={`w-full rounded-[1.75rem] border border-white/5 bg-white/5 text-left transition hover:border-white/15 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
           >
-            <div className="flex items-center gap-3">
+            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/20">
                 <User className="h-4 w-4 text-amber-300" />
               </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-white">{displayName}</p>
-                {profileRoleLabel && (
-                  <p className="truncate text-[11px] font-black uppercase tracking-[0.18em] text-amber-500">{profileRoleLabel}</p>
-                )}
-                <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-slate-500">Profile &amp; onboarding</p>
-              </div>
+              {!sidebarCollapsed && (
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-white">{displayName}</p>
+                  {profileRoleLabel && (
+                    <p className="truncate text-[11px] font-black uppercase tracking-[0.1em] text-amber-500">{profileRoleLabel}</p>
+                  )}
+                  <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-slate-500">Profile &amp; onboarding</p>
+                </div>
+              )}
             </div>
           </button>
         </div>
@@ -1066,7 +555,7 @@ function PraxisStudyAppContent() {
                 </div>
                 <div>
                   <p className="text-base font-bold tracking-tight text-slate-900">Praxis Study</p>
-                  <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">School Psychology 5403</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">School Psychology 5403</p>
                 </div>
               </div>
 
@@ -1111,9 +600,6 @@ function PraxisStudyAppContent() {
                     clearSession();
                     await logout();
                     setMode('home');
-                    setScreenerQuestions([]);
-                    setFullAssessmentQuestions([]);
-                    setLastAssessmentResponses([]);
                   }}
                   className="editorial-topbar-button"
                   title="Log out"
@@ -1131,12 +617,14 @@ function PraxisStudyAppContent() {
                   { label: 'Practice', onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                   { label: 'Progress', onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
                   { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
+                  { label: 'Notebook', onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true },
+                  { label: 'Glossary', onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
                 ];
                 return tabs.filter(tab => tab.show).map(tab => (
                   <button
                     key={tab.label}
                     onClick={tab.onClick}
-                    className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all ${
+                    className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all ${
                       tab.active
                         ? 'bg-amber-500 text-slate-900'
                         : 'border border-slate-200 bg-white text-slate-500'
@@ -1297,7 +785,7 @@ function PraxisStudyAppContent() {
                     <Flame className="h-4 w-4 fill-amber-400 text-amber-400" />
                     Spicy Mode
                   </span>
-                  <span className="mt-2 block text-sm font-medium leading-relaxed text-slate-300">
+                  <span className="mt-2 block text-sm font-medium leading-normal text-slate-300">
                     Jump into a full 45-question cycle.
                   </span>
                 </span>
@@ -1315,7 +803,7 @@ function PraxisStudyAppContent() {
                       <div className="editorial-surface p-6 lg:p-7">
                         <p className="editorial-overline">Dashboard</p>
                         <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to Praxis Study</h2>
-                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
+                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
                           Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.
                         </p>
                         <div className="mt-6 grid gap-3 md:grid-cols-2">
@@ -1352,7 +840,7 @@ function PraxisStudyAppContent() {
                       <div className="editorial-surface-soft p-5 lg:p-6">
                         <p className="editorial-overline">Quick start</p>
                         <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Want extra exposure first?</p>
-                        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+                        <p className="mt-3 text-sm leading-normal text-slate-500">
                           Spicy mode cycles one question per skill so you can see the full question bank before diving into the diagnostic.
                         </p>
                         <div className="mt-5">{spicyButton}</div>
@@ -1368,7 +856,7 @@ function PraxisStudyAppContent() {
                       <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">
                         {firstName ? `Nice work, ${firstName}.` : 'Baseline complete.'}
                       </h2>
-                      <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
+                      <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
                         Your initial baseline is recorded. Take the adaptive diagnostic for deeper skill-level insights, or jump straight into practice.
                       </p>
                       <div className="mt-6 grid gap-3 md:grid-cols-2">
@@ -1391,7 +879,7 @@ function PraxisStudyAppContent() {
                     <div className="editorial-surface-soft p-5 lg:p-6">
                       <p className="editorial-overline">Practice</p>
                       <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Keep practicing in the meantime.</p>
-                      <p className="mt-3 text-sm leading-relaxed text-slate-500">
+                      <p className="mt-3 text-sm leading-normal text-slate-500">
                         Spicy mode cycles through all 45 skills for broader exposure.
                       </p>
                       <div className="mt-5">{spicyButton}</div>
@@ -1407,7 +895,7 @@ function PraxisStudyAppContent() {
                         <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">
                           {firstName ? `Greetings, ${firstName}.` : 'Welcome back.'}
                         </h2>
-                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-500">
+                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
                           Keep building your skill bank with focused practice. Use the learning path and domain practice to zero in on your biggest gaps.
                         </p>
                         <div className="mt-6 grid gap-3 md:grid-cols-2">
@@ -1440,6 +928,42 @@ function PraxisStudyAppContent() {
                             </button>
                           )}
                         </div>
+
+                        {/* ── Redemption Rounds button ── */}
+                        {redemption.bankCount > 0 && (
+                          <div className="mt-4">
+                            <button
+                              onClick={async () => {
+                                const rows = await redemption.startRound();
+                                if (!rows || rows.length === 0) return;
+                                const matched = rows
+                                  .map((row: any) => ({
+                                    q: analyzedQuestions.find(q => q.id === row.question_id),
+                                    row,
+                                  }))
+                                  .filter((item: any) => item.q != null);
+                                setRedemptionQuestions(matched.map((item: any) => item.q));
+                                setRedemptionMissedRows(matched.map((item: any) => item.row));
+                                setMode('redemption-round');
+                              }}
+                              disabled={redemption.credits <= 0}
+                              className={`editorial-button-dark flex min-h-[4.25rem] w-full items-center justify-between rounded-[1.75rem] px-5 py-4 text-left ${redemption.credits <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                              <span>
+                                <span className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-amber-400">
+                                  <RotateCcw className="h-4 w-4" />
+                                  Redemption Rounds
+                                </span>
+                                <span className="mt-2 block text-sm font-medium leading-normal text-slate-300">
+                                  {redemption.credits > 0
+                                    ? `${redemption.credits} credit${redemption.credits !== 1 ? 's' : ''} · ${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} waiting`
+                                    : `${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} waiting · earn a credit with 20 more practice answers`}
+                                </span>
+                              </span>
+                              <ChevronRight className="h-4 w-4 shrink-0 text-amber-300" />
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       <div className="editorial-surface-soft p-5 lg:p-6">
@@ -1453,13 +977,13 @@ function PraxisStudyAppContent() {
                             style={{ width: `${Math.min((dailyQuestionCount / DAILY_GOAL) * 100, 100)}%` }}
                           />
                         </div>
-                        <p className="mt-4 text-sm leading-relaxed text-slate-500">
-                          {dailyQuestionCount >= DAILY_GOAL 
+                        <p className="mt-4 text-sm leading-normal text-slate-500">
+                          {dailyQuestionCount >= DAILY_GOAL
                             ? <span className="italic">"{getRandomAffirmation()}"</span>
                             : "Keep moving toward today's question goal while leaving room to read the lesson content and explanations that support it."}
                         </p>
                         <div className="mt-4 rounded-[1.5rem] border border-amber-100 bg-white p-4">
-                          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Weekly usage</p>
+                          <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">Weekly usage</p>
                           <p className="mt-2 text-sm font-bold text-slate-900">
                             {weeklyUsageSeconds > 0 ? formatStudyTime(weeklyUsageSeconds) : '0m'} this week
                           </p>
@@ -1479,7 +1003,7 @@ function PraxisStudyAppContent() {
                                 <MapIcon className="h-5 w-5" />
                               </span>
                               <span>
-                                <span className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Learning path</span>
+                                <span className="block text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">Learning path</span>
                                 <span className="mt-1 block text-sm font-bold text-slate-900">Pick up your next skill</span>
                               </span>
                             </span>
@@ -1490,7 +1014,7 @@ function PraxisStudyAppContent() {
                               if (weakestDomain) startPractice(weakestDomain.id);
                               else setMode('practice-hub');
                             }}
-                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
+                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
                           >
                             <Layers className="h-4 w-4" />
                             Go directly to domain practice
@@ -1500,7 +1024,7 @@ function PraxisStudyAppContent() {
                               if (top5Target[0]) startSkillPractice(top5Target[0][0]);
                               else setMode('practice-hub');
                             }}
-                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
+                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
                           >
                             <Target className="h-4 w-4" />
                             Go directly to skill practice
@@ -1540,7 +1064,7 @@ function PraxisStudyAppContent() {
                           accent: 'bg-blue-50 text-blue-700',
                         },
                       ].map(stat => (
-                        <div key={stat.label} className="editorial-stat-card p-4">
+                        <div key={stat.label} className="editorial-stat-card">
                           <div className="flex items-center justify-between">
                             <div className={`rounded-2xl border border-white p-2.5 shadow-sm ${stat.accent}`}>
                               <stat.icon className="h-4.5 w-4.5" />
@@ -1548,9 +1072,9 @@ function PraxisStudyAppContent() {
                             <ChevronRight className="h-4 w-4 text-slate-300" />
                           </div>
                           <div>
-                            <p className="mb-2 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">{stat.label}</p>
+                            <p className="mb-1.5 text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">{stat.label}</p>
                             <p className="text-xl font-black italic tracking-tighter text-slate-900 sm:text-[1.6rem]">{stat.value}</p>
-                            <p className="mt-2 text-[13px] font-medium leading-relaxed text-slate-500">{stat.supporting}</p>
+                            <p className="mt-1.5 text-[13px] font-medium leading-normal text-slate-500">{stat.supporting}</p>
                           </div>
                         </div>
                       ))}
@@ -1560,10 +1084,10 @@ function PraxisStudyAppContent() {
                       <div className="space-y-6">
                         <div className="px-1 sm:px-2">
                           <div className="flex items-center gap-3">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">High-Impact Skills</h3>
+                            <h3 className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">High-Impact Skills</h3>
                             <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)] animate-pulse" />
                           </div>
-                          <p className="mt-3 max-w-3xl text-sm font-medium leading-relaxed text-slate-500">
+                          <p className="mt-2 max-w-3xl text-sm font-medium leading-normal text-slate-500">
                             High-impact skills are the lowest-performing skills in your skill bank. These skills change dynamically as you improve. If you want to see a full readout of every skill, go to Progress and expand the domains.
                           </p>
                         </div>
@@ -1586,7 +1110,7 @@ function PraxisStudyAppContent() {
                                   </div>
                                   <div className="min-w-0">
                                     <h4 className="truncate text-[15px] font-bold text-slate-900 transition-colors group-hover:text-amber-700">{displayName}</h4>
-                                    <p className="mt-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 italic">
+                                    <p className="mt-1 text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 italic">
                                       {skillId}
                                     </p>
                                   </div>
@@ -1612,7 +1136,7 @@ function PraxisStudyAppContent() {
                               <Sparkles className="mt-0.5 h-5 w-5 text-amber-600" />
                               <div>
                                 <p className="text-lg font-bold text-slate-900">Generate your Study Guide</p>
-                                <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                                <p className="mt-2 text-sm leading-normal text-slate-500">
                                   Build a bigger plan around your developing skills whenever you are ready. The guide stays optional, but it can help connect your next steps.
                                 </p>
                               </div>
@@ -1652,7 +1176,7 @@ function PraxisStudyAppContent() {
                                 <ChevronRight className="h-4 w-4 text-slate-400" />
                               </div>
                               {snapshot?.summary && (
-                                <p className="mt-4 text-sm leading-relaxed text-slate-500">{snapshot.summary}</p>
+                                <p className="mt-3 text-sm leading-normal text-slate-500">{snapshot.summary}</p>
                               )}
                               <p className="mt-4 text-sm font-semibold text-amber-700">View full Study Guide</p>
                             </button>
@@ -1682,7 +1206,7 @@ function PraxisStudyAppContent() {
             <div className="pt-4">
               <p className="editorial-overline mb-2">Practice</p>
               <h2 className="text-4xl font-bold tracking-tight text-slate-900">Choose your focus.</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-500">
+              <p className="mt-3 max-w-2xl text-sm leading-normal text-slate-500">
                 Practice by domain, by skill, or follow your personalized learning path.
               </p>
             </div>
@@ -1724,6 +1248,11 @@ function PraxisStudyAppContent() {
                   setLearningPathSkillId(null);
                   setMode('practice-hub');
                 }}
+                latestStudyPlan={
+                  studyPlanHistory.length > 0
+                    ? { id: studyPlanHistory[0].id, createdAt: studyPlanHistory[0].createdAt, plan: studyPlanHistory[0].plan }
+                    : null
+                }
               />
             </Suspense>
           </div>
@@ -1747,6 +1276,27 @@ function PraxisStudyAppContent() {
               />
             </Suspense>
           </div>
+        )}
+
+        {/* STUDY NOTEBOOK PAGE */}
+        {mode === 'study-notebook' && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading notebook…</div>}>
+            <StudyNotebookPage
+              userId={user?.id ?? null}
+              latestStudyPlan={
+                studyPlanHistory.length > 0
+                  ? { id: studyPlanHistory[0].id, createdAt: studyPlanHistory[0].createdAt, plan: studyPlanHistory[0].plan }
+                  : null
+              }
+            />
+          </Suspense>
+        )}
+
+        {/* GLOSSARY PAGE */}
+        {mode === 'glossary' && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading glossary…</div>}>
+            <GlossaryPage userId={user?.id ?? null} />
+          </Suspense>
         )}
 
         {/* SCREENER MODE */}
@@ -1860,12 +1410,10 @@ function PraxisStudyAppContent() {
             practiceSkillId={practiceSkillFilter}
             hideSummary={isSpicyMode && !profile.fullAssessmentComplete}
             spicyCycleMode={isSpicyMode}
+            onWrongAnswer={redemption.addToMissedBank}
+            onAnswerSubmitted={redemption.handleAnswerSubmitted}
             onExitPractice={() => {
-              const wasSkillPractice = Boolean(practiceSkillFilter);
-              const wasSpicy = isSpicyMode;
-              setPracticeDomainFilter(null);
-              setPracticeSkillFilter(null);
-              setIsSpicyMode(false);
+              const { wasSkillPractice, wasSpicy } = resetPracticeFilters();
               if (wasSkillPractice) {
                 setMode('results');
               } else if (wasSpicy) {
@@ -1906,6 +1454,22 @@ function PraxisStudyAppContent() {
           />
         )}
         
+        {/* REDEMPTION ROUND */}
+        {mode === 'redemption-round' && redemptionQuestions.length > 0 && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading round…</div>}>
+            <RedemptionRoundSession
+              questions={redemptionQuestions}
+              missedRows={redemptionMissedRows}
+              highScore={redemption.highScore}
+              onComplete={async (results) => {
+                await redemption.recordRoundResult(results);
+                setMode('home');
+              }}
+              onExit={() => setMode('home')}
+            />
+          </Suspense>
+        )}
+
         {/* ADMIN DASHBOARD */}
         {mode === 'admin' && (
           <AdminDashboard

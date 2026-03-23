@@ -6,7 +6,9 @@
 // The page has THREE sequential locked sections:
 //
 // ─── Section 1 — LESSON CONTENT ─────────────────────────────────────────────
-//   • Renders the micro-lesson text via ModuleLessonViewer
+//   • Accordion layout: multi-module skills show collapsible lesson sections
+//   • BreadcrumbPillNav for quick module navigation
+//   • "Next Lesson" sequential progression between modules
 //   • Full section-level engagement tracking (IntersectionObserver)
 //   • Interactive exercise onComplete callbacks wired and persisted
 //   • "Mark Lesson Complete" button — unlocks Section 2
@@ -28,13 +30,17 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
-  ArrowLeft, CheckCircle, Lock,
+  ArrowLeft, ArrowRight, CheckCircle, Lock,
   ChevronDown, ChevronUp,
-  Trophy, RotateCcw,
+  Trophy, RotateCcw, PanelRight, Printer,
 } from 'lucide-react';
 import { getAllModulesForSkill } from '../data/learningModules';
+import skillVocabMap from '../data/skill-vocabulary-map.json';
 import ModuleLessonViewer from './ModuleLessonViewer';
+import AccordionModule from './AccordionModule';
+import BreadcrumbPillNav from './BreadcrumbPillNav';
 import QuestionCard from './QuestionCard';
+import StudyCenterSidebar from './StudyCenterSidebar';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
 import { useLearningPathProgress } from '../hooks/useLearningPathProgress';
 import { useModuleVisitTracking } from '../hooks/useModuleVisitTracking';
@@ -44,6 +50,9 @@ import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
 import type { UserProfile } from '../hooks/useFirebaseProgress';
+import type { StudyPlanDocumentV2 } from '../types/studyPlanTypes';
+import { useFocusItems } from '../hooks/useFocusItems';
+import { FocusItemsPanel } from './FocusItemGroup';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -62,6 +71,8 @@ interface LearningPathModulePageProps {
   onSkillProgressUpdate: (skillId: string, isCorrect: boolean) => void;
   /** Navigate back to the Learning Path node map */
   onBack: () => void;
+  /** Latest study plan from App.tsx — used for Focus Items in Study Center */
+  latestStudyPlan?: { id: string; createdAt: string; plan: StudyPlanDocumentV2 } | null;
 }
 
 // ─── Section header ───────────────────────────────────────────────────────────
@@ -86,7 +97,7 @@ function SectionHeader({
       onClick={isLocked ? undefined : onToggle}
       disabled={isLocked}
       className={`
-        flex w-full items-center gap-3 rounded-[1.75rem] border px-4 py-3.5 text-left transition-all
+        flex w-full items-center gap-3 rounded-[1.75rem] border px-4 py-3.5 text-left transition-all no-print
         ${isLocked
           ? 'cursor-not-allowed border-slate-200 bg-[#fbfaf7] opacity-60'
           : isOpen
@@ -284,17 +295,43 @@ export default function LearningPathModulePage({
   analyzedQuestions,
   onSkillProgressUpdate,
   onBack,
+  latestStudyPlan = null,
 }: LearningPathModulePageProps) {
   const lpSupabase = useLearningPathSupabase(userId);
   const lpLocal = useLearningPathProgress(userId);
 
+  // ── Focus Items from study plan ──────────────────────────────────────────
+  const focusItems = useFocusItems(userId, skillId, latestStudyPlan);
+
   const skillDef = getProgressSkillDefinition(skillId);
   const modules = getAllModulesForSkill(skillId);
+  const skillTerms = (skillVocabMap as { skills: Record<string, { vocabularyTerms: string[] }> })
+    .skills[skillId]?.vocabularyTerms ?? [];
   const primaryModule = modules[0] ?? null;
 
-  // ── Active module tab ──────────────────────────────────────────────────
-  const [activeModuleIdx, setActiveModuleIdx] = useState(0);
-  const activeModule = modules[activeModuleIdx] ?? null;
+  // ── Accordion state (replaces old tab-switching) ─────────────────────────
+  const [expandedModuleIdx, setExpandedModuleIdx] = useState(0);
+  const activeModule = modules[expandedModuleIdx] ?? null;
+
+  // Refs for scrolling to accordion sections
+  const accordionRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  function scrollToModule(idx: number) {
+    setExpandedModuleIdx(idx);
+    // Scroll into view with a small delay for re-render
+    requestAnimationFrame(() => {
+      accordionRefs.current[idx]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  function handleNextLesson() {
+    if (expandedModuleIdx < modules.length - 1) {
+      scrollToModule(expandedModuleIdx + 1);
+    } else {
+      // Last module — mark lesson complete and move to Section 2
+      handleMarkLessonComplete();
+    }
+  }
 
   // ── Module visit tracking ──────────────────────────────────────────────
   const visitTracking = useModuleVisitTracking(
@@ -346,7 +383,7 @@ export default function LearningPathModulePage({
   // Clear completed interactives when module tab changes
   useEffect(() => {
     setCompletedInteractives({});
-  }, [activeModuleIdx]);
+  }, [expandedModuleIdx]);
 
   // ── Skill questions (random sample) ──────────────────────────────────────
   const skillQuestions = useMemo(() => {
@@ -386,8 +423,12 @@ export default function LearningPathModulePage({
     setS1Submitting(true);
     const elapsed = Math.floor((Date.now() - s1StartRef.current) / 1000);
     await lpSupabase.markLessonComplete(skillId, elapsed);
-    // Also mark in localStorage progress for SkillHelpDrawer / LearningPathPanel consistency
-    if (activeModule) {
+    // Mark all viewed modules in localStorage for SkillHelpDrawer / LearningPathPanel consistency
+    for (const m of modules) {
+      if (lpLocal.isViewed(m.id)) continue;
+      lpLocal.setViewed(m.id, true);
+    }
+    if (activeModule && !lpLocal.isViewed(activeModule.id)) {
       lpLocal.setViewed(activeModule.id, true);
     }
     setS1Submitting(false);
@@ -432,11 +473,20 @@ export default function LearningPathModulePage({
   const s1Complete = record.lessonViewed;
   const s2Complete = record.questionsSubmitted;
 
+  // Count viewed modules for progress display
+  const viewedCount = modules.filter(m => lpLocal.isViewed(m.id)).length;
+
+  // ── Study Center sidebar state ───────────────────────────────────────────
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="space-y-6 pb-16">
+    <div className="flex gap-6">
+
+      {/* ── Main content column ── */}
+      <div className="flex-1 min-w-0 space-y-6 pb-16">
 
       {/* ── Back nav + header ─────────────────────────────────────────────── */}
-      <div className="editorial-surface flex items-center gap-3 p-5">
+      <div className="editorial-surface flex items-center gap-3 p-5 no-print">
         <button
           onClick={onBack}
           className="editorial-button-secondary shrink-0 px-3 py-2"
@@ -444,19 +494,50 @@ export default function LearningPathModulePage({
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">Learning Path</p>
           <h2 className="truncate text-lg font-bold leading-tight text-slate-900">
             {skillDef?.fullLabel ?? skillId}
           </h2>
-          {primaryModule && (
+          {modules.length > 1 ? (
+            <p className="text-[10px] text-slate-500">
+              {modules.length} lessons · {viewedCount} viewed
+            </p>
+          ) : primaryModule ? (
             <p className="text-[10px] font-mono text-slate-500">{primaryModule.id}</p>
-          )}
+          ) : null}
         </div>
+
+        {/* Print button */}
+        <button
+          onClick={() => window.print()}
+          className="shrink-0 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-400 hover:border-amber-200 hover:text-amber-700 transition-all"
+          title="Print lesson"
+        >
+          <Printer className="w-4 h-4" />
+        </button>
+
+        {/* Study Center toggle */}
+        <button
+          onClick={() => setSidebarOpen(prev => !prev)}
+          className={`shrink-0 rounded-xl border p-2.5 transition-all relative ${
+            sidebarOpen
+              ? 'border-amber-300 bg-amber-50 text-amber-700'
+              : 'border-slate-200 bg-white text-slate-400 hover:border-amber-200 hover:text-amber-700'
+          }`}
+          title="Toggle Study Center"
+        >
+          <PanelRight className="w-4 h-4" />
+          {focusItems.newCount > 0 && !sidebarOpen && (
+            <span className="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-amber-500 px-1 text-[8px] font-bold text-white">
+              {focusItems.newCount}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* ── Progress pills ────────────────────────────────────────────────── */}
-      <div className="editorial-surface-soft flex flex-wrap items-center gap-2 px-4 py-3">
+      <div className="editorial-surface-soft flex flex-wrap items-center gap-2 px-4 py-3 no-print">
         {[
           { label: 'Lesson', done: s1Complete },
           { label: 'Practice', done: s2Complete },
@@ -496,7 +577,7 @@ export default function LearningPathModulePage({
       <div className="space-y-0">
         <SectionHeader
           number={1}
-          title="Lesson"
+          title={modules.length > 1 ? `Lesson (${modules.length} parts)` : 'Lesson'}
           isLocked={false}
           isComplete={s1Complete}
           isOpen={openSection === 1}
@@ -504,46 +585,74 @@ export default function LearningPathModulePage({
         />
 
         {openSection === 1 && (
-          <div className="mt-2 space-y-4 px-1">
+          <div className="mt-2 space-y-3 px-1">
 
-            {/* Module tab pills (if multiple) */}
-            {modules.length > 1 && (
-              <div className="flex gap-1.5 overflow-x-auto pb-0.5">
-                {modules.map((m, i) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setActiveModuleIdx(i)}
-                    className={`
-                      flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-semibold transition-all
-                      ${activeModuleIdx === i
-                        ? 'border-amber-300 bg-amber-50 text-amber-700'
-                        : 'border-slate-200 bg-white text-slate-500 hover:border-amber-200 hover:text-slate-900'}
-                    `}
-                  >
-                    {lpLocal.isViewed(m.id) && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                    )}
-                    Lesson {i + 1}
-                  </button>
-                ))}
+            {/* Breadcrumb pill navigator */}
+            <BreadcrumbPillNav
+              modules={modules}
+              expandedIdx={expandedModuleIdx}
+              isViewed={(id) => lpLocal.isViewed(id)}
+              onSelect={scrollToModule}
+            />
+
+            {/* Accordion modules */}
+            {modules.map((m, i) => (
+              <div
+                key={m.id}
+                ref={el => { accordionRefs.current[i] = el; }}
+              >
+                <AccordionModule
+                  moduleId={m.id}
+                  title={m.title}
+                  index={i}
+                  totalModules={modules.length}
+                  isExpanded={expandedModuleIdx === i}
+                  isViewed={lpLocal.isViewed(m.id)}
+                  onToggle={() => setExpandedModuleIdx(expandedModuleIdx === i ? -1 as any : i)}
+                >
+                  {/* Only render ModuleLessonViewer for the expanded module
+                      (tracking hooks bind to expandedModuleIdx / activeModule) */}
+                  {expandedModuleIdx === i && activeModule && (
+                    <>
+                      <ModuleLessonViewer
+                        module={activeModule}
+                        isViewed={lpLocal.isViewed(activeModule.id)}
+                        secondsSpent={lpLocal.getSecondsSpent(activeModule.id)}
+                        onSetViewed={(v) => lpLocal.setViewed(activeModule.id, v)}
+                        onInteractiveComplete={handleInteractiveComplete}
+                        sectionRefs={sectionRefs}
+                        completedInteractives={completedInteractives}
+                        density="tight"
+                        skillTerms={skillTerms}
+                      />
+
+                      {/* Next Lesson / Continue button */}
+                      <div className="flex justify-center pt-4 no-print">
+                        <button
+                          onClick={handleNextLesson}
+                          className="editorial-button-primary flex items-center gap-2 px-6 py-2.5 text-sm"
+                        >
+                          {i < modules.length - 1 ? (
+                            <>
+                              Next Lesson
+                              <ArrowRight className="w-4 h-4" />
+                            </>
+                          ) : modules.length > 1 ? (
+                            <>
+                              Continue to Practice Questions
+                              <ArrowRight className="w-4 h-4" />
+                            </>
+                          ) : null}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </AccordionModule>
               </div>
-            )}
-
-            {/* Lesson text */}
-            {activeModule && (
-              <ModuleLessonViewer
-                module={activeModule}
-                isViewed={lpLocal.isViewed(activeModule.id)}
-                secondsSpent={lpLocal.getSecondsSpent(activeModule.id)}
-                onSetViewed={(v) => lpLocal.setViewed(activeModule.id, v)}
-                onInteractiveComplete={handleInteractiveComplete}
-                sectionRefs={sectionRefs}
-                completedInteractives={completedInteractives}
-              />
-            )}
+            ))}
 
             {/* Timer + Mark Complete */}
-            <div className="flex items-center justify-between gap-3 pt-1">
+            <div className="flex items-center justify-between gap-3 pt-1 no-print">
               <p className="text-[10px] text-slate-500">
                 Time in lesson: {Math.floor(s1ElapsedSec / 60)}m {s1ElapsedSec % 60}s
               </p>
@@ -637,6 +746,58 @@ export default function LearningPathModulePage({
           </div>
         )}
       </div>
+
+      </div>{/* end main content column */}
+
+      {/* ── Study Center Sidebar ── */}
+      {sidebarOpen && (
+        <div className="hidden lg:block w-80 shrink-0 sticky top-4 self-start">
+          <StudyCenterSidebar
+            userId={userId}
+            moduleId={activeModule?.id ?? null}
+            moduleTitle={activeModule?.title ?? null}
+            skillId={skillId}
+            onClose={() => setSidebarOpen(false)}
+            focusNewCount={focusItems.newCount}
+            focusItemsSlot={
+              latestStudyPlan ? (
+                <FocusItemsPanel
+                  items={focusItems.items}
+                  checkedIds={focusItems.checkedIds}
+                  onToggleCheck={focusItems.toggleCheck}
+                  showNewBadges={focusItems.newCount > 0}
+                  loading={focusItems.loading}
+                />
+              ) : undefined
+            }
+          />
+        </div>
+      )}
+
+      {/* Mobile sidebar (overlay) */}
+      {sidebarOpen && (
+        <div className="lg:hidden">
+          <StudyCenterSidebar
+            userId={userId}
+            moduleId={activeModule?.id ?? null}
+            moduleTitle={activeModule?.title ?? null}
+            skillId={skillId}
+            onClose={() => setSidebarOpen(false)}
+            focusNewCount={focusItems.newCount}
+            focusItemsSlot={
+              latestStudyPlan ? (
+                <FocusItemsPanel
+                  items={focusItems.items}
+                  checkedIds={focusItems.checkedIds}
+                  onToggleCheck={focusItems.toggleCheck}
+                  showNewBadges={focusItems.newCount > 0}
+                  loading={focusItems.loading}
+                />
+              ) : undefined
+            }
+          />
+        </div>
+      )}
 
     </div>
   );
