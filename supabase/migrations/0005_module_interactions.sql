@@ -15,7 +15,7 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS module_visit_sessions (
-  id                UUID        PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id           UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   module_id         TEXT        NOT NULL,
   skill_id          TEXT        NOT NULL,
@@ -58,7 +58,7 @@ CREATE POLICY "Users can update their own visit sessions"
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS section_interactions (
-  id                  UUID        PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id             UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   visit_session_id    UUID        REFERENCES module_visit_sessions(id) ON DELETE CASCADE,
   module_id           TEXT        NOT NULL,
@@ -112,12 +112,40 @@ CREATE POLICY "Users can update their own section interactions"
   WITH CHECK (auth.uid() = user_id);
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- ALTER learning_path_progress — add aggregate interactive columns
+-- Table C: learning_path_progress (create if not exists, then add columns)
 -- ═══════════════════════════════════════════════════════════════════════════════
 
-ALTER TABLE learning_path_progress
-  ADD COLUMN IF NOT EXISTS visit_count                    INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS total_interactive_score        FLOAT,
-  ADD COLUMN IF NOT EXISTS interactive_exercises_completed INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS interactive_exercises_total    INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS last_visited_at                TIMESTAMPTZ;
+CREATE TABLE IF NOT EXISTS learning_path_progress (
+  id                              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id                         UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  module_id                       TEXT        NOT NULL,
+  skill_id                        TEXT        NOT NULL,
+  status                          TEXT        NOT NULL DEFAULT 'not_started',
+  progress_pct                    FLOAT       DEFAULT 0,
+  visit_count                     INTEGER     DEFAULT 0,
+  total_interactive_score         FLOAT,
+  interactive_exercises_completed INTEGER     DEFAULT 0,
+  interactive_exercises_total     INTEGER     DEFAULT 0,
+  last_visited_at                 TIMESTAMPTZ,
+  created_at                      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at                      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+  CONSTRAINT lpp_user_module_unique UNIQUE (user_id, module_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_lpp_user ON learning_path_progress(user_id);
+
+ALTER TABLE learning_path_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read their own learning path progress"
+  ON learning_path_progress FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own learning path progress"
+  ON learning_path_progress FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own learning path progress"
+  ON learning_path_progress FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
