@@ -52,6 +52,7 @@ The **Users** tab in the admin dashboard calls `POST /api/admin-reset-assessment
 
 - **Requires** Netlify env `SUPABASE_SERVICE_ROLE_KEY` (JWT `eyJ...` from Supabase → Settings → API → `service_role`).
 - **Requires** migration `0004_assessment_reset_archive.sql` applied in Supabase.
+- **Requires** migration `0005_module_interactions.sql` applied in Supabase (module visit tracking, section interactions, learning_path_progress table).
 - Admin allowlist is **`src/config/admin.ts`** (`isAdminEmail`), not only the SQL `is_admin_email` helper used for RLS elsewhere.
 
 ---
@@ -201,6 +202,33 @@ Plans are stored with `schemaVersion: "2"` in `plan_document`. Old v1 plans (no 
 ### Output Sections (9)
 
 `readinessSnapshot` → `dataInterpretation` → `priorityClusters` → `domainStudyMaps` → `vocabulary` → `casePatterns` → `weeklyStudyPlan` → `tacticalInstructions` → `checkpointLogic`
+
+---
+
+## Supabase Migrations
+
+All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
+
+| Migration | Purpose |
+|---|---|
+| `0000` – `0003` | Core tables (users, responses, assessments, study plans) |
+| `0004_assessment_reset_archive.sql` | Archive table for admin assessment resets |
+| `0005_module_interactions.sql` | `module_visit_sessions`, `section_interactions`, `learning_path_progress` — module engagement tracking with RLS |
+
+**UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
+
+---
+
+## Assessment Pathways
+
+The app supports two assessment paths. New users always get the **adaptive diagnostic**; the legacy path exists for backward compatibility.
+
+| Path | Components | Unlocks |
+|---|---|---|
+| **Adaptive diagnostic** (current) | 45–90 questions, 1 per skill + follow-ups | All practice modes + study guide |
+| **Legacy** (backward compat) | 50-question screener + 125-question full assessment | Same, but requires both steps |
+
+Unlock logic is in `App.tsx` (~lines 315–322). Both paths feed into the same `user_progress` and study plan pipeline.
 
 ---
 

@@ -42,7 +42,7 @@ Before sign-in, the public entry page leads with an outcome-first hero for Praxi
 That page also previews the signed-in practice and skill-tracking surfaces. A beta disclaimer is shown near the sign-up form: "Currently in beta. Not responsible for loss of data during the beta period."
 
 ### Step 1b: Complete Your Profile (Onboarding Wizard)
-Immediately after creating an account, new users are guided through a **4-step onboarding wizard** before reaching the main app. This is how the platform personalizes the experience from day one.
+Immediately after creating an account, new users are guided through a **3- or 4-step onboarding wizard** before reaching the main app. The step count depends on the role selected — users who choose "Other" get 3 steps (Role → Exam → Goals), while Graduate Students and Certification-Only candidates get 4 steps (Role → Pathway Details → Exam → Goals). This is how the platform personalizes the experience from day one.
 
 **Step 1 — Role**
 The user identifies which path they're on:
@@ -104,7 +104,7 @@ The adaptive diagnostic is your **baseline map**. It starts with one question pe
 
 After completing the diagnostic, you get a **Score Report** — a breakdown of which domains and skills are strong and which need work. Practice is available immediately, with no gates.
 
-> **Note:** The AI Study Guide feature is currently in development and will be available in a future release.
+> **Legacy assessment path:** The app also supports a legacy two-step assessment flow (50-question Skills Screener + 125-question Full Assessment) for users who started before the adaptive diagnostic was introduced. Both paths unlock the same features. New users always see the adaptive diagnostic.
 
 ### Step 4: Study, Practice, and Track
 From this point on, every session and every question feeds back into your profile. The system keeps learning about you as you go.
@@ -219,7 +219,7 @@ The Practice Hub offers three distinct modes. All three live under the **Practic
 ### By Domain
 Practice by Praxis section. Choose from the 4 domains and work through questions in that category. Progress bars show your percentage score per domain, color-coded (green = ≥ 80%, amber = 60–79%, red = < 60%).
 
-**Unlocks after:** completing the Skills Screener.
+**Unlocks after:** completing the adaptive diagnostic (or the legacy Skills Screener).
 
 ---
 
@@ -232,7 +232,7 @@ Practice on a specific skill — any of the 45 individual competency areas. The 
 
 **The Help drawer (Skill lesson during practice):** When a user is answering questions in By Skill mode, tapping **Help** in the session header opens the same lesson drawer. This drawer shows the full micro-lesson so users can review concept content while practicing — but does not reveal answers. Users must scroll through the lesson to find what they need.
 
-**Unlocks after:** completing both the screener and the full assessment.
+**Unlocks after:** completing the adaptive diagnostic (or the legacy screener + full assessment).
 
 ---
 
@@ -257,8 +257,13 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 
 **Section 1 — Lesson**
 - Renders the full micro-lesson content (all modules for the skill, with tab pills if multiple)
-- ⚙ placeholder for a future interactive visual/diagram component
-- 🎮 placeholder for a future interactive activity
+- **Interactive exercises** embedded within the lesson — 5 types available:
+  - *ScenarioSorter* — drag items into categorized buckets
+  - *DragToOrder* — arrange steps or concepts in the correct sequence
+  - *TermMatcher* — match terms to their definitions
+  - *ClickSelector* — identify correct items from a set
+  - *CardFlip* — spaced-repetition flashcards for key concepts
+- Each interactive reports a completion score; a badge appears on the section once finished
 - Live timer tracks time spent reading
 - "Mark Lesson Complete →" button — saves elapsed time + marks lesson as viewed in Supabase, unlocks Section 2
 
@@ -304,16 +309,16 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 
 **The Learning Path is separate from By Skill Practice.** By Skill takes users into question practice. The Learning Path takes users into lesson content with a structured 3-section completion flow. These are intentionally distinct.
 
-**Unlocks after:** completing both the screener and the full assessment.
+**Unlocks after:** completing the adaptive diagnostic (or the legacy screener + full assessment).
 
 ---
 
 ## The AI Study Guide — The Core Differentiator
 
-After completing both assessments, you can generate a **personalized study guide** written specifically about you — not a generic "how to study for Praxis 5403" template, but a document that reads your actual performance data, identifies your exact problem areas, explains why they're problems, and gives you a week-by-week action plan.
+After completing the adaptive diagnostic (or the legacy screener + full assessment), you can generate a **personalized study guide** written specifically about you — not a generic "how to study for Praxis 5403" template, but a document that reads your actual performance data, identifies your exact problem areas, explains why they're problems, and gives you a week-by-week action plan.
 
 ### Unlock Condition
-Requires: screener complete + at least one full assessment on record.
+Requires: adaptive diagnostic complete — OR — legacy screener complete + at least one full assessment on record.
 
 ### Generation Limit
 1 generation per 7 days. (Disabled during testing — see `CLAUDE.md` for the rate-limit toggle location.)
@@ -406,8 +411,12 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 |------|--------|
 | Exam domains | 4 |
 | Tracked skills | 45 |
-| Screener length | 50 questions |
-| Full assessment length | 125 questions |
+| Question bank size | ~1,150 questions |
+| Adaptive diagnostic length | 45–90 questions (adaptive follow-ups) |
+| Legacy screener length | 50 questions |
+| Legacy full assessment length | 125 questions |
+| Onboarding wizard steps | 3 or 4 (depends on role) |
+| Interactive exercise types | 5 (ScenarioSorter, DragToOrder, TermMatcher, ClickSelector, CardFlip) |
 | Skill status categories | 6 (internal AI/preprocessor labels) |
 | User-facing proficiency levels | 3 (Emerging / Approaching / Demonstrating) |
 | Learning Path status labels | 5 (not_started / emerging / approaching / demonstrating / mastered) |
@@ -416,6 +425,7 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 | Study guide tabs | 6 + side rail |
 | Readiness levels | 4 (Early / Developing / Approaching / Ready) |
 | Time between guide regenerations | 7 days (once live) |
+| Supabase migrations applied | 6 (0000–0005) |
 
 ---
 
