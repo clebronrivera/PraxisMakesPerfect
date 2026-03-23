@@ -34,9 +34,43 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-23 - Alignment report: all P1 and P2 items resolved
+
+- Status: resolved
+- Area: documentation / Cursor rules / codebase overview / question bank
+- Summary: Full codebase alignment audit (`docs/PraxisMakesPerfect_Alignment_Report_2026-03-23.docx`) identified 7 bugs and 10 action items across 3 priority tiers. Key finding: the report was working from a partially stale snapshot — several issues it flagged had already been fixed in code. Here is the item-by-item disposition:
+
+  **P1 — Critical (all resolved):**
+  - P1-1 (production build blocker): Already resolved. `ModuleSection` union includes interactive/visual variants, `InteractiveScenario` is exported, `tsc --noEmit` passes clean.
+  - P1-2 (ResultsDashboard reads `practiceHistory.length`): Already resolved. No reference to `practiceHistory` exists in codebase.
+  - P1-3 (TeachMode writes `practiceHistory`): Already resolved. No reference exists.
+  - P1-4 (useAdaptiveLearning uses `generatedQuestionsSeen` / `attemptHistory`): Already resolved. `generatedQuestionsSeen` removed. `attemptHistory` is optional with proper null guards in all consuming code.
+  - P1-5 (domain_rules.mdc references NASP 10-domain): **Fixed this session.** Rule D-01 now documents the 4-domain Praxis 5403 model with all domain names, skill counts, canonical source file, and explicit warning against NASP references.
+
+  **P2 — Before Next Sprint (all resolved):**
+  - P2-1 (cognitiveComplexity enrichment): Already complete. All 1,150/1,150 questions have `cognitive_complexity` set (376 Recall, 774 Application). All 45 skills covered. The 5 allegedly-zero-CC skills (DBD-10, ACA-09, FAM-03, DIV-01, DIV-05) all have full coverage. buildScreener() CC enforcement is functional.
+  - P2-2 (agent_protocols.mdc stale refs): **Fixed this session.** Replaced all IMPLEMENTATION_PLAN.md references with AGENTS.md + docs/. Updated P-06 to point to mistake_registry.mdc + ISSUE_LEDGER.md. Updated P-07 from NASP 10-domain to Praxis 4-domain.
+  - P2-3 (CODEBASE_OVERVIEW.md): **Fixed this session.** Added buildScreener() and buildAdaptiveDiagnostic() to §5. Removed stale practiceHistory callouts from §3.1 and §10. Marked all 3 §11 issues as resolved.
+  - P2-4 (study plan rate limit): Already active — code is uncommented and live. **Fixed CLAUDE.md** which still said it was "commented out during testing."
+  - P2-5 (deprecate old gap analysis): **Done this session.** Alignment report saved to docs/. This ledger entry serves as the disposition record.
+
+  **P3 — Nice-to-Have (still open):**
+  - Regenerate `question-skill-map.json` to cover all 1,150 questions (currently maps only the old 466).
+  - Decide multi-select question strategy: add 27 MS questions or formally retire that requirement.
+  - Populate `.cursor/rules/mistake_registry.mdc` with recurring patterns (domain-count drift, Firebase naming, ghost fields).
+  - Address health check content warnings (Generation Capacity, Distractor Audit, Blueprint Alignment).
+
+- Source of truth: `docs/PraxisMakesPerfect_Alignment_Report_2026-03-23.docx` supersedes the archived gap analysis in `archive/docs-legacy-2026-03-14/DOMAIN_COVERAGE_GAP_ANALYSIS.md`. This ledger entry supersedes the report's own status claims where the report was stale.
+- Code anchors:
+  `.cursor/rules/domain_rules.mdc`
+  `.cursor/rules/agent_protocols.mdc`
+  `CODEBASE_OVERVIEW.md`
+  `CLAUDE.md`
+- Resolution / next step: All P1 and P2 items resolved. P3 items remain as future work (low urgency).
+
 ## 2026-03-21 - Production build blocked by learning-module interactive type drift
 
-- Status: open
+- Status: resolved (confirmed 2026-03-23 — `tsc --noEmit` passes clean)
 - Area: learning modules / module lesson viewer / interactive lesson components
 - Summary: `npm run verify:health` currently fails at the production build step because the new interactive lesson rendering in `ModuleLessonViewer.tsx` expects `interactive` and `visual` section variants plus related fields (`interactiveType`, `prompt`, `scenarios`, `categories`, `pairs`, `options`, `cards`, `visualType`), but `src/data/learningModules.ts` still types `ModuleSection` as only `paragraph | anchor | comparison | list`. `ScenarioSorter.tsx` also imports an `InteractiveScenario` type that is not exported from `learningModules.ts`.
 - Source of truth: the build must pass `tsc -p tsconfig.json --noEmit` and the learning-module content model must match the UI renderer and interactive component contracts.

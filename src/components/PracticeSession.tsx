@@ -23,6 +23,8 @@ import { getSkillById, type SkillId } from '../brain/skill-map';
 import { useAuth } from '../contexts/AuthContext';
 import { incrementDailyQuestionCount } from '../hooks/useDailyQuestionCount';
 import { addDailyStudySeconds } from '../hooks/useDailyStudyTime';
+import { addTermsFromWrongAnswer } from '../services/glossaryService';
+import skillVocabMap from '../data/skill-vocabulary-map.json';
 import { SKILL_MAP } from '../brain/skill-map';
 
 // ─── Question retirement ──────────────────────────────────────────────────────
@@ -93,6 +95,10 @@ interface PracticeSessionProps {
   hideSummary?: boolean;
   /** Spicy cycle mode: cycles one question per skill through all skills in sequence. */
   spicyCycleMode?: boolean;
+  /** Called after every non-hint answer submission — used to track credits for Redemption Rounds. */
+  onAnswerSubmitted?: () => void;
+  /** Called when a non-hint answer is wrong — adds the question to the Redemption Rounds bank. */
+  onWrongAnswer?: (questionId: string, skillId: string | null) => void;
 }
 
 export default function PracticeSession({
@@ -108,6 +114,8 @@ export default function PracticeSession({
   onExitPractice,
   hideSummary = false,
   spicyCycleMode = false,
+  onAnswerSubmitted,
+  onWrongAnswer,
 }: PracticeSessionProps) {
   const engine = useEngine();
   const { logout, user } = useAuth();
@@ -469,6 +477,27 @@ export default function PracticeSession({
             setCurrentDistractorNote('This distractor could not be analyzed, but your response was recorded.');
           }
         }
+
+        // ── Glossary trigger ────────────────────────────────────────────
+        // When the student gets a question wrong, queue that skill's
+        // vocabulary terms into their personal glossary for self-study.
+        try {
+          const skillId = currentQuestion.skillId;
+          const userId = user?.id;
+          if (skillId && userId) {
+            const skillEntry = (skillVocabMap as { skills: Record<string, { vocabularyTerms: string[] }> }).skills[skillId];
+            const terms = skillEntry?.vocabularyTerms ?? [];
+            if (terms.length > 0) {
+              // Fire-and-forget; don't block the UI
+              addTermsFromWrongAnswer(userId, terms, skillId).catch((e) =>
+                console.error('[PracticeSession] glossary trigger error:', e)
+              );
+            }
+          }
+        } catch (glossaryErr) {
+          // Non-critical — never let glossary errors affect practice flow
+          console.error('[PracticeSession] glossary trigger uncaught:', glossaryErr);
+        }
       }
 
       if (savePracticeResponse) {
@@ -483,6 +512,17 @@ export default function PracticeSession({
           shuffled_order: shuffledOrder,
           consecutive_correct: newStreak,
         });
+      }
+
+      // ── Redemption Rounds integration ────────────────────────────────────
+      // Only applies to non-hint submissions (hint answers are already excluded
+      // from skill scoring and should not pollute the redemption bank either).
+      const wasHintUsedForRedemption = hintUsedIds.has(currentQuestion.id);
+      if (!wasHintUsedForRedemption) {
+        if (!isCorrect && onWrongAnswer) {
+          onWrongAnswer(currentQuestion.id, currentQuestion.skillId ?? null);
+        }
+        onAnswerSubmitted?.();
       }
 
       setQuestionHistory(prev => [...prev, currentQuestion.id]);

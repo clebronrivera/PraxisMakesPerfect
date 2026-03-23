@@ -65,7 +65,7 @@ export default function TermMatcher({
   return (
     <div className="space-y-4">
       {prompt && (
-        <p className="text-sm text-slate-300 italic">
+        <p className="text-sm text-slate-600 italic">
           {prompt}
         </p>
       )}
@@ -73,7 +73,7 @@ export default function TermMatcher({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Terms (left) */}
         <div className="space-y-3">
-          <p className="text-[10px] font-bold uppercase text-slate-500 mb-3">Terms</p>
+          <p className="text-[10px] font-bold uppercase text-slate-600 mb-3">Terms</p>
           {pairs.map((pair, termIdx) => {
             const matchedDefIdx = matches.get(termIdx);
             const matchedDef = matchedDefIdx !== undefined ? definitions[matchedDefIdx] : null;
@@ -88,26 +88,26 @@ export default function TermMatcher({
                 className={`rounded-lg border-2 border-dashed p-3 min-h-[80px] transition-colors ${
                   matchedDefIdx !== undefined
                     ? isCorrect
-                      ? 'border-emerald-500/50 bg-emerald-500/10'
-                      : 'border-amber-500/50 bg-amber-500/10'
-                    : 'border-slate-600/40 bg-slate-800/40 hover:border-cyan-500/30'
+                      ? 'border-emerald-300 bg-emerald-50'
+                      : 'border-amber-300 bg-amber-50'
+                    : 'border-slate-300 bg-slate-50 hover:border-cyan-300'
                 }`}
               >
-                <p className="font-semibold text-slate-200 mb-2">{pair.term}</p>
+                <p className="font-semibold text-slate-800 mb-2">{pair.term}</p>
                 {matchedDef ? (
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-xs text-slate-300 leading-relaxed">
+                    <p className="text-xs text-slate-700 leading-normal">
                       {matchedDef.definition}
                     </p>
                     <button
                       onClick={() => removePairing(termIdx)}
-                      className="mt-0.5 text-slate-500 hover:text-red-400 transition-colors"
+                      className="mt-0.5 text-slate-400 hover:text-rose-600 transition-colors"
                     >
                       <X className="w-3 h-3" />
                     </button>
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-500 italic">Drag definition here</p>
+                  <p className="text-xs text-slate-400 italic">Drag definition here</p>
                 )}
               </div>
             );
@@ -116,7 +116,7 @@ export default function TermMatcher({
 
         {/* Definitions (right) */}
         <div className="space-y-3">
-          <p className="text-[10px] font-bold uppercase text-slate-500 mb-3">Definitions</p>
+          <p className="text-[10px] font-bold uppercase text-slate-600 mb-3">Definitions</p>
           <div className="space-y-2 min-h-[320px]">
             {availableDefinitions.map((def) => {
               const actualIdx = definitions.indexOf(def);
@@ -127,17 +127,17 @@ export default function TermMatcher({
                   onDragStart={e => handleDragStart(e, actualIdx)}
                   className={`flex items-start gap-2.5 p-3 rounded-lg cursor-move transition-colors ${
                     draggedDefIndex === actualIdx
-                      ? 'bg-cyan-600/20 border border-cyan-500/40 opacity-75'
-                      : 'bg-slate-800/60 border border-slate-600/40 hover:border-cyan-500/30'
+                      ? 'bg-cyan-50 border border-cyan-300 opacity-75'
+                      : 'bg-white border border-slate-200 hover:border-cyan-300 shadow-sm'
                   }`}
                 >
-                  <GripVertical className="w-3.5 h-3.5 mt-0.5 text-slate-600 flex-shrink-0" />
-                  <p className="text-xs text-slate-300 leading-relaxed">{def.definition}</p>
+                  <GripVertical className="w-3.5 h-3.5 mt-0.5 text-slate-400 flex-shrink-0" />
+                  <p className="text-xs text-slate-700 leading-normal">{def.definition}</p>
                 </div>
               );
             })}
             {availableDefinitions.length === 0 && (
-              <p className="text-xs text-slate-500 italic">All definitions matched</p>
+              <p className="text-xs text-slate-400 italic">All definitions matched</p>
             )}
           </div>
         </div>
@@ -146,13 +146,13 @@ export default function TermMatcher({
       {allMatched && (
         <div className={`rounded-lg px-4 py-3 ${
           allCorrect
-            ? 'bg-emerald-500/10 border border-emerald-500/20'
-            : 'bg-amber-500/10 border border-amber-500/20'
+            ? 'bg-emerald-50 border border-emerald-200'
+            : 'bg-amber-50 border border-amber-200'
         }`}>
           <p className={`text-sm font-semibold ${
-            allCorrect ? 'text-emerald-300' : 'text-amber-300'
+            allCorrect ? 'text-emerald-700' : 'text-amber-700'
           }`}>
-            {allCorrect ? '✓ Perfect match!' : `${correctMatches}/${pairs.length} correct`}
+            {allCorrect ? '✓ Perfect match!' : `${correctMatches}/${pairs.length} correct — remove and retry the incorrect ones`}
           </p>
         </div>
       )}
@@ -163,8 +163,8 @@ export default function TermMatcher({
           disabled={!allMatched}
           className={`w-full py-2 rounded-lg font-semibold text-sm transition-colors ${
             allMatched
-              ? 'bg-cyan-600/20 border border-cyan-500/40 hover:bg-cyan-600/30 text-cyan-300'
-              : 'bg-slate-800/40 border border-slate-700/40 text-slate-500 cursor-not-allowed'
+              ? 'bg-cyan-600 hover:bg-cyan-700 text-white border border-transparent'
+              : 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed'
           }`}
         >
           Complete activity

@@ -60,7 +60,7 @@ export default function ModuleSnippetCard({
             <BookOpen className="h-4 w-4 flex-shrink-0 text-sky-600" />
           )}
           <span
-            className={`text-xs font-black uppercase tracking-[0.18em] ${
+            className={`text-xs font-black uppercase tracking-[0.1em] ${
               isHint ? 'text-amber-700' : 'text-sky-700'
             }`}
           >

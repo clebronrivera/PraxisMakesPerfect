@@ -89,6 +89,11 @@ export interface UserProfile {
   usedOtherResources?: boolean;
   otherResourcesList?: string[];
   whatWasMissing?: string;
+
+  // Redemption Rounds
+  redemptionCredits?: number;
+  practiceQuestionsSinceCredit?: number;
+  redemptionHighScore?: number;
 }
 
 export interface ResponseLog {
@@ -136,7 +141,10 @@ const defaultProfile: UserProfile = {
   screenerComplete: false,
   diagnosticComplete: false,
   onboardingComplete: false,
-  studyGoals: []
+  studyGoals: [],
+  redemptionCredits: 0,
+  practiceQuestionsSinceCredit: 0,
+  redemptionHighScore: 0,
 };
 
 export function useFirebaseProgress() {
@@ -282,6 +290,11 @@ export function useFirebaseProgress() {
           usedOtherResources: data.used_other_resources ?? undefined,
           otherResourcesList: data.other_resources_list ?? [],
           whatWasMissing: data.what_was_missing ?? undefined,
+
+          // Redemption Rounds
+          redemptionCredits: data.redemption_credits ?? 0,
+          practiceQuestionsSinceCredit: data.practice_questions_since_credit ?? 0,
+          redemptionHighScore: data.redemption_high_score ?? 0,
         });
       } else {
         setProfileState(defaultProfile);
@@ -331,7 +344,12 @@ export function useFirebaseProgress() {
         streak: newProfile.streak,
         last_session: newProfile.lastSession,
         migration_version: newProfile.migrationVersion,
-        
+
+        // Redemption Rounds
+        redemption_credits: newProfile.redemptionCredits ?? 0,
+        practice_questions_since_credit: newProfile.practiceQuestionsSinceCredit ?? 0,
+        redemption_high_score: newProfile.redemptionHighScore ?? 0,
+
         updated_at: new Date().toISOString()
       };
 

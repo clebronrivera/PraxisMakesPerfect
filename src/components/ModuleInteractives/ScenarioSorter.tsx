@@ -55,35 +55,35 @@ export default function ScenarioSorter({
 
   const getCategoryColor = (category: string) => {
     if (category.includes('GREEN') || category.includes('YES') || category.includes('ENDORSED')) {
-      return 'bg-emerald-500/10 border-emerald-500/20';
+      return 'bg-emerald-50 border-emerald-200';
     }
     if (category.includes('RED') || category.includes('NO') || category.includes('NOT')) {
-      return 'bg-red-500/10 border-red-500/20';
+      return 'bg-rose-50 border-rose-200';
     }
-    return 'bg-blue-500/10 border-blue-500/20';
+    return 'bg-blue-50 border-blue-200';
   };
 
   const getCategoryBadgeColor = (category: string) => {
     if (category.includes('GREEN') || category.includes('YES') || category.includes('ENDORSED')) {
-      return 'bg-emerald-500/20 text-emerald-300';
+      return 'bg-emerald-100 text-emerald-700';
     }
     if (category.includes('RED') || category.includes('NO') || category.includes('NOT')) {
-      return 'bg-red-500/20 text-red-300';
+      return 'bg-rose-100 text-rose-700';
     }
-    return 'bg-blue-500/20 text-blue-300';
+    return 'bg-blue-100 text-blue-700';
   };
 
   return (
     <div className="space-y-4">
       {prompt && (
-        <p className="text-sm text-slate-300 italic">
+        <p className="text-sm text-slate-600 italic">
           {prompt}
         </p>
       )}
 
       {/* Unassigned scenarios */}
-      <div className="rounded-xl border border-slate-600/30 bg-slate-900/20 p-4">
-        <p className="text-[10px] font-bold uppercase text-slate-500 mb-3">
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <p className="text-[10px] font-bold uppercase text-slate-600 mb-3">
           Scenarios to sort
         </p>
         <div className="space-y-2 min-h-[80px]">
@@ -95,10 +95,10 @@ export default function ScenarioSorter({
                 key={scenario.id}
                 draggable
                 onDragStart={e => handleDragStart(e, scenario.id)}
-                className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/60 border border-slate-600/40 hover:border-cyan-500/30 cursor-move transition-colors"
+                className="flex items-start gap-3 p-3 rounded-lg bg-white border border-slate-200 hover:border-cyan-300 cursor-move transition-colors shadow-sm"
               >
-                <GripVertical className="w-4 h-4 mt-0.5 text-slate-500 shrink-0" />
-                <span className="text-sm text-slate-300">{scenario.text}</span>
+                <GripVertical className="w-4 h-4 mt-0.5 text-slate-400 shrink-0" />
+                <span className="text-sm text-slate-700">{scenario.text}</span>
               </div>
             ))
           )}
@@ -120,14 +120,14 @@ export default function ScenarioSorter({
 
             <div className="space-y-2 min-h-[120px]">
               {categorization[category].length === 0 ? (
-                <p className="text-xs text-slate-500 italic">Drag scenarios here</p>
+                <p className="text-xs text-slate-400 italic">Drag scenarios here</p>
               ) : (
                 categorization[category].map(scenarioId => {
                   const scenario = scenarios.find(s => s.id === scenarioId);
                   return scenario ? (
                     <div
                       key={scenarioId}
-                      className="p-3 rounded-lg bg-slate-800/60 border border-slate-600/40 text-sm text-slate-300"
+                      className="p-3 rounded-lg bg-white border border-slate-200 text-sm text-slate-700 shadow-sm"
                     >
                       {scenario.text}
                     </div>
@@ -142,7 +142,7 @@ export default function ScenarioSorter({
       {onComplete && unassignedScenarios.length === 0 && (
         <button
           onClick={() => onComplete(categorization)}
-          className="w-full py-2 rounded-lg bg-cyan-600/20 border border-cyan-500/40 hover:bg-cyan-600/30 text-cyan-300 text-sm font-semibold transition-colors"
+          className="w-full py-2 rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition-colors border border-transparent"
         >
           Complete activity
         </button>

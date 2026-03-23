@@ -151,15 +151,37 @@ export default function AdminDashboard({
 
     setIsRefreshing(true);
     try {
-      const [{ data: usersData, error: usersError }, allReports, allFeedback] = await Promise.all([
-        supabase.from('user_progress').select('*'),
+      // Fetch users via admin API (bypasses RLS — anon key only sees own row)
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+
+      let usersData: any[] = [];
+      if (token) {
+        try {
+          const res = await fetch('/api/admin-list-users', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const body = await res.json();
+            usersData = body.users || [];
+          } else {
+            console.warn('[AdminDashboard] admin-list-users returned', res.status, '— falling back to client query');
+            const { data } = await supabase.from('user_progress').select('*');
+            usersData = data || [];
+          }
+        } catch {
+          // Fallback for local dev without Netlify functions
+          const { data } = await supabase.from('user_progress').select('*');
+          usersData = data || [];
+        }
+      }
+
+      const [allReports, allFeedback] = await Promise.all([
         getAllReports(),
         getAllFeedback()
       ]);
 
-      if (usersError) throw usersError;
-
-      const allUsers: UserAnalyticsDoc[] = (usersData || []).map(row => ({
+      const allUsers: UserAnalyticsDoc[] = (usersData || []).map((row: any) => ({
         id: row.user_id,
         totalQuestionsSeen: row.total_questions_seen,
         practiceResponseCount: row.practice_response_count,
@@ -241,6 +263,62 @@ export default function AdminDashboard({
         setResetNotice({
           tone: 'ok',
           text: `Reset complete — removed ${body.deletedResponseCount ?? 0} response row(s); aggregates rebuilt from remaining data.`
+        });
+        await loadAdminData();
+      } catch (err) {
+        setResetNotice({
+          tone: 'err',
+          text: err instanceof Error ? err.message : String(err)
+        });
+      } finally {
+        setResettingUserId(null);
+      }
+    },
+    [loadAdminData]
+  );
+
+  const runDeleteUser = useCallback(
+    async (targetUserId: string, userLabel: string) => {
+      if (
+        !window.confirm(
+          `DELETE ALL DATA for "${userLabel}"?\n\nThis removes responses, progress, study plans, module tracking, feedback, and reports. The auth account will remain (delete it from Supabase Dashboard).\n\nThis cannot be undone.`
+        )
+      ) {
+        return;
+      }
+
+      setResetNotice(null);
+      setResettingUserId(targetUserId);
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) {
+          setResetNotice({ tone: 'err', text: 'No active session — sign in again.' });
+          return;
+        }
+
+        const res = await fetch('/api/admin-delete-user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ targetUserId })
+        });
+
+        const body = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          totalDeletedRows?: number;
+          note?: string;
+        };
+
+        if (!res.ok) {
+          throw new Error(body.error || res.statusText || 'Request failed');
+        }
+
+        setResetNotice({
+          tone: 'ok',
+          text: `Deleted ${body.totalDeletedRows ?? 0} row(s) across all tables. ${body.note ?? ''}`
         });
         await loadAdminData();
       } catch (err) {
@@ -364,15 +442,15 @@ export default function AdminDashboard({
 
   if (!user || !isAdminEmail(user.email)) {
     return (
-      <div className="rounded-3xl border border-red-500/30 bg-red-500/10 p-8 text-center">
-        <Shield className="mx-auto mb-3 h-10 w-10 text-red-300" />
-        <h2 className="text-2xl font-semibold text-red-100">Admin access required</h2>
-        <p className="mt-2 text-sm text-red-100/80">
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center">
+        <Shield className="mx-auto mb-3 h-10 w-10 text-rose-500" />
+        <h2 className="text-2xl font-semibold text-rose-800">Admin access required</h2>
+        <p className="mt-2 text-sm text-rose-700">
           This page is restricted to the configured admin account.
         </p>
         <button
           onClick={onExit}
-          className="mt-6 inline-flex items-center gap-2 rounded-xl border border-red-400/30 px-4 py-2 text-sm text-red-100 transition-colors hover:bg-red-500/10"
+          className="mt-6 inline-flex items-center gap-2 rounded-xl border border-rose-300 px-4 py-2 text-sm text-rose-700 transition-colors hover:bg-rose-100"
         >
           <ArrowLeft className="h-4 w-4" />
           {returnLabel}
@@ -383,13 +461,13 @@ export default function AdminDashboard({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-3xl border border-slate-700 bg-slate-900/70 p-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="editorial-surface flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <div className="flex items-center gap-3 text-cyan-300">
+          <div className="flex items-center gap-3 text-amber-700">
             <Shield className="h-8 w-8" />
-            <h2 className="text-2xl font-bold text-slate-100">Beta Admin Dashboard</h2>
+            <h2 className="text-2xl font-bold text-slate-900">Beta Admin Dashboard</h2>
           </div>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-slate-500">
             Monitor beta usage, review tester feedback, and triage question issues from one place.
           </p>
         </div>
@@ -397,14 +475,14 @@ export default function AdminDashboard({
         <div className="flex gap-3">
           <button
             onClick={loadAdminData}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-slate-700"
+            className="editorial-button-secondary inline-flex items-center gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
           </button>
           <button
             onClick={onExit}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800"
+            className="editorial-button-secondary inline-flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
             {returnLabel}
@@ -412,30 +490,30 @@ export default function AdminDashboard({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/10 p-5">
+      <div className="editorial-surface-soft rounded-2xl border border-amber-200 bg-amber-50 p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">Testing Shortcuts</p>
-            <p className="mt-2 text-sm text-cyan-50/80">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-700">Testing Shortcuts</p>
+            <p className="mt-2 text-sm text-slate-600">
               Jump back into the app instantly while staying signed in as admin.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={onGoHome}
-              className="rounded-xl bg-slate-950/70 px-4 py-2 text-sm font-medium text-slate-100 transition-colors hover:bg-slate-800"
+              className="editorial-button-secondary"
             >
               Home
             </button>
             <button
               onClick={onStartPractice}
-              className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-medium text-slate-950 transition-colors hover:bg-cyan-300"
+              className="editorial-button-primary"
             >
               Test Practice
             </button>
             <button
               onClick={onGoTeach}
-              className="rounded-xl bg-slate-950/70 px-4 py-2 text-sm font-medium text-slate-100 transition-colors hover:bg-slate-800"
+              className="editorial-button-secondary"
             >
               Teach Mode
             </button>
@@ -443,7 +521,7 @@ export default function AdminDashboard({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 border-b border-slate-800 pb-3">
+      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
         {([
           ['overview', 'Overview'],
           ['audit', 'Audit'],
@@ -454,10 +532,10 @@ export default function AdminDashboard({
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
               activeTab === tab
-                ? 'bg-cyan-500 text-slate-950'
-                : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                ? 'bg-amber-500 text-slate-900 shadow-md'
+                : 'border border-slate-200 bg-white text-slate-500 hover:border-amber-200 hover:text-slate-700'
             }`}
           >
             {label}
@@ -466,9 +544,9 @@ export default function AdminDashboard({
       </div>
 
       {isLoading ? (
-        <div className="rounded-3xl border border-slate-700 bg-slate-900/60 p-10 text-center">
-          <RefreshCw className="mx-auto mb-3 h-8 w-8 animate-spin text-cyan-300" />
-          <p className="text-slate-300">Loading admin data...</p>
+        <div className="editorial-surface p-10 text-center">
+          <RefreshCw className="mx-auto mb-3 h-8 w-8 animate-spin text-amber-500" />
+          <p className="text-slate-500">Loading admin data...</p>
         </div>
       ) : (
         <>
@@ -502,8 +580,8 @@ export default function AdminDashboard({
               </div>
 
               <div className="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">
-                <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
-                  <h3 className="mb-4 text-lg font-semibold text-slate-100">Adoption Snapshot</h3>
+                <section className="editorial-surface p-6">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900">Adoption Snapshot</h3>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <StatLine label="Completed screener" value={overview.screenerUsers} />
                     <StatLine label="Reached assessment beyond screener" value={overview.assessmentUsers} />
@@ -514,17 +592,17 @@ export default function AdminDashboard({
                   </div>
                 </section>
 
-                <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
-                  <h3 className="mb-4 text-lg font-semibold text-slate-100">Recent Activity</h3>
+                <section className="editorial-surface p-6">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900">Recent Activity</h3>
                   <div className="space-y-3">
                     {recentUsers.length === 0 && (
                       <p className="text-sm text-slate-500">No users found yet.</p>
                     )}
                     {recentUsers.map((entry) => (
-                      <div key={entry.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                      <div key={entry.id} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] p-4">
                         <div className="flex items-center justify-between gap-3">
                           <div>
-                            <p className="font-medium text-slate-100">
+                            <p className="font-medium text-slate-900">
                               {entry.authMetrics?.displayName || entry.authMetrics?.email || entry.id}
                             </p>
                             <p className="text-sm text-slate-500">
@@ -544,7 +622,7 @@ export default function AdminDashboard({
 
               <div className="grid gap-6 lg:grid-cols-2">
                 <QueuePanel
-                  icon={<MessageSquare className="h-5 w-5 text-cyan-300" />}
+                  icon={<MessageSquare className="h-5 w-5 text-amber-700" />}
                   title="Latest Beta Feedback"
                   items={recentFeedback.map((item) => ({
                     id: item.id || item.userId,
@@ -555,7 +633,7 @@ export default function AdminDashboard({
                   emptyLabel="No beta feedback yet."
                 />
                 <QueuePanel
-                  icon={<ClipboardList className="h-5 w-5 text-amber-300" />}
+                  icon={<ClipboardList className="h-5 w-5 text-amber-700" />}
                   title="Latest Question Reports"
                   items={recentReports.map((item) => ({
                     id: item.id || item.questionId,
@@ -572,21 +650,21 @@ export default function AdminDashboard({
           {activeTab === 'audit' && (
             auditBundle ? (
               <div className="space-y-6">
-                <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+                <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Feedback Audit</p>
-                      <p className="mt-2 text-sm text-emerald-50/80">
+                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Feedback Audit</p>
+                      <p className="mt-2 text-sm text-emerald-700">
                         Consolidates live `question_reports`, `beta_feedback`, and Teach Mode `flagged_questions` into one audit view with snapshot comparison against the current bundled question bank.
                       </p>
-                      <p className="mt-2 text-xs text-emerald-100/70">
+                      <p className="mt-2 text-xs text-emerald-600">
                         Generated: {formatDate(auditBundle.generatedAt)} • Window: {auditBundle.auditWindow.firstSeenAt ? formatDate(auditBundle.auditWindow.firstSeenAt) : 'Unknown'} to {auditBundle.auditWindow.lastSeenAt ? formatDate(auditBundle.auditWindow.lastSeenAt) : 'Unknown'}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-3">
                       <button
                         onClick={() => downloadBlob(`feedback-audit-${auditBundle.generatedAt}.json`, JSON.stringify(auditBundle, null, 2), 'application/json')}
-                        className="inline-flex items-center gap-2 rounded-xl bg-slate-950/70 px-4 py-2 text-sm font-medium text-slate-100 transition-colors hover:bg-slate-800"
+                        className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
                       >
                         <Download className="h-4 w-4" />
                         Download JSON
@@ -600,7 +678,7 @@ export default function AdminDashboard({
                       </button>
                       <button
                         onClick={() => downloadBlob(`feedback-audit-summary-${auditBundle.generatedAt}.md`, buildAuditSummaryMarkdown(auditBundle), 'text/markdown;charset=utf-8')}
-                        className="inline-flex items-center gap-2 rounded-xl bg-slate-950/70 px-4 py-2 text-sm font-medium text-slate-100 transition-colors hover:bg-slate-800"
+                        className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
                       >
                         <Download className="h-4 w-4" />
                         Download Summary
@@ -637,14 +715,14 @@ export default function AdminDashboard({
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-2">
-                  <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
-                    <h3 className="mb-4 text-lg font-semibold text-slate-100">Top Themes</h3>
+                  <section className="editorial-surface p-6">
+                    <h3 className="mb-4 text-lg font-semibold text-slate-900">Top Themes</h3>
                     <div className="space-y-3">
                       {auditBundle.summary.topThemes.map((theme) => (
-                        <div key={theme.bucket} className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        <div key={theme.bucket} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] px-4 py-3">
                           <div className="flex items-center justify-between gap-3">
-                            <p className="text-sm text-slate-200">{theme.bucket}</p>
-                            <span className="text-sm font-semibold text-cyan-300">{theme.count}</span>
+                            <p className="text-sm text-slate-800">{theme.bucket}</p>
+                            <span className="text-sm font-semibold text-amber-700">{theme.count}</span>
                           </div>
                         </div>
                       ))}
@@ -654,14 +732,14 @@ export default function AdminDashboard({
                     </div>
                   </section>
 
-                  <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
-                    <h3 className="mb-4 text-lg font-semibold text-slate-100">Top Recurring Questions</h3>
+                  <section className="editorial-surface p-6">
+                    <h3 className="mb-4 text-lg font-semibold text-slate-900">Top Recurring Questions</h3>
                     <div className="space-y-3">
                       {auditBundle.summary.topRecurringQuestions.map((item) => (
-                        <div key={item.questionId} className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        <div key={item.questionId} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] px-4 py-3">
                           <div className="flex items-center justify-between gap-3">
-                            <p className="font-medium text-slate-100">{item.questionId}</p>
-                            <span className="text-sm font-semibold text-amber-300">{item.count}</span>
+                            <p className="font-medium text-slate-900">{item.questionId}</p>
+                            <span className="text-sm font-semibold text-amber-700">{item.count}</span>
                           </div>
                         </div>
                       ))}
@@ -685,11 +763,11 @@ export default function AdminDashboard({
                   />
                 </div>
 
-                <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
-                  <h3 className="mb-4 text-lg font-semibold text-slate-100">Instrumentation Gaps</h3>
+                <section className="editorial-surface p-6">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900">Instrumentation Gaps</h3>
                   <div className="space-y-3">
                     {auditBundle.summary.instrumentationGaps.map((gap) => (
-                      <div key={gap} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm text-slate-300">
+                      <div key={gap} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] p-4 text-sm text-slate-700">
                         {gap}
                       </div>
                     ))}
@@ -699,16 +777,16 @@ export default function AdminDashboard({
                   </div>
                 </section>
 
-                <section className="rounded-3xl border border-slate-700 bg-slate-900/60">
-                  <div className="border-b border-slate-800 px-6 py-4">
-                    <h3 className="text-lg font-semibold text-slate-100">Row-Level Audit Table</h3>
+                <section className="editorial-surface">
+                  <div className="border-b border-slate-200 px-6 py-4">
+                    <h3 className="text-lg font-semibold text-slate-900">Row-Level Audit Table</h3>
                     <p className="text-sm text-slate-400">
                       One row per consolidated issue cluster. Use the CSV export for spreadsheet work.
                     </p>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-slate-800 text-left">
-                      <thead className="bg-slate-950/70 text-xs uppercase tracking-wide text-slate-500">
+                    <table className="min-w-full divide-y divide-slate-200 text-left">
+                      <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                         <tr>
                           <th className="px-6 py-4">Issue</th>
                           <th className="px-6 py-4">Bucket</th>
@@ -717,17 +795,17 @@ export default function AdminDashboard({
                           <th className="px-6 py-4">Signals</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800/70 text-sm">
+                      <tbody className="divide-y divide-slate-200/70 text-sm">
                         {auditBundle.consolidatedIssues.map((issue) => (
-                          <tr key={issue.issueId} className="align-top text-slate-300">
+                          <tr key={issue.issueId} className="align-top text-slate-700">
                             <td className="px-6 py-4">
-                              <p className="font-medium text-slate-100">{issue.questionId || issue.issueId}</p>
+                              <p className="font-medium text-slate-900">{issue.questionId || issue.issueId}</p>
                               <p className="mt-1 text-xs text-slate-500">
                                 {issue.sourceTypes.join(', ')}
                                 {issue.displayAssessmentTypes.length > 0 && ` • ${issue.displayAssessmentTypes.join(', ')}`}
                               </p>
                               {issue.representativeNotes.length > 0 && (
-                                <p className="mt-2 text-slate-300">{issue.representativeNotes[0]}</p>
+                                <p className="mt-2 text-slate-700">{issue.representativeNotes[0]}</p>
                               )}
                             </td>
                             <td className="px-6 py-4">
@@ -738,7 +816,7 @@ export default function AdminDashboard({
                                 )}
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-slate-200">
+                            <td className="px-6 py-4 text-slate-800">
                               <p>{issue.reportCount} records</p>
                               <p className="text-slate-500">{issue.uniqueReporterCount} reporters</p>
                               <p className="mt-2 text-xs text-slate-500">
@@ -756,9 +834,9 @@ export default function AdminDashboard({
                                       ? 'neutral'
                                       : 'warn'}
                               />
-                              <p className="mt-3 text-sm text-slate-300">{issue.verificationReason}</p>
+                              <p className="mt-3 text-sm text-slate-700">{issue.verificationReason}</p>
                             </td>
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-slate-700">
                               <p>Snapshot changed: {issue.snapshotChanged ? 'Yes' : 'No'}</p>
                               <p>Current question: {issue.currentQuestionExists ? 'Present' : 'Missing'}</p>
                               {issue.changedFields.length > 0 && (
@@ -783,9 +861,9 @@ export default function AdminDashboard({
                 </section>
               </div>
             ) : (
-              <div className="rounded-3xl border border-slate-700 bg-slate-900/60 p-10 text-center">
-                <RefreshCw className={`mx-auto mb-3 h-8 w-8 text-cyan-300 ${isAuditLoading ? 'animate-spin' : ''}`} />
-                <p className="text-slate-300">
+              <div className="editorial-surface p-10 text-center">
+                <RefreshCw className={`mx-auto mb-3 h-8 w-8 text-amber-700 ${isAuditLoading ? 'animate-spin' : ''}`} />
+                <p className="text-slate-700">
                   {isAuditLoading ? 'Building audit from live feedback and the bundled question bank...' : 'Audit data is unavailable right now.'}
                 </p>
               </div>
@@ -802,18 +880,18 @@ export default function AdminDashboard({
                 />
               )}
               {feedback.map((item) => (
-                <div key={item.id} className="rounded-3xl border border-slate-700 bg-slate-900/60 p-5">
+                <div key={item.id} className="editorial-surface p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-cyan-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cyan-300">
+                        <span className="rounded-full bg-cyan-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
                           {item.category}
                         </span>
-                        <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">
                           {item.contextType}
                         </span>
                         {item.featureArea && (
-                          <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">
                             {item.featureArea}
                           </span>
                         )}
@@ -821,7 +899,7 @@ export default function AdminDashboard({
                       <p className="text-sm text-slate-400">
                         {item.userDisplayName || item.userEmail || item.userId} • {formatDate(item.createdAt)}
                       </p>
-                      <p className="text-slate-100">{item.message}</p>
+                      <p className="text-slate-900">{item.message}</p>
                       {item.page && (
                         <p className="text-sm text-slate-500">Page: {item.page}</p>
                       )}
@@ -833,7 +911,7 @@ export default function AdminDashboard({
                         <select
                           value={item.status}
                           onChange={(event) => handleFeedbackStatusChange(item.id!, event.target.value as BetaFeedbackStatus)}
-                          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none focus:border-cyan-400/60"
+                          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-amber-300"
                         >
                           {FEEDBACK_STATUS_OPTIONS.map((status) => (
                             <option key={status} value={status}>
@@ -859,40 +937,40 @@ export default function AdminDashboard({
                 />
               )}
               {reports.map((item) => (
-                <div key={item.id} className="rounded-3xl border border-slate-700 bg-slate-900/60 p-5">
+                <div key={item.id} className="editorial-surface p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
                           item.severity === 'critical'
-                            ? 'bg-red-500/15 text-red-300'
+                            ? 'bg-rose-50 text-rose-700'
                             : item.severity === 'major'
-                              ? 'bg-amber-500/15 text-amber-300'
-                              : 'bg-slate-800 text-slate-300'
+                              ? 'bg-amber-500/15 text-amber-700'
+                              : 'bg-slate-100 text-slate-700'
                         }`}>
                           {item.severity}
                         </span>
-                        <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">
                           {item.assessmentType}
                         </span>
-                        <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">
                           {item.questionId}
                         </span>
                       </div>
                       <p className="text-sm text-slate-400">
                         {item.userDisplayName || item.userEmail || item.userId} • {formatDate(item.createdAt)}
                       </p>
-                      <p className="text-sm text-slate-300">
+                      <p className="text-sm text-slate-700">
                         Targets: {item.targets.join(', ')}
                       </p>
-                      <p className="text-sm text-slate-300">
+                      <p className="text-sm text-slate-700">
                         Issue types: {item.issueTypes.join(', ')}
                       </p>
                       {item.notes && (
-                        <p className="text-slate-100">{item.notes}</p>
+                        <p className="text-slate-900">{item.notes}</p>
                       )}
                       {item.questionSnapshot?.stem && (
-                        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                        <div className="rounded-2xl border border-slate-200 bg-[#fbfaf7] p-4">
                           <p className="line-clamp-3 text-sm text-slate-400">
                             {item.questionSnapshot.stem}
                           </p>
@@ -906,7 +984,7 @@ export default function AdminDashboard({
                         <select
                           value={item.status}
                           onChange={(event) => handleReportStatusChange(item.id!, event.target.value as QuestionReport['status'])}
-                          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none focus:border-amber-400/60"
+                          className="mt-2 w-full rounded-xl border border-slate-700 bg-white px-3 py-2 text-slate-900 outline-none focus:border-amber-300"
                         >
                           {REPORT_STATUS_OPTIONS.map((status) => (
                             <option key={status} value={status}>
@@ -923,19 +1001,19 @@ export default function AdminDashboard({
           )}
 
           {activeTab === 'users' && (
-            <div className="rounded-3xl border border-slate-700 bg-slate-900/60">
-              <div className="border-b border-slate-800 px-6 py-4">
-                <h3 className="text-lg font-semibold text-slate-100">User Usage</h3>
+            <div className="editorial-surface">
+              <div className="border-b border-slate-200 px-6 py-4">
+                <h3 className="text-lg font-semibold text-slate-900">User Usage</h3>
                 <p className="text-sm text-slate-400">
                   Login counts are tracked as authenticated app sessions for beta analytics. Use the actions column to
                   archive and clear screener or full/diagnostic data for a learner (requires{' '}
-                  <code className="rounded bg-slate-800 px-1 text-xs text-cyan-200">SUPABASE_SERVICE_ROLE_KEY</code> on
+                  <code className="rounded bg-slate-100 px-1 text-xs text-amber-600">SUPABASE_SERVICE_ROLE_KEY</code> on
                   Netlify for the admin-reset API).
                 </p>
                 {resetNotice && (
                   <p
                     className={`mt-3 text-sm ${
-                      resetNotice.tone === 'ok' ? 'text-emerald-300' : 'text-red-300'
+                      resetNotice.tone === 'ok' ? 'text-emerald-700' : 'text-rose-600'
                     }`}
                   >
                     {resetNotice.text}
@@ -943,8 +1021,8 @@ export default function AdminDashboard({
                 )}
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-800 text-left">
-                  <thead className="bg-slate-950/70 text-xs uppercase tracking-wide text-slate-500">
+                <table className="min-w-full divide-y divide-slate-200 text-left">
+                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>
                       <th className="px-6 py-4">User</th>
                       <th className="px-6 py-4">Created</th>
@@ -955,11 +1033,11 @@ export default function AdminDashboard({
                       <th className="px-6 py-4">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/70 text-sm">
+                  <tbody className="divide-y divide-slate-200/70 text-sm">
                     {users.map((entry) => (
-                      <tr key={entry.id} className="align-top text-slate-300">
+                      <tr key={entry.id} className="align-top text-slate-700">
                         <td className="px-6 py-4">
-                          <p className="font-medium text-slate-100">
+                          <p className="font-medium text-slate-900">
                             {entry.authMetrics?.displayName || entry.authMetrics?.email || entry.id}
                           </p>
                           <p className="text-slate-500">
@@ -969,26 +1047,26 @@ export default function AdminDashboard({
                         </td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.createdAt || entry.lastUpdated)}</td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.lastLoginAt || entry.lastUpdated)}</td>
-                        <td className="px-6 py-4 text-slate-100">{entry.authMetrics?.loginCount ?? 0}</td>
-                        <td className="px-6 py-4 text-slate-100">{entry.totalQuestionsSeen ?? 0}</td>
+                        <td className="px-6 py-4 text-slate-900">{entry.authMetrics?.loginCount ?? 0}</td>
+                        <td className="px-6 py-4 text-slate-900">{entry.totalQuestionsSeen ?? 0}</td>
                         <td className="px-6 py-4">
                           <div className="flex flex-wrap gap-2">
                             {entry.screenerComplete && (
-                              <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs text-blue-300">Screener</span>
+                              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs text-blue-700">Screener</span>
                             )}
                             {entry.fullAssessmentComplete && (
-                              <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300">Full assessment</span>
+                              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs text-emerald-700">Full assessment</span>
                             )}
                             {entry.diagnosticComplete && !entry.fullAssessmentComplete && (
-                              <span className="rounded-full bg-teal-500/15 px-3 py-1 text-xs text-teal-300">Archived assessment</span>
+                              <span className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-700">Archived assessment</span>
                             )}
                             {(entry.practiceResponseCount ?? 0) > 0 && (
-                              <span className="rounded-full bg-amber-500/15 px-3 py-1 text-xs text-amber-300">
+                              <span className="rounded-full bg-amber-50 px-3 py-1 text-xs text-amber-700">
                                 Practice {entry.practiceResponseCount}
                               </span>
                             )}
                             {!entry.screenerComplete && !entry.diagnosticComplete && !entry.fullAssessmentComplete && (entry.practiceResponseCount ?? 0) === 0 && (
-                              <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-400">Not started</span>
+                              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-400">Not started</span>
                             )}
                           </div>
                         </td>
@@ -998,7 +1076,7 @@ export default function AdminDashboard({
                               type="button"
                               disabled={resettingUserId === entry.id}
                               onClick={() => void runAssessmentReset(entry.id, 'screener')}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-blue-500/40 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-200 hover:bg-blue-500/20 disabled:opacity-50"
+                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
                               Reset screener
@@ -1007,11 +1085,25 @@ export default function AdminDashboard({
                               type="button"
                               disabled={resettingUserId === entry.id}
                               onClick={() => void runAssessmentReset(entry.id, 'full_diagnostic')}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-500/20 disabled:opacity-50"
+                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
                               Reset full / diagnostic
                             </button>
+                            <div className="mt-2 border-t border-slate-200 pt-2">
+                              <button
+                                type="button"
+                                disabled={resettingUserId === entry.id}
+                                onClick={() => void runDeleteUser(
+                                  entry.id,
+                                  entry.authMetrics?.email || entry.authMetrics?.displayName || entry.id
+                                )}
+                                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-50"
+                              >
+                                <AlertTriangle className="h-3.5 w-3.5" />
+                                Delete all data
+                              </button>
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -1039,12 +1131,12 @@ function MetricCard({
   detail: string;
 }) {
   return (
-    <div className="rounded-3xl border border-slate-700 bg-slate-900/60 p-5">
+    <div className="editorial-surface p-5">
       <div className="mb-4 flex items-center justify-between">
-        <span className="rounded-2xl bg-slate-800 p-3 text-cyan-300">{icon}</span>
-        <p className="text-3xl font-bold text-slate-100">{value}</p>
+        <span className="rounded-2xl bg-slate-100 p-3 text-amber-700">{icon}</span>
+        <p className="text-3xl font-bold text-slate-900">{value}</p>
       </div>
-      <p className="text-sm font-medium text-slate-300">{label}</p>
+      <p className="text-sm font-medium text-slate-700">{label}</p>
       <p className="mt-1 text-sm text-slate-500">{detail}</p>
     </div>
   );
@@ -1052,9 +1144,9 @@ function MetricCard({
 
 function StatLine({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+    <div className="rounded-2xl border border-slate-200 bg-[#fbfaf7] px-4 py-3">
       <p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-slate-100">{value}</p>
+      <p className="mt-2 text-2xl font-semibold text-slate-900">{value}</p>
     </div>
   );
 }
@@ -1071,23 +1163,23 @@ function QueuePanel({
   emptyLabel: string;
 }) {
   return (
-    <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
+    <section className="editorial-surface p-6">
       <div className="mb-4 flex items-center gap-3">
         {icon}
-        <h3 className="text-lg font-semibold text-slate-100">{title}</h3>
+        <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
       </div>
       <div className="space-y-3">
         {items.length === 0 && (
           <p className="text-sm text-slate-500">{emptyLabel}</p>
         )}
         {items.map((item) => (
-          <div key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+          <div key={item.id} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] p-4">
             <div className="flex items-start justify-between gap-3">
-              <p className="font-medium text-slate-100">{item.title}</p>
+              <p className="font-medium text-slate-900">{item.title}</p>
               <CheckCircle2 className="mt-0.5 h-4 w-4 text-slate-600" />
             </div>
             <p className="mt-1 text-xs text-slate-500">{item.meta}</p>
-            <p className="mt-3 line-clamp-3 text-sm text-slate-300">{item.body}</p>
+            <p className="mt-3 line-clamp-3 text-sm text-slate-700">{item.body}</p>
           </div>
         ))}
       </div>
@@ -1103,11 +1195,11 @@ function DecisionPill({
   tone: 'info' | 'success' | 'warn' | 'danger' | 'neutral';
 }) {
   const styles = {
-    info: 'bg-cyan-500/15 text-cyan-300',
-    success: 'bg-emerald-500/15 text-emerald-300',
-    warn: 'bg-amber-500/15 text-amber-300',
-    danger: 'bg-red-500/15 text-red-300',
-    neutral: 'bg-slate-800 text-slate-300'
+    info: 'bg-amber-100 text-amber-700',
+    success: 'bg-emerald-50 text-emerald-700',
+    warn: 'bg-amber-50 text-amber-700',
+    danger: 'bg-rose-50 text-rose-700',
+    neutral: 'bg-slate-100 text-slate-500'
   } as const;
 
   return (
@@ -1127,19 +1219,19 @@ function AuditIssuePanel({
   emptyLabel: string;
 }) {
   return (
-    <section className="rounded-3xl border border-slate-700 bg-slate-900/60 p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-100">{title}</h3>
+    <section className="editorial-surface p-6">
+      <h3 className="mb-4 text-lg font-semibold text-slate-900">{title}</h3>
       <div className="space-y-3">
         {issues.map((issue) => (
-          <div key={issue.issueId} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+          <div key={issue.issueId} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-medium text-slate-100">{issue.questionId || issue.issueId}</p>
+                <p className="font-medium text-slate-900">{issue.questionId || issue.issueId}</p>
                 <p className="mt-1 text-sm text-slate-400">{issue.bucket}</p>
               </div>
-              <span className="text-sm font-semibold text-slate-200">{issue.reportCount}</span>
+              <span className="text-sm font-semibold text-slate-800">{issue.reportCount}</span>
             </div>
-            <p className="mt-3 text-sm text-slate-300">{issue.verificationReason}</p>
+            <p className="mt-3 text-sm text-slate-700">{issue.verificationReason}</p>
           </div>
         ))}
         {issues.length === 0 && (
@@ -1160,11 +1252,11 @@ function EmptyPanel({
   description: string;
 }) {
   return (
-    <div className="rounded-3xl border border-slate-700 bg-slate-900/60 p-10 text-center">
-      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-3xl bg-slate-800">
+    <div className="editorial-surface p-10 text-center">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-3xl bg-slate-100">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold text-slate-100">{title}</h3>
+      <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
       <p className="mt-2 text-sm text-slate-500">{description}</p>
     </div>
   );

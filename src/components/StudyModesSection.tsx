@@ -46,6 +46,16 @@ import type { UserProfile } from '../hooks/useFirebaseProgress';
 const TOTAL_SKILLS = 45;
 const READINESS_TARGET = Math.ceil(TOTAL_SKILLS * 0.7); // 32
 
+// Light-surface equivalents for PROFICIENCY_META badge/text tokens.
+// PROFICIENCY_META uses dark-mode colours; these overrides apply when
+// badges are rendered on white/editorial-surface backgrounds.
+const LIGHT_BADGE: Record<string, { badge: string; text: string }> = {
+  proficient:  { badge: 'bg-emerald-50 border border-emerald-200 text-emerald-700', text: 'text-emerald-700' },
+  approaching: { badge: 'bg-amber-50 border border-amber-200 text-amber-700',       text: 'text-amber-700'   },
+  emerging:    { badge: 'bg-rose-50 border border-rose-200 text-rose-600',           text: 'text-rose-600'    },
+  unstarted:   { badge: 'bg-slate-100 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
+};
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface StudyModesSectionProps {
@@ -172,7 +182,7 @@ function DomainPanel({
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Unlocks after the screener</p>
-          <p className="mt-1 max-w-xs mx-auto text-xs leading-relaxed text-slate-500">
+          <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the 50-question screener to unlock domain-based practice across all four Praxis sections.
           </p>
         </div>
@@ -201,7 +211,7 @@ function DomainPanel({
           const color = getDomainColor(stat.domain.id);
           const barPct = stat.demonstratingPct;
           const barColor = barPct >= 70 ? 'bg-emerald-400' : barPct >= 50 ? 'bg-amber-400' : 'bg-rose-400';
-          const labelColor = barPct >= 70 ? 'text-emerald-400' : barPct >= 50 ? 'text-amber-400' : 'text-rose-400';
+          const labelColor = barPct >= 70 ? 'text-emerald-700' : barPct >= 50 ? 'text-amber-700' : 'text-rose-600';
 
           return (
             <div
@@ -240,17 +250,17 @@ function DomainPanel({
                 </p>
                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
                   {stat.emergingCount > 0 && (
-                    <span className="rounded-full bg-rose-500/15 px-1.5 py-0.5 text-[11px] font-medium text-rose-300">
+                    <span className="rounded-full bg-rose-50 border border-rose-200 px-1.5 py-0.5 text-[11px] font-medium text-rose-600">
                       {stat.emergingCount} {PROFICIENCY_META.emerging.label}
                     </span>
                   )}
                   {stat.approachingCount > 0 && (
-                    <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[11px] font-medium text-amber-300">
+                    <span className="rounded-full bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[11px] font-medium text-amber-700">
                       {stat.approachingCount} {PROFICIENCY_META.approaching.label}
                     </span>
                   )}
                   {stat.demonstratingCount > 0 && (
-                    <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[11px] font-medium text-emerald-300">
+                    <span className="rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[11px] font-medium text-emerald-700">
                       {stat.demonstratingCount} {PROFICIENCY_META.proficient.label}
                     </span>
                   )}
@@ -291,7 +301,7 @@ function SkillPanel({
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Unlocks after the full diagnostic</p>
-          <p className="mt-1 max-w-xs mx-auto text-xs leading-relaxed text-slate-500">
+          <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the 125-question full diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
           </p>
         </div>
@@ -317,9 +327,9 @@ function SkillPanel({
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
     { id: 'all', label: 'All', count: allRows.length, css: 'text-slate-500 border-slate-200', activeCss: 'bg-amber-50 border-amber-300 text-slate-900' },
-    { id: 'emerging', label: PROFICIENCY_META.emerging.label, count: emergingCount, css: 'text-rose-400 border-rose-500/20', activeCss: 'bg-rose-500/15 border-rose-500/30 text-rose-300' },
-    { id: 'approaching', label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-400 border-amber-500/20', activeCss: 'bg-amber-500/15 border-amber-500/30 text-amber-300' },
-    { id: 'proficient', label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-400 border-emerald-500/20', activeCss: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300' },
+    { id: 'emerging', label: PROFICIENCY_META.emerging.label, count: emergingCount, css: 'text-rose-600 border-rose-200', activeCss: 'bg-rose-50 border-rose-300 text-rose-700' },
+    { id: 'approaching', label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-700 border-amber-200', activeCss: 'bg-amber-50 border-amber-300 text-amber-700' },
+    { id: 'proficient', label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-700 border-emerald-200', activeCss: 'bg-emerald-50 border-emerald-300 text-emerald-700' },
   ];
 
   return (
@@ -373,6 +383,7 @@ function SkillPanel({
             const pct = row.score !== null ? Math.round(row.score * 100) : null;
             const primaryModule = getPrimaryModuleForSkill(row.skillId);
 
+            const lightBadge = LIGHT_BADGE[row.tier] ?? LIGHT_BADGE.unstarted;
             return (
               <div
                 key={row.skillId}
@@ -390,11 +401,11 @@ function SkillPanel({
 
                 {/* Proficiency + score */}
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${meta.badgeCss}`}>
+                  <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${lightBadge.badge}`}>
                     {meta.label}
                   </span>
                   {pct !== null && (
-                    <span className={`text-[11px] font-bold tabular-nums ${meta.textCss}`}>{pct}%</span>
+                    <span className={`text-[11px] font-bold tabular-nums ${lightBadge.text}`}>{pct}%</span>
                   )}
                 </div>
 
@@ -452,7 +463,7 @@ function LearningPathPanel({
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Unlocks after the full diagnostic</p>
-          <p className="mt-1 max-w-xs mx-auto text-xs leading-relaxed text-slate-500">
+          <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the full diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
           </p>
         </div>
@@ -555,21 +566,21 @@ export default function StudyModesSection({
           {
             label: 'Questions answered',
             value: (totalQuestionsSeen ?? totalAttempts).toLocaleString(),
-            css: 'text-cyan-400',
+            css: 'text-cyan-700',
           },
           {
             label: 'Avg study time / day',
             value: weeklyAvgSeconds > 0 ? formatStudyTime(weeklyAvgSeconds) : '—',
-            css: 'text-violet-400',
+            css: 'text-violet-700',
           },
           {
             label: 'Overall accuracy',
             value: overallAccuracy !== null ? `${overallAccuracy}%` : '—',
             css: overallAccuracy !== null && overallAccuracy >= 70
-              ? 'text-emerald-400'
+              ? 'text-emerald-700'
               : overallAccuracy !== null && overallAccuracy >= 50
-                ? 'text-amber-400'
-                : 'text-rose-400',
+                ? 'text-amber-700'
+                : 'text-rose-600',
           },
         ].map(stat => (
           <div key={stat.label} className="editorial-surface p-3 text-center">
@@ -581,7 +592,7 @@ export default function StudyModesSection({
 
       {/* ── Zero-data welcome nudge ─────────────────────────────────────── */}
       {totalAttempts === 0 && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-relaxed">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-normal">
           No data yet — your stats will appear here as soon as you answer your first question.
           Start with the screener on the Dashboard, or jump straight into Spicy mode to get going.
         </div>

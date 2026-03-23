@@ -42,8 +42,8 @@ This document summarizes all components, hooks, utilities, brain modules, and da
 | **FullAssessment** | 125Q full exam. Same pattern as ScreenerAssessment (session, `logResponse`, `updateLastSession`, `onComplete`). | QuestionCard, ExplanationPanel, sessionStorage, userSessionStorage, distractor-matcher |
 | **ScoreReport**  | Post-assessment report: overall score, domain breakdown, weakest domains, time metrics, “Start Practice” / “Retake” / “Go Home” / “Teach Mode” / “Practice with domains”. Handles missing data with recovery UI. | NASP_DOMAINS, UserResponse, AnalyzedQuestion |
 | **PracticeSession** | Adaptive practice: intro, goal picker, `selectNextQuestion(profile, questions, history)`, per-question feedback, `updateSkillProgress`, `logResponse`, `updateLastSession`, local weakness updates. Can filter by `practiceDomain`. | QuestionCard, ExplanationPanel, useFirebaseProgress (profile), useAdaptiveLearning, detectWeaknesses, distractor-matcher |
-| **TeachMode**    | Review mode: questions from full assessment (wrong or all), teaching context, explanations. Updates `flaggedQuestions` and **writes `practiceHistory`** (legacy field – see Issues). | QuestionCard, ExplanationPanel, NASP_DOMAINS, UserProfile |
-| **ResultsDashboard** | “View Progress”: toggles Praxis sections vs NASP domains; shows domain scores and focus areas inside the shared light-shell visual treatment. **Reads `userProfile.practiceHistory.length`** (removed from profile – see Issues). | PraxisPerformanceView, NASP_DOMAINS, UserProfile |
+| **TeachMode**    | Review mode: questions from full assessment (wrong or all), teaching context, explanations. Updates `flaggedQuestions`. | QuestionCard, ExplanationPanel, NASP_DOMAINS, UserProfile |
+| **ResultsDashboard** | “View Progress”: toggles Praxis sections vs NASP domains; shows domain scores and focus areas inside the shared light-shell visual treatment. | PraxisPerformanceView, NASP_DOMAINS, UserProfile |
 | **StudyModesSection** | Practice hub: By Domain / By Skill / Learning Path entry, readiness strip, lock states, skill actions, and lesson-help entry points. | PROFICIENCY_META, skill-map, learning-path data |
 | **StudyPlanCard** | Study Guide destination card: generation settings, generation status, plan history chips, and entry to the full viewer. | StudyConstraintsForm, StudyPlanViewer |
 
@@ -84,7 +84,7 @@ This document summarizes all components, hooks, utilities, brain modules, and da
 |--------|--------|
 | **sessionStorage** | Single assessment session: `AssessmentSession` (type, questionIds, currentIndex, responses, selectedAnswers, showFeedback, confidence, startTime). Key `praxis-assessment-session`. `saveSession`, `loadSession`, `clearSession`, `hasActiveSession`. |
 | **userSessionStorage** | Per-user sessions in localStorage: `UserSession` (adds userName, sessionId, lastUpdated, createdAt). `createUserSession`, `getUserSessions`, `getCurrentSession`, `saveUserSession`, `getCurrentUser`, `setCurrentUser`, etc. Used with the signed-in Supabase user's display name/email for resume. |
-| **assessment-builder** | **Used.** `buildFullAssessment(analyzedQuestions, options?)` – 125Q with Praxis distribution and exclusion. Used by App for full assessment. |
+| **assessment-builder** | **Used.** `buildFullAssessment(analyzedQuestions, options?)` – 125Q with Praxis distribution and exclusion. `buildScreener(analyzedQuestions, excludeIds)` – 50Q screener using SKILL_BLUEPRINT with CC enforcement and round-robin interleave. `buildAdaptiveDiagnostic(analyzedQuestions, excludeIds)` – **primary assessment path**: 45 initial questions (1 per skill) + follow-up pool of 1–2 per skill (45–90Q adaptive). Used by App.tsx. |
 | **assessment-selector** | **Unused.** Also has `buildFullAssessment` (domain balancing). Not imported. |
 
 ---
@@ -148,15 +148,17 @@ Templates live in **brain/templates/** (domain-1 through domain-10).
 - **Assessments:** App builds screener/full question lists, persists session state in local storage, logs response events through `useFirebaseProgress`, and writes profile/session metadata to Supabase.
 - **Reports:** ScoreReport reads lastAssessmentResponses (or App fetches via getAssessmentResponses(sessionId) for “View Report”).
 - **Practice:** PracticeSession uses selectNextQuestion (useAdaptiveLearning), updateSkillProgress, logResponse, updateLastSession; updates profile and local weakness state.
-- **Teach:** TeachMode uses profile and analyzed questions; on exit writes flaggedQuestions and **practiceHistory** (legacy).
+- **Teach:** TeachMode uses profile and analyzed questions; on exit writes flaggedQuestions.
 
 ---
 
 ## 11. Issues found (legacy / missing fields)
 
-1. **ResultsDashboard** – Uses `userProfile.practiceHistory.length`. `UserProfile` no longer has `practiceHistory`. Should use `profile.totalQuestionsSeen` or `profile.practiceResponseCount` (or both) and guard for undefined.
-2. **TeachMode** – Calls `onUpdateProfile({ practiceHistory: [...userProfile.practiceHistory, ...responses] })`. `UserProfile` has no `practiceHistory`; this will add an unknown field or error. Should stop writing practiceHistory; if needed, rely on response logging only.
-3. **useAdaptiveLearning** – Uses `profile.generatedQuestionsSeen` (removed) and `skill.attemptHistory` (optional; useFirebaseProgress only keeps last 5 as `history: boolean[]`, not full attemptHistory). Generated-path and priority logic may fall back or behave incorrectly. Should use profile fields that exist (e.g. recentPracticeQuestionIds) and either populate attemptHistory from responses or change priority to use score/history only.
+> All three issues below have been **resolved** as of 2026-03-23.
+
+1. ~~**ResultsDashboard** – Uses `userProfile.practiceHistory.length`.~~ **Resolved.** The `practiceHistory` reference has been removed from ResultsDashboard.
+2. ~~**TeachMode** – Calls `onUpdateProfile({ practiceHistory: [...] })`.~~ **Resolved.** The `practiceHistory` write has been removed from TeachMode.
+3. ~~**useAdaptiveLearning** – Uses `profile.generatedQuestionsSeen` (removed) and `skill.attemptHistory`.~~ **Resolved.** `generatedQuestionsSeen` reference removed. `attemptHistory` is declared optional in `SkillPerformance` and all consuming code (ResultsDashboard, skillTrend) includes proper null guards.
 
 ---
 
@@ -172,4 +174,4 @@ Used for tooling, not at runtime in the app: analyze-coverage-gaps, blueprint-al
 
 ---
 
-This overview reflects the codebase as of the review. Fixing the three issues in §11 will align the app with the current Supabase profile and response model before a rewrite.
+This overview reflects the codebase as of 2026-03-23. The three issues previously listed in §11 have been resolved. The adaptive diagnostic (`buildAdaptiveDiagnostic`) is the primary assessment path — see §5.

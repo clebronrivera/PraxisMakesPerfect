@@ -20,14 +20,10 @@ const GENERIC_TIPS = new Set([
   'Consider what framework steps apply to this situation',
   'Consider what framework steps apply',
 ]);
-const GENERIC_EXPLANATION = new Set([
-  'This answer is incorrect. Review the rationale to understand the correct approach.',
-  'Your answer was incorrect. Review the rationale to understand the correct approach.',
-]);
 
 export default function DiagnosticFeedback({
   feedback,
-  distractorNote,
+  distractorNote: _distractorNote,
   onDismiss
 }: DiagnosticFeedbackProps) {
   const [frameworkOpen, setFrameworkOpen] = useState(false);
@@ -64,8 +60,6 @@ export default function DiagnosticFeedback({
 
   // ── Incorrect answer: build Card 2 ────────────────────────────────────────
   const meaningfulTips = feedback.remediationTips.filter(t => !GENERIC_TIPS.has(t));
-  const hasDistractorNote = !!distractorNote;
-  const hasNonGenericExplanation = !GENERIC_EXPLANATION.has(feedback.generalExplanation);
   const hasFramework = !!(
     feedback.frameworkGuidance &&
     feedback.frameworkGuidance.currentStepId
@@ -77,18 +71,15 @@ export default function DiagnosticFeedback({
   );
 
   // Don't render this card if there's nothing meaningful to show
-  if (!hasDistractorNote && !hasNonGenericExplanation && meaningfulTips.length === 0 && !hasFramework && !hasPrerequisites) {
+  if (meaningfulTips.length === 0 && !hasFramework && !hasPrerequisites) {
     return null;
   }
 
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-6">
-      {/* Leading explanation — distractor-specific or non-generic pattern explanation */}
-      {(hasDistractorNote || hasNonGenericExplanation) && (
-        <p className="mb-4 text-sm leading-relaxed text-slate-700">
-          {distractorNote || feedback.generalExplanation}
-        </p>
-      )}
+      {/* generalExplanation removed — it parroted the user's wrong answer
+          ("You selected X. This is a common confusion...") which added no value
+          beyond what the ExplanationPanel already shows. */}
 
       {/* Prerequisite Warning */}
       {hasPrerequisites && (

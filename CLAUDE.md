@@ -103,11 +103,7 @@ The 1-generation-per-7-days rate limit lives in:
 src/services/studyPlanService.ts  ~line 728
 ```
 
-It is **commented out** during testing. Search for:
-```ts
-// TODO: Re-enable before production. Disabled for testing.
-```
-Un-comment the block before going to production.
+The rate limit is **active** as of 2026-03-23. It was previously commented out for testing but has been re-enabled.
 
 ---
 

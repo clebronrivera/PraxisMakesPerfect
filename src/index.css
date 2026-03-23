@@ -45,7 +45,7 @@
   }
 
   .editorial-sidebar-item {
-    @apply w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5;
+    @apply w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5;
   }
 
   .editorial-sidebar-item-active {
@@ -58,14 +58,14 @@
   }
 
   .editorial-pill {
-    @apply inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-[0.22em] border shadow-sm;
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-[0.1em] border shadow-sm;
     background-color: rgba(251, 191, 36, 0.14);
     border-color: rgba(251, 191, 36, 0.22);
     color: #b45309;
   }
 
   .editorial-overline {
-    @apply text-[11px] font-black uppercase tracking-[0.24em] text-slate-400;
+    @apply text-[11px] font-black uppercase tracking-[0.1em] text-slate-400;
   }
 
   .editorial-heading {
@@ -73,11 +73,11 @@
   }
 
   .editorial-copy {
-    @apply text-[15px] leading-relaxed text-slate-500;
+    @apply text-[15px] leading-normal text-slate-500;
   }
 
   .editorial-stat-card {
-    @apply editorial-surface p-5 flex flex-col gap-4;
+    @apply editorial-surface p-4 flex flex-col gap-3;
   }
 
   .editorial-button-primary {
@@ -172,7 +172,7 @@
 
   /* ── Section overline ─────────────────────────────────── */
   .overline {
-    @apply text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-400;
+    @apply text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400;
   }
 
   /* ── Tabs ─────────────────────────────────────────────── */
@@ -248,5 +248,77 @@
   /* Subtle gradient overlays */
   .gradient-fade-b {
     background: linear-gradient(to bottom, transparent, rgba(6, 13, 26, 0.9));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PRINT MODE
+   Strips UI chrome, expands all accordions, hides interactives.
+   Triggered by window.print() from the Learning Path module page.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+@media print {
+  /* Hide navigation, buttons, sidebars, interactive controls */
+  .no-print,
+  nav,
+  aside,
+  button,
+  .editorial-button-primary,
+  .editorial-button-secondary,
+  .editorial-button-dark,
+  .editorial-button-ghost,
+  .editorial-progress-track {
+    display: none !important;
+  }
+
+  /* Reset page background to white */
+  html, body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+  }
+
+  /* Remove card styling for clean print */
+  .editorial-surface,
+  .editorial-surface-soft {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+    padding: 0 !important;
+  }
+
+  /* Expand all accordion sections */
+  .print-expand > div {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Hide interactive exercise components (useless on paper) */
+  .print-hide-interactive {
+    display: none !important;
+  }
+
+  /* Clean text colors */
+  .text-slate-700 { color: #333 !important; }
+  .text-slate-900 { color: black !important; }
+  .text-slate-500, .text-slate-400 { color: #666 !important; }
+  .text-amber-700 { color: #92400e !important; }
+  .text-emerald-700 { color: #047857 !important; }
+
+  /* Callout boxes — keep border but lighten */
+  .border-amber-400 { border-color: #d97706 !important; }
+  .bg-amber-50 { background: #fffbeb !important; }
+  .bg-slate-50 { background: #f8fafc !important; }
+
+  /* Page breaks between modules */
+  .print-page-break {
+    page-break-before: always;
+  }
+
+  /* Remove rounded corners and shadows everywhere */
+  * {
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 }
