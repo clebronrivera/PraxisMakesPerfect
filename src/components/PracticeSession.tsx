@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw, BookOpen } from 'lucide-react';
+import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw, BookOpen, Lightbulb, X } from 'lucide-react';
+import ModuleSnippetCard from './ModuleSnippetCard';
 import SkillHelpDrawer from './SkillHelpDrawer';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import QuestionCard from './QuestionCard';
@@ -117,6 +118,18 @@ export default function PracticeSession({
   const skillLabel = practiceSkillId
     ? (getProgressSkillDefinition(practiceSkillId)?.fullLabel ?? 'Skill Help')
     : '';
+
+  // ── Hint system ─────────────────────────────────────────────────────────────
+  // hintOpenForQuestion tracks whether the hint panel is currently visible.
+  // hintUsedIds tracks questions where the user opened a hint this session —
+  // those answers do NOT count toward skill score (keeps adaptive data clean).
+  const [hintOpenForQuestion, setHintOpenForQuestion] = useState<string | null>(null);
+  const [hintUsedIds, setHintUsedIds] = useState<Set<string>>(new Set());
+
+  // ── Missed-skill alert ───────────────────────────────────────────────────────
+  // Show an in-app alert when a skill has been missed 3+ times with <60% accuracy.
+  // Dismissed per-session by the user.
+  const [dismissedSkillAlerts, setDismissedSkillAlerts] = useState<Set<string>>(new Set());
 
   // ── Daily study time tracking ────────────────────────────────────────────────
   // Record session start time so we can compute elapsed seconds on unmount.
@@ -496,9 +509,16 @@ export default function PracticeSession({
         await updateLastSession(sessionId, 'practice', questionHistory.length, 0);
       }
 
-      if (currentQuestion.skillId && updateSkillProgress) {
+      // Only count toward skill score if the user did NOT open a hint for this question.
+      // Hint-used answers keep the adaptive data clean — seeing the answer before guessing
+      // would inflate accuracy and corrupt the skill priority signal.
+      const wasHintUsed = hintUsedIds.has(currentQuestion.id);
+      if (currentQuestion.skillId && updateSkillProgress && !wasHintUsed) {
         await updateSkillProgress(currentQuestion.skillId, isCorrect, confidence, currentQuestion.id, timeSpent);
       }
+
+      // Close any open hint panel when advancing
+      setHintOpenForQuestion(null);
     } catch (error) {
       console.error('[PracticeSession] Failed to submit answer:', error);
       setCurrentDistractorNote('We hit an error while processing this answer. Your session is still active, so try again.');
@@ -604,8 +624,33 @@ export default function PracticeSession({
           )}
         </div>
 
-        {/* Right side: Help button (skill practice only) + Exit */}
+        {/* Right side: Hint + Help (skill practice only) + Exit */}
         <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Hint button — available on any question with a module snippet, before submitting */}
+          {!showFeedback && currentQuestion?.primarySnippet && (
+            <button
+              onClick={() => {
+                if (!currentQuestion) return;
+                const qid = currentQuestion.id;
+                setHintOpenForQuestion(prev => prev === qid ? null : qid);
+                // Mark hint used as soon as panel opens — this is intentional and irreversible
+                setHintUsedIds(prev => new Set(prev).add(qid));
+              }}
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                hintOpenForQuestion === currentQuestion?.id
+                  ? 'border-amber-300 bg-amber-100 text-amber-800'
+                  : 'border-transparent text-slate-500 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700'
+              }`}
+              title="Open module hint — answer won't count toward score"
+            >
+              <Lightbulb className="w-4 h-4" />
+              <span className="hidden sm:inline">Hint</span>
+              {hintUsedIds.has(currentQuestion?.id ?? '') && (
+                <span className="ml-0.5 text-[10px] text-amber-600">(used)</span>
+              )}
+            </button>
+          )}
+
           {/* Help button — opens SkillHelpDrawer when in skill practice mode */}
           {practiceSkillId && (
             <button
@@ -656,6 +701,43 @@ export default function PracticeSession({
           </span>
         </div>
       )}
+
+      {/* ── Struggling Skill Alert ───────────────────────────────────────────── */}
+      {(() => {
+        if (!currentQuestion?.skillId) return null;
+        const alertSkillId = currentQuestion.skillId;
+        if (dismissedSkillAlerts.has(alertSkillId)) return null;
+        const skillScore = userProfile.skillScores?.[alertSkillId];
+        if (!skillScore || skillScore.attempts < 3 || (skillScore.score ?? 1) >= 0.6) return null;
+        const alertModuleId = currentQuestion.primaryModuleId;
+        const alertModuleTitle =
+          currentQuestion.moduleRefs?.find(r => r.moduleId === alertModuleId)?.moduleTitle ??
+          alertModuleId;
+        const alertSkillDef = getProgressSkillDefinition(alertSkillId);
+        return (
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-rose-200 bg-rose-50 px-4 py-3 duration-300">
+            <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-rose-600" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-rose-900">This skill needs more attention</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-rose-700">
+                You've answered{' '}
+                <span className="font-semibold">{alertSkillDef?.fullLabel ?? alertSkillId}</span>{' '}
+                questions incorrectly multiple times.
+                {alertModuleId && (
+                  <> Review the <span className="font-semibold">{alertModuleTitle ?? alertModuleId}</span> module to strengthen this area.</>
+                )}
+              </p>
+            </div>
+            <button
+              onClick={() => setDismissedSkillAlerts(prev => new Set(prev).add(alertSkillId))}
+              className="flex-shrink-0 rounded-lg p-1 text-rose-400 hover:bg-rose-100 hover:text-rose-700 transition-colors"
+              title="Dismiss alert"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        );
+      })()}
 
       {/* ── Streak Banner ────────────────────────────────────────────────────── */}
       {streakMessage && consecutiveCorrect >= 2 && (
@@ -741,25 +823,70 @@ export default function PracticeSession({
         assessmentType="practice"
       />
 
-      {/* ── Feedback Area ────────────────────────────────────────────────────── */}
-      {showFeedback && (
-        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <ExplanationPanel
-            question={currentQuestion}
-            userAnswer={selectedAnswers}
-            isCorrect={
-              selectedAnswers.every(a => (currentQuestion.correct_answer || []).includes(a)) &&
-              selectedAnswers.length === (currentQuestion.correct_answer || []).length
-            }
-            rationale={currentQuestion.rationale || ''}
-            userProfile={userProfile}
-            distractorNote={currentDistractorNote ?? undefined}
+      {/* ── Hint Panel (before submitting) ──────────────────────────────────── */}
+      {!showFeedback && hintOpenForQuestion === currentQuestion.id && currentQuestion.primarySnippet && (
+        <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+          <ModuleSnippetCard
+            snippet={currentQuestion.primarySnippet}
+            moduleTitle={(currentQuestion.moduleRefs?.find(r => r.moduleId === currentQuestion.primaryModuleId)?.moduleTitle) ?? currentQuestion.primaryModuleId ?? null}
+            moduleId={currentQuestion.primaryModuleId ?? null}
+            moduleRefs={currentQuestion.moduleRefs}
+            mode="hint"
+            onDismiss={() => setHintOpenForQuestion(null)}
+            onOpenModule={(_mid) => {
+              // Open the full module in the skill help drawer if available,
+              // otherwise just close the hint (module navigation is handled by the app shell)
+              setHelpDrawerOpen(true);
+            }}
           />
-          <div className="editorial-surface-soft rounded-[1.5rem] border px-4 py-4 text-center">
-            <p className="text-sm italic text-slate-500">You will see this feedback again in your report</p>
-          </div>
         </div>
       )}
+
+      {/* ── Feedback Area ────────────────────────────────────────────────────── */}
+      {showFeedback && (() => {
+        const isCorrect =
+          selectedAnswers.every(a => (currentQuestion.correct_answer || []).includes(a)) &&
+          selectedAnswers.length === (currentQuestion.correct_answer || []).length;
+        const wasHintUsed = hintUsedIds.has(currentQuestion.id);
+        return (
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Hint-used notice */}
+            {wasHintUsed && (
+              <div className="flex items-center gap-2.5 rounded-[1.25rem] border border-amber-200 bg-amber-50 px-4 py-3">
+                <Lightbulb className="h-4 w-4 flex-shrink-0 text-amber-600" />
+                <span className="text-sm text-amber-800">
+                  Hint was used — this answer was not counted toward your score.
+                </span>
+              </div>
+            )}
+
+            <ExplanationPanel
+              question={currentQuestion}
+              userAnswer={selectedAnswers}
+              isCorrect={isCorrect}
+              rationale={currentQuestion.rationale || ''}
+              userProfile={userProfile}
+              distractorNote={currentDistractorNote ?? undefined}
+            />
+
+            {/* Module snippet card — shown after wrong answers (or hint-used) when snippet exists */}
+            {(!isCorrect || wasHintUsed) && currentQuestion.primarySnippet && (
+              <ModuleSnippetCard
+                snippet={currentQuestion.primarySnippet}
+                moduleTitle={(currentQuestion.moduleRefs?.find(r => r.moduleId === currentQuestion.primaryModuleId)?.moduleTitle) ?? currentQuestion.primaryModuleId ?? null}
+                moduleId={currentQuestion.primaryModuleId ?? null}
+                moduleRefs={currentQuestion.moduleRefs}
+                mode="feedback"
+                onOpenModule={(_mid) => setHelpDrawerOpen(true)}
+              />
+            )}
+
+            <div className="editorial-surface-soft rounded-[1.5rem] border px-4 py-4 text-center">
+              <p className="text-sm italic text-slate-500">You will see this feedback again in your report</p>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── Pause Overlay ────────────────────────────────────────────────────── */}
       {isPaused && (

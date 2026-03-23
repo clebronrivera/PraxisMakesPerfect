@@ -36,6 +36,12 @@ export interface Question {
   metadata?: any;
 }
 
+export interface ModuleRef {
+  moduleId: string;
+  moduleTitle: string;
+  snippet: string | null;
+}
+
 export interface AnalyzedQuestion extends Question {
   domains?: number[];
   domainName?: string;
@@ -47,9 +53,12 @@ export interface AnalyzedQuestion extends Question {
   keyConcepts?: string[];
   skillId?: string;
   isGenerated?: boolean;
-  isFoundational?: boolean; // true for vetted anchor questions (entry-point priority)
+  isFoundational?: boolean;    // true for vetted anchor questions (entry-point priority)
+  primaryModuleId?: string;    // primary study module for this question's skill
+  primarySnippet?: string;     // verbatim module text that addresses this question
+  moduleRefs?: ModuleRef[];    // all modules + snippets for multi-module questions
   source?: 'bank' | 'generated';
-  templateId?: string; // For generated questions, shows which template was used
+  templateId?: string;
   isMultiSelect?: boolean;
   cognitiveComplexity?: 'Recall' | 'Application' | string;
   distractors?: Distractor[];
@@ -243,6 +252,9 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
     isMultiSelect: q.isMultiSelect ?? String(q.is_multi_select).toLowerCase() === 'true',
     cognitiveComplexity: q.cognitiveComplexity || q.cognitive_complexity,
     isFoundational: (q as any).is_foundational === true || (q as any).is_foundational === 'true',
+    primaryModuleId: (q as any).primaryModuleId || undefined,
+    primarySnippet: (q as any).primarySnippet || undefined,
+    moduleRefs: (q as any).moduleRefs || undefined,
     source: 'bank' // Questions from questions.json are from the bank
   };
 }
