@@ -30,22 +30,90 @@
 //   PraxisVisualPlan v2.docx         — visual / activity specifications (future)
 // ──────────────────────────────────────────────────────────────────────────────
 
-export type ModuleSectionType = 'paragraph' | 'anchor' | 'comparison' | 'list';
+export type ModuleSectionType = 'paragraph' | 'anchor' | 'comparison' | 'list' | 'interactive' | 'visual';
 
 export interface ComparisonRow {
   left: string;
   right: string;
 }
 
-export interface ModuleSection {
-  type: ModuleSectionType;
-  label?: string;           // e.g. "Memory anchor", "The trap", "Key terms"
-  text?: string;            // for paragraph / anchor
-  items?: string[];         // for list
-  leftHeader?: string;      // for comparison
-  rightHeader?: string;     // for comparison
-  rows?: ComparisonRow[];   // for comparison
+// ─── Interactive section sub-types ───────────────────────────────────────────
+
+export interface InteractiveScenario {
+  id: string;
+  text: string;
 }
+
+export interface InteractivePair {
+  term: string;
+  definition: string;
+}
+
+export interface InteractiveOption {
+  id: string;
+  label: string;
+  explanation?: string;
+}
+
+export interface InteractiveCard {
+  id: string;
+  front: string;
+  back: string;
+}
+
+// ─── Section union ───────────────────────────────────────────────────────────
+
+interface BaseSection {
+  label?: string;
+}
+
+interface ParagraphSection extends BaseSection {
+  type: 'paragraph';
+  text: string;
+}
+
+interface AnchorSection extends BaseSection {
+  type: 'anchor';
+  text: string;
+}
+
+interface ListSection extends BaseSection {
+  type: 'list';
+  items: string[];
+}
+
+interface ComparisonSection extends BaseSection {
+  type: 'comparison';
+  leftHeader: string;
+  rightHeader: string;
+  rows: ComparisonRow[];
+}
+
+interface InteractiveSection extends BaseSection {
+  type: 'interactive';
+  interactiveType: 'scenario-sorter' | 'drag-to-order' | 'term-matcher' | 'click-selector' | 'card-flip';
+  prompt?: string;
+  scenarios?: InteractiveScenario[];
+  categories?: string[];
+  items?: string[];
+  pairs?: InteractivePair[];
+  options?: InteractiveOption[];
+  cards?: InteractiveCard[];
+}
+
+interface VisualSection extends BaseSection {
+  type: 'visual';
+  visualType: 'image' | 'diagram';
+  prompt?: string;
+}
+
+export type ModuleSection =
+  | ParagraphSection
+  | AnchorSection
+  | ListSection
+  | ComparisonSection
+  | InteractiveSection
+  | VisualSection;
 
 export interface LearningModule {
   /** Stable ID. Format: MOD-D{doc_domain}-{seq}. Never rename. */
