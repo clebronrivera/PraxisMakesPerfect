@@ -29,7 +29,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   ArrowLeft, CheckCircle, Lock,
-  ChevronDown, ChevronUp, Settings, Gamepad2,
+  ChevronDown, ChevronUp,
   Trophy, RotateCcw,
 } from 'lucide-react';
 import { getAllModulesForSkill } from '../data/learningModules';
@@ -445,7 +445,7 @@ export default function LearningPathModulePage({
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Learning Path</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">Learning Path</p>
           <h2 className="truncate text-lg font-bold leading-tight text-slate-900">
             {skillDef?.fullLabel ?? skillId}
           </h2>
@@ -541,24 +541,6 @@ export default function LearningPathModulePage({
                 completedInteractives={completedInteractives}
               />
             )}
-
-            {/* ⚙  Interactive visual placeholder */}
-            <div className="space-y-2 rounded-[1.75rem] border border-dashed border-slate-300 bg-[#fbfaf7] p-5 text-center">
-              <Settings className="mx-auto h-6 w-6 text-amber-700" />
-              <p className="text-xs font-semibold text-slate-700">Interactive Visual</p>
-              <p className="text-[10px] leading-relaxed text-slate-500">
-                ⚙  A visual/diagram component for <span className="font-mono">{primaryModule?.id ?? skillId}</span> will be embedded here.
-              </p>
-            </div>
-
-            {/* 🎮 Interactive activity placeholder */}
-            <div className="space-y-2 rounded-[1.75rem] border border-dashed border-slate-300 bg-[#fbfaf7] p-5 text-center">
-              <Gamepad2 className="mx-auto h-6 w-6 text-amber-700" />
-              <p className="text-xs font-semibold text-slate-700">Interactive Activity</p>
-              <p className="text-[10px] leading-relaxed text-slate-500">
-                🎮  A hands-on activity for this skill will be embedded here.
-              </p>
-            </div>
 
             {/* Timer + Mark Complete */}
             <div className="flex items-center justify-between gap-3 pt-1">

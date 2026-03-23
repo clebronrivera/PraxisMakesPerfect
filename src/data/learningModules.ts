@@ -42,6 +42,7 @@ export interface ComparisonRow {
 export interface InteractiveScenario {
   id: string;
   text: string;
+  category?: string;  // e.g., "BREACH REQUIRED", "NO BREACH"
 }
 
 export interface InteractivePair {
@@ -53,6 +54,7 @@ export interface InteractiveOption {
   id: string;
   label: string;
   explanation?: string;
+  isCorrect?: boolean;
 }
 
 export interface InteractiveCard {
@@ -137,6 +139,21 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'anchor', label: 'The scenario that trips people up', text: 'A teacher casually shares a student\'s test results with a helpful colleague — even a reading specialist next door. Feels like good teamwork. It is actually a FERPA violation.' },
       { type: 'paragraph', text: 'FERPA — the Family Educational Rights and Privacy Act — governs all student educational records. It does not matter whether the person receiving the information is qualified, well-meaning, or even employed by the same district. What matters is whether the disclosure was authorized. FERPA allows schools to share student records only with school officials who have a legitimate educational interest and parents who have rights to the records. Informal sharing outside that framework — even with a specialist — is a violation.' },
       { type: 'comparison', leftHeader: 'Who CAN access records (FERPA)', rightHeader: 'Who CANNOT — even if qualified', rows: [{ left: 'School officials with legitimate educational interest; the student\'s parents/guardians; the student (at age 18)', right: 'A neighbor who happens to be a reading specialist; anyone without a formal need-to-know in the student\'s case' }] },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'FERPA Access Control',
+        prompt: 'Sort each access request into the correct category.',
+        scenarios: [
+          { id: 's1', text: 'School counselor requests the student\'s IEP to coordinate services', category: 'ALLOWED' },
+          { id: 's2', text: 'Parent asks to see their child\'s test protocols and answer sheets', category: 'ALLOWED' },
+          { id: 's3', text: 'A teaching assistant without assigned responsibilities shares test results with an unrelated teacher', category: 'VIOLATION' },
+          { id: 's4', text: 'School psychologist shares comprehensive eval results with parents at an IEP meeting', category: 'ALLOWED' },
+          { id: 's5', text: 'Community counselor not employed by the school calls to request student behavior data', category: 'VIOLATION' },
+          { id: 's6', text: 'Student at age 18 requests their own educational records', category: 'ALLOWED' },
+        ],
+        categories: ['ALLOWED (FERPA permits)', 'VIOLATION (FERPA prohibits)'],
+      },
       { type: 'anchor', label: 'Memory anchor', text: 'FERPA = Family Educational Records Protected Always. If there is no formal authorization, the answer is almost always FERPA.' },
     ],
   },
@@ -147,6 +164,30 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Response to Intervention (RTI) runs on two specific data engines. Get these terms exactly right — the exam uses both and will offer plausible-sounding alternatives.' },
       { type: 'comparison', leftHeader: 'Universal Screening', rightHeader: 'Progress Monitoring', rows: [{ left: 'A brief, low-cost assessment given to all students at the same time. Purpose: identify who may be at risk before problems become serious.', right: 'Frequent, repeated assessments on a specific skill for students already receiving intervention. Purpose: track whether the intervention is working.' }] },
+      {
+        type: 'interactive',
+        interactiveType: 'term-matcher',
+        label: 'RTI Terminology',
+        prompt: 'Match each RTI term with its correct definition.',
+        pairs: [
+          {
+            term: 'Universal Screening',
+            definition: 'Brief assessment given to all students simultaneously to identify those at risk',
+          },
+          {
+            term: 'Progress Monitoring',
+            definition: 'Frequent, repeated measures of specific skills for students receiving intervention',
+          },
+          {
+            term: 'Tier 1',
+            definition: 'Universal, preventive supports available to all students',
+          },
+          {
+            term: 'Tier 2',
+            definition: 'Targeted intervention for students showing risk indicators',
+          },
+        ],
+      },
       { type: 'anchor', label: 'The trap', text: 'Answer choices like "Universal Monitoring" or "Progress Screening" sound real but are not valid RTI terms. If you see either of those, eliminate them immediately.' },
     ],
   },
@@ -157,6 +198,17 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Before writing any formal behavior support plan, a school psychologist must conduct a Functional Behavioral Assessment. This is not optional — it is the legally expected and best-practice foundation for any individualized behavior plan.' },
       { type: 'paragraph', text: 'An FBA identifies the ABCs of behavior: Antecedent (what triggers the behavior), Behavior (the specific observable action), and Consequence (what follows and may be maintaining it). Without understanding function, any intervention is a guess.' },
+      {
+        type: 'interactive',
+        interactiveType: 'drag-to-order',
+        label: 'FBA Sequence: The ABC Model',
+        prompt: 'Arrange the FBA steps in the correct order.',
+        items: [
+          'Antecedent: Identify the trigger or situation that precedes the behavior',
+          'Behavior: Describe the specific, observable action the student exhibits',
+          'Consequence: Determine what follows the behavior and maintains it',
+        ],
+      },
       { type: 'anchor', label: 'Why the other answers fail', text: '"Social-emotional assessment" describes a different domain. "Executive function assessment" is a cognitive measure. "School psychology behavior evaluation" is not a standard term. Only FBA directly answers the question of behavioral function.' },
     ],
   },
@@ -167,6 +219,17 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'When a student presents with multiple concerns — withdrawal, sadness, AND anxiety — the correct starting tool is a broad-spectrum behavioral and emotional assessment. The Behavior Assessment System for Children (BASC) is the gold-standard choice because it captures a wide range of internalizing and externalizing concerns across multiple raters.' },
       { type: 'paragraph', text: 'Narrow-band tools like the Beck Depression Inventory or the CDI-2 are valuable supplements, but they only measure one thing. Starting narrow risks missing the larger picture. The BASC opens the case; targeted tools deepen it.' },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Assessment Tool Selector',
+        prompt: 'For each scenario, which assessment tool should you start with?',
+        options: [
+          { id: 'basc-multi', label: 'BASC-3 (Broad-spectrum)', explanation: 'Best for: Multiple symptoms (anxiety + depression + withdrawal). Captures wide range across multiple raters.', isCorrect: true },
+          { id: 'cdi-narrow', label: 'CDI-2 (Narrow - Depression)', explanation: 'Useful for: Following up on a specific symptom after broad screening, but misses the full picture.' },
+          { id: 'beck-narrow', label: 'Beck Inventory (Narrow - Anxiety)', explanation: 'Useful for: Deep dive on one symptom, but starts too narrow when multiple concerns exist.' },
+        ],
+      },
       { type: 'anchor', label: 'Clinical logic', text: 'Multiple symptoms = broad tool first. Single symptom = narrow tool may be appropriate. If a question lists anxiety AND depression AND withdrawal together, the answer is almost always the BASC.' },
     ],
   },
@@ -177,6 +240,17 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'When a parent and teacher complete the same adaptive behavior scale (e.g., Vineland) and the scores differ significantly, the most defensible interpretation is that the raters perceive the child\'s behavior differently across different environments — not that the test is broken.' },
       { type: 'paragraph', text: 'Standard error of measurement exists in every test, but SEM does not typically account for a 20+ point difference between raters. Contextual differences are real, but when scores vary dramatically even between the two parents, the most likely explanation is subjective perception differences between raters.' },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Rater Discrepancy Interpretation',
+        prompt: 'Parent gave Vineland SS 95, Teacher gave SS 68. What is the best interpretation?',
+        options: [
+          { id: 'perception', label: 'Rater perception differences across environments', explanation: 'Parent and teacher observe the child in different contexts; behavior varies accordingly.', isCorrect: true },
+          { id: 'sem', label: 'Standard error of measurement', explanation: 'Real issue, but SEM typically does not account for 27-point gaps.' },
+          { id: 'test-broken', label: 'The test has poor reliability', explanation: 'Unlikely; Vineland has strong reliability. A 27-point gap suggests real behavioral differences, not test failure.' },
+        ],
+      },
       { type: 'anchor', label: 'Test-taking note', text: 'This question type will include distractors like "measurement error" and "contextual factors." Both are partially true, but when the discrepancy is extreme and occurs even between the same-household raters, perception difference is the best answer.' },
     ],
   },
@@ -188,6 +262,21 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'Tier 1 of the Multi-Tiered System of Supports is universal — it applies to ALL students. It emphasizes clear expectations, explicit and direct instruction, and corrective feedback for the entire school population. The defining feature of Tier 1 is its universal, preventive nature.' },
       { type: 'paragraph', text: 'Tier 3 is intensive and individualized. When you see the word "intensive" or "specific students" in an answer choice about MTSS, that is a Tier 3 signal — it does not belong at Tier 1.' },
       { type: 'comparison', leftHeader: 'Tier 1 (Universal)', rightHeader: 'Tier 3 (Intensive)', rows: [{ left: 'Clear learning expectations • Explicit/direct instruction • Corrective feedback • Evidence-based for all students', right: 'Evidence-based interventions aligned to intensive needs of specific students • Individualized plans • Frequent progress monitoring' }] },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'MTSS Tier Classifier',
+        prompt: 'Sort each practice to the tier where it belongs.',
+        scenarios: [
+          { id: 's1', text: 'School-wide clear behavioral expectations posted in hallways', category: 'TIER_1' },
+          { id: 's2', text: 'Individualized intensive intervention for a student with chronic behavior violations', category: 'TIER_3' },
+          { id: 's3', text: 'Explicit, direct reading instruction for all students using a core curriculum', category: 'TIER_1' },
+          { id: 's4', text: 'Frequent progress monitoring (2-3x/week) for a specific student on a targeted intervention', category: 'TIER_3' },
+          { id: 's5', text: 'Universal corrective feedback system applied consistently across the school', category: 'TIER_1' },
+          { id: 's6', text: 'Specialized intervention plan developed for a student identified as at-risk', category: 'TIER_3' },
+        ],
+        categories: ['TIER_1 (Universal)', 'TIER_3 (Intensive)'],
+      },
     ],
   },
 
@@ -198,6 +287,17 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'On most mainstream cognitive assessments, the normative mean is 100 with a standard deviation of 15. Here is how key benchmark scores translate:' },
       { type: 'list', items: ['SS 130+ = Very Superior (2 SDs above mean)', 'SS 115–129 = Above Average / High Average', 'SS 85–115 = Average range', 'SS 70–84 = Below Average / Borderline', 'SS 69 and below = Intellectual Disability range (2+ SDs below mean)'] },
       { type: 'paragraph', text: 'A score of 61 sits firmly in the intellectual disability range. A score of 85 is at the 16th percentile — low average, but not a disability range score. These distinctions matter enormously on the exam.' },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Standard Score Interpretation',
+        prompt: 'What is the correct classification for a standard score of 61?',
+        options: [
+          { id: 'id-range', label: 'Intellectual Disability range (2+ SDs below 100)', explanation: 'SS 61 = 39 points below mean, or 2.6 standard deviations below. Firmly in ID range.', isCorrect: true },
+          { id: 'below-avg', label: 'Below average but not disability range', explanation: 'No; SS 70 is the threshold. Scores below 70 are ID range.' },
+          { id: 'borderline', label: 'Borderline range', explanation: 'Borderline is SS 70-84. A score of 61 falls below borderline into ID range.' },
+        ],
+      },
       { type: 'anchor', label: 'Memory anchor', text: 'The mean is 100. Every 15 points is one standard deviation. Two SDs below = 70. That is the ID threshold. Know these numbers cold.' },
     ],
   },
@@ -209,6 +309,17 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'Psychometric adequacy is judged by specific coefficient benchmarks. Test-retest reliability of 0.79 is acceptable but on the lower end of convention — most experts prefer 0.80 or higher. A convergent validity coefficient of 0.58 indicates only moderate association between the new test and the established one.' },
       { type: 'paragraph', text: 'When validity is only moderate (below 0.70), practitioners should be cautious about recommending a new test solely on that basis. The correct answer frames this as a moderate relationship that is not strong enough to endorse the new test.' },
       { type: 'comparison', leftHeader: 'Reliability (consistency)', rightHeader: 'Validity (accuracy)', rows: [{ left: 'Coefficient should be ≥0.80 ideally. A coefficient of 0.79 is acceptable but marginal. Measures whether the test gives consistent scores.', right: 'Coefficient of 0.70+ preferred. A coefficient of 0.58 is moderate — the new test is correlated with the old one, but not strongly enough to confidently replace it.' }] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Coefficient Interpretation',
+        prompt: 'A new assessment shows test-retest reliability = 0.79. What does this mean?',
+        options: [
+          { id: 'acceptable-marginal', label: 'Acceptable but marginal', explanation: 'Convention is ≥0.80. At 0.79, it meets minimum criteria but practitioners prefer stronger reliability.', isCorrect: true },
+          { id: 'strong-reliable', label: 'Strongly reliable; recommended', explanation: 'No; 0.79 is below the preferred 0.80 threshold. It is acceptable but not strong.' },
+          { id: 'unacceptable', label: 'Unacceptable; test should not be used', explanation: 'No; 0.79 is still acceptable, just on the lower end of the range.' },
+        ],
+      },
     ],
   },
 
@@ -218,6 +329,21 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'A Curriculum-Based Measurement is a brief, repeatable assessment taken directly from a student\'s own curriculum materials. It measures how a student is progressing in basic academic skills over time — reading fluency, math computation, spelling.' },
       { type: 'paragraph', text: 'CBMs supplement standardized testing; they do not replace it. They are local-norm referenced (compared to classmates or grade peers), not national norm referenced. A CBM reading probe uses a passage from the classroom\'s own reading program — not a nationally standardized passage.' },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'Assessment Type Classifier',
+        prompt: 'Classify each assessment as CBM, CBA, or Standardized.',
+        scenarios: [
+          { id: 's1', text: 'Weekly fluency probes from the classroom reading series, compared to grade-level peers', category: 'CBM' },
+          { id: 's2', text: 'WISC-5 cognitive assessment with national norm tables', category: 'STANDARDIZED' },
+          { id: 's3', text: 'Teacher-created spelling test from weekly spelling words', category: 'CBA' },
+          { id: 's4', text: 'Repeated ORF (Oral Reading Fluency) measures from curriculum passages', category: 'CBM' },
+          { id: 's5', text: 'Woodcock-Johnson Tests of Achievement with standardized scores', category: 'STANDARDIZED' },
+          { id: 's6', text: 'Work sample portfolio including student writing and problem-solving artifacts', category: 'CBA' },
+        ],
+        categories: ['CBM (standardized curriculum-based)', 'CBA (curriculum-based assessment)', 'STANDARDIZED (norm-referenced)'],
+      },
       { type: 'anchor', label: 'CBA vs. CBM', text: 'A Curriculum-Based Assessment (CBA) is the broader umbrella: any assessment drawn from the curriculum, which may include CBMs, structured observations, work samples, and teacher-made tests. A CBM is a specific, standardized measurement tool within that umbrella.' },
     ],
   },
@@ -228,6 +354,30 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Working memory is the cognitive ability to hold and manipulate information in an active mental workspace while simultaneously completing a task. It is distinct from short-term memory (passive holding) and long-term memory (stored information).' },
       { type: 'paragraph', text: 'On cognitive assessments like the WISC or WJ, working memory tasks might ask a student to hear a string of numbers, then repeat them backward — holding the information while mentally reorganizing it. This is the classic working memory demand.' },
+      {
+        type: 'interactive',
+        interactiveType: 'term-matcher',
+        label: 'Memory Types',
+        prompt: 'Match each memory type with its definition and example.',
+        pairs: [
+          {
+            term: 'Short-Term Memory',
+            definition: 'Passive holding of information for a brief period (seconds); no manipulation',
+          },
+          {
+            term: 'Working Memory',
+            definition: 'Holding and manipulating information while completing a task (e.g., digits backward)',
+          },
+          {
+            term: 'Long-Term Memory',
+            definition: 'Stored information retrieved from past experience and learning',
+          },
+          {
+            term: 'Processing Speed',
+            definition: 'Cognitive efficiency in completing simple tasks quickly (distinct from working memory)',
+          },
+        ],
+      },
       { type: 'anchor', label: 'Common confusion', text: 'Processing speed measures how fast a student completes simple tasks. Working memory measures how much information a student can hold while doing something with it. These are separate cognitive factors that are often both impaired in students with ADHD or learning disabilities.' },
     ],
   },
@@ -238,6 +388,34 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Matrix Reasoning subtests (found on the WISC, DAS, and other cognitive batteries) require the student to identify a missing piece of a visual pattern — rows and columns of shapes, designs, or objects with a piece removed. The student must reason by induction and analogy to solve the pattern.' },
       { type: 'paragraph', text: 'This is considered a measure of fluid reasoning (Gf) — the ability to solve novel problems without relying on previously learned facts. It is primarily a nonverbal task, though some verbal mediation may occur internally.' },
+      {
+        type: 'interactive',
+        interactiveType: 'card-flip',
+        label: 'Matrix Reasoning Concepts',
+        prompt: 'Review key concepts about matrix reasoning subtests.',
+        cards: [
+          {
+            id: 'card1',
+            front: 'What do Matrices Measure?',
+            back: 'Fluid reasoning (Gf) — the ability to solve novel problems using pattern recognition and analogy, without relying on learned facts.',
+          },
+          {
+            id: 'card2',
+            front: 'Is it Verbal or Nonverbal?',
+            back: 'Nonverbal. The student solves a visual pattern. No reading or speaking required.',
+          },
+          {
+            id: 'card3',
+            front: 'What is the Task Format?',
+            back: 'Student sees a grid of shapes with one missing. They must select the piece that completes the pattern from multiple choices.',
+          },
+          {
+            id: 'card4',
+            front: 'When does this appear?',
+            back: 'On most modern cognitive batteries: WISC-5, WAIS-IV, DAS-II, Stanford-Binet, Raven\'s Progressive Matrices.',
+          },
+        ],
+      },
       { type: 'anchor', label: 'Memory anchor', text: "Matrices = patterns = nonverbal/fluid reasoning. If you see the word 'novel problem-solving,' think right hemisphere of the brain, fluid reasoning, and nonverbal." },
     ],
   },
@@ -248,6 +426,34 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Projective tests (Rorschach, Draw-a-Person, Sentence Completion) have a legitimate but limited role in school psychological assessment. They are best used to gather supplementary qualitative information — additional texture and hypotheses about a student\'s inner life.' },
       { type: 'paragraph', text: 'They should not be used as the sole basis for a diagnosis or eligibility determination. Their psychometric properties are more variable than standardized tests, but that does not make them useless — it makes them supplementary.' },
+      {
+        type: 'interactive',
+        interactiveType: 'card-flip',
+        label: 'Projective Test Usage',
+        prompt: 'Test your understanding of when and how projective tests are used.',
+        cards: [
+          {
+            id: 'card1',
+            front: 'What is the PRIMARY role of projectives?',
+            back: 'Supplementary qualitative information — additional texture about a student\'s inner experience, not standalone diagnosis.',
+          },
+          {
+            id: 'card2',
+            front: 'Can you use a projective as the ONLY basis for diagnosis?',
+            back: 'No. Projectives have variable psychometric properties. They must be paired with standardized tests.',
+          },
+          {
+            id: 'card3',
+            front: 'True or False: Projectives are rarely used by school psychologists.',
+            back: 'FALSE. Many practitioners use them. The accurate statement is they are supplementary, not primary.',
+          },
+          {
+            id: 'card4',
+            front: 'What are examples of projective tests?',
+            back: 'Rorschach (inkblots), Draw-a-Person, Sentence Completion, Thematic Apperception Test (TAT), House-Tree-Person.',
+          },
+        ],
+      },
       { type: 'anchor', label: 'What projectives are NOT used for (on the exam)', text: "They are not primarily for rapport building (that is a side benefit). They are not used to detect malingering. And the claim that school psychologists 'rarely use them due to poor psychometrics' is an overstatement — many practitioners do use them. The correct answer is supplementary information." },
     ],
   },
@@ -260,6 +466,17 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'When a school psychologist begins a professional consultation with a teacher, the recommended starting framework is nonhierarchical and collaborative. This means both the psychologist and the consultee (teacher) are treated as equal experts — the psychologist brings psychological knowledge; the teacher brings knowledge of the student and classroom context.' },
       { type: 'paragraph', text: 'This model promotes shared problem ownership, which makes intervention follow-through far more likely than a top-down expert model.' },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Consultation Model Selection',
+        prompt: 'A school psychologist wants to improve intervention follow-through. Which model should guide the initial consultation?',
+        options: [
+          { id: 'collab', label: 'Nonhierarchical Collaborative Model', explanation: 'Treats both professionals as equal experts. Promotes shared problem ownership and follow-through.', isCorrect: true },
+          { id: 'expert', label: 'Expert/Hierarchical Model', explanation: 'Psychologist directs; teacher implements. Reduces shared ownership and follow-through.' },
+          { id: 'directive', label: 'Directive Instruction Model', explanation: 'Not a consultation model; this describes a teaching approach.' },
+        ],
+      },
       { type: 'anchor', label: 'The exam cue word', text: "When you see 'collaboration' or 'collaborative' in an answer choice about consultation, that is almost always the correct direction. The nonhierarchical collaborative model is the go-to starting framework." },
     ],
   },
@@ -271,6 +488,17 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: "In a consultee-centered model, the goal is not just to fix one student's problem — it is to develop the consultee's (usually the teacher's) own skills and capacities so they can address similar situations independently in the future." },
       { type: 'paragraph', text: 'This is different from a student-centered model (focused on the individual child) or a systems-level model (focused on the organization). When the question mentions building a teacher\'s skills or reducing dependence on the psychologist, consultee-centered is the answer.' },
       { type: 'comparison', leftHeader: 'Consultee-Centered', rightHeader: 'Student-Centered', rows: [{ left: "Goal: build the teacher's capacity. Psychologist teaches skills and frameworks so the teacher can handle future cases independently.", right: "Goal: solve this specific student's problem. The psychologist focuses directly on assessment and intervention for the individual." }] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Consultation Goal Selection',
+        prompt: 'A teacher has one student struggling. Which approach reduces long-term dependence on the school psychologist?',
+        options: [
+          { id: 'consultee', label: 'Consultee-Centered: Build the teacher\'s problem-solving skills', explanation: 'Teacher gains capacity to handle similar cases independently; reduces future dependence on psychologist.', isCorrect: true },
+          { id: 'student', label: 'Student-Centered: Focus on fixing this student\'s problem', explanation: 'Solves one case but does not build teacher capacity for future situations.' },
+          { id: 'systems', label: 'Systems-Centered: Restructure school policies', explanation: 'Appropriate for organizational change, but not the most direct way to build individual teacher capacity.' },
+        ],
+      },
     ],
   },
 
@@ -281,6 +509,17 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'PLCs are collaborative professional development structures in which staff meet regularly to examine data and improve student outcomes. They are driven by three specific questions:' },
       { type: 'list', items: ['What do we want each student to learn?', 'How will we know when each student has learned it?', 'How will we respond when a student experiences difficulty in learning?'] },
       { type: 'paragraph', text: 'PLCs are not prescriptive about data collection methods or presentation formats — they set goals and let professionals determine how to get there. A question about how data will be collected and presented is not one of the three driving questions.' },
+      {
+        type: 'interactive',
+        interactiveType: 'drag-to-order',
+        label: 'PLC Driving Questions Sequence',
+        prompt: 'Arrange the three PLC driving questions in the correct order of focus.',
+        items: [
+          'Question 1: What do we want each student to learn? (Define learning goals)',
+          'Question 2: How will we know when each student has learned it? (Measure success)',
+          'Question 3: How will we respond when a student experiences difficulty in learning? (Intervene)',
+        ],
+      },
       { type: 'anchor', label: 'Memory anchor', text: 'The three PLC questions focus on WHAT students learn, HOW we know they learned it, and WHAT we do when they struggle. Anything about data mechanics or presentation format is outside these three.' },
     ],
   },
@@ -291,6 +530,18 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'When a school psychologist faces a community-wide substance abuse problem affecting multiple families and students, the most effective intervention is not a single classroom program or a teacher training — it is a broad-spectrum coalition that brings together parents, school staff, and community partners.' },
       { type: 'paragraph', text: 'This aligns with systems-level thinking: the most powerful and durable interventions address problems at multiple levels simultaneously. A school psychologist who works in isolation misses the leverage that community support provides.' },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Intervention Level for Community Problem',
+        prompt: 'A district has a systemic substance abuse problem affecting multiple students and families. Which intervention is most effective?',
+        options: [
+          { id: 'coalition', label: 'Community coalition with school, parents, and community partners', explanation: 'Broadest approach; addresses multiple system levels simultaneously for maximum impact and durability.', isCorrect: true },
+          { id: 'classroom', label: 'Single classroom prevention program', explanation: 'Too narrow for a systemic problem; misses families and community leverage.' },
+          { id: 'teacher-training', label: 'Teacher training on drug awareness', explanation: 'Valuable but insufficient; does not engage families or community partners.' },
+          { id: 'student-only', label: 'Individual counseling for affected students', explanation: 'Reactive and incomplete; does not address systemic causes.' },
+        ],
+      },
       { type: 'anchor', label: 'Test-taking logic', text: "When answer choices are nested (one option includes everything the others offer), the broader, more comprehensive answer is almost always correct. Look for the answer that 'contains' the other options." },
     ],
   },
@@ -303,6 +554,18 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Explicit and systematic instruction is the gold standard for teaching foundational academic skills, particularly reading and math. Explicit means skills are taught directly and clearly — nothing is left to be discovered by the student. Systematic means the instruction follows a deliberate sequence, building from simpler to more complex skills.' },
       { type: 'paragraph', text: "'Drill and practice' has a place, but it is not a complete instructional approach. 'Implicit and direct' is not a valid educational term. 'Analysis and synthesis' describes thinking skills, not an instructional delivery method." },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Evidence-Based Instruction Identifier',
+        prompt: 'Which describes explicit and systematic instruction for teaching reading?',
+        options: [
+          { id: 'explicit', label: 'Direct, step-by-step teaching with clear skill sequence (simple → complex)', explanation: 'Explicit = taught directly and clearly. Systematic = follows a deliberate sequence.', isCorrect: true },
+          { id: 'implicit', label: 'Students discover skills through exploration and reading', explanation: 'This is implicit, not explicit. Not supported for foundational skills.' },
+          { id: 'drill', label: 'Repeated practice without direct instruction', explanation: 'Drill alone is not sufficient without explicit instruction.' },
+          { id: 'analysis', label: 'Analysis and synthesis of complex texts', explanation: 'Describes higher-order thinking, not foundational instruction method.' },
+        ],
+      },
       { type: 'anchor', label: 'Key terms to recognize', text: 'Direct instruction, explicit instruction, systematic instruction — these terms are interchangeable in this context and always represent the correct answer when asked about evidence-based teaching.' },
     ],
   },
@@ -313,6 +576,18 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'For beginning readers, the most research-supported foundation is phonological processing — the ability to hear, identify, and manipulate the sound structure of language. Phonemic awareness (awareness of individual sounds/phonemes) is the most critical early reading skill.' },
       { type: 'paragraph', text: 'Programs that emphasize phonological processes outperform whole-language or meaning-based approaches in early reading development, particularly for students at risk for dyslexia.' },
+      {
+        type: 'interactive',
+        interactiveType: 'drag-to-order',
+        label: 'Reading Skill Hierarchy',
+        prompt: 'Arrange the reading skills in the correct order from foundational to advanced.',
+        items: [
+          'Phonological Awareness: Hear and identify sounds in language (foundational)',
+          'Phonics: Connect sounds to letters and letter patterns',
+          'Fluency: Read with accuracy and speed',
+          'Comprehension: Understand and derive meaning from text (advanced)',
+        ],
+      },
       { type: 'anchor', label: 'Dyslexia connection', text: 'The hallmark of dyslexia is a phonological processing deficit. Reading programs that target phonological awareness and phoneme-grapheme correspondence are the evidence-based first choice for struggling readers.' },
     ],
   },
@@ -323,6 +598,34 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'The National Association of School Psychologists does not endorse grade retention as an effective intervention. Research consistently shows that retention does not produce lasting academic gains and carries significant social-emotional costs for students.' },
       { type: 'paragraph', text: "When a parent asks whether to hold a child back, the psychologist's role is to advocate for evidence-based interventions first and to document whether those interventions are working before any retention decision is considered." },
+      {
+        type: 'interactive',
+        interactiveType: 'card-flip',
+        label: 'NASP Position on Grade Retention',
+        prompt: 'Review NASP\'s research-based position on retention and its effects.',
+        cards: [
+          {
+            id: 'card1',
+            front: 'Does NASP endorse grade retention?',
+            back: 'No. NASP does not endorse retention as an effective intervention.',
+          },
+          {
+            id: 'card2',
+            front: 'Does retention improve academic outcomes?',
+            back: 'No. Research shows retention does not produce lasting academic gains.',
+          },
+          {
+            id: 'card3',
+            front: 'What social-emotional costs does retention carry?',
+            back: 'Significant costs: reduced self-esteem, increased dropout risk, peer relationship strain.',
+          },
+          {
+            id: 'card4',
+            front: 'What should a psychologist advocate before retention?',
+            back: 'Evidence-based interventions first, with documented effectiveness, before any retention decision.',
+          },
+        ],
+      },
       { type: 'anchor', label: 'Exam rule of thumb', text: "Any answer choice that endorses retention as a primary or recommended strategy is almost certainly wrong. NASP's position is to try interventions first and document their effectiveness." },
     ],
   },
@@ -333,6 +636,21 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'When a student with a disability (such as a visual impairment) is given a challenging assignment, best practice is to involve the student in identifying appropriate accommodations. Students who have input into their own learning experience stronger ownership and better outcomes.' },
       { type: 'paragraph', text: "Excusing the student entirely removes an important learning opportunity. Assigning an entirely different task treats the student as incapable. Helping without explicit accommodation discussion bypasses the student's right to participate in their own education plan." },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'Accommodation vs. Modification Classifier',
+        prompt: 'Sort each example as an accommodation or a modification.',
+        scenarios: [
+          { id: 's1', text: 'A student with dyslexia receives the same test questions but in large print', category: 'ACCOMMODATION' },
+          { id: 's2', text: 'A student is given a 5-question version of a 10-question test', category: 'MODIFICATION' },
+          { id: 's3', text: 'A student using a wheelchair takes a test in an accessible room instead of upstairs', category: 'ACCOMMODATION' },
+          { id: 's4', text: 'A student must write a 1-page summary instead of a 5-page essay on the same topic', category: 'MODIFICATION' },
+          { id: 's5', text: 'A student listens to a math problem read aloud instead of reading it', category: 'ACCOMMODATION' },
+          { id: 's6', text: 'A student learns different material (simpler fractions instead of complex algebra)', category: 'MODIFICATION' },
+        ],
+        categories: ['ACCOMMODATION (same goal, different format)', 'MODIFICATION (different goal or reduced scope)'],
+      },
       { type: 'anchor', label: 'Key principle', text: 'Accommodations change HOW a student accesses or demonstrates learning — not WHAT they are expected to learn. A student with a visual impairment may need a different presentation format, but can still meet the same learning objective.' },
     ],
   },
@@ -344,6 +662,21 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'Research on motivation shows that tangible rewards (stickers, candy, prizes) can actually undermine intrinsic motivation by shifting a student\'s focus from the activity itself to the external reward. When the reward disappears, motivation often collapses.' },
       { type: 'paragraph', text: 'Cognitive approaches — particularly giving students choice — are more effective for building lasting intrinsic motivation. Choice gives students a sense of autonomy and control, which is one of the three core components of self-determination theory (autonomy, competence, relatedness).' },
       { type: 'comparison', leftHeader: 'Builds Intrinsic Motivation', rightHeader: 'Can Undermine Intrinsic Motivation', rows: [{ left: 'Choice • Autonomy • Mastery-oriented feedback • Self-regulation strategies', right: 'Tangible rewards • Token economies (when overused) • Praise that is controlling rather than informational' }] },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'Motivation Strategy Classifier',
+        prompt: 'Sort each strategy by whether it builds or undermines intrinsic motivation.',
+        scenarios: [
+          { id: 's1', text: 'Offering a student choice of three learning activities', category: 'BUILDS' },
+          { id: 's2', text: 'Praising effort and strategy: "You worked hard and tried different approaches"', category: 'BUILDS' },
+          { id: 's3', text: 'Rewarding correct answers with candy or stickers', category: 'UNDERMINES' },
+          { id: 's4', text: 'Allowing student input into learning goals and objectives', category: 'BUILDS' },
+          { id: 's5', text: 'Using token economies as a primary behavior system', category: 'UNDERMINES' },
+          { id: 's6', text: 'Teaching self-regulation and metacognitive strategies', category: 'BUILDS' },
+        ],
+        categories: ['BUILDS Intrinsic Motivation', 'UNDERMINES Intrinsic Motivation'],
+      },
     ],
   },
 
@@ -353,6 +686,30 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Chunking is a well-researched memory strategy in which information is grouped into meaningful clusters to reduce the burden on working memory. The classic example is a phone number: rather than remembering ten individual digits, we remember three chunks (area code, prefix, number).' },
       { type: 'paragraph', text: 'When students need to memorize a long sequence of information, chunking is the most evidence-supported strategy because it aligns with how working memory actually operates — in units, not in endless individual pieces.' },
+      {
+        type: 'interactive',
+        interactiveType: 'term-matcher',
+        label: 'Memory Strategies',
+        prompt: 'Match each memory strategy with its definition and best use.',
+        pairs: [
+          {
+            term: 'Chunking',
+            definition: 'Grouping information into meaningful clusters to reduce working memory burden (e.g., phone number in three chunks)',
+          },
+          {
+            term: 'Mnemonic Devices',
+            definition: 'Memory aids like acronyms or rhymes to encode information (e.g., PEMDAS for order of operations)',
+          },
+          {
+            term: 'Rehearsal',
+            definition: 'Repetition of information to strengthen encoding and retention',
+          },
+          {
+            term: 'Elaboration',
+            definition: 'Connecting new information to existing knowledge and creating meaningful relationships',
+          },
+        ],
+      },
       { type: 'anchor', label: 'Memory anchor', text: 'Think of a phone number: 555-867-5309. Not ten digits — three chunks. That is chunking. The exam will ask about memory strategies and this is the answer for long series of information.' },
     ],
   },
@@ -366,6 +723,17 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'Cognitive Behavioral Therapy is the most extensively researched and widely adopted psychotherapy approach in school psychology. It is grounded in the principle that thoughts, feelings, and behaviors are interconnected — changing maladaptive thought patterns leads to changes in both emotional states and behavior.' },
       { type: 'paragraph', text: 'CBT is short-term, goal-oriented, and skills-focused. It emphasizes active practice, homework, and building coping strategies the student can use independently after treatment ends.' },
       { type: 'comparison', leftHeader: 'CBT Is Best For', rightHeader: 'What CBT Is Not', rows: [{ left: 'Anxiety • Depression • Social skill deficits • Phobias • Assertiveness training • Selective mutism (with behavioral components)', right: 'It is not psychodynamic (unconscious drives). It is not purely behavioral (consequences only). It is not person-centered (unconditional positive regard).' }] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Counseling Approach for School Anxiety',
+        prompt: 'A student has anxiety about public speaking. Which counseling approach is most evidence-based?',
+        options: [
+          { id: 'cbt', label: 'Cognitive Behavioral Therapy', explanation: 'CBT targets thoughts, feelings, and behaviors. It teaches coping strategies the student can use independently.', isCorrect: true },
+          { id: 'psycho', label: 'Psychodynamic approach', explanation: 'Focuses on unconscious drives; longer-term. Less evidence-base for school-based work.' },
+          { id: 'humanist', label: 'Person-centered/humanistic', explanation: 'Emphasizes unconditional positive regard; not structured for skills-building.' },
+        ],
+      },
     ],
   },
 
@@ -376,6 +744,21 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'These two terms are among the most commonly confused in all of school psychology. The key is this: reinforcement — whether positive or negative — always INCREASES a behavior. Punishment always DECREASES a behavior.' },
       { type: 'paragraph', text: 'Negative reinforcement removes an aversive stimulus to increase a desired behavior. Example: a car\'s seatbelt alarm stops when you buckle up. The alarm (aversive stimulus) is removed, which increases seatbelt-buckling behavior. That is negative reinforcement.' },
       { type: 'comparison', leftHeader: 'Negative Reinforcement', rightHeader: 'Punishment', rows: [{ left: 'Removes something unpleasant → INCREASES a behavior. Example: a nagging reminder stops when the child completes homework — increases homework completion.', right: 'Adds something unpleasant (or removes something pleasant) → DECREASES a behavior. Example: removing recess privileges to decrease talking out of turn.' }] },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'Reinforcement vs. Punishment Classifier',
+        prompt: 'Sort each scenario as negative reinforcement or punishment.',
+        scenarios: [
+          { id: 's1', text: 'A nagging reminder stops when homework is completed → increases homework completion', category: 'NEG_REINF' },
+          { id: 's2', text: 'Recess is removed to decrease talking out of turn', category: 'PUNISHMENT' },
+          { id: 's3', text: 'A teacher stops reminding a student when assignments are turned in on time → improves timeliness', category: 'NEG_REINF' },
+          { id: 's4', text: 'A student loses screen time for not completing chores → decreases behavior', category: 'PUNISHMENT' },
+          { id: 's5', text: 'Seatbelt alarm stops (relief) when buckled → increases buckling', category: 'NEG_REINF' },
+          { id: 's6', text: 'Detention is assigned for being tardy → decreases tardiness', category: 'PUNISHMENT' },
+        ],
+        categories: ['NEGATIVE REINFORCEMENT (removes aversive → increases behavior)', 'PUNISHMENT (adds/removes → decreases behavior)'],
+      },
       { type: 'anchor', label: 'Memory anchor', text: 'Negative reinforcement = relief. If removing something makes a behavior go UP, that is negative reinforcement. If anything makes a behavior go DOWN, that is punishment.' },
     ],
   },
@@ -405,6 +788,21 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: 'Bullying has a specific conceptual definition in the research literature that differentiates it from general aggression or conflict. The defining features are: repetition (not a one-time incident), intentionality, and — critically — an imbalance of power between the aggressor and the target.' },
       { type: 'paragraph', text: 'Bullying is not the same as fighting, bantering, or general conflict. It is aggression characterized by a consistent abuse of power. This framing has implications for intervention: addressing bullying requires addressing the power dynamic, not just the behavior.' },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'Bullying vs. Other Aggression',
+        prompt: 'Identify whether each scenario constitutes bullying or is a different form of conflict.',
+        scenarios: [
+          { id: 's1', text: 'Two students have equal strength, get into one fight over a disagreement', category: 'NOT_BULLYING' },
+          { id: 's2', text: 'Older student repeatedly excludes younger student from group, threatens them', category: 'BULLYING' },
+          { id: 's3', text: 'Friends banter and joke back-and-forth', category: 'NOT_BULLYING' },
+          { id: 's4', text: 'Physically larger student pushes smaller student for lunch money repeatedly', category: 'BULLYING' },
+          { id: 's5', text: 'Two classmates argue once about a test', category: 'NOT_BULLYING' },
+          { id: 's6', text: 'One student spreads rumors repeatedly about another; excludes from social groups', category: 'BULLYING' },
+        ],
+        categories: ['BULLYING (power imbalance, repetition, intentionality)', 'NOT BULLYING (one-time, equal power, mutual conflict)'],
+      },
       { type: 'anchor', label: "NASP's preferred approach", text: 'Restorative practices and skill-building are endorsed over zero-tolerance policies. Zero tolerance is not effective and creates disparate impact on minority and special education students.' },
     ],
   },
@@ -446,6 +844,30 @@ export const LEARNING_MODULES: LearningModule[] = [
     sections: [
       { type: 'paragraph', text: "Erikson's psychosocial theory is a consistent source of exam questions. Know the school-age stages by their age ranges and core challenges:" },
       { type: 'list', items: ['Industry vs. Inferiority (6–12 years, elementary school): Children learn to be competent and productive. Success builds industry; failure builds feelings of inferiority.', 'Initiative vs. Guilt (3–5 years, preschool): Children take on new tasks and assert themselves. Excessive criticism creates guilt.', 'Identity vs. Role Confusion (13–18 years, high school): Adolescents explore who they are and where they fit in the world.', 'Trust vs. Mistrust (0–18 months): Infants learn whether the world is safe and reliable.'] },
+      {
+        type: 'interactive',
+        interactiveType: 'term-matcher',
+        label: 'Erikson Developmental Stages',
+        prompt: 'Match each Erikson stage with its age range and core psychosocial challenge.',
+        pairs: [
+          {
+            term: 'Trust vs. Mistrust',
+            definition: '0–18 months (infancy): Learn if world is safe and caregivers are reliable',
+          },
+          {
+            term: 'Initiative vs. Guilt',
+            definition: '3–5 years (preschool): Assert yourself and take on tasks without excessive criticism',
+          },
+          {
+            term: 'Industry vs. Inferiority',
+            definition: '6–12 years (elementary): Develop competence and productivity; avoid feelings of inadequacy',
+          },
+          {
+            term: 'Identity vs. Role Confusion',
+            definition: '13–18 years (adolescence): Explore identity and social role; determine where you fit in the world',
+          },
+        ],
+      },
       { type: 'anchor', label: 'Exam pattern', text: 'A 9-year-old (second grade) is in the Industry vs. Inferiority stage. A high schooler exploring career identity is in Identity vs. Role Confusion. These are the two most frequently tested.' },
     ],
   },
