@@ -328,13 +328,13 @@ export default function LoginScreen() {
     'w-full rounded-[1.35rem] border border-slate-200 bg-[#fbfaf7] px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-200/70';
 
   return (
-    <div className="editorial-shell relative min-h-screen overflow-hidden" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
+    <div className="editorial-shell relative h-screen overflow-hidden" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[24rem] bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.12),_transparent_45%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.08),_transparent_35%)]" />
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-200/20 blur-3xl" />
       </div>
 
-      <div className="relative z-10 min-h-screen lg:flex">
+      <div className="relative z-10 flex h-full flex-col lg:flex-row">
         <aside className="hidden lg:flex lg:w-72 lg:flex-shrink-0 lg:flex-col lg:bg-[#0f172a] lg:shadow-2xl">
           <div className="p-8">
             <div className="group flex items-center gap-3">
