@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface Card {
   id: string;
@@ -9,13 +9,14 @@ interface Card {
 interface CardFlipProps {
   cards: Card[];
   prompt?: string;
+  onComplete?: (result: { flipped: number; total: number }) => void;
 }
 
 /**
  * CardFlip: Reveal-on-click cards
  * Used for: True/False, vocabulary definitions, terminology flash cards
  */
-export default function CardFlip({ cards, prompt }: CardFlipProps) {
+export default function CardFlip({ cards, prompt, onComplete }: CardFlipProps) {
   const [flipped, setFlipped] = useState<Set<string>>(new Set());
 
   const toggleFlip = (id: string) => {
@@ -29,6 +30,14 @@ export default function CardFlip({ cards, prompt }: CardFlipProps) {
   };
 
   const allRevealed = flipped.size === cards.length;
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    if (allRevealed && !firedRef.current && onComplete) {
+      firedRef.current = true;
+      onComplete({ flipped: flipped.size, total: cards.length });
+    }
+  }, [allRevealed, onComplete, flipped.size, cards.length]);
 
   return (
     <div className="space-y-4">

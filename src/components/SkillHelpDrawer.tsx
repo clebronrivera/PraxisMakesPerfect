@@ -9,6 +9,7 @@
 //   - The panel does not auto-scroll or highlight answers.
 //   - Linked to the primary module for the current practiceSkillId.
 //   - Users can navigate to related modules from within the drawer.
+//   - Tracks section visibility and interactive exercise completion.
 //
 // Props:
 //   skillId          — the skill currently being practiced
@@ -17,7 +18,7 @@
 //   userId           — for progress tracking
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, BookOpen, ChevronLeft } from 'lucide-react';
 import {
   getAllModulesForSkill,
@@ -25,6 +26,9 @@ import {
   type LearningModule,
 } from '../data/learningModules';
 import { useLearningPathProgress } from '../hooks/useLearningPathProgress';
+import { useModuleVisitTracking } from '../hooks/useModuleVisitTracking';
+import { useSectionObserver } from '../hooks/useSectionObserver';
+import type { InteractiveResult } from '../hooks/useModuleVisitTracking';
 import ModuleLessonViewer from './ModuleLessonViewer';
 
 interface SkillHelpDrawerProps {
@@ -77,6 +81,57 @@ export default function SkillHelpDrawer({
   }, [isOpen]);
 
   const activeModule = activeModuleId ? MODULE_LOOKUP[activeModuleId] : null;
+
+  // ── Module visit tracking ──────────────────────────────────────────────
+  const visitTracking = useModuleVisitTracking(
+    isOpen ? userId : null,
+    isOpen ? activeModuleId : null,
+    skillId,
+    'skill_help_drawer'
+  );
+
+  // ── Completed interactives map ─────────────────────────────────────────
+  const [completedInteractives, setCompletedInteractives] = useState<
+    Record<number, { score: number; completed: boolean }>
+  >({});
+
+  // Reset when module changes
+  useEffect(() => {
+    setCompletedInteractives({});
+  }, [activeModuleId]);
+
+  const handleInteractiveComplete = useCallback((sectionIndex: number, result: InteractiveResult) => {
+    visitTracking.reportInteractiveComplete(sectionIndex, result);
+    setCompletedInteractives(prev => ({
+      ...prev,
+      [sectionIndex]: { score: result.score, completed: result.completed },
+    }));
+  }, [visitTracking]);
+
+  // ── Section observer ───────────────────────────────────────────────────
+  const sectionCount = activeModule?.sections.length ?? 0;
+
+  const { sectionRefs, maxScrollDepth } = useSectionObserver({
+    sectionCount,
+    onVisible: useCallback((idx: number) => {
+      const section = activeModule?.sections[idx];
+      if (section) {
+        visitTracking.reportSectionVisible(
+          idx,
+          section.type,
+          section.type === 'interactive' ? section.interactiveType : undefined
+        );
+      }
+    }, [activeModule, visitTracking]),
+    onHidden: useCallback((idx: number) => {
+      visitTracking.reportSectionHidden(idx);
+    }, [visitTracking]),
+    enabled: isOpen && !!activeModule,
+  });
+
+  useEffect(() => {
+    visitTracking.reportScrollDepth(maxScrollDepth);
+  }, [maxScrollDepth, visitTracking]);
 
   if (!isOpen) return null;
 
@@ -176,6 +231,9 @@ export default function SkillHelpDrawer({
                 setActiveModuleId(id);
                 progress.onOpenModule(id);
               }}
+              onInteractiveComplete={handleInteractiveComplete}
+              sectionRefs={sectionRefs}
+              completedInteractives={completedInteractives}
             />
             <div className="h-6" />
           </div>

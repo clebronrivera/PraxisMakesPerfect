@@ -109,8 +109,13 @@ export interface UseLearningPathSupabaseReturn {
   /** Add incremental seconds to time_spent for a skill (called periodically during reading). */
   addTimeSpent: (skillId: string, seconds: number) => Promise<void>;
 
-  /** Submit practice question results for a skill. */
-  submitQuestions: (skillId: string, correct: number, total: number) => Promise<void>;
+  /** Submit practice question results for a skill, optionally blended with interactive exercise scores. */
+  submitQuestions: (
+    skillId: string,
+    correct: number,
+    total: number,
+    interactiveScore?: { score: number; count: number }
+  ) => Promise<void>;
 
   /** Explicitly promote a skill to mastered (e.g. after second demonstrating session). */
   markMastered: (skillId: string) => Promise<void>;
@@ -264,15 +269,31 @@ export function useLearningPathSupabase(
   );
 
   // ── submitQuestions ───────────────────────────────────────────────────────
+  // Supports blended accuracy: 70% quiz weight + 30% interactive weight.
+  // If no interactive scores provided, uses quiz accuracy alone.
   const submitQuestions = useCallback(
-    async (skillId: string, correct: number, total: number): Promise<void> => {
+    async (
+      skillId: string,
+      correct: number,
+      total: number,
+      interactiveScore?: { score: number; count: number }
+    ): Promise<void> => {
       if (!userId) return;
       const existing = progress[skillId] ?? defaultRecord(skillId);
-      const accuracy = total > 0 ? correct / total : null;
+      const quizAccuracy = total > 0 ? correct / total : null;
+
+      // Blend quiz + interactive scores when both available
+      let blendedAccuracy: number | null;
+      if (quizAccuracy !== null && interactiveScore && interactiveScore.count > 0) {
+        blendedAccuracy = quizAccuracy * 0.7 + interactiveScore.score * 0.3;
+      } else {
+        blendedAccuracy = quizAccuracy;
+      }
+
       const nextStatus = deriveLearningPathStatus(
         existing.lessonViewed,
         true,
-        accuracy,
+        blendedAccuracy,
         existing.status
       );
 
@@ -281,19 +302,27 @@ export function useLearningPathSupabase(
         questionsSubmitted: true,
         questionsCorrect: correct,
         questionsTotal: total,
-        accuracy,
+        accuracy: blendedAccuracy,
         status: nextStatus,
       };
 
       setProgress(prev => ({ ...prev, [skillId]: updated }));
 
-      await upsert(skillId, {
+      const patch: Record<string, unknown> = {
         questions_submitted: true,
         questions_correct: correct,
         questions_total: total,
-        accuracy,
+        accuracy: blendedAccuracy,
         status: nextStatus,
-      });
+      };
+
+      // Also persist interactive aggregates if provided
+      if (interactiveScore && interactiveScore.count > 0) {
+        patch.total_interactive_score = interactiveScore.score;
+        patch.interactive_exercises_completed = interactiveScore.count;
+      }
+
+      await upsert(skillId, patch);
     },
     [userId, progress, upsert]
   );

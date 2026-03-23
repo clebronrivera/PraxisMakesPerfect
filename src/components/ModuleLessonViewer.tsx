@@ -4,19 +4,26 @@
 // Used inside both the Learning Path lesson panel and the Skill Help Drawer.
 //
 // ─── Module Lesson Viewer ─────────────────────────────────────────────────────
-//   - Renders all typed sections (paragraph, anchor, comparison, list)
+//   - Renders all typed sections (paragraph, anchor, comparison, list, interactive)
+//   - Section refs for IntersectionObserver-based engagement tracking
+//   - Wires onComplete callbacks to all interactive components
+//   - Shows completion indicators on interactive sections
 //   - "Mark as viewed" checkbox at the bottom
 //   - Shows cumulative time spent badge
 //   - No storage logic here — parent passes callbacks
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { useCallback } from 'react';
 import { CheckCircle, Circle, Clock } from 'lucide-react';
 import type { LearningModule, ModuleSection } from '../data/learningModules';
 import {
   ScenarioSorter,
   DragToOrder,
   TermMatcher,
+  ClickSelector,
+  CardFlip,
 } from './ModuleInteractives';
+import type { InteractiveResult } from '../hooks/useModuleVisitTracking';
 
 interface ModuleLessonViewerProps {
   module: LearningModule;
@@ -26,6 +33,12 @@ interface ModuleLessonViewerProps {
   /** Additional modules linked to the same skill (shown as "See also" links) */
   relatedModules?: Array<{ id: string; title: string }>;
   onOpenRelated?: (moduleId: string) => void;
+  /** Callback when an interactive exercise is completed */
+  onInteractiveComplete?: (sectionIndex: number, result: InteractiveResult) => void;
+  /** Ref array for section observation — assign via ref={el => sectionRefs[i] = el} */
+  sectionRefs?: React.MutableRefObject<Array<HTMLDivElement | null>>;
+  /** Map of sectionIndex → completion status for interactive sections */
+  completedInteractives?: Record<number, { score: number; completed: boolean }>;
 }
 
 function formatTime(seconds: number): string {
@@ -35,7 +48,19 @@ function formatTime(seconds: number): string {
   return s > 0 ? `${m}m ${s}s` : `${m}m`;
 }
 
-function SectionRenderer({ section }: { section: ModuleSection }) {
+function SectionRenderer({
+  section,
+  index,
+  onInteractiveComplete,
+  completedInteractives,
+}: {
+  section: ModuleSection;
+  index: number;
+  onInteractiveComplete?: (sectionIndex: number, result: InteractiveResult) => void;
+  completedInteractives?: Record<number, { score: number; completed: boolean }>;
+}) {
+  const completed = completedInteractives?.[index];
+
   switch (section.type) {
     case 'paragraph':
       return (
@@ -112,8 +137,17 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
         </div>
       );
 
-    case 'interactive':
-      // Render appropriate interactive component based on type
+    case 'interactive': {
+      // Completion badge shown after exercise is done
+      const completionBadge = completed?.completed ? (
+        <div className="flex items-center gap-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 mt-2">
+          <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="text-[11px] font-semibold text-emerald-300">
+            Completed{completed.score != null ? ` · ${Math.round(completed.score * 100)}%` : ''}
+          </span>
+        </div>
+      ) : null;
+
       if (section.interactiveType === 'scenario-sorter' && section.scenarios && section.categories) {
         return (
           <div className="space-y-2">
@@ -126,7 +160,22 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
               scenarios={section.scenarios}
               categories={section.categories}
               prompt={section.prompt}
+              onComplete={(categorization) => {
+                if (!onInteractiveComplete) return;
+                const total = section.scenarios!.length;
+                // Score: count how many scenarios the user sorted
+                // (ScenarioSorter doesn't have a correctAnswer field, so completion = engagement)
+                const sorted = Object.values(categorization).flat().length;
+                onInteractiveComplete(index, {
+                  interactiveType: 'scenario-sorter',
+                  score: total > 0 ? sorted / total : 1,
+                  completed: true,
+                  attempts: 1,
+                  data: { categorization },
+                });
+              }}
             />
+            {completionBadge}
           </div>
         );
       }
@@ -138,7 +187,26 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
                 {section.label}
               </p>
             )}
-            <DragToOrder items={section.items} prompt={section.prompt} />
+            <DragToOrder
+              items={section.items}
+              prompt={section.prompt}
+              onComplete={(orderedItems) => {
+                if (!onInteractiveComplete) return;
+                // Score: compare to original (correct) order
+                const correct = orderedItems.filter(
+                  (item, i) => item === section.items![i]
+                ).length;
+                const total = orderedItems.length;
+                onInteractiveComplete(index, {
+                  interactiveType: 'drag-to-order',
+                  score: total > 0 ? correct / total : 1,
+                  completed: true,
+                  attempts: 1,
+                  data: { submittedOrder: orderedItems },
+                });
+              }}
+            />
+            {completionBadge}
           </div>
         );
       }
@@ -150,63 +218,90 @@ function SectionRenderer({ section }: { section: ModuleSection }) {
                 {section.label}
               </p>
             )}
-            <TermMatcher pairs={section.pairs} prompt={section.prompt} />
+            <TermMatcher
+              pairs={section.pairs}
+              prompt={section.prompt}
+              onComplete={(correctMatches) => {
+                if (!onInteractiveComplete) return;
+                const total = section.pairs!.length;
+                onInteractiveComplete(index, {
+                  interactiveType: 'term-matcher',
+                  score: total > 0 ? correctMatches / total : 1,
+                  completed: true,
+                  attempts: 1,
+                  data: { correctMatches, total },
+                });
+              }}
+            />
+            {completionBadge}
           </div>
         );
       }
       if (section.interactiveType === 'click-selector' && section.options) {
         return (
-          <div className="space-y-4">
+          <div className="space-y-2">
             {section.label && (
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3">
                 {section.label}
               </p>
             )}
-            {section.prompt && <p className="text-sm text-slate-300 italic">{section.prompt}</p>}
-            <div className="grid grid-cols-1 gap-3">
-              {section.options.map(option => (
-                <div
-                  key={option.id}
-                  className="p-4 rounded-lg border-2 border-slate-600/40 bg-slate-800/60 hover:border-cyan-500/30"
-                >
-                  <p className="font-semibold text-slate-200">{option.label}</p>
-                  {option.explanation && (
-                    <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                      {option.explanation}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
+            <ClickSelector
+              options={section.options.map(o => ({ ...o, isCorrect: (o as any).isCorrect }))}
+              prompt={section.prompt}
+              onComplete={(selectedIds) => {
+                if (!onInteractiveComplete) return;
+                const opts = section.options!;
+                const hasCorrectAnswers = opts.some(o => (o as any).isCorrect);
+                let score = 1;
+                if (hasCorrectAnswers) {
+                  const correctIds = opts.filter(o => (o as any).isCorrect).map(o => o.id);
+                  const allCorrectSelected = selectedIds.every(id =>
+                    correctIds.includes(id)
+                  ) && selectedIds.length === correctIds.length;
+                  score = allCorrectSelected ? 1 : 0;
+                }
+                onInteractiveComplete(index, {
+                  interactiveType: 'click-selector',
+                  score,
+                  completed: true,
+                  attempts: 1,
+                  data: { selectedIds },
+                });
+              }}
+            />
+            {completionBadge}
           </div>
         );
       }
       if (section.interactiveType === 'card-flip' && section.cards) {
         return (
-          <div className="space-y-4">
+          <div className="space-y-2">
             {section.label && (
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3">
                 {section.label}
               </p>
             )}
-            {section.prompt && <p className="text-sm text-slate-300 italic">{section.prompt}</p>}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {section.cards.map(card => (
-                <div
-                  key={card.id}
-                  className="h-32 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-cyan-500/30 rounded-xl p-4 flex flex-col items-center justify-center text-center"
-                >
-                  <p className="text-lg font-bold text-cyan-300 mb-2">{card.front}</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-wide">
-                    Answer: {card.back}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <CardFlip
+              cards={section.cards}
+              prompt={section.prompt}
+              onComplete={(result) => {
+                if (!onInteractiveComplete) return;
+                const total = section.cards!.length;
+                onInteractiveComplete(index, {
+                  interactiveType: 'card-flip',
+                  score: total > 0 ? result.flipped / total : 1,
+                  completed: true,
+                  attempts: 1,
+                  data: { flipped: result.flipped, total },
+                });
+              }}
+            />
+            {completionBadge}
           </div>
         );
       }
       return null;
+    }
 
     case 'visual':
       // Placeholder for visual components (diagrams, charts)
@@ -230,7 +325,19 @@ export default function ModuleLessonViewer({
   onSetViewed,
   relatedModules,
   onOpenRelated,
+  onInteractiveComplete,
+  sectionRefs,
+  completedInteractives,
 }: ModuleLessonViewerProps) {
+  const assignRef = useCallback(
+    (el: HTMLDivElement | null, i: number) => {
+      if (sectionRefs) {
+        sectionRefs.current[i] = el;
+      }
+    },
+    [sectionRefs]
+  );
+
   return (
     <div className="space-y-5">
       {/* Module ID badge + time spent */}
@@ -254,7 +361,14 @@ export default function ModuleLessonViewer({
       {/* Content sections */}
       <div className="space-y-4">
         {module.sections.map((section, i) => (
-          <SectionRenderer key={i} section={section} />
+          <div key={i} ref={el => assignRef(el, i)}>
+            <SectionRenderer
+              section={section}
+              index={i}
+              onInteractiveComplete={onInteractiveComplete}
+              completedInteractives={completedInteractives}
+            />
+          </div>
         ))}
       </div>
 

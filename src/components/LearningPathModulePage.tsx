@@ -7,8 +7,8 @@
 //
 // ─── Section 1 — LESSON CONTENT ─────────────────────────────────────────────
 //   • Renders the micro-lesson text via ModuleLessonViewer
-//   • ⚙  placeholder for future interactive visual component
-//   • 🎮 placeholder for future interactive activity
+//   • Full section-level engagement tracking (IntersectionObserver)
+//   • Interactive exercise onComplete callbacks wired and persisted
 //   • "Mark Lesson Complete" button — unlocks Section 2
 //   • Tracks and saves elapsed time to Supabase (learning_path_progress)
 //
@@ -17,7 +17,7 @@
 //   • Shows up to LP_QUESTION_COUNT questions for this skill (random sample)
 //   • One question at a time via QuestionCard
 //   • On final submit:
-//       – calls useLearningPathSupabase.submitQuestions()  → LP status
+//       – calls useLearningPathSupabase.submitQuestions()  → LP status (blended)
 //       – calls onSkillProgressUpdate() for each response → skill_scores
 //   • Results summary + "Return to Learning Path" button
 //
@@ -26,7 +26,7 @@
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   ArrowLeft, CheckCircle, Lock,
   ChevronDown, ChevronUp, Settings, Gamepad2,
@@ -37,6 +37,9 @@ import ModuleLessonViewer from './ModuleLessonViewer';
 import QuestionCard from './QuestionCard';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
 import { useLearningPathProgress } from '../hooks/useLearningPathProgress';
+import { useModuleVisitTracking } from '../hooks/useModuleVisitTracking';
+import { useSectionObserver } from '../hooks/useSectionObserver';
+import type { InteractiveResult } from '../hooks/useModuleVisitTracking';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
@@ -289,6 +292,62 @@ export default function LearningPathModulePage({
   const modules = getAllModulesForSkill(skillId);
   const primaryModule = modules[0] ?? null;
 
+  // ── Active module tab ──────────────────────────────────────────────────
+  const [activeModuleIdx, setActiveModuleIdx] = useState(0);
+  const activeModule = modules[activeModuleIdx] ?? null;
+
+  // ── Module visit tracking ──────────────────────────────────────────────
+  const visitTracking = useModuleVisitTracking(
+    userId,
+    activeModule?.id ?? null,
+    skillId,
+    'learning_path'
+  );
+
+  // ── Completed interactives map (for UI indicators) ─────────────────────
+  const [completedInteractives, setCompletedInteractives] = useState<
+    Record<number, { score: number; completed: boolean }>
+  >({});
+
+  const handleInteractiveComplete = useCallback((sectionIndex: number, result: InteractiveResult) => {
+    visitTracking.reportInteractiveComplete(sectionIndex, result);
+    setCompletedInteractives(prev => ({
+      ...prev,
+      [sectionIndex]: { score: result.score, completed: result.completed },
+    }));
+  }, [visitTracking]);
+
+  // ── Section observer ───────────────────────────────────────────────────
+  const sectionCount = activeModule?.sections.length ?? 0;
+
+  const { sectionRefs, maxScrollDepth } = useSectionObserver({
+    sectionCount,
+    onVisible: useCallback((idx: number) => {
+      const section = activeModule?.sections[idx];
+      if (section) {
+        visitTracking.reportSectionVisible(
+          idx,
+          section.type,
+          section.type === 'interactive' ? section.interactiveType : undefined
+        );
+      }
+    }, [activeModule, visitTracking]),
+    onHidden: useCallback((idx: number) => {
+      visitTracking.reportSectionHidden(idx);
+    }, [visitTracking]),
+    enabled: !!activeModule,
+  });
+
+  // Feed scroll depth from observer to visit tracking
+  useEffect(() => {
+    visitTracking.reportScrollDepth(maxScrollDepth);
+  }, [maxScrollDepth, visitTracking]);
+
+  // Clear completed interactives when module tab changes
+  useEffect(() => {
+    setCompletedInteractives({});
+  }, [activeModuleIdx]);
+
   // ── Skill questions (random sample) ──────────────────────────────────────
   const skillQuestions = useMemo(() => {
     const qs = analyzedQuestions.filter(q => q.skillId === skillId);
@@ -322,8 +381,6 @@ export default function LearningPathModulePage({
 
   // ── Section 1: lesson complete ────────────────────────────────────────────
   const [s1Submitting, setS1Submitting] = useState(false);
-  const [activeModuleIdx, setActiveModuleIdx] = useState(0);
-  const activeModule = modules[activeModuleIdx] ?? null;
 
   async function handleMarkLessonComplete() {
     setS1Submitting(true);
@@ -346,8 +403,17 @@ export default function LearningPathModulePage({
     const correct = results.filter(r => r.isCorrect).length;
     const total = results.length;
 
-    // Update LP Supabase progress
-    await lpSupabase.submitQuestions(skillId, correct, total);
+    // Gather interactive exercise aggregate for blended scoring
+    const interactiveEntries = Object.values(completedInteractives).filter(e => e.completed);
+    const interactiveScore = interactiveEntries.length > 0
+      ? {
+          score: interactiveEntries.reduce((sum, e) => sum + e.score, 0) / interactiveEntries.length,
+          count: interactiveEntries.length,
+        }
+      : undefined;
+
+    // Update LP Supabase progress with blended accuracy
+    await lpSupabase.submitQuestions(skillId, correct, total, interactiveScore);
 
     // Update skill_scores for each answered question
     for (const r of results) {
@@ -470,6 +536,9 @@ export default function LearningPathModulePage({
                 isViewed={lpLocal.isViewed(activeModule.id)}
                 secondsSpent={lpLocal.getSecondsSpent(activeModule.id)}
                 onSetViewed={(v) => lpLocal.setViewed(activeModule.id, v)}
+                onInteractiveComplete={handleInteractiveComplete}
+                sectionRefs={sectionRefs}
+                completedInteractives={completedInteractives}
               />
             )}
 

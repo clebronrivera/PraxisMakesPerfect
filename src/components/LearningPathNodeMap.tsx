@@ -34,6 +34,8 @@ interface SkillNode {
   overallTier: ReturnType<typeof getSkillProficiency>;
   lpStatus: LearningPathStatus;
   lpLessonViewed: boolean;
+  visitCount: number;
+  interactivesDone: boolean;
 }
 
 interface LearningPathNodeMapProps {
@@ -145,6 +147,9 @@ function buildNodes(
         overallTier,
         lpStatus: lp?.status ?? 'not_started',
         lpLessonViewed: lp?.lessonViewed ?? false,
+        visitCount: (lp as any)?.visitCount ?? 0,
+        interactivesDone: ((lp as any)?.interactiveExercisesCompleted ?? 0) > 0 &&
+          ((lp as any)?.interactiveExercisesCompleted ?? 0) >= ((lp as any)?.interactiveExercisesTotal ?? 1),
       });
     }
   }
@@ -235,7 +240,19 @@ function NodeCard({
         <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${style.badge}`}>
           {tileStatus}
         </span>
-        {isMastered && <Lock className="h-3.5 w-3.5 text-emerald-700" />}
+        <div className="flex items-center gap-1.5">
+          {node.visitCount > 1 && !isMastered && (
+            <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold text-slate-500" title={`${node.visitCount} visits`}>
+              {node.visitCount}x
+            </span>
+          )}
+          {node.interactivesDone && !isMastered && (
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-cyan-100" title="Exercises complete">
+              <CheckCircle className="h-2.5 w-2.5 text-cyan-700" />
+            </span>
+          )}
+          {isMastered && <Lock className="h-3.5 w-3.5 text-emerald-700" />}
+        </div>
       </div>
     </button>
   );

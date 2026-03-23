@@ -294,6 +294,12 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 | `demonstrating` | Questions submitted, accuracy ≥ 80% |
 | `mastered` | Demonstrating on two or more separate sessions |
 
+**Blended accuracy scoring:** When a user completes both interactive exercises (inside the lesson) and the mini-quiz (Section 2), their LP accuracy is calculated as a blend: 70% quiz weight + 30% interactive exercise weight. If no interactive exercises were completed, quiz accuracy alone is used. This blended accuracy determines the LP status labels above.
+
+**Interaction tracking (Supabase):** Every time a module is opened, a visit session is recorded in the `module_visit_sessions` table. Per-section engagement (time in viewport, interactive exercise scores/completion) is tracked in the `section_interactions` table. The `learning_path_progress` table also stores aggregate interactive metrics: `visit_count`, `total_interactive_score`, `interactive_exercises_completed`, and `interactive_exercises_total`.
+
+**Interactive exercise tracking:** All 5 interactive section types (ScenarioSorter, DragToOrder, TermMatcher, ClickSelector, CardFlip) now report completion scores. These scores are persisted per-visit in `section_interactions` and aggregated into `learning_path_progress`. Completion badges appear on interactive sections after the user finishes them, and on Learning Path nodes when all exercises for a skill are done.
+
 **Local tracking (localStorage):** Individual module viewed/time data is also stored in `localStorage` (`pmp-lp-{userId}`) for quick UI consistency. This is supplementary to the Supabase record — Supabase is the source of truth for node colors and status.
 
 **The Learning Path is separate from By Skill Practice.** By Skill takes users into question practice. The Learning Path takes users into lesson content with a structured 3-section completion flow. These are intentionally distinct.
