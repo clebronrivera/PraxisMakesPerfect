@@ -114,7 +114,7 @@ function statusLabel(lpStatus: LearningPathStatus, overallTier: ReturnType<typeo
       emerging: PROFICIENCY_META.emerging.label,
       approaching: PROFICIENCY_META.approaching.label,
       demonstrating: PROFICIENCY_META.proficient.label,
-      mastered: 'Mastered',
+      mastered: PROFICIENCY_META.proficient.label,
     };
 
     return map[lpStatus];
@@ -354,7 +354,7 @@ export default function LearningPathNodeMap({
     <div className="space-y-4">
       <div className="editorial-surface-soft flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm leading-relaxed text-slate-600">
-          {activeCount} skills to strengthen · {masteredCount} mastered
+          {activeCount} skills to strengthen · {masteredCount} {PROFICIENCY_META.proficient.label}
         </p>
         <div className="flex flex-wrap items-center gap-3">
           {[

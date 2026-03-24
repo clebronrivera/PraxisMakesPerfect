@@ -63,6 +63,10 @@ export interface UserProfile {
     completed_at: any;
   };
   diagnosticComplete?: boolean;
+  adaptiveDiagnosticComplete?: boolean;
+  diagnosticQuestionIds?: string[];
+  lastDiagnosticSessionId?: string;
+  lastDiagnosticCompletedAt?: string;
   lastUpdated?: any;
 
   // Extended profile / onboarding fields

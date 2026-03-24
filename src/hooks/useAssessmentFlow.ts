@@ -322,7 +322,7 @@ export function useAssessmentFlow({
         ...Object.values(result.followUpPool).flat().map(q => q.id),
       ];
 
-      void updateProfile({ diagnosticQuestionIds: allQuestionIds } as any);
+      void updateProfile({ diagnosticQuestionIds: allQuestionIds });
 
       setAdaptiveDiagnosticData(result);
       setAssessmentStartTime(Date.now());
@@ -491,6 +491,13 @@ export function useAssessmentFlow({
       const questionIds = responses.map(r => r.questionId);
       const analysis = detectWeaknesses(responses, analyzedQuestions);
 
+      // Build the question list for ScoreReport (fullAssessmentQuestions is used there)
+      const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
+      const diagnosticQuestions = questionIds
+        .map(id => questionMap.get(id))
+        .filter((q): q is AnalyzedQuestion => q !== undefined);
+      setFullAssessmentQuestions(diagnosticQuestions);
+
       await updateProfile({
         screenerComplete: true,
         fullAssessmentComplete: true,
@@ -499,8 +506,8 @@ export function useAssessmentFlow({
         lastDiagnosticSessionId: selectedSessionId,
         lastDiagnosticCompletedAt: new Date().toISOString(),
         lastSession: null,
-        ...analysis,
-      } as any);
+        ...(analysis as Partial<UserProfile>),
+      });
 
       if (currentUserName && selectedSessionId) {
         deleteUserSession(currentUserName, selectedSessionId);

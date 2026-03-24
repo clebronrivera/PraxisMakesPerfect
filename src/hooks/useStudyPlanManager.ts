@@ -53,7 +53,7 @@ export function useStudyPlanManager({
   const canGenerateStudyPlan = useMemo(() => {
     if (!user) return false;
     // New adaptive diagnostic path
-    if ((profile as any).adaptiveDiagnosticComplete) return true;
+    if (profile.adaptiveDiagnosticComplete) return true;
     // Legacy two-step path: screener + full assessment
     if (!profile.screenerComplete) return false;
     return Boolean(profile.lastFullAssessmentSessionId || profile.fullAssessmentComplete);

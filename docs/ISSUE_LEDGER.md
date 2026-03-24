@@ -34,6 +34,22 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-24 - State contract audit: CAT-4/CAT-3 findings resolved
+
+- Status: resolved
+- Area: TypeScript / UI labels
+- Summary: Two-pass audit (CAT-4, CAT-5, CAT-6, CAT-8 · CAT-2, CAT-3, CAT-7) after extracting `useAssessmentFlow` from `App.tsx`. All CAT-6 session/resume contract checks passed. Two issues fixed:
+  1. **CAT-4 (MEDIUM)** — `UserProfile` was missing four adaptive diagnostic fields (`adaptiveDiagnosticComplete`, `diagnosticQuestionIds`, `lastDiagnosticSessionId`, `lastDiagnosticCompletedAt`). All were written/read via `as any` bypasses, creating invisible type drift.
+  2. **CAT-3 (MEDIUM)** — `LearningPathNodeMap` hardcoded `'Mastered'` in two user-facing strings instead of using `PROFICIENCY_META.proficient.label` (`'Demonstrating'`).
+- Code anchors:
+  - `src/hooks/useFirebaseProgress.ts` — 4 fields added to `UserProfile`
+  - `src/hooks/useAssessmentFlow.ts` — `as any` removed (lines ~325, ~506)
+  - `src/hooks/useStudyPlanManager.ts` — `(profile as any)` read removed (line ~56)
+  - `src/components/LearningPathNodeMap.tsx` — lines ~117, ~357 fixed
+- Resolution: All four edits applied. `tsc --noEmit` zero new errors. `npm run build` clean.
+
+---
+
 ## 2026-03-24 - Type check blocked by unused `screenerComplete` binding
 
 - Status: resolved
