@@ -215,7 +215,7 @@ export default function TeachMode({
     return (
       <div className="text-center text-slate-400 p-8">
         <p>No questions available for teaching mode.</p>
-        <p className="text-sm mt-2">Complete a full assessment to identify areas for improvement.</p>
+        <p className="text-sm mt-2">Complete the adaptive diagnostic to identify areas for improvement.</p>
       </div>
     );
   }

@@ -221,8 +221,8 @@ export default function AdminDashboard({
     async (targetUserId: string, scope: 'screener' | 'full_diagnostic') => {
       const label =
         scope === 'screener'
-          ? 'screener (all screener responses will be archived, then deleted)'
-          : 'full / short diagnostic (all full and diagnostic responses will be archived, then deleted)';
+          ? 'baseline assessment (all baseline screener responses will be archived, then deleted)'
+          : 'adaptive diagnostic (all diagnostic responses will be archived, then deleted)';
       if (
         !window.confirm(
           `Reset ${label} for this learner?\n\nA row will be saved to assessment_reset_archive with their prior responses and profile snapshot. Practice data is not removed.`
@@ -1079,7 +1079,7 @@ export default function AdminDashboard({
                               className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
-                              Reset screener
+                              Reset baseline
                             </button>
                             <button
                               type="button"
@@ -1088,7 +1088,7 @@ export default function AdminDashboard({
                               className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
-                              Reset full / diagnostic
+                              Reset diagnostic
                             </button>
                             <div className="mt-2 border-t border-slate-200 pt-2">
                               <button

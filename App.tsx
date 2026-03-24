@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw } from 'lucide-react';
+import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw, Trophy, HelpCircle } from 'lucide-react';
 import { formatStudyTime } from './src/hooks/useDailyStudyTime';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 // Import questions and analysis
@@ -19,6 +19,7 @@ const PracticeSession = lazy(() => import('./src/components/PracticeSession'));
 const LearningPathModulePage = lazy(() => import('./src/components/LearningPathModulePage'));
 const StudyNotebookPage = lazy(() => import('./src/components/StudyNotebookPage'));
 const GlossaryPage = lazy(() => import('./src/components/GlossaryPage'));
+const HelpFAQ = lazy(() => import('./src/components/HelpFAQ'));
 const TeachMode = lazy(() => import('./src/components/TeachMode'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
@@ -66,7 +67,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -133,6 +134,69 @@ function PraxisStudyAppContent() {
   const [teachModeDomains] = useState<number[] | undefined>(undefined);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // ── Users online + Leaderboard ─────────────────────────────────────────────
+  const [usersOnline] = useState(() => Math.floor(Math.random() * 6) + 5);
+
+  const FAKE_STUDENTS = ['M.R.','J.T.','S.K.','P.L.','C.M.','A.W.','D.H.','T.B.','N.S.','R.J.','K.O.','L.F.'];
+
+  function seedLbScores(): Record<string, { time: number; questions: number; mastery: number }> {
+    const out: Record<string, { time: number; questions: number; mastery: number }> = {};
+    FAKE_STUDENTS.forEach(name => {
+      out[name] = {
+        time: Math.floor(Math.random() * 166) + 15,       // 15–180 min
+        questions: Math.floor(Math.random() * 84) + 12,   // 12–95
+        mastery: Math.floor(Math.random() * 39) + 2,      // 2–40 skills left
+      };
+    });
+    return out;
+  }
+
+  function formatLbTime(mins: number): string {
+    if (mins < 60) return `${mins}m`;
+    return `${Math.floor(mins / 60)}h ${mins % 60}m`;
+  }
+
+  type LbMode = 'time' | 'questions' | 'mastery';
+  const [lbOpen, setLbOpen] = useState(false);
+  const [lbMode, setLbMode] = useState<LbMode>('questions');
+  const [lbScores, setLbScores] = useState<Record<string, { time: number; questions: number; mastery: number }>>(seedLbScores);
+  const [lbTick, setLbTick] = useState<string | null>(null);
+
+  useEffect(() => {
+    const scheduleNext = () => {
+      const delay = Math.floor(Math.random() * 7000) + 8000; // 8–15s
+      return setTimeout(() => {
+        const name = FAKE_STUDENTS[Math.floor(Math.random() * FAKE_STUDENTS.length)];
+        setLbScores(prev => {
+          const s = prev[name];
+          return {
+            ...prev,
+            [name]: {
+              time: s.time + Math.floor(Math.random() * 3) + 1,
+              questions: s.questions + (Math.random() < 0.7 ? Math.floor(Math.random() * 2) + 1 : 0),
+              mastery: Math.max(0, s.mastery - (Math.random() < 0.3 ? 1 : 0)),
+            },
+          };
+        });
+        setLbTick(name);
+        setTimeout(() => setLbTick(null), 1200);
+        timerId = scheduleNext();
+      }, delay);
+    };
+    let timerId = scheduleNext();
+    return () => clearTimeout(timerId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const sortedLb = useMemo(() => {
+    return [...FAKE_STUDENTS].sort((a, b) => {
+      if (lbMode === 'mastery') return lbScores[a].mastery - lbScores[b].mastery;
+      if (lbMode === 'questions') return lbScores[b].questions - lbScores[a].questions;
+      return lbScores[b].time - lbScores[a].time;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lbMode, lbScores]);
 
   // Analyze all questions — declared here so it's available to the sub-hooks below.
   // Always use the canonical local bank as the source of truth for question content.
@@ -481,6 +545,7 @@ function PraxisStudyAppContent() {
                 { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
                 { label: 'Study Notebook', icon: <BookMarked className="w-4 h-4" />, onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
                 { label: 'Glossary', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
+                { label: 'Help', icon: <HelpCircle className="w-4 h-4" />, onClick: () => setMode('help'), active: mode === 'help', show: true },
               ];
               return tabs.filter(tab => tab.show).map(tab => (
                 <button
@@ -579,6 +644,92 @@ function PraxisStudyAppContent() {
                 >
                   <User className="w-4 h-4" />
                 </button>
+
+                {/* Leaderboard widget */}
+                <div className="relative">
+                  <button
+                    onClick={() => setLbOpen(prev => !prev)}
+                    className="editorial-topbar-button"
+                    title="Leaderboard"
+                  >
+                    <Trophy className="w-4 h-4" />
+                  </button>
+
+                  {lbOpen && (
+                    <>
+                      {/* backdrop */}
+                      <div className="fixed inset-0 z-40" onClick={() => setLbOpen(false)} />
+                      {/* popover */}
+                      <div className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+                        {/* header */}
+                        <div className="px-4 pt-4 pb-2">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Trophy className="w-4 h-4 text-amber-500" />
+                            <span className="text-sm font-bold text-slate-800">Today's Leaders</span>
+                          </div>
+                          {/* toggle tabs */}
+                          <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
+                            {(['questions', 'time', 'mastery'] as LbMode[]).map(tab => (
+                              <button
+                                key={tab}
+                                onClick={() => setLbMode(tab)}
+                                className={`flex-1 rounded-lg py-1 text-[10px] font-bold uppercase tracking-wide transition-all ${
+                                  lbMode === tab
+                                    ? 'bg-white text-slate-900 shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-700'
+                                }`}
+                              >
+                                {tab === 'questions' ? 'Questions' : tab === 'time' ? 'Time' : 'Mastery'}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        {/* rows */}
+                        <div className="px-3 pb-2 max-h-72 overflow-y-auto">
+                          {sortedLb.map((name, idx) => {
+                            const s = lbScores[name];
+                            const score =
+                              lbMode === 'questions' ? `${s.questions}q`
+                              : lbMode === 'time' ? formatLbTime(s.time)
+                              : `${s.mastery} left`;
+                            const isLive = lbTick === name;
+                            return (
+                              <div
+                                key={name}
+                                className={`flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors ${
+                                  isLive ? 'bg-amber-50' : 'hover:bg-slate-50'
+                                }`}
+                              >
+                                <span className="w-5 text-center text-[11px] font-black text-slate-400">
+                                  {idx + 1}
+                                </span>
+                                <span className="flex-1 text-sm font-semibold text-slate-700">{name}</span>
+                                <span className="text-sm font-bold text-slate-900">{score}</span>
+                                {isLive && (
+                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {/* footer */}
+                        <div className="border-t border-slate-100 px-4 py-2 text-[10px] text-slate-400 text-center">
+                          Updates live · Resets daily
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Users online pill */}
+                <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-600 select-none">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  </span>
+                  {usersOnline} online
+                </span>
+
                 <button
                   onClick={() => setIsFeedbackModalOpen(true)}
                   className="editorial-topbar-button"
@@ -619,6 +770,7 @@ function PraxisStudyAppContent() {
                   { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
                   { label: 'Notebook', onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true },
                   { label: 'Glossary', onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
+                  { label: 'Help', onClick: () => setMode('help'), active: mode === 'help', show: true },
                 ];
                 return tabs.filter(tab => tab.show).map(tab => (
                   <button
@@ -672,11 +824,12 @@ function PraxisStudyAppContent() {
               : null;
 
             const hasAssessmentInProgress =
-              profile.lastSession?.mode === 'screener' ||
-              profile.lastSession?.mode === 'full' ||
-              profile.lastSession?.mode === 'diagnostic' ||
+              (profile.lastSession?.mode === 'screener' && !profile.screenerComplete) ||
+              (profile.lastSession?.mode === 'full' && !profile.fullAssessmentComplete) ||
+              (profile.lastSession?.mode === 'diagnostic' && !profile.diagnosticComplete) ||
               profile.lastSession?.mode === 'adaptive' ||
-              (!profile.lastSession && hasSession && savedSession);
+              (!profile.lastSession && hasSession && savedSession &&
+                !profile.screenerComplete && !profile.fullAssessmentComplete);
             const hasPracticeInProgress = profile.lastSession?.mode === 'practice';
 
             const sessionResumeCard = (() => {
@@ -1296,6 +1449,13 @@ function PraxisStudyAppContent() {
         {mode === 'glossary' && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading glossary…</div>}>
             <GlossaryPage userId={user?.id ?? null} />
+          </Suspense>
+        )}
+
+        {/* HELP / FAQ PAGE */}
+        {mode === 'help' && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading…</div>}>
+            <HelpFAQ onGoHome={() => setMode('home')} />
           </Suspense>
         )}
 

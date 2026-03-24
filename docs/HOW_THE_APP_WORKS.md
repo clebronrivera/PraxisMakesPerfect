@@ -104,7 +104,9 @@ The adaptive diagnostic is your **baseline map**. It starts with one question pe
 
 After completing the diagnostic, you get a **Score Report** — a breakdown of which domains and skills are strong and which need work. Practice is available immediately, with no gates.
 
-> **Legacy assessment path:** The app also supports a legacy two-step assessment flow (50-question Skills Screener + 125-question Full Assessment) for users who started before the adaptive diagnostic was introduced. Both paths unlock the same features. New users always see the adaptive diagnostic.
+> **Assessment timing:** The assessment is not timed — there is no per-question or total time limit. Time per question is tracked internally for analytics purposes only. Your score is determined by accuracy, not speed.
+
+> **Legacy assessment path:** The app also supports a legacy two-step assessment flow (Skills Screener + Full Assessment) for users who started before the adaptive diagnostic was introduced. Legacy users are shown a "Baseline recorded" state on the dashboard and prompted to take the adaptive diagnostic to unlock all features. New users always see the adaptive diagnostic directly.
 
 ### Step 4: Study, Practice, and Track
 From this point on, every session and every question feeds back into your profile. The system keeps learning about you as you go.
@@ -122,8 +124,8 @@ The Home dashboard is the most guided page in the app. It is designed to help us
 
 Depending on the user's state, Home can show:
 - A diagnostic-first start state for brand-new users (with practice always available)
-- A baseline-recorded state for users who completed a legacy screener
-- A fully unlocked dashboard after the adaptive diagnostic (or legacy screener + full assessment) is complete
+- A baseline-recorded state for users who completed a legacy screener (prompted to take the adaptive diagnostic)
+- A fully unlocked dashboard after the adaptive diagnostic is complete
 
 On the fully unlocked dashboard, the main sections are:
 - A greeting hero with a spicy-practice call to action
@@ -210,6 +212,40 @@ Consecutive correct answers build a streak. Shown on the dashboard; resets when 
 
 ---
 
+## Redemption Rounds
+
+**Redemption Rounds** is a focused review mode for questions you got wrong in practice. It is separate from the main Practice Hub and appears as its own card on the Home dashboard.
+
+### Credit System
+- Every time you submit a practice answer (hint-revealed answers excluded), a counter increments.
+- When the counter reaches **20**, you earn **1 Redemption Round credit**. The counter resets to zero.
+- Credits accumulate and are stored in your account across devices.
+
+### The Missed-Question Bank
+- Every question you answer incorrectly in practice is added to your **missed-question bank**.
+- Re-missing the same question does not create a duplicate — the bank tracks unique questions per user.
+- Questions stay in the bank until they are redeemed (see Redemption Criteria below).
+
+### Running a Round
+- From the Home dashboard, tap **Start Redemption Round** (visible when you have ≥ 1 credit and ≥ 1 missed question).
+- Spending a credit loads all unredeemed missed questions in a shuffled order.
+- Each question has a **90-second countdown**. Letting the timer expire is treated as an incorrect skip.
+- Before answering, you must select a confidence level: **Sure**, **Unsure**, or **Guess**.
+- No feedback is shown after each answer — the session advances immediately.
+- At the end of the round, a results screen shows your score and personal best.
+
+### Redemption Criteria
+A question is redeemed (removed from the bank) when:
+- You answer it **correctly** while choosing **Sure** — one correct answer is enough.
+- You answer it **correctly** while choosing **Unsure** or **Guess** — you need to get it right **3 times total** across multiple rounds.
+
+Incorrect answers do not count toward redemption; the question stays in the bank.
+
+### Why 20 Questions Per Credit
+The 20-question threshold ensures enough practice has occurred for new learning to consolidate before a review round. By the time a credit is earned, the missed-question bank typically holds several questions, making each round more targeted and valuable.
+
+---
+
 ## The Three Practice Modes
 
 The Practice Hub offers three distinct modes. All three live under the **Practice** tab and are accessible from the same screen via a three-tab selector: **By Domain / By Skill / Learning Path**.
@@ -219,7 +255,7 @@ The Practice Hub offers three distinct modes. All three live under the **Practic
 ### By Domain
 Practice by Praxis section. Choose from the 4 domains and work through questions in that category. Progress bars show your percentage score per domain, color-coded (green = ≥ 80%, amber = 60–79%, red = < 60%).
 
-**Unlocks after:** completing the adaptive diagnostic (or the legacy Skills Screener).
+**Unlocks after:** completing the adaptive diagnostic.
 
 ---
 
@@ -232,7 +268,7 @@ Practice on a specific skill — any of the 45 individual competency areas. The 
 
 **The Help drawer (Skill lesson during practice):** When a user is answering questions in By Skill mode, tapping **Help** in the session header opens the same lesson drawer. This drawer shows the full micro-lesson so users can review concept content while practicing — but does not reveal answers. Users must scroll through the lesson to find what they need.
 
-**Unlocks after:** completing the adaptive diagnostic (or the legacy screener + full assessment).
+**Unlocks after:** completing the adaptive diagnostic.
 
 ---
 
@@ -309,7 +345,7 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 
 **The Learning Path is separate from By Skill Practice.** By Skill takes users into question practice. The Learning Path takes users into lesson content with a structured 3-section completion flow. These are intentionally distinct.
 
-**Unlocks after:** completing the adaptive diagnostic (or the legacy screener + full assessment).
+**Unlocks after:** completing the adaptive diagnostic.
 
 ---
 
@@ -426,6 +462,9 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 | Readiness levels | 4 (Early / Developing / Approaching / Ready) |
 | Time between guide regenerations | 7 days (once live) |
 | Supabase migrations applied | 6 (0000–0005) |
+| Redemption Round credit threshold | 20 non-hint practice answers = 1 credit |
+| Redemption Round timer per question | 90 seconds |
+| Inactivity auto-logout | 15 minutes (separate from the "15 min avg session" marketing stat) |
 
 ---
 

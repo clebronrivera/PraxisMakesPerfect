@@ -214,8 +214,8 @@ export default function ResultsDashboard({
 
   // ── Timeline steps ──────────────────────────────────────────────────────────
   const timelineSteps: TimelineStep[] = [
-    { label: 'Screener done', done: Boolean(userProfile.screenerComplete) },
-    { label: 'Full diagnostic', sublabel: 'done', done: Boolean(userProfile.fullAssessmentComplete) },
+    { label: 'Baseline complete', done: Boolean(userProfile.screenerComplete) },
+    { label: 'Adaptive diagnostic', sublabel: 'done', done: Boolean(userProfile.fullAssessmentComplete) },
     { label: 'Domain practice', sublabel: 'unlocked', done: Boolean(userProfile.screenerComplete) },
     { label: 'Skill practice', sublabel: 'unlocked', done: Boolean(userProfile.fullAssessmentComplete) },
     {

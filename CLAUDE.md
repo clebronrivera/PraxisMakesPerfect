@@ -191,6 +191,37 @@ State is persisted in `localStorage` under key `pmp-spicy-cycle-${userId}` as `{
 
 Logic in `src/components/PracticeSession.tsx` — `advanceSpicyCycle()`.
 
+---
+
+## Redemption Rounds
+
+Focused review mode for missed practice questions. Lives in `src/hooks/useRedemptionRounds.ts` (hook) and `src/components/RedemptionRoundSession.tsx` (UI). Wired in `App.tsx`.
+
+### Key Constants
+- **Credit threshold:** 20 non-hint practice answers = 1 credit — `src/hooks/useRedemptionRounds.ts` ~line 104 (`Math.floor(newCount / 20)`)
+- **Timer per question:** 90 seconds — `src/components/RedemptionRoundSession.tsx` ~line 21 (`const SECONDS_PER_QUESTION = 90`)
+
+### Redemption Criteria (in `recordRoundResult`)
+- `Sure` + correct → redeemed immediately (1 correct is enough)
+- `Unsure` / `Guess` + correct → redeemed when `correct_count` reaches 3 across multiple rounds
+- Incorrect answers: no effect on `correct_count`; question stays in bank
+
+### Database Tables
+- `practice_missed_questions` — one row per `(user_id, question_id)`. Columns: `user_id`, `question_id`, `skill_id`, `correct_count`, `redeemed`, `redeemed_at`. Upsert with `onConflict: 'ignore'` so re-missing the same question is a no-op.
+- `redemption_sessions` — one row per completed round. Columns: `user_id`, `questions_attempted`, `questions_correct`, `score_pct`.
+
+### Profile Fields (stored via `useFirebaseProgress`)
+- `practiceQuestionsSinceCredit` — counter toward next credit; resets to remainder after credit awarded
+- `redemptionCredits` — available credits
+- `redemptionHighScore` — personal best score percentage
+
+### Hook Integration
+- `useRedemptionRounds` initialized in `App.tsx` with `user?.id`, `profile`, `updateProfile`
+- Returns: `bankCount`, `credits`, `questionsToNextCredit`, `highScore`, `addToMissedBank`, `handleAnswerSubmitted`, `startRound`, `recordRoundResult`
+- On wrong answer in `PracticeSession` → `redemption.addToMissedBank(questionId, skillId)`
+- On every non-hint answer in `PracticeSession` → `redemption.handleAnswerSubmitted()`
+- **Hint answers are excluded** from the credit counter
+
 ### Schema Version
 
 Plans are stored with `schemaVersion: "2"` in `plan_document`. Old v1 plans (no `schemaVersion`) return `null` from `normalizeStudyPlanDocument()`, which triggers a re-generation prompt in the UI.

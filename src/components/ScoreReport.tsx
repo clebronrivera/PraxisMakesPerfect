@@ -177,7 +177,7 @@ export default function ScoreReport({
       <div className="space-y-4 text-center">
         <div className="flex items-center justify-center gap-3">
           <Trophy className={`w-10 h-10 ${scoreStyle.text}`} />
-          <h2 className="editorial-heading text-3xl sm:text-4xl">Full Assessment Complete!</h2>
+          <h2 className="editorial-heading text-3xl sm:text-4xl">Diagnostic Complete!</h2>
         </div>
         <p className="editorial-copy">
           {`You completed all ${responses.length} questions`}

@@ -293,7 +293,7 @@ export default function FullAssessment({
       {/* Progress Bar */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-slate-500">
-          <span>Full Assessment</span>
+          <span>Full Diagnostic</span>
           <span>{currentIndex + 1} of {questions.length}</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-100">

@@ -105,9 +105,9 @@ export default function ScreenerResults({
   }
 
   const primaryDomain = report.highestNeedDomains[0];
-  const title = flow === 'screener' ? 'Screener Report' : 'Archived Short-Assessment Report';
+  const title = flow === 'screener' ? 'Baseline Assessment Report' : 'Archived Short-Assessment Report';
   const subtitle = flow === 'screener'
-    ? `Completed the skills screener (${report.totalQuestions} questions).`
+    ? `Completed the baseline assessment (${report.totalQuestions} questions).`
     : `Completed an archived short assessment (${report.totalQuestions} questions).`;
 
   return (
@@ -397,7 +397,7 @@ export default function ScreenerResults({
             onClick={onTakeFullAssessment}
             className="editorial-button-dark flex-1"
           >
-            Take Full Assessment
+            Take the Adaptive Diagnostic
           </button>
         )}
         <button

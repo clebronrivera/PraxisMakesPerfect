@@ -68,9 +68,8 @@ interface StudyModesSectionProps {
   onStartSkillPractice: (skillId: string) => void;
   /** Opens the full Learning Path module page for a skill node */
   onNodeClick?: (skillId: string) => void;
-  /** Called from locked panels to send the user to the screener */
+  /** Called from locked panels to send the user to the adaptive diagnostic */
   onStartScreener?: () => void;
-  /** Called from locked panels to send the user to the full diagnostic */
   onStartDiagnostic?: () => void;
   /** Legacy props kept for App.tsx compatibility — no longer used in this panel */
   onSkillReviewOpen?: () => void;
@@ -167,12 +166,12 @@ function DomainPanel({
   profile,
   isLocked,
   onDomainSelect,
-  onStartScreener,
+  onStartDiagnostic,
 }: {
   profile: UserProfile;
   isLocked: boolean;
   onDomainSelect: (domainId: number) => void;
-  onStartScreener?: () => void;
+  onStartDiagnostic?: () => void;
 }) {
   if (isLocked) {
     return (
@@ -181,17 +180,17 @@ function DomainPanel({
           <Lock className="w-4 h-4 text-amber-700" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-700">Unlocks after the screener</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
-            Complete the 50-question screener to unlock domain-based practice across all four Praxis sections.
+            Complete the adaptive diagnostic to unlock domain-based practice across all four Praxis sections.
           </p>
         </div>
-        {onStartScreener && (
+        {onStartDiagnostic && (
           <button
-            onClick={onStartScreener}
+            onClick={onStartDiagnostic}
             className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
           >
-            Take the screener
+            Take the adaptive diagnostic
           </button>
         )}
       </div>
@@ -300,9 +299,9 @@ function SkillPanel({
           <Lock className="w-4 h-4 text-amber-700" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-700">Unlocks after the full diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
-            Complete the 125-question full diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
+            Complete the adaptive diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
           </p>
         </div>
         {onStartDiagnostic && (
@@ -310,7 +309,7 @@ function SkillPanel({
             onClick={onStartDiagnostic}
             className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
           >
-            Take the full diagnostic
+            Take the adaptive diagnostic
           </button>
         )}
       </div>
@@ -462,9 +461,9 @@ function LearningPathPanel({
           <Lock className="w-4 h-4 text-amber-700" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-700">Unlocks after the full diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
-            Complete the full diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
+            Complete the adaptive diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
           </p>
         </div>
         {onStartDiagnostic && (
@@ -472,7 +471,7 @@ function LearningPathPanel({
             onClick={onStartDiagnostic}
             className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
           >
-            Take the full diagnostic
+            Take the adaptive diagnostic
           </button>
         )}
       </div>
@@ -498,7 +497,6 @@ export default function StudyModesSection({
   onDomainSelect,
   onStartSkillPractice,
   onNodeClick,
-  onStartScreener,
   onStartDiagnostic,
 }: StudyModesSectionProps) {
   const [selectedMode, setSelectedMode] = useState<PracticeMode>('domain');
@@ -535,8 +533,8 @@ export default function StudyModesSection({
       id: 'domain',
       label: 'By Domain',
       sublabel: '4 sections · Praxis structure',
-      locked: !screenerComplete,
-      lockReason: 'Requires screener',
+      locked: !fullAssessmentComplete,
+      lockReason: 'Requires adaptive diagnostic',
       icon: <Layers className="w-3.5 h-3.5" />,
     },
     {
@@ -544,7 +542,7 @@ export default function StudyModesSection({
       label: 'By Skill',
       sublabel: '45 skills · targeted',
       locked: !fullAssessmentComplete,
-      lockReason: 'Requires full diagnostic',
+      lockReason: 'Requires adaptive diagnostic',
       icon: <Target className="w-3.5 h-3.5" />,
     },
     {
@@ -552,7 +550,7 @@ export default function StudyModesSection({
       label: 'Learning Path',
       sublabel: 'Deficit-first · micro-lessons',
       locked: !fullAssessmentComplete,
-      lockReason: 'Requires full diagnostic',
+      lockReason: 'Requires adaptive diagnostic',
       icon: <BookOpen className="w-3.5 h-3.5" />,
     },
   ];
@@ -594,7 +592,7 @@ export default function StudyModesSection({
       {totalAttempts === 0 && (
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-normal">
           No data yet — your stats will appear here as soon as you answer your first question.
-          Start with the screener on the Dashboard, or jump straight into Spicy mode to get going.
+          Start with the baseline assessment on the Dashboard, or jump straight into Spicy mode to get going.
         </div>
       )}
 
@@ -654,9 +652,9 @@ export default function StudyModesSection({
         {selectedMode === 'domain' && (
           <DomainPanel
             profile={profile}
-            isLocked={!screenerComplete}
+            isLocked={!fullAssessmentComplete}
             onDomainSelect={onDomainSelect}
-            onStartScreener={onStartScreener}
+            onStartDiagnostic={onStartDiagnostic}
           />
         )}
         {selectedMode === 'skill' && (
