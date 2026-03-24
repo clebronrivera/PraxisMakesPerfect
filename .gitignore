@@ -87,6 +87,11 @@ scripts/delete-carlos-plans.ts
 # Root-level local reference files
 /*.pdf
 /*.docx
+/Module[0-9]*_*.md
+/Item_Bank_Review_Workbook_*.xlsx
+/module_coverage_report.html
+/question_bias_fix_worksheet.csv
+/question_length_bias_audit.csv
 /Questions.txt
 /HEALTH_CHECK_REPORT.txt
 
@@ -107,6 +112,7 @@ AUDIT_FIX_PLAN.md
 QUESTION_ENHANCEMENT_REPORT.md
 Praxis_5403_Skill_Distribution.xlsx
 scripts/enhance_questions.py
+scripts/apply-item-bank-corrections.py
 
 # Deno lockfile (not needed for Node project)
 deno.lock

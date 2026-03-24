@@ -34,6 +34,16 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-24 - Type check blocked by unused `screenerComplete` binding
+
+- Status: resolved
+- Area: practice hub / TypeScript health
+- Summary: `npm run scan:types` failed during review because `StudyModesSection` declared `const screenerComplete = Boolean(profile.screenerComplete);` but never used it. With `noUnusedLocals` enabled, that unused binding blocked the type-check step even though runtime tests still passed.
+- Source of truth: `npm run scan:types` must pass cleanly for the checked-in app state.
+- Code anchors:
+  [src/components/StudyModesSection.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/StudyModesSection.tsx)
+- Resolution / next step: Resolved by removing the unused binding and rerunning validation. Keep review passes grounded in `scan:types` or `verify:health` so similar drift gets caught before commit.
+
 ## 2026-03-23 - Alignment report: all P1 and P2 items resolved
 
 - Status: resolved

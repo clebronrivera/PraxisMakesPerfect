@@ -506,7 +506,6 @@ export default function StudyModesSection({
   const [helpSkillLabel, setHelpSkillLabel] = useState<string>('');
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
 
-  const screenerComplete = Boolean(profile.screenerComplete);
   const fullAssessmentComplete = Boolean(profile.fullAssessmentComplete);
 
   // ── Stats strip ──────────────────────────────────────────────────────────

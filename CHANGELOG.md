@@ -7,6 +7,12 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-03-24
+
+### Bug Fixes
+
+- **[Build — Restore clean type check + track missing FAQ view]** Removed an unused `screenerComplete` binding that was failing `npm run scan:types`, added the missing `HelpFAQ` component already imported by `App.tsx`, and checked in the referenced alignment report while ignoring local-only audit/personal artifacts so the repo can return to a clean working tree. — `src/components/StudyModesSection.tsx`, `src/components/HelpFAQ.tsx`, `docs/PraxisMakesPerfect_Alignment_Report_2026-03-23.docx`, `.gitignore`, `docs/ISSUE_LEDGER.md`
+
 ## 2026-03-21
 
 ### Documentation
