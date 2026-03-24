@@ -960,15 +960,17 @@ function PraxisStudyAppContent() {
                           Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.
                         </p>
                         <div className="mt-6 grid gap-3 md:grid-cols-2">
-                          <div className="editorial-surface-soft p-4">
-                            <p className="editorial-overline">Diagnostic</p>
-                            <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
-                            <p className="mt-2 text-sm text-slate-500">Starting with 45 questions (one per skill), it adapts based on your answers. Pause any time and come back without penalty.</p>
-                            <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
-                              <Zap className="h-4 w-4" />
-                              Start diagnostic
-                            </button>
-                          </div>
+                          {!hasAssessmentInProgress && (
+                            <div className="editorial-surface-soft p-4">
+                              <p className="editorial-overline">Diagnostic</p>
+                              <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
+                              <p className="mt-2 text-sm text-slate-500">Starting with 45 questions (one per skill), it adapts based on your answers. Pause any time and come back without penalty.</p>
+                              <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
+                                <Zap className="h-4 w-4" />
+                                Start diagnostic
+                              </button>
+                            </div>
+                          )}
                           <div className="editorial-surface-soft p-4">
                             <p className="editorial-overline">Practice</p>
                             <p className="mt-2 text-base font-bold text-slate-900">Start practicing right away</p>
