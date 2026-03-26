@@ -4,6 +4,7 @@
 
 import { SkillPerformance } from '../brain/learning-state';
 import { getSkillTrend } from './skillTrend';
+import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from './skillProficiency';
 
 export interface TodaysFocusItem {
   skillId: string;
@@ -46,7 +47,7 @@ export function computeTodaysFocus(
   // 2. Near mastery — easy win
   if (results.length < 2) {
     const nearMastery = skills.filter(
-      ([, perf]) => perf.attempts >= 3 && perf.score >= 0.6 && perf.score < 0.8
+      ([, perf]) => perf.attempts >= 3 && perf.score >= APPROACHING_THRESHOLD && perf.score < DEMONSTRATING_THRESHOLD
     );
     if (nearMastery.length > 0) {
       const [id, perf] = nearMastery.sort((a, b) => b[1].score - a[1].score)[0];

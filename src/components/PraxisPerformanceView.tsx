@@ -4,6 +4,7 @@ import { useEngine } from '../hooks/useEngine';
 import { UserProfile } from '../hooks/useFirebaseProgress';
 import { getDomainColor } from '../utils/domainColors';
 import { getDomainLabel } from '../utils/domainLabels';
+import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 
 interface PraxisPerformanceViewProps {
   userProfile: UserProfile;
@@ -52,24 +53,24 @@ const PRAXIS_SECTIONS: PraxisSection[] = [
 
 
 const getPerformanceLabel = (score: number): { label: string; color: string; bgColor: string } => {
-  if (score >= 0.8) {
-    return { 
-      label: 'Strong', 
-      color: 'text-emerald-400', 
-      bgColor: 'bg-emerald-500/20' 
+  if (score >= DEMONSTRATING_THRESHOLD) {
+    return {
+      label: 'Strong',
+      color: 'text-emerald-400',
+      bgColor: 'bg-emerald-500/20'
     };
   }
-  if (score >= 0.6) {
-    return { 
-      label: 'Developing', 
-      color: 'text-amber-400', 
-      bgColor: 'bg-amber-500/20' 
+  if (score >= APPROACHING_THRESHOLD) {
+    return {
+      label: 'Developing',
+      color: 'text-amber-400',
+      bgColor: 'bg-amber-500/20'
     };
   }
-  return { 
-    label: 'Needs Improvement', 
-    color: 'text-red-400', 
-    bgColor: 'bg-red-500/20' 
+  return {
+    label: 'Needs Improvement',
+    color: 'text-red-400',
+    bgColor: 'bg-red-500/20'
   };
 };
 
