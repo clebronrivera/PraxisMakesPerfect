@@ -1,14 +1,11 @@
 /**
- * Admin-only: List all users with their progress data.
+ * Admin-only: Fetch all response rows for a single user.
  *
- * The client-side admin dashboard can't see other users' rows because RLS
- * restricts user_progress to auth.uid() = user_id. This endpoint uses the
- * service role key to bypass RLS and return all rows.
- *
- * GET /api/admin-list-users
+ * GET /api/admin-student-detail?userId=<uuid>
  * Authorization: Bearer <user-jwt>
  *
- * Returns JSON array of user_progress rows.
+ * Returns the raw responses array so the client can aggregate
+ * domain/skill breakdowns, session timelines, and time distributions.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { isAdminEmail } from '../src/config/admin';
@@ -37,7 +34,7 @@ function getServiceClient(): SupabaseClient {
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!supabaseUrl || !serviceKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for admin list-users.');
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for admin-student-detail.');
   }
   return createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false }
@@ -53,6 +50,7 @@ function getBearerToken(header?: string): string | null {
 export const handler = async (event: {
   httpMethod?: string;
   headers?: Record<string, string>;
+  queryStringParameters?: Record<string, string> | null;
 }) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: JSON_HEADERS, body: '' };
@@ -60,6 +58,11 @@ export const handler = async (event: {
 
   if (event.httpMethod !== 'GET') {
     return json(405, { error: 'Method not allowed' });
+  }
+
+  const targetUserId = event.queryStringParameters?.userId;
+  if (!targetUserId) {
+    return json(400, { error: 'Missing required query param: userId' });
   }
 
   try {
@@ -81,40 +84,24 @@ export const handler = async (event: {
     }
 
     const svc = getServiceClient();
-    const { data: usersData, error: usersError } = await svc
-      .from('user_progress')
-      .select('*')
-      .order('updated_at', { ascending: false });
-
-    if (usersError) {
-      console.error('[admin-list-users] query error:', usersError);
-      return json(500, { error: 'Failed to fetch users.', detail: usersError.message });
-    }
-
-    // Aggregate avg time per question per user from responses table
-    const { data: timingRows } = await svc
+    const { data: responses, error: respErr } = await svc
       .from('responses')
-      .select('user_id, time_on_item_seconds')
-      .gt('time_on_item_seconds', 0);
+      .select(
+        'question_id, skill_id, domain_id, assessment_type, is_correct, confidence, ' +
+        'time_on_item_seconds, selected_answers, correct_answers, session_id, created_at'
+      )
+      .eq('user_id', targetUserId)
+      .order('created_at', { ascending: true });
 
-    const timingStats: Record<string, number> = {};
-    if (timingRows && timingRows.length > 0) {
-      const sums: Record<string, { total: number; count: number }> = {};
-      for (const row of timingRows) {
-        if (!row.user_id || row.time_on_item_seconds == null) continue;
-        if (!sums[row.user_id]) sums[row.user_id] = { total: 0, count: 0 };
-        sums[row.user_id].total += row.time_on_item_seconds;
-        sums[row.user_id].count += 1;
-      }
-      for (const [uid, { total, count }] of Object.entries(sums)) {
-        timingStats[uid] = Math.round(total / count);
-      }
+    if (respErr) {
+      console.error('[admin-student-detail] query error:', respErr);
+      return json(500, { error: 'Failed to fetch responses.', detail: respErr.message });
     }
 
-    return json(200, { users: usersData || [], timingStats });
+    return json(200, { responses: responses || [] });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
-    console.error('[admin-list-users]', e);
+    console.error('[admin-student-detail]', e);
     return json(500, { error: message });
   }
 };

@@ -6,7 +6,9 @@ import {
   BarChart3,
   Bug,
   CheckCircle2,
+  ChevronRight,
   ClipboardList,
+  Clock,
   Download,
   MessageSquare,
   RefreshCw,
@@ -30,8 +32,18 @@ import {
 } from '../utils/feedbackAudit';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
+import StudentDetailDrawer from './StudentDetailDrawer';
+import ItemAnalysisTab from './ItemAnalysisTab';
 
-type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users';
+type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users' | 'item-analysis';
+
+interface LastSession {
+  sessionId: string;
+  mode: string;
+  questionIndex: number;
+  elapsedSeconds: number;
+  updatedAt: string;
+}
 
 interface UserAnalyticsDoc {
   id: string;
@@ -42,6 +54,8 @@ interface UserAnalyticsDoc {
   fullAssessmentComplete?: boolean;
   lastUpdated?: any;
   flaggedQuestions?: Record<string, string>;
+  lastSession?: LastSession | null;
+  avgTimePerQuestionSeconds?: number | null;
   authMetrics?: {
     email?: string | null;
     displayName?: string | null;
@@ -62,6 +76,9 @@ interface OverviewStats {
   practiceUsers: number;
   screenerUsers: number;
   assessmentUsers: number;
+  inProgressSessions: number;
+  potentialDrops: number;
+  avgTimePerQuestion: number | null;
   feedbackOpen: number;
   reportsOpen: number;
   criticalReports: number;
@@ -101,6 +118,38 @@ function formatDate(value: any): string {
     return 'Unknown';
   }
   return new Date(millis).toLocaleString();
+}
+
+const ASSESSMENT_MODES = new Set(['screener', 'full_assessment', 'adaptive_diagnostic']);
+const DROP_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
+
+function isInProgress(user: UserAnalyticsDoc): boolean {
+  const ls = user.lastSession;
+  if (!ls || !ASSESSMENT_MODES.has(ls.mode)) return false;
+  if (ls.mode === 'screener' && user.screenerComplete) return false;
+  if (ls.mode === 'full_assessment' && user.fullAssessmentComplete) return false;
+  if (ls.mode === 'adaptive_diagnostic' && user.diagnosticComplete) return false;
+  return true;
+}
+
+function isDropped(user: UserAnalyticsDoc): boolean {
+  if (!isInProgress(user)) return false;
+  const updatedAt = user.lastSession?.updatedAt;
+  if (!updatedAt) return false;
+  return Date.now() - new Date(updatedAt).getTime() > DROP_THRESHOLD_MS;
+}
+
+function formatRelativeTime(isoString: string): string {
+  const diffMs = Date.now() - new Date(isoString).getTime();
+  const diffH = Math.floor(diffMs / (60 * 60 * 1000));
+  if (diffH < 24) return `${diffH}h ago`;
+  const diffD = Math.floor(diffH / 24);
+  return `${diffD}d ago`;
+}
+
+function formatAvgTime(seconds: number | null | undefined): string {
+  if (seconds == null) return '—';
+  return `${seconds}s`;
 }
 
 function getActivityTimestamp(user: UserAnalyticsDoc): number | null {
@@ -143,6 +192,7 @@ export default function AdminDashboard({
   const [isAuditLoading, setIsAuditLoading] = useState(false);
   const [resettingUserId, setResettingUserId] = useState<string | null>(null);
   const [resetNotice, setResetNotice] = useState<{ tone: 'ok' | 'err'; text: string } | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<UserAnalyticsDoc | null>(null);
 
   const loadAdminData = useCallback(async () => {
     if (!user || !isAdminEmail(user.email)) {
@@ -156,6 +206,7 @@ export default function AdminDashboard({
       const token = sessionData.session?.access_token;
 
       let usersData: any[] = [];
+      let timingStats: Record<string, number> = {};
       if (token) {
         try {
           const res = await fetch('/api/admin-list-users', {
@@ -164,6 +215,7 @@ export default function AdminDashboard({
           if (res.ok) {
             const body = await res.json();
             usersData = body.users || [];
+            timingStats = body.timingStats || {};
           } else {
             console.warn('[AdminDashboard] admin-list-users returned', res.status, '— falling back to client query');
             const { data } = await supabase.from('user_progress').select('*');
@@ -190,6 +242,8 @@ export default function AdminDashboard({
         fullAssessmentComplete: row.full_assessment_complete,
         lastUpdated: row.updated_at,
         flaggedQuestions: row.flagged_questions || {},
+        lastSession: row.last_session ?? null,
+        avgTimePerQuestionSeconds: timingStats[row.user_id] ?? null,
         authMetrics: {
           email: row.email,
           displayName: row.display_name,
@@ -338,6 +392,11 @@ export default function AdminDashboard({
     const oneDayAgo = now - (24 * 60 * 60 * 1000);
     const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
 
+    const usersWithTime = users.filter((u) => u.avgTimePerQuestionSeconds != null);
+    const avgTimePerQuestion = usersWithTime.length > 0
+      ? Math.round(usersWithTime.reduce((sum, u) => sum + (u.avgTimePerQuestionSeconds ?? 0), 0) / usersWithTime.length)
+      : null;
+
     return {
       totalUsers: users.length,
       newUsers7d: users.filter((entry) => {
@@ -357,6 +416,9 @@ export default function AdminDashboard({
       practiceUsers: users.filter((entry) => (entry.practiceResponseCount ?? 0) > 0).length,
       screenerUsers: users.filter((entry) => Boolean(entry.screenerComplete)).length,
       assessmentUsers: users.filter((entry) => Boolean(entry.diagnosticComplete || entry.fullAssessmentComplete)).length,
+      inProgressSessions: users.filter(isInProgress).length,
+      potentialDrops: users.filter(isDropped).length,
+      avgTimePerQuestion,
       feedbackOpen: feedback.filter((item) => ['new', 'reviewing', 'planned'].includes(item.status)).length,
       reportsOpen: reports.filter((item) => ['open', 'triaged'].includes(item.status)).length,
       criticalReports: reports.filter((item) => item.severity === 'critical' && item.status !== 'fixed').length
@@ -527,7 +589,8 @@ export default function AdminDashboard({
           ['audit', 'Audit'],
           ['feedback', 'Beta Feedback'],
           ['reports', 'Question Reports'],
-          ['users', 'Users']
+          ['users', 'Users'],
+          ['item-analysis', 'Item Analysis']
         ] as const).map(([tab, label]) => (
           <button
             key={tab}
@@ -552,7 +615,7 @@ export default function AdminDashboard({
         <>
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 <MetricCard
                   icon={<Users className="h-5 w-5" />}
                   label="Total Users"
@@ -572,6 +635,13 @@ export default function AdminDashboard({
                   detail={`${overview.totalQuestionsSeen} total questions seen`}
                 />
                 <MetricCard
+                  icon={<Clock className="h-5 w-5" />}
+                  label="Avg Q Time"
+                  value={overview.avgTimePerQuestion ?? 0}
+                  detail={overview.avgTimePerQuestion != null ? 'seconds per question (global avg)' : 'no timing data yet'}
+                  valueFormatter={(v) => v > 0 ? `${v}s` : '—'}
+                />
+                <MetricCard
                   icon={<AlertTriangle className="h-5 w-5" />}
                   label="Open Content Queue"
                   value={overview.reportsOpen + overview.feedbackOpen}
@@ -586,6 +656,8 @@ export default function AdminDashboard({
                     <StatLine label="Completed screener" value={overview.screenerUsers} />
                     <StatLine label="Reached assessment beyond screener" value={overview.assessmentUsers} />
                     <StatLine label="Used practice mode" value={overview.practiceUsers} />
+                    <StatLine label="In-progress assessments" value={overview.inProgressSessions} />
+                    <StatLine label="Potential drops (4h+)" value={overview.potentialDrops} />
                     <StatLine label="Open beta feedback" value={overview.feedbackOpen} />
                     <StatLine label="Open question reports" value={overview.reportsOpen} />
                     <StatLine label="Critical content reports" value={overview.criticalReports} />
@@ -1027,28 +1099,39 @@ export default function AdminDashboard({
                       <th className="px-6 py-4">User</th>
                       <th className="px-6 py-4">Created</th>
                       <th className="px-6 py-4">Last Login</th>
-                      <th className="px-6 py-4">Login Count</th>
-                      <th className="px-6 py-4">Questions Seen</th>
+                      <th className="px-6 py-4">Logins</th>
+                      <th className="px-6 py-4">Qs Seen</th>
+                      <th className="px-6 py-4">Avg Q Time</th>
                       <th className="px-6 py-4">Progress</th>
                       <th className="px-6 py-4">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/70 text-sm">
                     {users.map((entry) => (
-                      <tr key={entry.id} className="align-top text-slate-700">
+                      <tr
+                        key={entry.id}
+                        className="align-top text-slate-700 cursor-pointer hover:bg-amber-50/40 transition-colors"
+                        onClick={() => setSelectedStudent(entry)}
+                      >
                         <td className="px-6 py-4">
-                          <p className="font-medium text-slate-900">
-                            {entry.authMetrics?.displayName || entry.authMetrics?.email || entry.id}
-                          </p>
-                          <p className="text-slate-500">
-                            {entry.authMetrics?.email || 'No email'}
-                          </p>
-                          <p className="mt-1 font-mono text-xs text-slate-600">{entry.id}</p>
+                          <div className="flex items-center gap-2">
+                            <div>
+                              <p className="font-medium text-slate-900">
+                                {entry.authMetrics?.displayName || entry.authMetrics?.email || entry.id}
+                              </p>
+                              <p className="text-slate-500">
+                                {entry.authMetrics?.email || 'No email'}
+                              </p>
+                              <p className="mt-1 font-mono text-xs text-slate-600">{entry.id}</p>
+                            </div>
+                            <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-slate-300" />
+                          </div>
                         </td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.createdAt || entry.lastUpdated)}</td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.lastLoginAt || entry.lastUpdated)}</td>
                         <td className="px-6 py-4 text-slate-900">{entry.authMetrics?.loginCount ?? 0}</td>
                         <td className="px-6 py-4 text-slate-900">{entry.totalQuestionsSeen ?? 0}</td>
+                        <td className="px-6 py-4 text-slate-900 font-mono">{formatAvgTime(entry.avgTimePerQuestionSeconds)}</td>
                         <td className="px-6 py-4">
                           <div className="flex flex-wrap gap-2">
                             {entry.screenerComplete && (
@@ -1065,7 +1148,17 @@ export default function AdminDashboard({
                                 Practice {entry.practiceResponseCount}
                               </span>
                             )}
-                            {!entry.screenerComplete && !entry.diagnosticComplete && !entry.fullAssessmentComplete && (entry.practiceResponseCount ?? 0) === 0 && (
+                            {isDropped(entry) && entry.lastSession && (
+                              <span className="rounded-full bg-rose-50 px-3 py-1 text-xs text-rose-700">
+                                Dropped Q{entry.lastSession.questionIndex} ({formatRelativeTime(entry.lastSession.updatedAt)})
+                              </span>
+                            )}
+                            {isInProgress(entry) && !isDropped(entry) && entry.lastSession && (
+                              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs text-amber-800">
+                                In Progress Q{entry.lastSession.questionIndex} · {entry.lastSession.mode}
+                              </span>
+                            )}
+                            {!entry.screenerComplete && !entry.diagnosticComplete && !entry.fullAssessmentComplete && (entry.practiceResponseCount ?? 0) === 0 && !isInProgress(entry) && (
                               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-400">Not started</span>
                             )}
                           </div>
@@ -1113,7 +1206,17 @@ export default function AdminDashboard({
               </div>
             </div>
           )}
+          {activeTab === 'item-analysis' && (
+            <ItemAnalysisTab />
+          )}
         </>
+      )}
+
+      {selectedStudent && (
+        <StudentDetailDrawer
+          user={selectedStudent}
+          onClose={() => setSelectedStudent(null)}
+        />
       )}
     </div>
   );
@@ -1123,18 +1226,20 @@ function MetricCard({
   icon,
   label,
   value,
-  detail
+  detail,
+  valueFormatter
 }: {
   icon: ReactNode;
   label: string;
   value: number;
   detail: string;
+  valueFormatter?: (v: number) => string;
 }) {
   return (
     <div className="editorial-surface p-5">
       <div className="mb-4 flex items-center justify-between">
         <span className="rounded-2xl bg-slate-100 p-3 text-amber-700">{icon}</span>
-        <p className="text-3xl font-bold text-slate-900">{value}</p>
+        <p className="text-3xl font-bold text-slate-900">{valueFormatter ? valueFormatter(value) : value}</p>
       </div>
       <p className="text-sm font-medium text-slate-700">{label}</p>
       <p className="mt-1 text-sm text-slate-500">{detail}</p>
