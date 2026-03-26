@@ -94,7 +94,7 @@ export default function QuestionCard({
       {/* Question Card */}
       <div className="editorial-surface overflow-hidden">
         {/* Header with source and flag */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-3">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700">
               {getSourceDisplay()}
@@ -118,7 +118,7 @@ export default function QuestionCard({
           </div>
         )}
         
-        <div className="px-6 pb-2 pt-6">
+        <div className="px-6 pb-1 pt-4">
           <p className="text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]">
             {getQuestionPrompt(question)}
           </p>
@@ -134,7 +134,7 @@ export default function QuestionCard({
         )}
         
         {/* Answer Choices */}
-        <div className="space-y-3 p-6 pt-4">
+        <div className="space-y-3 p-4 pt-3">
           {(() => {
             // Handle new array of objects or old record of strings
             const optionsList = question.options 
@@ -154,7 +154,7 @@ export default function QuestionCard({
                     key={letter}
                     onClick={() => onSelectAnswer(letter)}
                     disabled={disabled || showFeedback || isSubmitting}
-                    className={`flex w-full items-start gap-4 rounded-[1.5rem] border px-4 py-4 text-left transition-all ${tone.container} ${
+                    className={`flex w-full items-start gap-4 rounded-[1.5rem] border px-4 py-3 text-left transition-all ${tone.container} ${
                       disabled || showFeedback || isSubmitting ? '' : 'hover:-translate-y-0.5'
                     }`}
                   >
@@ -177,7 +177,7 @@ export default function QuestionCard({
       
       {/* Confidence Selection (before submit) */}
       {isConfidenceVisible && (
-        <div className="editorial-surface-soft mt-8 flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+        <div className="editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-4 py-3">
           <span className="text-sm font-semibold text-slate-700">Confidence</span>
           <div className="flex flex-wrap items-center gap-2">
           {CONFIDENCE_DISPLAY_ORDER.map(level => (
@@ -199,7 +199,7 @@ export default function QuestionCard({
       
       {/* Submit / Next Button */}
       {!hideFooterControls && (
-        <div className={`flex justify-center ${isConfidenceVisible ? 'mt-12' : 'mt-8'}`}>
+        <div className={`flex justify-center ${isConfidenceVisible ? 'mt-6' : 'mt-4'}`}>
           {!showFeedback ? (
             <button
               onClick={onSubmit}

@@ -365,10 +365,10 @@ export default function AdaptiveDiagnostic({
   const progress = ((currentIndex + 1) / totalInQueue) * 100;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Resume Notice */}
       {isResuming && currentIndex > 0 && (
-        <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-4">
+        <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-3">
           <p className="text-sm text-sky-800">
             Resumed from question {currentIndex + 1}. Your progress has been saved.
           </p>
@@ -390,8 +390,8 @@ export default function AdaptiveDiagnostic({
       </div>
 
       {/* Timer, Pause, and Pacing */}
-      <div className="editorial-surface-soft flex items-center justify-between gap-4 p-4">
-        <div className="flex items-center gap-6">
+      <div className="editorial-surface-soft flex items-center justify-between gap-4 p-3">
+        <div className="flex items-center gap-4">
           <div className="flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{timerLabel}</span>
             <div className="flex items-center gap-2">
