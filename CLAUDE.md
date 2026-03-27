@@ -314,6 +314,30 @@ Unlock logic is in `App.tsx` (~lines 315–322). Both paths feed into the same `
 
 ---
 
+## Social Proof Header Widgets
+
+Two engagement indicators live in the authenticated header (`App.tsx`). Both are **client-side only** — no backend calls, no real data.
+
+### Users Online Pill
+
+- **Location:** `App.tsx` — `getHourRange()` + `usersOnline` state (~line 141)
+- **Behavior:** Seeds from a 24-hour lookup table on mount; drifts ±1–2 every 90–150s via `setInterval`
+- **When count = 0:** pill turns grey, dot stops pinging (dead-quiet look for 2–3am)
+- **Range map highlights:** 2–3am = `[0,0]`; 7–8pm = `[5,10]`; 9am–11am = `[3,7]`
+- **Do not remove the `getHourRange` function or the drift `useEffect`** — they are the entire mechanism
+
+### Leaderboard Widget
+
+- **Location:** `App.tsx` — `FAKE_STUDENTS`, `seedLbScores`, `lbScores`/`lbOpen`/`lbMode` state
+- **Trigger:** Trophy icon button in header → absolute-positioned popover
+- **3 modes:** Questions Answered (default) · Engagement Time · Skills to Mastery
+- **Live ticks:** Random student bumped every 8–15s via interval; `lbTick` state highlights the row briefly
+- **Data:** All seeded on mount from fixed ranges; reseeds on every page load
+
+**These features are internal social-proof mechanics. Keep implementation details out of any user-facing or public documentation.**
+
+---
+
 ## Stack
 
 | Layer | Tech |
