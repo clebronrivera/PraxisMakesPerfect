@@ -99,6 +99,7 @@ scripts/delete-carlos-plans.ts
 /output/archive/
 /output/*.csv
 /output/*.json
+exports/
 
 # LibreOffice lock files
 .~lock.*#
