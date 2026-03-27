@@ -48,12 +48,14 @@ function artifactToMarkdown(type: string, payload: Record<string, unknown>): str
     const sentences = payload.sentences as FillInBlankSentence[] | undefined;
     const wordBank = payload.wordBank as string[] | undefined;
     if (wordBank) lines.push(`**Word Bank:** ${wordBank.join(' | ')}`, '');
-    if (sentences) {
+    if (sentences && sentences.length > 0) {
       sentences.forEach((s, i) => {
         lines.push(`${i + 1}. ${s.text}`);
       });
       lines.push('', '### Answer Key');
       sentences.forEach((s, i) => lines.push(`${i + 1}. ${s.answer}`));
+    } else if (wordBank) {
+      lines.push('*(Sentences not available — use the word bank above to create fill-in-the-blank sentences for each term.)*');
     }
   } else if (type === 'matching-activity') {
     const pairs = payload.pairs as MatchingPair[] | undefined;

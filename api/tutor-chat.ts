@@ -112,11 +112,41 @@ function parseClaudeResponse(raw: string): ClaudeResponseShape {
 
   try {
     const parsed = JSON.parse(cleaned);
+
+    // Normalize artifact type: Claude sometimes uses underscores, wrong names, or wraps
+    // everything in a "study_activity" envelope. Convert to canonical hyphen-separated types.
+    let artifact = parsed.artifact || undefined;
+    if (artifact?.type) {
+      const CANONICAL: Record<string, string> = {
+        'fill_in_blank':       'fill-in-blank',
+        'fill-in-blank':       'fill-in-blank',
+        'matching_activity':   'matching-activity',
+        'matching-activity':   'matching-activity',
+        'vocabulary_list':     'vocabulary-list',
+        'vocabulary-list':     'vocabulary-list',
+        'practice_set':        'practice-set',
+        'practice-set':        'practice-set',
+        'weak_areas_summary':  'weak-areas-summary',
+        'weak-areas-summary':  'weak-areas-summary',
+      };
+
+      // Handle "study_activity" / "study-activity" wrapper Claude sometimes emits
+      // where the real type is nested in payload.activityType
+      const rawType = String(artifact.type).toLowerCase().replace(/_/g, '-');
+      if (rawType === 'study-activity' && artifact.payload?.activityType) {
+        const inner = String(artifact.payload.activityType).toLowerCase().replace(/_/g, '-');
+        artifact = { type: CANONICAL[inner] || inner, payload: artifact.payload };
+      } else {
+        const canonical = CANONICAL[String(artifact.type).toLowerCase().replace(/_/g, '-')];
+        if (canonical) artifact = { ...artifact, type: canonical };
+      }
+    }
+
     return {
       content: parsed.content || '',
       suggestedFollowUps: Array.isArray(parsed.suggestedFollowUps) ? parsed.suggestedFollowUps : [],
       poseQuestion: parsed.poseQuestion || undefined,
-      artifact: parsed.artifact || undefined,
+      artifact,
     };
   } catch {
     // Fallback: treat entire response as content
@@ -224,6 +254,9 @@ GROUNDING RULES:
 RESPONSE FORMAT: Always respond with valid JSON:
 { "content": "<markdown string>", "suggestedFollowUps": ["q1", "q2", "q3"] }
 Optional fields: "poseQuestion": { "questionId": "...", "skillId": "..." }, "artifact": { "type": "...", "payload": {} }
+ARTIFACT TYPE NAMES — use exactly these strings (hyphens, lowercase, no underscores):
+  "fill-in-blank" | "matching-activity" | "vocabulary-list" | "practice-set" | "weak-areas-summary"
+  Never use "study_activity", "fill_in_blank", or any other variant.
 
 ${sessionType === 'floating' ? 'Keep content under 250 words.' : 'Keep content under 400 words.'}
 Use **bold** and bullets freely. Be warm, encouraging, and specific.`);
