@@ -142,9 +142,13 @@ function parseClaudeResponse(raw: string): ClaudeResponseShape {
       }
     }
 
+    const followUps = Array.isArray(parsed.suggestedFollowUps) && parsed.suggestedFollowUps.length > 0
+      ? parsed.suggestedFollowUps
+      : ['Quiz me', 'What are my weakest areas?', 'Explain a concept'];
+
     return {
       content: parsed.content || '',
-      suggestedFollowUps: Array.isArray(parsed.suggestedFollowUps) ? parsed.suggestedFollowUps : [],
+      suggestedFollowUps: followUps,
       poseQuestion: parsed.poseQuestion || undefined,
       artifact,
     };
@@ -511,6 +515,15 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
       const selected = selectQuizQuestion(tutorContext, questions, usedIds);
       if (selected) {
         quizQuestion = selected.question;
+      } else {
+        // No question available — fall back to general tutoring with a note
+        // (extremely unlikely with 466 questions, but handle gracefully)
+        return json(200, {
+          sessionId: sessionId!,
+          messageId: '',
+          content: "I've run through all the available questions for this session! Start a new chat to continue quizzing, or ask me to explain a concept instead.",
+          suggestedFollowUps: ['Explain a concept', 'What should I focus on?', 'Start new chat'],
+        } satisfies TutorChatResponse);
       }
     }
 
@@ -693,7 +706,7 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
 
     // Add quiz question data if posing a question
     if (quizQuestion) {
-      const correctParts = quizQuestion.correct_answer.split(',').map((s: string) => s.trim());
+      const correctParts = (quizQuestion.correct_answer || '').split(',').map((s: string) => s.trim()).filter(Boolean);
       response.quizQuestion = {
         questionId: quizQuestion.id,
         skillId: quizQuestion.skillId,
