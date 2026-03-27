@@ -52,7 +52,9 @@ function getBearerToken(header?: string): string | null {
 
 function assessmentTypesForScope(scope: 'screener' | 'full_diagnostic'): string[] {
   if (scope === 'screener') return ['screener'];
-  return ['full', 'diagnostic'];
+  // 'adaptive' must be included — adaptive diagnostic responses are stored with
+  // assessment_type='adaptive' and must be cleared along with full/diagnostic rows.
+  return ['full', 'diagnostic', 'adaptive'];
 }
 
 function patchLastSession(
@@ -62,7 +64,7 @@ function patchLastSession(
   if (!lastSession || typeof lastSession !== 'object') return lastSession as null | undefined;
   const mode = (lastSession as { mode?: string }).mode;
   if (scope === 'screener' && mode === 'screener') return null;
-  if (scope === 'full_diagnostic' && (mode === 'full' || mode === 'diagnostic')) return null;
+  if (scope === 'full_diagnostic' && (mode === 'full' || mode === 'diagnostic' || mode === 'adaptive')) return null;
   return lastSession;
 }
 
@@ -246,6 +248,9 @@ export const handler = async (event: { httpMethod?: string; headers?: Record<str
     if (scope === 'full_diagnostic') {
       updatePayload.full_assessment_complete = false;
       updatePayload.diagnostic_complete = false;
+      updatePayload.adaptive_diagnostic_complete = false;
+      updatePayload.diagnostic_question_ids = [];
+      updatePayload.last_diagnostic_session_id = null;
       updatePayload.full_assessment_question_ids = [];
       updatePayload.pre_assessment_question_ids = [];
       updatePayload.last_full_assessment_session_id = null;

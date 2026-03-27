@@ -415,3 +415,29 @@ Use this template when adding a new durable rule:
 - Code anchor:
 - Notes / limits:
 ```
+
+---
+
+## 8. AI Tutor Chat — Scoring and Wiring Rules
+
+### Rule: Tutor quiz evaluation is separate from practice/assessment scoring
+
+- **Decision:** All-or-nothing multi-select quiz scoring in the AI Tutor Chat lives exclusively in `src/utils/tutorQuizEngine.ts` → `evaluateQuizAnswer()`. The result is pre-computed and passed to Claude as a fact. Claude is instructed not to change the correctness determination.
+- **Why:** Prevents AI hallucination of correctness. Claude explains *why*; deterministic code decides *what*.
+- **Source data:** `src/data/questions.json` — `correct_answer`, `distractor_misconception_*` fields.
+- **Code anchor:** `src/utils/tutorQuizEngine.ts` — `selectQuizQuestion()` (weighted selection) and `evaluateQuizAnswer()` (all-or-nothing scoring).
+- **Notes / limits:** Tutor quiz answers are NOT logged to `practice_responses` or `responses`. They do not affect `user_progress.skill_scores`. This is intentional — tutor quiz is for learning, not for updating the proficiency model.
+
+### Rule: Tutor context builder uses progressTaxonomy as canonical skill source
+
+- **Decision:** `src/utils/tutorContextBuilder.ts` imports skill definitions (IDs, labels, domain mapping) from `src/utils/progressTaxonomy.ts` via `PROGRESS_SKILLS`. It does not maintain its own skill list.
+- **Why:** Single source of truth. All skill-facing surfaces (Progress page, ResultsDashboard, Study Guide) use progressTaxonomy. The tutor must match.
+- **Code anchor:** `src/utils/tutorContextBuilder.ts` → `buildTutorContext()`.
+- **Notes / limits:** If a skill is added/removed from `progressTaxonomy.ts`, the tutor context automatically reflects it on next API call.
+
+### Rule: FloatingTutorWidget suppressed during active assessments
+
+- **Decision:** Widget is not rendered when `mode` is `'adaptive-diagnostic'`, `'screener'`, or `'fullassessment'`.
+- **Why:** Avoid distraction and prevent any appearance of AI assistance during assessments.
+- **Code anchor:** `App.tsx` → `showFloatingWidget` boolean.
+- **Notes / limits:** The flag is `ACTIVE_LAUNCH_FEATURES.tutorChat` — set `false` until production validation is complete.

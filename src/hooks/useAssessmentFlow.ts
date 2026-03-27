@@ -41,7 +41,6 @@ import { clearSession, AssessmentSession } from '../utils/sessionStorage';
 import {
   createUserSession,
   deleteUserSession,
-  loadUserSession,
   UserSession,
 } from '../utils/userSessionStorage';
 import { isStoredScreenerSessionType } from '../utils/sessionTypes';
@@ -114,7 +113,7 @@ export function useAssessmentFlow({
   profile,
   updateProfile,
   currentUserName,
-  isLoaded,
+  isLoaded: _isLoaded,
   savedSession,
   getAssessmentResponses,
   getLatestAssessmentResponses,
@@ -151,17 +150,11 @@ export function useAssessmentFlow({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // intentionally mount-only — mirrors original App.tsx behaviour
 
-  // ── Fix stale Supabase lastSession if localStorage entry is gone ────────────
-  useEffect(() => {
-    if (!isLoaded || !profile.lastSession) return;
-    const { sessionId, mode } = profile.lastSession;
-    // Practice sessions don't use userSessionStorage — skip the check.
-    if (mode === 'practice') return;
-    const saved = loadUserSession(sessionId);
-    if (!saved) {
-      void updateProfile({ lastSession: null });
-    }
-  }, [isLoaded, profile.lastSession, updateProfile]);
+  // NOTE: We intentionally do NOT auto-clear lastSession when localStorage is
+  // gone (e.g. user cleared cache or switched browser). Clearing it here would
+  // cause "Start Adaptive Test" to reappear even though the user has partial
+  // responses recorded in Supabase. The Resume button handler in App.tsx already
+  // shows a graceful "session no longer available" alert when this happens.
 
   // ── startScreener ───────────────────────────────────────────────────────────
   const startScreener = useCallback(
@@ -294,12 +287,22 @@ export function useAssessmentFlow({
     (resumeSession?: UserSession) => {
       if (resumeSession && resumeSession.type === 'adaptive-diagnostic') {
         setSelectedSessionId(resumeSession.sessionId);
-        const excludeIds = [
-          ...(profile.preAssessmentQuestionIds || []),
-          ...(profile.screenerItemIds || []),
-        ];
-        const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
-        setAdaptiveDiagnosticData(result);
+        // Restore the exact questions from the saved session using the full bank.
+        // Do NOT call buildAdaptiveDiagnostic here — it picks a new random set of
+        // questions, so the saved question IDs won't be found and the queue shrinks.
+        const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
+        const restoredQueue = resumeSession.questionIds
+          .map(id => questionMap.get(id))
+          .filter((q): q is typeof analyzedQuestions[number] => q !== undefined);
+        const restoredFollowUpPool: Record<string, typeof analyzedQuestions> = {};
+        if (resumeSession.followUpPoolRemaining) {
+          for (const [skillId, ids] of Object.entries(resumeSession.followUpPoolRemaining)) {
+            restoredFollowUpPool[skillId] = (ids as string[])
+              .map(id => questionMap.get(id))
+              .filter((q): q is typeof analyzedQuestions[number] => q !== undefined);
+          }
+        }
+        setAdaptiveDiagnosticData({ initialQueue: restoredQueue, followUpPool: restoredFollowUpPool });
         setAssessmentStartTime(resumeSession.startTime);
         onNavigate('adaptive-diagnostic');
         return;

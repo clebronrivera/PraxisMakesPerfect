@@ -416,6 +416,62 @@ A permanent quick-reference panel showing:
 
 ---
 
+## The AI Tutor — Conversational Study Assistant
+
+The AI Tutor (PraxisBot) is a conversational study assistant built on top of the same skill profile data as the study guide. It does **not** replace the study guide — both coexist. The study guide is a one-time generated report; the tutor is an interactive session.
+
+### Two Experiences
+
+**Full Tutor Page** (`mode === 'tutor'`):
+- Requires completing the adaptive diagnostic to unlock
+- Full personalization: knows your exact skill profile, accuracy per skill, trends
+- Session sidebar: browse and resume previous conversations
+- Chat mode + Quiz mode toggle
+- Artifacts: generate vocabulary lists and weak-area summaries as downloadable `.md` files
+
+**Floating Widget**:
+- Persistent chat bubble (bottom-right) on every page except active assessments
+- Works immediately after login — no diagnostic required
+- Provides app navigation help and general Praxis 5403 content Q&A
+- Suppressed during: `adaptive-diagnostic`, `screener`, `fullassessment`
+
+### Quiz Mode
+
+When the user asks to be quizzed:
+- Questions are selected from the 466-question bank using weighted random selection: 60% from Emerging skills, 25% from Approaching, 15% from Demonstrating/maintenance
+- Questions already used in the current session are excluded
+- Answer evaluation is **all-or-nothing** for multi-select questions — computed deterministically before Claude is called
+- Claude writes explanation prose around the pre-computed correctness result; it cannot change the scored outcome
+- Quiz scoring lives entirely in `src/utils/tutorQuizEngine.ts` → `evaluateQuizAnswer()` and does not affect practice or assessment skill scores
+
+### What the Tutor Can Do
+
+- Answer Praxis 5403 content questions and explain concepts
+- Quiz the user on weak-area skills (weighted toward Emerging skills)
+- Generate artifact cards: vocabulary lists, weak-area summaries
+- Guide app navigation: explain pages, suggest what to do next
+- Provide hints when the user is viewing a specific question (floating widget)
+
+### What the Tutor Cannot Do
+
+- Change any skill score or assessment result (all scoring is deterministic; Claude only writes prose)
+- Access ETS official materials or guarantee exam outcomes
+- Replace the personalized study guide (the guide has deeper structure: weekly plans, milestones, priority clusters)
+
+### Unlock Conditions
+
+| Feature | Condition |
+|---------|-----------|
+| Tutor page | `adaptiveDiagnosticComplete === true` |
+| Floating widget | User logged in |
+| Full personalization | `adaptiveDiagnosticComplete === true` (floating widget works without it, but with limited skill context) |
+
+### Feature Flag
+
+`ACTIVE_LAUNCH_FEATURES.tutorChat` in `src/utils/launchConfig.ts` — set `false` until validated in production.
+
+---
+
 ## How Data Flows — The Full Loop
 
 ```

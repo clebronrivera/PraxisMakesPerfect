@@ -60,10 +60,15 @@ export default function AdaptiveDiagnostic({
 }: AdaptiveDiagnosticProps) {
   const engine = useEngine();
 
-  // Attempt to resume a saved adaptive-diagnostic session
+  // Attempt to resume a saved adaptive-diagnostic session.
+  // Guard: a valid session must have at least as many question IDs as the fresh
+  // initialQueue, OR the currentIndex must be > 0 (user already answered some).
+  // This prevents a corrupted/truncated historical session from replacing the
+  // correctly-built 45-question queue with only a handful of questions.
   const savedSession = sessionId ? loadUserSession(sessionId) : null;
   const isResuming = savedSession?.type === 'adaptive-diagnostic' &&
-    savedSession.questionIds.length > 0;
+    savedSession.questionIds.length > 0 &&
+    (savedSession.currentIndex > 0 || savedSession.questionIds.length >= initialQueue.length);
 
   // Dynamic queue: starts with initialQueue, grows when wrong answers trigger follow-ups
   const [queue, setQueue] = useState<AnalyzedQuestion[]>(() => {
