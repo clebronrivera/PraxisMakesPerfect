@@ -5,6 +5,7 @@ import { AnalyzedQuestion, getQuestionIdentifierLabel, getQuestionPrompt } from 
 import { getDomainColor } from '../utils/domainColors';
 import { getDomainLabel } from '../utils/domainLabels';
 import { useFirebaseProgress } from '../hooks/useFirebaseProgress';
+import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
 import { loadSession, clearSession } from '../utils/sessionStorage';
 
@@ -19,8 +20,8 @@ interface ScoreReportProps {
 
 
 const getScoreColor = (score: number) => {
-  if (score >= 0.8) return { text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' };
-  if (score >= 0.6) return { text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' };
+  if (score >= DEMONSTRATING_THRESHOLD) return { text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' };
+  if (score >= APPROACHING_THRESHOLD) return { text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' };
   return { text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' };
 };
 

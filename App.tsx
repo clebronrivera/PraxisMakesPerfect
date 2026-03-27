@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw, Trophy, HelpCircle } from 'lucide-react';
+import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { formatStudyTime } from './src/hooks/useDailyStudyTime';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 // Import questions and analysis
@@ -23,6 +23,8 @@ const HelpFAQ = lazy(() => import('./src/components/HelpFAQ'));
 const TeachMode = lazy(() => import('./src/components/TeachMode'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
+const TutorChatPage = lazy(() => import('./src/components/TutorChatPage').then(m => ({ default: m.TutorChatPage })));
+const FloatingTutorWidget = lazy(() => import('./src/components/FloatingTutorWidget').then(m => ({ default: m.FloatingTutorWidget })));
 
 // Import hooks
 import { useFirebaseProgress } from './src/hooks/useFirebaseProgress';
@@ -67,7 +69,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -136,7 +138,60 @@ function PraxisStudyAppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // ── Users online + Leaderboard ─────────────────────────────────────────────
-  const [usersOnline] = useState(() => Math.floor(Math.random() * 6) + 5);
+  function getHourRange(h: number): [number, number] {
+    const map: [number, number][] = [
+      [0, 2],  // 12am
+      [0, 1],  // 1am
+      [0, 0],  // 2am
+      [0, 0],  // 3am
+      [0, 1],  // 4am
+      [0, 1],  // 5am
+      [1, 2],  // 6am
+      [1, 3],  // 7am
+      [2, 5],  // 8am
+      [3, 6],  // 9am
+      [3, 7],  // 10am
+      [3, 7],  // 11am
+      [2, 6],  // 12pm
+      [2, 5],  // 1pm
+      [2, 5],  // 2pm
+      [3, 7],  // 3pm
+      [4, 8],  // 4pm
+      [4, 8],  // 5pm
+      [5, 9],  // 6pm
+      [5, 10], // 7pm
+      [5, 10], // 8pm
+      [4, 8],  // 9pm
+      [2, 6],  // 10pm
+      [1, 4],  // 11pm
+    ];
+    return map[h] ?? [0, 0];
+  }
+
+  const [usersOnline, setUsersOnline] = useState(() => {
+    const [min, max] = getHourRange(new Date().getHours());
+    return min === max ? min : Math.floor(Math.random() * (max - min + 1)) + min;
+  });
+
+  useEffect(() => {
+    const scheduleNext = () => {
+      const delay = Math.floor(Math.random() * 60000) + 90000; // 90–150s
+      return setTimeout(() => {
+        const [min, max] = getHourRange(new Date().getHours());
+        setUsersOnline(prev => {
+          const roll = Math.random();
+          let drift = 0;
+          if (roll < 0.60) drift = Math.random() < 0.5 ? 1 : -1;
+          else if (roll < 0.75) drift = 0;
+          else drift = Math.random() < 0.5 ? 2 : -2;
+          return Math.min(max, Math.max(min, prev + drift));
+        });
+        timerId = scheduleNext();
+      }, delay);
+    };
+    let timerId = scheduleNext();
+    return () => clearTimeout(timerId);
+  }, []);
 
   const FAKE_STUDENTS = ['M.R.','J.T.','S.K.','P.L.','C.M.','A.W.','D.H.','T.B.','N.S.','R.J.','K.O.','L.F.'];
 
@@ -309,6 +364,15 @@ function PraxisStudyAppContent() {
     () => buildProgressSummary(profile.skillScores, fetchedSkills),
     [fetchedSkills, profile.skillScores]
   );
+
+  // Tutor page context — passed to FloatingTutorWidget so it knows what the user is viewing
+  const tutorPageContext = useMemo(() => ({
+    page: mode,
+  }), [mode]);
+
+  const showFloatingWidget = ACTIVE_LAUNCH_FEATURES.tutorChat &&
+    Boolean(user) &&
+    !['adaptive-diagnostic', 'screener', 'fullassessment'].includes(mode);
 
   // Count questions retired from practice (stored in localStorage per user).
   // Recomputed each time the user navigates to the home screen.
@@ -543,6 +607,7 @@ function PraxisStudyAppContent() {
                 { label: 'Practice', icon: <Zap className="w-4 h-4" />, onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                 { label: 'Progress', icon: <BarChart3 className="w-4 h-4" />, onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
                 { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
+                { label: 'AI Tutor', icon: <Bot className="w-4 h-4" />, onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
                 { label: 'Study Notebook', icon: <BookMarked className="w-4 h-4" />, onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
                 { label: 'Glossary', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
                 { label: 'Help', icon: <HelpCircle className="w-4 h-4" />, onClick: () => setMode('help'), active: mode === 'help', show: true },
@@ -722,10 +787,10 @@ function PraxisStudyAppContent() {
                 </div>
 
                 {/* Users online pill */}
-                <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-600 select-none">
+                <span className={`hidden sm:flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold select-none ${usersOnline === 0 ? 'border-slate-200 bg-slate-50 text-slate-400' : 'border-emerald-200 bg-emerald-50 text-emerald-600'}`}>
                   <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    {usersOnline > 0 && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />}
+                    <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${usersOnline > 0 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                   </span>
                   {usersOnline} online
                 </span>
@@ -768,6 +833,7 @@ function PraxisStudyAppContent() {
                   { label: 'Practice', onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                   { label: 'Progress', onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
                   { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
+                  { label: 'AI Tutor', onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
                   { label: 'Notebook', onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true },
                   { label: 'Glossary', onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
                   { label: 'Help', onClick: () => setMode('help'), active: mode === 'help', show: true },
@@ -1024,10 +1090,15 @@ function PraxisStudyAppContent() {
                           <p className="editorial-overline">Recommended</p>
                           <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
                           <p className="mt-2 text-sm text-slate-500">Deeper skill-level data to unlock your personalized learning path. Adapts to your performance.</p>
-                          <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
-                            <BarChart3 className="h-4 w-4" />
-                            Start adaptive diagnostic
-                          </button>
+                          {!hasAssessmentInProgress && (
+                            <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
+                              <BarChart3 className="h-4 w-4" />
+                              Start adaptive diagnostic
+                            </button>
+                          )}
+                          {hasAssessmentInProgress && (
+                            <p className="mt-4 text-sm font-medium text-amber-700">Diagnostic in progress — use the Resume card above.</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1461,6 +1532,16 @@ function PraxisStudyAppContent() {
           </Suspense>
         )}
 
+        {/* AI TUTOR PAGE */}
+        {mode === 'tutor' && ACTIVE_LAUNCH_FEATURES.tutorChat && user && (
+          <Suspense fallback={<div className="min-h-[400px] flex items-center justify-center text-slate-500 text-sm">Loading AI Tutor…</div>}>
+            <TutorChatPage
+              userId={user.id}
+              diagnosticComplete={Boolean(profile.adaptiveDiagnosticComplete)}
+            />
+          </Suspense>
+        )}
+
         {/* SCREENER MODE */}
         {mode === 'screener' && screenerQuestions.length > 0 && (
           <ScreenerAssessment
@@ -1649,6 +1730,15 @@ function PraxisStudyAppContent() {
         </Suspense>
       </div>
       </main>
+      {showFloatingWidget && user && (
+        <Suspense fallback={null}>
+          <FloatingTutorWidget
+            userId={user.id}
+            diagnosticComplete={Boolean(profile.adaptiveDiagnosticComplete)}
+            pageContext={tutorPageContext}
+          />
+        </Suspense>
+      )}
       <Suspense fallback={null}>
         <FeedbackModal
           isOpen={isFeedbackModalOpen}

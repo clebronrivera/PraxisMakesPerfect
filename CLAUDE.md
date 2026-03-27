@@ -46,6 +46,51 @@ Open **http://localhost:8888** — not 5173 — when using `netlify dev`.
 
 The background function is at `api/study-plan-background.ts`. Netlify loads it in Lambda compatibility mode. The app calls it at `/api/study-plan-background` (rewritten by `netlify.toml`) or falls back to `/.netlify/functions/study-plan-background`.
 
+### Admin Dashboard — API Endpoints
+
+All admin API endpoints live in `api/`. They require a valid admin session JWT (`Authorization: Bearer <token>`) and verify the caller via `isAdminEmail` in `src/config/admin.ts`.
+
+| Endpoint | Method | Requires Service Role | Purpose |
+|---|---|---|---|
+| `GET /api/admin-list-users` | GET | ✅ | All `user_progress` rows + per-user avg time from `responses` |
+| `POST /api/admin-reset-assessment` | POST | ✅ | Archive + delete screener or diagnostic responses for a user |
+| `POST /api/admin-delete-user` | POST | ✅ | Delete all app data for a user |
+| `GET /api/admin-student-detail?userId=<uuid>` | GET | ✅ | All `responses` rows for one user (for Student Detail Drawer) |
+| `GET /api/admin-item-analysis` | GET | ✅ | Psychometric stats across all questions (p-value, discrimination, distractor freqs) |
+
+**All endpoints require `SUPABASE_SERVICE_ROLE_KEY`** (JWT `eyJ...` from Supabase → Settings → API → `service_role`). They gracefully degrade on raw Vite (port 5173) — the admin dashboard shows a clear error message. Run `netlify dev` (port 8888) for full functionality.
+
+### Admin Dashboard — Tabs
+
+| Tab | What It Shows |
+|---|---|
+| Overview | User counts, active users, avg Q time (global), in-progress assessments, potential drops |
+| Audit | Consolidated feedback + question report audit with download |
+| Beta Feedback | All user feedback with status management |
+| Question Reports | Per-question issue reports with severity triage |
+| Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
+| Item Analysis | Psychometric quality metrics for the 466-question bank (p-value, discrimination, distractor analysis) |
+
+### Student Detail Drawer
+
+Triggered by clicking any row in the **Users** tab. Fetches responses via `api/admin-student-detail`. Shows:
+- Domain performance bars (4 domains)
+- Skill breakdown table (sortable by accuracy / attempts / avg time)
+- Session timeline (chronological by session)
+- Time distribution (min / Q1 / median / Q3 / max)
+- Top 10 most-missed skills
+
+### Item Analysis — Flag Thresholds
+
+| Flag | Rule |
+|---|---|
+| Too Easy | p-value > 0.90 (proportion correct > 90%) |
+| Too Hard | p-value < 0.20 |
+| Low Discrimination | discrimination index ≤ 0 (better students not outperforming weaker ones) |
+| Timing Outlier | avg time > global avg + 2× global stddev |
+
+Flags only applied when item has ≥ 5 attempts.
+
 ### Admin — reset screener / full diagnostic
 
 The **Users** tab in the admin dashboard calls `POST /api/admin-reset-assessment` to archive deleted rows into `assessment_reset_archive`, remove matching `responses`, and rebuild aggregates.
@@ -266,6 +311,30 @@ Unlock logic is in `App.tsx` (~lines 315–322). Both paths feed into the same `
 - Returns 202 immediately; client polls Supabase every 4 seconds (4 min timeout)
 - `max_tokens` for Claude: 12000
 - Model: `claude-sonnet-4-5` (or similar current Sonnet)
+
+---
+
+## Social Proof Header Widgets
+
+Two engagement indicators live in the authenticated header (`App.tsx`). Both are **client-side only** — no backend calls, no real data.
+
+### Users Online Pill
+
+- **Location:** `App.tsx` — `getHourRange()` + `usersOnline` state (~line 141)
+- **Behavior:** Seeds from a 24-hour lookup table on mount; drifts ±1–2 every 90–150s via `setInterval`
+- **When count = 0:** pill turns grey, dot stops pinging (dead-quiet look for 2–3am)
+- **Range map highlights:** 2–3am = `[0,0]`; 7–8pm = `[5,10]`; 9am–11am = `[3,7]`
+- **Do not remove the `getHourRange` function or the drift `useEffect`** — they are the entire mechanism
+
+### Leaderboard Widget
+
+- **Location:** `App.tsx` — `FAKE_STUDENTS`, `seedLbScores`, `lbScores`/`lbOpen`/`lbMode` state
+- **Trigger:** Trophy icon button in header → absolute-positioned popover
+- **3 modes:** Questions Answered (default) · Engagement Time · Skills to Mastery
+- **Live ticks:** Random student bumped every 8–15s via interval; `lbTick` state highlights the row briefly
+- **Data:** All seeded on mount from fixed ranges; reseeds on every page load
+
+**These features are internal social-proof mechanics. Keep implementation details out of any user-facing or public documentation.**
 
 ---
 

@@ -144,6 +144,8 @@ const defaultProfile: UserProfile = {
   migrationVersion: 1,
   screenerComplete: false,
   diagnosticComplete: false,
+  adaptiveDiagnosticComplete: false,
+  diagnosticQuestionIds: [],
   onboardingComplete: false,
   studyGoals: [],
   redemptionCredits: 0,
@@ -243,6 +245,9 @@ export function useFirebaseProgress() {
           screenerComplete: data.screener_complete ?? false,
           diagnosticComplete: data.diagnostic_complete ?? false,
           fullAssessmentComplete: data.full_assessment_complete ?? false,
+          adaptiveDiagnosticComplete: data.adaptive_diagnostic_complete ?? false,
+          diagnosticQuestionIds: data.diagnostic_question_ids ?? [],
+          lastDiagnosticSessionId: data.last_diagnostic_session_id ?? undefined,
 
           domainScores: data.domain_scores ?? {},
           skillScores: data.skill_scores ?? {},
@@ -326,6 +331,9 @@ export function useFirebaseProgress() {
         screener_complete: newProfile.screenerComplete,
         diagnostic_complete: newProfile.diagnosticComplete,
         full_assessment_complete: newProfile.fullAssessmentComplete,
+        adaptive_diagnostic_complete: newProfile.adaptiveDiagnosticComplete ?? false,
+        diagnostic_question_ids: newProfile.diagnosticQuestionIds ?? [],
+        last_diagnostic_session_id: newProfile.lastDiagnosticSessionId ?? null,
         
         domain_scores: newProfile.domainScores,
         skill_scores: newProfile.skillScores,

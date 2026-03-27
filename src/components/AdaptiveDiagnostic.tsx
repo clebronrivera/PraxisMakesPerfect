@@ -60,10 +60,15 @@ export default function AdaptiveDiagnostic({
 }: AdaptiveDiagnosticProps) {
   const engine = useEngine();
 
-  // Attempt to resume a saved adaptive-diagnostic session
+  // Attempt to resume a saved adaptive-diagnostic session.
+  // Guard: a valid session must have at least as many question IDs as the fresh
+  // initialQueue, OR the currentIndex must be > 0 (user already answered some).
+  // This prevents a corrupted/truncated historical session from replacing the
+  // correctly-built 45-question queue with only a handful of questions.
   const savedSession = sessionId ? loadUserSession(sessionId) : null;
   const isResuming = savedSession?.type === 'adaptive-diagnostic' &&
-    savedSession.questionIds.length > 0;
+    savedSession.questionIds.length > 0 &&
+    (savedSession.currentIndex > 0 || savedSession.questionIds.length >= initialQueue.length);
 
   // Dynamic queue: starts with initialQueue, grows when wrong answers trigger follow-ups
   const [queue, setQueue] = useState<AnalyzedQuestion[]>(() => {
@@ -365,10 +370,10 @@ export default function AdaptiveDiagnostic({
   const progress = ((currentIndex + 1) / totalInQueue) * 100;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Resume Notice */}
       {isResuming && currentIndex > 0 && (
-        <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-4">
+        <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-3">
           <p className="text-sm text-sky-800">
             Resumed from question {currentIndex + 1}. Your progress has been saved.
           </p>
@@ -390,8 +395,8 @@ export default function AdaptiveDiagnostic({
       </div>
 
       {/* Timer, Pause, and Pacing */}
-      <div className="editorial-surface-soft flex items-center justify-between gap-4 p-4">
-        <div className="flex items-center gap-6">
+      <div className="editorial-surface-soft flex items-center justify-between gap-4 p-3">
+        <div className="flex items-center gap-4">
           <div className="flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{timerLabel}</span>
             <div className="flex items-center gap-2">

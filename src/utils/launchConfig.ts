@@ -8,4 +8,5 @@ export const ACTIVE_LAUNCH_FEATURES = {
   adaptivePractice: false,
   teachMode: false,
   studyGuide: false,        // AI study guide — set true when production-ready
+  tutorChat: true,          // AI Tutor Chat — enabled for testing
 } as const;

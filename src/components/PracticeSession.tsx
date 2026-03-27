@@ -24,6 +24,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { incrementDailyQuestionCount } from '../hooks/useDailyQuestionCount';
 import { addDailyStudySeconds } from '../hooks/useDailyStudyTime';
 import { addTermsFromWrongAnswer } from '../services/glossaryService';
+import { APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import skillVocabMap from '../data/skill-vocabulary-map.json';
 import { SKILL_MAP } from '../brain/skill-map';
 
@@ -748,7 +749,7 @@ export default function PracticeSession({
         const alertSkillId = currentQuestion.skillId;
         if (dismissedSkillAlerts.has(alertSkillId)) return null;
         const skillScore = userProfile.skillScores?.[alertSkillId];
-        if (!skillScore || skillScore.attempts < 3 || (skillScore.score ?? 1) >= 0.6) return null;
+        if (!skillScore || skillScore.attempts < 3 || (skillScore.score ?? 1) >= APPROACHING_THRESHOLD) return null;
         const alertModuleId = currentQuestion.primaryModuleId;
         const alertModuleTitle =
           currentQuestion.moduleRefs?.find(r => r.moduleId === alertModuleId)?.moduleTitle ??
