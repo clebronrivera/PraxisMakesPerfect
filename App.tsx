@@ -413,7 +413,6 @@ function PraxisStudyAppContent() {
       ['Keep going', 'One step at a time'],
       ['Stay consistent', 'Small reps compound'],
       ['Show up again', 'That is the whole job'],
-      ['You are building something', 'Keep the reps going'],
       ['Progress is quiet', 'Keep practicing'],
       ['Earn it every day', 'No shortcuts here'],
       ['Trust the process', 'You are closer than you think'],

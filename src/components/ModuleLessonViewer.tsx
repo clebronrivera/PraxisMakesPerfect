@@ -189,11 +189,20 @@ function SectionRenderer({
             prompt={section.prompt}
             onComplete={(categorization) => {
               if (!onInteractiveComplete) return;
-              const total = section.scenarios!.length;
-              const sorted = Object.values(categorization).flat().length;
+              const scenarios = section.scenarios!;
+              const total = scenarios.length;
+              let correct = 0;
+              scenarios.forEach(scenario => {
+                if (!scenario.category) { correct++; return; }
+                Object.entries(categorization).forEach(([cat, ids]) => {
+                  if (ids.includes(scenario.id) && cat.toUpperCase().startsWith(scenario.category!.toUpperCase())) {
+                    correct++;
+                  }
+                });
+              });
               onInteractiveComplete(index, {
                 interactiveType: 'scenario-sorter',
-                score: total > 0 ? sorted / total : 1,
+                score: total > 0 ? correct / total : 1,
                 completed: true,
                 attempts: 1,
                 data: { categorization },

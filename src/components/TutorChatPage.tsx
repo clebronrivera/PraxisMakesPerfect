@@ -45,8 +45,8 @@ export function TutorChatPage({
   };
 
   const handleFollowUp = (text: string) => {
-    setInput(text);
-    inputRef.current?.focus();
+    if (chat.isSending) return;
+    chat.sendMessage(text);
   };
 
   const handleSubmitQuizAnswer = (questionId: string, selectedAnswers: string[]) => {

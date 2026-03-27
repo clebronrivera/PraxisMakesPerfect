@@ -8,6 +8,7 @@ import type {
   TutorChatResponse,
   ClaudeResponseShape,
   TutorIntent,
+  TutorUserContext,
 } from '../src/types/tutorChat';
 import { classifyIntent } from '../src/utils/tutorIntentClassifier';
 import { buildTutorContext, formatContextForPrompt } from '../src/utils/tutorContextBuilder';
@@ -18,6 +19,44 @@ import { skillMetadataV1 } from '../src/data/skill-metadata-v1';
 import { PROGRESS_SKILLS } from '../src/utils/progressTaxonomy';
 // Static import — Netlify bundles this into the function
 import questionsData from '../src/data/questions.json';
+
+// Raw shape from questions.json (field names differ from QuestionItem interface)
+interface RawQuestionItem {
+  UNIQUEID: string;
+  question_stem: string;
+  current_skill_id: string;
+  A: string; B: string; C: string; D: string; E?: string; F?: string;
+  correct_answers: string;
+  CORRECT_Explanation: string;
+  distractor_misconception_A?: string;
+  distractor_misconception_B?: string;
+  distractor_misconception_C?: string;
+  distractor_misconception_D?: string;
+  case_text?: string;
+  has_case_vignette?: string;
+}
+
+function normalizeQuestion(raw: RawQuestionItem): QuestionItem {
+  return {
+    id: raw.UNIQUEID,
+    question: raw.question_stem,
+    skillId: raw.current_skill_id,
+    choices: {
+      A: raw.A || '',
+      B: raw.B || '',
+      C: raw.C || '',
+      D: raw.D || '',
+      ...(raw.E ? { E: raw.E } : {}),
+      ...(raw.F ? { F: raw.F } : {}),
+    },
+    correct_answer: raw.correct_answers,
+    CORRECT_Explanation: raw.CORRECT_Explanation || '',
+    distractor_misconception_A: raw.distractor_misconception_A,
+    distractor_misconception_B: raw.distractor_misconception_B,
+    distractor_misconception_C: raw.distractor_misconception_C,
+    distractor_misconception_D: raw.distractor_misconception_D,
+  };
+}
 
 const MODEL = 'claude-sonnet-4-20250514';
 const MAX_TOKENS = 1500;
@@ -88,7 +127,74 @@ function parseClaudeResponse(raw: string): ClaudeResponseShape {
   }
 }
 
+// ─── Activity artifact helpers ────────────────────────────────────────────────
+
+function detectArtifactSubtype(msg: string): string {
+  if (/practice\s*(set|sheet|packet)|print.*questions?|questions?.*print|generate.*questions?|questions?.*weak|questions?.*areas?|questions?.*needs?/i.test(msg)) return 'practice-set';
+  if (/fill.in.*(blank|the)|word.bank|blank.*(exercise|worksheet|activity)/i.test(msg)) return 'fill-in-blank';
+  if (/match(ing)?.*(activity|game|exercise|terms?|concepts?)?$|drag.*(and|&)?.drop|match.the/i.test(msg)) return 'matching-activity';
+  if (/vocabulary.list/i.test(msg)) return 'vocabulary-list';
+  return 'weak-areas-summary';
+}
+
+interface PracticeSetQuestion {
+  id: string; skillId: string; skillName: string;
+  stem: string; choices: Array<{ label: string; text: string }>;
+  correctAnswer: string; explanation: string;
+}
+
+function selectPracticeSetQuestions(
+  tutorContext: TutorUserContext,
+  questions: QuestionItem[],
+  count = 9,
+): PracticeSetQuestion[] {
+  const targetIds = tutorContext.emergingSkills.slice(0, 3).map(s => s.skillId);
+  const perSkill = Math.ceil(count / Math.max(targetIds.length, 1));
+  const result: PracticeSetQuestion[] = [];
+
+  for (const skillId of targetIds) {
+    const pool = questions.filter(q => q.skillId === skillId);
+    const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, perSkill);
+    const skillDef = PROGRESS_SKILLS.find(s => s.skillId === skillId);
+    for (const q of shuffled) {
+      result.push({
+        id: q.id,
+        skillId: q.skillId,
+        skillName: skillDef?.fullLabel || skillId,
+        stem: q.question,
+        choices: Object.entries(q.choices).filter(([, v]) => v).map(([k, v]) => ({ label: k, text: v as string })),
+        correctAnswer: q.correct_answer,
+        explanation: q.CORRECT_Explanation,
+      });
+    }
+  }
+
+  return result.slice(0, count);
+}
+
+function gatherActivityVocab(tutorContext: TutorUserContext): Array<{ term: string; skillId: string; skillName: string }> {
+  const targetIds = tutorContext.emergingSkills.slice(0, 3).map(s => s.skillId);
+  const terms: Array<{ term: string; skillId: string; skillName: string }> = [];
+
+  for (const skillId of targetIds) {
+    const meta = skillMetadataV1[skillId];
+    if (!meta) continue;
+    const skillDef = PROGRESS_SKILLS.find(s => s.skillId === skillId);
+    for (const term of meta.vocabulary.slice(0, 4)) {
+      terms.push({ term, skillId, skillName: skillDef?.fullLabel || skillId });
+    }
+  }
+
+  return terms;
+}
+
 // ─── System prompt assembly ──────────────────────────────────────────────────
+
+interface ArtifactBuildContext {
+  subtype: string;
+  prebuiltSummary?: string;          // practice-set: summary of what was built
+  activityVocab?: Array<{ term: string; skillId: string; skillName: string }>;
+}
 
 function buildSystemPrompt(
   intent: TutorIntent,
@@ -98,6 +204,7 @@ function buildSystemPrompt(
   quizEvaluation?: QuizEvaluationResult,
   quizQuestion?: QuestionItem,
   skillMetadataSnippet?: string,
+  artifactCtx?: ArtifactBuildContext,
 ): string {
   const sections: string[] = [];
 
@@ -167,6 +274,103 @@ Skill: ${quizQuestion.skillId}
 Stem: ${quizQuestion.question}
 ${choiceLines}
 `);
+  }
+
+  // Section H — Practice set (pre-built server-side)
+  if (artifactCtx?.subtype === 'practice-set' && artifactCtx.prebuiltSummary) {
+    sections.push(`PRACTICE SET PRE-BUILT (server has already selected the questions):
+${artifactCtx.prebuiltSummary}
+
+Your ONLY job: write a warm 2–3 sentence intro in "content" that names the skills covered and encourages the student to work through the set. Do NOT include an "artifact" key in your JSON — the server will attach the pre-built set automatically. Just return "content" and "suggestedFollowUps".
+Suggested follow-ups should be things like "Explain [skill]", "Quiz me more on [skill]", "What are my weakest spots?".`);
+  }
+
+  // Section I — Fill-in-the-blank (Claude generates from vocab list)
+  if (artifactCtx?.subtype === 'fill-in-blank' && artifactCtx.activityVocab?.length) {
+    const vocabLines = artifactCtx.activityVocab.map(v => `- ${v.term} (${v.skillName})`).join('\n');
+    sections.push(`FILL-IN-THE-BLANK ACTIVITY:
+Create a fill-in-the-blank worksheet using these vocabulary terms from the student's weakest skills:
+${vocabLines}
+
+Return in your JSON:
+{
+  "content": "brief intro (1-2 sentences)",
+  "artifact": {
+    "type": "fill-in-blank",
+    "payload": {
+      "title": "Fill in the Blank — Key Vocabulary",
+      "wordBank": ["term1", "term2", ...],
+      "sentences": [
+        { "text": "The ___ is used when a psychologist needs to...", "answer": "term1", "skillId": "X-01" },
+        ...
+      ]
+    }
+  },
+  "suggestedFollowUps": [...]
+}
+
+Rules: one sentence per term; exactly one blank (___) per sentence; sentences should read like real Praxis scenario contexts; keep sentences to 1–2 lines.`);
+  }
+
+  // Section J — Matching activity (Claude generates definitions)
+  if (artifactCtx?.subtype === 'matching-activity' && artifactCtx.activityVocab?.length) {
+    const vocabLines = artifactCtx.activityVocab.map(v => `- ${v.term} (${v.skillName})`).join('\n');
+    sections.push(`MATCHING ACTIVITY:
+Create a term-definition matching activity using these vocabulary terms from the student's weakest skills:
+${vocabLines}
+
+Return in your JSON:
+{
+  "content": "brief intro (1-2 sentences)",
+  "artifact": {
+    "type": "matching-activity",
+    "payload": {
+      "title": "Matching Activity — Key Terms",
+      "pairs": [
+        { "term": "...", "definition": "...", "skillId": "..." },
+        ...
+      ]
+    }
+  },
+  "suggestedFollowUps": [...]
+}
+
+Rules: include ALL terms listed above; definitions should be 1–2 concise sentences appropriate for school psychology exam context; use skillId values from the list above.`);
+  }
+
+  // Section K — Vocabulary list (Claude generates definitions)
+  if (artifactCtx?.subtype === 'vocabulary-list' && artifactCtx.activityVocab?.length) {
+    const vocabLines = artifactCtx.activityVocab.map(v => `- ${v.term} (${v.skillName})`).join('\n');
+    sections.push(`VOCABULARY LIST ARTIFACT:
+Create a vocabulary list with definitions for these terms from the student's weakest skills:
+${vocabLines}
+
+Return in your JSON:
+{
+  "content": "brief intro (1-2 sentences)",
+  "artifact": {
+    "type": "vocabulary-list",
+    "payload": {
+      "title": "Key Vocabulary — Priority Skills",
+      "terms": [
+        { "term": "...", "definition": "..." },
+        ...
+      ]
+    }
+  },
+  "suggestedFollowUps": [...]
+}
+
+Rules: include ALL terms listed above; definitions should be 1–2 concise sentences in school psychology / Praxis 5403 context; be specific and exam-relevant.`);
+  }
+
+  // Section L — Weak areas summary (pre-built server-side)
+  if (artifactCtx?.subtype === 'weak-areas-summary' && artifactCtx.prebuiltSummary) {
+    sections.push(`WEAK AREAS SUMMARY PRE-BUILT (server has already compiled the skill data):
+${artifactCtx.prebuiltSummary}
+
+Your ONLY job: write a warm 2–3 sentence intro in "content" that names the skill areas and encourages targeted practice. Do NOT include an "artifact" key — the server will attach it automatically. Return only "content" and "suggestedFollowUps".
+Suggested follow-ups should be things like "Quiz me on [skill]", "Explain [skill]", "Make a vocabulary list".`);
   }
 
   return sections.join('\n\n---\n\n');
@@ -253,7 +457,7 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
     // 8. Handle quiz logic
     let quizQuestion: QuestionItem | null = null;
     let quizEvaluation: QuizEvaluationResult | undefined;
-    const questions = questionsData as QuestionItem[];
+    const questions = (questionsData as RawQuestionItem[]).map(normalizeQuestion);
 
     if (intent === 'quiz-answer' && body.quizAnswerFor) {
       const q = questions.find(q => q.id === body.quizAnswerFor!.questionId);
@@ -304,10 +508,64 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
       skillMetadataSnippet = snippets.join('\n\n');
     }
 
+    // 9b. Artifact sub-type detection and pre-build
+    let artifactCtx: ArtifactBuildContext | undefined;
+    let prebuiltArtifact: { type: string; payload: Record<string, unknown> } | null = null;
+
+    if (intent === 'artifact-request') {
+      const subtype = detectArtifactSubtype(body.message);
+      if (subtype === 'practice-set') {
+        const practiceQs = selectPracticeSetQuestions(tutorContext, questions);
+        prebuiltArtifact = {
+          type: 'practice-set',
+          payload: {
+            title: 'Practice Questions — Priority Skills',
+            questions: practiceQs,
+          },
+        };
+        const skillNames = [...new Set(practiceQs.map(q => q.skillName))];
+        artifactCtx = {
+          subtype,
+          prebuiltSummary: `${practiceQs.length} questions selected from: ${skillNames.join(', ')}.`,
+        };
+      } else if (subtype === 'fill-in-blank' || subtype === 'matching-activity') {
+        artifactCtx = {
+          subtype,
+          activityVocab: gatherActivityVocab(tutorContext),
+        };
+      } else if (subtype === 'vocabulary-list') {
+        artifactCtx = {
+          subtype,
+          activityVocab: gatherActivityVocab(tutorContext),
+        };
+      } else if (subtype === 'weak-areas-summary') {
+        // Pre-build server-side from tutorContext — more reliable than asking Claude
+        const weakSkills = tutorContext.emergingSkills.slice(0, 8).map(s => ({
+          skillId: s.skillId,
+          skillName: s.skillName,
+          accuracy: s.accuracy ?? 0,
+        }));
+        prebuiltArtifact = {
+          type: 'weak-areas-summary',
+          payload: {
+            title: 'Your Weak Areas',
+            skills: weakSkills,
+          },
+        };
+        const skillNames = weakSkills.map(s => s.skillName).join(', ');
+        artifactCtx = {
+          subtype,
+          prebuiltSummary: `${weakSkills.length} weak skills identified: ${skillNames}.`,
+        };
+      } else {
+        artifactCtx = { subtype };
+      }
+    }
+
     // 10. Build system prompt
     const systemPrompt = buildSystemPrompt(
       intent, userContextPrompt, body.sessionType, body.pageContext,
-      quizEvaluation, quizQuestion ?? undefined, skillMetadataSnippet,
+      quizEvaluation, quizQuestion ?? undefined, skillMetadataSnippet, artifactCtx,
     );
 
     // 11. Build messages for Claude
@@ -347,6 +605,11 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
     const rawContent = claudeData.content?.[0]?.text || '';
     const parsed = parseClaudeResponse(rawContent);
 
+    // Attach pre-built artifact (practice-set) — overrides whatever Claude returned
+    if (prebuiltArtifact) {
+      parsed.artifact = prebuiltArtifact;
+    }
+
     // 13. Persist messages
     const latencyMs = Date.now() - startTime;
     const msgMetadata = {
@@ -376,8 +639,8 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
       quiz_question_id: quizQuestion?.id || parsed.poseQuestion?.questionId || null,
       quiz_skill_id: quizQuestion?.skillId || parsed.poseQuestion?.skillId || null,
       quiz_answered: intent === 'quiz-answer' ? true : null,
-      artifact_type: parsed.artifact?.type || null,
-      artifact_payload: parsed.artifact?.payload || null,
+      artifact_type: (parsed.artifact?.type ?? prebuiltArtifact?.type) || null,
+      artifact_payload: (parsed.artifact?.payload ?? prebuiltArtifact?.payload) || null,
       metadata: msgMetadata,
     }).select('id').single();
 

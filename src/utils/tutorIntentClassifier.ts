@@ -1,16 +1,30 @@
 // src/utils/tutorIntentClassifier.ts
 // Deterministic intent classification for tutor chat messages.
 // Priority-ordered: most specific intent wins.
+//
+// PRIORITY ORDER (highest → lowest):
+//   1. quiz-answer   — structural (quizAnswerFor present)
+//   2. quiz-request  — user wants to be quizzed (checked BEFORE artifact so "quiz me on my
+//                      weak areas" routes here, not to artifact-request)
+//   3. artifact-request — user wants a generated study material
+//   4. hint-request  — question-specific help
+//   5. app-guide     — navigation / how-to
+//   6. general       — everything else
 
 import type { TutorIntent, TutorChatRequest } from '../types/tutorChat';
 
 const QUIZ_TRIGGER_PATTERNS = [
-  /\bquiz\s*me\b/i,
-  /\btest\s*me\b/i,
-  /\bgive\s*me\s*a\s*question\b/i,
-  /\bpractice\s*question\b/i,
-  /\bdrill\s*me\b/i,
-  /\bask\s*me\s*(a\s*)?question/i,
+  /\bquiz\s*me\b/i,                              // "quiz me"
+  /\bquiz\s*my\b/i,                              // "quiz my weakest skill"
+  /\bcan\s+you\s+quiz\b/i,                       // "can you quiz me/my..."
+  /\btest\s*me\b/i,                              // "test me"
+  /\bgive\s*me\s*a\s*(quiz|question)\b/i,        // "give me a quiz / a question"
+  /\bpractice\s*question\b/i,                    // "practice question" (singular)
+  /\bdrill\s*me\b/i,                             // "drill me"
+  /\bask\s*me\s*(a\s*)?question/i,               // "ask me a question"
+  /\bone\s*(more\s*)?question\b/i,               // "one more question"
+  /\btry\s+(a\s*)?question\b/i,                  // "try a question"
+  /\bi\s*(want|'d\s*like)\s*to\s*(be\s*)?(quizzed|tested)\b/i, // "I want to be quizzed"
 ];
 
 const ARTIFACT_TRIGGER_PATTERNS = [
@@ -21,6 +35,19 @@ const ARTIFACT_TRIGGER_PATTERNS = [
   /\bgenerate\s*(a\s*)?summary\b/i,
   /\bgive\s*me\s*(my\s*)?priorities\b/i,
   /\bwhat\s*are\s*my\s*(weakest|worst|lowest)\b/i,
+  // Practice set (printable questions)
+  /\bpractice\s*(set|sheet|questions?\s*to\s*print|packet)\b/i,
+  /\bprint\s*(out\s*)?(some\s*)?(practice\s*)?questions?\b/i,
+  /\bgenerate\s*(some\s*)?questions?\b/i,
+  /\bquestions?\s*(based\s*on|for)\s*(my\s*)?(weak|areas?|gaps?|needs?)\b/i,
+  // Fill-in-the-blank / word bank
+  /\bfill\s*in\s*(the\s*)?blank/i,
+  /\bword\s*bank\b/i,
+  /\bblank\s*(exercise|activity|worksheet)\b/i,
+  // Matching activity
+  /\bmatching\s*(activity|game|exercise|worksheet)?\b/i,
+  /\bdrag\s*(and\s*|&\s*)?drop\b/i,
+  /\bmatch\s*(the\s*)?(terms?|concepts?|definitions?)\b/i,
 ];
 
 const APP_GUIDE_TRIGGER_PATTERNS = [
@@ -49,14 +76,16 @@ export function classifyIntent(request: TutorChatRequest): TutorIntent {
     return 'quiz-answer';
   }
 
-  // Priority 2: Artifact request
-  if (ARTIFACT_TRIGGER_PATTERNS.some(p => p.test(msg))) {
-    return 'artifact-request';
-  }
-
-  // Priority 3: Quiz request
+  // Priority 2: Quiz request — checked BEFORE artifact so that phrases like
+  // "quiz me on my weak areas" or "quiz my weakest skill" route here instead
+  // of being misclassified as artifact-request.
   if (request.mode === 'quiz' || QUIZ_TRIGGER_PATTERNS.some(p => p.test(msg))) {
     return 'quiz-request';
+  }
+
+  // Priority 3: Artifact request
+  if (ARTIFACT_TRIGGER_PATTERNS.some(p => p.test(msg))) {
+    return 'artifact-request';
   }
 
   // Priority 4: Hint request (only when pageContext has a questionId)
