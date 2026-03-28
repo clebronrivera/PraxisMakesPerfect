@@ -193,11 +193,48 @@ interface MatchingPair {
   term: string; definition: string; skillId: string;
 }
 
+// ─── Empty-state detection ───────────────────────────────────────────────────
+
+function isArtifactEmpty(type: string, payload: Record<string, unknown>): boolean {
+  if (type === 'practice-set') {
+    const qs = payload.questions as unknown[] | undefined;
+    return !qs || qs.length === 0;
+  }
+  if (type === 'fill-in-blank') {
+    const sentences = payload.sentences as unknown[] | undefined;
+    return !sentences || sentences.length === 0;
+  }
+  if (type === 'matching-activity') {
+    const pairs = payload.pairs as unknown[] | undefined;
+    return !pairs || pairs.length === 0;
+  }
+  if (type === 'vocabulary-list') {
+    const terms = payload.terms as unknown[] | undefined;
+    return !terms || terms.length === 0;
+  }
+  if (type === 'weak-areas-summary') {
+    const skills = payload.skills as unknown[] | undefined;
+    return !skills || skills.length === 0;
+  }
+  return false;
+}
+
+function EmptyArtifactNotice({ type }: { type: string }) {
+  return (
+    <div className="mt-1 p-4 text-center text-sm text-amber-700 bg-amber-50 rounded-lg border border-dashed border-amber-300">
+      <p className="font-medium">No content could be generated for this {formatType(type).toLowerCase()}.</p>
+      <p className="text-xs text-amber-600 mt-1">Try asking about a different skill or topic.</p>
+    </div>
+  );
+}
+
 // ─── Sub-renderers ────────────────────────────────────────────────────────────
 
 function PracticeSetRenderer({ payload }: { payload: Record<string, unknown> }) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const qs = (payload.questions as PracticeSetQuestion[]) || [];
+
+  if (qs.length === 0) return <EmptyArtifactNotice type="practice-set" />;
 
   const toggle = (i: number) => {
     setRevealed(prev => {
@@ -240,6 +277,8 @@ function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) 
   const sentences = (payload.sentences as FillInBlankSentence[]) || [];
   const wordBank = (payload.wordBank as string[]) || [];
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
+
+  if (sentences.length === 0) return <EmptyArtifactNotice type="fill-in-blank" />;
 
   const toggle = (i: number) => {
     setRevealed(prev => {
@@ -287,6 +326,9 @@ function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) 
 
 function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
   const pairs = (payload.pairs as MatchingPair[]) || [];
+
+  if (pairs.length === 0) return <EmptyArtifactNotice type="matching-activity" />;
+
   const [selected, setSelected] = useState<{ termIdx: number | null; defIdx: number | null }>({ termIdx: null, defIdx: null });
   const [matches, setMatches] = useState<Map<number, number>>(new Map());
   const [shuffledDefs] = useState(() => [...pairs.map((p, i) => ({ ...p, origIdx: i }))].sort(() => Math.random() - 0.5));
@@ -374,6 +416,8 @@ function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
 // ─── Main ArtifactCard ────────────────────────────────────────────────────────
 
 export function ArtifactCard({ type, payload }: ArtifactCardProps) {
+  const empty = isArtifactEmpty(type, payload);
+
   const handleDownload = () => {
     const markdown = artifactToMarkdown(type, payload);
     const blob = new Blob([markdown], { type: 'text/markdown' });
@@ -400,6 +444,7 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
           <FileText className="w-4 h-4 text-amber-700" />
           <span className="text-sm font-semibold text-amber-900">{label}</span>
         </div>
+        {!empty && (
         <div className="flex items-center gap-1.5">
           {isPrintable && (
             <button
@@ -418,6 +463,7 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
             Download
           </button>
         </div>
+        )}
       </div>
 
       {type === 'vocabulary-list' && (

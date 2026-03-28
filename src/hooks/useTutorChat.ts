@@ -41,6 +41,9 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
   // Track pending quiz question from the latest assistant message
   const pendingQuizRef = useRef<TutorChatResponse['quizQuestion'] | null>(null);
 
+  // Adaptive retry: track consecutive misses on the same skill
+  const quizRetryStateRef = useRef<{ skillId: string; missCount: number } | null>(null);
+
   // ── Load session list on mount (page-tutor only) ─────────────────────────
   useEffect(() => {
     if (!userId || sessionType !== 'page-tutor') return;
@@ -72,6 +75,7 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
     setIsHydratingSession(true);
     setMessagesOffset(0);
     setHasOlderMessages(false);
+    quizRetryStateRef.current = null;
 
     const { data, count } = await supabase
       .from('chat_messages')
@@ -104,6 +108,7 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
     setActiveSessionId(sessionId);
     setMessages([]);
     pendingQuizRef.current = null;
+    quizRetryStateRef.current = null;
     loadSessionMessages(sessionId);
   }, [loadSessionMessages]);
 
@@ -113,6 +118,7 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
     setMessages([]);
     setError(null);
     pendingQuizRef.current = null;
+    quizRetryStateRef.current = null;
   }, []);
 
   // ── Load older messages (pagination) ─────────────────────────────────────
@@ -178,6 +184,33 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
         quizAnswerFor,
       };
 
+      // ── Adaptive retry: inject prioritySkillId / quizRetryContext ──────
+      const retryState = quizRetryStateRef.current;
+      if (retryState) {
+        if (!quizAnswerFor) {
+          // Quiz-request turn: attach prioritySkillId only when this looks
+          // like a quiz request (mode=quiz or message matches quiz patterns).
+          // The server ignores it on non-quiz-request intents anyway, but
+          // we avoid sending it on general chat turns per spec.
+          const isQuizRequest = mode === 'quiz' ||
+            /\b(quiz|test|drill)\s*me\b/i.test(text) ||
+            /\b(give|ask)\s*me\s*(a\s*)?(quiz|question)\b/i.test(text) ||
+            /\b(one\s*(more\s*)?|try\s+(a\s*)?)question\b/i.test(text);
+          if (isQuizRequest) {
+            requestBody.prioritySkillId = retryState.skillId;
+          }
+        } else {
+          // Quiz-answer turn: attach retryContext only if the pending quiz
+          // matches the retry skill (guard against skill mismatch).
+          if (pendingQuizRef.current?.skillId === retryState.skillId) {
+            requestBody.quizRetryContext = {
+              skillId: retryState.skillId,
+              missCount: retryState.missCount,
+            };
+          }
+        }
+      }
+
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: {
@@ -231,6 +264,29 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
         pendingQuizRef.current = data.quizQuestion;
       } else if (quizAnswerFor) {
         pendingQuizRef.current = null;
+      }
+
+      // ── Adaptive retry: state transitions ─────────────────────────────
+      // Quiz question received: check if priority skill was actually served
+      if (data.quizQuestion) {
+        const currentRetry = quizRetryStateRef.current;
+        if (currentRetry && data.quizQuestion.skillId !== currentRetry.skillId) {
+          // Pool exhausted for retry skill — clear retry immediately
+          quizRetryStateRef.current = null;
+        }
+      }
+      // Quiz answer graded: update retry state machine
+      if (data.quizResult) {
+        const currentRetry = quizRetryStateRef.current;
+        if (currentRetry) {
+          // Active retry → always clear (remediation already happened if wrong)
+          quizRetryStateRef.current = null;
+        } else if (!data.quizResult.isCorrect && data.quizResult.skillId) {
+          // First miss on this skill → start retry.
+          // Guard: only start when skillId is truthy — empty string from
+          // unresolved questions is a clear-only signal, not a retry target.
+          quizRetryStateRef.current = { skillId: data.quizResult.skillId, missCount: 1 };
+        }
       }
 
     } catch (err: unknown) {

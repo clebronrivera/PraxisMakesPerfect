@@ -32,6 +32,17 @@ export interface TutorChatRequest {
     questionId: string;
     selectedAnswers: string[];
   };
+  // ── Adaptive retry fields ────────────────────────────────────────────────
+  // Sent on quiz-request when student missed the previous question: forces
+  // question selection from this skill instead of weighted random.
+  prioritySkillId?: string;
+  // Sent on quiz-answer when the question being answered is a retry attempt.
+  // missCount = 1 means "this is the 2nd miss on this skill in a row" →
+  // server shifts Claude into full remediation/explanation mode.
+  quizRetryContext?: {
+    skillId: string;
+    missCount: number;
+  };
 }
 
 // ─── API Response ────────────────────────────────────────────────────────────
@@ -51,6 +62,12 @@ export interface TutorChatResponse {
   artifact?: {
     type: string;
     payload: Record<string, unknown>;
+  };
+  // Populated whenever intent === 'quiz-answer'. Used by the client to
+  // track consecutive misses and trigger the adaptive retry state machine.
+  quizResult?: {
+    isCorrect: boolean;
+    skillId: string;
   };
 }
 

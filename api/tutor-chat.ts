@@ -17,6 +17,7 @@ import type { QuestionItem, QuizEvaluationResult } from '../src/utils/tutorQuizE
 import { APP_GUIDE_CONTENT, PAGE_CONTEXT_HINTS } from '../src/data/app-guide';
 import { skillMetadataV1 } from '../src/data/skill-metadata-v1';
 import { PROGRESS_SKILLS } from '../src/utils/progressTaxonomy';
+import { toMetadataId } from '../src/data/skillIdMap';
 // Static import — Netlify bundles this into the function
 import questionsData from '../src/data/questions.json';
 
@@ -164,7 +165,7 @@ function parseClaudeResponse(raw: string): ClaudeResponseShape {
 // ─── Activity artifact helpers ────────────────────────────────────────────────
 
 function detectArtifactSubtype(msg: string): string {
-  if (/practice\s*(set|sheet|packet)|print.*questions?|questions?.*print|generate.*questions?|questions?.*weak|questions?.*areas?|questions?.*needs?/i.test(msg)) return 'practice-set';
+  if (/practice\s*(set|sheet|packet|questions)|print.*questions?|questions?.*print|(create|make|build|generate|give|write).*questions?|questions?.*weak|questions?.*areas?|questions?.*needs?|questions?\s+(for|about|on)\s+\w/i.test(msg)) return 'practice-set';
   if (/fill.in.*(blank|the)|word.bank|blank.*(exercise|worksheet|activity)/i.test(msg)) return 'fill-in-blank';
   if (/match(ing)?.*(activity|game|exercise|terms?|concepts?)?$|drag.*(and|&)?.drop|match.the/i.test(msg)) return 'matching-activity';
   if (/vocabulary.list/i.test(msg)) return 'vocabulary-list';
@@ -177,12 +178,50 @@ interface PracticeSetQuestion {
   correctAnswer: string; explanation: string;
 }
 
+/**
+ * Resolve which skills to target for artifact generation.
+ * 1. If the user's message names a specific skill (by ID, fullLabel, or shortLabel), use that.
+ * 2. Otherwise fall back to Emerging skills first, then Approaching — never Demonstrating.
+ */
+function resolveTargetSkills(
+  message: string,
+  tutorContext: TutorUserContext,
+  maxSkills = 3,
+): string[] {
+  const msgLower = message.toLowerCase();
+
+  // Check for explicit skill ID like "RES-02" or "DBD-01"
+  const matched: string[] = [];
+  for (const skill of PROGRESS_SKILLS) {
+    const idLower = skill.skillId.toLowerCase();
+    const fullLower = skill.fullLabel.toLowerCase();
+    const shortLower = skill.shortLabel.toLowerCase();
+
+    if (msgLower.includes(idLower) || msgLower.includes(fullLower) || msgLower.includes(shortLower)) {
+      matched.push(skill.skillId);
+    }
+  }
+
+  if (matched.length > 0) {
+    return matched.slice(0, maxSkills);
+  }
+
+  // Fallback: Emerging first (sorted by accuracy asc), then Approaching — exclude Demonstrating
+  const fallback = [
+    ...tutorContext.emergingSkills,
+    ...tutorContext.approachingSkills,
+  ].map(s => s.skillId);
+
+  return fallback.slice(0, maxSkills);
+}
+
 function selectPracticeSetQuestions(
   tutorContext: TutorUserContext,
   questions: QuestionItem[],
   count = 9,
+  targetSkillIds?: string[],
 ): PracticeSetQuestion[] {
-  const targetIds = tutorContext.emergingSkills.slice(0, 3).map(s => s.skillId);
+  const targetIds = targetSkillIds ?? tutorContext.emergingSkills.slice(0, 3).map(s => s.skillId);
   const perSkill = Math.ceil(count / Math.max(targetIds.length, 1));
   const result: PracticeSetQuestion[] = [];
 
@@ -206,12 +245,16 @@ function selectPracticeSetQuestions(
   return result.slice(0, count);
 }
 
-function gatherActivityVocab(tutorContext: TutorUserContext): Array<{ term: string; skillId: string; skillName: string }> {
-  const targetIds = tutorContext.emergingSkills.slice(0, 3).map(s => s.skillId);
+function gatherActivityVocab(
+  tutorContext: TutorUserContext,
+  targetSkillIds?: string[],
+): Array<{ term: string; skillId: string; skillName: string }> {
+  const targetIds = targetSkillIds ?? tutorContext.emergingSkills.slice(0, 3).map(s => s.skillId);
   const terms: Array<{ term: string; skillId: string; skillName: string }> = [];
 
   for (const skillId of targetIds) {
-    const meta = skillMetadataV1[skillId];
+    // Try direct lookup, then mapped lookup (progressTaxonomy → metadata IDs)
+    const meta = skillMetadataV1[skillId] ?? skillMetadataV1[toMetadataId(skillId)];
     if (!meta) continue;
     const skillDef = PROGRESS_SKILLS.find(s => s.skillId === skillId);
     for (const term of meta.vocabulary.slice(0, 4)) {
@@ -239,6 +282,7 @@ function buildSystemPrompt(
   quizQuestion?: QuestionItem,
   skillMetadataSnippet?: string,
   artifactCtx?: ArtifactBuildContext,
+  remediationSkillId?: string,
 ): string {
   const sections: string[] = [];
 
@@ -410,6 +454,20 @@ Your ONLY job: write a warm 2–3 sentence intro in "content" that names the ski
 Suggested follow-ups should be things like "Quiz me on [skill]", "Explain [skill]", "Make a vocabulary list".`);
   }
 
+  // Section M — Remediation mode (consecutive misses on same skill)
+  if (remediationSkillId) {
+    const skillDef = PROGRESS_SKILLS.find(s => s.skillId === remediationSkillId);
+    const skillName = skillDef?.fullLabel || remediationSkillId;
+    sections.push(`REMEDIATION MODE — the student has missed two consecutive questions on the same skill (${remediationSkillId}: ${skillName}).
+After explaining why the answer is wrong, provide thorough remediation for this skill:
+1. **Core concept** — plain-language explanation of what this skill is about and why it matters for school psychology practice
+2. **Key terms and distinctions** — the 3–5 most important terms or comparisons the student needs to know
+3. **Memory anchor** — a mnemonic, analogy, or mental model that makes the concept stick
+4. **Praxis scenario** — one realistic exam-style scenario (NOT a question) that shows how this concept appears in practice
+
+Be thorough — this student needs a deeper explanation, not just feedback on the wrong answer.`);
+  }
+
   return sections.join('\n\n---\n\n');
 }
 
@@ -512,7 +570,7 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
         .not('quiz_question_id', 'is', null);
       const usedIds = new Set((sessionQuizMessages || []).map((m: { quiz_question_id: string }) => m.quiz_question_id));
 
-      const selected = selectQuizQuestion(tutorContext, questions, usedIds);
+      const selected = selectQuizQuestion(tutorContext, questions, usedIds, body.prioritySkillId);
       if (selected) {
         quizQuestion = selected.question;
       } else {
@@ -542,7 +600,7 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
 
     if (relevantSkillIds.size > 0) {
       const snippets = Array.from(relevantSkillIds).slice(0, 3).map(skillId => {
-        const meta = skillMetadataV1[skillId];
+        const meta = skillMetadataV1[skillId] ?? skillMetadataV1[toMetadataId(skillId) ?? ''];
         if (!meta) return '';
         const skillDef = PROGRESS_SKILLS.find(s => s.skillId === skillId);
         const skillName = skillDef?.fullLabel || skillId;
@@ -560,58 +618,90 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
 
     if (intent === 'artifact-request') {
       const subtype = detectArtifactSubtype(body.message);
+      const targetSkillIds = resolveTargetSkills(body.message, tutorContext);
+
       if (subtype === 'practice-set') {
-        const practiceQs = selectPracticeSetQuestions(tutorContext, questions);
-        prebuiltArtifact = {
-          type: 'practice-set',
-          payload: {
-            title: 'Practice Questions — Priority Skills',
-            questions: practiceQs,
-          },
-        };
-        const skillNames = [...new Set(practiceQs.map(q => q.skillName))];
-        artifactCtx = {
-          subtype,
-          prebuiltSummary: `${practiceQs.length} questions selected from: ${skillNames.join(', ')}.`,
-        };
-      } else if (subtype === 'fill-in-blank' || subtype === 'matching-activity') {
-        artifactCtx = {
-          subtype,
-          activityVocab: gatherActivityVocab(tutorContext),
-        };
-      } else if (subtype === 'vocabulary-list') {
-        artifactCtx = {
-          subtype,
-          activityVocab: gatherActivityVocab(tutorContext),
-        };
+        const practiceQs = selectPracticeSetQuestions(tutorContext, questions, 9, targetSkillIds);
+        if (practiceQs.length === 0) {
+          // No questions available — tell Claude to explain gracefully
+          prebuiltArtifact = null;
+          artifactCtx = {
+            subtype,
+            prebuiltSummary: 'NO QUESTIONS FOUND for the requested skill(s). Tell the user that no practice questions are currently available for this topic and suggest they try a different skill or ask for a matching activity or vocabulary list instead.',
+          };
+        } else {
+          const skillNames = [...new Set(practiceQs.map(q => q.skillName))];
+          const title = skillNames.length === 1
+            ? `Practice Questions — ${skillNames[0]}`
+            : 'Practice Questions — Priority Skills';
+          prebuiltArtifact = {
+            type: 'practice-set',
+            payload: { title, questions: practiceQs },
+          };
+          artifactCtx = {
+            subtype,
+            prebuiltSummary: `${practiceQs.length} questions selected from: ${skillNames.join(', ')}.`,
+          };
+        }
+      } else if (subtype === 'fill-in-blank' || subtype === 'matching-activity' || subtype === 'vocabulary-list') {
+        const vocab = gatherActivityVocab(tutorContext, targetSkillIds);
+        if (vocab.length === 0) {
+          // No vocab available — tell Claude to explain gracefully
+          artifactCtx = {
+            subtype,
+            prebuiltSummary: `NO VOCABULARY FOUND for the requested skill(s). Tell the user that vocabulary data is not yet available for these skills and suggest they try a practice set or ask about a different topic.`,
+          };
+        } else {
+          artifactCtx = {
+            subtype,
+            activityVocab: vocab,
+          };
+        }
       } else if (subtype === 'weak-areas-summary') {
         // Pre-build server-side from tutorContext — more reliable than asking Claude
-        const weakSkills = tutorContext.emergingSkills.slice(0, 8).map(s => ({
+        const weakSkills = [
+          ...tutorContext.emergingSkills,
+          ...tutorContext.approachingSkills,
+        ].slice(0, 8).map(s => ({
           skillId: s.skillId,
           skillName: s.skillName,
           accuracy: s.accuracy ?? 0,
         }));
-        prebuiltArtifact = {
-          type: 'weak-areas-summary',
-          payload: {
-            title: 'Your Weak Areas',
-            skills: weakSkills,
-          },
-        };
-        const skillNames = weakSkills.map(s => s.skillName).join(', ');
-        artifactCtx = {
-          subtype,
-          prebuiltSummary: `${weakSkills.length} weak skills identified: ${skillNames}.`,
-        };
+        if (weakSkills.length === 0) {
+          artifactCtx = {
+            subtype,
+            prebuiltSummary: 'No weak areas found — all skills are at Demonstrating level. Congratulate the user.',
+          };
+        } else {
+          prebuiltArtifact = {
+            type: 'weak-areas-summary',
+            payload: {
+              title: 'Your Weak Areas',
+              skills: weakSkills,
+            },
+          };
+          const skillNames = weakSkills.map(s => s.skillName).join(', ');
+          artifactCtx = {
+            subtype,
+            prebuiltSummary: `${weakSkills.length} weak skills identified: ${skillNames}.`,
+          };
+        }
       } else {
         artifactCtx = { subtype };
       }
+    }
+
+    // 9c. Detect remediation trigger (consecutive misses on same skill)
+    let remediationSkillId: string | undefined;
+    if (body.quizRetryContext?.missCount >= 1 && quizEvaluation && !quizEvaluation.isCorrect) {
+      remediationSkillId = quizEvaluation.skillId;
     }
 
     // 10. Build system prompt
     const systemPrompt = buildSystemPrompt(
       intent, userContextPrompt, body.sessionType, body.pageContext,
       quizEvaluation, quizQuestion ?? undefined, skillMetadataSnippet, artifactCtx,
+      remediationSkillId,
     );
 
     // 11. Build messages for Claude
@@ -625,6 +715,40 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
     if (!anthropicKey) return json(500, { error: 'API key not configured' });
 
+    // ── DIAGNOSTIC LOGGING ─────────────────────────────────────────────────
+    const claudeRequestPayload = {
+      model: MODEL,
+      max_tokens: remediationSkillId ? 2500 : MAX_TOKENS,
+      temperature: 0.3,
+      system: systemPrompt,
+      messages: claudeMessages,
+    };
+    console.log('[TutorChat] PRE-FLIGHT DIAGNOSTICS:');
+    console.log('  intent:', intent);
+    console.log('  model:', MODEL);
+    console.log('  max_tokens:', claudeRequestPayload.max_tokens);
+    console.log('  systemPrompt length (chars):', systemPrompt.length);
+    console.log('  message count (history + user):', claudeMessages.length);
+    console.log('  has prioritySkillId:', !!body.prioritySkillId, body.prioritySkillId ?? '(none)');
+    console.log('  has quizRetryContext:', !!body.quizRetryContext, JSON.stringify(body.quizRetryContext ?? null));
+    console.log('  remediationSkillId:', remediationSkillId ?? '(none)');
+    console.log('  quizEvaluation:', quizEvaluation ? JSON.stringify({ skillId: quizEvaluation.skillId, isCorrect: quizEvaluation.isCorrect }) : '(none)');
+    console.log('  message roles (must alternate):', claudeMessages.map(m => m.role).join(' → '));
+    console.log('  message content lengths:', claudeMessages.map(m => `${m.role}:${(m.content || '').length}`).join(', '));
+    // Check for consecutive same-role messages (Anthropic API rejects these)
+    for (let i = 1; i < claudeMessages.length; i++) {
+      if (claudeMessages[i].role === claudeMessages[i - 1].role) {
+        console.error(`[TutorChat] CONSECUTIVE SAME-ROLE MESSAGES at index ${i - 1} and ${i}: role="${claudeMessages[i].role}"`);
+      }
+    }
+    // Check for null/empty content
+    for (let i = 0; i < claudeMessages.length; i++) {
+      if (!claudeMessages[i].content) {
+        console.error(`[TutorChat] NULL/EMPTY content at message index ${i}: role="${claudeMessages[i].role}"`);
+      }
+    }
+    // ── END DIAGNOSTICS ────────────────────────────────────────────────────
+
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -632,19 +756,28 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
         'x-api-key': anthropicKey,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        temperature: 0.3,
-        system: systemPrompt,
-        messages: claudeMessages,
-      }),
+      body: JSON.stringify(claudeRequestPayload),
     });
 
     if (!claudeResponse.ok) {
       const errText = await claudeResponse.text();
-      console.error('[TutorChat] Claude API error:', errText);
-      return json(502, { error: 'AI service error' });
+      console.error('[TutorChat] Claude API ERROR:');
+      console.error('  HTTP status:', claudeResponse.status, claudeResponse.statusText);
+      console.error('  Response body:', errText);
+      console.error('  intent:', intent);
+      console.error('  model:', MODEL);
+      console.error('  max_tokens:', claudeRequestPayload.max_tokens);
+      console.error('  systemPrompt length:', systemPrompt.length);
+      console.error('  message count:', claudeMessages.length);
+      console.error('  roles:', claudeMessages.map(m => m.role).join(' → '));
+      return json(502, {
+        error: 'AI service error',
+        debug_status: claudeResponse.status,
+        debug_body: errText.slice(0, 500),
+        debug_roles: claudeMessages.map(m => m.role).join(' → '),
+        debug_msg_count: claudeMessages.length,
+        debug_prompt_len: systemPrompt.length,
+      });
     }
 
     const claudeData = await claudeResponse.json() as { content?: { text: string }[]; usage?: { input_tokens: number; output_tokens: number } };
@@ -703,6 +836,21 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
       content: parsed.content,
       suggestedFollowUps: parsed.suggestedFollowUps,
     };
+
+    // Add quiz result for client-side retry state machine.
+    // Always send on quiz-answer turns so the client can clear retry state
+    // even when the question wasn't found in the bank.
+    if (quizEvaluation) {
+      response.quizResult = {
+        isCorrect: quizEvaluation.isCorrect,
+        skillId: quizEvaluation.skillId,
+      };
+    } else if (intent === 'quiz-answer' && body.quizAnswerFor) {
+      response.quizResult = {
+        isCorrect: false,
+        skillId: body.quizRetryContext?.skillId ?? '',
+      };
+    }
 
     // Add quiz question data if posing a question
     if (quizQuestion) {

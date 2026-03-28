@@ -40,6 +40,10 @@ const ARTIFACT_TRIGGER_PATTERNS = [
   /\bprint\s*(out\s*)?(some\s*)?(practice\s*)?questions?\b/i,
   /\bgenerate\s*(some\s*)?questions?\b/i,
   /\bquestions?\s*(based\s*on|for)\s*(my\s*)?(weak|areas?|gaps?|needs?)\b/i,
+  // Broader practice-question phrasing ("create practice questions", "make questions", etc.)
+  /\b(create|make|build|give\s+me|write)\s+(some\s+)?(practice\s+)?questions\b/i,
+  /\bpractice\s+questions\b/i,                        // "practice questions" (plural → artifact, not quiz)
+  /\bquestions?\s+(for|about|on)\s+\w/i,               // "questions for/about/on [topic]"
   // Fill-in-the-blank / word bank
   /\bfill\s*in\s*(the\s*)?blank/i,
   /\bword\s*bank\b/i,

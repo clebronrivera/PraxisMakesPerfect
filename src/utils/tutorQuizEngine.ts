@@ -40,12 +40,29 @@ export interface QuizEvaluationResult {
  *   - 15% from demonstrating/maintenance skills
  *
  * Excludes questionIds already used in the current session.
+ *
+ * If prioritySkillId is provided (adaptive retry), try that skill first.
+ * Falls back to weighted selection if the priority skill pool is exhausted.
  */
 export function selectQuizQuestion(
   ctx: TutorUserContext,
   questions: QuestionItem[],
   excludeQuestionIds: Set<string>,
+  prioritySkillId?: string,
 ): QuizSelectionResult | null {
+  // Priority skill override (adaptive retry): try this skill first
+  if (prioritySkillId) {
+    const priorityPool = questions.filter(
+      q => q.skillId === prioritySkillId && !excludeQuestionIds.has(q.id)
+    );
+    if (priorityPool.length > 0) {
+      const question = priorityPool[Math.floor(Math.random() * priorityPool.length)];
+      const correctParts = question.correct_answer.split(',').map(s => s.trim());
+      return { question, skillId: question.skillId, isMultiSelect: correctParts.length > 1 };
+    }
+    // Fall through to weighted selection if priority skill exhausted
+  }
+
   // Build skill pools by tier
   const emergingIds = new Set(ctx.emergingSkills.map(s => s.skillId));
   const approachingIds = new Set(ctx.approachingSkills.map(s => s.skillId));
