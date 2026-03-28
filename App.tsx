@@ -1181,8 +1181,8 @@ function PraxisStudyAppContent() {
                                 </span>
                                 <span className="mt-2 block text-sm font-medium leading-normal text-slate-300">
                                   {redemption.credits > 0
-                                    ? `${redemption.credits} credit${redemption.credits !== 1 ? 's' : ''} · ${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} waiting`
-                                    : `${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} waiting · earn a credit with 20 more practice answers`}
+                                    ? `${redemption.credits} credit${redemption.credits !== 1 ? 's' : ''} · ${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} in quarantine · 1 credit = full pass through all`
+                                    : `${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} in quarantine · earn a credit with ${redemption.questionsToNextCredit} more practice answers`}
                                 </span>
                               </span>
                               <ChevronRight className="h-4 w-4 shrink-0 text-amber-300" />
@@ -1478,6 +1478,9 @@ function PraxisStudyAppContent() {
                     ? { id: studyPlanHistory[0].id, createdAt: studyPlanHistory[0].createdAt, plan: studyPlanHistory[0].plan }
                     : null
                 }
+                onWrongAnswer={(qId, sId) => redemption.addToMissedBankForMiss(qId, sId)}
+                onAnswerSubmitted={redemption.handleAnswerSubmitted}
+                redemptionBlacklistIds={redemption.redemptionBlacklistIds}
               />
             </Suspense>
           </div>
@@ -1650,10 +1653,10 @@ function PraxisStudyAppContent() {
             selectNextQuestion={selectNextQuestion}
             practiceDomain={practiceDomainFilter}
             practiceSkillId={practiceSkillFilter}
-            hideSummary={isSpicyMode && !profile.fullAssessmentComplete}
-            spicyCycleMode={isSpicyMode}
-            onWrongAnswer={redemption.addToMissedBank}
+            onWrongAnswer={(qId, sId) => redemption.addToMissedBankForMiss(qId, sId)}
+            onHintRedemption={(qId, sId) => redemption.addToMissedBankForHint(qId, sId)}
             onAnswerSubmitted={redemption.handleAnswerSubmitted}
+            redemptionBlacklistIds={redemption.redemptionBlacklistIds}
             onExitPractice={() => {
               const { wasSkillPractice, wasSpicy } = resetPracticeFilters();
               if (wasSkillPractice) {

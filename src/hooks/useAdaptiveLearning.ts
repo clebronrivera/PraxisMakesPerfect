@@ -47,7 +47,8 @@ export function useAdaptiveLearning() {
   const selectNextQuestion = useCallback((
     profile: UserProfile,
     questions: AnalyzedQuestion[],
-    history: string[]
+    history: string[],
+    redemptionBlacklistIds?: Set<string>
   ): AnalyzedQuestion | null => {
     // Build exclusion set: assessment questions + recent practice + session history
     const excludeIds = new Set<string>();
@@ -74,6 +75,12 @@ export function useAdaptiveLearning() {
     
     // Exclude questions already seen in this session
     history.forEach(id => excludeIds.add(id));
+
+    // Exclude questions quarantined in Redemption — these must NEVER appear
+    // in normal practice, including pool-exhaustion fallbacks.
+    if (redemptionBlacklistIds) {
+      redemptionBlacklistIds.forEach(id => excludeIds.add(id));
+    }
     
     // Determine target skill (prefer weakest)
     const weakestSkills = getWeakestSkills(profile);
@@ -88,8 +95,11 @@ export function useAdaptiveLearning() {
     const available = questions.filter(q => !excludeIds.has(q.id) && !q.isGenerated);
 
     if (available.length === 0) {
-      // Reset history if we've seen all available questions within our content policy constraint
-      const allStaticQuestions = questions.filter(q => !q.isGenerated);
+      // Reset history if we've seen all available questions within our content policy constraint.
+      // CRITICAL: quarantined IDs must never be reintroduced, even on pool exhaustion.
+      const allStaticQuestions = questions.filter(q =>
+        !q.isGenerated && !(redemptionBlacklistIds?.has(q.id))
+      );
       if (allStaticQuestions.length === 0) return null;
       return allStaticQuestions[Math.floor(Math.random() * allStaticQuestions.length)];
     }

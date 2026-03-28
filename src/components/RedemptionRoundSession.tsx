@@ -4,18 +4,14 @@
 //
 // Design rules:
 //   - 90-second countdown per question. Expiry = skipped = incorrect.
-//   - Confidence selector (Sure / Unsure / Guess) required before answering.
 //   - NO feedback, NO explanation, NO hint after submitting — immediately advance.
-//   - Redemption criteria (applied in useRedemptionRounds.recordRoundResult):
-//       Sure + correct    → redeemed (1 correct enough)
-//       Unsure/Guess + correct → redeemed when correct_count reaches 3
+//   - 3 correct answers to clear a question. No confidence shortcuts.
 //   - End screen shows X/Y correct + personal best.
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Timer, RotateCcw, Home, ChevronRight, Trophy } from 'lucide-react';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
-import { CONFIDENCE_DISPLAY_ORDER, CONFIDENCE_DISPLAY_LABELS } from '../utils/confidenceLabels';
 import type { MissedQuestion, RoundResult } from '../hooks/useRedemptionRounds';
 
 const SECONDS_PER_QUESTION = 90;
@@ -41,7 +37,6 @@ export default function RedemptionRoundSession({
   const [index, setIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(SECONDS_PER_QUESTION);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [confidence, setConfidence] = useState<'low' | 'medium' | 'high' | null>(null);
   const [results, setResults] = useState<RoundResult[]>([]);
   const [done, setDone] = useState(false);
 
@@ -52,7 +47,7 @@ export default function RedemptionRoundSession({
   const currentRow = missedRows[index];
 
   // ── Advance to next question (or finish) ─────────────────────────────────
-  const advance = useCallback((answer: string | null, conf: 'low' | 'medium' | 'high') => {
+  const advance = useCallback((answer: string | null) => {
     if (advancingRef.current || !currentQ || !currentRow) return;
     advancingRef.current = true;
 
@@ -64,7 +59,6 @@ export default function RedemptionRoundSession({
     const result: RoundResult = {
       questionId: currentQ.id,
       isCorrect,
-      confidence: conf,
       missedRowId: currentRow.id,
       correct_count: currentRow.correct_count,
     };
@@ -81,7 +75,6 @@ export default function RedemptionRoundSession({
       setIndex(i => i + 1);
       setTimeLeft(SECONDS_PER_QUESTION);
       setSelectedAnswer(null);
-      setConfidence(null);
       advancingRef.current = false;
     }
     // If last question, done=true triggers onComplete via useEffect below
@@ -103,8 +96,8 @@ export default function RedemptionRoundSession({
       setTimeLeft(t => {
         if (t <= 1) {
           clearInterval(id);
-          // Timer expired → skipped = incorrect; use last confidence or 'low'
-          advance(null, confidence ?? 'low');
+          // Timer expired → skipped = incorrect
+          advance(null);
           return SECONDS_PER_QUESTION;
         }
         return t - 1;
@@ -118,8 +111,8 @@ export default function RedemptionRoundSession({
 
   // ── Submit ────────────────────────────────────────────────────────────────
   const handleSubmit = () => {
-    if (!selectedAnswer || !confidence) return;
-    advance(selectedAnswer, confidence);
+    if (!selectedAnswer) return;
+    advance(selectedAnswer);
   };
 
   // ── End screen ────────────────────────────────────────────────────────────
@@ -173,7 +166,7 @@ export default function RedemptionRoundSession({
   const letters = Object.keys(currentQ.choices || {});
   const timerPct = (timeLeft / SECONDS_PER_QUESTION) * 100;
   const timerWarning = timeLeft <= 15;
-  const canSubmit = selectedAnswer !== null && confidence !== null;
+  const canSubmit = selectedAnswer !== null;
 
   return (
     <div className="mx-auto max-w-2xl py-6 px-4 space-y-6">
@@ -209,28 +202,6 @@ export default function RedemptionRoundSession({
         <p className="text-base font-semibold leading-relaxed text-slate-900">
           {currentQ.question}
         </p>
-
-        {/* ── Confidence selector ── */}
-        <div>
-          <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 mb-3">
-            How confident are you?
-          </p>
-          <div className="flex gap-2">
-            {CONFIDENCE_DISPLAY_ORDER.map(level => (
-              <button
-                key={level}
-                onClick={() => setConfidence(level)}
-                className={`flex-1 rounded-2xl border px-3 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition-all ${
-                  confidence === level
-                    ? 'border-amber-400 bg-amber-50 text-amber-700'
-                    : 'border-slate-200 bg-white text-slate-500 hover:border-amber-200'
-                }`}
-              >
-                {CONFIDENCE_DISPLAY_LABELS[level]}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* ── Answer choices ── */}
         <div className="space-y-2">

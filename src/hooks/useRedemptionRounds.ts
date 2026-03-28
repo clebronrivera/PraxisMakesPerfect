@@ -1,16 +1,23 @@
 // src/hooks/useRedemptionRounds.ts
 //
-// Manages the Redemption Rounds feature:
-//   - Tracks the missed-question bank (practice_missed_questions table)
-//   - Awards credits (1 per 20 non-hint practice answers) via user_progress
-//   - Loads questions for a round and records round results
+// Manages the Redemption Rounds quarantine system:
 //
-// Design notes:
-//   - The credit counter (practice_questions_since_credit) is stored in
-//     user_progress so it persists across devices. updateProfile is used for
-//     lightweight partial updates.
-//   - Bank count is fetched once on mount and kept in sync via local state
-//     increments (no subscription needed — the count is cosmetic on the button).
+//   Entry rules:
+//     - 3rd wrong answer total on a question → quarantined (via RPC)
+//     - Hint used on a question → quarantined immediately
+//
+//   Quarantine:
+//     - `in_redemption = true` is the single source of truth
+//     - Quarantined questions are excluded from all normal practice
+//     - They only appear inside Redemption Rounds
+//
+//   Clearance:
+//     - 3 correct answers inside Redemption → cleared
+//     - No confidence shortcut, no instant redemption
+//
+//   Credits:
+//     - 1 credit = 1 full pass through the entire Redemption bank
+//     - 20 non-hint practice answers = 1 credit
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../config/supabase';
@@ -26,8 +33,7 @@ export interface MissedQuestion {
 export interface RoundResult {
   questionId: string;
   isCorrect: boolean;
-  confidence: 'low' | 'medium' | 'high';
-  missedRowId: string; // UUID of the practice_missed_questions row
+  missedRowId: string;   // UUID of the practice_missed_questions row
   correct_count: number; // current correct_count before this answer
 }
 
@@ -42,22 +48,30 @@ export function useRedemptionRounds({
   profile,
   updateProfile,
 }: UseRedemptionRoundsOptions) {
-  const [bankCount, setBankCount] = useState(0);
+  // ── Quarantine blacklist — the single source of truth for practice exclusion
+  const [redemptionBlacklistIds, setRedemptionBlacklistIds] = useState<Set<string>>(new Set());
   const [bankLoading, setBankLoading] = useState(false);
 
-  // ── Load bank count on mount / userId change ─────────────────────────────
+  // Derived: bank count is just the blacklist size
+  const bankCount = redemptionBlacklistIds.size;
+
+  // ── Load quarantined question IDs on mount / userId change ─────────────────
   useEffect(() => {
-    if (!userId) { setBankCount(0); return; }
+    if (!userId) { setRedemptionBlacklistIds(new Set()); return; }
 
     let active = true;
     setBankLoading(true);
     supabase
       .from('practice_missed_questions')
-      .select('*', { count: 'exact', head: true })
+      .select('question_id')
       .eq('user_id', userId)
+      .eq('in_redemption', true)
       .eq('redeemed', false)
-      .then(({ count }) => {
-        if (active) setBankCount(count ?? 0);
+      .then(({ data }) => {
+        if (active) {
+          const ids = new Set((data ?? []).map(r => r.question_id));
+          setRedemptionBlacklistIds(ids);
+        }
         if (active) setBankLoading(false);
       }, () => {
         if (active) setBankLoading(false);
@@ -66,35 +80,114 @@ export function useRedemptionRounds({
     return () => { active = false; };
   }, [userId]);
 
-  // ── Add a question to the missed bank ────────────────────────────────────
-  // Called from PracticeSession on every wrong answer.
-  // Uses upsert with onConflict so re-missing the same question is a no-op
-  // (correct_count and redeemed are preserved — we don't reset progress if
-  //  the user misses the same question again before redeeming it).
-  const addToMissedBank = useCallback(async (questionId: string, skillId: string | null) => {
+  // ── Refresh blacklist from DB (fire-and-forget helper) ─────────────────────
+  const refreshBlacklist = useCallback(() => {
+    if (!userId) return;
+    void supabase
+      .from('practice_missed_questions')
+      .select('question_id')
+      .eq('user_id', userId)
+      .eq('in_redemption', true)
+      .eq('redeemed', false)
+      .then(({ data }) => {
+        const ids = new Set((data ?? []).map(r => r.question_id));
+        setRedemptionBlacklistIds(ids);
+      }, () => {});
+  }, [userId]);
+
+  // ── Add question to bank for MISS (3rd wrong = quarantine) ─────────────────
+  // Uses the atomic increment_wrong_count RPC. The RPC returns the post-upsert
+  // wrong_count and in_redemption so we can update the local blacklist Set.
+  const addToMissedBankForMiss = useCallback(async (
+    questionId: string,
+    skillId: string | null
+  ): Promise<{ enteredRedemption: boolean; wrongCount: number }> => {
+    if (!userId) return { enteredRedemption: false, wrongCount: 0 };
+    try {
+      const { data, error } = await supabase.rpc('increment_wrong_count', {
+        p_user_id: userId,
+        p_question_id: questionId,
+        p_skill_id: skillId ?? null,
+      });
+
+      if (error || !data || data.length === 0) {
+        return { enteredRedemption: false, wrongCount: 0 };
+      }
+
+      const row = data[0];
+      const nowInRedemption = row.now_in_redemption === true;
+      const newWrongCount = row.new_wrong_count ?? 0;
+
+      if (nowInRedemption) {
+        setRedemptionBlacklistIds(prev => {
+          const next = new Set(prev);
+          next.add(questionId);
+          return next;
+        });
+      }
+
+      return { enteredRedemption: nowInRedemption, wrongCount: newWrongCount };
+    } catch {
+      return { enteredRedemption: false, wrongCount: 0 };
+    }
+  }, [userId]);
+
+  // ── Add question to bank for HINT (immediate quarantine) ───────────────────
+  // Uses a two-step select-then-upsert to preserve wrong_count on existing rows.
+  // Critical: never reset wrong_count when a hint hits a row with prior misses.
+  const addToMissedBankForHint = useCallback(async (
+    questionId: string,
+    skillId: string | null
+  ): Promise<void> => {
     if (!userId) return;
     try {
-      const { error } = await supabase
+      // Check if row already exists
+      const { data: existing } = await supabase
         .from('practice_missed_questions')
-        .upsert(
-          { user_id: userId, question_id: questionId, skill_id: skillId ?? null },
-          { onConflict: 'user_id,question_id', ignoreDuplicates: true }
-        );
-      if (!error) {
-        // Only increment count if the row didn't already exist.
-        // ignoreDuplicates means count stays stable on re-miss.
-        // Refresh count (fire-and-forget)
-        void supabase
+        .select('id')
+        .eq('user_id', userId)
+        .eq('question_id', questionId)
+        .maybeSingle();
+
+      if (existing) {
+        // Row exists: update entry_reason and quarantine flag.
+        // Do NOT touch wrong_count — preserve the historical miss count.
+        await supabase
           .from('practice_missed_questions')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .eq('redeemed', false)
-          .then(({ count }) => setBankCount(count ?? 0), () => {});
+          .update({
+            entry_reason: 'hint',
+            in_redemption: true,
+            correct_count: 0,
+            redeemed: false,
+            redeemed_at: null,
+          })
+          .eq('id', existing.id);
+      } else {
+        // No row: insert fresh
+        await supabase
+          .from('practice_missed_questions')
+          .insert({
+            user_id: userId,
+            question_id: questionId,
+            skill_id: skillId ?? null,
+            wrong_count: 0,
+            entry_reason: 'hint',
+            in_redemption: true,
+            correct_count: 0,
+            redeemed: false,
+          });
       }
+
+      // Update local blacklist
+      setRedemptionBlacklistIds(prev => {
+        const next = new Set(prev);
+        next.add(questionId);
+        return next;
+      });
     } catch { /* non-critical */ }
   }, [userId]);
 
-  // ── Handle a submitted practice answer for credit tracking ───────────────
+  // ── Handle a submitted practice answer for credit tracking ─────────────────
   // Called from PracticeSession after every non-hint answer submission.
   // Increments the counter; awards +1 credit every 20 answers.
   const handleAnswerSubmitted = useCallback(async () => {
@@ -114,8 +207,8 @@ export function useRedemptionRounds({
     }
   }, [userId, profile.practiceQuestionsSinceCredit, profile.redemptionCredits, updateProfile]);
 
-  // ── Start a round ─────────────────────────────────────────────────────────
-  // Decrements 1 credit, fetches all unredeemed questions, returns them shuffled.
+  // ── Start a round ──────────────────────────────────────────────────────────
+  // Decrements 1 credit, fetches all quarantined questions, returns them shuffled.
   // Returns null if no credits or empty bank.
   const startRound = useCallback(async (): Promise<MissedQuestion[] | null> => {
     if (!userId) return null;
@@ -123,11 +216,12 @@ export function useRedemptionRounds({
     if (credits <= 0) return null;
 
     try {
-      // Fetch all unredeemed rows
+      // Fetch only truly quarantined rows
       const { data, error } = await supabase
         .from('practice_missed_questions')
         .select('id, question_id, skill_id, correct_count')
         .eq('user_id', userId)
+        .eq('in_redemption', true)
         .eq('redeemed', false);
 
       if (error || !data || data.length === 0) return null;
@@ -150,11 +244,13 @@ export function useRedemptionRounds({
     }
   }, [userId, profile.redemptionCredits, updateProfile]);
 
-  // ── Record round results ──────────────────────────────────────────────────
+  // ── Record round results ───────────────────────────────────────────────────
   // After a round completes:
-  //   - Batch-updates correct_count / redeemed on practice_missed_questions rows
+  //   - All correct answers increment correct_count
+  //   - When correct_count >= 3: redeemed = true, in_redemption = false
+  //   - No confidence shortcut — always 3 correct to clear
   //   - Inserts a redemption_sessions row
-  //   - Updates redemption_high_score if beaten
+  //   - Updates high score if beaten
   const recordRoundResult = useCallback(async (results: RoundResult[]) => {
     if (!userId || results.length === 0) return;
 
@@ -162,21 +258,28 @@ export function useRedemptionRounds({
     const correct = results.filter(r => r.isCorrect).length;
     const scorePct = attempted > 0 ? Math.round((correct / attempted) * 100 * 100) / 100 : 0;
 
-    // ── 1. Update redeemed questions ─────────────────────────────────────
-    // Process each result: if correct, check redemption criteria
+    // Track which questions get cleared so we can update the blacklist
+    const clearedIds: string[] = [];
+
+    // ── 1. Update question records ─────────────────────────────────────────
     const updates: Promise<void>[] = results.map(async (r) => {
       if (!r.isCorrect) return; // incorrect — no change
 
       const newCount = r.correct_count + 1;
-      const redeemed = r.confidence === 'high'
-        ? true              // Sure + correct → immediate redemption
-        : newCount >= 3;    // Unsure/Guess + correct → 3 corrects total
+      const cleared = newCount >= 3;
 
-      if (redeemed) {
+      if (cleared) {
+        // Cleared: redeemed = true, in_redemption = false (synced)
         await supabase
           .from('practice_missed_questions')
-          .update({ redeemed: true, redeemed_at: new Date().toISOString(), correct_count: newCount })
+          .update({
+            redeemed: true,
+            in_redemption: false,
+            redeemed_at: new Date().toISOString(),
+            correct_count: newCount,
+          })
           .eq('id', r.missedRowId);
+        clearedIds.push(r.questionId);
       } else {
         await supabase
           .from('practice_missed_questions')
@@ -186,6 +289,15 @@ export function useRedemptionRounds({
     });
 
     await Promise.allSettled(updates);
+
+    // Remove cleared questions from local blacklist
+    if (clearedIds.length > 0) {
+      setRedemptionBlacklistIds(prev => {
+        const next = new Set(prev);
+        clearedIds.forEach(id => next.delete(id));
+        return next;
+      });
+    }
 
     // ── 2. Insert session record ─────────────────────────────────────────
     try {
@@ -203,22 +315,19 @@ export function useRedemptionRounds({
       try { await updateProfile({ redemptionHighScore: scorePct }); } catch { /* non-critical */ }
     }
 
-    // ── 4. Refresh bank count ─────────────────────────────────────────────
-    void supabase
-      .from('practice_missed_questions')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('redeemed', false)
-      .then(({ count }) => setBankCount(count ?? 0), () => {});
-  }, [userId, profile.redemptionHighScore, updateProfile]);
+    // ── 4. Refresh blacklist from DB for consistency ─────────────────────
+    refreshBlacklist();
+  }, [userId, profile.redemptionHighScore, updateProfile, refreshBlacklist]);
 
   return {
     bankCount,
     bankLoading,
+    redemptionBlacklistIds,
     credits: profile.redemptionCredits ?? 0,
     highScore: profile.redemptionHighScore ?? 0,
     questionsToNextCredit: 20 - ((profile.practiceQuestionsSinceCredit ?? 0) % 20),
-    addToMissedBank,
+    addToMissedBankForMiss,
+    addToMissedBankForHint,
     handleAnswerSubmitted,
     startRound,
     recordRoundResult,
