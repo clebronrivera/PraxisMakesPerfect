@@ -12,7 +12,7 @@
 //          once revealed it stays revealed permanently.
 //   • A filter bar lets students focus on terms they haven't defined yet, etc.
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import {
   Eye,
   EyeOff,
@@ -22,6 +22,7 @@ import {
   Loader2,
   BookMarked,
   Sparkles,
+  Zap,
 } from 'lucide-react';
 import {
   loadGlossaryTerms,
@@ -32,9 +33,12 @@ import {
 } from '../services/glossaryService';
 import glossaryData from '../data/master-glossary.json';
 
+const VocabularyQuizMode = lazy(() => import('./VocabularyQuizMode'));
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type FilterMode = 'all' | 'to-define' | 'defined' | 'revealed';
+type GlossaryTab = 'terms' | 'quiz';
 
 interface GlossaryPageProps {
   userId: string | null;
@@ -191,6 +195,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
 // ─── GlossaryPage ─────────────────────────────────────────────────────────────
 
 export default function GlossaryPage({ userId }: GlossaryPageProps) {
+  const [activeTab, setActiveTab] = useState<GlossaryTab>('terms');
   const [entries, setEntries] = useState<GlossaryTerm[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterMode>('all');
@@ -255,6 +260,9 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
     return matchSearch && matchFilter;
   });
 
+  // ── User term names (for quiz prioritization) ───────────────────────────
+  const userTermNames = entries.map((e) => e.term);
+
   // ── Empty state ──────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -266,115 +274,166 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {/* ── Header + column headers (single sticky block) ───────────────── */}
-      <div className="sticky top-0 z-10">
-        <div className="px-6 pt-6 pb-4 bg-white border-b border-slate-200">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
-              <BookMarked size={18} className="text-indigo-600" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-slate-800">My Glossary</h1>
-              <p className="text-xs text-slate-500">
-                Words added when you miss a question. Define them, then reveal the
-                official meaning to compare.
-              </p>
-            </div>
-          </div>
-
-          {/* Stats row */}
-          {total > 0 && (
-            <div className="mt-3 flex flex-wrap gap-3">
-              <StatChip label="Total" value={total} color="slate" />
-              <StatChip label="To Define" value={totalToDo} color="amber" />
-              <StatChip label="Defined" value={totalDefined} color="indigo" />
-              <StatChip label="Revealed" value={totalRevealed} color="emerald" />
-            </div>
-          )}
-
-          {/* Search + Filter */}
-          {total > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2 items-center">
-              {/* Search */}
-              <div className="relative flex-1 min-w-[160px] max-w-xs">
-                <Search
-                  size={13}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search terms…"
-                  className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                />
-              </div>
-
-              {/* Filter pills */}
-              <div className="flex gap-1.5">
-                {(
-                  [
-                    { id: 'all', label: 'All' },
-                    { id: 'to-define', label: 'To Define' },
-                    { id: 'defined', label: 'Defined' },
-                    { id: 'revealed', label: 'Revealed' },
-                  ] as { id: FilterMode; label: string }[]
-                ).map(({ id, label }) => (
-                  <button
-                    key={id}
-                    onClick={() => setFilter(id)}
-                    className={`text-xs px-3 py-1 rounded-full border transition font-medium ${
-                      filter === id
-                        ? 'bg-indigo-600 text-white border-indigo-600'
-                        : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+      {/* ── Tab bar ────────────────────────────────────────────────────────── */}
+      <div className="sticky top-0 z-20 bg-white border-b border-slate-200">
+        <div className="px-6 pt-5 pb-0 flex items-end gap-1">
+          <button
+            onClick={() => setActiveTab('terms')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
+              activeTab === 'terms'
+                ? 'bg-white text-indigo-700 border-slate-200 relative z-10 -mb-px'
+                : 'bg-slate-50 text-slate-500 border-transparent hover:text-slate-700'
+            }`}
+          >
+            <BookMarked size={14} />
+            My Terms
+            {total > 0 && (
+              <span className="ml-1 text-[10px] bg-indigo-100 text-indigo-600 rounded-full px-1.5 py-0.5 font-bold">
+                {total}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('quiz')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
+              activeTab === 'quiz'
+                ? 'bg-white text-violet-700 border-slate-200 relative z-10 -mb-px'
+                : 'bg-slate-50 text-slate-500 border-transparent hover:text-slate-700'
+            }`}
+          >
+            <Zap size={14} />
+            Quiz Mode
+          </button>
         </div>
-
-        {/* ── Table column headers ──────────────────────────────────────── */}
-        {total > 0 && (
-          <div className="grid grid-cols-[minmax(140px,1fr)_2fr_2fr] gap-0 bg-slate-50 border-b border-slate-200">
-            <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-r border-slate-200">
-              Term
-            </div>
-            <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-r border-slate-200">
-              What does this mean to you?
-            </div>
-            <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-              Official Definition
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* ── Rows ─────────────────────────────────────────────────────────── */}
-      {total === 0 ? (
-        <EmptyState />
-      ) : filtered.length === 0 ? (
-        <div className="py-16 text-center text-slate-400 text-sm">
-          No terms match your filter.
-        </div>
-      ) : (
-        <div className="divide-y divide-slate-100">
-          {filtered.map((entry) =>
-            userId ? (
-              <GlossaryRow
-                key={entry.term}
-                entry={entry}
-                userId={userId}
-                onDefinitionSaved={handleDefinitionSaved}
-                onReveal={handleReveal}
-                onRemove={handleRemove}
-              />
-            ) : null
+      {/* ── Quiz Mode tab ──────────────────────────────────────────────────── */}
+      {activeTab === 'quiz' && (
+        <Suspense
+          fallback={
+            <div className="flex-1 flex items-center justify-center py-24">
+              <Loader2 className="animate-spin text-violet-400" size={28} />
+            </div>
+          }
+        >
+          <VocabularyQuizMode userTerms={userTermNames} />
+        </Suspense>
+      )}
+
+      {/* ── My Terms tab ───────────────────────────────────────────────────── */}
+      {activeTab === 'terms' && (
+        <>
+          {/* ── Header + column headers (single sticky block) ───────────── */}
+          <div className="sticky top-[53px] z-10">
+            <div className="px-6 pt-4 pb-4 bg-white border-b border-slate-200">
+              <div className="flex items-center gap-3 mb-1">
+                <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
+                  <BookMarked size={18} className="text-indigo-600" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-slate-800">My Glossary</h1>
+                  <p className="text-xs text-slate-500">
+                    Words added when you miss a question. Define them, then reveal the
+                    official meaning to compare.
+                  </p>
+                </div>
+              </div>
+
+              {/* Stats row */}
+              {total > 0 && (
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <StatChip label="Total" value={total} color="slate" />
+                  <StatChip label="To Define" value={totalToDo} color="amber" />
+                  <StatChip label="Defined" value={totalDefined} color="indigo" />
+                  <StatChip label="Revealed" value={totalRevealed} color="emerald" />
+                </div>
+              )}
+
+              {/* Search + Filter */}
+              {total > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2 items-center">
+                  {/* Search */}
+                  <div className="relative flex-1 min-w-[160px] max-w-xs">
+                    <Search
+                      size={13}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Search terms…"
+                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    />
+                  </div>
+
+                  {/* Filter pills */}
+                  <div className="flex gap-1.5">
+                    {(
+                      [
+                        { id: 'all', label: 'All' },
+                        { id: 'to-define', label: 'To Define' },
+                        { id: 'defined', label: 'Defined' },
+                        { id: 'revealed', label: 'Revealed' },
+                      ] as { id: FilterMode; label: string }[]
+                    ).map(({ id, label }) => (
+                      <button
+                        key={id}
+                        onClick={() => setFilter(id)}
+                        className={`text-xs px-3 py-1 rounded-full border transition font-medium ${
+                          filter === id
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ── Table column headers ──────────────────────────────────── */}
+            {total > 0 && (
+              <div className="grid grid-cols-[minmax(140px,1fr)_2fr_2fr] gap-0 bg-slate-50 border-b border-slate-200">
+                <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-r border-slate-200">
+                  Term
+                </div>
+                <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-r border-slate-200">
+                  What does this mean to you?
+                </div>
+                <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                  Official Definition
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Rows ───────────────────────────────────────────────────────── */}
+          {total === 0 ? (
+            <EmptyState />
+          ) : filtered.length === 0 ? (
+            <div className="py-16 text-center text-slate-400 text-sm">
+              No terms match your filter.
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {filtered.map((entry) =>
+                userId ? (
+                  <GlossaryRow
+                    key={entry.term}
+                    entry={entry}
+                    userId={userId}
+                    onDefinitionSaved={handleDefinitionSaved}
+                    onReveal={handleReveal}
+                    onRemove={handleRemove}
+                  />
+                ) : null
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
