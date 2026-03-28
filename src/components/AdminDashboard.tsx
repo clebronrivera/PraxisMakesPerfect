@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { useQuestionReports, QuestionReport } from '../hooks/useQuestionReports';
+import ChatActivityTab from './ChatActivityTab';
 import {
   BetaFeedback,
   BetaFeedbackStatus,
@@ -35,7 +36,7 @@ import { isAdminEmail } from '../config/admin';
 import StudentDetailDrawer from './StudentDetailDrawer';
 import ItemAnalysisTab from './ItemAnalysisTab';
 
-type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users' | 'item-analysis';
+type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users' | 'item-analysis' | 'chat-activity';
 
 interface LastSession {
   sessionId: string;
@@ -590,7 +591,8 @@ export default function AdminDashboard({
           ['feedback', 'Beta Feedback'],
           ['reports', 'Question Reports'],
           ['users', 'Users'],
-          ['item-analysis', 'Item Analysis']
+          ['item-analysis', 'Item Analysis'],
+          ['chat-activity', 'AI Tutor']
         ] as const).map(([tab, label]) => (
           <button
             key={tab}
@@ -1208,6 +1210,9 @@ export default function AdminDashboard({
           )}
           {activeTab === 'item-analysis' && (
             <ItemAnalysisTab />
+          )}
+          {activeTab === 'chat-activity' && (
+            <ChatActivityTab />
           )}
         </>
       )}
