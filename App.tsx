@@ -47,6 +47,8 @@ import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progre
 
 import { isAdminEmail } from './src/config/admin';
 import { useRedemptionRounds } from './src/hooks/useRedemptionRounds';
+import { useLeaderboard } from './src/hooks/useLeaderboard';
+import type { LbMode } from './src/hooks/useLeaderboard';
 const RedemptionRoundSession = lazy(() => import('./src/components/RedemptionRoundSession'));
 import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
 import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
@@ -193,65 +195,8 @@ function PraxisStudyAppContent() {
     return () => clearTimeout(timerId);
   }, []);
 
-  const FAKE_STUDENTS = ['M.R.','J.T.','S.K.','P.L.','C.M.','A.W.','D.H.','T.B.','N.S.','R.J.','K.O.','L.F.'];
-
-  function seedLbScores(): Record<string, { time: number; questions: number; mastery: number }> {
-    const out: Record<string, { time: number; questions: number; mastery: number }> = {};
-    FAKE_STUDENTS.forEach(name => {
-      out[name] = {
-        time: Math.floor(Math.random() * 166) + 15,       // 15–180 min
-        questions: Math.floor(Math.random() * 84) + 12,   // 12–95
-        mastery: Math.floor(Math.random() * 39) + 2,      // 2–40 skills left
-      };
-    });
-    return out;
-  }
-
-  function formatLbTime(mins: number): string {
-    if (mins < 60) return `${mins}m`;
-    return `${Math.floor(mins / 60)}h ${mins % 60}m`;
-  }
-
-  type LbMode = 'time' | 'questions' | 'mastery';
-  const [lbOpen, setLbOpen] = useState(false);
-  const [lbMode, setLbMode] = useState<LbMode>('questions');
-  const [lbScores, setLbScores] = useState<Record<string, { time: number; questions: number; mastery: number }>>(seedLbScores);
-  const [lbTick, setLbTick] = useState<string | null>(null);
-
-  useEffect(() => {
-    const scheduleNext = () => {
-      const delay = Math.floor(Math.random() * 7000) + 8000; // 8–15s
-      return setTimeout(() => {
-        const name = FAKE_STUDENTS[Math.floor(Math.random() * FAKE_STUDENTS.length)];
-        setLbScores(prev => {
-          const s = prev[name];
-          return {
-            ...prev,
-            [name]: {
-              time: s.time + Math.floor(Math.random() * 3) + 1,
-              questions: s.questions + (Math.random() < 0.7 ? Math.floor(Math.random() * 2) + 1 : 0),
-              mastery: Math.max(0, s.mastery - (Math.random() < 0.3 ? 1 : 0)),
-            },
-          };
-        });
-        setLbTick(name);
-        setTimeout(() => setLbTick(null), 1200);
-        timerId = scheduleNext();
-      }, delay);
-    };
-    let timerId = scheduleNext();
-    return () => clearTimeout(timerId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const sortedLb = useMemo(() => {
-    return [...FAKE_STUDENTS].sort((a, b) => {
-      if (lbMode === 'mastery') return lbScores[a].mastery - lbScores[b].mastery;
-      if (lbMode === 'questions') return lbScores[b].questions - lbScores[a].questions;
-      return lbScores[b].time - lbScores[a].time;
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lbMode, lbScores]);
+  // Leaderboard — real data from /api/leaderboard
+  const { sortedEntries: lbEntries, callerUserId: lbCallerId, lbOpen, setLbOpen, lbMode, setLbMode, isLoading: lbLoading, error: lbError, getRank, formatLbTime } = useLeaderboard(user?.id ?? null);
 
   // Analyze all questions — declared here so it's available to the sub-hooks below.
   // Always use the canonical local bank as the source of truth for question content.
@@ -729,7 +674,7 @@ function PraxisStudyAppContent() {
                         <div className="px-4 pt-4 pb-2">
                           <div className="flex items-center gap-2 mb-3">
                             <Trophy className="w-4 h-4 text-amber-500" />
-                            <span className="text-sm font-bold text-slate-800">Today's Leaders</span>
+                            <span className="text-sm font-bold text-slate-800">Leaderboard</span>
                           </div>
                           {/* toggle tabs */}
                           <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
@@ -750,35 +695,43 @@ function PraxisStudyAppContent() {
                         </div>
                         {/* rows */}
                         <div className="px-3 pb-2 max-h-72 overflow-y-auto">
-                          {sortedLb.map((name, idx) => {
-                            const s = lbScores[name];
+                          {lbLoading && lbEntries.length === 0 && (
+                            <div className="py-6 text-center text-xs text-slate-400">Loading…</div>
+                          )}
+                          {lbError && lbEntries.length === 0 && (
+                            <div className="py-6 text-center text-xs text-slate-400">Leaderboard unavailable</div>
+                          )}
+                          {!lbLoading && !lbError && lbEntries.length === 0 && (
+                            <div className="py-6 text-center text-xs text-slate-400">No activity yet</div>
+                          )}
+                          {lbEntries.map((entry, idx) => {
+                            const rank = getRank(entry.userId) ?? idx + 1;
+                            const isMe = entry.userId === lbCallerId;
                             const score =
-                              lbMode === 'questions' ? `${s.questions}q`
-                              : lbMode === 'time' ? formatLbTime(s.time)
-                              : `${s.mastery} left`;
-                            const isLive = lbTick === name;
+                              lbMode === 'questions' ? `${entry.questions}q`
+                              : lbMode === 'time' ? formatLbTime(entry.time)
+                              : `${entry.mastery} left`;
                             return (
                               <div
-                                key={name}
+                                key={entry.userId}
                                 className={`flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors ${
-                                  isLive ? 'bg-amber-50' : 'hover:bg-slate-50'
+                                  isMe ? 'bg-indigo-50 border-l-2 border-indigo-400' : 'hover:bg-slate-50'
                                 }`}
                               >
                                 <span className="w-5 text-center text-[11px] font-black text-slate-400">
-                                  {idx + 1}
+                                  {rank}
                                 </span>
-                                <span className="flex-1 text-sm font-semibold text-slate-700">{name}</span>
+                                <span className={`flex-1 text-sm font-semibold ${isMe ? 'text-indigo-700' : 'text-slate-700'}`}>
+                                  {entry.initials}{isMe && <span className="ml-1 text-[10px] font-bold text-indigo-500">You</span>}
+                                </span>
                                 <span className="text-sm font-bold text-slate-900">{score}</span>
-                                {isLive && (
-                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                )}
                               </div>
                             );
                           })}
                         </div>
                         {/* footer */}
                         <div className="border-t border-slate-100 px-4 py-2 text-[10px] text-slate-400 text-center">
-                          Updates live · Resets daily
+                          All-time stats
                         </div>
                       </div>
                     </>
