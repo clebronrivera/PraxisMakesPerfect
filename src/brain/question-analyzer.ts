@@ -1,4 +1,5 @@
 import questionSkillMapData from '../data/question-skill-map.json';
+import questionVocabTagsData from '../data/question-vocabulary-tags.json';
 import { Distractor } from './answer-generator';
 import { resolveProgressDomainId } from '../utils/progressTaxonomy';
 
@@ -224,10 +225,9 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
   if (stemType === 'First Step' || isScenario) dok = 3;
   if (text.includes('definition') || text.includes('which of the following is')) dok = 1;
   
-  // Extract key concepts being tested (Requires generic domain array passed in next iteration, 
-  // bypassing hardcoded extraction for now to decouple it)
-  const keyConcepts: string[] = [];
-  // For now, keyConcepts can be mapped later when we have complete Domain integration in context.
+  // Look up pre-computed vocabulary tags for this question
+  const vocabTags = (questionVocabTagsData as any).tags?.[questionId];
+  const keyConcepts: string[] = vocabTags?.concepts ?? [];
   
   return {
     ...q,

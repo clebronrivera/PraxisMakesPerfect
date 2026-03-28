@@ -73,6 +73,12 @@ interface LearningPathModulePageProps {
   onBack: () => void;
   /** Latest study plan from App.tsx — used for Focus Items in Study Center */
   latestStudyPlan?: { id: string; createdAt: string; plan: StudyPlanDocumentV2 } | null;
+  /** Called when a quiz question is answered wrong — tracks toward Redemption threshold */
+  onWrongAnswer?: (questionId: string, skillId: string | null) => void;
+  /** Called after each quiz answer — tracks toward Redemption credit */
+  onAnswerSubmitted?: () => void;
+  /** Question IDs currently quarantined in Redemption — excluded from quiz pool */
+  redemptionBlacklistIds?: Set<string>;
 }
 
 // ─── Section header ───────────────────────────────────────────────────────────
@@ -296,6 +302,9 @@ export default function LearningPathModulePage({
   onSkillProgressUpdate,
   onBack,
   latestStudyPlan = null,
+  onWrongAnswer,
+  onAnswerSubmitted,
+  redemptionBlacklistIds,
 }: LearningPathModulePageProps) {
   const lpSupabase = useLearningPathSupabase(userId);
   const lpLocal = useLearningPathProgress(userId);
@@ -386,8 +395,11 @@ export default function LearningPathModulePage({
   }, [expandedModuleIdx]);
 
   // ── Skill questions (random sample) ──────────────────────────────────────
+  // Filter quarantined questions BEFORE shuffle-and-slice to prevent short quizzes.
   const skillQuestions = useMemo(() => {
-    const qs = analyzedQuestions.filter(q => q.skillId === skillId);
+    const qs = analyzedQuestions.filter(q =>
+      q.skillId === skillId && !(redemptionBlacklistIds?.has(q.id))
+    );
     // Fisher-Yates shuffle, then take LP_QUESTION_COUNT
     const arr = [...qs];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -459,6 +471,15 @@ export default function LearningPathModulePage({
     // Update skill_scores for each answered question
     for (const r of results) {
       onSkillProgressUpdate(skillId, r.isCorrect);
+    }
+
+    // ── Redemption Rounds integration ─────────────────────────────────────
+    // Track each answer toward credit; track wrong answers toward 3-miss threshold.
+    for (const r of results) {
+      onAnswerSubmitted?.();
+      if (!r.isCorrect) {
+        onWrongAnswer?.(r.questionId, skillId);
+      }
     }
 
     setQuizResults({ correct, total } as any);

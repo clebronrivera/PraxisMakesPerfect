@@ -75,7 +75,6 @@ interface StudyModesSectionProps {
   onSkillReviewOpen?: () => void;
   onLearningPathOpen?: () => void;
   onGenerateStudyPlan?: () => void;
-  onStartSpicyPractice?: () => void;
   studyPlanExists?: boolean;
 }
 
@@ -591,7 +590,7 @@ export default function StudyModesSection({
       {totalAttempts === 0 && (
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-normal">
           No data yet — your stats will appear here as soon as you answer your first question.
-          Start with the baseline assessment on the Dashboard, or jump straight into Spicy mode to get going.
+          Start with the baseline assessment on the Dashboard, or jump straight into practice to get going.
         </div>
       )}
 

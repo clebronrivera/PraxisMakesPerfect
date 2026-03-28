@@ -37,6 +37,8 @@ interface SkillHelpDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   userId: string | null;
+  /** If provided, the drawer opens directly to this module instead of the primary module. */
+  initialModuleId?: string | null;
 }
 
 export default function SkillHelpDrawer({
@@ -45,6 +47,7 @@ export default function SkillHelpDrawer({
   isOpen,
   onClose,
   userId,
+  initialModuleId,
 }: SkillHelpDrawerProps) {
   const progress = useLearningPathProgress(userId);
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
@@ -53,14 +56,17 @@ export default function SkillHelpDrawer({
   const primaryModule = modules[0] ?? null;
   const relatedModules = modules.slice(1);
 
-  // When drawer opens or skillId changes, reset to primary module
+  // When drawer opens, navigate to initialModuleId if provided, otherwise the primary module.
   useEffect(() => {
-    if (isOpen && primaryModule) {
-      setActiveModuleId(primaryModule.id);
-      progress.onOpenModule(primaryModule.id);
+    if (isOpen) {
+      const startId = initialModuleId ?? primaryModule?.id ?? null;
+      if (startId) {
+        setActiveModuleId(startId);
+        progress.onOpenModule(startId);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, skillId]);
+  }, [isOpen, skillId, initialModuleId]);
 
   // Track time on active module change
   useEffect(() => {

@@ -128,14 +128,17 @@ Depending on the user's state, Home can show:
 - A fully unlocked dashboard after the adaptive diagnostic is complete
 
 On the fully unlocked dashboard, the main sections are:
-- A greeting hero with a spicy-practice call to action
+- A greeting hero card with readiness summary and your weakest domain as next focus
 - Four summary cards: Number of questions answered, Readiness phase, Skills to reach goal, and Weekly usage
 - A Daily goal card showing progress toward the daily question target
 - A High-Impact Skills list showing the current lowest-performing skills
+- A **Practice shortcuts rail** (right side) — three one-tap buttons to start a session immediately:
+  - **Domain Review** — launches practice for your weakest domain
+  - **Practice by Skill** — launches practice for your top gap skill
+  - **Random Questions** — adaptive practice across all skills, weighted by need level
+- An **AI Tutor** button — opens the tutor directly from the dashboard
 
 The High-Impact Skills list is intentionally action-oriented. On Home, each row uses a simple **Practice** button instead of exposing raw accuracy percentages. Those buttons drop the user into the existing skill-focused learning path or practice flow for that skill.
-
-Practice, Progress, and Study Plan keep their existing behaviors and unlock rules. In this release, those pages were restyled to match the same shell and color system as Home rather than being redesigned from scratch.
 
 ---
 
@@ -197,58 +200,59 @@ Consecutive correct answers build a streak. Shown on the dashboard; resets when 
 
 ---
 
-## Feeling Spicy — Quick Recalibration Mode
+## Redemption Rounds (Quarantine System)
 
-**Feeling Spicy** is a rapid-fire practice mode accessible from the Home dashboard hero. It is designed for quick daily recalibration across every skill — one question per skill, cycling through all 45 skills in a shuffled order.
+**Redemption Rounds** is a quarantine-based review system for questions you struggle with in practice. When a question enters Redemption, it is removed from all normal practice and can only be cleared inside Redemption Rounds.
 
-**How it works:**
-- The system picks a random order for all 45 skills and presents one question per skill.
-- After you answer all 45 (completing one full cycle), the order reshuffles automatically into a new random sequence and starts again from skill 1.
-- Every completed cycle generates fresh signal across the whole skill map, which improves the accuracy of status labels and study guide recommendations.
+### How Questions Enter Redemption
+A question enters Redemption (quarantine) in two ways:
+1. **3rd wrong answer** — If you answer the same question incorrectly 3 times total across all sessions, it is automatically quarantined.
+2. **Hint usage** — If you use a hint on a practice question, that question is immediately quarantined when you move to the next question. A notice appears explaining the move.
 
-**What it shows:** The session header displays which skill you're on (e.g. "Skill 7 of 45") instead of the standard correct/wrong counters. The answer experience uses the same question card and confidence selector as other practice modes.
+This applies across all practice sources: practice by skill, practice by domain, and learning path module quizzes.
 
-**State persistence:** Your position in the current cycle is saved in the browser (`localStorage`, keyed per user) so you can pick up exactly where you left off across sessions.
-
----
-
-## Redemption Rounds
-
-**Redemption Rounds** is a focused review mode for questions you got wrong in practice. It is separate from the main Practice Hub and appears as its own card on the Home dashboard.
+### What Quarantine Means
+- The question is **removed from all normal practice pools**. You will not see it again in regular practice by skill, by domain, or in learning path quizzes.
+- It only appears inside **Redemption Rounds** until cleared.
 
 ### Credit System
 - Every time you submit a practice answer (hint-revealed answers excluded), a counter increments.
 - When the counter reaches **20**, you earn **1 Redemption Round credit**. The counter resets to zero.
+- **1 credit = 1 full pass through all quarantined questions.** Not one question — one complete cycle through every question currently in Redemption.
 - Credits accumulate and are stored in your account across devices.
 
-### The Missed-Question Bank
-- Every question you answer incorrectly in practice is added to your **missed-question bank**.
-- Re-missing the same question does not create a duplicate — the bank tracks unique questions per user.
-- Questions stay in the bank until they are redeemed (see Redemption Criteria below).
-
 ### Running a Round
-- From the Home dashboard, tap **Start Redemption Round** (visible when you have ≥ 1 credit and ≥ 1 missed question).
-- Spending a credit loads all unredeemed missed questions in a shuffled order.
+- From the Practice Hub, tap **Redemption Rounds** (visible when you have ≥ 1 quarantined question).
+- Spending a credit loads all quarantined questions in a shuffled order.
 - Each question has a **90-second countdown**. Letting the timer expire is treated as an incorrect skip.
-- Before answering, you must select a confidence level: **Sure**, **Unsure**, or **Guess**.
 - No feedback is shown after each answer — the session advances immediately.
 - At the end of the round, a results screen shows your score and personal best.
 
-### Redemption Criteria
-A question is redeemed (removed from the bank) when:
-- You answer it **correctly** while choosing **Sure** — one correct answer is enough.
-- You answer it **correctly** while choosing **Unsure** or **Guess** — you need to get it right **3 times total** across multiple rounds.
+### Clearance Rule
+A question is cleared (returned to normal practice) when you answer it **correctly 3 times** inside Redemption Rounds. There are no shortcuts — confidence level does not matter, and all 3 correct answers must come from Redemption Round sessions.
 
-Incorrect answers do not count toward redemption; the question stays in the bank.
+Incorrect answers do not count toward clearance; the question stays quarantined.
 
-### Why 20 Questions Per Credit
-The 20-question threshold ensures enough practice has occurred for new learning to consolidate before a review round. By the time a credit is earned, the missed-question bank typically holds several questions, making each round more targeted and valuable.
+---
+
+## Follow-Up Question System (All Practice Modes)
+
+Every practice session includes an automatic follow-up loop when you get a question wrong. This applies to all modes — Domain Review, By Skill, and Random Questions.
+
+**How it works:**
+1. **First wrong answer** — the next question is automatically pulled from the same skill ("second chance"). A subtle tip banner appears above the question: *"Second chance — read carefully."*
+2. **Second wrong in a row on the same skill** — the next question is again from that skill, and the banner now shows the distractor explanation from your previous wrong answer as a fuller hint.
+3. **Third consecutive wrong on the same skill** — the follow-up loop ends. A **domain warning banner** appears in the session: *"This domain needs extra attention."* The domain name is called out, signaling that a dedicated study session on that domain is needed.
+
+A correct answer at any point clears the follow-up state for that skill and returns to normal question selection.
 
 ---
 
 ## The Three Practice Modes
 
 The Practice Hub offers three distinct modes. All three live under the **Practice** tab and are accessible from the same screen via a three-tab selector: **By Domain / By Skill / Learning Path**.
+
+The **Home dashboard also has direct shortcuts** to the three most common session starts (see Home Dashboard section above), so users can begin practicing without going through the Practice Hub.
 
 ---
 
@@ -444,6 +448,24 @@ When the user asks to be quizzed:
 - Claude writes explanation prose around the pre-computed correctness result; it cannot change the scored outcome
 - Quiz scoring lives entirely in `src/utils/tutorQuizEngine.ts` → `evaluateQuizAnswer()` and does not affect practice or assessment skill scores
 
+### Adaptive Retry Loop
+
+When a student misses a quiz question, the tutor forces a same-skill follow-up before returning to normal weighted selection. This ensures the student gets immediate reinforcement on the concept they just missed.
+
+**State machine (tracked client-side via `quizRetryStateRef` in `useTutorChat.ts`):**
+
+1. **Normal mode** — weighted random selection (60/25/15 split). Student answers wrong on skill X → retry state activates for skill X.
+2. **Retry mode** — next quiz request sends `prioritySkillId` to the server, which selects a different question from the same skill. If no questions remain for that skill, falls back to weighted selection and retry state clears.
+3. **Retry answer** — regardless of whether the student answers the retry correctly or incorrectly, retry state clears and normal selection resumes.
+4. **Remediation trigger** — if the retry answer is also wrong (two consecutive misses on the same skill), the server appends a remediation instruction to the system prompt. Claude then provides: (a) plain-language concept explanation, (b) key terms/distinctions, (c) memory anchor or mnemonic, (d) one realistic Praxis scenario. The remediation trigger is deterministic in code — Claude only writes the prose.
+
+**Key constraints:**
+- No AI-generated questions — only the existing 466-question bank
+- `prioritySkillId` is sent only on quiz-request turns, not general chat
+- `quizRetryContext` is sent only on the retry answer submission, guarded by a skill-match check against `pendingQuizRef`
+- Retry state clears on session switch or new session creation
+- Does not affect the standalone diagnostic or practice scoring
+
 ### What the Tutor Can Do
 
 - Answer Praxis 5403 content questions and explain concepts
@@ -469,6 +491,69 @@ When the user asks to be quizzed:
 ### Feature Flag
 
 `ACTIVE_LAUNCH_FEATURES.tutorChat` in `src/utils/launchConfig.ts` — set `false` until validated in production.
+
+---
+
+## Glossary & Vocabulary Quiz
+
+The **Glossary** page is a personal vocabulary study tool, accessible from the main sidebar. It has two tabs: **My Terms** and **Quiz Mode**.
+
+### My Terms Tab
+
+When a student answers a practice question **incorrectly**, the vocabulary terms associated with that skill are automatically added to their personal glossary. Each term row has three columns:
+
+1. **Term** — the vocabulary word, with skill ID and status indicator
+2. **What does this mean to you?** — editable text area where the student writes their own definition (auto-saved on blur)
+3. **Official Definition** — hidden by default; the student clicks "Reveal" to see the glossary definition and compare it with their own
+
+Filter options: All, To Define, Defined, Revealed. A search bar filters by term name.
+
+Stats chips at the top show total terms, to define, defined, and revealed counts.
+
+### Quiz Mode Tab
+
+An interactive vocabulary knowledge check using terms from the **master glossary** (396 Praxis terms with official definitions).
+
+**Configuration options:**
+- **Term Source**: "My Glossary Terms" (restricted to the user's personal word list) or "Full Glossary" (all 396 terms). "My Glossary Terms" requires at least 4 terms.
+- **Quiz Type**: Mixed (both types randomly), "Know the Definition" (see a term → pick its definition), or "Name the Term" (see a definition → pick the correct term)
+- **Number of Questions**: 5, 10, 15, or 20
+
+**How it works:**
+- Each question presents 4 multiple-choice answers
+- Distractors are drawn from the same skill neighborhood for plausibility (terms that share the same skill as the correct answer are preferred over random terms)
+- Immediate feedback after each answer: correct/incorrect with the right answer shown
+- Progress bar and running score during the quiz
+- End-of-quiz review screen: overall percentage, per-question breakdown showing correct answers and the user's wrong picks
+
+**Scoring:** Quiz results are session-only — they do not affect skill proficiency scores or any persistent data. The quiz is a study tool, not an assessment.
+
+---
+
+## Concept Insights — Progress Dashboard
+
+The **Progress** page includes a **Concept Insights** section that surfaces vocabulary-level performance analytics across all answered questions.
+
+Every question in the bank is tagged with specific vocabulary concepts (e.g., "functional behavioral assessment", "IDEA", "reinforcement"). When a user answers questions, the system aggregates performance by concept — not just by skill — to reveal patterns invisible at the skill level.
+
+### What It Shows
+
+- **Cross-Skill Vocabulary Gaps** — concepts the user struggles with across 2 or more skills. These indicate a vocabulary gap (not understanding the term itself) rather than a skill gap (not understanding how to apply it in one context). Highest-signal finding.
+- **Weakest Concepts** — concepts with accuracy below 60% and at least 3 attempts, sorted by accuracy ascending. Each shows an accuracy bar.
+- **Strongest Concepts** — concepts with accuracy at or above 80% and at least 3 attempts.
+- **Summary line** — total concepts tested, gaps, strengths, and cross-skill gaps.
+
+### How Concepts Are Tagged
+
+Each question is pre-tagged with vocabulary concepts via text-matching against the 396-term master glossary. Tags are stored in `src/data/question-vocabulary-tags.json` (separate from the question bank). The tagging pipeline matches glossary terms against question stems, answer choices, and explanations. Average: ~2.7 concepts per question.
+
+### Where the Computation Happens
+
+`src/utils/conceptAnalytics.ts` — a pure computation module (no DB calls, no side effects). It takes user responses + analyzed questions and produces:
+- Per-concept accuracy, attempt count, trend, related skills
+- Gap concepts (< 60% accuracy, ≥ 3 attempts)
+- Strength concepts (≥ 80% accuracy, ≥ 3 attempts)
+- Cross-skill gaps (concept weak across 2+ skills)
 
 ---
 
@@ -517,9 +602,16 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 | Study guide tabs | 6 + side rail |
 | Readiness levels | 4 (Early / Developing / Approaching / Ready) |
 | Time between guide regenerations | 7 days (once live) |
-| Supabase migrations applied | 6 (0000–0005) |
-| Redemption Round credit threshold | 20 non-hint practice answers = 1 credit |
+| Supabase migrations applied | 8 (0000–0005, 0009, 0013) |
+| Redemption entry threshold (miss) | 3rd cumulative wrong answer on a question |
+| Redemption entry (hint) | Immediate — any hint use quarantines the question |
+| Redemption clearance threshold | 3 correct answers inside Redemption Rounds |
+| Redemption Round credit cost | 1 credit = 1 full pass through entire quarantine bank |
+| Redemption Round credit earning | 20 non-hint practice answers = 1 credit |
 | Redemption Round timer per question | 90 seconds |
+| Master glossary terms | 396 |
+| Avg vocabulary concepts per question | ~2.7 |
+| Vocabulary quiz sizes | 5, 10, 15, or 20 questions |
 | Inactivity auto-logout | 15 minutes (separate from the "15 min avg session" marketing stat) |
 
 ---

@@ -875,6 +875,7 @@ export async function generateStudyPlan({
 // ─── Helper: seed cluster urgency before building (fast pass) ─────────────────
 
 import { skillMetadataV1 as _skillMeta } from '../data/skill-metadata-v1';
+import { toMetadataId } from '../data/skillIdMap';
 import type { ContentCluster } from '../types/studyPlanTypes';
 
 function skillMetadataV1Clusters(
@@ -882,7 +883,7 @@ function skillMetadataV1Clusters(
 ): Record<string, { clusterId: ContentCluster; urgency: 'urgent_now' | 'important_next' | 'maintain' }> {
   const result: Record<string, { clusterId: ContentCluster; urgency: 'urgent_now' | 'important_next' | 'maintain' }> = {};
   for (const state of skillStates) {
-    const meta = _skillMeta[state.skillId];
+    const meta = _skillMeta[state.skillId] ?? _skillMeta[toMetadataId(state.skillId) ?? ''];
     if (!meta) continue;
     const cluster = meta.contentCluster;
     if (!result[cluster]) {

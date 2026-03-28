@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Sparkles, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw, Trophy, HelpCircle, Bot } from 'lucide-react';
+import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw, Trophy, HelpCircle, Bot, Shuffle, MessageCircle } from 'lucide-react';
 import { formatStudyTime } from './src/hooks/useDailyStudyTime';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 // Import questions and analysis
@@ -227,12 +227,10 @@ function PraxisStudyAppContent() {
   const {
     practiceDomainFilter,
     practiceSkillFilter,
-    isSpicyMode,
     lastPracticeContext,
     practiceQuestions,
     startPractice,
     startSkillPractice,
-    startSpicyPractice,
     resetPracticeFilters,
   } = usePracticeFlow({
     analyzedQuestions,
@@ -515,7 +513,7 @@ function PraxisStudyAppContent() {
   })();
 
   return (
-    <div className="editorial-shell flex min-h-screen" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
+    <div className="editorial-shell flex h-screen overflow-hidden" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[24rem] bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.12),_transparent_45%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.08),_transparent_35%)]" />
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-200/20 blur-3xl" />
@@ -619,7 +617,7 @@ function PraxisStudyAppContent() {
         </div>
       </aside>
 
-      <main className="relative z-10 flex-1 overflow-y-auto">
+      <main className="relative z-10 flex-1 flex flex-col overflow-hidden">
         <header className="sticky top-0 z-50 border-b border-slate-200 bg-[#f7f6f2]/85 backdrop-blur-md">
           <div className="mx-auto max-w-[92rem] px-5 py-3.5 sm:px-8">
             <div className="flex items-center justify-between gap-4">
@@ -808,6 +806,17 @@ function PraxisStudyAppContent() {
           </div>
         </header>
 
+        {mode === 'tutor' && ACTIVE_LAUNCH_FEATURES.tutorChat && user ? (
+          <div className="flex-1 min-h-0">
+            <Suspense fallback={<div className="flex-1 flex items-center justify-center text-slate-500 text-sm">Loading AI Tutor…</div>}>
+              <TutorChatPage
+                userId={user.id}
+                diagnosticComplete={Boolean(profile.adaptiveDiagnosticComplete)}
+              />
+            </Suspense>
+          </div>
+        ) : (
+        <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-[92rem] px-5 py-5 sm:px-8 sm:py-7">
           <Suspense fallback={
             <div className="min-h-[240px] flex items-center justify-center">
@@ -946,24 +955,6 @@ function PraxisStudyAppContent() {
             // Legacy session-in-progress checks (kept for backward compat)
             void (profile.lastSession); // referenced above in hasAssessmentInProgress
 
-            const spicyButton = (
-              <button
-                onClick={startSpicyPractice}
-                className="editorial-button-dark flex min-h-[4.25rem] w-full items-center justify-between rounded-[1.75rem] px-5 py-4 text-left"
-              >
-                <span>
-                  <span className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-amber-400">
-                    <Flame className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    Spicy Mode
-                  </span>
-                  <span className="mt-2 block text-sm font-medium leading-normal text-slate-300">
-                    Jump into a full 45-question cycle.
-                  </span>
-                </span>
-                <ChevronRight className="h-4 w-4 shrink-0 text-amber-300" />
-              </button>
-            );
-
             return (
               <div className="space-y-8 pb-12">
                 {sessionResumeCard}
@@ -996,15 +987,15 @@ function PraxisStudyAppContent() {
                             <ul className="mt-3 space-y-1.5">
                               <li className="flex items-center gap-2 text-xs text-slate-500">
                                 <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
-                                Spicy mode — cycle through all 45 skills
+                                Random questions — based on your level of need
                               </li>
                               <li className="flex items-center gap-2 text-xs text-slate-500">
                                 <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
-                                Domain practice — focus on one section
+                                Domain review — focus on one section
                               </li>
                               <li className="flex items-center gap-2 text-xs text-slate-500">
                                 <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
-                                Learning path — ordered by your gaps
+                                Skill practice — ordered by your gaps
                               </li>
                             </ul>
                           </div>
@@ -1012,11 +1003,26 @@ function PraxisStudyAppContent() {
                       </div>
                       <div className="editorial-surface-soft p-5 lg:p-6">
                         <p className="editorial-overline">Quick start</p>
-                        <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Want extra exposure first?</p>
+                        <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Jump right in.</p>
                         <p className="mt-3 text-sm leading-normal text-slate-500">
-                          Spicy mode cycles one question per skill so you can see the full question bank before diving into the diagnostic.
+                          Start practicing immediately — no assessment required.
                         </p>
-                        <div className="mt-5">{spicyButton}</div>
+                        <div className="mt-5 space-y-3">
+                          <button
+                            onClick={() => startPractice()}
+                            className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
+                          >
+                            <span className="text-sm font-semibold text-slate-900">Random Questions</span>
+                            <ChevronRight className="h-4 w-4 text-slate-400" />
+                          </button>
+                          <button
+                            onClick={() => setMode('practice-hub')}
+                            className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
+                          >
+                            <span className="text-sm font-semibold text-slate-900">Browse by Domain or Skill</span>
+                            <ChevronRight className="h-4 w-4 text-slate-400" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </>
@@ -1056,11 +1062,23 @@ function PraxisStudyAppContent() {
                     </div>
                     <div className="editorial-surface-soft p-5 lg:p-6">
                       <p className="editorial-overline">Practice</p>
-                      <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Keep practicing in the meantime.</p>
-                      <p className="mt-3 text-sm leading-normal text-slate-500">
-                        Spicy mode cycles through all 45 skills for broader exposure.
-                      </p>
-                      <div className="mt-5">{spicyButton}</div>
+                      <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Keep building momentum.</p>
+                      <div className="mt-5 space-y-3">
+                        <button
+                          onClick={() => startPractice()}
+                          className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
+                        >
+                          <span className="text-sm font-semibold text-slate-900">Random Questions</span>
+                          <ChevronRight className="h-4 w-4 text-slate-400" />
+                        </button>
+                        <button
+                          onClick={() => setMode('practice-hub')}
+                          className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
+                        >
+                          <span className="text-sm font-semibold text-slate-900">Browse by Domain or Skill</span>
+                          <ChevronRight className="h-4 w-4 text-slate-400" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1097,14 +1115,6 @@ function PraxisStudyAppContent() {
                                 : 'Choose a skill or domain and keep practicing a little at a time.'}
                             </p>
                           </div>
-                        </div>
-                        <div className="mt-6 flex flex-wrap gap-3">
-                          <div className="w-full sm:w-auto sm:min-w-[18rem]">{spicyButton}</div>
-                          {hasShortAssessmentReport && (
-                            <button onClick={() => handleViewReport('screener')} className="editorial-button-secondary">
-                              View progress
-                            </button>
-                          )}
                         </div>
 
                         {/* ── Redemption Rounds button ── */}
@@ -1307,69 +1317,85 @@ function PraxisStudyAppContent() {
                         </div>
                       </div>
 
-                      <div className="space-y-5">
-                        {canGenerateStudyPlan && studyPlanHistory.length === 0 && !studyPlanLoading && (
-                          <div className="editorial-surface-soft p-5">
-                            <div className="flex items-start gap-3">
-                              <Sparkles className="mt-0.5 h-5 w-5 text-amber-600" />
-                              <div>
-                                <p className="text-lg font-bold text-slate-900">Generate your Study Guide</p>
-                                <p className="mt-2 text-sm leading-normal text-slate-500">
-                                  Build a bigger plan around your developing skills whenever you are ready. The guide stays optional, but it can help connect your next steps.
-                                </p>
-                              </div>
-                            </div>
+                      <div className="space-y-4">
+                        {/* Practice mode shortcuts */}
+                        <div className="editorial-surface-soft p-5">
+                          <p className="editorial-overline">Start a session</p>
+                          <div className="mt-4 space-y-2">
+                            {/* Domain Review */}
                             <button
-                              onClick={() => {
-                                handleGenerateStudyPlan();
-                                setMode('study-guide');
-                              }}
-                              className="editorial-button-primary mt-6"
+                              onClick={() => weakestDomain ? startPractice(weakestDomain.id) : setMode('practice-hub')}
+                              className="group flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3.5 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
                             >
-                              <Sparkles className="h-4 w-4" />
-                              Generate Study Guide
+                              <span className="flex items-center gap-3">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+                                  <Layers className="h-4 w-4" />
+                                </span>
+                                <span>
+                                  <span className="block text-sm font-bold text-slate-900">Domain Review</span>
+                                  {weakestDomain && (
+                                    <span className="block text-xs text-slate-500 mt-0.5">{weakestDomain.name}</span>
+                                  )}
+                                </span>
+                              </span>
+                              <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
+                            </button>
+
+                            {/* By Skill */}
+                            <button
+                              onClick={() => top5Target[0] ? startSkillPractice(top5Target[0][0]) : setMode('practice-hub')}
+                              className="group flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3.5 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
+                            >
+                              <span className="flex items-center gap-3">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+                                  <Target className="h-4 w-4" />
+                                </span>
+                                <span>
+                                  <span className="block text-sm font-bold text-slate-900">Practice by Skill</span>
+                                  {top5Target[0] && (() => {
+                                    const s = getSkillById(top5Target[0][0] as any);
+                                    return s ? <span className="block text-xs text-slate-500 mt-0.5">{s.name}</span> : null;
+                                  })()}
+                                </span>
+                              </span>
+                              <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
+                            </button>
+
+                            {/* Random Questions */}
+                            <button
+                              onClick={() => startPractice()}
+                              className="group flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3.5 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
+                            >
+                              <span className="flex items-center gap-3">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+                                  <Shuffle className="h-4 w-4" />
+                                </span>
+                                <span>
+                                  <span className="block text-sm font-bold text-slate-900">Random Questions</span>
+                                  <span className="block text-xs text-slate-500 mt-0.5">Based on your level of need</span>
+                                </span>
+                              </span>
+                              <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
                             </button>
                           </div>
-                        )}
+                        </div>
 
-                        {studyPlanHistory.length > 0 && (() => {
-                          const latest = studyPlanHistory[0];
-                          const planDate = latest.createdAt
-                            ? new Date(latest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                            : null;
-                          const snapshot = latest.plan?.readinessSnapshot;
-                          return (
-                            <button
-                              onClick={() => setMode('study-guide')}
-                              className="editorial-surface-soft w-full p-5 text-left transition-all hover:border-amber-300"
-                            >
-                              <div className="flex items-start justify-between gap-3">
-                                <div>
-                                  <p className="editorial-overline">Study Guide</p>
-                                  <p className="mt-2 text-lg font-bold text-slate-900">Your latest plan is ready</p>
-                                  {planDate && (
-                                    <p className="mt-2 text-xs font-medium text-slate-500">Generated {planDate}</p>
-                                  )}
-                                </div>
-                                <ChevronRight className="h-4 w-4 text-slate-400" />
-                              </div>
-                              {snapshot?.summary && (
-                                <p className="mt-3 text-sm leading-normal text-slate-500">{snapshot.summary}</p>
-                              )}
-                              <p className="mt-4 text-sm font-semibold text-amber-700">View full Study Guide</p>
-                            </button>
-                          );
-                        })()}
-
-                        {hasShortAssessmentReport && (
-                          <button
-                            onClick={() => handleViewReport('screener')}
-                            className="editorial-button-ghost"
-                          >
-                            View your progress
-                            <ChevronRight className="h-4 w-4" />
-                          </button>
-                        )}
+                        {/* AI Tutor shortcut */}
+                        <button
+                          onClick={() => setMode('tutor')}
+                          className="editorial-button-dark flex w-full items-center justify-between rounded-[1.75rem] px-5 py-4 text-left"
+                        >
+                          <span>
+                            <span className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-amber-400">
+                              <MessageCircle className="h-4 w-4" />
+                              AI Tutor
+                            </span>
+                            <span className="mt-1.5 block text-sm font-medium leading-normal text-slate-300">
+                              Ask a question about any skill
+                            </span>
+                          </span>
+                          <ChevronRight className="h-4 w-4 shrink-0 text-amber-300" />
+                        </button>
                       </div>
                     </div>
                   </>
@@ -1404,7 +1430,6 @@ function PraxisStudyAppContent() {
                 handleGenerateStudyPlan();
                 setMode('study-guide');
               }}
-              onStartSpicyPractice={startSpicyPractice}
               studyPlanExists={studyPlanHistory.length > 0}
             />
           </div>
@@ -1484,16 +1509,6 @@ function PraxisStudyAppContent() {
         {mode === 'help' && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading…</div>}>
             <HelpFAQ onGoHome={() => setMode('home')} />
-          </Suspense>
-        )}
-
-        {/* AI TUTOR PAGE */}
-        {mode === 'tutor' && ACTIVE_LAUNCH_FEATURES.tutorChat && user && (
-          <Suspense fallback={<div className="min-h-[400px] flex items-center justify-center text-slate-500 text-sm">Loading AI Tutor…</div>}>
-            <TutorChatPage
-              userId={user.id}
-              diagnosticComplete={Boolean(profile.adaptiveDiagnosticComplete)}
-            />
           </Suspense>
         )}
 
@@ -1611,11 +1626,9 @@ function PraxisStudyAppContent() {
             onAnswerSubmitted={redemption.handleAnswerSubmitted}
             redemptionBlacklistIds={redemption.redemptionBlacklistIds}
             onExitPractice={() => {
-              const { wasSkillPractice, wasSpicy } = resetPracticeFilters();
+              const { wasSkillPractice } = resetPracticeFilters();
               if (wasSkillPractice) {
                 setMode('results');
-              } else if (wasSpicy) {
-                setMode('home');
               } else {
                 setMode('practice-hub');
               }
@@ -1685,6 +1698,8 @@ function PraxisStudyAppContent() {
         )}
         </Suspense>
       </div>
+      </div>
+        )}
       </main>
       {showFloatingWidget && user && (
         <Suspense fallback={null}>

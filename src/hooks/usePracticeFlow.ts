@@ -4,7 +4,7 @@
  * Owns practice-session routing state that previously lived in App.tsx:
  *   State
  *   ─────
- *   practiceDomainFilter · practiceSkillFilter · isSpicyMode · lastPracticeContext
+ *   practiceDomainFilter · practiceSkillFilter · lastPracticeContext
  *
  *   Derived
  *   ───────
@@ -12,7 +12,7 @@
  *
  *   Handlers
  *   ─────────
- *   startPractice · startSkillPractice · startSpicyPractice
+ *   startPractice · startSkillPractice
  *   savePracticeContext · resetPracticeFilters
  *
  *   Effects
@@ -46,19 +46,17 @@ export interface UsePracticeFlowOptions {
 export interface UsePracticeFlowReturn {
   practiceDomainFilter: number | null;
   practiceSkillFilter: string | null;
-  isSpicyMode: boolean;
   lastPracticeContext: PracticeContext | null;
   practiceQuestions: AnalyzedQuestion[];
 
   startPractice: (domainId?: number) => void;
   startSkillPractice: (skillId: string) => void;
-  startSpicyPractice: () => void;
   savePracticeContext: (ctx: PracticeContext) => void;
   /**
-   * Called by onExitPractice in App.tsx — clears filters/spicy mode
+   * Called by onExitPractice in App.tsx — clears filters
    * and returns the mode to navigate to based on what was active.
    */
-  resetPracticeFilters: () => { wasSkillPractice: boolean; wasSpicy: boolean };
+  resetPracticeFilters: () => { wasSkillPractice: boolean };
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -70,7 +68,6 @@ export function usePracticeFlow({
 }: UsePracticeFlowOptions): UsePracticeFlowReturn {
   const [practiceDomainFilter, setPracticeDomainFilter] = useState<number | null>(null);
   const [practiceSkillFilter, setPracticeSkillFilter] = useState<string | null>(null);
-  const [isSpicyMode, setIsSpicyMode] = useState(false);
   const [lastPracticeContext, setLastPracticeContext] = useState<PracticeContext | null>(null);
 
   // Restore last practice context from localStorage when the user is known.
@@ -132,38 +129,24 @@ export function usePracticeFlow({
     [onNavigate, savePracticeContext],
   );
 
-  // ── startSpicyPractice ────────────────────────────────────────────────────
-  const startSpicyPractice = useCallback(() => {
-    setPracticeDomainFilter(null);
-    setPracticeSkillFilter(null);
-    savePracticeContext({ type: 'general' });
-    setIsSpicyMode(true);
-    onNavigate('practice');
-  }, [onNavigate, savePracticeContext]);
-
   // ── resetPracticeFilters ──────────────────────────────────────────────────
   // Returns the flags App.tsx needs to decide the exit-navigation target.
   const resetPracticeFilters = useCallback((): {
     wasSkillPractice: boolean;
-    wasSpicy: boolean;
   } => {
     const wasSkillPractice = Boolean(practiceSkillFilter);
-    const wasSpicy = isSpicyMode;
     setPracticeDomainFilter(null);
     setPracticeSkillFilter(null);
-    setIsSpicyMode(false);
-    return { wasSkillPractice, wasSpicy };
-  }, [isSpicyMode, practiceSkillFilter]);
+    return { wasSkillPractice };
+  }, [practiceSkillFilter]);
 
   return {
     practiceDomainFilter,
     practiceSkillFilter,
-    isSpicyMode,
     lastPracticeContext,
     practiceQuestions,
     startPractice,
     startSkillPractice,
-    startSpicyPractice,
     savePracticeContext,
     resetPracticeFilters,
   };

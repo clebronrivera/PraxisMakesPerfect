@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw, BookOpen, Lightbulb, X } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw, BookOpen, Lightbulb, X, AlertTriangle } from 'lucide-react';
 import ModuleSnippetCard from './ModuleSnippetCard';
 import SkillHelpDrawer from './SkillHelpDrawer';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
+import { getSkillForModule } from '../data/learningModules';
 import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
@@ -26,7 +27,6 @@ import { addDailyStudySeconds } from '../hooks/useDailyStudyTime';
 import { addTermsFromWrongAnswer } from '../services/glossaryService';
 import { APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import skillVocabMap from '../data/skill-vocabulary-map.json';
-import { SKILL_MAP } from '../brain/skill-map';
 
 // ─── Question retirement ──────────────────────────────────────────────────────
 //
@@ -88,18 +88,18 @@ interface PracticeSessionProps {
   updateLastSession?: (sessionId: string, mode: SessionMode, questionIndex: number, elapsedSeconds?: number) => Promise<void>;
   savePracticeResponse?: (sessionId: string, questionId: string, response: any) => Promise<void>;
   analyzedQuestions: AnalyzedQuestion[];
-  selectNextQuestion: (profile: UserProfile, questions: AnalyzedQuestion[], history: string[]) => AnalyzedQuestion | null;
+  selectNextQuestion: (profile: UserProfile, questions: AnalyzedQuestion[], history: string[], redemptionBlacklistIds?: Set<string>) => AnalyzedQuestion | null;
   practiceDomain?: number | null;
   practiceSkillId?: string | null;
   onExitPractice?: () => void;
-  /** Hide the session stats bar (correct/wrong totals). Used for new-user spicy sessions. */
-  hideSummary?: boolean;
-  /** Spicy cycle mode: cycles one question per skill through all skills in sequence. */
-  spicyCycleMode?: boolean;
   /** Called after every non-hint answer submission — used to track credits for Redemption Rounds. */
   onAnswerSubmitted?: () => void;
-  /** Called when a non-hint answer is wrong — adds the question to the Redemption Rounds bank. */
+  /** Called when a non-hint answer is wrong — tracks toward 3-miss Redemption threshold. */
   onWrongAnswer?: (questionId: string, skillId: string | null) => void;
+  /** Called when a hint-used question transitions to next — immediate Redemption quarantine. */
+  onHintRedemption?: (questionId: string, skillId: string | null) => void;
+  /** Question IDs currently quarantined in Redemption — excluded from practice pools. */
+  redemptionBlacklistIds?: Set<string>;
 }
 
 export default function PracticeSession({
@@ -113,20 +113,33 @@ export default function PracticeSession({
   practiceDomain,
   practiceSkillId,
   onExitPractice,
-  hideSummary = false,
-  spicyCycleMode = false,
   onAnswerSubmitted,
   onWrongAnswer,
+  onHintRedemption,
+  redemptionBlacklistIds,
 }: PracticeSessionProps) {
   const engine = useEngine();
   const { logout, user } = useAuth();
   const userId = user?.id ?? 'anon';
 
-  // ── Skill Help Drawer (shown during By Skill practice) ─────────────────────
+  // ── Skill Help Drawer (shown during By Skill practice or from hint/feedback) ──
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
+  // Tracks which specific module the user clicked "Study the full module" for.
+  // This lets the drawer open directly to the correct module instead of always
+  // starting at the primary module for the skill.
+  const [drawerTargetModuleId, setDrawerTargetModuleId] = useState<string | null>(null);
+
   const skillLabel = practiceSkillId
     ? (getProgressSkillDefinition(practiceSkillId)?.fullLabel ?? 'Skill Help')
     : '';
+
+  // In domain practice mode, practiceSkillId is null. Derive the skill from
+  // the module the user clicked so the drawer can load the right content.
+  const drawerSkillId = practiceSkillId
+    ?? (drawerTargetModuleId ? getSkillForModule(drawerTargetModuleId) : null);
+  const drawerSkillLabel = practiceSkillId
+    ? skillLabel
+    : (drawerSkillId ? (getProgressSkillDefinition(drawerSkillId)?.fullLabel ?? 'Module Reference') : 'Module Reference');
 
   // ── Hint system ─────────────────────────────────────────────────────────────
   // hintOpenForQuestion tracks whether the hint panel is currently visible.
@@ -134,6 +147,10 @@ export default function PracticeSession({
   // those answers do NOT count toward skill score (keeps adaptive data clean).
   const [hintOpenForQuestion, setHintOpenForQuestion] = useState<string | null>(null);
   const [hintUsedIds, setHintUsedIds] = useState<Set<string>>(new Set());
+
+  // ── Redemption quarantine toast + double-fire guard ───────────────────────
+  const [redemptionToast, setRedemptionToast] = useState<string | null>(null);
+  const hintRedemptionFiredRef = useRef(new Set<string>());
 
   // ── Missed-skill alert ───────────────────────────────────────────────────────
   // Show an in-app alert when a skill has been missed 3+ times with <60% accuracy.
@@ -154,76 +171,16 @@ export default function PracticeSession({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
-  // ── Spicy cycle: one question per skill, all 45 skills in sequence ──────────
-  // State stored in localStorage so it survives navigation away and back.
-  const spicyCycleKey = `pmp-spicy-cycle-${userId}`;
-
-  const [spicySkillIds, setSpicySkillIds] = useState<string[]>(() => {
-    if (!spicyCycleMode) return [];
-    try {
-      const stored = localStorage.getItem(spicyCycleKey);
-      if (stored) {
-        const parsed = JSON.parse(stored) as { ids: string[]; index: number };
-        if (Array.isArray(parsed.ids) && parsed.ids.length > 0) return parsed.ids;
-      }
-    } catch { /* ignore */ }
-    // Build a fresh shuffled list from the skill map
-    const all: string[] = [];
-    for (const domain of Object.values(SKILL_MAP)) {
-      for (const cluster of domain.clusters) {
-        for (const skill of cluster.skills) all.push(skill.skillId);
-      }
-    }
-    // Fisher-Yates shuffle
-    for (let i = all.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [all[i], all[j]] = [all[j], all[i]];
-    }
-    return all;
-  });
-
-  const [spicyCycleIndex, setSpicyCycleIndex] = useState<number>(() => {
-    if (!spicyCycleMode) return 0;
-    try {
-      const stored = localStorage.getItem(spicyCycleKey);
-      if (stored) {
-        const parsed = JSON.parse(stored) as { ids: string[]; index: number };
-        return typeof parsed.index === 'number' ? parsed.index : 0;
-      }
-    } catch { /* ignore */ }
-    return 0;
-  });
-
-  // Persist spicy cycle state whenever it changes
-  useEffect(() => {
-    if (!spicyCycleMode || spicySkillIds.length === 0) return;
-    try {
-      localStorage.setItem(spicyCycleKey, JSON.stringify({ ids: spicySkillIds, index: spicyCycleIndex }));
-    } catch { /* ignore */ }
-  }, [spicyCycleMode, spicyCycleKey, spicySkillIds, spicyCycleIndex]);
-
-  // Current skill ID to filter for in spicy mode
-  const currentSpicySkillId = spicyCycleMode && spicySkillIds.length > 0
-    ? spicySkillIds[spicyCycleIndex % spicySkillIds.length]
-    : null;
-
-  // Advance to next skill after each answered question in spicy mode.
-  // When the cycle completes (all 45 skills answered once), reshuffle for the next round.
-  const advanceSpicyCycle = useCallback(() => {
-    const next = spicyCycleIndex + 1;
-    if (next >= spicySkillIds.length) {
-      // Completed a full cycle — reshuffle skill order for the next round
-      const reshuffled = [...spicySkillIds];
-      for (let i = reshuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [reshuffled[i], reshuffled[j]] = [reshuffled[j], reshuffled[i]];
-      }
-      setSpicySkillIds(reshuffled);
-      setSpicyCycleIndex(0);
-    } else {
-      setSpicyCycleIndex(next);
-    }
-  }, [spicyCycleIndex, spicySkillIds]);
+  // ── Follow-up question system ─────────────────────────────────────────────
+  // When a student gets a question wrong, the next question comes from the same
+  // skill ("follow-up"). After the first wrong we show a subtle tip; after a
+  // second wrong in a row we surface a fuller hint. Three consecutive wrongs
+  // on the same skill triggers a domain-level warning.
+  const [skillWrongStreak, setSkillWrongStreak] = useState<Record<string, number>>({});
+  const [followUpSkillId, setFollowUpSkillId] = useState<string | null>(null);
+  const [domainWarnings, setDomainWarnings] = useState<Set<number>>(new Set());
+  // The distractor note from the previous wrong answer — used as the tip on attempt 2
+  const prevDistractorNoteRef = useRef<string | null>(null);
 
   // ── Stable practice-progress key (per user + context) ──────────────────────
   // Using a stable key means the question history and retire map reload
@@ -313,19 +270,23 @@ export default function PracticeSession({
       analyzedQuestions.every(q => (retireMap[q.id]?.times_seen ?? 0) >= 1);
   }, [analyzedQuestions, retireMap]);
 
-  // ── Active pool (exclude retired questions, only after first pass) ───────────
-  // In spicy cycle mode, the pool is narrowed to one skill at a time.
+  // ── Active pool (exclude retired + quarantined questions) ───────────────────
+  // When a follow-up is active, the pool is narrowed to that skill.
+  // Quarantined (Redemption) questions are ALWAYS excluded regardless of first-pass state.
   const activePool = useMemo(() => {
     let base = analyzedQuestions;
-    if (spicyCycleMode && currentSpicySkillId) {
-      const skillPool = analyzedQuestions.filter(q => q.skillId === currentSpicySkillId);
-      // If no questions exist for this skill, skip it gracefully by using the full pool
+    if (followUpSkillId) {
+      const skillPool = analyzedQuestions.filter(q => q.skillId === followUpSkillId);
       base = skillPool.length > 0 ? skillPool : analyzedQuestions;
+    }
+    // Always exclude quarantined questions
+    if (redemptionBlacklistIds && redemptionBlacklistIds.size > 0) {
+      base = base.filter(q => !redemptionBlacklistIds.has(q.id));
     }
     if (!firstPassComplete) return base;
     const active = base.filter(q => !retireMap[q.id]?.retired);
     return active.length > 0 ? active : base;
-  }, [analyzedQuestions, retireMap, firstPassComplete, spicyCycleMode, currentSpicySkillId]);
+  }, [analyzedQuestions, retireMap, firstPassComplete, followUpSkillId, redemptionBlacklistIds]);
 
   // ── Pool exhaustion: reset when every question in the pool is retired ────────
   useEffect(() => {
@@ -374,7 +335,7 @@ export default function PracticeSession({
   // ── Initialize with first question ──────────────────────────────────────────
   useEffect(() => {
     if (!currentQuestion && activePool.length > 0) {
-      const next = selectNextQuestion(userProfile, activePool, questionHistory);
+      const next = selectNextQuestion(userProfile, activePool, questionHistory, redemptionBlacklistIds);
       if (next) {
         setCurrentQuestion(next);
         const letters = next.options ? next.options.map(o => o.letter) : Object.keys(next.choices || {});
@@ -385,7 +346,21 @@ export default function PracticeSession({
   }, [activePool]);
 
   const loadNextQuestion = () => {
-    const next = selectNextQuestion(userProfile, activePool, questionHistory);
+    // ── Hint → Redemption quarantine on transition ──────────────────────────
+    // If the departing question had a hint used, move it to Redemption now.
+    // Guard: only fire once per question to prevent double-fire from rerenders.
+    if (currentQuestion && hintUsedIds.has(currentQuestion.id)) {
+      if (!hintRedemptionFiredRef.current.has(currentQuestion.id)) {
+        hintRedemptionFiredRef.current.add(currentQuestion.id);
+        onHintRedemption?.(currentQuestion.id, currentQuestion.skillId ?? null);
+        setRedemptionToast(
+          'This question has been moved to Redemption. It won\'t appear in normal practice until you answer it correctly 3 times in a Redemption Round.'
+        );
+        setTimeout(() => setRedemptionToast(null), 6000);
+      }
+    }
+
+    const next = selectNextQuestion(userProfile, activePool, questionHistory, redemptionBlacklistIds);
     if (next) {
       setCurrentQuestion(next);
       const letters = next.options ? next.options.map(o => o.letter) : Object.keys(next.choices || {});
@@ -516,8 +491,10 @@ export default function PracticeSession({
       }
 
       // ── Redemption Rounds integration ────────────────────────────────────
-      // Only applies to non-hint submissions (hint answers are already excluded
-      // from skill scoring and should not pollute the redemption bank either).
+      // Non-hint wrong answers: track toward 3-miss threshold (hook handles it).
+      // Non-hint answers: count toward credit (20 = 1 credit).
+      // Hint-used questions: excluded here — they enter Redemption via
+      // onHintRedemption in loadNextQuestion() on transition to next question.
       const wasHintUsedForRedemption = hintUsedIds.has(currentQuestion.id);
       if (!wasHintUsedForRedemption) {
         if (!isCorrect && onWrongAnswer) {
@@ -527,7 +504,35 @@ export default function PracticeSession({
       }
 
       setQuestionHistory(prev => [...prev, currentQuestion.id]);
-      if (spicyCycleMode) advanceSpicyCycle();
+
+      // ── Follow-up question system ─────────────────────────────────────────
+      const skillId = currentQuestion.skillId;
+      if (skillId && !hintUsedIds.has(currentQuestion.id)) {
+        if (isCorrect) {
+          // Correct answer — clear any follow-up state for this skill
+          setSkillWrongStreak(prev => ({ ...prev, [skillId]: 0 }));
+          if (followUpSkillId === skillId) setFollowUpSkillId(null);
+          prevDistractorNoteRef.current = null;
+        } else {
+          // Wrong answer — increment streak and queue a follow-up
+          const newStreak2 = (skillWrongStreak[skillId] ?? 0) + 1;
+          setSkillWrongStreak(prev => ({ ...prev, [skillId]: newStreak2 }));
+          if (newStreak2 >= 3) {
+            // 3 consecutive wrongs — flag the domain and stop follow-up loop
+            const domainId = currentQuestion.domains?.[0];
+            if (domainId != null) {
+              setDomainWarnings(prev => new Set(prev).add(domainId));
+            }
+            setFollowUpSkillId(null);
+            prevDistractorNoteRef.current = null;
+          } else {
+            // Queue follow-up from this skill
+            setFollowUpSkillId(skillId);
+            prevDistractorNoteRef.current = currentDistractorNote;
+          }
+        }
+      }
+
       setShowFeedback(true);
 
       if (logResponse) {
@@ -614,6 +619,23 @@ export default function PracticeSession({
   return (
     <div className="mx-auto max-w-5xl space-y-6">
 
+      {/* ── Redemption quarantine toast ───────────────────────────────────────── */}
+      {redemptionToast && (
+        <div className="animate-in fade-in slide-in-from-top-2 duration-300 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800 flex items-start gap-3">
+          <RotateCcw className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
+          <div>
+            <p className="font-bold">Moved to Redemption</p>
+            <p className="mt-1 text-xs leading-relaxed text-amber-700">{redemptionToast}</p>
+          </div>
+          <button
+            onClick={() => setRedemptionToast(null)}
+            className="ml-auto shrink-0 text-amber-400 hover:text-amber-600"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* ── Session Header ────────────────────────────────────────────────────── */}
       <div className="editorial-surface flex items-center justify-between gap-4 p-5">
         <div className="flex items-center gap-5 flex-wrap">
@@ -624,32 +646,22 @@ export default function PracticeSession({
             </span>
           </div>
 
-          {/* Correct / Wrong / Overconfident — hidden in spicy new-user mode */}
-          {!hideSummary && (
-            <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
-              <span className="text-emerald-700">Correct: {sessionStats.correct}</span>
-              <span className="text-rose-600">Wrong: {sessionStats.wrong}</span>
-              {sessionStats.highConfidenceWrong > 0 && (
-                <span
-                  className="text-amber-700"
-                  title={`Answered wrong despite selecting ${getConfidenceDisplayLabel('high')} - worth extra review`}
-                >
-                  Overconfident: {sessionStats.highConfidenceWrong}
-                </span>
-              )}
-            </div>
-          )}
+          {/* Correct / Wrong / Overconfident */}
+          <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
+            <span className="text-emerald-700">Correct: {sessionStats.correct}</span>
+            <span className="text-rose-600">Wrong: {sessionStats.wrong}</span>
+            {sessionStats.highConfidenceWrong > 0 && (
+              <span
+                className="text-amber-700"
+                title={`Answered wrong despite selecting ${getConfidenceDisplayLabel('high')} - worth extra review`}
+              >
+                Overconfident: {sessionStats.highConfidenceWrong}
+              </span>
+            )}
+          </div>
 
-          {/* Spicy mode indicator */}
-          {spicyCycleMode && (
-            <div className="flex items-center gap-2 text-xs text-amber-700">
-              <Flame className="h-3.5 w-3.5" />
-              <span className="font-medium">Skill {(spicyCycleIndex % spicySkillIds.length) + 1} of {spicySkillIds.length}</span>
-            </div>
-          )}
-
-          {/* All-time cumulative % — hidden in hideSummary mode */}
-          {!hideSummary && allTimePct !== null && (
+          {/* All-time cumulative % */}
+          {allTimePct !== null && (
             <div className="hidden items-center gap-1.5 border-l border-slate-200 pl-4 sm:flex">
               <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">All-time</span>
               <span className={`text-sm font-bold ${pctColor}`}>{allTimePct}%</span>
@@ -723,12 +735,17 @@ export default function PracticeSession({
       </div>
 
       {/* ── Skill Help Drawer ─────────────────────────────────────────────────── */}
-      {practiceSkillId && (
+      {/* Rendered whenever a module link is clicked (skill or domain practice). */}
+      {(practiceSkillId || drawerTargetModuleId) && (
         <SkillHelpDrawer
-          skillId={practiceSkillId}
-          skillLabel={skillLabel}
+          skillId={drawerSkillId}
+          skillLabel={drawerSkillLabel}
+          initialModuleId={drawerTargetModuleId}
           isOpen={helpDrawerOpen}
-          onClose={() => setHelpDrawerOpen(false)}
+          onClose={() => {
+            setHelpDrawerOpen(false);
+            setDrawerTargetModuleId(null);
+          }}
           userId={user?.id ?? null}
         />
       )}
@@ -742,6 +759,48 @@ export default function PracticeSession({
           </span>
         </div>
       )}
+
+      {/* ── Domain Warning — 3 consecutive wrongs on a skill ─────────────────── */}
+      {domainWarnings.size > 0 && (() => {
+        const warnedDomainIds = Array.from(domainWarnings);
+        return (
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-rose-200 bg-rose-50 px-4 py-3 duration-300">
+            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-rose-600 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-rose-800">This domain needs extra attention.</p>
+              <p className="mt-0.5 text-xs text-rose-700">
+                You've missed the same skill three times in a row.{' '}
+                {warnedDomainIds.length === 1 && (() => {
+                  const d = getProgressDomainDefinition(warnedDomainIds[0]);
+                  return d ? `Focus your next study session on ${d.name}.` : 'Consider reviewing your study guide for this domain.';
+                })()}
+              </p>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── Follow-up tip banner (shown on 2nd attempt after a wrong answer) ── */}
+      {followUpSkillId && !showFeedback && (() => {
+        const streak = skillWrongStreak[followUpSkillId] ?? 0;
+        if (streak < 1) return null;
+        const tip = streak >= 2 && prevDistractorNoteRef.current
+          ? prevDistractorNoteRef.current
+          : null;
+        return (
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 duration-300">
+            <Lightbulb className="h-4 w-4 flex-shrink-0 text-amber-600 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-800">
+                {streak >= 2 ? 'One more look — here\'s what tripped you up:' : 'Second chance — read carefully.'}
+              </p>
+              {tip && (
+                <p className="mt-1 text-xs leading-relaxed text-amber-700">{tip}</p>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── Struggling Skill Alert ───────────────────────────────────────────── */}
       {(() => {
@@ -874,9 +933,8 @@ export default function PracticeSession({
             moduleRefs={currentQuestion.moduleRefs}
             mode="hint"
             onDismiss={() => setHintOpenForQuestion(null)}
-            onOpenModule={(_mid) => {
-              // Open the full module in the skill help drawer if available,
-              // otherwise just close the hint (module navigation is handled by the app shell)
+            onOpenModule={(mid) => {
+              setDrawerTargetModuleId(mid);
               setHelpDrawerOpen(true);
             }}
           />
@@ -918,7 +976,10 @@ export default function PracticeSession({
                 moduleId={currentQuestion.primaryModuleId ?? null}
                 moduleRefs={currentQuestion.moduleRefs}
                 mode="feedback"
-                onOpenModule={(_mid) => setHelpDrawerOpen(true)}
+                onOpenModule={(mid) => {
+                  setDrawerTargetModuleId(mid);
+                  setHelpDrawerOpen(true);
+                }}
               />
             )}
 

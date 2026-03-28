@@ -17,7 +17,7 @@ Three practice modes:
 - By Skill: Target a specific skill (sorted weakest to strongest)
 - Learning Path: A visual node map ordered by your weakest skills, with lessons + practice in a 3-section flow (Lesson → Practice Questions → Extend)
 
-Feeling Spicy mode: Quick recalibration — one question per skill, cycling through all 45. Good for daily warmups.
+Random Questions: Adaptive practice based on your level of need — good for daily warmups and broad review.
 
 PROGRESS:
 Detailed breakdown of every skill and domain. Shows accuracy, attempt count, and proficiency level (Emerging / Approaching / Demonstrating).

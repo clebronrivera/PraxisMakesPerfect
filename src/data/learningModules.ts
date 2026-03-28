@@ -1251,3 +1251,15 @@ export function getAllModulesForSkill(skillId: string): LearningModule[] {
 export function getModuleIdsForSkill(skillId: string): string[] {
   return SKILL_MODULE_MAP[skillId] ?? [];
 }
+
+/**
+ * Reverse lookup: given a module ID, returns the first skill that maps to it.
+ * Useful for opening the SkillHelpDrawer from a module reference when no
+ * practiceSkillId is available (e.g., domain practice mode).
+ */
+export function getSkillForModule(moduleId: string): string | null {
+  for (const [skillId, moduleIds] of Object.entries(SKILL_MODULE_MAP)) {
+    if (moduleIds.includes(moduleId)) return skillId;
+  }
+  return null;
+}

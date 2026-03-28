@@ -26,6 +26,7 @@ import {
   CONTENT_CLUSTER_LABELS,
 } from '../types/studyPlanTypes';
 import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
+import { toMetadataId } from '../data/skillIdMap';
 
 // ─── Response shape expected from the caller ──────────────────────────────────
 
@@ -236,7 +237,7 @@ function retrieveSkillContent(skillIds: string[]): {
   const laws: string[]     = [];
 
   for (const id of skillIds) {
-    const meta = getSkillMetadataV1(id);
+    const meta = getSkillMetadataV1(id) ?? getSkillMetadataV1(toMetadataId(id) ?? '');
     if (!meta) continue;
     vocab.push(...meta.vocabulary);
     misc.push(...meta.commonMisconceptions);
@@ -268,7 +269,7 @@ export function buildPrecomputedClusters(
   // Group by cluster
   const byCluster = new Map<ContentCluster, StudentSkillState[]>();
   for (const state of active) {
-    const meta = getSkillMetadataV1(state.skillId);
+    const meta = getSkillMetadataV1(state.skillId) ?? getSkillMetadataV1(toMetadataId(state.skillId) ?? '');
     if (!meta) continue;
     const cluster = meta.contentCluster;
     const list = byCluster.get(cluster) ?? [];
@@ -278,7 +279,7 @@ export function buildPrecomputedClusters(
 
   // Also include mastered clusters at "maintain" level if they have near_mastery skills
   for (const state of skillStates.filter(s => s.status === "near_mastery")) {
-    const meta = getSkillMetadataV1(state.skillId);
+    const meta = getSkillMetadataV1(state.skillId) ?? getSkillMetadataV1(toMetadataId(state.skillId) ?? '');
     if (!meta) continue;
     if (!byCluster.has(meta.contentCluster)) {
       byCluster.set(meta.contentCluster, [state]);

@@ -413,9 +413,13 @@ export default function LoginScreen() {
                   <span className="editorial-pill">Learning path</span>
                 </div>
 
-                <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => focusAccountPanel('login')}
+                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500 cursor-pointer hover:border-amber-300 hover:text-amber-700 transition-colors"
+                >
                   Sign in to continue
-                </div>
+                </button>
               </div>
             </div>
           </header>

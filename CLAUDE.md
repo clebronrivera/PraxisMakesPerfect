@@ -57,6 +57,8 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | `POST /api/admin-delete-user` | POST | ✅ | Delete all app data for a user |
 | `GET /api/admin-student-detail?userId=<uuid>` | GET | ✅ | All `responses` rows for one user (for Student Detail Drawer) |
 | `GET /api/admin-item-analysis` | GET | ✅ | Psychometric stats across all questions (p-value, discrimination, distractor freqs) |
+| `GET /api/admin-chat-activity` | GET | ✅ | Latest 200 AI Tutor sessions with user names and artifact counts |
+| `GET /api/admin-chat-activity?sessionId=<uuid>` | GET | ✅ | Full conversation for one AI Tutor session (messages, artifacts, metadata) |
 
 **All endpoints require `SUPABASE_SERVICE_ROLE_KEY`** (JWT `eyJ...` from Supabase → Settings → API → `service_role`). They gracefully degrade on raw Vite (port 5173) — the admin dashboard shows a clear error message. Run `netlify dev` (port 8888) for full functionality.
 
@@ -70,6 +72,7 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | Question Reports | Per-question issue reports with severity triage |
 | Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
 | Item Analysis | Psychometric quality metrics for the 466-question bank (p-value, discrimination, distractor analysis) |
+| AI Tutor | AI Tutor chat sessions — session list with user/type/message count/artifacts, drill into full conversation with intent badges and inline artifact cards, CSV export |
 
 ### Student Detail Drawer
 
@@ -238,22 +241,38 @@ Logic in `src/components/PracticeSession.tsx` — `advanceSpicyCycle()`.
 
 ---
 
-## Redemption Rounds
+## Redemption Rounds (v2 — Quarantine System)
 
-Focused review mode for missed practice questions. Lives in `src/hooks/useRedemptionRounds.ts` (hook) and `src/components/RedemptionRoundSession.tsx` (UI). Wired in `App.tsx`.
+Quarantine loop for hinted and repeatedly-missed practice questions. Lives in `src/hooks/useRedemptionRounds.ts` (hook) and `src/components/RedemptionRoundSession.tsx` (UI). Wired in `App.tsx`.
+
+### Entry Rules
+- **3rd wrong answer total** on a question across all sessions → quarantined (tracked via `wrong_count` column + `increment_wrong_count` RPC)
+- **Hint used** on a practice question → quarantined immediately on transition to next question
+- **Scope:** Practice by skill, practice by domain, learning path mini-quiz. Does NOT apply to AI tutor quiz or vocabulary quiz (generated questions, no stable IDs).
+
+### Quarantine Behavior
+- `in_redemption = true` is the **single source of truth** for quarantine status
+- Quarantined questions are excluded from ALL normal practice pools via ID-based blacklist in `useAdaptiveLearning.ts` (`redemptionBlacklistIds` param) and `PracticeSession.tsx` (`activePool` filter)
+- Quarantined questions only appear inside Redemption Rounds until cleared
+
+### Clearance Rule
+- 3 correct answers inside Redemption Rounds → cleared (`redeemed = true`, `in_redemption = false`)
+- No confidence shortcuts. No instant redemption. Always 3 correct.
 
 ### Key Constants
-- **Credit threshold:** 20 non-hint practice answers = 1 credit — `src/hooks/useRedemptionRounds.ts` ~line 104 (`Math.floor(newCount / 20)`)
-- **Timer per question:** 90 seconds — `src/components/RedemptionRoundSession.tsx` ~line 21 (`const SECONDS_PER_QUESTION = 90`)
+- **Credit threshold:** 20 non-hint practice answers = 1 credit
+- **Timer per question:** 90 seconds
+- **Miss threshold:** 3 wrong answers total to enter quarantine
+- **Clearance threshold:** 3 correct answers in Redemption to clear
 
-### Redemption Criteria (in `recordRoundResult`)
-- `Sure` + correct → redeemed immediately (1 correct is enough)
-- `Unsure` / `Guess` + correct → redeemed when `correct_count` reaches 3 across multiple rounds
-- Incorrect answers: no effect on `correct_count`; question stays in bank
+### Credit System
+- 1 credit = 1 full pass through the entire Redemption bank (all quarantined questions)
+- Not one question, not one attempt — one full cycle
 
 ### Database Tables
-- `practice_missed_questions` — one row per `(user_id, question_id)`. Columns: `user_id`, `question_id`, `skill_id`, `correct_count`, `redeemed`, `redeemed_at`. Upsert with `onConflict: 'ignore'` so re-missing the same question is a no-op.
+- `practice_missed_questions` — one row per `(user_id, question_id)`. Columns: `user_id`, `question_id`, `skill_id`, `wrong_count`, `entry_reason` (`'hint'` | `'miss_threshold'`), `in_redemption`, `correct_count`, `redeemed`, `redeemed_at`. Uses atomic `increment_wrong_count` RPC for miss tracking.
 - `redemption_sessions` — one row per completed round. Columns: `user_id`, `questions_attempted`, `questions_correct`, `score_pct`.
+- Migration: `0013_redemption_v2.sql` adds `wrong_count`, `entry_reason`, `in_redemption` columns + RPC function.
 
 ### Profile Fields (stored via `useFirebaseProgress`)
 - `practiceQuestionsSinceCredit` — counter toward next credit; resets to remainder after credit awarded
@@ -262,10 +281,19 @@ Focused review mode for missed practice questions. Lives in `src/hooks/useRedemp
 
 ### Hook Integration
 - `useRedemptionRounds` initialized in `App.tsx` with `user?.id`, `profile`, `updateProfile`
-- Returns: `bankCount`, `credits`, `questionsToNextCredit`, `highScore`, `addToMissedBank`, `handleAnswerSubmitted`, `startRound`, `recordRoundResult`
-- On wrong answer in `PracticeSession` → `redemption.addToMissedBank(questionId, skillId)`
-- On every non-hint answer in `PracticeSession` → `redemption.handleAnswerSubmitted()`
-- **Hint answers are excluded** from the credit counter
+- Returns: `bankCount`, `redemptionBlacklistIds`, `credits`, `questionsToNextCredit`, `highScore`, `addToMissedBankForMiss`, `addToMissedBankForHint`, `handleAnswerSubmitted`, `startRound`, `recordRoundResult`
+- On non-hint wrong answer in `PracticeSession` → `redemption.addToMissedBankForMiss(questionId, skillId)` (RPC increments `wrong_count`; quarantines at 3)
+- On hint-used question transition to next → `redemption.addToMissedBankForHint(questionId, skillId)` (immediate quarantine)
+- On every non-hint answer in `PracticeSession` → `redemption.handleAnswerSubmitted()` (credit counter)
+- `LearningPathModulePage` quiz wrong answers also call `addToMissedBankForMiss`
+- **Hint answers are excluded** from the credit counter and wrong-answer tracking
+
+### Mixed Path Edge Case
+When a question has prior misses and then a hint is used:
+- `wrong_count` is preserved (not reset)
+- `entry_reason` is updated to `'hint'`
+- `in_redemption` is set to `true` immediately
+- Example: wrong twice (wrong_count=2) → hint → result: `wrong_count=2, entry_reason='hint', in_redemption=true`
 
 ### Schema Version
 
@@ -286,6 +314,8 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0000` – `0003` | Core tables (users, responses, assessments, study plans) |
 | `0004_assessment_reset_archive.sql` | Archive table for admin assessment resets |
 | `0005_module_interactions.sql` | `module_visit_sessions`, `section_interactions`, `learning_path_progress` — module engagement tracking with RLS |
+| `0009_redemption_rounds.sql` | `practice_missed_questions`, `redemption_sessions`, user_progress credit columns |
+| `0013_redemption_v2.sql` | Adds `wrong_count`, `entry_reason`, `in_redemption` columns + `increment_wrong_count` RPC to `practice_missed_questions` |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 
@@ -316,7 +346,7 @@ Unlock logic is in `App.tsx` (~lines 315–322). Both paths feed into the same `
 
 ## Social Proof Header Widgets
 
-Two engagement indicators live in the authenticated header (`App.tsx`). Both are **client-side only** — no backend calls, no real data.
+Two engagement indicators live in the authenticated header (`App.tsx`).
 
 ### Users Online Pill
 
@@ -325,16 +355,22 @@ Two engagement indicators live in the authenticated header (`App.tsx`). Both are
 - **When count = 0:** pill turns grey, dot stops pinging (dead-quiet look for 2–3am)
 - **Range map highlights:** 2–3am = `[0,0]`; 7–8pm = `[5,10]`; 9am–11am = `[3,7]`
 - **Do not remove the `getHourRange` function or the drift `useEffect`** — they are the entire mechanism
+- **Data:** Client-side only, no backend calls, no real data
 
 ### Leaderboard Widget
 
-- **Location:** `App.tsx` — `FAKE_STUDENTS`, `seedLbScores`, `lbScores`/`lbOpen`/`lbMode` state
+- **Location:** `src/hooks/useLeaderboard.ts` (hook) + `App.tsx` (UI) + `api/leaderboard.ts` (Netlify function)
 - **Trigger:** Trophy icon button in header → absolute-positioned popover
 - **3 modes:** Questions Answered (default) · Engagement Time · Skills to Mastery
-- **Live ticks:** Random student bumped every 8–15s via interval; `lbTick` state highlights the row briefly
-- **Data:** All seeded on mount from fixed ranges; reseeds on every page load
+- **Data:** **Real user data** from the database. The Netlify function queries `user_progress` and `responses` via service role key, computes all-time stats per user, and returns anonymized initials.
+- **Metrics:** Questions = `total_questions_seen`; Time = SUM of `time_on_item_seconds` (converted to minutes); Mastery = 45 minus count of skills ≥ 80% accuracy
+- **Initials:** Derived from `display_name` → `email` fallback (e.g., "Veronica Rivera" → "V.R.")
+- **Auth:** Any authenticated user can call `GET /api/leaderboard` (not admin-only). Requires `SUPABASE_SERVICE_ROLE_KEY` on the server to bypass RLS for cross-user reads.
+- **Refresh:** Fetches on mount, then every 5 minutes via `setInterval`
+- **Current user:** Highlighted with indigo styling and "You" badge. If outside top 12, appended at the bottom with their actual rank.
+- **Fallback:** Shows "Leaderboard unavailable" on error, "Loading…" while fetching, "No activity yet" if no users have data.
 
-**These features are internal social-proof mechanics. Keep implementation details out of any user-facing or public documentation.**
+**The Users Online pill is an internal social-proof mechanic (fake data). The leaderboard uses real data. Keep implementation details out of any user-facing or public documentation.**
 
 ---
 
