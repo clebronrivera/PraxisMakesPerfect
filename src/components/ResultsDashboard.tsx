@@ -2,12 +2,14 @@
 // Progress page — pure analytics. No practice entry points.
 
 import { useMemo, useState } from 'react';
-import { Check, ChevronDown, ChevronUp, Clock } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Clock, Lightbulb } from 'lucide-react';
 import type { Skill } from '../types/content';
 import type { UserProfile } from '../hooks/useFirebaseProgress';
+import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
 import { PROFICIENCY_META } from '../utils/skillProficiency';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
+import { buildConceptAnalytics, type ConceptAnalyticsReport } from '../utils/conceptAnalytics';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -31,6 +33,7 @@ interface ResultsDashboardProps {
   fullAssessmentUnlocked: boolean;
   hasScreenerReport?: boolean;
   onViewScreenerReport?: () => void;
+  analyzedQuestions?: AnalyzedQuestion[];
   // Kept for App.tsx compatibility — not used in UI (pure analytics page)
   onStartPractice?: (domainId?: number) => void;
   onStartSkillPractice?: (skillId: string) => void;
@@ -163,9 +166,11 @@ export default function ResultsDashboard({
   fullAssessmentUnlocked,
   hasScreenerReport,
   onViewScreenerReport,
+  analyzedQuestions,
 }: ResultsDashboardProps) {
   const [expandedDomains, setExpandedDomains] = useState<Set<number>>(new Set()); // all collapsed by default
   const [advancedExpanded, setAdvancedExpanded] = useState(false);
+  const [conceptsExpanded, setConceptsExpanded] = useState(false);
 
   // ── Progress data ───────────────────────────────────────────────────────────
   const progress = useMemo(
@@ -211,6 +216,40 @@ export default function ResultsDashboard({
 
     return { rawPct, weightedPct, delta, highWrong };
   }, [userProfile.skillScores]);
+
+  // ── Concept analytics ──────────────────────────────────────────────────────
+  const conceptReport: ConceptAnalyticsReport | null = useMemo(() => {
+    if (!analyzedQuestions || analyzedQuestions.length === 0) return null;
+
+    // Build UserResponse[] from profile's skillScores.attemptHistory
+    const responses: Array<{
+      questionId: string;
+      selectedAnswers: string[];
+      correctAnswers: string[];
+      isCorrect: boolean;
+      timeSpent: number;
+      confidence: 'low' | 'medium' | 'high';
+      timestamp: number;
+    }> = [];
+
+    for (const [, perf] of Object.entries(userProfile.skillScores ?? {})) {
+      if (!perf.attemptHistory) continue;
+      for (const attempt of perf.attemptHistory) {
+        responses.push({
+          questionId: attempt.questionId,
+          selectedAnswers: [],
+          correctAnswers: [],
+          isCorrect: attempt.correct,
+          timeSpent: attempt.timeSpent ?? 0,
+          confidence: attempt.confidence ?? 'medium',
+          timestamp: attempt.timestamp ?? 0,
+        });
+      }
+    }
+
+    if (responses.length === 0) return null;
+    return buildConceptAnalytics(responses, analyzedQuestions);
+  }, [analyzedQuestions, userProfile.skillScores]);
 
   // ── Timeline steps ──────────────────────────────────────────────────────────
   const timelineSteps: TimelineStep[] = [
@@ -453,6 +492,134 @@ export default function ResultsDashboard({
         })}
 
       </div>
+
+      {/* ── Concept insights ─────────────────────────────────────────────────── */}
+      {conceptReport && conceptReport.concepts.length > 0 && (
+        <div className="editorial-surface overflow-hidden">
+          <button
+            onClick={() => setConceptsExpanded(prev => !prev)}
+            className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-[#fbfaf7]"
+          >
+            <div className="flex items-center gap-2">
+              <Lightbulb className="w-3.5 h-3.5 text-cyan-600" />
+              <p className="text-base font-semibold text-slate-900">Concept insights</p>
+              {conceptReport.summary.totalGaps > 0 && (
+                <span className="rounded-full bg-rose-500/15 px-2 py-0.5 text-[11px] font-medium text-rose-500">
+                  {conceptReport.summary.totalGaps} gap{conceptReport.summary.totalGaps !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+            {conceptsExpanded
+              ? <ChevronUp className="w-4 h-4 text-slate-400" />
+              : <ChevronDown className="w-4 h-4 text-slate-400" />}
+          </button>
+
+          {conceptsExpanded && (
+            <div className="space-y-4 border-t border-slate-200 bg-[#fbfaf7] px-4 pb-4 pt-3">
+              <p className="text-[11px] text-slate-400 leading-snug">
+                Vocabulary concepts that appear across multiple questions. Gaps indicate terms you may need to study further — they recur in questions you&apos;re getting wrong.
+              </p>
+
+              {/* Cross-skill gaps (highest signal) */}
+              {conceptReport.crossSkillGaps.length > 0 && (
+                <div>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-rose-600">
+                    Cross-skill vocabulary gaps
+                  </p>
+                  <p className="mb-2 text-[11px] text-slate-400 leading-snug">
+                    These concepts are weak across multiple skills — likely a foundational vocabulary gap.
+                  </p>
+                  <div className="space-y-1.5">
+                    {conceptReport.crossSkillGaps.slice(0, 8).map(gap => (
+                      <div key={gap.concept} className="flex items-center justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-700 truncate">{gap.concept}</p>
+                          <p className="text-[11px] text-slate-400 truncate">
+                            Weak in {gap.affectedSkills.length} skills: {gap.affectedSkills.join(', ')}
+                          </p>
+                        </div>
+                        <span className="shrink-0 text-sm font-bold tabular-nums text-rose-600">
+                          {Math.round(gap.accuracy * 100)}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Top gap concepts */}
+              {conceptReport.gapConcepts.length > 0 && (
+                <div>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-amber-700">
+                    Weakest concepts
+                  </p>
+                  <div className="space-y-1.5">
+                    {conceptReport.gapConcepts.slice(0, 10).map(c => (
+                      <div key={c.concept} className="flex items-center justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-slate-700 truncate">{c.concept}</p>
+                          <p className="text-[11px] text-slate-400">
+                            {c.correct}/{c.attempted} correct · {c.relatedSkills.length} skill{c.relatedSkills.length !== 1 ? 's' : ''}
+                            {c.trend !== 'insufficient' && ` · ${c.trend}`}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="w-16 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-rose-400"
+                              style={{ width: `${Math.round(c.accuracy * 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-bold tabular-nums text-rose-600 w-10 text-right">
+                            {Math.round(c.accuracy * 100)}%
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Strength concepts */}
+              {conceptReport.strengthConcepts.length > 0 && (
+                <div>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-emerald-600">
+                    Strongest concepts
+                  </p>
+                  <div className="space-y-1.5">
+                    {conceptReport.strengthConcepts.slice(0, 5).map(c => (
+                      <div key={c.concept} className="flex items-center justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-slate-700 truncate">{c.concept}</p>
+                          <p className="text-[11px] text-slate-400">
+                            {c.correct}/{c.attempted} correct · {c.relatedSkills.length} skill{c.relatedSkills.length !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="w-16 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-emerald-400"
+                              style={{ width: `${Math.round(c.accuracy * 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-bold tabular-nums text-emerald-600 w-10 text-right">
+                            {Math.round(c.accuracy * 100)}%
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Summary line */}
+              <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-200">
+                {conceptReport.summary.totalConceptsTested} concepts tested · {conceptReport.summary.totalGaps} gap{conceptReport.summary.totalGaps !== 1 ? 's' : ''} · {conceptReport.summary.totalStrengths} strength{conceptReport.summary.totalStrengths !== 1 ? 's' : ''} · {conceptReport.summary.totalCrossSkillGaps} cross-skill gap{conceptReport.summary.totalCrossSkillGaps !== 1 ? 's' : ''}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── Advanced statistics ──────────────────────────────────────────────── */}
       <div className="editorial-surface overflow-hidden">

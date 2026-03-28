@@ -1638,6 +1638,7 @@ function PraxisStudyAppContent() {
           <ResultsDashboard
             userProfile={profile}
             skills={fetchedSkills}
+            analyzedQuestions={analyzedQuestions}
             onStartPractice={startPractice}
             onStartSkillPractice={startSkillPractice}
             fullAssessmentUnlocked={Boolean(profile.fullAssessmentComplete)}
