@@ -274,7 +274,7 @@ Quarantine loop for hinted and repeatedly-missed practice questions. Lives in `s
 - `redemption_sessions` — one row per completed round. Columns: `user_id`, `questions_attempted`, `questions_correct`, `score_pct`.
 - Migration: `0013_redemption_v2.sql` adds `wrong_count`, `entry_reason`, `in_redemption` columns + RPC function.
 
-### Profile Fields (stored via `useFirebaseProgress`)
+### Profile Fields (stored via `useProgressTracking`)
 - `practiceQuestionsSinceCredit` — counter toward next credit; resets to remainder after credit awarded
 - `redemptionCredits` — available credits
 - `redemptionHighScore` — personal best score percentage
