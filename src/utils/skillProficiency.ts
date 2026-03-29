@@ -12,11 +12,20 @@ export type SkillProficiencyLevel = 'proficient' | 'approaching' | 'emerging' | 
 export const DEMONSTRATING_THRESHOLD = 0.8;
 export const APPROACHING_THRESHOLD = 0.6;
 
-/** Return the proficiency tier from a skill's accuracy score and attempt count. */
-export function getSkillProficiency(score: number, attempts: number): SkillProficiencyLevel {
+/**
+ * Return the proficiency tier from a skill's accuracy score and attempt count.
+ * When weightedAccuracy is provided (real confidence-weighted data), it takes
+ * precedence over the raw score. Falls back to raw score for legacy data.
+ */
+export function getSkillProficiency(
+  score: number,
+  attempts: number,
+  weightedAccuracy?: number,
+): SkillProficiencyLevel {
   if (attempts === 0) return 'unstarted';
-  if (score >= DEMONSTRATING_THRESHOLD) return 'proficient';
-  if (score >= APPROACHING_THRESHOLD) return 'approaching';
+  const effective = weightedAccuracy ?? score;
+  if (effective >= DEMONSTRATING_THRESHOLD) return 'proficient';
+  if (effective >= APPROACHING_THRESHOLD) return 'approaching';
   return 'emerging';
 }
 

@@ -45,7 +45,7 @@ import {
 } from '../utils/userSessionStorage';
 import { isStoredScreenerSessionType } from '../utils/sessionTypes';
 import { isScreenerQuestionCount } from '../utils/assessmentConstants';
-import type { UserProfile } from './useFirebaseProgress';
+import type { UserProfile } from './useProgressTracking';
 import type { AssessmentReportType } from '../types/assessment';
 
 // ─── Types ────────────────────────────────────────────────────────────────────

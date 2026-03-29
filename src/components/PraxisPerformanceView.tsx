@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp, BarChart3, AlertTriangle } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
-import { UserProfile } from '../hooks/useFirebaseProgress';
+import { UserProfile } from '../hooks/useProgressTracking';
 import { getDomainColor } from '../utils/domainColors';
 import { getDomainLabel } from '../utils/domainLabels';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';

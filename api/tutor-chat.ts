@@ -6,10 +6,10 @@ import { createClient } from '@supabase/supabase-js';
 import type {
   TutorChatRequest,
   TutorChatResponse,
-  ClaudeResponseShape,
   TutorIntent,
   TutorUserContext,
 } from '../src/types/tutorChat';
+import { parseClaudeResponse } from './parseClaude';
 import { classifyIntent } from '../src/utils/tutorIntentClassifier';
 import { buildTutorContext, formatContextForPrompt } from '../src/utils/tutorContextBuilder';
 import { selectQuizQuestion, evaluateQuizAnswer } from '../src/utils/tutorQuizEngine';
@@ -98,69 +98,7 @@ function json(statusCode: number, body: unknown) {
   };
 }
 
-// ─── JSON parse with fallback repair ─────────────────────────────────────────
-
-function parseClaudeResponse(raw: string): ClaudeResponseShape {
-  // Strip markdown fences if present
-  let cleaned = raw.trim().replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
-
-  // Find first { and last }
-  const first = cleaned.indexOf('{');
-  const last = cleaned.lastIndexOf('}');
-  if (first !== -1 && last > first) {
-    cleaned = cleaned.slice(first, last + 1);
-  }
-
-  try {
-    const parsed = JSON.parse(cleaned);
-
-    // Normalize artifact type: Claude sometimes uses underscores, wrong names, or wraps
-    // everything in a "study_activity" envelope. Convert to canonical hyphen-separated types.
-    let artifact = parsed.artifact || undefined;
-    if (artifact?.type) {
-      const CANONICAL: Record<string, string> = {
-        'fill_in_blank':       'fill-in-blank',
-        'fill-in-blank':       'fill-in-blank',
-        'matching_activity':   'matching-activity',
-        'matching-activity':   'matching-activity',
-        'vocabulary_list':     'vocabulary-list',
-        'vocabulary-list':     'vocabulary-list',
-        'practice_set':        'practice-set',
-        'practice-set':        'practice-set',
-        'weak_areas_summary':  'weak-areas-summary',
-        'weak-areas-summary':  'weak-areas-summary',
-      };
-
-      // Handle "study_activity" / "study-activity" wrapper Claude sometimes emits
-      // where the real type is nested in payload.activityType
-      const rawType = String(artifact.type).toLowerCase().replace(/_/g, '-');
-      if (rawType === 'study-activity' && artifact.payload?.activityType) {
-        const inner = String(artifact.payload.activityType).toLowerCase().replace(/_/g, '-');
-        artifact = { type: CANONICAL[inner] || inner, payload: artifact.payload };
-      } else {
-        const canonical = CANONICAL[String(artifact.type).toLowerCase().replace(/_/g, '-')];
-        if (canonical) artifact = { ...artifact, type: canonical };
-      }
-    }
-
-    const followUps = Array.isArray(parsed.suggestedFollowUps) && parsed.suggestedFollowUps.length > 0
-      ? parsed.suggestedFollowUps
-      : ['Quiz me', 'What are my weakest areas?', 'Explain a concept'];
-
-    return {
-      content: parsed.content || '',
-      suggestedFollowUps: followUps,
-      poseQuestion: parsed.poseQuestion || undefined,
-      artifact,
-    };
-  } catch {
-    // Fallback: treat entire response as content
-    return {
-      content: raw.trim(),
-      suggestedFollowUps: ['Tell me more', 'Quiz me', 'What should I focus on?'],
-    };
-  }
-}
+// parseClaudeResponse is imported from ./parseClaude
 
 // ─── Activity artifact helpers ────────────────────────────────────────────────
 
@@ -704,10 +642,12 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
       remediationSkillId,
     );
 
-    // 11. Build messages for Claude
+    // 11. Build messages for Claude (filter out null/empty content)
     const claudeMessages: { role: string; content: string }[] = [];
     for (const msg of conversationHistory) {
-      claudeMessages.push({ role: msg.role, content: msg.content });
+      if (msg.content && msg.content.trim().length > 0) {
+        claudeMessages.push({ role: msg.role, content: msg.content });
+      }
     }
     claudeMessages.push({ role: 'user', content: body.message });
 
@@ -854,7 +794,9 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
 
     // Add quiz question data if posing a question
     if (quizQuestion) {
-      const correctParts = (quizQuestion.correct_answer || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+      const correctParts = quizQuestion.correct_answer
+        ? quizQuestion.correct_answer.split(',').map((s: string) => s.trim()).filter(Boolean)
+        : [];
       response.quizQuestion = {
         questionId: quizQuestion.id,
         skillId: quizQuestion.skillId,

@@ -1,4 +1,4 @@
-import type { UserProfile } from '../hooks/useFirebaseProgress';
+import type { UserProfile } from '../hooks/useProgressTracking';
 import type { UserProfileData } from '../components/OnboardingFlow';
 
 function numToStr(n: number | undefined): string {

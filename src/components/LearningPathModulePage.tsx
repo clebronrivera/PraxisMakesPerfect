@@ -49,7 +49,7 @@ import type { InteractiveResult } from '../hooks/useModuleVisitTracking';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
-import type { UserProfile } from '../hooks/useFirebaseProgress';
+import type { UserProfile } from '../hooks/useProgressTracking';
 import type { StudyPlanDocumentV2 } from '../types/studyPlanTypes';
 import { useFocusItems } from '../hooks/useFocusItems';
 import { FocusItemsPanel } from './FocusItemGroup';

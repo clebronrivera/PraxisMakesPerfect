@@ -21,7 +21,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../config/supabase';
-import type { UserProfile } from './useFirebaseProgress';
+import type { UserProfile } from './useProgressTracking';
 
 export interface MissedQuestion {
   id: string;            // row UUID in practice_missed_questions

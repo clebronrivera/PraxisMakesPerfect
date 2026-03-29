@@ -23,7 +23,7 @@ import type { LearningPathSkillRecord, LearningPathStatus } from '../hooks/useLe
 import { getPrimaryModuleForSkill } from '../data/learningModules';
 import { getSkillProficiency, PROFICIENCY_META } from '../utils/skillProficiency';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
-import type { UserProfile } from '../hooks/useFirebaseProgress';
+import type { UserProfile } from '../hooks/useProgressTracking';
 
 interface SkillNode {
   skillId: string;
@@ -134,7 +134,7 @@ function buildNodes(
       const perf = profile.skillScores?.[skill.skillId];
       const attempts = perf?.attempts ?? 0;
       const score = attempts > 0 ? (perf?.score ?? 0) : null;
-      const overallTier = getSkillProficiency(score ?? 0, attempts);
+      const overallTier = getSkillProficiency(score ?? 0, attempts, perf?.weightedAccuracy);
       const lp = lpProgress[skill.skillId];
       const primaryModule = getPrimaryModuleForSkill(skill.skillId);
 

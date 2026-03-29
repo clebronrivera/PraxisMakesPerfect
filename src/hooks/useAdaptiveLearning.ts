@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import type { SkillPerformance } from '../brain/learning-state';
-import { UserProfile } from './useFirebaseProgress';
+import { UserProfile } from './useProgressTracking';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import { CONTENT_POLICY } from '../config/content-policy';
 import { ACTIVE_LAUNCH_FEATURES } from '../utils/launchConfig';

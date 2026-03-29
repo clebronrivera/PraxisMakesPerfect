@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react';
 import { Check, ChevronDown, ChevronUp, Clock, Lightbulb } from 'lucide-react';
 import type { Skill } from '../types/content';
-import type { UserProfile } from '../hooks/useFirebaseProgress';
+import type { UserProfile } from '../hooks/useProgressTracking';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
 import { PROFICIENCY_META } from '../utils/skillProficiency';

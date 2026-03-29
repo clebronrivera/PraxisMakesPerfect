@@ -26,7 +26,7 @@ export const PRODUCT_TERMINOLOGY: Record<ProductTermId, ProductTermDefinition> =
     codeAnchors: [
       'src/utils/assessment-builder.ts',
       'src/components/ScreenerAssessment.tsx',
-      'src/hooks/useFirebaseProgress.ts',
+      'src/hooks/useProgressTracking.ts',
       'src/components/ScreenerResults.tsx'
     ]
   },

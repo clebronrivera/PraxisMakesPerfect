@@ -153,6 +153,7 @@ For every one of the 45 skills:
 - **Confidence signals** — whether answers are chosen confidently or appear to be guesses
 - **Distractor patterns** — which wrong answer keeps getting selected (reveals specific misconceptions)
 - **Trend** — improving or declining over time (requires at least 6 attempts to calculate)
+- **Spaced repetition schedule** — the system internally calculates when each skill is next due for review, using a Leitner box algorithm (5 levels, intervals of 1 / 3 / 7 / 14 / 30 days). This data is collected now and will surface as a Review Suggestions feature in a future update. It does not currently affect practice queuing or any visible badge.
 
 ### The 6 Skill Status Labels
 Each skill is assigned one of six status labels, calculated by hard rules — not AI opinion:
@@ -178,9 +179,9 @@ Separate from the internal status labels, the app shows three simplified levels 
 | **Emerging** | < 60% | Foundational gaps are still getting in the way, so targeted remediation is needed before performance is consistent |
 | **Not started** | 0 attempts | No data yet |
 
-**Important:** Proficiency tiers (Emerging / Approaching / Demonstrating) are calculated from **raw accuracy only** — the simple percentage of correct answers. Confidence ratings do not affect these badges.
+**Important:** Proficiency tiers (Emerging / Approaching / Demonstrating) are calculated from **confidence-weighted accuracy** when available — a score that penalizes high-confidence wrong answers more heavily than low-confidence ones (answering "Sure" and getting it wrong counts against you more than a "Guess" that is wrong). For skills where no per-answer confidence history has been recorded yet (legacy data or brand-new accounts), raw accuracy is used as a fallback. The thresholds are the same either way: ≥ 80% = Demonstrating, 60–79% = Approaching, < 60% = Emerging.
 
-A separate **confidence-adjusted accuracy** metric is available in the Advanced Statistics section of the Progress page. This score penalizes high-confidence wrong answers more heavily (answering "Sure" and getting it wrong counts against you more than a "Guess" that is wrong). A large gap between raw and confidence-adjusted accuracy is a signal that misconceptions — not just knowledge gaps — are present. This metric is supplemental and does not change the proficiency tier calculation.
+This means a large gap between how confidently you answer and whether you are actually correct will be reflected in your proficiency tier — not just in a supplemental statistics panel. Answering correctly but always with low confidence keeps your effective score slightly lower than raw accuracy alone would suggest. Answering incorrectly with high confidence (a misconception signal) pulls the effective score down more sharply.
 
 ### Readiness Target
 70% of all 45 skills must reach Demonstrating (≥ 80% accuracy) for overall exam readiness. That's 32 out of 45 skills.

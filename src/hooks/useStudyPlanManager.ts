@@ -20,7 +20,7 @@ import {
   getStudyPlanHistory,
 } from '../services/studyPlanService';
 import type { Domain, Skill } from '../types/content';
-import type { UserProfile } from './useFirebaseProgress';
+import type { UserProfile } from './useProgressTracking';
 
 interface UseStudyPlanManagerOptions {
   user: User | null;

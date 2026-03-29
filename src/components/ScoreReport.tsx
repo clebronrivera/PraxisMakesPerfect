@@ -4,7 +4,7 @@ import { detectWeaknesses, UserResponse } from '../brain/weakness-detector';
 import { AnalyzedQuestion, getQuestionIdentifierLabel, getQuestionPrompt } from '../brain/question-analyzer';
 import { getDomainColor } from '../utils/domainColors';
 import { getDomainLabel } from '../utils/domainLabels';
-import { useFirebaseProgress } from '../hooks/useFirebaseProgress';
+import { useProgressTracking } from '../hooks/useProgressTracking';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
 import { loadSession, clearSession } from '../utils/sessionStorage';
@@ -37,7 +37,7 @@ export default function ScoreReport({
   const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
 
 
-  const { profile } = useFirebaseProgress();
+  const { profile } = useProgressTracking();
   const hideRetake = Boolean(profile.screenerComplete && profile.fullAssessmentComplete);
 
   // Safety check: Handle missing or corrupted data
