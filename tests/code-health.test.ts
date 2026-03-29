@@ -13,7 +13,7 @@ import { ERROR_LIBRARY } from '../src/brain/error-library';
 import { FRAMEWORK_STEPS } from '../src/brain/framework-definitions';
 import { calculateGlobalScoresFromData } from '../src/utils/globalScoreCalculator';
 import { normalizeStudyInputs } from '../src/services/studyPlanService';
-import type { UserProfile } from '../src/hooks/useFirebaseProgress';
+import type { UserProfile } from '../src/hooks/useProgressTracking';
 import type { EngineConfig } from '../src/types/engine';
 import { getTeachingContext } from '../src/components/TeachMode';
 

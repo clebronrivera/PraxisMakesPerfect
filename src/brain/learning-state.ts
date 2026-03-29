@@ -69,9 +69,13 @@ export interface SkillPerformance {
   history: boolean[];         // Last 5 results (true=correct)
   learningState: LearningState;
   masteryDate?: number;       // Timestamp when mastery was first reached
-  attemptHistory?: SkillAttempt[]; // Raw attempt history (bounded to last 50-100)
+  attemptHistory?: SkillAttempt[]; // Raw attempt history (bounded to last 20)
   weightedAccuracy?: number;  // Confidence-weighted accuracy
-  confidenceFlags?: number;    // Count of high+wrong (misconceptions)
+  confidenceFlags?: number;   // Count of high+wrong (misconceptions)
+  // SRS fields (shadow mode — written but not yet read by UI)
+  srsBox?: number;            // Leitner box 0-4
+  nextReviewDate?: string;    // ISO date-only "YYYY-MM-DD"
+  lastReviewDate?: string;    // ISO date-only "YYYY-MM-DD"
 }
 
 /**

@@ -10,56 +10,55 @@ interface ArtifactCardProps {
   payload: Record<string, unknown>;
 }
 
+/** Safely extract an array field from payload. Returns [] if missing or wrong type. */
+function safeArray<T>(value: unknown): T[] {
+  return Array.isArray(value) ? (value as T[]) : [];
+}
+
 // ─── Markdown export ──────────────────────────────────────────────────────────
 
 function artifactToMarkdown(type: string, payload: Record<string, unknown>): string {
   const lines: string[] = [`# ${formatType(type)}`, ''];
 
   if (type === 'vocabulary-list') {
-    const terms = payload.terms as Array<{ term: string; definition: string }> | undefined;
-    if (terms) {
-      for (const t of terms) {
-        lines.push(`**${t.term}**: ${t.definition}`, '');
-      }
+    const terms = safeArray<{ term: string; definition: string }>(payload.terms);
+    for (const t of terms) {
+      lines.push(`**${t.term}**: ${t.definition}`, '');
     }
   } else if (type === 'weak-areas-summary') {
-    const skills = payload.skills as Array<{ skillId: string; skillName: string; accuracy: number; note?: string }> | undefined;
-    if (skills) {
-      for (const s of skills) {
-        lines.push(`## ${s.skillName} (${s.skillId})`);
-        lines.push(`Accuracy: ${Math.round(s.accuracy * 100)}%`);
-        if (s.note) lines.push(s.note);
-        lines.push('');
-      }
+    const skills = safeArray<{ skillId: string; skillName: string; accuracy: number; note?: string }>(payload.skills);
+    for (const s of skills) {
+      lines.push(`## ${s.skillName} (${s.skillId})`);
+      lines.push(`Accuracy: ${Math.round(s.accuracy * 100)}%`);
+      if (s.note) lines.push(s.note);
+      lines.push('');
     }
   } else if (type === 'practice-set') {
-    const qs = payload.questions as PracticeSetQuestion[] | undefined;
-    if (qs) {
-      qs.forEach((q, i) => {
-        lines.push(`## Question ${i + 1} — ${q.skillName}`, '');
-        lines.push(q.stem, '');
-        q.choices.forEach(c => lines.push(`${c.label}. ${c.text}`));
-        lines.push('', `**Correct Answer:** ${q.correctAnswer}`, '');
-        if (q.explanation) lines.push(`*${q.explanation}*`, '');
-        lines.push('---', '');
-      });
-    }
+    const qs = safeArray<PracticeSetQuestion>(payload.questions);
+    qs.forEach((q, i) => {
+      lines.push(`## Question ${i + 1} — ${q.skillName}`, '');
+      lines.push(q.stem, '');
+      if (Array.isArray(q.choices)) q.choices.forEach(c => lines.push(`${c.label}. ${c.text}`));
+      lines.push('', `**Correct Answer:** ${q.correctAnswer}`, '');
+      if (q.explanation) lines.push(`*${q.explanation}*`, '');
+      lines.push('---', '');
+    });
   } else if (type === 'fill-in-blank') {
-    const sentences = payload.sentences as FillInBlankSentence[] | undefined;
-    const wordBank = payload.wordBank as string[] | undefined;
-    if (wordBank) lines.push(`**Word Bank:** ${wordBank.join(' | ')}`, '');
-    if (sentences && sentences.length > 0) {
+    const sentences = safeArray<FillInBlankSentence>(payload.sentences);
+    const wordBank = safeArray<string>(payload.wordBank);
+    if (wordBank.length > 0) lines.push(`**Word Bank:** ${wordBank.join(' | ')}`, '');
+    if (sentences.length > 0) {
       sentences.forEach((s, i) => {
         lines.push(`${i + 1}. ${s.text}`);
       });
       lines.push('', '### Answer Key');
       sentences.forEach((s, i) => lines.push(`${i + 1}. ${s.answer}`));
-    } else if (wordBank) {
+    } else if (wordBank.length > 0) {
       lines.push('*(Sentences not available — use the word bank above to create fill-in-the-blank sentences for each term.)*');
     }
   } else if (type === 'matching-activity') {
-    const pairs = payload.pairs as MatchingPair[] | undefined;
-    if (pairs) {
+    const pairs = safeArray<MatchingPair>(payload.pairs);
+    if (pairs.length > 0) {
       lines.push('**Match each term with its definition.**', '');
       lines.push('**Terms:**');
       pairs.forEach((p, i) => lines.push(`${i + 1}. ${p.term}`));
@@ -98,34 +97,34 @@ function buildPrintHtml(type: string, payload: Record<string, unknown>, title: s
   let body = '';
 
   if (type === 'practice-set') {
-    const qs = payload.questions as PracticeSetQuestion[] | undefined;
-    body = (qs || []).map((q, i) => `
+    const qs = safeArray<PracticeSetQuestion>(payload.questions);
+    body = qs.map((q, i) => `
       <div class="question">
         <p class="qnum">Question ${i + 1} <span class="skill">${q.skillName}</span></p>
         <p class="stem">${q.stem}</p>
         <ul class="choices">
-          ${q.choices.map(c => `<li><span class="label">${c.label}.</span> ${c.text}</li>`).join('')}
+          ${Array.isArray(q.choices) ? q.choices.map(c => `<li><span class="label">${c.label}.</span> ${c.text}</li>`).join('') : ''}
         </ul>
         <p class="answer">Answer: ___</p>
       </div>`).join('');
   } else if (type === 'fill-in-blank') {
-    const sentences = payload.sentences as FillInBlankSentence[] | undefined;
-    const wordBank = payload.wordBank as string[] | undefined;
+    const sentences = safeArray<FillInBlankSentence>(payload.sentences);
+    const wordBank = safeArray<string>(payload.wordBank);
     body = `
       <div class="word-bank">
-        <strong>Word Bank:</strong> ${(wordBank || []).map(w => `<span>${w}</span>`).join(', ')}
+        <strong>Word Bank:</strong> ${wordBank.map(w => `<span>${w}</span>`).join(', ')}
       </div>
       <ol class="sentences">
-        ${(sentences || []).map(s => `<li>${s.text.replace('___', '<span class="blank">___________</span>')}</li>`).join('')}
+        ${sentences.map(s => `<li>${String(s.text || '').replace('___', '<span class="blank">___________</span>')}</li>`).join('')}
       </ol>`;
   } else if (type === 'matching-activity') {
-    const pairs = payload.pairs as MatchingPair[] | undefined;
-    const shuffled = pairs ? [...pairs].sort(() => Math.random() - 0.5) : [];
+    const pairs = safeArray<MatchingPair>(payload.pairs);
+    const shuffled = [...pairs].sort(() => Math.random() - 0.5);
     body = `
       <table class="match-table">
         <thead><tr><th>#</th><th>Term</th><th>Letter</th><th>Definition</th></tr></thead>
         <tbody>
-          ${(pairs || []).map((p, i) => `
+          ${pairs.map((p, i) => `
             <tr>
               <td>${i + 1}.</td>
               <td class="term">${p.term}</td>
@@ -196,26 +195,11 @@ interface MatchingPair {
 // ─── Empty-state detection ───────────────────────────────────────────────────
 
 function isArtifactEmpty(type: string, payload: Record<string, unknown>): boolean {
-  if (type === 'practice-set') {
-    const qs = payload.questions as unknown[] | undefined;
-    return !qs || qs.length === 0;
-  }
-  if (type === 'fill-in-blank') {
-    const sentences = payload.sentences as unknown[] | undefined;
-    return !sentences || sentences.length === 0;
-  }
-  if (type === 'matching-activity') {
-    const pairs = payload.pairs as unknown[] | undefined;
-    return !pairs || pairs.length === 0;
-  }
-  if (type === 'vocabulary-list') {
-    const terms = payload.terms as unknown[] | undefined;
-    return !terms || terms.length === 0;
-  }
-  if (type === 'weak-areas-summary') {
-    const skills = payload.skills as unknown[] | undefined;
-    return !skills || skills.length === 0;
-  }
+  if (type === 'practice-set') return safeArray(payload.questions).length === 0;
+  if (type === 'fill-in-blank') return safeArray(payload.sentences).length === 0;
+  if (type === 'matching-activity') return safeArray(payload.pairs).length === 0;
+  if (type === 'vocabulary-list') return safeArray(payload.terms).length === 0;
+  if (type === 'weak-areas-summary') return safeArray(payload.skills).length === 0;
   return false;
 }
 
@@ -232,7 +216,7 @@ function EmptyArtifactNotice({ type }: { type: string }) {
 
 function PracticeSetRenderer({ payload }: { payload: Record<string, unknown> }) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
-  const qs = (payload.questions as PracticeSetQuestion[]) || [];
+  const qs = safeArray<PracticeSetQuestion>(payload.questions);
 
   if (qs.length === 0) return <EmptyArtifactNotice type="practice-set" />;
 
@@ -274,8 +258,8 @@ function PracticeSetRenderer({ payload }: { payload: Record<string, unknown> }) 
 }
 
 function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) {
-  const sentences = (payload.sentences as FillInBlankSentence[]) || [];
-  const wordBank = (payload.wordBank as string[]) || [];
+  const sentences = safeArray<FillInBlankSentence>(payload.sentences);
+  const wordBank = safeArray<string>(payload.wordBank);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
   if (sentences.length === 0) return <EmptyArtifactNotice type="fill-in-blank" />;
@@ -325,7 +309,7 @@ function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) 
 }
 
 function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
-  const pairs = (payload.pairs as MatchingPair[]) || [];
+  const pairs = safeArray<MatchingPair>(payload.pairs);
 
   if (pairs.length === 0) return <EmptyArtifactNotice type="matching-activity" />;
 
@@ -430,11 +414,11 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
   };
 
   const handlePrint = () => {
-    const title = (payload.title as string) || formatType(type);
+    const title = (typeof payload.title === 'string' ? payload.title : '') || formatType(type);
     printArtifact(type, payload, title);
   };
 
-  const label = (payload.title as string) || formatType(type);
+  const label = (typeof payload.title === 'string' ? payload.title : '') || formatType(type);
   const isPrintable = ['practice-set', 'fill-in-blank', 'matching-activity'].includes(type);
 
   return (
@@ -466,32 +450,38 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
         )}
       </div>
 
-      {type === 'vocabulary-list' && (
-        <div className="space-y-2">
-          {(payload.terms as Array<{ term: string; definition: string }> || []).slice(0, 5).map((t, i) => (
-            <div key={i} className="text-sm">
-              <span className="font-semibold text-amber-900">{t.term}: </span>
-              <span className="text-amber-800">{t.definition}</span>
-            </div>
-          ))}
-          {(payload.terms as unknown[])?.length > 5 && (
-            <p className="text-xs text-amber-700">+ {(payload.terms as unknown[]).length - 5} more in download</p>
-          )}
-        </div>
-      )}
+      {type === 'vocabulary-list' && (() => {
+        const terms = safeArray<{ term: string; definition: string }>(payload.terms);
+        return (
+          <div className="space-y-2">
+            {terms.slice(0, 5).map((t, i) => (
+              <div key={i} className="text-sm">
+                <span className="font-semibold text-amber-900">{t.term}: </span>
+                <span className="text-amber-800">{t.definition}</span>
+              </div>
+            ))}
+            {terms.length > 5 && (
+              <p className="text-xs text-amber-700">+ {terms.length - 5} more in download</p>
+            )}
+          </div>
+        );
+      })()}
 
-      {type === 'weak-areas-summary' && (
-        <div className="space-y-1.5">
-          {(payload.skills as Array<{ skillId: string; skillName: string; accuracy: number }> || []).slice(0, 4).map((s, i) => (
-            <div key={i} className="flex items-center justify-between text-sm">
-              <span className="text-amber-900">{s.skillName}</span>
-              <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-medium">
-                {Math.round(s.accuracy * 100)}%
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+      {type === 'weak-areas-summary' && (() => {
+        const skills = safeArray<{ skillId: string; skillName: string; accuracy: number }>(payload.skills);
+        return (
+          <div className="space-y-1.5">
+            {skills.slice(0, 4).map((s, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <span className="text-amber-900">{s.skillName}</span>
+                <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-medium">
+                  {Math.round(s.accuracy * 100)}%
+                </span>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
       {type === 'practice-set' && <PracticeSetRenderer payload={payload} />}
       {type === 'fill-in-blank' && <FillInBlankRenderer payload={payload} />}

@@ -8,7 +8,7 @@ import {
   getQuestionPrompt,
   getQuestionRationale
 } from '../brain/question-analyzer';
-import { UserProfile } from '../hooks/useFirebaseProgress';
+import { UserProfile } from '../hooks/useProgressTracking';
 import DiagnosticFeedback from './DiagnosticFeedback';
 import { useEngine } from '../hooks/useEngine';
 import {

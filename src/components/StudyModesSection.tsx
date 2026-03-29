@@ -39,7 +39,7 @@ import {
 import SkillHelpDrawer from './SkillHelpDrawer';
 import LearningPathNodeMap from './LearningPathNodeMap';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
-import type { UserProfile } from '../hooks/useFirebaseProgress';
+import type { UserProfile } from '../hooks/useProgressTracking';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -102,7 +102,7 @@ function buildDomainStats(profile: UserProfile): DomainStat[] {
 
     for (const s of skills) {
       const perf = profile.skillScores?.[s.skillId];
-      const tier = getSkillProficiency(perf?.score ?? 0, perf?.attempts ?? 0);
+      const tier = getSkillProficiency(perf?.score ?? 0, perf?.attempts ?? 0, perf?.weightedAccuracy);
       if (tier === 'proficient') demonstratingCount++;
       else if (tier === 'approaching') approachingCount++;
       else if (tier === 'emerging') emergingCount++;
@@ -146,7 +146,7 @@ function buildAllSkillRows(profile: UserProfile): SkillRow[] {
         fullLabel: s.fullLabel,
         score,
         attempts,
-        tier: getSkillProficiency(score ?? 0, attempts),
+        tier: getSkillProficiency(score ?? 0, attempts, perf?.weightedAccuracy),
       });
     }
   }
@@ -515,7 +515,7 @@ export default function StudyModesSection({
 
   // ── Readiness bar ────────────────────────────────────────────────────────
   const demonstratingCount = allEntries.filter(
-    ([, p]) => getSkillProficiency(p.score ?? 0, p.attempts ?? 0) === 'proficient'
+    ([, p]) => getSkillProficiency(p.score ?? 0, p.attempts ?? 0, p.weightedAccuracy) === 'proficient'
   ).length;
   const readinessBarPct = Math.min(Math.round((demonstratingCount / READINESS_TARGET) * 100), 100);
 

@@ -27,7 +27,7 @@ const TutorChatPage = lazy(() => import('./src/components/TutorChatPage').then(m
 const FloatingTutorWidget = lazy(() => import('./src/components/FloatingTutorWidget').then(m => ({ default: m.FloatingTutorWidget })));
 
 // Import hooks
-import { useFirebaseProgress } from './src/hooks/useFirebaseProgress';
+import { useProgressTracking } from './src/hooks/useProgressTracking';
 import { useAdaptiveLearning } from './src/hooks/useAdaptiveLearning';
 import { clearSession } from './src/utils/sessionStorage';
 import { getCurrentSession, loadUserSession } from './src/utils/userSessionStorage';
@@ -77,7 +77,7 @@ function PraxisStudyAppContent() {
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();
   const { questions: fetchedQuestions, isLoading: contentLoading, domains: fetchedDomains, skills: fetchedSkills } = useContent();
-  const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, isLoaded } = useFirebaseProgress();
+  const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, isLoaded } = useProgressTracking();
   const { selectNextQuestion } = useAdaptiveLearning();
   const [canonicalQuestions, setCanonicalQuestions] = useState<any[]>([]);
   const [canonicalLoading, setCanonicalLoading] = useState(true);

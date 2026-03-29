@@ -8,7 +8,7 @@ import { ErrorExplanation, FrameworkStepGuidance } from './error-library';
 import { matchDistractorPattern } from './distractor-matcher';
 import { SkillId } from './skill-map';
 import { LearningState, SkillPerformance, checkPrerequisitesMet } from './learning-state';
-import { UserProfile } from '../hooks/useFirebaseProgress';
+import { UserProfile } from '../hooks/useProgressTracking';
 import { EngineConfig } from '../types/engine';
 
 export interface FrameworkGuidance {

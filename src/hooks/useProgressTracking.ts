@@ -1,7 +1,6 @@
-// src/hooks/useFirebaseProgress.ts
+// src/hooks/useProgressTracking.ts
 // Supabase-backed progress hook.
-// The filename is kept as-is to avoid updating 10+ imports across the app,
-// but all internals use Supabase exclusively — Firebase/Firestore is not used.
+// All internals use Supabase exclusively — Firebase/Firestore is not used.
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
@@ -17,6 +16,7 @@ import {
 } from '../brain/learning-state';
 import { UserResponse } from '../brain/weakness-detector';
 import { calculateAndSaveGlobalScores } from '../utils/globalScoreCalculator';
+import { calculateSrsUpdate } from '../utils/srsEngine';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import type {
   AssessmentReportType,
@@ -153,7 +153,7 @@ const defaultProfile: UserProfile = {
   redemptionHighScore: 0,
 };
 
-export function useFirebaseProgress() {
+export function useProgressTracking() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile>(defaultProfile);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -561,15 +561,19 @@ export function useFirebaseProgress() {
     const newConsecutiveCorrect = isCorrect ? baseSkill.consecutiveCorrect + 1 : 0;
     const newHistory = [...baseSkill.history, isCorrect].slice(-5);
     
-    const recentAttempts: SkillAttempt[] = newHistory.map((correct, idx) => ({
-      questionId: questionId || `unknown-${Date.now()}-${idx}`,
-      correct,
-      confidence: confidence,
+    // Append a real attempt with this answer's actual confidence/timestamp (cap at 20)
+    const newAttempt: SkillAttempt = {
+      questionId: questionId || `unknown-${Date.now()}`,
+      correct: isCorrect,
+      confidence,
       timestamp: Date.now(),
-      timeSpent: timeSpent || 0
-    }));
-    const weightedAccuracy = calculateWeightedAccuracy(recentAttempts);
-    const confidenceFlags = countConfidenceFlags(recentAttempts);
+      timeSpent: timeSpent || 0,
+    };
+    const prevAttemptHistory = baseSkill.attemptHistory ?? [];
+    const newAttemptHistory = [...prevAttemptHistory, newAttempt].slice(-20);
+
+    const weightedAccuracy = calculateWeightedAccuracy(newAttemptHistory);
+    const confidenceFlags = countConfidenceFlags(newAttemptHistory);
     
     const updatedSkill: SkillPerformance = {
       ...baseSkill,
@@ -578,6 +582,7 @@ export function useFirebaseProgress() {
       correct: newCorrect,
       consecutiveCorrect: newConsecutiveCorrect,
       history: newHistory,
+      attemptHistory: newAttemptHistory,
       weightedAccuracy,
       confidenceFlags
     };
@@ -595,7 +600,14 @@ export function useFirebaseProgress() {
     }
     
     updatedSkill.learningState = newState;
-    
+
+    // SRS shadow write — compute and persist, nothing reads these yet
+    const today = new Date().toISOString().slice(0, 10);
+    const srs = calculateSrsUpdate(updatedSkill.srsBox, isCorrect, today);
+    updatedSkill.srsBox = srs.newBox;
+    updatedSkill.nextReviewDate = srs.nextReviewDate;
+    updatedSkill.lastReviewDate = srs.lastReviewDate;
+
     const newProfile = {
       ...latestProfile,
       skillScores: {

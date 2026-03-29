@@ -4,7 +4,7 @@ import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
 // Removed UserResponse import
-import { UserProfile } from '../hooks/useFirebaseProgress';
+import { UserProfile } from '../hooks/useProgressTracking';
 import {
   AnalyzedQuestion,
   getQuestionCorrectAnswers,

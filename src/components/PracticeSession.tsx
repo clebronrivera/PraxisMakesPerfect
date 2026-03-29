@@ -8,7 +8,7 @@ import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
 import { matchDistractorPattern } from '../brain/distractor-matcher';
-import { UserProfile } from '../hooks/useFirebaseProgress';
+import { UserProfile } from '../hooks/useProgressTracking';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
 import {
   AnalyzedQuestion,

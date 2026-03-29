@@ -16,6 +16,7 @@ export interface Skill {
   conceptLabel?: string;
   prerequisites?: string[]; // IDs of prerequisite skills
   prerequisiteReasoning?: string;
+  knowledgeType?: 'definition' | 'procedure' | 'concept-relationship' | 'application';
 }
 
 export interface Option {

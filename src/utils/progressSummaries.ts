@@ -47,8 +47,8 @@ export interface ProgressSummary {
   weakestDomainId: PraxisDomainId | null;
 }
 
-function getColorState(score: number | null, attempted: number): SkillColorState {
-  const tier = getSkillProficiency(score ?? 0, attempted);
+function getColorState(score: number | null, attempted: number, weightedAccuracy?: number): SkillColorState {
+  const tier = getSkillProficiency(score ?? 0, attempted, weightedAccuracy);
 
   switch (tier) {
     case 'unstarted':
@@ -105,7 +105,7 @@ function buildSkillSummary(
   const attempted = performance?.attempts ?? 0;
   const correct = performance?.correct ?? 0;
   const score = attempted > 0 ? correct / attempted : null;
-  const colorState = getColorState(score, attempted);
+  const colorState = getColorState(score, attempted, performance?.weightedAccuracy);
   const prerequisiteInfo = getPrerequisiteNames(skillId, allSkills);
 
   return {
