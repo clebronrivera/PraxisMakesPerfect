@@ -54,6 +54,8 @@ import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
 import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
 import { buildProgressSummary } from './src/utils/progressSummaries';
 import { PROFICIENCY_META } from './src/utils/skillProficiency';
+import { buildAssessmentReportModel } from './src/utils/assessmentReport';
+import { buildDiagnosticSummary } from './src/utils/diagnosticSelectors';
 import { onboardingFormToSavePayload } from './src/utils/onboardingFormToSavePayload';
 import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
@@ -307,6 +309,26 @@ function PraxisStudyAppContent() {
     () => buildProgressSummary(profile.skillScores, fetchedSkills),
     [fetchedSkills, profile.skillScores]
   );
+
+  // Build unified DiagnosticSummary for ScoreReport after a full/adaptive assessment.
+  // Omits conceptAnalytics (App.tsx does not compute it at this level — ResultsDashboard
+  // runs it independently). conceptGaps/crossSkillConceptGaps/conceptSummary will be null.
+  const diagnosticSummary = useMemo(() => {
+    if (
+      lastAssessmentType === 'screener' ||
+      lastAssessmentResponses.length === 0 ||
+      fullAssessmentQuestions.length === 0
+    ) {
+      return undefined;
+    }
+    const report = buildAssessmentReportModel(
+      lastAssessmentResponses,
+      fullAssessmentQuestions,
+      fetchedDomains,
+      fetchedSkills,
+    );
+    return buildDiagnosticSummary(report, profile);
+  }, [lastAssessmentResponses, fullAssessmentQuestions, fetchedDomains, fetchedSkills, profile, lastAssessmentType]);
 
   // Tutor page context — passed to FloatingTutorWidget so it knows what the user is viewing
   const tutorPageContext = useMemo(() => ({
@@ -1574,6 +1596,7 @@ function PraxisStudyAppContent() {
                   responses={lastAssessmentResponses}
                   questions={fullAssessmentQuestions}
                   totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
+                  diagnosticSummary={diagnosticSummary}
                   onStartPractice={startPractice}
                   onRetakeAssessment={() => {
                     // After the user completes both assessments, do not allow any retake path.

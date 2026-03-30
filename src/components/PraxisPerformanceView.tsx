@@ -108,7 +108,7 @@ export default function PraxisPerformanceView({
       });
 
       const overallScore = totalQuestions > 0 ? totalCorrect / totalQuestions : 0;
-      const deficiencyCount = domainScores.filter(d => d.score < 0.6).length;
+      const deficiencyCount = domainScores.filter(d => d.score < APPROACHING_THRESHOLD).length;
       const totalDomainsWithData = domainScores.length;
 
       return {
@@ -404,7 +404,7 @@ export default function PraxisPerformanceView({
           </div>
           <div className="p-4 bg-slate-800/50 rounded-xl text-center">
             <p className="text-2xl font-bold text-emerald-400">
-              {sortedSections.filter(s => s.overallScore >= 0.8).length}
+              {sortedSections.filter(s => s.overallScore >= DEMONSTRATING_THRESHOLD).length}
             </p>
             <p className="text-xs text-slate-500 mt-1">Strong Sections</p>
           </div>
