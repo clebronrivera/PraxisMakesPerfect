@@ -128,6 +128,7 @@ export interface PrecomputedCluster {
   }>;
   retrievedVocabulary: string[];     // from SkillMetadataV1 for skills in this cluster
   retrievedMisconceptions: string[]; // from SkillMetadataV1
+  resolvedMisconceptionIds: string[]; // canonical MisconceptionIds from taxonomy (parallel to retrievedMisconceptions)
   retrievedCaseArchetypes: string[]; // from SkillMetadataV1
   retrievedLawsFrameworks: string[]; // from SkillMetadataV1
   allocatedMinutes: number;          // deterministic from study time budget

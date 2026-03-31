@@ -27,6 +27,7 @@ import {
 } from '../types/studyPlanTypes';
 import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
 import { toMetadataId } from '../data/skillIdMap';
+import { findMisconceptionByText, getMisconceptionsByProgressSkill } from './misconceptionRegistry';
 import {
   computeFragilityFlag,
   computeUncertainSkillFlag,
@@ -249,6 +250,7 @@ function dedup(arr: string[]): string[] {
 function retrieveSkillContent(skillIds: string[]): {
   vocabulary: string[];
   misconceptions: string[];
+  resolvedMisconceptionIds: string[];
   caseArchetypes: string[];
   lawsFrameworks: string[];
 } {
@@ -266,11 +268,30 @@ function retrieveSkillContent(skillIds: string[]): {
     laws.push(...meta.lawsFrameworks);
   }
 
+  const dedupedMisc = dedup(misc).slice(0, 15);
+
+  // Resolve free-text misconceptions to canonical taxonomy IDs.
+  // Uses exact-match bridge since taxonomy entries were derived from the same source text.
+  // Also includes any taxonomy entries found via skill-level lookup that weren't in metadata text.
+  const resolvedIds = new Set<string>();
+  for (const text of dedupedMisc) {
+    const entry = findMisconceptionByText(text);
+    if (entry) resolvedIds.add(entry.id);
+  }
+  // Supplement: taxonomy entries for these skills that may not have exact text matches
+  for (const id of skillIds) {
+    const entries = getMisconceptionsByProgressSkill(id);
+    for (const entry of entries) {
+      resolvedIds.add(entry.id);
+    }
+  }
+
   return {
-    vocabulary:      dedup(vocab).slice(0, 20),
-    misconceptions:  dedup(misc).slice(0, 15),
-    caseArchetypes:  dedup(cases).slice(0, 12),
-    lawsFrameworks:  dedup(laws).slice(0, 8),
+    vocabulary:              dedup(vocab).slice(0, 20),
+    misconceptions:          dedupedMisc,
+    resolvedMisconceptionIds: [...resolvedIds],
+    caseArchetypes:          dedup(cases).slice(0, 12),
+    lawsFrameworks:          dedup(laws).slice(0, 8),
   };
 }
 
@@ -330,10 +351,11 @@ export function buildPrecomputedClusters(
         trend: s.trend,
         fragilityFlag: s.fragilityFlag,
       })),
-      retrievedVocabulary:     content.vocabulary,
-      retrievedMisconceptions: content.misconceptions,
-      retrievedCaseArchetypes: content.caseArchetypes,
-      retrievedLawsFrameworks: content.lawsFrameworks,
+      retrievedVocabulary:       content.vocabulary,
+      retrievedMisconceptions:   content.misconceptions,
+      resolvedMisconceptionIds:  content.resolvedMisconceptionIds,
+      retrievedCaseArchetypes:   content.caseArchetypes,
+      retrievedLawsFrameworks:   content.lawsFrameworks,
       allocatedMinutes: allocation?.allocatedMinutes ?? 0,
     });
   }

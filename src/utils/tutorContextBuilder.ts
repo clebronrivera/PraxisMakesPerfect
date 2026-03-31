@@ -10,6 +10,7 @@ import {
   DEMONSTRATING_THRESHOLD,
   APPROACHING_THRESHOLD,
 } from './skillProficiency';
+import { getMisconceptionsByProgressSkill } from './misconceptionRegistry';
 
 // These types mirror what's stored in user_progress.skill_scores
 interface RawSkillScore {
@@ -106,6 +107,12 @@ export function formatContextForPrompt(ctx: TutorUserContext): string {
       const tentative = s.isTentative ? ` [LOW SAMPLE — only ${s.attempts} attempts]` : '';
       const trend = s.trend !== 'unknown' ? ` | trend: ${s.trend}` : '';
       lines.push(`  - ${s.skillId}: ${s.skillName} — ${Math.round((s.accuracy ?? 0) * 100)}% (${s.attempts} attempts${trend})${tentative}`);
+      // Include top misconceptions from taxonomy for emerging skills
+      const misconceptions = getMisconceptionsByProgressSkill(s.skillId);
+      if (misconceptions.length > 0) {
+        const topMisc = misconceptions.slice(0, 2);
+        lines.push(`    Common misconceptions: ${topMisc.map(m => m.text).join('; ')}`);
+      }
     }
     lines.push('');
   }
