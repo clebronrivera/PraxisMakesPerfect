@@ -5,7 +5,7 @@
 // teachMode        — guided teach-back review mode
 
 export const ACTIVE_LAUNCH_FEATURES = {
-  adaptivePractice: false,
+  adaptivePractice: true,
   teachMode: false,
   studyGuide: false,        // AI study guide — set true when production-ready
   tutorChat: true,          // AI Tutor Chat — enabled for testing
