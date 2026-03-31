@@ -5,6 +5,7 @@ import { UserProfile } from './useProgressTracking';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import { CONTENT_POLICY } from '../config/content-policy';
 import { ACTIVE_LAUNCH_FEATURES } from '../utils/launchConfig';
+import { filterByPreferredTier } from '../utils/questionDifficulty';
 
 export function useAdaptiveLearning() {
   // Question history is managed by components, not the hook
@@ -165,7 +166,16 @@ export function useAdaptiveLearning() {
         if (foundationalCandidates.length > 0) {
           return foundationalCandidates[Math.floor(Math.random() * foundationalCandidates.length)];
         }
-        return skillCandidates[Math.floor(Math.random() * skillCandidates.length)];
+        // Step 8: Difficulty-tier routing — prefer Recall for skills < 40% accuracy,
+        // Application for skills >= 40%. Falls back to full skillCandidates if the
+        // preferred tier has no questions (e.g. skill has only one complexity type).
+        const minSkillAccuracy = Math.min(
+          ...skillCandidates.map(q =>
+            q.skillId ? (profile.skillScores[q.skillId]?.score ?? 0) : 0
+          )
+        );
+        const tieredCandidates = filterByPreferredTier(skillCandidates, minSkillAccuracy);
+        return tieredCandidates[Math.floor(Math.random() * tieredCandidates.length)];
       }
     }
 
