@@ -27,7 +27,7 @@
 import { useState } from 'react';
 import {
   BookOpen, Layers, Lock, Target, TrendingUp,
-  HelpCircle,
+  HelpCircle, RefreshCw,
 } from 'lucide-react';
 import { getDomainColor } from '../utils/domainColors';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
@@ -524,6 +524,12 @@ export default function StudyModesSection({
   ).length;
   const readinessBarPct = Math.min(Math.round((demonstratingCount / READINESS_TARGET) * 100), 100);
 
+  // ── SRS: skills due for review ────────────────────────────────────────
+  const today = new Date().toISOString().slice(0, 10);
+  const srsOverdueCount = allEntries.filter(
+    ([, p]) => p.nextReviewDate && p.nextReviewDate <= today && p.attempts > 0
+  ).length;
+
   const tabs: Array<{
     id: PracticeMode;
     label: string;
@@ -615,6 +621,17 @@ export default function StudyModesSection({
         </div>
         <p className="mt-1.5 text-[11px] text-slate-500">Goal: {READINESS_TARGET} of {TOTAL_SKILLS} skills {PROFICIENCY_META.proficient.label}</p>
       </div>
+
+      {/* ── SRS due-for-review nudge ─────────────────────────────────────── */}
+      {srsOverdueCount > 0 && fullAssessmentComplete && (
+        <div className="flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5">
+          <RefreshCw className="w-3.5 h-3.5 shrink-0 text-violet-600" />
+          <p className="text-sm text-violet-800">
+            <span className="font-semibold">{srsOverdueCount} skill{srsOverdueCount !== 1 ? 's' : ''} due for spaced review</span>
+            {' '}— the adaptive system will prioritize these in today's practice.
+          </p>
+        </div>
+      )}
 
       {/* ── Tab selector ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3">

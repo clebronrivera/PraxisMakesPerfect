@@ -19,6 +19,7 @@ interface RawSkillScore {
   correct: number;
   incorrect: number;
   attemptHistory?: { correct: boolean; timestamp: string }[];
+  nextReviewDate?: string;  // ISO date-only "YYYY-MM-DD" — set by the SRS engine
 }
 
 type SkillScoresMap = Record<string, RawSkillScore>;
@@ -50,6 +51,8 @@ export function buildTutorContext(
   totalQuestionsSeen: number,
   skillScores: SkillScoresMap,
 ): TutorUserContext {
+  const todayStr = new Date().toISOString().slice(0, 10);
+
   const snapshots: TutorSkillSnapshot[] = PROGRESS_SKILLS.map(def => {
     const raw = skillScores[def.skillId];
     const attempts = raw?.attempts ?? 0;
@@ -64,6 +67,7 @@ export function buildTutorContext(
       attempts,
       trend: getTrend(raw?.attemptHistory),
       isTentative: attempts > 0 && attempts < 6,
+      overdueForReview: attempts > 0 && !!raw?.nextReviewDate && raw.nextReviewDate <= todayStr,
     };
   });
 
@@ -106,7 +110,8 @@ export function formatContextForPrompt(ctx: TutorUserContext): string {
     for (const s of ctx.emergingSkills) {
       const tentative = s.isTentative ? ` [LOW SAMPLE — only ${s.attempts} attempts]` : '';
       const trend = s.trend !== 'unknown' ? ` | trend: ${s.trend}` : '';
-      lines.push(`  - ${s.skillId}: ${s.skillName} — ${Math.round((s.accuracy ?? 0) * 100)}% (${s.attempts} attempts${trend})${tentative}`);
+      const overdue = s.overdueForReview ? ' ⟳ overdue for review' : '';
+      lines.push(`  - ${s.skillId}: ${s.skillName} — ${Math.round((s.accuracy ?? 0) * 100)}% (${s.attempts} attempts${trend})${tentative}${overdue}`);
       // Include top misconceptions from taxonomy for emerging skills
       const misconceptions = getMisconceptionsByProgressSkill(s.skillId);
       if (misconceptions.length > 0) {
@@ -121,7 +126,8 @@ export function formatContextForPrompt(ctx: TutorUserContext): string {
     lines.push('APPROACHING SKILLS (close — targeted practice can push these over):');
     for (const s of ctx.approachingSkills.slice(0, 5)) {
       const trend = s.trend !== 'unknown' ? ` | trend: ${s.trend}` : '';
-      lines.push(`  - ${s.skillId}: ${s.skillName} — ${Math.round((s.accuracy ?? 0) * 100)}%${trend}`);
+      const overdue = s.overdueForReview ? ' ⟳ overdue for review' : '';
+      lines.push(`  - ${s.skillId}: ${s.skillName} — ${Math.round((s.accuracy ?? 0) * 100)}%${trend}${overdue}`);
     }
     if (ctx.approachingSkills.length > 5) {
       lines.push(`  ... and ${ctx.approachingSkills.length - 5} more`);

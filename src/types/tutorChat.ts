@@ -120,6 +120,7 @@ export interface TutorSkillSnapshot {
   attempts: number;
   trend: 'improving' | 'declining' | 'stable' | 'unknown';
   isTentative: boolean;         // true if attempts < 6
+  overdueForReview?: boolean;   // true when nextReviewDate is today or in the past
 }
 
 export interface TutorUserContext {
