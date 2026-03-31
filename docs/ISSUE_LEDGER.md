@@ -34,6 +34,42 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-31 - Adaptive Redevelopment Phase 1 complete, adaptive practice still feature-flagged off
+
+- Status: watch
+- Area: Adaptive learning / feature flags
+- Summary: Completed all Phase 1 work (Steps 0-4): signal functions, taxonomy (98 entries / 45 skills), registry wiring, vocab tagging (37 items). Full audit reveals `ACTIVE_LAUNCH_FEATURES.adaptivePractice` is `false` in `launchConfig.ts`, meaning the entire adaptive question selection system (priority scoring from Rules 1+2, domain targeting, foundational question preference, skill weakness targeting) is dead code at runtime. Students get random questions. The SRS engine also persists data on every answer but nothing reads it. Phase 2 plan created with Step 5 (enable adaptive practice) as highest priority.
+- Source of truth: `src/utils/launchConfig.ts` line 8
+- Code anchors:
+  - `src/hooks/useAdaptiveLearning.ts:119-121` — random fallback when flag is false
+  - `src/utils/srsEngine.ts` — full Leitner engine, tested, zero consumers
+  - `src/hooks/useProgressTracking.ts:607-612` — SRS shadow write, "nothing reads these yet"
+- Resolution / next step: Phase 2 Step 5 — flip `adaptivePractice: true` with integration tests. See implementation plan.
+
+---
+
+## 2026-03-31 - resolvedMisconceptionIds computed but dropped from study plan prompt
+
+- Status: open
+- Area: Study plan pipeline
+- Summary: `resolvedMisconceptionIds` is computed in `studyPlanPreprocessor.ts` (via `findMisconceptionByText()` + `getMisconceptionsByProgressSkill()`) and stored on `PrecomputedCluster`, but `studyPlanService.ts` prompt serialization explicitly omits it. The model only sees free-text misconception descriptions, not structured IDs. Phase 2 Step 7a addresses this.
+- Code anchors:
+  - `src/utils/studyPlanPreprocessor.ts:277-294` — computes resolvedMisconceptionIds
+  - `src/services/studyPlanService.ts:266-275` — prompt payload omits the field
+- Resolution / next step: Phase 2 Step 7a — add to prompt serialization.
+
+---
+
+## 2026-03-31 - Vocab tagging complete: 250/250 diagnostic items tagged
+
+- Status: resolved
+- Area: Content / missedConcepts pipeline
+- Summary: All 37 previously-untagged diagnostic items now have vocabulary concept tags. 20 skills affected. ETH-01 had the most untagged items (5), ETH-02 worst by percentage (60% untagged). Pipeline now fires for all 250 diagnostic items.
+- Code anchors: `src/data/question-vocabulary-tags.json`
+- Resolution: Complete. All diagnostic items tagged.
+
+---
+
 ## 2026-03-24 - State contract audit: CAT-4/CAT-3 findings resolved
 
 - Status: resolved

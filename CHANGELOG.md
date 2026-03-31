@@ -7,6 +7,26 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-03-31
+
+### Adaptive Redevelopment — Phase 1 Complete (Steps 0–4)
+
+- **[Refactor — Centralize skill proficiency thresholds]** Replaced hardcoded threshold literals across 6 files with imports from `skillProficiency.ts` (`TOTAL_SKILLS`, `READINESS_TARGET`, `READINESS_GOAL_PCT`). Zero behavior change. — `src/utils/skillProficiency.ts`, `src/components/ScreenerResults.tsx`, `src/components/StudentDetailDrawer.tsx`, `src/components/StudyModesSection.tsx`, `src/utils/scoreReportGenerator.ts`, `src/utils/tutorContextBuilder.ts`, `src/components/ResultsDashboard.tsx`
+- **[Feature — Learning state signals]** Added four new signal functions to `learning-state.ts`: `countRecentHighConfidenceWrong()` (Rule 1: rolling 10-window high-confidence errors), `computeFragilityFlag()` (Rule 2: low-confidence correct ≥50% of last 6), `computeUncertainSkillFlag()` (Rule 5: shadow mode confidence variance), `computeRapidGuessCount()` (shadow mode timing signal, 4s threshold). Wired `recentHighConfidenceWrongCount` into `useProgressTracking` for persistence. Rewrote `calculateSkillPriority()` with additive boost model: +2/+1 for recent high-confidence wrong, +1 for fragility. Added `fragilityFlag` to study plan urgency scoring (+10 points) and prompt instructions. Extracted `buildDiagnosticSummary()` and confidence/time selectors to `diagnosticSelectors.ts`. Added overconfidence interpretation to ResultsDashboard. — `src/brain/learning-state.ts`, `src/hooks/useProgressTracking.ts`, `src/hooks/useAdaptiveLearning.ts`, `src/types/studyPlanTypes.ts`, `src/utils/studyPlanPreprocessor.ts`, `src/services/studyPlanService.ts`, `src/utils/assessmentReport.ts`, `src/utils/diagnosticSelectors.ts`, `src/components/ResultsDashboard.tsx`
+- **[Feature — Misconception taxonomy]** Built misconception taxonomy with 98 entries across 48 metadata skill IDs covering all 45 progress skills. Defined type system (`MisconceptionEntry`, `MisconceptionFamily` ×8, `PatternId` ×28) and registry utility functions (`getMisconceptionById`, `getMisconceptionsBySkill`, `getMisconceptionsByFamily`, `getMisconceptionsByPatternId`). All `questionIds[]` remain empty pending distractor content authoring (0% valid coverage confirmed by audit). — `src/types/misconception.ts`, `src/data/misconception-taxonomy.ts`, `src/utils/misconceptionRegistry.ts`
+- **[Feature — Wire registry into pipelines]** Added `findMisconceptionByText()` (O(1) text bridge) and `getMisconceptionsByProgressSkill()` (cross-ID-system lookup) to the registry. Enriched `retrieveSkillContent()` in study plan preprocessor to resolve free-text misconceptions to canonical `MisconceptionId`s alongside strings. Added `resolvedMisconceptionIds` field to `PrecomputedCluster`. Injected top misconceptions into AI tutor context for emerging skills. — `src/utils/misconceptionRegistry.ts`, `src/utils/studyPlanPreprocessor.ts`, `src/types/studyPlanTypes.ts`, `src/utils/tutorContextBuilder.ts`
+- **[Content — Tag 37 untagged diagnostic items]** Added vocabulary concept tags to all 37 previously-untagged diagnostic items (250/250 now tagged, was 213/250). Unlocks `missedConcepts` pipeline for 20 affected skills. — `src/data/question-vocabulary-tags.json`
+
+### Tests
+
+- **[Tests — Learning state signal coverage]** Added `tests/learningStateSignals.test.ts` with 24 tests covering `computeFragilityFlag`, `computeUncertainSkillFlag`, `computeRapidGuessCount`, and `countRecentHighConfidenceWrong`. — `tests/learningStateSignals.test.ts`
+
+### Documentation
+
+- **[Docs — Codebase audit and refactor plan]** Added root-level `CODEBASE_AUDIT.md` (authoritative) and updated `REFACTOR_PLAN_LEARNING_SCIENCE.md` (28KB authoritative copy). Added `docs/diagnostic-output-contract-plan.md`. Removed stale `docs/REFACTOR_PLAN_LEARNING_SCIENCE.md` (19KB duplicate). — `CODEBASE_AUDIT.md`, `REFACTOR_PLAN_LEARNING_SCIENCE.md`, `docs/diagnostic-output-contract-plan.md`
+
+---
+
 ## 2026-03-24
 
 ### Bug Fixes
