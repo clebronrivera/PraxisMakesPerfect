@@ -6,10 +6,6 @@ import { useEngine } from '../hooks/useEngine';
 import { getDomainColor } from '../utils/domainColors';
 import {
   buildAssessmentReportModel,
-  DOMAIN_BUILDING_THRESHOLD,
-  DOMAIN_READY_THRESHOLD,
-  OVERALL_BUILDING_THRESHOLD,
-  OVERALL_READY_THRESHOLD,
   type ReadinessTone
 } from '../utils/assessmentReport';
 import { PROFICIENCY_META } from '../utils/skillProficiency';
@@ -33,25 +29,23 @@ function formatPercent(score: number): string {
   return `${Math.round(score * 100)}%`;
 }
 
-function domainStatusLabel(score: number): string {
-  if (score >= DOMAIN_READY_THRESHOLD) {
-    return PROFICIENCY_META.proficient.label;
-  }
-  if (score >= DOMAIN_BUILDING_THRESHOLD) {
-    return PROFICIENCY_META.approaching.label;
-  }
-  return PROFICIENCY_META.emerging.label;
-}
+// Map readiness tone → domain-level proficiency label.
+// Uses the tone already computed by buildAssessmentReportModel() — avoids
+// re-deriving from the raw score and removes the domainStatusLabel() selector bypass.
+const TONE_DOMAIN_LABEL: Record<ReadinessTone, string> = {
+  ready:    PROFICIENCY_META.proficient.label,   // 'Demonstrating'
+  building: PROFICIENCY_META.approaching.label,  // 'Approaching'
+  priority: PROFICIENCY_META.emerging.label,     // 'Emerging'
+};
 
-function overallMeaning(score: number): string {
-  if (score >= OVERALL_READY_THRESHOLD) {
-    return 'You are meeting the threshold overall. Keep your strongest areas steady and tighten the domains that still lag.';
-  }
-  if (score >= OVERALL_BUILDING_THRESHOLD) {
-    return 'You are approaching the threshold overall, but some weak spots are still large enough to slow you down on a mixed assessment.';
-  }
-  return 'The biggest gain will come from remediating foundational concepts before you spend time on harder mixed sets.';
-}
+// Map readiness tone → overall interpretation text.
+// Uses report.readiness.tone rather than re-deriving from the raw score,
+// removing the overallMeaning() selector bypass.
+const TONE_OVERALL_MEANING: Record<ReadinessTone, string> = {
+  ready:    'You are meeting the threshold overall. Keep your strongest areas steady and tighten the domains that still lag.',
+  building: 'You are approaching the threshold overall, but some weak spots are still large enough to slow you down on a mixed assessment.',
+  priority: 'The biggest gain will come from remediating foundational concepts before you spend time on harder mixed sets.',
+};
 
 export default function ScreenerResults({
   responses,
@@ -134,7 +128,7 @@ export default function ScreenerResults({
             <div className="space-y-2">
               <p className="text-5xl font-bold text-white">{formatPercent(report.overallScore)}</p>
               <p className="text-slate-200">{report.readiness.description}</p>
-              <p className="text-sm text-slate-400">{overallMeaning(report.overallScore)}</p>
+              <p className="text-sm text-slate-400">{TONE_OVERALL_MEANING[report.readiness.tone]}</p>
             </div>
             <div className="rounded-[1.5rem] border border-amber-500/20 bg-white/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300">Best Next Step</p>
@@ -205,7 +199,7 @@ export default function ScreenerResults({
                       {formatPercent(domain.score)}
                     </p>
                     <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${toneStyles[domain.tone]}`}>
-                      {domainStatusLabel(domain.score)}
+                      {TONE_DOMAIN_LABEL[domain.tone]}
                     </span>
                   </div>
                 </div>
@@ -298,7 +292,7 @@ export default function ScreenerResults({
                   </p>
                 </div>
                 <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${toneStyles[domain.tone]}`}>
-                  {domainStatusLabel(domain.score)}
+                  {TONE_DOMAIN_LABEL[domain.tone]}
                 </span>
               </summary>
 

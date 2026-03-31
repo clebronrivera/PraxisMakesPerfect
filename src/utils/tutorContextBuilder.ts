@@ -5,6 +5,11 @@
 
 import type { TutorUserContext, TutorSkillSnapshot } from '../types/tutorChat';
 import { PROGRESS_SKILLS } from './progressTaxonomy';
+import {
+  READINESS_TARGET,
+  DEMONSTRATING_THRESHOLD,
+  APPROACHING_THRESHOLD,
+} from './skillProficiency';
 
 // These types mirror what's stored in user_progress.skill_scores
 interface RawSkillScore {
@@ -17,13 +22,12 @@ interface RawSkillScore {
 
 type SkillScoresMap = Record<string, RawSkillScore>;
 
-// Readiness denominator: 70% of 45 skills = 32
-const READINESS_TARGET = 32;
+// READINESS_TARGET is imported from skillProficiency — single source of truth.
 
 function getProficiency(score: number | null, attempts: number): TutorSkillSnapshot['proficiency'] {
   if (attempts === 0 || score === null) return 'not-started';
-  if (score >= 0.80) return 'demonstrating';
-  if (score >= 0.60) return 'approaching';
+  if (score >= DEMONSTRATING_THRESHOLD) return 'demonstrating';
+  if (score >= APPROACHING_THRESHOLD) return 'approaching';
   return 'emerging';
 }
 

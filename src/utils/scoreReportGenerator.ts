@@ -1,6 +1,7 @@
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, ShadingType, WidthType, BorderStyle, AlignmentType, HeadingLevel, VerticalAlign } from 'docx';
 import { saveAs } from 'file-saver';
 import { UserResponse } from '../brain/weakness-detector';
+import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from './skillProficiency';
 
 import { skillStudyGuide, SkillStudyGuide } from '../data/skill-study-guide';
 
@@ -11,14 +12,14 @@ const C = {
   GRAY_BAR: "E2E8F0",
   TEXT_DARK: "2D3748",
   TEXT_LIGHT: "718096",
-  RED: "E53E3E",     // < 60% Emerging
-  YELLOW: "D69E2E",  // 60-79% Approaching
-  GREEN: "38A169"    // 80%+ Demonstrating
+  RED: "E53E3E",     // < APPROACHING_THRESHOLD — Emerging
+  YELLOW: "D69E2E",  // APPROACHING_THRESHOLD–DEMONSTRATING_THRESHOLD — Approaching
+  GREEN: "38A169"    // >= DEMONSTRATING_THRESHOLD — Demonstrating
 };
 
 function getStatusColor(pct: number) {
-  if (pct >= 80) return C.GREEN;
-  if (pct >= 60) return C.YELLOW;
+  if (pct >= DEMONSTRATING_THRESHOLD * 100) return C.GREEN;
+  if (pct >= APPROACHING_THRESHOLD * 100) return C.YELLOW;
   return C.RED;
 }
 
@@ -221,8 +222,8 @@ export function buildDocument(responses: UserResponse[], scoreData: Record<strin
     if (stats.total > 0 && skillStudyGuide[skillId]) {
       const pct = Math.round((stats.correct / stats.total) * 100);
       const entry = { skill: skillStudyGuide[skillId], pct };
-      if (pct >= 80) demonstrating.push(entry);
-      else if (pct >= 60) approaching.push(entry);
+      if (pct >= DEMONSTRATING_THRESHOLD * 100) demonstrating.push(entry);
+      else if (pct >= APPROACHING_THRESHOLD * 100) approaching.push(entry);
       else emerging.push(entry);
     }
   });

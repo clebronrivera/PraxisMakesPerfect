@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { X, RefreshCw, BarChart3, Clock, TrendingUp, AlertTriangle, BookOpen } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { PROGRESS_DOMAINS, PROGRESS_SKILL_LOOKUP } from '../utils/progressTaxonomy';
+import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 
 interface UserInfo {
   id: string;
@@ -338,7 +339,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                         <td className="px-4 py-3 text-right">{s.attempts}</td>
                         <td className="px-4 py-3 text-right">
                           <span className={`font-semibold ${
-                            s.accuracy >= 80 ? 'text-emerald-600' : s.accuracy < 50 ? 'text-rose-600' : 'text-amber-700'
+                            s.accuracy >= DEMONSTRATING_THRESHOLD * 100 ? 'text-emerald-600' : s.accuracy >= APPROACHING_THRESHOLD * 100 ? 'text-amber-700' : 'text-rose-600'
                           }`}>
                             {s.accuracy}%
                           </span>
@@ -382,7 +383,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                         <td className="px-4 py-3 text-right">{s.questions}</td>
                         <td className="px-4 py-3 text-right">
                           <span className={`font-semibold ${
-                            s.accuracy >= 80 ? 'text-emerald-600' : s.accuracy < 50 ? 'text-rose-600' : 'text-amber-700'
+                            s.accuracy >= DEMONSTRATING_THRESHOLD * 100 ? 'text-emerald-600' : s.accuracy >= APPROACHING_THRESHOLD * 100 ? 'text-amber-700' : 'text-rose-600'
                           }`}>
                             {s.accuracy}%
                           </span>

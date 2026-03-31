@@ -12,6 +12,14 @@ export type SkillProficiencyLevel = 'proficient' | 'approaching' | 'emerging' | 
 export const DEMONSTRATING_THRESHOLD = 0.8;
 export const APPROACHING_THRESHOLD = 0.6;
 
+// ─── Readiness goal constants ─────────────────────────────────────────────────
+// Single source of truth. All components must import from here — do not
+// redeclare locally in ResultsDashboard, StudyModesSection, tutorContextBuilder,
+// or anywhere else.
+export const TOTAL_SKILLS = 45;
+export const READINESS_GOAL_PCT = 0.7;  // 70% of skills must reach Demonstrating
+export const READINESS_TARGET = Math.ceil(TOTAL_SKILLS * READINESS_GOAL_PCT); // 32
+
 /**
  * Return the proficiency tier from a skill's accuracy score and attempt count.
  * When weightedAccuracy is provided (real confidence-weighted data), it takes

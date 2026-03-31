@@ -31,7 +31,14 @@ import {
 } from 'lucide-react';
 import { getDomainColor } from '../utils/domainColors';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
-import { getSkillProficiency, PROFICIENCY_META } from '../utils/skillProficiency';
+import {
+  getSkillProficiency,
+  PROFICIENCY_META,
+  TOTAL_SKILLS,
+  READINESS_TARGET,
+  DEMONSTRATING_THRESHOLD,
+  APPROACHING_THRESHOLD,
+} from '../utils/skillProficiency';
 import { formatStudyTime } from '../hooks/useDailyStudyTime';
 import {
   getPrimaryModuleForSkill,
@@ -42,9 +49,7 @@ import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
 import type { UserProfile } from '../hooks/useProgressTracking';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-const TOTAL_SKILLS = 45;
-const READINESS_TARGET = Math.ceil(TOTAL_SKILLS * 0.7); // 32
+// TOTAL_SKILLS and READINESS_TARGET are imported from skillProficiency — do not redeclare.
 
 // Light-surface equivalents for PROFICIENCY_META badge/text tokens.
 // PROFICIENCY_META uses dark-mode colours; these overrides apply when
@@ -572,9 +577,9 @@ export default function StudyModesSection({
           {
             label: 'Overall accuracy',
             value: overallAccuracy !== null ? `${overallAccuracy}%` : '—',
-            css: overallAccuracy !== null && overallAccuracy >= 70
+            css: overallAccuracy !== null && overallAccuracy >= DEMONSTRATING_THRESHOLD * 100
               ? 'text-emerald-700'
-              : overallAccuracy !== null && overallAccuracy >= 50
+              : overallAccuracy !== null && overallAccuracy >= APPROACHING_THRESHOLD * 100
                 ? 'text-amber-700'
                 : 'text-rose-600',
           },

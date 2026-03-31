@@ -7,7 +7,7 @@ import type { Skill } from '../types/content';
 import type { UserProfile } from '../hooks/useProgressTracking';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
-import { PROFICIENCY_META } from '../utils/skillProficiency';
+import { PROFICIENCY_META, TOTAL_SKILLS, READINESS_TARGET } from '../utils/skillProficiency';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import { buildConceptAnalytics, type ConceptAnalyticsReport } from '../utils/conceptAnalytics';
 
@@ -21,9 +21,7 @@ const EXAM_WEIGHTS: Record<number, number> = {
   4: 24, // Foundations of School Psychology
 };
 
-const READINESS_GOAL_PCT = 0.7; // 70% of skills must reach Demonstrating
-const TOTAL_SKILLS = 45;
-const READINESS_TARGET = Math.ceil(TOTAL_SKILLS * READINESS_GOAL_PCT); // 32
+// TOTAL_SKILLS and READINESS_TARGET are imported from skillProficiency — do not redeclare.
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
