@@ -225,6 +225,7 @@ function buildPromptV2({
   domainSummaries,
   studyConstraints,
   assessmentState,
+  enrichedSignals,
 }: {
   precomputedClusters: PrecomputedCluster[];
   scheduleFrame: WeeklyScheduleFrame[];
@@ -235,6 +236,15 @@ function buildPromptV2({
     assessmentComplete: boolean;
     totalResponses: number;
     flaggedSkillCount: number;
+  };
+  enrichedSignals: {
+    /** Counts of skills in each concerning state — informs confidence calibration narrative */
+    misconceptionSkillCount: number;
+    confidenceIssueSkillCount: number;
+    repeatedDistractorSkillCount: number;
+    fragilityFlagSkillCount: number;
+    /** Top vocabulary terms from the most urgent clusters, deduped — targets for active retrieval */
+    topAtRiskVocabulary: string[];
   };
 }): string {
 
@@ -256,6 +266,19 @@ OUTPUT SECTION RULES — read before generating:
   const payload = {
     assessmentState,
     studyConstraints: studyConstraints ?? { intensity: 'moderate' },
+    // ── 7b: Confidence signals — pre-computed from skill states ──────────────
+    // Use these counts to inform the narrative around misconceptions vs. fragility.
+    // Do NOT re-derive these from accuracy alone; they encode confidence behaviour.
+    confidenceSignals: {
+      misconceptionSkillCount:      enrichedSignals.misconceptionSkillCount,
+      confidenceIssueSkillCount:    enrichedSignals.confidenceIssueSkillCount,
+      repeatedDistractorSkillCount: enrichedSignals.repeatedDistractorSkillCount,
+      fragilityFlagSkillCount:      enrichedSignals.fragilityFlagSkillCount,
+    },
+    // ── 7c: Cross-cluster at-risk vocabulary — deduped from urgent clusters ──
+    // Terms from the two highest-urgency clusters in order of retrieval priority.
+    // Model should prioritize these in vocabulary section and retrieval practice tasks.
+    topAtRiskVocabulary: enrichedSignals.topAtRiskVocabulary,
     domainSummaries: domainSummaries.map(d => ({
       domainId:          d.domainId,
       domainName:        d.domainName,
@@ -264,14 +287,18 @@ OUTPUT SECTION RULES — read before generating:
       skillCount:        d.skillCount,
     })),
     precomputedClusters: precomputedClusters.map(c => ({
-      clusterName:             c.clusterName,
-      urgency:                 c.urgency,
-      allocatedMinutes:        c.allocatedMinutes,
-      skills:                  c.skills,
-      retrievedVocabulary:     c.retrievedVocabulary,
-      retrievedMisconceptions: c.retrievedMisconceptions,
-      retrievedCaseArchetypes: c.retrievedCaseArchetypes,
-      retrievedLawsFrameworks: c.retrievedLawsFrameworks,
+      clusterName:              c.clusterName,
+      urgency:                  c.urgency,
+      allocatedMinutes:         c.allocatedMinutes,
+      skills:                   c.skills,
+      retrievedVocabulary:      c.retrievedVocabulary,
+      // ── 7a: Canonical misconception IDs alongside free-text descriptions ──
+      // Use resolvedMisconceptionIds when referring to specific misconceptions
+      // to maintain consistency with the taxonomy. Parallel array to retrievedMisconceptions.
+      retrievedMisconceptions:  c.retrievedMisconceptions,
+      resolvedMisconceptionIds: c.resolvedMisconceptionIds,
+      retrievedCaseArchetypes:  c.retrievedCaseArchetypes,
+      retrievedLawsFrameworks:  c.retrievedLawsFrameworks,
     })),
     weeklyScheduleFrame: scheduleFrame.map(w => ({
       weekNumber:      w.weekNumber,
@@ -383,6 +410,10 @@ OUTPUT SECTION RULES — read before generating:
     '- Provide 3 to 6 items per array unless the data clearly supports fewer.',
     '- Keep strings concise and actionable. Avoid filler phrases.',
     '- For skills with fragilityFlag=true: append note to whyItMatters saying "This student answers correctly but self-rates low confidence — prioritize active retrieval practice."',
+    '- confidenceSignals.misconceptionSkillCount tells you how many skills show a systematic error pattern (high-confidence wrong). If > 3, call this out explicitly in dataInterpretation.urgentInsights.',
+    '- confidenceSignals.fragilityFlagSkillCount tells you how many skills the student gets right but rates low confidence. Emphasize active retrieval (not re-reading) in tacticalInstructions if > 2.',
+    '- Each cluster includes resolvedMisconceptionIds (canonical taxonomy IDs) parallel to retrievedMisconceptions. When you reference a specific misconception, use the format "misconception [ID]: <description>" so the misconception is anchored to the taxonomy.',
+    '- topAtRiskVocabulary is the cross-cluster priority vocabulary list for this student. Vocabulary entries in the vocabulary section MUST include all terms from this list before adding others.',
     '- schemaVersion must be "2".',
     '',
     'Assessment data (pre-processed):',
@@ -842,6 +873,25 @@ export async function generateStudyPlan({
   };
 
   // ── Layer 3: build prompt for model synthesis ────────────────────────────
+
+  // ── 7b: Confidence signal summary (pre-computed from skill states) ─────────
+  const enrichedSignals = {
+    misconceptionSkillCount:      skillStates.filter(s => s.status === 'misconception').length,
+    confidenceIssueSkillCount:    skillStates.filter(s => s.confidenceIssue).length,
+    repeatedDistractorSkillCount: skillStates.filter(s => s.repeatedDistractorPattern).length,
+    fragilityFlagSkillCount:      skillStates.filter(s => s.fragilityFlag).length,
+    // ── 7c: Cross-cluster at-risk vocabulary — top terms from urgent clusters ─
+    // Deduplicate vocabulary across all urgent_now and important_next clusters.
+    // First 20 terms are the highest-priority retrieval targets for this student.
+    topAtRiskVocabulary: Array.from(
+      new Set(
+        finalClusters
+          .filter(c => c.urgency === 'urgent_now' || c.urgency === 'important_next')
+          .flatMap(c => c.retrievedVocabulary)
+      )
+    ).slice(0, 20),
+  };
+
   const prompt = buildPromptV2({
     precomputedClusters: finalClusters,
     scheduleFrame,
@@ -853,6 +903,7 @@ export async function generateStudyPlan({
       totalResponses:     allResponses.length,
       flaggedSkillCount:  globalScores.flaggedSkills.length,
     },
+    enrichedSignals,
   });
 
   // ── Fire background function ─────────────────────────────────────────────
