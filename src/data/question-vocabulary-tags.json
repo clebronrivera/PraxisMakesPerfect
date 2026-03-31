@@ -6444,7 +6444,12 @@
       ]
     },
     "item_013": {
-      "concepts": []
+      "concepts": [
+        "community support",
+        "drug prevention",
+        "prevention",
+        "school-community collaboration"
+      ]
     },
     "item_014": {
       "concepts": [
@@ -6524,7 +6529,11 @@
       ]
     },
     "item_024": {
-      "concepts": []
+      "concepts": [
+        "aggression",
+        "bullying",
+        "power imbalance"
+      ]
     },
     "item_025": {
       "concepts": [
@@ -6534,7 +6543,12 @@
       ]
     },
     "item_026": {
-      "concepts": []
+      "concepts": [
+        "cultural bias",
+        "culturally diverse",
+        "standardized assessment",
+        "test bias"
+      ]
     },
     "item_027": {
       "concepts": [
@@ -6551,7 +6565,11 @@
       ]
     },
     "item_029": {
-      "concepts": []
+      "concepts": [
+        "amygdala",
+        "brain structure",
+        "emotion"
+      ]
     },
     "item_030": {
       "concepts": [
@@ -6560,7 +6578,11 @@
       ]
     },
     "item_031": {
-      "concepts": []
+      "concepts": [
+        "consent",
+        "informed consent",
+        "parental consent"
+      ]
     },
     "item_032": {
       "concepts": [
@@ -6601,7 +6623,10 @@
       ]
     },
     "item_038": {
-      "concepts": []
+      "concepts": [
+        "intern supervision",
+        "NASP"
+      ]
     },
     "item_039": {
       "concepts": [
@@ -6611,7 +6636,12 @@
       ]
     },
     "item_040": {
-      "concepts": []
+      "concepts": [
+        "behavioral engagement",
+        "cognitive engagement",
+        "emotional engagement",
+        "engagement"
+      ]
     },
     "item_041": {
       "concepts": [
@@ -6713,7 +6743,12 @@
       ]
     },
     "item_057": {
-      "concepts": []
+      "concepts": [
+        "cognitive assessment",
+        "nonverbal",
+        "novel problem-solving",
+        "right hemisphere"
+      ]
     },
     "item_058": {
       "concepts": [
@@ -6740,7 +6775,12 @@
       ]
     },
     "item_062": {
-      "concepts": []
+      "concepts": [
+        "APA",
+        "NASP",
+        "NCSP",
+        "professional association"
+      ]
     },
     "item_063": {
       "concepts": [
@@ -6789,7 +6829,12 @@
       ]
     },
     "item_070": {
-      "concepts": []
+      "concepts": [
+        "authentic assessment",
+        "informal assessment",
+        "normative group",
+        "standardized assessment"
+      ]
     },
     "item_071": {
       "concepts": [
@@ -6847,7 +6892,10 @@
       ]
     },
     "item_079": {
-      "concepts": []
+      "concepts": [
+        "child abuse",
+        "mandated reporter"
+      ]
     },
     "item_080": {
       "concepts": [
@@ -6882,7 +6930,10 @@
       ]
     },
     "item_084": {
-      "concepts": []
+      "concepts": [
+        "child abuse",
+        "mandated reporter"
+      ]
     },
     "item_085": {
       "concepts": [
@@ -6969,7 +7020,10 @@
       ]
     },
     "item_098": {
-      "concepts": []
+      "concepts": [
+        "heuristic",
+        "problem-solving"
+      ]
     },
     "item_099": {
       "concepts": [
@@ -7098,10 +7152,17 @@
       ]
     },
     "item_117": {
-      "concepts": []
+      "concepts": [
+        "learning disability",
+        "multimodal intervention"
+      ]
     },
     "item_118": {
-      "concepts": []
+      "concepts": [
+        "narrative recording",
+        "observational recording",
+        "running record"
+      ]
     },
     "item_119": {
       "concepts": [
@@ -7109,7 +7170,10 @@
       ]
     },
     "item_120": {
-      "concepts": []
+      "concepts": [
+        "cognitive processing",
+        "simultaneous processing"
+      ]
     },
     "item_121": {
       "concepts": [
@@ -7204,7 +7268,12 @@
       ]
     },
     "item_135": {
-      "concepts": []
+      "concepts": [
+        "comprehensive evaluation",
+        "formal assessment",
+        "informal assessment",
+        "special education evaluation"
+      ]
     },
     "item_136": {
       "concepts": [
@@ -7392,7 +7461,10 @@
       ]
     },
     "item_160": {
-      "concepts": []
+      "concepts": [
+        "crisis preparation",
+        "crisis prevention"
+      ]
     },
     "item_161": {
       "concepts": [
@@ -7404,10 +7476,18 @@
       ]
     },
     "item_162": {
-      "concepts": []
+      "concepts": [
+        "external locus of control",
+        "learned helplessness"
+      ]
     },
     "item_163": {
-      "concepts": []
+      "concepts": [
+        "contagion effect",
+        "crisis response",
+        "postvention",
+        "suicide"
+      ]
     },
     "item_164": {
       "concepts": [
@@ -7415,7 +7495,12 @@
       ]
     },
     "item_165": {
-      "concepts": []
+      "concepts": [
+        "Standard Response Protocol",
+        "SRP",
+        "crisis response",
+        "lockdown"
+      ]
     },
     "item_166": {
       "concepts": [
@@ -7505,7 +7590,11 @@
       ]
     },
     "item_176": {
-      "concepts": []
+      "concepts": [
+        "autism",
+        "autism spectrum disorder",
+        "theory of mind"
+      ]
     },
     "item_177": {
       "concepts": [
@@ -7638,7 +7727,11 @@
       ]
     },
     "item_195": {
-      "concepts": []
+      "concepts": [
+        "cooperative learning",
+        "individual learning differences",
+        "prosocial skills"
+      ]
     },
     "item_196": {
       "concepts": [
@@ -7669,10 +7762,17 @@
       ]
     },
     "item_200": {
-      "concepts": []
+      "concepts": [
+        "cognitive behavioral theory",
+        "mental representation",
+        "schemata"
+      ]
     },
     "item_201": {
-      "concepts": []
+      "concepts": [
+        "consultation",
+        "empathy"
+      ]
     },
     "item_202": {
       "concepts": [
@@ -7744,13 +7844,25 @@
       ]
     },
     "item_211": {
-      "concepts": []
+      "concepts": [
+        "intern supervision",
+        "NASP"
+      ]
     },
     "item_212": {
-      "concepts": []
+      "concepts": [
+        "ethical complaint",
+        "NASP",
+        "professional ethics",
+        "referral"
+      ]
     },
     "item_213": {
-      "concepts": []
+      "concepts": [
+        "ethical complaint",
+        "NASP",
+        "professional ethics"
+      ]
     },
     "item_214": {
       "concepts": [
@@ -7758,7 +7870,10 @@
       ]
     },
     "item_215": {
-      "concepts": []
+      "concepts": [
+        "confidentiality",
+        "consultation"
+      ]
     },
     "item_216": {
       "concepts": [
@@ -7803,7 +7918,12 @@
       ]
     },
     "item_221": {
-      "concepts": []
+      "concepts": [
+        "IDEA",
+        "IDEIA",
+        "Individuals with Disabilities Education Act",
+        "evaluation timeline"
+      ]
     },
     "item_222": {
       "concepts": [
@@ -7815,10 +7935,19 @@
       ]
     },
     "item_223": {
-      "concepts": []
+      "concepts": [
+        "bullying",
+        "bystander",
+        "harassment",
+        "peer interaction"
+      ]
     },
     "item_224": {
-      "concepts": []
+      "concepts": [
+        "Brown v. Board of Education",
+        "Hobson v. Hansen",
+        "tracking"
+      ]
     },
     "item_225": {
       "concepts": [
@@ -7832,7 +7961,10 @@
       ]
     },
     "item_226": {
-      "concepts": []
+      "concepts": [
+        "Brown v. Board of Education",
+        "desegregation"
+      ]
     },
     "item_227": {
       "concepts": [
@@ -7841,7 +7973,11 @@
       ]
     },
     "item_228": {
-      "concepts": []
+      "concepts": [
+        "change agent",
+        "indirect services",
+        "systems approach"
+      ]
     },
     "item_229": {
       "concepts": [
@@ -7858,7 +7994,12 @@
       ]
     },
     "item_231": {
-      "concepts": []
+      "concepts": [
+        "neurologic impairment",
+        "novel problem-solving",
+        "right hemisphere",
+        "stroke"
+      ]
     },
     "item_232": {
       "concepts": [
@@ -7876,7 +8017,10 @@
       ]
     },
     "item_235": {
-      "concepts": []
+      "concepts": [
+        "Maslow's hierarchy of needs",
+        "safety needs"
+      ]
     },
     "item_236": {
       "concepts": [
@@ -7908,7 +8052,12 @@
       ]
     },
     "item_240": {
-      "concepts": []
+      "concepts": [
+        "curriculum",
+        "ecological assessment",
+        "instruction",
+        "learning style"
+      ]
     },
     "item_241": {
       "concepts": [
