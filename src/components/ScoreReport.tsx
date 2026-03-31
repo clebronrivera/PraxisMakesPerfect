@@ -1,4 +1,4 @@
-import { Trophy, Clock, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, Zap, RotateCcw } from 'lucide-react';
+import { Trophy, Clock, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, Zap, RotateCcw, Lightbulb } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
 import { detectWeaknesses, UserResponse } from '../brain/weakness-detector';
 import { AnalyzedQuestion, getQuestionIdentifierLabel, getQuestionPrompt } from '../brain/question-analyzer';
@@ -8,6 +8,7 @@ import { useProgressTracking } from '../hooks/useProgressTracking';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
 import { loadSession, clearSession } from '../utils/sessionStorage';
+import type { DiagnosticSummary } from '../types/diagnosticSummary';
 
 interface ScoreReportProps {
   responses: UserResponse[];
@@ -16,6 +17,14 @@ interface ScoreReportProps {
   onStartPractice: (domainId?: number) => void;
   onRetakeAssessment: () => void;
   onGoHome: () => void;
+  /**
+   * Pre-built diagnostic summary. Optional — component falls back to deriving
+   * scores inline from `responses` and `questions` when absent.
+   * Confidence signals (interpretation, totalHighWrong) and missed concept panels
+   * are now rendered when present. Concept-level analytics (conceptGaps,
+   * crossSkillConceptGaps) remain deferred — they are null in the current wiring.
+   */
+  diagnosticSummary?: DiagnosticSummary;
 }
 
 
@@ -31,7 +40,8 @@ export default function ScoreReport({
   totalTime,
   onStartPractice,
   onRetakeAssessment,
-  onGoHome
+  onGoHome,
+  diagnosticSummary,
 }: ScoreReportProps) {
   const engine = useEngine();
   const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
@@ -96,41 +106,54 @@ export default function ScoreReport({
     );
   }
 
-  // Calculate overall score
-  const totalQuestions = responses.length;
-  const correctAnswers = responses.filter(r => r.isCorrect).length;
-  const overallScore = totalQuestions > 0 ? correctAnswers / totalQuestions : 0;
-  const scorePercentage = Math.round(overallScore * 100);
-
-  // Calculate domain scores
-  const domainScores: Record<number, { correct: number; total: number }> = {};
+  // questionMap is always needed for longestQuestions (current-session timing data).
   const questionMap = new Map(questions.map(q => [q.id, q]));
 
-  responses.forEach(response => {
-    const question = questionMap.get(response.questionId);
-    if (question) {
-      question.domains?.forEach(domain => {
-        if (!domainScores[domain]) {
-          domainScores[domain] = { correct: 0, total: 0 };
-        }
-        domainScores[domain].total++;
-        if (response.isCorrect) {
-          domainScores[domain].correct++;
-        }
-      });
-    }
-  });
+  // ── Scores ──────────────────────────────────────────────────────────────────
+  // Use diagnosticSummary when provided; fall back to inline computation from responses.
+  const totalQuestions = diagnosticSummary?.totalQuestions ?? responses.length;
+  const correctAnswers = diagnosticSummary?.correctAnswers
+    ?? responses.filter(r => r.isCorrect).length;
+  const overallScore = diagnosticSummary?.overallScore
+    ?? (totalQuestions > 0 ? correctAnswers / totalQuestions : 0);
+  const scorePercentage = Math.round(overallScore * 100);
 
-  // Find weakest domains
-  const domainArray = Object.entries(domainScores)
-    .map(([domain, score]) => ({
-      domain: parseInt(domain),
-      score: score.total > 0 ? score.correct / score.total : 0,
-      ...score
-    }))
-    .sort((a, b) => a.score - b.score);
+  // ── Domain scores ──────────────────────────────────────────────────────────
+  // When diagnosticSummary is present, use its pre-sorted domainSummaries (score asc).
+  // Fallback: compute from responses.
+  const domainArray: Array<{ domain: number; score: number; correct: number; total: number }> =
+    diagnosticSummary
+      ? diagnosticSummary.domainSummaries.map(d => ({
+          domain: d.id,
+          score: d.score,
+          correct: d.correct,
+          total: d.total,
+        }))
+      : (() => {
+          const domainScores: Record<number, { correct: number; total: number }> = {};
+          responses.forEach(response => {
+            const question = questionMap.get(response.questionId);
+            if (question) {
+              question.domains?.forEach(domain => {
+                if (!domainScores[domain]) domainScores[domain] = { correct: 0, total: 0 };
+                domainScores[domain].total++;
+                if (response.isCorrect) domainScores[domain].correct++;
+              });
+            }
+          });
+          return Object.entries(domainScores)
+            .map(([domain, score]) => ({
+              domain: parseInt(domain),
+              score: score.total > 0 ? score.correct / score.total : 0,
+              ...score,
+            }))
+            .sort((a, b) => a.score - b.score);
+        })();
 
-  const weakestDomains = domainArray.slice(0, 3).map(d => d.domain);
+  // weakestDomains: highestNeedDomains already sorted score-asc; slice to 3.
+  const weakestDomains = diagnosticSummary
+    ? diagnosticSummary.highestNeedDomains.map(d => d.id)
+    : domainArray.slice(0, 3).map(d => d.domain);
 
   // Calculate average time per question
   const avgTimePerQuestion = totalQuestions > 0 
@@ -181,7 +204,7 @@ export default function ScoreReport({
           <h2 className="editorial-heading text-3xl sm:text-4xl">Diagnostic Complete!</h2>
         </div>
         <p className="editorial-copy">
-          {`You completed all ${responses.length} questions`}
+          {`You completed all ${totalQuestions} questions`}
         </p>
         <button
           onClick={() => {
@@ -213,8 +236,43 @@ export default function ScoreReport({
               <span className="text-slate-200">{totalQuestions - correctAnswers} Incorrect</span>
             </div>
           </div>
+
+          {/* Readiness context — only when diagnosticSummary is present */}
+          {diagnosticSummary && (
+            <div className="border-t border-slate-600 pt-4 space-y-2">
+              <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                diagnosticSummary.readiness.tone === 'ready'
+                  ? 'bg-emerald-500/20 text-emerald-300'
+                  : diagnosticSummary.readiness.tone === 'building'
+                  ? 'bg-amber-500/20 text-amber-300'
+                  : 'bg-rose-500/20 text-rose-300'
+              }`}>
+                {diagnosticSummary.readiness.label}
+              </span>
+              <p className="text-sm text-slate-300">{diagnosticSummary.readiness.description}</p>
+              <p className="text-xs text-slate-400 italic">{diagnosticSummary.readiness.nextAction}</p>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Confidence callout — only when overconfidence pattern detected */}
+      {diagnosticSummary?.confidence?.interpretation === 'possible_overconfidence' && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-700 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-amber-900">Confidence Pattern Detected</p>
+              <p className="mt-1 text-sm text-amber-800">
+                {diagnosticSummary.confidence.totalHighWrong > 0
+                  ? `${diagnosticSummary.confidence.totalHighWrong} high-confidence wrong answer${diagnosticSummary.confidence.totalHighWrong !== 1 ? 's' : ''} detected. `
+                  : ''}
+                These may indicate misconceptions rather than simple knowledge gaps. Your study plan will prioritize them.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4">
@@ -344,6 +402,55 @@ export default function ScoreReport({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Key Concepts to Review */}
+      {(diagnosticSummary?.missedConcepts?.length ?? 0) > 0 && (
+        <div className="editorial-surface p-6">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
+            <Lightbulb className="w-5 h-5 text-amber-700" />
+            Key Concepts to Review
+          </h3>
+          <div className="space-y-2">
+            {diagnosticSummary!.missedConcepts.slice(0, 8).map((mc, i) => (
+              <div
+                key={`${mc.concept}-${mc.skillId}-${i}`}
+                className="editorial-surface-soft flex items-center justify-between gap-3 p-3"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-900 truncate">{mc.concept}</p>
+                  <p className="text-xs text-slate-500 truncate">{mc.skillName}</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
+                  {mc.count}×
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Foundational Gaps */}
+      {(diagnosticSummary?.foundationalGaps?.length ?? 0) > 0 && (
+        <div className="editorial-surface p-6">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold text-amber-700">
+            <AlertTriangle className="w-5 h-5" />
+            Foundational Gaps
+          </h3>
+          <div className="space-y-3">
+            {diagnosticSummary!.foundationalGaps.map((gap, i) => (
+              <div key={`${gap.skillId}-${i}`} className="editorial-surface-soft p-4">
+                <p className="font-medium text-slate-900">{gap.skillName}</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Flagged by: {gap.triggeredBy.join(', ')}
+                </p>
+                {gap.reason && (
+                  <p className="mt-1 text-xs text-slate-400 italic">{gap.reason}</p>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
