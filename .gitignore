@@ -104,6 +104,15 @@ exports/
 # LibreOffice lock files
 .~lock.*#
 
+# Content authoring agent output — lives locally, applied to questions.json manually
+# The folder structure and docs (README, STATUS, AGENT_PROMPT) stay in git.
+# Only the CSV/JSON output files from agent sessions are ignored.
+content-authoring/output/**/*.csv
+content-authoring/output/**/*.json
+
+# Extraction script output (generated locally, not committed)
+*-questions-for-agent.txt
+
 # Generated question files (from enhance scripts)
 questions-enhanced.json
 questions-mobile-optimized.json
