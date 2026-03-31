@@ -9,6 +9,7 @@ import type { AssessmentReportModel } from './assessmentReport';
 import type { ConceptAnalyticsReport } from './conceptAnalytics';
 import type { DiagnosticSummary } from '../types/diagnosticSummary';
 import { getProgressSkillDefinition } from './progressTaxonomy';
+import { computeRapidGuessCount } from '../brain/learning-state';
 
 // ─── Time ─────────────────────────────────────────────────────────────────────
 
@@ -40,12 +41,11 @@ export function computeTimeStats(userProfile: UserProfile): TimeStats {
     const def = getProgressSkillDefinition(skillId);
     const domainId = def?.domainId ?? 0;
 
+    // Rapid-guess count: use canonical function from learning-state.ts (SHADOW MODE)
+    rapidGuessCount += computeRapidGuessCount(perf.attemptHistory);
+
     for (const attempt of perf.attemptHistory) {
       const t = attempt.timeSpent;
-      // Count rapid guesses (shadow mode): timeSpent in (0, 4) seconds
-      if (t > 0 && t < 4) {
-        rapidGuessCount++;
-      }
       // Sanity filter: exclude missing, sub-second, and implausibly long times
       if (!t || t < 1 || t > 600) continue;
       allTimes.push(t);

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import type { SkillPerformance } from '../brain/learning-state';
+import { computeFragilityFlag } from '../brain/learning-state';
 import { UserProfile } from './useProgressTracking';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import { CONTENT_POLICY } from '../config/content-policy';
@@ -9,21 +10,27 @@ export function useAdaptiveLearning() {
   // Question history is managed by components, not the hook
 
   /**
-   * Calculate priority for a skill using current profile fields only (no attemptHistory).
-   * Uses score, recentHighConfidenceWrongCount (Rule 1 recency signal), and history (last 5 bools).
+   * Calculate priority for a skill using additive signal model.
+   * Signals: score band, recentHighConfidenceWrongCount (Rule 1), fragilityFlag (Rule 2).
+   * confidenceFlags (lifetime count) is retained on SkillPerformance but no longer drives priority.
    */
   const calculateSkillPriority = useCallback((skill: SkillPerformance): number => {
     if (!skill || skill.attempts === 0) return 2;
     const score = skill.score ?? 0;
     let priority = 0;
+    // Base: accuracy band
     if (score < 0.6) priority += 3;
     else if (score < 0.8) priority += 2;
     else priority += 1;
+    // Rule 1: recent high-confidence wrong answers (rolling 10-window)
     const hcw = skill.recentHighConfidenceWrongCount ?? 0;
     if (hcw >= 2) priority += 2.0;
     else if (hcw === 1) priority += 1.0;
+    // Rule 2: fragility — correct but low confidence (softer signal, +1.0)
+    if (skill.attemptHistory && computeFragilityFlag(skill.attemptHistory)) {
+      priority += 1.0;
+    }
     return priority;
-    // Note: confidenceFlags (lifetime count) retained on SkillPerformance but no longer drives priority boost.
   }, []);
 
   const getWeakestSkills = useCallback((profile: UserProfile): string[] => {

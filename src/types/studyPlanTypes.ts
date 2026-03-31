@@ -57,8 +57,14 @@ export interface StudentSkillState {
   repeatedDistractorPattern: boolean; // same wrong answer chosen >= 2 times
   missedQuestionIds: string[];
   status: StudentSkillStatus;
-  fragilityFlag: boolean;        // Low-confidence correct >= 50% of last 6 attempts. Feeds study plan prompt.
-  uncertainSkillFlag: boolean;   // High confidence variance. SHADOW MODE — do not surface to student.
+  fragilityFlag: boolean;        // Low-confidence correct >= 50% of last 6 attempts. Feeds urgency scoring + study plan prompt.
+  /**
+   * SHADOW MODE — computed and stored but intentionally NOT consumed by any downstream logic.
+   * Fires when both high-confidence and low-confidence rates >= 25% of attempts (confidence variance).
+   * Requires cohort validation data before activation. Do not surface to student or use in scoring.
+   * See audit-confidence-timing.md Rule 5 and diagnostic-synthesis-2026-03-29.md.
+   */
+  uncertainSkillFlag: boolean;
 }
 
 // ─── Study constraints ────────────────────────────────────────────────────────
