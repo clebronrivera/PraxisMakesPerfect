@@ -11,7 +11,8 @@ export function useAdaptiveLearning() {
 
   /**
    * Calculate priority for a skill using additive signal model.
-   * Signals: score band, recentHighConfidenceWrongCount (Rule 1), fragilityFlag (Rule 2).
+   * Signals: score band, recentHighConfidenceWrongCount (Rule 1), fragilityFlag (Rule 2),
+   * SRS overdue review (Rule 3).
    * confidenceFlags (lifetime count) is retained on SkillPerformance but no longer drives priority.
    */
   const calculateSkillPriority = useCallback((skill: SkillPerformance): number => {
@@ -29,6 +30,13 @@ export function useAdaptiveLearning() {
     // Rule 2: fragility — correct but low confidence (softer signal, +1.0)
     if (skill.attemptHistory && computeFragilityFlag(skill.attemptHistory)) {
       priority += 1.0;
+    }
+    // Rule 3: SRS overdue review — skill is past its scheduled review date (+1.5)
+    // The SRS engine persists nextReviewDate on every answer via useProgressTracking.
+    // When overdue, the adaptive system silently surfaces this skill more often.
+    const today = new Date().toISOString().slice(0, 10);
+    if (skill.nextReviewDate && skill.nextReviewDate <= today) {
+      priority += 1.5;
     }
     return priority;
   }, []);
