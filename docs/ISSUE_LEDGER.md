@@ -34,9 +34,30 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-03-31 - Phase 2 complete: adaptive practice, SRS routing, study plan enrichment, difficulty tiers
+
+- Status: resolved
+- Area: Adaptive learning / study plan / content
+- Summary: All five Phase 2 steps executed and committed in a single session:
+  - Step 5: `adaptivePractice: true` — activated the entire adaptive selection pipeline (domain targeting, skill priority scoring Rules 1+2, foundational gating). 12 integration tests added.
+  - Step 6: SRS Rule 3 — overdue skills get +1.5 priority boost in `calculateSkillPriority()`. First consumer of SRS data. 7 tests.
+  - Step 7: Study plan prompt enriched with `resolvedMisconceptionIds`, `confidenceSignals` (4 counts), and `topAtRiskVocabulary` (20 cross-cluster terms). Prompt rules updated.
+  - Step 8: Difficulty tier routing — new `src/utils/questionDifficulty.ts` maps `cognitiveComplexity` to Tier 1 (Recall) / Tier 2 (Application). Routing applied after foundational gating. Data audit confirmed labels are valid (8× scenario-language correlation). 15 tests.
+  - Step 9: 8 audit documents ported from external cowork session to `docs/` and `docs/audits/`.
+  Total: 34 new tests, 96 total (was 62).
+- Code anchors:
+  - `src/utils/launchConfig.ts` — `adaptivePractice: true`
+  - `src/hooks/useAdaptiveLearning.ts` — Rule 3 SRS boost + tier routing
+  - `src/utils/questionDifficulty.ts` — new difficulty tier utility
+  - `src/services/studyPlanService.ts` — enrichedSignals in prompt
+  - `docs/`, `docs/audits/` — ported audit documents
+- Resolution: Complete.
+
+---
+
 ## 2026-03-31 - Adaptive Redevelopment Phase 1 complete, adaptive practice still feature-flagged off
 
-- Status: watch
+- Status: resolved
 - Area: Adaptive learning / feature flags
 - Summary: Completed all Phase 1 work (Steps 0-4): signal functions, taxonomy (98 entries / 45 skills), registry wiring, vocab tagging (37 items). Full audit reveals `ACTIVE_LAUNCH_FEATURES.adaptivePractice` is `false` in `launchConfig.ts`, meaning the entire adaptive question selection system (priority scoring from Rules 1+2, domain targeting, foundational question preference, skill weakness targeting) is dead code at runtime. Students get random questions. The SRS engine also persists data on every answer but nothing reads it. Phase 2 plan created with Step 5 (enable adaptive practice) as highest priority.
 - Source of truth: `src/utils/launchConfig.ts` line 8
@@ -44,19 +65,19 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
   - `src/hooks/useAdaptiveLearning.ts:119-121` — random fallback when flag is false
   - `src/utils/srsEngine.ts` — full Leitner engine, tested, zero consumers
   - `src/hooks/useProgressTracking.ts:607-612` — SRS shadow write, "nothing reads these yet"
-- Resolution / next step: Phase 2 Step 5 — flip `adaptivePractice: true` with integration tests. See implementation plan.
+- Resolution: Resolved in Phase 2 Step 5. `adaptivePractice: true` as of commit `79aba51`.
 
 ---
 
 ## 2026-03-31 - resolvedMisconceptionIds computed but dropped from study plan prompt
 
-- Status: open
+- Status: resolved
 - Area: Study plan pipeline
 - Summary: `resolvedMisconceptionIds` is computed in `studyPlanPreprocessor.ts` (via `findMisconceptionByText()` + `getMisconceptionsByProgressSkill()`) and stored on `PrecomputedCluster`, but `studyPlanService.ts` prompt serialization explicitly omits it. The model only sees free-text misconception descriptions, not structured IDs. Phase 2 Step 7a addresses this.
 - Code anchors:
   - `src/utils/studyPlanPreprocessor.ts:277-294` — computes resolvedMisconceptionIds
   - `src/services/studyPlanService.ts:266-275` — prompt payload omits the field
-- Resolution / next step: Phase 2 Step 7a — add to prompt serialization.
+- Resolution: Resolved in Phase 2 Step 7a. `resolvedMisconceptionIds` now serialized in prompt payload alongside `retrievedMisconceptions`.
 
 ---
 

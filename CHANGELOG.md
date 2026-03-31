@@ -9,6 +9,28 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ## 2026-03-31
 
+### Adaptive Redevelopment — Phase 2 Complete (Steps 5–9)
+
+- **[Feature — Enable adaptive practice]** Flipped `adaptivePractice: false → true` in `launchConfig.ts`. Activates the full adaptive question selection pipeline that was built but feature-flagged off: 70% domain targeting, skill priority scoring (Rules 1+2: high-confidence-wrong boost + fragility boost), foundational question preference for low-attempt skills, and pool-exhaustion fallback. Students now receive targeted questions instead of random ones. — `src/utils/launchConfig.ts`
+
+- **[Feature — SRS overdue-review priority boost (Rule 3)]** Added Rule 3 to `calculateSkillPriority()` in `useAdaptiveLearning.ts`: when a skill's `nextReviewDate` is at or before today, its priority score receives a +1.5 boost. The SRS engine (`srsEngine.ts`) already persisted `srsBox`/`nextReviewDate`/`lastReviewDate` on every answer; this is the first consumer of that data. Rule 3 stacks correctly with Rules 1 and 2. Inclusive boundary: `nextReviewDate === today` triggers the boost. — `src/hooks/useAdaptiveLearning.ts`
+
+- **[Feature — Enrich study plan model prompt]** Three previously-computed signals now reach the study plan model: (7a) `resolvedMisconceptionIds` — canonical taxonomy IDs parallel to free-text misconception descriptions per cluster; (7b) `confidenceSignals` — `{ misconceptionSkillCount, confidenceIssueSkillCount, repeatedDistractorSkillCount, fragilityFlagSkillCount }` derived from `skillStates` at call time; (7c) `topAtRiskVocabulary` — deduped cross-cluster vocabulary from `urgent_now` + `important_next` clusters, max 20 terms, as a priority retrieval target list. Prompt rules updated for all three signals. — `src/services/studyPlanService.ts`
+
+- **[Feature — Difficulty tier routing in adaptive selection (Step 8)]** New utility `src/utils/questionDifficulty.ts` maps `cognitiveComplexity` metadata to two tiers: Tier 1 (Recall) and Tier 2 (Application). After the foundational gating check, `selectNextQuestion` applies tier routing: skills with accuracy < 40% receive Recall questions first; skills at ≥ 40% receive Application questions first. Falls back to the full candidate pool when the preferred tier is unavailable for a skill. Data audit confirmed labels are intentional and valid: 376 Recall (33%), 774 Application (67%), 8× higher scenario-language correlation in Application vs Recall. — `src/utils/questionDifficulty.ts`, `src/hooks/useAdaptiveLearning.ts`
+
+- **[Docs — Port audit documents from Adaptive Redevelopment session (Step 9)]** Copied 8 files from the external cowork session into `docs/` and new `docs/audits/` folder: master synthesis (`diagnostic-synthesis-2026-03-29.md`), taxonomy design (`misconception-taxonomy-design.md`), content priority plan (`diagnostic-content-priority.md`), and individual audits (adaptive diagnostic, confidence/timing, misconceptions, vocab tags, distractor coverage). — `docs/`, `docs/audits/`
+
+### Tests (Phase 2)
+
+- **[Tests — Adaptive selection integration (12 tests)]** Added `tests/adaptiveSelection.test.ts` covering: priority ordering with Rule 1 HCW boost, weak-skill preference in selection, foundational preference gated by attempt count, redemption blacklist hard guarantee (normal + fallback), pool exhaustion fallback, and assessment question exclusion. — `tests/adaptiveSelection.test.ts`
+- **[Tests — SRS priority boost (7 tests)]** Added `tests/adaptivePriority.test.ts` covering: overdue vs. non-overdue priority comparison, future date no boost, today inclusive boundary, missing date no boost, Rule 1 + Rule 3 stacking, Rule 2 + Rule 3 stacking, and end-to-end question selection with overdue signal. — `tests/adaptivePriority.test.ts`
+- **[Tests — Question difficulty tiers (15 tests)]** Added `tests/questionDifficulty.test.ts` covering: `getQuestionTier` (4), `getPreferredTier` boundary conditions (3), `filterByPreferredTier` with fallback (4), and adaptive selection integration for Recall preference, Application preference, no-Recall fallback, and foundational gating priority (4). — `tests/questionDifficulty.test.ts`
+
+Total test count: 96 (was 62 after Phase 1).
+
+---
+
 ### Adaptive Redevelopment — Phase 1 Complete (Steps 0–4)
 
 - **[Refactor — Centralize skill proficiency thresholds]** Replaced hardcoded threshold literals across 6 files with imports from `skillProficiency.ts` (`TOTAL_SKILLS`, `READINESS_TARGET`, `READINESS_GOAL_PCT`). Zero behavior change. — `src/utils/skillProficiency.ts`, `src/components/ScreenerResults.tsx`, `src/components/StudentDetailDrawer.tsx`, `src/components/StudyModesSection.tsx`, `src/utils/scoreReportGenerator.ts`, `src/utils/tutorContextBuilder.ts`, `src/components/ResultsDashboard.tsx`
