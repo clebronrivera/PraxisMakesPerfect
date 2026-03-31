@@ -2,6 +2,7 @@ import type { Domain, Skill } from '../types/content';
 import type { UserResponse } from '../brain/weakness-detector';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD, PROFICIENCY_META } from './skillProficiency';
+import type { MissedConceptSummary } from '../types/diagnosticSummary';
 
 export const DOMAIN_READY_THRESHOLD = DEMONSTRATING_THRESHOLD;
 export const DOMAIN_BUILDING_THRESHOLD = APPROACHING_THRESHOLD;
@@ -10,6 +11,10 @@ export const OVERALL_BUILDING_THRESHOLD = APPROACHING_THRESHOLD;
 
 export type ReadinessTone = 'ready' | 'building' | 'priority';
 
+// MissedConceptSummary is defined in src/types/diagnosticSummary.ts and re-exported here
+// so existing callers that import it from assessmentReport keep working.
+export type { MissedConceptSummary };
+
 export interface ReportSkillSummary {
   skillId: string;
   skillName: string;
@@ -17,6 +22,8 @@ export interface ReportSkillSummary {
   correct: number;
   incorrect: number;
   score: number;
+  /** Concepts that were missed in wrong answers. Empty array when none missed. */
+  missedConcepts: MissedConceptSummary[];
 }
 
 export interface FoundationalGapSummary {
@@ -56,11 +63,14 @@ export interface AssessmentReportModel {
   domainSummaries: DomainReportSummary[];
   foundationalGaps: FoundationalGapSummary[];
   strengths: ReportSkillSummary[];
+  /** Skills with the most incorrect answers — includes missedConcepts (Step 2 unstrip). */
+  weaknesses: ReportSkillSummary[];
 }
 
 interface SkillAttemptSummary extends ReportSkillSummary {
   domainIds: Set<number>;
-  missedConcepts: Set<string>;
+  /** Internal concept tracking: concept → count of incorrect answers touching it */
+  missedConceptCounts: Map<string, number>;
 }
 
 function toDomainName(domainId: number, domains: Domain[]): string {
@@ -153,8 +163,9 @@ export function buildAssessmentReportModel(
       correct: 0,
       incorrect: 0,
       score: 0,
+      missedConcepts: [],
       domainIds: new Set<number>(),
-      missedConcepts: new Set<string>()
+      missedConceptCounts: new Map<string, number>(),
     };
 
     currentSkill.attempted += 1;
@@ -162,7 +173,12 @@ export function buildAssessmentReportModel(
       currentSkill.correct += 1;
     } else {
       currentSkill.incorrect += 1;
-      (question.keyConcepts || []).forEach((concept) => currentSkill.missedConcepts.add(concept));
+      (question.keyConcepts || []).forEach((concept) => {
+        currentSkill.missedConceptCounts.set(
+          concept,
+          (currentSkill.missedConceptCounts.get(concept) ?? 0) + 1
+        );
+      });
     }
     currentSkill.score = currentSkill.attempted > 0 ? currentSkill.correct / currentSkill.attempted : 0;
     domainIds.forEach((domainId) => currentSkill.domainIds.add(domainId));
@@ -205,12 +221,25 @@ export function buildAssessmentReportModel(
         .filter((skill) => skill.correct > 0 && skill.score >= DOMAIN_READY_THRESHOLD)
         .sort((a, b) => b.score - a.score || b.correct - a.correct)
         .slice(0, 3)
-        .map(({ domainIds, missedConcepts, ...summary }) => summary);
+        .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+          ...summary,
+          missedConcepts: [] as MissedConceptSummary[],
+        }));
       const weaknesses = domainSkillStats
         .filter((skill) => skill.incorrect > 0)
         .sort((a, b) => b.incorrect - a.incorrect || a.score - b.score)
         .slice(0, 4)
-        .map(({ domainIds, missedConcepts, ...summary }) => summary);
+        .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+          ...summary,
+          missedConcepts: Array.from(missedConceptCounts.entries())
+            .map(([concept, count]) => ({
+              concept,
+              skillId: summary.skillId,
+              skillName: summary.skillName,
+              count,
+            }))
+            .sort((a, b) => b.count - a.count),
+        }));
       const foundationalGaps = Array.from(foundationalGapMap.values())
         .filter((gap) => gap.domainIds.includes(domainId))
         .slice(0, 3);
@@ -255,7 +284,27 @@ export function buildAssessmentReportModel(
     .filter((skill) => skill.correct > 0)
     .sort((a, b) => b.score - a.score || b.correct - a.correct)
     .slice(0, 4)
-    .map(({ domainIds, missedConcepts, ...summary }) => summary);
+    .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+      ...summary,
+      missedConcepts: [] as MissedConceptSummary[],
+    }));
+
+  // Top-level weaknesses with missedConcepts populated (Step 2 unstrip)
+  const weaknesses = Array.from(skillStats.values())
+    .filter((skill) => skill.incorrect > 0)
+    .sort((a, b) => b.incorrect - a.incorrect || a.score - b.score)
+    .slice(0, 5)
+    .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+      ...summary,
+      missedConcepts: Array.from(missedConceptCounts.entries())
+        .map(([concept, count]) => ({
+          concept,
+          skillId: summary.skillId,
+          skillName: summary.skillName,
+          count,
+        }))
+        .sort((a, b) => b.count - a.count),
+    }));
 
   return {
     totalQuestions: validResponses.length,
@@ -267,6 +316,7 @@ export function buildAssessmentReportModel(
     strongestDomains,
     domainSummaries,
     foundationalGaps: Array.from(foundationalGapMap.values()).slice(0, 5),
-    strengths
+    strengths,
+    weaknesses,
   };
 }

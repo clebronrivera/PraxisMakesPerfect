@@ -51,6 +51,54 @@ export function countConfidenceFlags(attemptHistory: SkillAttempt[]): number {
   ).length;
 }
 
+export const RAPID_THRESHOLD_SECONDS = 4;
+
+/**
+ * Rolling-window count of high-confidence wrong answers (Rule 1).
+ * Replaces the blunt lifetime confidenceFlags signal for priority boosting.
+ */
+export function countRecentHighConfidenceWrong(
+  attemptHistory: SkillAttempt[],
+  window = 10
+): number {
+  const recent = attemptHistory.slice(-window);
+  return recent.filter(a => a.confidence === 'high' && !a.correct).length;
+}
+
+/**
+ * Fragility flag: student answers correctly but self-rates low confidence (Rule 2).
+ * Requires >= 6 attempts. Safe to surface via study plan prompt.
+ */
+export function computeFragilityFlag(attemptHistory: SkillAttempt[]): boolean {
+  if (attemptHistory.length < 6) return false;
+  const recent = attemptHistory.slice(-6);
+  const lcrCount = recent.filter(a => a.confidence === 'low' && a.correct).length;
+  return lcrCount / 6 >= 0.5;
+}
+
+/**
+ * Uncertain skill flag: alternating high/low confidence (Rule 5). Shadow mode only.
+ * Requires >= 6 attempts. Do NOT surface to student until validated.
+ */
+export function computeUncertainSkillFlag(attemptHistory: SkillAttempt[]): boolean {
+  if (attemptHistory.length < 6) return false;
+  const total = attemptHistory.length;
+  const highRate = attemptHistory.filter(a => a.confidence === 'high').length / total;
+  const lowRate = attemptHistory.filter(a => a.confidence === 'low').length / total;
+  return highRate >= 0.25 && lowRate >= 0.25;
+}
+
+/**
+ * Rapid-guess count. SHADOW MODE ONLY — do not connect to any score or label.
+ * Guard: timeSpent > 0 excludes the 0 sentinel (no timing recorded).
+ * Validate threshold over one cohort cycle before activating.
+ */
+export function computeRapidGuessCount(attemptHistory: SkillAttempt[]): number {
+  return attemptHistory.filter(
+    a => a.timeSpent > 0 && a.timeSpent < RAPID_THRESHOLD_SECONDS
+  ).length;
+}
+
 export type LearningState = 'emerging' | 'developing' | 'proficient' | 'mastery';
 
 export interface SkillAttempt {
@@ -58,7 +106,7 @@ export interface SkillAttempt {
   correct: boolean;
   confidence: 'low' | 'medium' | 'high';
   timestamp: number;
-  timeSpent: number;
+  timeSpent: number; // Stored per-attempt from time_on_item_seconds. Value 0 = not recorded (sentinel). See computeRapidGuessCount() for usage.
 }
 
 export interface SkillPerformance {
@@ -72,6 +120,7 @@ export interface SkillPerformance {
   attemptHistory?: SkillAttempt[]; // Raw attempt history (bounded to last 20)
   weightedAccuracy?: number;  // Confidence-weighted accuracy
   confidenceFlags?: number;   // Count of high+wrong (misconceptions)
+  recentHighConfidenceWrongCount?: number; // Rolling 10-attempt window count of confidence === 'high' AND correct === false
   // SRS fields (shadow mode — written but not yet read by UI)
   srsBox?: number;            // Leitner box 0-4
   nextReviewDate?: string;    // ISO date-only "YYYY-MM-DD"

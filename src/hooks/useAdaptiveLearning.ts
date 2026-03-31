@@ -10,16 +10,20 @@ export function useAdaptiveLearning() {
 
   /**
    * Calculate priority for a skill using current profile fields only (no attemptHistory).
-   * Uses score, confidenceFlags (high+wrong = misconceptions), and history (last 5 bools).
+   * Uses score, recentHighConfidenceWrongCount (Rule 1 recency signal), and history (last 5 bools).
    */
   const calculateSkillPriority = useCallback((skill: SkillPerformance): number => {
     if (!skill || skill.attempts === 0) return 2;
     const score = skill.score ?? 0;
-    const confidenceFlags = skill.confidenceFlags ?? 0;
-    if (confidenceFlags > 0) return 3 + Math.min(1, confidenceFlags / 3);
-    if (score < 0.6) return 3;
-    if (score < 0.8) return 2;
-    return 1;
+    let priority = 0;
+    if (score < 0.6) priority += 3;
+    else if (score < 0.8) priority += 2;
+    else priority += 1;
+    const hcw = skill.recentHighConfidenceWrongCount ?? 0;
+    if (hcw >= 2) priority += 2.0;
+    else if (hcw === 1) priority += 1.0;
+    return priority;
+    // Note: confidenceFlags (lifetime count) retained on SkillPerformance but no longer drives priority boost.
   }, []);
 
   const getWeakestSkills = useCallback((profile: UserProfile): string[] => {

@@ -6,13 +6,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { SkillId } from '../brain/skill-map';
-import { 
-  LearningState, 
-  SkillPerformance, 
+import {
+  LearningState,
+  SkillPerformance,
   SkillAttempt,
   calculateLearningState,
   calculateWeightedAccuracy,
-  countConfidenceFlags
+  countConfidenceFlags,
+  countRecentHighConfidenceWrong
 } from '../brain/learning-state';
 import { UserResponse } from '../brain/weakness-detector';
 import { calculateAndSaveGlobalScores } from '../utils/globalScoreCalculator';
@@ -574,7 +575,8 @@ export function useProgressTracking() {
 
     const weightedAccuracy = calculateWeightedAccuracy(newAttemptHistory);
     const confidenceFlags = countConfidenceFlags(newAttemptHistory);
-    
+    const recentHighConfidenceWrongCount = countRecentHighConfidenceWrong(newAttemptHistory, 10);
+
     const updatedSkill: SkillPerformance = {
       ...baseSkill,
       score: newScore,
@@ -584,7 +586,8 @@ export function useProgressTracking() {
       history: newHistory,
       attemptHistory: newAttemptHistory,
       weightedAccuracy,
-      confidenceFlags
+      confidenceFlags,
+      recentHighConfidenceWrongCount
     };
     
     const skillPerfLookup = (id: SkillId) => {

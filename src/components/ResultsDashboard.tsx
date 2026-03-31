@@ -8,8 +8,8 @@ import type { UserProfile } from '../hooks/useProgressTracking';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
 import { PROFICIENCY_META, TOTAL_SKILLS, READINESS_TARGET } from '../utils/skillProficiency';
-import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import { buildConceptAnalytics, type ConceptAnalyticsReport } from '../utils/conceptAnalytics';
+import { computeTimeStats, computeConfidenceStats } from '../utils/diagnosticSelectors';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -20,7 +20,6 @@ const EXAM_WEIGHTS: Record<number, number> = {
   3: 19, // Systems-Level Services
   4: 24, // Foundations of School Psychology
 };
-
 // TOTAL_SKILLS and READINESS_TARGET are imported from skillProficiency — do not redeclare.
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -40,11 +39,7 @@ interface ResultsDashboardProps {
   defaultView?: 'domain' | 'skill';
 }
 
-interface TimeStats {
-  avgOverall: number | null;
-  byDomain: Record<number, { avg: number; count: number }>;
-  topSlowQuestions: Array<{ questionId: string; avgSeconds: number; count: number }>;
-}
+// TimeStats is imported from diagnosticSelectors — do not redeclare.
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -62,44 +57,7 @@ const DOT_COLORS: Record<SkillColorState, string> = {
   green:  'bg-emerald-400',
 };
 
-function computeTimeStats(userProfile: UserProfile): TimeStats {
-  const domainGroups: Record<number, number[]> = {};
-  const questionGroups: Record<string, number[]> = {};
-  const allTimes: number[] = [];
-
-  for (const [skillId, perf] of Object.entries(userProfile.skillScores ?? {})) {
-    if (!perf.attemptHistory) continue;
-    const def = getProgressSkillDefinition(skillId);
-    const domainId = def?.domainId ?? 0;
-
-    for (const attempt of perf.attemptHistory) {
-      const t = attempt.timeSpent;
-      // Sanity: 1–600 seconds
-      if (!t || t < 1 || t > 600) continue;
-      allTimes.push(t);
-      if (!domainGroups[domainId]) domainGroups[domainId] = [];
-      domainGroups[domainId].push(t);
-      if (!questionGroups[attempt.questionId]) questionGroups[attempt.questionId] = [];
-      questionGroups[attempt.questionId].push(t);
-    }
-  }
-
-  const avg = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / arr.length;
-
-  const avgOverall = allTimes.length > 0 ? avg(allTimes) : null;
-
-  const byDomain: Record<number, { avg: number; count: number }> = {};
-  for (const [dId, times] of Object.entries(domainGroups)) {
-    byDomain[Number(dId)] = { avg: avg(times), count: times.length };
-  }
-
-  const topSlowQuestions = Object.entries(questionGroups)
-    .map(([qId, times]) => ({ questionId: qId, avgSeconds: avg(times), count: times.length }))
-    .sort((a, b) => b.avgSeconds - a.avgSeconds)
-    .slice(0, 5);
-
-  return { avgOverall, byDomain, topSlowQuestions };
-}
+// computeTimeStats is imported from diagnosticSelectors — do not redeclare.
 
 // ─── Timeline ────────────────────────────────────────────────────────────────
 
@@ -190,30 +148,19 @@ export default function ResultsDashboard({
   const timeStats = useMemo(() => computeTimeStats(userProfile), [userProfile]);
 
   // ── Confidence-weighted accuracy ─────────────────────────────────────────────
-  const confidenceStats = useMemo(() => {
-    let rawCorrect = 0;
-    let rawAttempts = 0;
-    let weightedCorrectSum = 0;
-    let weightedTotalSum = 0;
-    let highWrong = 0; // misconceptions: answered "Sure" but wrong
-
-    for (const perf of Object.values(userProfile.skillScores ?? {})) {
-      rawCorrect += perf.correct ?? 0;
-      rawAttempts += perf.attempts ?? 0;
-      highWrong += perf.confidenceFlags ?? 0;
-      if (perf.weightedAccuracy !== undefined && perf.attempts > 0) {
-        // Reconstruct weighted sums using stored weightedAccuracy × attempts as proxy
-        weightedCorrectSum += perf.weightedAccuracy * perf.attempts;
-        weightedTotalSum += perf.attempts;
-      }
-    }
-
-    const rawPct = rawAttempts > 0 ? Math.round((rawCorrect / rawAttempts) * 100) : null;
-    const weightedPct = weightedTotalSum > 0 ? Math.round((weightedCorrectSum / weightedTotalSum) * 100) : null;
-    const delta = rawPct !== null && weightedPct !== null ? weightedPct - rawPct : null;
-
-    return { rawPct, weightedPct, delta, highWrong };
-  }, [userProfile.skillScores]);
+  // Uses computeConfidenceStats from diagnosticSelectors (returns 0–1 ratios).
+  // Convert to integer percentages at display sites below.
+  const confidenceStats = useMemo(
+    () => computeConfidenceStats(userProfile),
+    [userProfile]
+  );
+  // Display-ready percentages derived from 0–1 ratios
+  const rawPct = confidenceStats.rawAccuracy !== null
+    ? Math.round(confidenceStats.rawAccuracy * 100) : null;
+  const weightedPct = confidenceStats.weightedAccuracy !== null
+    ? Math.round(confidenceStats.weightedAccuracy * 100) : null;
+  const confidenceDeltaPct = confidenceStats.delta !== null
+    ? Math.round(confidenceStats.delta * 100) : null;
 
   // ── Concept analytics ──────────────────────────────────────────────────────
   const conceptReport: ConceptAnalyticsReport | null = useMemo(() => {
@@ -706,39 +653,44 @@ export default function ResultsDashboard({
             )}
 
             {/* Confidence-weighted accuracy */}
-            {confidenceStats.rawPct !== null && (
+            {rawPct !== null && (
               <div>
                 <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Confidence-adjusted accuracy</p>
                 <p className="mb-2 text-[11px] text-slate-400 leading-snug">High-confidence wrong answers are penalized more heavily. A large gap between raw and adjusted accuracy suggests misconceptions worth targeting.</p>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm text-slate-500">Raw accuracy</p>
-                    <span className="text-sm font-bold tabular-nums text-slate-700">{confidenceStats.rawPct}%</span>
+                    <span className="text-sm font-bold tabular-nums text-slate-700">{rawPct}%</span>
                   </div>
-                  {confidenceStats.weightedPct !== null && (
+                  {weightedPct !== null && (
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm text-slate-500">
                         Confidence-weighted
                         <span className="ml-1.5 text-[11px] text-slate-400">(Sure×1.2, Guess×0.8, Sure+wrong×0.5)</span>
                       </p>
                       <span className={`text-sm font-bold tabular-nums ${
-                        confidenceStats.delta !== null && confidenceStats.delta > 0 ? 'text-emerald-600' :
-                        confidenceStats.delta !== null && confidenceStats.delta < 0 ? 'text-rose-500' : 'text-slate-700'
+                        confidenceDeltaPct !== null && confidenceDeltaPct > 0 ? 'text-emerald-600' :
+                        confidenceDeltaPct !== null && confidenceDeltaPct < 0 ? 'text-rose-500' : 'text-slate-700'
                       }`}>
-                        {confidenceStats.weightedPct}%
-                        {confidenceStats.delta !== null && confidenceStats.delta !== 0 && (
-                          <span className="ml-1 text-[11px]">({confidenceStats.delta > 0 ? '+' : ''}{confidenceStats.delta})</span>
+                        {weightedPct}%
+                        {confidenceDeltaPct !== null && confidenceDeltaPct !== 0 && (
+                          <span className="ml-1 text-[11px]">({confidenceDeltaPct > 0 ? '+' : ''}{confidenceDeltaPct})</span>
                         )}
                       </span>
                     </div>
                   )}
-                  {confidenceStats.highWrong > 0 && (
+                  {confidenceStats.totalHighWrong > 0 && (
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm text-rose-600">Misconception flags <span className="text-[11px] text-rose-400">(answered Sure, got wrong)</span></p>
-                      <span className="text-sm font-bold tabular-nums text-rose-600">{confidenceStats.highWrong}</span>
+                      <span className="text-sm font-bold tabular-nums text-rose-600">{confidenceStats.totalHighWrong}</span>
                     </div>
                   )}
                 </div>
+                {confidenceStats.interpretation === 'possible_overconfidence' && (
+                  <p className="mt-1.5 text-[11px] leading-snug text-slate-400">
+                    High-confidence wrong answers are pulling your effective score below your raw accuracy — likely a misconception area worth targeting.
+                  </p>
+                )}
               </div>
             )}
 

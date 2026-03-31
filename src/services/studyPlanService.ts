@@ -382,6 +382,7 @@ OUTPUT SECTION RULES — read before generating:
     '- domainStudyMaps must cover every domain in domainSummaries with a score below 70 or a deficitSkillCount > 0.',
     '- Provide 3 to 6 items per array unless the data clearly supports fewer.',
     '- Keep strings concise and actionable. Avoid filler phrases.',
+    '- For skills with fragilityFlag=true: append note to whyItMatters saying "This student answers correctly but self-rates low confidence — prioritize active retrieval practice."',
     '- schemaVersion must be "2".',
     '',
     'Assessment data (pre-processed):',

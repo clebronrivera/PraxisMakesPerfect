@@ -57,6 +57,8 @@ export interface StudentSkillState {
   repeatedDistractorPattern: boolean; // same wrong answer chosen >= 2 times
   missedQuestionIds: string[];
   status: StudentSkillStatus;
+  fragilityFlag: boolean;        // Low-confidence correct >= 50% of last 6 attempts. Feeds study plan prompt.
+  uncertainSkillFlag: boolean;   // High confidence variance. SHADOW MODE — do not surface to student.
 }
 
 // ─── Study constraints ────────────────────────────────────────────────────────
@@ -116,6 +118,7 @@ export interface PrecomputedCluster {
     status: StudentSkillStatus;
     accuracy: number | null;
     trend: TrendDirection;
+    fragilityFlag: boolean;           // Low-confidence correct >= 50% of last 6. Feeds study plan prompt.
   }>;
   retrievedVocabulary: string[];     // from SkillMetadataV1 for skills in this cluster
   retrievedMisconceptions: string[]; // from SkillMetadataV1

@@ -27,6 +27,11 @@ import {
 } from '../types/studyPlanTypes';
 import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
 import { toMetadataId } from '../data/skillIdMap';
+import {
+  computeFragilityFlag,
+  computeUncertainSkillFlag,
+  type SkillAttempt,
+} from '../brain/learning-state';
 
 // ─── Response shape expected from the caller ──────────────────────────────────
 
@@ -150,6 +155,19 @@ export function computeStudentSkillStates(
       .filter(r => !r.isCorrect && r.questionId)
       .map(r => r.questionId as string);
 
+    // Convert raw responses to SkillAttempt objects for flag computation
+    const skillAttempts: SkillAttempt[] = skillResponses.map(r => ({
+      questionId: r.questionId ?? `unknown-${skillId}-${Math.random()}`,
+      correct: r.isCorrect,
+      confidence: (r.confidence as 'low' | 'medium' | 'high' | 'unknown') === 'unknown' ? 'medium' : (r.confidence as 'low' | 'medium' | 'high'),
+      timestamp: 0, // Not available from raw responses
+      timeSpent: 0,  // Not available from raw responses
+    }));
+
+    // Compute new flags using the flag functions
+    const fragilityFlag = computeFragilityFlag(skillAttempts);
+    const uncertainSkillFlag = computeUncertainSkillFlag(skillAttempts);
+
     return {
       skillId,
       currentAccuracy: accuracy,
@@ -161,6 +179,8 @@ export function computeStudentSkillStates(
       repeatedDistractorPattern,
       missedQuestionIds,
       status: assignStatus(attempts, accuracy, confidenceIssue, repeatedDistractorPattern),
+      fragilityFlag,
+      uncertainSkillFlag,
     };
   });
 }
@@ -196,9 +216,10 @@ function urgencyScore(state: StudentSkillState): number {
   const base      = statusWeight[state.status];
   const trend     = trendPenalty[state.trend];
   const confBoost = state.confidenceIssue ? 15 : 0;
+  const fragility = state.fragilityFlag ? 10 : 0;
   const accFactor = state.currentAccuracy !== null ? (100 - state.currentAccuracy) / 10 : 5;
 
-  return base + trend + confBoost + accFactor;
+  return base + trend + confBoost + fragility + accFactor;
 }
 
 // ─── Cluster assignment and urgency ──────────────────────────────────────────
@@ -307,6 +328,7 @@ export function buildPrecomputedClusters(
         status: s.status,
         accuracy: s.currentAccuracy,
         trend: s.trend,
+        fragilityFlag: s.fragilityFlag,
       })),
       retrievedVocabulary:     content.vocabulary,
       retrievedMisconceptions: content.misconceptions,
