@@ -7,6 +7,24 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-04-01
+
+### SRS Visibility — Per-Skill Chips + Clickable Badge (Step 6c extension)
+
+- **[Feature — Per-skill SRS review chips]** Each skill row in the By Skill panel now shows a contextual chip when a review date is near: amber "Overdue" for past-due skills, amber "Due today" for skills due today, violet "Due Apr N" for skills due within 3 days. Skills with distant or no review date show no chip, keeping the list uncluttered. Unattempted skills are excluded from all SRS display (gate: `attempts > 0`). — `src/components/StudyModesSection.tsx`
+
+- **[Feature — Clickable overdue badge with filter jump]** The violet "X skills due for spaced review" nudge (previously a passive `<div>`) is now a `<button>`. Clicking it switches to the By Skill tab and activates the new "Due (N)" filter, showing only overdue skills. Copy updated from "the adaptive system will prioritize these" to "tap to view them now" to match the actionable behavior. — `src/components/StudyModesSection.tsx`
+
+- **[Feature — Overdue filter in By Skill panel]** Added `'overdue'` to `SkillFilter` type. The filter bar shows a "Due (N)" button in violet only when `srsOverdueCount > 0`. Filter logic: `attempts > 0 && nextReviewDate <= today`. — `src/components/StudyModesSection.tsx`
+
+- **[Refactor — Lift skill filter state]** `filter` / `setFilter` moved from `SkillPanel` local state to `StudyModesSection` so the nudge badge in the parent can set both mode and filter atomically. `SkillPanel` now accepts `filter`, `onFilterChange`, `srsOverdueCount` as props. — `src/components/StudyModesSection.tsx`
+
+- **[Fix — Local date for SRS comparisons]** Replaced `new Date().toISOString().slice(0, 10)` (UTC-based, can drift near midnight) with `getLocalDateStr()` using local date parts. Shared across `srsOverdueCount`, filter logic, and chip computation. `formatShortDate()` uses a noon offset to prevent timezone boundary flips in displayed dates. — `src/components/StudyModesSection.tsx`
+
+96/96 tests pass, types clean.
+
+---
+
 ## 2026-03-31
 
 ### Adaptive Redevelopment — Phase 2 Complete (Steps 5–9)

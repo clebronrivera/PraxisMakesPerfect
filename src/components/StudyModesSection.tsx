@@ -61,6 +61,23 @@ const LIGHT_BADGE: Record<string, { badge: string; text: string }> = {
   unstarted:   { badge: 'bg-slate-100 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
 };
 
+// ─── Date helpers ────────────────────────────────────────────────────────────
+// Uses local date parts (not UTC) so "today" matches the user's wall clock.
+
+function getLocalDateStr(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function formatShortDate(dateStr: string): string {
+  // Add noon offset so timezone shifts don't flip the displayed day.
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface StudyModesSectionProps {
@@ -137,6 +154,8 @@ interface SkillRow {
   score: number | null;
   attempts: number;
   tier: ReturnType<typeof getSkillProficiency>;
+  nextReviewDate?: string;
+  srsBox?: number;
 }
 
 function buildAllSkillRows(profile: UserProfile): SkillRow[] {
@@ -152,6 +171,8 @@ function buildAllSkillRows(profile: UserProfile): SkillRow[] {
         score,
         attempts,
         tier: getSkillProficiency(score ?? 0, attempts, perf?.weightedAccuracy),
+        nextReviewDate: perf?.nextReviewDate,
+        srsBox: perf?.srsBox,
       });
     }
   }
@@ -279,22 +300,27 @@ function DomainPanel({
 
 // ─── Skill Panel ─────────────────────────────────────────────────────────────
 
-type SkillFilter = 'all' | 'proficient' | 'approaching' | 'emerging' | 'unstarted';
+type SkillFilter = 'all' | 'proficient' | 'approaching' | 'emerging' | 'unstarted' | 'overdue';
 
 function SkillPanel({
   profile,
   isLocked,
+  filter,
+  onFilterChange,
+  srsOverdueCount,
   onStartSkillPractice,
   onOpenHelp,
   onStartDiagnostic,
 }: {
   profile: UserProfile;
   isLocked: boolean;
+  filter: SkillFilter;
+  onFilterChange: (f: SkillFilter) => void;
+  srsOverdueCount: number;
   onStartSkillPractice: (skillId: string) => void;
   onOpenHelp: (skillId: string, skillLabel: string) => void;
   onStartDiagnostic?: () => void;
 }) {
-  const [filter, setFilter] = useState<SkillFilter>('all');
 
   if (isLocked) {
     return (
@@ -326,13 +352,24 @@ function SkillPanel({
   const approachingCount = assessedRows.filter(r => r.tier === 'approaching').length;
   const emergingCount = assessedRows.filter(r => r.tier === 'emerging').length;
 
-  const displayed = filter === 'all' ? allRows : allRows.filter(r => r.tier === filter);
+  const today = getLocalDateStr();
+  const displayed =
+    filter === 'all'     ? allRows :
+    filter === 'overdue' ? allRows.filter(r => r.attempts > 0 && !!r.nextReviewDate && r.nextReviewDate <= today) :
+                           allRows.filter(r => r.tier === filter);
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
-    { id: 'all', label: 'All', count: allRows.length, css: 'text-slate-500 border-slate-200', activeCss: 'bg-amber-50 border-amber-300 text-slate-900' },
-    { id: 'emerging', label: PROFICIENCY_META.emerging.label, count: emergingCount, css: 'text-rose-600 border-rose-200', activeCss: 'bg-rose-50 border-rose-300 text-rose-700' },
-    { id: 'approaching', label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-700 border-amber-200', activeCss: 'bg-amber-50 border-amber-300 text-amber-700' },
-    { id: 'proficient', label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-700 border-emerald-200', activeCss: 'bg-emerald-50 border-emerald-300 text-emerald-700' },
+    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-amber-50 border-amber-300 text-slate-900'    },
+    { id: 'emerging',  label: PROFICIENCY_META.emerging.label,  count: emergingCount,     css: 'text-rose-600 border-rose-200',     activeCss: 'bg-rose-50 border-rose-300 text-rose-700'       },
+    { id: 'approaching',label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-700 border-amber-200', activeCss: 'bg-amber-50 border-amber-300 text-amber-700'    },
+    { id: 'proficient',label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-700 border-emerald-200', activeCss: 'bg-emerald-50 border-emerald-300 text-emerald-700' },
+    ...(srsOverdueCount > 0 ? [{
+      id: 'overdue' as SkillFilter,
+      label: `Due (${srsOverdueCount})`,
+      count: srsOverdueCount,
+      css: 'text-violet-700 border-violet-200',
+      activeCss: 'bg-violet-50 border-violet-300 text-violet-700',
+    }] : []),
   ];
 
   return (
@@ -366,12 +403,14 @@ function SkillPanel({
         {filterButtons.map(btn => (
           <button
             key={btn.id}
-            onClick={() => setFilter(btn.id)}
+            onClick={() => onFilterChange(btn.id)}
             className={`px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all ${
               filter === btn.id ? btn.activeCss : `bg-transparent ${btn.css} hover:opacity-80`
             }`}
           >
-            {btn.label} {btn.count > 0 && <span className="opacity-70">({btn.count})</span>}
+            {btn.id === 'overdue' ? btn.label : (
+              <>{btn.label} {btn.count > 0 && <span className="opacity-70">({btn.count})</span>}</>
+            )}
           </button>
         ))}
       </div>
@@ -411,6 +450,31 @@ function SkillPanel({
                     <span className={`text-[11px] font-bold tabular-nums ${lightBadge.text}`}>{pct}%</span>
                   )}
                 </div>
+
+                {/* SRS chip — only for skills with attempts and a near/past review date */}
+                {(() => {
+                  if (!row.nextReviewDate || row.attempts === 0) return null;
+                  const daysOut = Math.round(
+                    (new Date(row.nextReviewDate + 'T12:00:00').getTime() - new Date(today + 'T12:00:00').getTime())
+                    / 86_400_000
+                  );
+                  if (daysOut < 0) return (
+                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-200 text-amber-700 shrink-0">
+                      Overdue
+                    </span>
+                  );
+                  if (daysOut === 0) return (
+                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-200 text-amber-700 shrink-0">
+                      Due today
+                    </span>
+                  );
+                  if (daysOut <= 3) return (
+                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-violet-50 border border-violet-200 text-violet-700 shrink-0">
+                      Due {formatShortDate(row.nextReviewDate)}
+                    </span>
+                  );
+                  return null;
+                })()}
 
                 {/* Help button — opens SkillHelpDrawer */}
                 <button
@@ -504,6 +568,7 @@ export default function StudyModesSection({
   onStartDiagnostic,
 }: StudyModesSectionProps) {
   const [selectedMode, setSelectedMode] = useState<PracticeMode>('domain');
+  const [skillFilter, setSkillFilter] = useState<SkillFilter>('all');
 
   // Skill Help Drawer state (By Skill tab → help icon)
   const [helpSkillId, setHelpSkillId] = useState<string | null>(null);
@@ -525,7 +590,7 @@ export default function StudyModesSection({
   const readinessBarPct = Math.min(Math.round((demonstratingCount / READINESS_TARGET) * 100), 100);
 
   // ── SRS: skills due for review ────────────────────────────────────────
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDateStr();
   const srsOverdueCount = allEntries.filter(
     ([, p]) => p.nextReviewDate && p.nextReviewDate <= today && p.attempts > 0
   ).length;
@@ -624,13 +689,16 @@ export default function StudyModesSection({
 
       {/* ── SRS due-for-review nudge ─────────────────────────────────────── */}
       {srsOverdueCount > 0 && fullAssessmentComplete && (
-        <div className="flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5">
+        <button
+          onClick={() => { setSelectedMode('skill'); setSkillFilter('overdue'); }}
+          className="w-full flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-left transition-colors hover:bg-violet-100"
+        >
           <RefreshCw className="w-3.5 h-3.5 shrink-0 text-violet-600" />
           <p className="text-sm text-violet-800">
             <span className="font-semibold">{srsOverdueCount} skill{srsOverdueCount !== 1 ? 's' : ''} due for spaced review</span>
-            {' '}— the adaptive system will prioritize these in today's practice.
+            {' '}— tap to view them now.
           </p>
-        </div>
+        </button>
       )}
 
       {/* ── Tab selector ────────────────────────────────────────────────── */}
@@ -681,6 +749,9 @@ export default function StudyModesSection({
           <SkillPanel
             profile={profile}
             isLocked={!fullAssessmentComplete}
+            filter={skillFilter}
+            onFilterChange={setSkillFilter}
+            srsOverdueCount={srsOverdueCount}
             onStartSkillPractice={onStartSkillPractice}
             onStartDiagnostic={onStartDiagnostic}
             onOpenHelp={(skillId, skillLabel) => {
