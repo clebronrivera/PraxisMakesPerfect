@@ -52,6 +52,8 @@ import type { LbMode } from './src/hooks/useLeaderboard';
 const RedemptionRoundSession = lazy(() => import('./src/components/RedemptionRoundSession'));
 import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
 import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
+import { useTutorialState } from './src/hooks/useTutorialState';
+const TutorialWalkthrough = lazy(() => import('./src/components/TutorialWalkthrough'));
 import { buildProgressSummary } from './src/utils/progressSummaries';
 import { PROFICIENCY_META } from './src/utils/skillProficiency';
 import { buildAssessmentReportModel } from './src/utils/assessmentReport';
@@ -199,6 +201,9 @@ function PraxisStudyAppContent() {
 
   // Leaderboard — real data from /api/leaderboard
   const { sortedEntries: lbEntries, callerUserId: lbCallerId, lbOpen, setLbOpen, lbMode, setLbMode, isLoading: lbLoading, error: lbError, getRank, formatLbTime } = useLeaderboard(user?.id ?? null);
+
+  // Tutorial walkthrough — auto-triggers after first onboarding completion
+  const { showTutorial, dismissTutorial, replayTutorial } = useTutorialState(user?.id, !!profile.onboardingComplete);
 
   // Analyze all questions — declared here so it's available to the sub-hooks below.
   // Always use the canonical local bank as the source of truth for question content.
@@ -536,6 +541,12 @@ function PraxisStudyAppContent() {
 
   return (
     <div className="editorial-shell flex h-screen overflow-hidden" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
+      {/* Tutorial walkthrough overlay */}
+      {showTutorial && (
+        <Suspense fallback={null}>
+          <TutorialWalkthrough onDismiss={dismissTutorial} />
+        </Suspense>
+      )}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[24rem] bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.12),_transparent_45%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.08),_transparent_35%)]" />
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-200/20 blur-3xl" />
@@ -1530,7 +1541,7 @@ function PraxisStudyAppContent() {
         {/* HELP / FAQ PAGE */}
         {mode === 'help' && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading…</div>}>
-            <HelpFAQ onGoHome={() => setMode('home')} />
+            <HelpFAQ onGoHome={() => setMode('home')} onReplayTutorial={replayTutorial} />
           </Suspense>
         )}
 
