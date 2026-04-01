@@ -14,7 +14,7 @@ import { classifyIntent } from '../src/utils/tutorIntentClassifier';
 import { buildTutorContext, formatContextForPrompt } from '../src/utils/tutorContextBuilder';
 import { selectQuizQuestion, evaluateQuizAnswer } from '../src/utils/tutorQuizEngine';
 import type { QuestionItem, QuizEvaluationResult } from '../src/utils/tutorQuizEngine';
-import { APP_GUIDE_CONTENT, PAGE_CONTEXT_HINTS } from '../src/data/app-guide';
+import { APP_KNOWLEDGE_CORE, APP_GUIDE_CONTENT, PAGE_CONTEXT_HINTS } from '../src/data/app-guide';
 import { skillMetadataV1 } from '../src/data/skill-metadata-v1';
 import { PROGRESS_SKILLS } from '../src/utils/progressTaxonomy';
 import { toMetadataId } from '../src/data/skillIdMap';
@@ -237,6 +237,8 @@ SCOPE: Only answer questions about Praxis 5403 content, this user's study progre
 DISCLAIMER: You are not affiliated with ETS. Information is for study purposes only.
 EXAM: 4 domains, 45 skills, single-select and multi-select questions.
 PROFICIENCY LEVELS: Demonstrating (≥80%), Approaching (60–79%), Emerging (<60%), Not started.
+
+${APP_KNOWLEDGE_CORE}
 
 GROUNDING RULES:
 - Only reference the user's skill profile and supplied metadata. Do not invent performance trends or exam rules not present in the context.
