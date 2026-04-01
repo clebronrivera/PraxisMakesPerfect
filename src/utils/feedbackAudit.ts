@@ -25,8 +25,7 @@ export type AuditBucket =
   | 'duplicate / similarity'
   | 'UX / workflow friction'
   | 'app bug'
-  | 'feature request'
-  | 'Teach Mode weak-signal flags';
+  | 'feature request';
 
 export type VerificationDecision =
   | 'still present'
@@ -36,7 +35,7 @@ export type VerificationDecision =
 
 export interface AuditRawRecord {
   rawId: string;
-  source: 'question_report' | 'beta_feedback' | 'teach_mode_flag';
+  source: 'question_report' | 'beta_feedback';
   questionId?: string | null;
   rawAssessmentTypes: string[];
   displayAssessmentTypes: string[];
@@ -63,7 +62,7 @@ export interface AuditRawRecord {
 
 export interface ConsolidatedAuditIssue {
   issueId: string;
-  sourceTypes: Array<'question_report' | 'beta_feedback' | 'teach_mode_flag'>;
+  sourceTypes: Array<'question_report' | 'beta_feedback'>;
   questionId?: string | null;
   bucket: AuditBucket;
   issueFamily: string;
@@ -84,7 +83,6 @@ export interface ConsolidatedAuditIssue {
   snapshotChanged: boolean;
   changedFields: string[];
   exactDuplicateStemCount: number;
-  corroboratedByTeachModeFlags: boolean;
   corroboratedByQuestionReports: boolean;
   corroboratedByBetaFeedback: boolean;
   rawRecordIds: string[];
@@ -386,7 +384,7 @@ function consolidateVerification(
   const notes = uniqueNonEmpty(records.flatMap((record) => record.notes));
   const duplicateCount = exactDuplicateStemCount(questionId, auditQuestionContext);
 
-  if (records.every((record) => record.source === 'teach_mode_flag')) {
+  if (records.every((record) => record.source === 'beta_feedback')) {
     return {
       verificationDecision: 'cannot verify from current evidence',
       verificationReason: 'Teach Mode flags do not enter the moderated queues and do not preserve issue timestamps, so they are treated as weak signals unless corroborated elsewhere.',
@@ -580,37 +578,10 @@ function buildBetaFeedbackRecords(feedback: BetaFeedback[]): AuditRawRecord[] {
   });
 }
 
-function buildTeachModeRecords(users: FeedbackAuditUser[]): AuditRawRecord[] {
-  return users.flatMap((user) => {
-    const flaggedQuestions = user.flaggedQuestions || {};
-    return Object.entries(flaggedQuestions).map(([questionId, note]) => ({
-      rawId: `teach-${user.id}-${questionId}`,
-      source: 'teach_mode_flag' as const,
-      questionId,
-      rawAssessmentTypes: [],
-      displayAssessmentTypes: [],
-      bucket: 'Teach Mode weak-signal flags' as const,
-      issueFamily: 'Teach Mode weak-signal flags',
-      severity: null,
-      status: null,
-      userEmail: user.authMetrics?.email || null,
-      userDisplayName: user.authMetrics?.displayName || null,
-      targets: [],
-      issueTypes: [],
-      notes: note ? [note] : [],
-      createdAt: toIsoString(user.lastUpdated),
-      updatedAt: toIsoString(user.lastUpdated),
-      questionSnapshot: null
-    }));
-  });
-}
 
 function buildClusterKey(record: AuditRawRecord): string {
   if (record.source === 'question_report') {
     return `question:${record.questionId || 'unknown'}:${record.issueFamily}`;
-  }
-  if (record.source === 'teach_mode_flag') {
-    return `teach:${record.questionId || 'unknown'}`;
   }
   const noteKey = normalizeMessage(record.notes[0] || '').slice(0, 120);
   return `feedback:${record.bucket}:${normalizeMessage(record.featureArea || '')}:${normalizeMessage(record.page || '')}:${noteKey}`;
@@ -646,9 +617,6 @@ function buildInstrumentationGaps(rawRecords: AuditRawRecord[]): string[] {
   if (rawRecords.some((record) => record.source === 'question_report' && record.rawAssessmentTypes.includes('pre'))) {
     gaps.add('Question reports still store screener submissions as raw assessment type `pre`, so audit logic has to normalize that legacy label back to `screener` for product-facing analysis.');
   }
-  if (rawRecords.some((record) => record.source === 'teach_mode_flag')) {
-    gaps.add('Teach Mode review flags live in `user_progress.flagged_questions`, outside the moderated admin queues, and they do not preserve issue-specific timestamps.');
-  }
   if (rawRecords.some((record) => record.source === 'question_report' && !record.updatedAt)) {
     gaps.add('Question reports do not currently surface a reliable updated timestamp in the audit export, so the latest admin status must be inferred from queue state rather than a full moderation history.');
   }
@@ -668,8 +636,7 @@ export async function buildFeedbackAudit(args: {
   const auditQuestionContext = await getAuditQuestionContext();
   const rawRecords = [
     ...buildQuestionReportRecords(args.reports),
-    ...buildBetaFeedbackRecords(args.feedback),
-    ...buildTeachModeRecords(args.users)
+    ...buildBetaFeedbackRecords(args.feedback)
   ];
 
   const clusterMap = rawRecords.reduce<Map<string, AuditRawRecord[]>>((acc, record) => {
@@ -710,7 +677,6 @@ export async function buildFeedbackAudit(args: {
       snapshotChanged: verification.snapshotChanged,
       changedFields: verification.changedFields,
       exactDuplicateStemCount: verification.exactDuplicateCount,
-      corroboratedByTeachModeFlags: sourceTypes.includes('teach_mode_flag') && sourceTypes.length > 1,
       corroboratedByQuestionReports: sourceTypes.includes('question_report'),
       corroboratedByBetaFeedback: sourceTypes.includes('beta_feedback'),
       rawRecordIds: records.map((record) => record.rawId)
@@ -750,8 +716,7 @@ export async function buildFeedbackAudit(args: {
     'duplicate / similarity': 0,
     'UX / workflow friction': 0,
     'app bug': 0,
-    'feature request': 0,
-    'Teach Mode weak-signal flags': 0
+    'feature request': 0
   });
 
   const visibleDates = rawRecords.map((record) => record.createdAt).filter((value): value is string => Boolean(value)).sort();
@@ -764,7 +729,6 @@ export async function buildFeedbackAudit(args: {
     sourceCounts: {
       question_reports: rawRecords.filter((record) => record.source === 'question_report').length,
       beta_feedback: rawRecords.filter((record) => record.source === 'beta_feedback').length,
-      teach_mode_flags: rawRecords.filter((record) => record.source === 'teach_mode_flag').length
     },
     totalConsolidatedIssues: consolidatedIssues.length,
     verificationCounts,
@@ -818,7 +782,6 @@ export function buildAuditCsv(issues: ConsolidatedAuditIssue[]): string {
     'snapshot_changed',
     'changed_fields',
     'exact_duplicate_stem_count',
-    'corroborated_by_teach_mode_flags',
     'corroborated_by_question_reports',
     'corroborated_by_beta_feedback',
     'representative_notes',
@@ -847,7 +810,6 @@ export function buildAuditCsv(issues: ConsolidatedAuditIssue[]): string {
     String(issue.snapshotChanged),
     issue.changedFields.join('; '),
     String(issue.exactDuplicateStemCount),
-    String(issue.corroboratedByTeachModeFlags),
     String(issue.corroboratedByQuestionReports),
     String(issue.corroboratedByBetaFeedback),
     issue.representativeNotes.join(' || '),

@@ -20,7 +20,6 @@ const LearningPathModulePage = lazy(() => import('./src/components/LearningPathM
 const StudyNotebookPage = lazy(() => import('./src/components/StudyNotebookPage'));
 const GlossaryPage = lazy(() => import('./src/components/GlossaryPage'));
 const HelpFAQ = lazy(() => import('./src/components/HelpFAQ'));
-const TeachMode = lazy(() => import('./src/components/TeachMode'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
 const TutorChatPage = lazy(() => import('./src/components/TutorChatPage').then(m => ({ default: m.TutorChatPage })));
@@ -75,7 +74,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'teach' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -139,7 +138,6 @@ function PraxisStudyAppContent() {
   // App-level navigation state (not owned by any sub-hook)
   const [mode, setMode] = useState<AppMode>('home');
   const [lastNonAdminMode, setLastNonAdminMode] = useState<NonAdminAppMode>('home');
-  const [teachModeDomains] = useState<number[] | undefined>(undefined);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -1670,16 +1668,6 @@ function PraxisStudyAppContent() {
           />
         )}
         
-        {/* TEACH MODE */}
-        {ACTIVE_LAUNCH_FEATURES.teachMode && mode === 'teach' && (
-          <TeachMode
-            userProfile={profile}
-            analyzedQuestions={analyzedQuestions}
-            onUpdateProfile={updateProfile}
-            selectedDomains={teachModeDomains}
-          />
-        )}
-        
         {/* RESULTS SCREEN */}
         {mode === 'results' && (
           <ResultsDashboard
@@ -1723,11 +1711,7 @@ function PraxisStudyAppContent() {
             returnLabel={lastNonAdminMode === 'home' ? 'Return to site' : `Back to ${lastNonAdminMode}`}
             onGoHome={() => returnFromAdmin('home')}
             onStartPractice={() => startPractice()}
-            onGoTeach={() => {
-              if (ACTIVE_LAUNCH_FEATURES.teachMode) {
-                setMode('teach');
-              }
-            }}
+            onGoTeach={() => {}}
           />
         )}
         </Suspense>

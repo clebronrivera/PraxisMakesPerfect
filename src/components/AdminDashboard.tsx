@@ -782,9 +782,9 @@ export default function AdminDashboard({
                   />
                   <MetricCard
                     icon={<MessageSquare className="h-5 w-5" />}
-                    label="Teach Mode Signals"
-                    value={auditBundle.summary.sourceCounts.teach_mode_flags}
-                    detail={`${auditBundle.summary.sourceCounts.question_reports} question reports`}
+                    label="Question Reports"
+                    value={auditBundle.summary.sourceCounts.question_reports}
+                    detail="flagged by users"
                   />
                 </div>
 
