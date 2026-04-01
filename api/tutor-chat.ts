@@ -35,6 +35,10 @@ interface RawQuestionItem {
   distractor_misconception_D?: string;
   case_text?: string;
   has_case_vignette?: string;
+  // Phase C fields
+  dominant_error_pattern?: string;
+  instructional_red_flags?: string;
+  error_cluster_tag?: string;
 }
 
 function normalizeQuestion(raw: RawQuestionItem): QuestionItem {
@@ -56,6 +60,8 @@ function normalizeQuestion(raw: RawQuestionItem): QuestionItem {
     distractor_misconception_B: raw.distractor_misconception_B,
     distractor_misconception_C: raw.distractor_misconception_C,
     distractor_misconception_D: raw.distractor_misconception_D,
+    dominant_error_pattern: raw.dominant_error_pattern,
+    instructional_red_flags: raw.instructional_red_flags,
   };
 }
 
@@ -396,7 +402,19 @@ Suggested follow-ups should be things like "Quiz me on [skill]", "Explain [skill
   if (remediationSkillId) {
     const skillDef = PROGRESS_SKILLS.find(s => s.skillId === remediationSkillId);
     const skillName = skillDef?.fullLabel || remediationSkillId;
-    sections.push(`REMEDIATION MODE — the student has missed two consecutive questions on the same skill (${remediationSkillId}: ${skillName}).
+
+    // Phase C: inject targeted error pattern data when available
+    const errorPatternGuidance = quizEvaluation?.dominantErrorPattern
+      ? `\nDOMINANT ERROR PATTERN for this question: "${quizEvaluation.dominantErrorPattern}"
+This describes the most common way students get this question wrong. Address this pattern directly in your remediation.`
+      : '';
+    const redFlagGuidance = quizEvaluation?.instructionalRedFlags
+      ? `\nINSTRUCTIONAL RED FLAGS: "${quizEvaluation.instructionalRedFlags}"
+This is a specific teaching move to address the student's likely confusion. Incorporate this guidance into your explanation.`
+      : '';
+
+    sections.push(`REMEDIATION MODE — the student has missed two consecutive questions on the same skill (${remediationSkillId}: ${skillName}).${errorPatternGuidance}${redFlagGuidance}
+
 After explaining why the answer is wrong, provide thorough remediation for this skill:
 1. **Core concept** — plain-language explanation of what this skill is about and why it matters for school psychology practice
 2. **Key terms and distinctions** — the 3–5 most important terms or comparisons the student needs to know

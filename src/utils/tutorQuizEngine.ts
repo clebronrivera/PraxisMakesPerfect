@@ -16,6 +16,9 @@ export interface QuestionItem {
   distractor_misconception_B?: string;
   distractor_misconception_C?: string;
   distractor_misconception_D?: string;
+  // Phase C fields
+  dominant_error_pattern?: string;
+  instructional_red_flags?: string;
 }
 
 export interface QuizSelectionResult {
@@ -31,6 +34,9 @@ export interface QuizEvaluationResult {
   explanation: string;
   misconceptions: string[];    // misconceptions for chosen wrong answers
   skillId: string;
+  // Phase C fields (passed through for remediation prompts)
+  dominantErrorPattern?: string;
+  instructionalRedFlags?: string;
 }
 
 /**
@@ -134,5 +140,7 @@ export function evaluateQuizAnswer(
     explanation: question.CORRECT_Explanation,
     misconceptions,
     skillId: question.skillId,
+    dominantErrorPattern: question.dominant_error_pattern,
+    instructionalRedFlags: question.instructional_red_flags,
   };
 }
