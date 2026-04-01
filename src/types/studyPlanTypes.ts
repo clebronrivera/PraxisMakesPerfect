@@ -68,6 +68,10 @@ export interface StudentSkillState {
   /** Present only when repeatedDistractorPattern=true and a dominant wrong-answer question can be identified.
    *  Used to look up distractor_misconception_* and distractor_skill_deficit_* from the question bank. */
   dominantMisconceptionKey?: { questionId: string; letter: string };
+  /** Phase C: most frequent error_cluster_tag across missed questions for this skill. */
+  dominantErrorClusterTag?: string;
+  /** Phase C: count of missed questions sharing the dominant error_cluster_tag. */
+  errorClusterTagCount?: number;
 }
 
 // ─── Study constraints ────────────────────────────────────────────────────────
@@ -140,6 +144,9 @@ export interface PrecomputedCluster {
   retrievedCaseArchetypes: string[]; // from SkillMetadataV1
   retrievedLawsFrameworks: string[]; // from SkillMetadataV1
   allocatedMinutes: number;          // deterministic from study time budget
+  /** Phase C: aggregated error_cluster_tag frequencies across all missed questions in this cluster.
+   *  Only tags appearing 3+ times are included. Sorted by frequency descending. */
+  dominantErrorClusters?: Array<{ tag: string; count: number }>;
 }
 
 // ─── Time budget ─────────────────────────────────────────────────────────────

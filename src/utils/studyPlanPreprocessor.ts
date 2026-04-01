@@ -181,6 +181,27 @@ export function computeStudentSkillStates(
       .filter(r => !r.isCorrect && r.questionId)
       .map(r => r.questionId as string);
 
+    // Phase C: aggregate error_cluster_tag across missed questions
+    let dominantErrorClusterTag: string | undefined;
+    let errorClusterTagCount: number | undefined;
+    if (missedQuestionIds.length > 0) {
+      const tagCounts = new Map<string, number>();
+      const qIdx = getQuestionIndex();
+      for (const qid of missedQuestionIds) {
+        const q = qIdx.get(qid);
+        const tag = q?.error_cluster_tag;
+        if (tag) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+      }
+      if (tagCounts.size > 0) {
+        const sorted = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+        const [topTag, topCount] = sorted[0];
+        if (topCount >= 2) {
+          dominantErrorClusterTag = topTag;
+          errorClusterTagCount = topCount;
+        }
+      }
+    }
+
     // Convert raw responses to SkillAttempt objects for flag computation
     const skillAttempts: SkillAttempt[] = skillResponses.map(r => ({
       questionId: r.questionId ?? `unknown-${skillId}-${Math.random()}`,
@@ -208,6 +229,8 @@ export function computeStudentSkillStates(
       fragilityFlag,
       uncertainSkillFlag,
       dominantMisconceptionKey,
+      dominantErrorClusterTag,
+      errorClusterTagCount,
     };
   });
 }
@@ -424,6 +447,23 @@ export function buildPrecomputedClusters(
       retrievedCaseArchetypes:   content.caseArchetypes,
       retrievedLawsFrameworks:   content.lawsFrameworks,
       allocatedMinutes: allocation?.allocatedMinutes ?? 0,
+      // Phase C: aggregate error cluster tags across all missed questions in this cluster
+      dominantErrorClusters: (() => {
+        const tagCounts = new Map<string, number>();
+        const qIdx = getQuestionIndex();
+        for (const s of sorted) {
+          for (const qid of s.missedQuestionIds) {
+            const q = qIdx.get(qid);
+            const tag = q?.error_cluster_tag;
+            if (tag) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+          }
+        }
+        const entries = [...tagCounts.entries()]
+          .filter(([, count]) => count >= 3)
+          .sort((a, b) => b[1] - a[1])
+          .map(([tag, count]) => ({ tag, count }));
+        return entries.length > 0 ? entries : undefined;
+      })(),
     });
   }
 
