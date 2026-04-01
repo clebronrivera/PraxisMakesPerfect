@@ -9,4 +9,5 @@ export const ACTIVE_LAUNCH_FEATURES = {
   teachMode: false,
   studyGuide: false,        // AI study guide — set true when production-ready
   tutorChat: true,          // AI Tutor Chat — enabled for testing
+  paywall: false,           // Stripe paywall — set true when payment infrastructure is live
 } as const;
