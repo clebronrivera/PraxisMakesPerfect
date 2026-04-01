@@ -79,6 +79,10 @@ export interface ItemStat {
   distractorFreqs: Record<string, number>;
   distractorDetails: Record<string, DistractorDetail>; // enriched with tier/errorType/misconception
   flags: string[];
+  // Phase C fields
+  errorClusterTag: string | null;
+  dominantErrorPattern: string | null;
+  instructionalRedFlags: string | null;
 }
 
 // Build a lookup map from UNIQUEID → question object (loaded once at cold-start).
@@ -273,7 +277,10 @@ export const handler = async (event: {
         avgTime: itemAvgTime,
         distractorFreqs: q.distractorFreqs,
         distractorDetails,
-        flags
+        flags,
+        errorClusterTag: qBank?.error_cluster_tag || null,
+        dominantErrorPattern: qBank?.dominant_error_pattern || null,
+        instructionalRedFlags: qBank?.instructional_red_flags || null,
       });
     }
 

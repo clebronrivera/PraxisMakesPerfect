@@ -20,6 +20,9 @@ interface ItemStat {
   distractorFreqs: Record<string, number>;
   distractorDetails?: Record<string, DistractorDetail>;
   flags: string[];
+  errorClusterTag?: string | null;
+  dominantErrorPattern?: string | null;
+  instructionalRedFlags?: string | null;
 }
 
 type SortField = 'attempts' | 'pValue' | 'discrimination' | 'avgTime' | 'flags';
@@ -76,6 +79,7 @@ export default function ItemAnalysisTab() {
   // Filters + sort
   const [domainFilter, setDomainFilter] = useState('');
   const [flagFilter, setFlagFilter] = useState('');
+  const [clusterTagFilter, setClusterTagFilter] = useState('');
   const [minAttempts, setMinAttempts] = useState(1);
   const [sortField, setSortField] = useState<SortField>('attempts');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -121,6 +125,15 @@ export default function ItemAnalysisTab() {
     }
   };
 
+  // Unique error cluster tags for filter dropdown
+  const clusterTagOptions = useMemo(() => {
+    const tags = new Set<string>();
+    for (const item of items) {
+      if (item.errorClusterTag) tags.add(item.errorClusterTag);
+    }
+    return Array.from(tags).sort();
+  }, [items]);
+
   const filtered = useMemo(() => {
     let out = items.filter((item) => item.attempts >= minAttempts);
     if (domainFilter) {
@@ -131,6 +144,9 @@ export default function ItemAnalysisTab() {
       out = out.filter((item) => item.flags.length > 0);
     } else if (flagFilter) {
       out = out.filter((item) => item.flags.includes(flagFilter));
+    }
+    if (clusterTagFilter) {
+      out = out.filter((item) => item.errorClusterTag === clusterTagFilter);
     }
     return [...out].sort((a, b) => {
       let av: number, bv: number;
@@ -143,7 +159,7 @@ export default function ItemAnalysisTab() {
       }
       return sortDir === 'asc' ? av - bv : bv - av;
     });
-  }, [items, domainFilter, flagFilter, minAttempts, sortField, sortDir]);
+  }, [items, domainFilter, flagFilter, clusterTagFilter, minAttempts, sortField, sortDir]);
 
   const totalFlagged = useMemo(() => items.filter((i) => i.flags.length > 0).length, [items]);
   const avgPValue = useMemo(() => {
@@ -271,6 +287,19 @@ export default function ItemAnalysisTab() {
             </select>
           </label>
           <label className="flex flex-col gap-1">
+            <span className="text-xs text-slate-500">Error Cluster</span>
+            <select
+              value={clusterTagFilter}
+              onChange={(e) => setClusterTagFilter(e.target.value)}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-300"
+            >
+              <option value="">All Clusters</option>
+              {clusterTagOptions.map((tag) => (
+                <option key={tag} value={tag}>{tag}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1">
             <span className="text-xs text-slate-500">Min attempts</span>
             <select
               value={minAttempts}
@@ -324,6 +353,11 @@ export default function ItemAnalysisTab() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-xs text-slate-900">{item.questionId}</span>
+                        {item.errorClusterTag && (
+                          <span className="rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-700">
+                            {item.errorClusterTag}
+                          </span>
+                        )}
                         {expandedRow === item.questionId
                           ? <ChevronUp className="h-3 w-3 text-slate-400" />
                           : <ChevronDown className="h-3 w-3 text-slate-400" />}
@@ -430,6 +464,27 @@ export default function ItemAnalysisTab() {
                                 ? ' flag: students scoring higher overall got this wrong as often or more than lower scorers'
                                 : ' moderate: some differentiation between higher and lower performers'}
                           </p>
+
+                          {/* Phase C: Error Pattern Analysis */}
+                          {(item.dominantErrorPattern || item.instructionalRedFlags) && (
+                            <div className="mt-3 space-y-2 border-t border-slate-200 pt-3">
+                              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Error Pattern Analysis
+                              </p>
+                              {item.dominantErrorPattern && (
+                                <div className="rounded-lg bg-violet-50 px-3 py-2">
+                                  <p className="text-xs font-medium text-violet-700">Dominant Error Pattern</p>
+                                  <p className="mt-0.5 text-xs text-violet-600">{item.dominantErrorPattern}</p>
+                                </div>
+                              )}
+                              {item.instructionalRedFlags && (
+                                <div className="rounded-lg bg-amber-50 px-3 py-2">
+                                  <p className="text-xs font-medium text-amber-700">Instructional Red Flags</p>
+                                  <p className="mt-0.5 text-xs text-amber-600">{item.instructionalRedFlags}</p>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </td>
                     </tr>
