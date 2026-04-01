@@ -127,3 +127,7 @@ scripts/apply-item-bank-corrections.py
 # Deno lockfile (not needed for Node project)
 deno.lock
 vite.config.ts.timestamp-*
+
+# Content authoring pipeline state
+content-authoring/pipeline/pipeline_state.db
+content-authoring/pipeline/.env

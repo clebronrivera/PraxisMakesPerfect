@@ -1,0 +1,132 @@
+[
+  {
+    "skill_id": "DBD-05",
+    "skill_name": "Emotional and Behavioral Disorders",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "Understanding cognitive processing deficits (DBD-02) as foundational to distinguishing between phonological processing, working memory, and attention deficits",
+      "Knowledge of reading development stages and the simple view of reading model (decoding \u00d7 comprehension)",
+      "Familiarity with standardized cognitive assessment batteries (WISC-V, KABC-II, CAS2) for context on processing measure selection",
+      "Understanding of comprehensive evaluation protocols and when different processing instruments (CTOPP-2, NEPSY-II, TOMAL-2) are appropriate",
+      "Ability to interpret T-scores and percentile ranks from norm-referenced instruments"
+    ],
+    "prereq_chain_narrative": "Comprehensive phonological and processing assessment requires foundational understanding of reading development and the cognitive architecture underlying reading fluency (decoding and language comprehension). When a student shows intact phonological awareness but poor fluency, school psychologists must differentiate processing deficits from other factors\u2014a skill dependent on knowing how to select and sequence instruments like CTOPP-2, NEPSY-II, and TOMAL-2 within a full evaluation. Mastery of processing assessment selection unlocks accurate differential diagnosis of reading disabilities and informs targeted intervention design."
+  },
+  {
+    "skill_id": "DBD-06",
+    "skill_name": "Autism Spectrum Disorder \u2014 Assessment",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "Proficiency with BASC-3 T-score thresholds and clinical significance cutoffs (T \u2265 60 for clinical range)",
+      "Understanding of multi-informant discrepancies and how setting/relationship context affects behavior ratings",
+      "Knowledge of internalizing disorder presentations and associated assessment instruments (CDI-2, RCADS, SCARED)",
+      "Ability to interpret composite scores versus subscale patterns on behavior rating scales",
+      "Familiarity with cross-cultural and cross-setting variability in symptom presentation"
+    ],
+    "prereq_chain_narrative": "Accurate ASD assessment in school settings demands mastery of multi-informant behavior rating interpretation, particularly recognizing that teacher ratings may differ substantially from parent ratings due to setting-specific demands and relationship factors. Prerequisites include understanding BASC-3 composite structure, T-score thresholds (especially \u226560 for clinically significant internalizing), and how to sequence internalizing-focused instruments (CDI-2, RCADS, SCARED) when anxiety or mood concerns co-occur with ASD traits. This integration of rating scale literacy, cross-informant discrepancy analysis, and composite score selection enables school psychologists to avoid false negatives and accurately distinguish internalizing comorbidity from autism core features."
+  },
+  {
+    "skill_id": "DBD-07",
+    "skill_name": "Specific Learning Disabilities \u2014 Identification Models",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "Core understanding of functional behavior assessment (FBA) methodology and antecedent-behavior-consequence (ABC) analysis",
+      "Knowledge of operant conditioning principles and behavioral reinforcement contingencies",
+      "Understanding of extinction burst phenomenon and behavioral momentum theory",
+      "Ability to design function-based behavior intervention plans (BIPs) with replacement behaviors matched to function",
+      "Proficiency in explaining behavior change principles to teachers and families"
+    ],
+    "prereq_chain_narrative": "FBA-based identification of SLD and externalizing behavior requires deep grounding in operant conditioning: understanding how antecedents trigger behavior and consequences shape its persistence. A foundational prerequisite is recognizing extinction bursts\u2014temporary increases in problem behavior when reinforcement is withdrawn\u2014so that when a teacher implements planned ignoring, they interpret the initial intensification as expected rather than as failure. This theory-to-practice connection (behavioral momentum theory informing the extinction burst prediction) is essential for designing function-based BIPs that address the root cause (e.g., escape from reading tasks) through replacement behavior instruction rather than punishment alone. Mastery here unlocks sustainable behavior change and prevention of ineffective, coercive practices."
+  },
+  {
+    "skill_id": "DBD-08",
+    "skill_name": "Specific Learning Disabilities \u2014 Reading Profiles",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "Understanding of Curriculum-Based Measurement (CBM) purpose and interpretation: fluency monitoring versus achievement testing",
+      "Knowledge of ORF (Oral Reading Fluency) probes and growth expectations across grades (benchmark vs. progress monitoring)",
+      "Ability to interpret slope and trend data in progress monitoring: flat slope as evidence of insufficient response to intervention",
+      "Understanding of expected vs. non-expected variability in CBM data and reliability implications",
+      "Familiarity with data-based decision-making frameworks for Tier 2 intervention eligibility"
+    ],
+    "prereq_chain_narrative": "Progress monitoring for reading profiles requires distinguishing CBM's purpose\u2014measuring skill fluency trajectories, not global achievement\u2014from achievement tests, making it essential for early identification of reading disabilities. Prerequisites include interpreting ORF slope and recognizing when flat slopes indicate inadequate Tier 2 intervention response, a data-literacy skill grounded in understanding expected growth benchmarks and detecting when week-to-week variability reflects unreliability versus true inconsistency in student performance. Mastery of these skills enables school psychologists to make high-stakes decisions about Tier 3 referral and SLD identification based on objective, repeated measurement rather than single-point assessment scores."
+  },
+  {
+    "skill_id": "DBD-09",
+    "skill_name": "Attention-Deficit/Hyperactivity Disorder",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "Understanding of Bronfenbrenner's ecological systems model (microsystem, mesosystem, exosystem, macrosystem)",
+      "Knowledge of setting-specific ADHD presentations and how environmental demands (transitions, independent work, unstructured time) trigger symptoms",
+      "Proficiency with ecological assessment components: teacher interviews, classroom observation, home environment assessment",
+      "Understanding of 504 Plan accommodations and their evidence base for ADHD (extended time, reduced assignment length, preferential seating)",
+      "Ability to synthesize longitudinal data across settings and years to identify persistent patterns"
+    ],
+    "prereq_chain_narrative": "ADHD assessment in school contexts must situate individual neurobiological differences within Bronfenbrenner's ecological framework, recognizing that symptoms emerge from the interaction between the child's attention/executive function profile and environmental demands. Prerequisites include conducting ecological assessments that examine microsystem factors (classroom structure, teacher expectations) and mesosystem effects (home-school consistency in demands), then selecting 504 accommodations matched to those specific contexts. Reviewing cumulative data across multiple teachers and years strengthens diagnostic confidence by revealing persistent patterns independent of rater bias. This ecological perspective prevents misattribution of environmental factors to neurodevelopmental disability and enables targeted, setting-specific intervention design."
+  },
+  {
+    "skill_id": "DBD-10",
+    "skill_name": "Gifted and Twice-Exceptional Learners",
+    "nasp_domain_primary": "NASP-8",
+    "skill_prerequisites": [
+      "Understanding of twice-exceptionality (2e) definition: concurrent giftedness and disability",
+      "Ability to interpret longitudinal academic performance patterns and identifying sudden achievement discrepancies as diagnostic signals",
+      "Knowledge of masking behaviors in gifted students with learning disabilities or ADHD",
+      "Understanding of developmental transitions (e.g., elementary to middle school) and when academic decline reflects transition adjustment versus emerging disability",
+      "Familiarity with early developmental history (language delay, motor milestones) as potential indicators of underlying neurodevelopmental differences"
+    ],
+    "prereq_chain_narrative": "Identifying twice-exceptional learners requires vigilance for achievement discrepancies and developmental history patterns that might otherwise be overlooked because giftedness masks disability. Prerequisites include recognizing that a sudden D on a writing assessment in a historically high-achieving student signals potential unmasking of a specific learning disability, not declining ability, and interpreting early developmental milestones (e.g., language delay from ages 2\u20134) as potential indicators of neurodevelopmental variation. Transitions to middle school often unmask 2e profiles when cognitive demands shift and compensatory strategies become insufficient. This longitudinal, contextual lens prevents misidentification as gifted-only or underidentification of twice-exceptional students who have coped through elementary school."
+  },
+  {
+    "skill_id": "DEV-01",
+    "skill_name": "Child and Adolescent Development",
+    "nasp_domain_primary": "NASP-8",
+    "skill_prerequisites": [
+      "Understanding of Piaget's cognitive development stages and stage-specific cognitive limitations (preoperational, concrete operational, formal operational)",
+      "Knowledge of conservation tasks as diagnostic indicators of preoperational thinking versus concrete operations",
+      "Familiarity with Erikson's psychosocial development stages and age-appropriate developmental tasks",
+      "Understanding of theory of mind and perspective-taking development across childhood",
+      "Knowledge of attachment theory and Strange Situation procedure for classifying attachment patterns"
+    ],
+    "prereq_chain_narrative": "Developmental assessment and intervention design require precise understanding of cognitive and social-emotional capabilities at each stage. A 3-year-old's failure on a conservation task reflects normal preoperational egocentrism and centration, not deficiency\u2014a distinction rooted in Piaget's stage theory. Prerequisites include recognizing Erikson's identity versus role confusion stage as the framework explaining why peer relationships become primary during adolescence, and understanding theory of mind as the developmental achievement allowing children to grasp that others have different perspectives. Attachment pattern recognition through Strange Situation indicators enables early identification of relationship disruption. Mastery of these frameworks transforms assessment from a search for deficits into a developmentally informed evaluation of age-appropriate capabilities, informing both differential diagnosis and strength-based intervention."
+  },
+  {
+    "skill_id": "DIV-01",
+    "skill_name": "Culturally Responsive Practice and Assessment",
+    "nasp_domain_primary": "NASP-7",
+    "skill_prerequisites": [
+      "Understanding of cultural factors affecting help-seeking behavior (stigma, alternative explanatory models, collectivism vs. individualism)",
+      "Knowledge of acculturation and adaptation frameworks for refugees and recently immigrated families",
+      "Familiarity with evidence-based intervention adaptation frameworks (e.g., ADAPT-ITT for culturally tailoring interventions)",
+      "Ability to interpret behavioral norms through a cultural lens (e.g., eye contact avoidance in collectivist cultures as respect, not avoidance)",
+      "Understanding of socioeconomic context effects on assessment interpretation and academic outcomes"
+    ],
+    "prereq_chain_narrative": "Culturally responsive practice requires understanding how cultural background, acculturation stage, and socioeconomic context shape families' engagement with mental health services and interpretation of child behavior. Prerequisites include recognizing that a refugee family's decline of counseling may reflect stigma or unfamiliarity with mental health services in their culture of origin, not lack of need, and knowing how to adapt evidence-based interventions using frameworks like ADAPT-ITT to honor cultural values. Interpreting a student's direct eye contact avoidance as disrespect rather than as a collectivist norm of deference requires cultural humility and knowledge of non-dominant cultural communication patterns. This foundation enables school psychologists to distinguish cultural difference from disorder, build trust across cultural divides, and design interventions that are both evidence-based and culturally grounded."
+  },
+  {
+    "skill_id": "DIV-03",
+    "skill_name": "English Language Acquisition and Bilingualism",
+    "nasp_domain_primary": "NASP-8",
+    "skill_prerequisites": [
+      "Understanding of BICS (Basic Interpersonal Communication Skills) vs. CALP (Cognitive Academic Language Proficiency) distinction",
+      "Knowledge of typical bilingual development trajectories and expected timelines for academic English proficiency (4\u20137 years)",
+      "Ability to distinguish language acquisition effects from language-based learning disabilities in bilingual students",
+      "Familiarity with bilingual assessment protocols and culture/language-fair instruments (nonverbal batteries, bilingual cognitive tests)",
+      "Understanding of language of instruction effects on performance and how to separate acquisition from disability indicators"
+    ],
+    "prereq_chain_narrative": "Bilingual assessment for suspected SLD requires grounding in the BICS/CALP distinction: a student may demonstrate strong conversational English (BICS) while still developing academic language proficiency (CALP), a normal developmental trajectory not indicative of disability. Prerequisites include knowing that 4\u20137 years of English exposure are typical for CALP development and understanding how recent immigration affects test performance\u2014a student struggling in all language-based tasks may reflect English acquisition stage rather than an underlying language-based disability. Selecting appropriate instruments (e.g., nonverbal cognitive batteries, bilingual cognitive tests) and interpreting profiles in the context of language acquisition stages prevents false identification of Spanish-English bilingual students as learning disabled. Mastery here safeguards against disproportionate representation of English learners in special education and enables accurate differential diagnosis of genuine learning disabilities."
+  },
+  {
+    "skill_id": "DIV-05",
+    "skill_name": "Disproportionality, Bias, and Equity in Assessment",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "Understanding of disproportionality metrics and identification: recognizing over- and under-representation patterns by race/ethnicity and disability category",
+      "Knowledge of systemic causes of disproportionality (exclusionary discipline, inadequate early intervention, biased referral) versus individual-level assessment bias",
+      "Ability to contextualize environmental factors (poverty, trauma, limited English proficiency) in score interpretation without pathologizing disadvantage",
+      "Familiarity with nondiscriminatory assessment principles and selection of culture/language-fair instruments",
+      "Understanding of the intersection between identification category and overrepresentation (e.g., Black students overidentified in ED, Latino students overidentified in ID)"
+    ],
+    "prereq_chain_narrative": "Addressing disproportionality in special education identification requires systems-level understanding of how structural factors (exclusionary discipline, inadequate Tier 1/2 prevention) combine with individual assessment bias to produce overrepresentation patterns. Prerequisites include recognizing that a 2:1 ED identification ratio for Black students versus white students reflects systemic bias in referral, not genuine prevalence differences, and that low SES cognitive scores reflect environmental disadvantage and limited English exposure, not intellectual disability. Distinguishing genuine learning disabilities from language acquisition effects or cultural/linguistic differences requires culture-fair assessment selection and ecological interpretation of results. This comprehensive, systems-aware approach to assessment literacy enables school psychologists to interrupt disproportionality at the assessment gate, prevent false-positive special education placements, and ensure equitable identification practices."
+  }
+]

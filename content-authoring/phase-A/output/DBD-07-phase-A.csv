@@ -1,0 +1,79 @@
+UNIQUEID,distractor_letter,distractor_tier,distractor_error_type,distractor_misconception,distractor_skill_deficit
+PQ_DBD-07_1,A,L2,Procedural,"Frames FBA as a punishment-driven process for suppressing behavior instead of identifying antecedents, behavior, consequences, and maintaining function.",Misconception of functional assessment as punitive suppression rather than analytic hypothesis formation
+PQ_DBD-07_1,C,L2,Conceptual,Treats FBA as disciplinary gatekeeping for suspension or expulsion rather than functional clarification for support planning.,Confusion of functional clarification with eligibility or exclusionary discipline thresholds
+PQ_DBD-07_1,D,L3,Conceptual,Treats FBA as proving intent or fault instead of analyzing reinforcement relations.,Substituting blame attribution for reinforcement-based causal analysis in assessment
+PQ_DBD-07_2,A,L2,Conceptual,Equates function with any listed consequence rather than the reinforcer that maintains the response class.,Overbroad equating of any postcedent event with the maintaining reinforcer
+PQ_DBD-07_2,C,L2,Conceptual,Confuses maintaining function with the setting where behavior occurs.,Conflating spatial or situational context with the operant's reinforcing consequence
+PQ_DBD-07_2,D,L2,Conceptual,Substitutes self-reported intent for inferred reinforcing outcomes.,Relying on verbalized purpose instead of empirically inferred reinforcement relations
+PQ_DBD-07_3,A,L2,Conceptual,Misses that public reprimands can deliver contingent adult attention.,Failure to classify contingent adult reprimands as potential positive reinforcement
+PQ_DBD-07_3,B,L2,Conceptual,Does not consider escape from tasks or adult interaction via time-out as possible reinforcement.,Overlooking removal from tasks or adults as negatively reinforcing escape contact
+PQ_DBD-07_3,D,L2,Procedural,Assumes detentions cannot contact maintaining reinforcement for the target behavior.,Underestimating delayed adult contact or structured detention as possible reinforcement
+PQ_DBD-07_4,A,L2,Conceptual,Chooses passive compliance that does not match an escape function.,Selecting a low-response alternative that fails to contact escape from demands
+PQ_DBD-07_4,C,L2,Conceptual,Adds tangibles for abstinence without a function-matched escape replacement.,Pairing tangible consequences without a demand-reduction or break pathway
+PQ_DBD-07_4,D,L2,Procedural,Prioritizes punitive time-out over teaching an appropriate break request.,Preferring exclusionary punishment over teaching a function-matched break request
+PQ_DBD-07_5,A,L2,Conceptual,Attributes the contingency to peer attention when work is removed after refusal.,Misattributing peer contingencies when adult withdrawal of demand follows refusal
+PQ_DBD-07_5,C,L2,Conceptual,Mislabels demand reduction as tangible access.,Labeling work reduction as tangible access rather than aversive stimulus removal
+PQ_DBD-07_5,D,L2,Conceptual,Uses adult attention too generically without matching the escape contingency.,Using nonspecific attention labels that ignore demand-escape reinforcement
+PQ_DBD-07_6,A,L3,Conceptual,Claims the main benefit is saving time or cost rather than hypothesis testing plus verification.,Preference for logistical savings over hypothesis generation and confirmation logic
+PQ_DBD-07_6,C,L1,Lexical,Restates complementarity without the sharper hypothesis-generation versus confirmation distinction.,Blurry restatement of indirect and direct roles without sharpened evidentiary distinction
+PQ_DBD-07_6,D,L1,Lexical,Duplicates the indirect-plus-direct rationale without isolating hypothesis refinement from confirmation.,Redundant paraphrase omitting the refinement versus verification separation
+PQ_DBD-07_7,A,L2,Conceptual,Treats regulated mood and sleep as typical setting events that elevate problem behavior.,Mislabeling well-regulated states as behavior-elevating setting conditions
+PQ_DBD-07_7,B,L2,Conceptual,Misclassifies prior praise as a risk-elevating setting event in the usual sense.,Treating antecedent praise as typical setting-event risk rather than neutral or protective factors
+PQ_DBD-07_7,D,L2,Conceptual,Offers generic weather as a setting event without individualized linkage.,Generic environmental mention without individualized links to response probability
+PQ_DBD-07_8,A,L3,Conceptual,Assumes one extinction source controls the operant while peers still reinforce it.,Assuming single-agent extinction while unrecognized peer schedules maintain the response
+PQ_DBD-07_8,C,L2,Conceptual,Predicts replacement gains without eliminating competing peer reinforcement.,Predicting replacement gains absent control of competing peer-maintained reinforcement
+PQ_DBD-07_8,D,L2,Conceptual,Expects extinction-like decline despite continued peer delivery of reinforcement.,Expecting response weakening while peers continue delivering the maintaining reinforcer
+PQ_DBD-07_9,A,L1,Conceptual,Treats FBA and BIP as one interchangeable process rather than assessment informing a subsequent plan.,Collapse of assessment and plan design into one undifferentiated procedure
+PQ_DBD-07_9,C,L1,Procedural,Reverses the order so intervention precedes formal functional assessment.,Reversed sequencing of intervention planning ahead of completed functional assessment
+PQ_DBD-07_9,D,L1,Conceptual,Treats FBA and BIP as optional rather than tied to disciplinary and placement safeguards.,Underestimation of procedural necessity under disciplinary and placement safeguards
+PQ_DBD-07_10,A,L2,Conceptual,Withdraws stimulation rather than providing safer intense activity aligned with sensory function.,Reducing needed sensory input instead of channeling it through safer alternatives
+PQ_DBD-07_10,C,L2,Procedural,Uses harsh exclusionary punishment without addressing sensory maintaining consequences.,Applying severe consequences without addressing sensory maintaining outcomes
+PQ_DBD-07_10,D,L2,Conceptual,Denies communicative or sensory mediation and relies on passive extinction alone.,Ignoring sensory mediation and relying on passive nonreaction alone
+PQ_DBD-07_11,A,L2,Conceptual,Reads a clear context-linked pattern as random variation unsuitable for localized intervention.,Dismissing clustered situational patterns as noise unsuitable for localized planning
+PQ_DBD-07_11,C,L2,Conceptual,Prematurely narrows to one function hypothesis without grounding in the displayed situational clusters.,Single-function narrowing without support from displayed situational clusters
+PQ_DBD-07_11,D,L2,Procedural,Plans to withdraw supports during high-rate periods instead of intensifying prevention there.,Planned support reduction during elevated-rate contexts instead of intensified prevention
+PQ_DBD-07_12,A,L3,Conceptual,Requires FBA for every special education student regardless of triggering events.,Overgeneralized mandate for every special education student absent qualifying triggers
+PQ_DBD-07_12,C,L3,Conceptual,Limits FBA to a disability label rather than discipline and change-of-placement logic.,Disability-label gating that ignores discipline-driven change-of-placement logic
+PQ_DBD-07_12,D,L3,Procedural,Makes parental request the sole trigger instead of specified disciplinary timelines.,Parent-initiated trigger framing that omits specified disciplinary timelines
+PQ_DBD-07_13,A,L1,Procedural,Escapes the wrong direction by increasing aversive demand despite identified escape function.,Intensifying aversive demands contrary to an identified escape-maintained function
+PQ_DBD-07_13,C,L2,Procedural,Pairs punishment with unchanged incompatible demands instead of reducing aversiveness and teaching alternatives.,Adding punishment while leaving incompatible task demands structurally unmodified
+PQ_DBD-07_13,D,L2,Procedural,Eliminates the skill domain rather than modifying how performance is elicited and measured.,Removing the instructional domain instead of adapting task presentation and measurement
+PQ_DBD-07_14,A,L2,Conceptual,Mistakes a competing escape pathway for the definition of appropriate replacement function.,Confusing another escape pathway with prosocial replacement matching reinforcement
+PQ_DBD-07_14,B,L2,Conceptual,Invokes tangible reinforcement when the item targets matching replacement to current social or instructional function.,Invoking tangible pathways when social or instructional access defines the function
+PQ_DBD-07_14,D,L2,Procedural,Defines replacement in terms of suppression rather than matched reinforcement for a prosocial alternative.,Defining replacement through suppression instead of matched reinforcement for alternatives
+PQ_DBD-07_15,A,L2,Procedural,Treats informal trait labels as sufficient without ABC specificity.,Accepting global trait descriptors without operational antecedent-behavior-consequence specificity
+PQ_DBD-07_15,C,L2,Procedural,Disputes the teacher instead of re-framing concerns into observable terms.,Adversarial correction of informants instead of collaborative operational reframing
+PQ_DBD-07_15,D,L1,Conceptual,Discards informant reports rather than integrating them with structured methods.,Wholesale rejection of narrative input instead of triangulation with structured methods
+PQ_DBD-07_16,A,L2,Conceptual,Describes descriptive observation rather than condition-controlled functional analysis.,Categorizing naturalistic description as experimental functional analysis
+PQ_DBD-07_16,B,L2,Procedural,States manipulation abstractly without matching the concrete attention versus demand contrasts in the keyed example.,Abstract manipulation language detached from concrete attention-demand contrast design
+PQ_DBD-07_16,D,L1,Conceptual,Labels archival review as experimental hypothesis testing.,Misclassifying record review as active hypothesis-testing environmental manipulation
+PQ_DBD-07_17,A,L1,Procedural,Eliminates recess instead of teaching regulation and dispute resolution around the risk period.,Removing protective unstructured time instead of teaching regulation around the period
+PQ_DBD-07_17,C,L3,Procedural,Relies on harsh punishment after escalation without preventive skill building.,Reactive harsh penalties post-escalation without preventive skill instruction
+PQ_DBD-07_17,D,L2,Conceptual,Assumes setting events cannot be addressed through school-based supports.,Belief that school-based supports cannot modify setting-event contributions
+PQ_DBD-07_18,B,L2,Conceptual,Splits documentation quality from its role in selecting and monitoring interventions.,Splitting thorough documentation from its intervention-selection and progress-monitoring utility
+PQ_DBD-07_18,C,L2,Conceptual,Underuses multi-function information when designing replacement and reinforcement.,Underusing co-occurring functions when designing replacement schedules and reinforcers
+PQ_DBD-07_18,D,L2,Procedural,Claims frequency and context are insufficient for plan decisions despite a comprehensive report.,Claiming context-frequency data cannot inform planning despite a comprehensive report
+PQ_DBD-07_19,A,L3,Conceptual,Addresses only one maintaining function when co-occurring reinforcement is explicit.,Single-function intervention design when explicit dual reinforcement pathways exist
+PQ_DBD-07_19,C,L2,Procedural,Fragments services per function without an integrated replacement contacting both pathways.,Fragmented services that fail to integrate replacements contacting multiple pathways
+PQ_DBD-07_19,D,L3,Conceptual,Rejects the FBA because two functions were identified.,Invalidating assessment conclusions solely because two maintaining functions were found
+PQ_DBD-07_20,A,L1,Conceptual,Discards the whole analysis before checking procedural fidelity and reinforcement asymmetry.,Premature dismissal of the entire analysis before fidelity and asymmetry checks
+PQ_DBD-07_20,C,L2,Conceptual,Explains plateaued trends with intentional defiance instead of contingency and implementation review.,Motivational defiance attribution replacing contingency-quality and implementation review
+PQ_DBD-07_20,D,L3,Conceptual,Concludes interventions are ineffective categorically rather than comparing slope to quality of implementation.,Categorical ineffectiveness claims ignoring slope comparison to implementation quality
+item_005,B,L2,Procedural,Selects broad social-emotional assessment as the prerequisite for a formal behavior plan instead of FBA.,Preference for broad socioemotional screening over function-specific prerequisite assessment
+item_005,C,L2,Lexical,Uses a nonstandard label that does not map to the FBA process.,Reliance on nonstandard terminology that fails to denote the mandated assessment type
+item_005,D,L2,Procedural,Prioritizes executive-function testing without contingent ABC analysis.,Substituting cognitive testing batteries for contingent antecedent-behavior-consequence analysis
+item_071,B,L2,Conceptual,Chooses motivations that do not match the canonical school-focused triad in the keyed answer.,Substitution of non-canonical motive taxonomy for the endorsed school-behavior triad
+item_071,C,L2,Conceptual,Collapses overlapping constructs so the trio no longer matches the specified framework.,Construct collapse that erodes distinction within the specified motivational framework
+item_071,D,L2,Conceptual,Partial overlap without the exact emphasis required by the item.,Partial construct overlap missing the precise emphasis required by the framework
+item_087,B,L1,Lexical,Names a measurement tactic rather than the integrated FBA designation.,Confusion of a sampling tactic with the integrated formal evaluation designation
+item_087,C,L2,Lexical,Identifies a subprocess label instead of the overall FBA classification.,Identification of a subprocess label instead of the overarching assessment classification
+item_087,D,L1,Lexical,Stops at qualitative observation without the formal assessment type.,Stopping at qualitative observation without the formal integrated evaluation type
+item_112,B,L2,Procedural,Focuses only on post-antecedent counts without the dimensional measurement bundle.,Narrow post-antecedent frequency focus without the full dimensional measurement bundle
+item_112,C,L2,Procedural,Elevates reinforcement analysis alone over full formal dimensional quantification.,Elevation of reinforcement analysis above complete intensity-duration-frequency documentation
+item_112,D,L2,Conceptual,Stops at trigger labels without intensity and duration alongside frequency.,Trigger labeling without parallel intensity and duration alongside frequency capture
+item_140,A,L1,Procedural,Starts with unfounded intervention planning before hypothesis-driven observation order.,Intervention-first sequencing that skips hypothesis-driven observational foundations
+item_140,C,L1,Procedural,Places hypothesis before observation such that the sequence contradicts data-informed FBA flow.,Hypothesis placement ahead of observation contradicting data-informed assessment flow
+item_140,D,L1,Procedural,Skips explicit problem definition or hypothesis placement relative to the keyed sequence.,Omitted or misplaced explicit problem definition relative to the keyed sequence
+item_141,A,L2,Procedural,Leads with consequence-heavy response-cost before simpler environmental alignment.,Leading with individualized response cost before simpler environmental alignment
+item_141,B,L2,Procedural,Selects a multi-layered token economy when antecedent-environment change is indicated.,Multi-layered token systems when antecedent-environment change is the indicated first step
+item_141,D,L2,Procedural,Emphasizes reactive corrective feedback over modifying immediate environmental supports.,Emphasis on immediate corrective feedback over modifying immediate environmental supports

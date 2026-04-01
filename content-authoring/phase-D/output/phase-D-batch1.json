@@ -1,0 +1,142 @@
+[
+  {
+    "skill_id": "ACA-02",
+    "skill_name": "Accommodations, Modifications, and Instructional Supports",
+    "nasp_domain_primary": "NASP-3",
+    "skill_prerequisites": [
+      "- Foundational understanding of IEPs and 504 plans as mandated frameworks",
+      "- Knowledge of grade-level content standards and learning objectives",
+      "- Understanding of how student disabilities affect academic access to the curriculum",
+      "- Familiarity with universal design for learning (UDL) principles",
+      "- Ability to interpret assessment data to identify specific learning barriers",
+      "- Knowledge of how accommodations versus modifications differ in scope"
+    ],
+    "prereq_chain_narrative": "Before designing accommodations or modifications, school psychologists must understand IEP frameworks, grade-level standards, and how individual disabilities create specific barriers to access. The critical distinction is that accommodations maintain grade-level expectations while modifications alter those expectations—a concept shift that requires clear operational understanding. Mastery of accommodation design enables teams to select evidence-based supports matched to barrier type (timing, format, sensory, organizational), and evaluating accommodation efficacy through data ensures supports remain responsive rather than becoming a reflexive permanent extension. This skill unlocks the ability to participate in comprehensive individualized education plan meetings and contribute meaningfully to accessibility discussions."
+  },
+  {
+    "skill_id": "ACA-03",
+    "skill_name": "Academic Assessment and Progress Monitoring",
+    "nasp_domain_primary": "NASP-3",
+    "skill_prerequisites": [
+      "- Grundy's self-regulated learning (SRL) theoretical framework",
+      "- Knowledge of cognitive strategies including elaboration, rehearsal, and organization",
+      "- Understanding of attribution theory and locus of control concepts",
+      "- Familiarity with Bloom's taxonomy and goal-setting frameworks",
+      "- Ability to interpret student effort, ability, and strategy use in academic contexts",
+      "- Understanding of feedback loops and metacognitive monitoring"
+    ],
+    "prereq_chain_narrative": "Understanding student academic progress requires knowledge of how learners regulate their own cognition through Zimmerman's three-phase SRL model (forethought, performance, reflection) and how cognitive strategies like elaboration support encoding and retrieval. The conceptual shift involves recognizing that attribution style—whether students blame effort (controllable) or ability (uncontrollable) for failure—directly predicts persistence and future engagement. Students with adaptive attributions benefit from goal-setting structures that are specific, measurable, and challenging yet attainable, allowing school psychologists to target interventions at the metacognitive level. This skill prepares practitioners to design study interventions and coaching conversations that address the internal mechanisms of learning, not just surface-level study techniques."
+  },
+  {
+    "skill_id": "ACA-04",
+    "skill_name": "Curriculum-Based Measurement and Formative Assessment",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "- Understanding of explicit instruction model phases (modeling, guided practice, independent practice)",
+      "- Knowledge of working memory limitations and cognitive load theory",
+      "- Familiarity with mnemonic and memory-enhancement strategies",
+      "- Understanding of chunking as an information-processing technique",
+      "- Knowledge of visual supports, graphic organizers, and their cognitive mechanisms",
+      "- Ability to interpret classroom observation data on student engagement and strategy use"
+    ],
+    "prereq_chain_narrative": "Effective curriculum-based measurement depends on understanding how the explicit instruction model sequences teacher modeling, guided practice, and independent practice to build fluency, and how mnemonic strategies (acronyms, rhymes, method of loci) enhance retention of discrete factual knowledge. The key concept shift involves recognizing that working memory is limited—typically 4–7 items—so chunking information into meaningful units and using visual supports reduce cognitive load, improving encoding and retrieval during assessment. When monitoring progress through CBM data, school psychologists interpret performance growth as evidence of successful strategy implementation or identify performance plateaus as signals to re-chunk content or modify the instructional sequence. This skill enables practitioners to design efficient, data-responsive formative assessment systems that align with cognitive science principles."
+  },
+  {
+    "skill_id": "ACA-06",
+    "skill_name": "Reading Instruction and Intervention",
+    "nasp_domain_primary": "NASP-3",
+    "skill_prerequisites": [
+      "- Knowledge of classical conditioning mechanisms (Pavlov) and unconditioned/conditioned stimulus pairing",
+      "- Understanding of working memory capacity constraints and information processing theory",
+      "- Familiarity with schema theory (Piaget, Bartlett) and how prior knowledge shapes comprehension",
+      "- Knowledge of cognitive load theory and its implications for reading comprehension instruction",
+      "- Understanding of phonological awareness, decoding, fluency, vocabulary, and comprehension as foundational reading components",
+      "- Ability to recognize reading profile patterns (e.g., strong decoding + weak comprehension, strong fluency + weak phonemic awareness)"
+    ],
+    "prereq_chain_narrative": "Reading development is fundamentally a cognitive enterprise rooted in classical conditioning (automatizing decoding through repeated pairing) and information processing constraints—working memory can typically hold only 4–7 items, so fluent decoding frees resources for comprehension. Schema theory explains why prior knowledge and comprehension monitoring are critical: readers activate existing schemas and assimilate new information into organized mental frameworks. Cognitive load theory predicts that excessive decoding demands consume working memory, leaving insufficient capacity for meaning-making; therefore, fluency interventions and visual supports are essential preparatory steps. Understanding these mechanisms allows school psychologists to identify specific reading profiles (e.g., a student with adequate decoding but weak comprehension due to low working memory) and target interventions that reduce extraneous cognitive load while building comprehension strategies. This skill unlocks the ability to design comprehensive, evidence-based reading interventions aligned to cognitive architecture."
+  },
+  {
+    "skill_id": "ACA-07",
+    "skill_name": "Mathematics Instruction and Intervention",
+    "nasp_domain_primary": "NASP-3",
+    "skill_prerequisites": [
+      "- Knowledge of language development milestones and receptive/expressive language domains",
+      "- Understanding of single-word versus multi-word utterance production as developmental markers",
+      "- Familiarity with morphological awareness (awareness of word parts, prefixes, suffixes, inflections) as a reading component",
+      "- Understanding of how working memory constrains listening and reading comprehension despite adequate decoding",
+      "- Knowledge of early language screening procedures and comprehensive language assessment",
+      "- Ability to recognize developmental sequences in language production and comprehension"
+    ],
+    "prereq_chain_narrative": "Mathematics intervention planning requires foundational knowledge of how language development—including single-word production, multi-word utterance emergence, and morphological awareness of word parts—supports both reading and mathematical vocabulary acquisition. The critical conceptual link is that morphological awareness (understanding how prefixes like 're-' or suffixes like '-tion' modify meaning) is fundamental to vocabulary expansion in both reading and math; a student weak in morphology will struggle to understand mathematical terminology (e.g., 'denominator,' 'numerator,' 'equivalent'). Additionally, working memory constraints, even in children with age-appropriate decoding and phonological skills, can severely limit listening comprehension of word problems and mathematical discourse. School psychologists must use comprehensive language screening as the initial assessment step before designing mathematics interventions, particularly for students with language-based learning differences. This skill enables practitioners to recognize that mathematics achievement is supported by language and working memory capacities and to integrate language-development principles into numeracy interventions."
+  },
+  {
+    "skill_id": "ACA-08",
+    "skill_name": "Written Language Instruction and Executive Function Supports",
+    "nasp_domain_primary": "NASP-3",
+    "skill_prerequisites": [
+      "- Knowledge of executive function (EF) constructs: working memory, inhibitory control, cognitive flexibility",
+      "- Understanding of Barkley's ADHD model positioning the disorder as inhibitory control and impulse regulation dysfunction",
+      "- Distinction between cool EF (abstract, laboratory-context problem-solving) and hot EF (emotionally-laden, socially-situated regulation)",
+      "- Understanding of developmental trajectories of EF across preschool through school-age years",
+      "- Familiarity with how EF performance in controlled settings may not generalize to classroom contexts",
+      "- Knowledge of writing processes, planning, drafting, and revision as EF-dependent academic skills"
+    ],
+    "prereq_chain_narrative": "Executive function is the cognitive control system that governs planning, impulse regulation, working memory management, and flexible responding—processes essential for both written expression and behavioral self-regulation. Barkley's model reconceptualizes ADHD as a fundamental disorder of inhibitory control (the capacity to suppress prepotent responses) rather than inattention, revealing why students with this profile struggle to plan and revise written work despite adequate spelling and grammar knowledge. The critical distinction between cool EF (abstract rule-following in quiet laboratory tasks) and hot EF (emotionally-driven regulation in frustrating, socially-relevant classroom situations) explains why a student may perform normally on standardized EF testing yet show severe classroom dysregulation. Understanding developmental trajectories—inhibitory control shows dramatic improvement during preschool years—helps practitioners differentiate developmental immaturity from disorder. This skill enables school psychologists to design written language and behavioral interventions that target the underlying EF bottleneck rather than the surface symptoms, using real-world classroom contexts to assess and support regulation."
+  },
+  {
+    "skill_id": "ACA-09",
+    "skill_name": "Self-Regulated Learning and Study Skills",
+    "nasp_domain_primary": "NASP-8",
+    "skill_prerequisites": [
+      "- Understanding of how chronic medical conditions (traumatic brain injury, sickle cell disease) affect cognition and school functioning",
+      "- Knowledge of medication side effects and their behavioral and cognitive manifestations",
+      "- Familiarity with fatigue, pain, and mood dysregulation as barriers to learning",
+      "- Understanding of neuropsychological recovery and re-entry planning following acquired brain injury",
+      "- Knowledge of accommodations and environmental modifications for students with sensory or physical disabilities",
+      "- Ability to coordinate with medical and healthcare teams to align school and medical management"
+    ],
+    "prereq_chain_narrative": "Supporting students managing chronic medical conditions and acquired brain injuries requires understanding how underlying physiological factors—fatigue from traumatic brain injury recovery, pain episodes in sickle cell disease, behavioral side effects of corticosteroids—directly impair self-regulation and academic performance. School psychologists must recognize that behavioral dysregulation in these contexts is a symptom of medical/neurological conditions, not willful noncompliance, and requires collaborative planning with healthcare teams to synchronize medical and educational supports. When assessing students with sensory impairments (visual, auditory), procedural modifications ensure valid measurement, and accommodations address access barriers rather than changing content standards. The concept shift from viewing behavioral or academic difficulties as purely educational problems to recognizing their neurological or medical etiology allows practitioners to design interventions that honor developmental and physiological realities. This skill prepares school psychologists to function as bridge-builders between medical and educational systems, ensuring comprehensive support that addresses root causes rather than symptoms alone."
+  },
+  {
+    "skill_id": "CON-01",
+    "skill_name": "Consultation Models and Problem-Solving",
+    "nasp_domain_primary": "NASP-2",
+    "skill_prerequisites": [
+      "- Understanding of Caplan's consultee-centered consultation model and its focus on addressing consultee internal barriers (skill deficits, objectivity loss, confidence)",
+      "- Knowledge of behavioral consultation framework and its emphasis on operational definitions and data-based problem-solving",
+      "- Familiarity with coaching models and the principle of gradual release of responsibility",
+      "- Understanding of how global labels ('bad behavior,' 'poor attention') obscure observable target behaviors",
+      "- Knowledge of inter-rater reliability and the importance of consistent communication across observers",
+      "- Ability to diagnose consultation relationship failures through narrative analysis and communication patterns"
+    ],
+    "prereq_chain_narrative": "Effective consultation requires understanding that consultant and consultee roles are distinct—the school psychologist may choose consultee-centered consultation when a teacher's internal barrier (lack of objectivity, skill deficit, or low confidence) is the primary obstacle to problem-solving. The fundamental concept shift involves recognizing that 'bad behavior' is not an operational definition; consultants must translate global descriptors into observable, measurable statements (e.g., 'off-task for >30% of independent work time') that allow for reliable monitoring and data-based decision making. Coaching models leverage this principle by pairing direct observation with feedback and gradual release of responsibility, ensuring the consultee develops sustainable skill rather than dependence on the consultant. Diagnostic acuity—noticing when teacher descriptions shift across conversations or when observer agreement is low—signals communication failures that undermine intervention integrity. This skill enables school psychologists to flexibly select and adapt consultation models to match the root cause of the problem (consultee skill, teacher objectivity, implementation fidelity) and to monitor consultation effectiveness through relationship and data indicators."
+  },
+  {
+    "skill_id": "DBD-01",
+    "skill_name": "Intellectual Disability — Classification and Identification",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "- Knowledge of the RIOT framework (Review Records, Interviews, Observations, Tests) and its sequential logic",
+      "- Understanding of inter-rater reliability and observer agreement statistics in behavioral observation",
+      "- Familiarity with observation methods: running records, interval recording, event recording, and what each captures",
+      "- Knowledge of how cumulative file information (prior school placements, assessment history, absences) provides contextual understanding",
+      "- Understanding of how environmental, socioeconomic, and cultural factors influence assessment validity",
+      "- Ability to recognize and mitigate threats to validity including observer bias, missing contextual information, and practice effects"
+    ],
+    "prereq_chain_narrative": "Comprehensive identification of intellectual disability requires a systematic, bias-aware approach beginning with the RIOT framework—prioritizing records review and interviews before formal testing ensures contextual understanding and informs test selection. When observing, school psychologists must recognize that a 20-minute running record captures narrative detail and behavioral sequences, while interval recording provides frequency and distribution data; inter-rater reliability (comparing two observers' ratings) surfaces measurement error, and low agreement signals that either the target behavior is poorly defined or observers need calibration. Records review reveals critical contextual factors (frequent school changes, chronic absences, prior assessments) that shape both current performance and interpretation—a student's low scores may reflect educational discontinuity or cultural mismatch rather than cognitive disability. This foundational skill sequence enables school psychologists to recognize and mitigate assessment threats before administering cognitive or adaptive behavior measures, ensuring that dual-criterion identification (low IQ + low adaptive behavior) reflects true disability rather than environmental or cultural factors. Mastery of RIOT sequencing and observation literacy prevents misidentification and supports equitable decision-making."
+  },
+  {
+    "skill_id": "DBD-03",
+    "skill_name": "Assessment Models and Psychoeducational Evaluation",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "- Understanding of cognitive assessment theory: CAS-2 alignment with the PASS model (Planning, Attention, Simultaneous, Successive processing) and Lurian neuropsychological tradition",
+      "- Knowledge of cross-linguistic assessment principles and how verbal-nonverbal discrepancies inform interpretation for English language learners",
+      "- Familiarity with dual-criterion intellectual disability frameworks integrating IQ (cognitive ability) and adaptive behavior (functional living skills)",
+      "- Understanding of twice-exceptionality and how high IQ may coexist with learning disabilities, ADHD, or social-emotional needs",
+      "- Knowledge of adaptive behavior assessment tools (e.g., Vineland) and their measurement domains",
+      "- Ability to recognize moderators of test performance (language proficiency, anxiety, motivation) and their impact on score validity"
+    ],
+    "prereq_chain_narrative": "Psychoeducational evaluation requires understanding how different cognitive models organize and measure mental processing—the Cognitive Assessment System (CAS-2) operationalizes PASS theory (Planning, Attention, Simultaneous, Successive) grounded in Lurian neuropsychology, providing a processing-focused alternative to traditional g-based models. When assessing students who are English language learners, interpreting a large verbal-nonverbal discrepancy (e.g., 5th percentile verbal, 50th percentile nonverbal) signals language proficiency effects rather than true cognitive disability; school psychologists must use nonverbal scores or processing-based indices more heavily in interpretation. Intellectual disability identification requires dual-criteria evidence—both low FSIQ and significantly low adaptive behavior (measured on instruments like Vineland)—because IQ alone does not establish impairment in daily functioning. The critical caveat about high FSIQ (130+) is recognizing twice-exceptionality: gifted cognition may mask or co-occur with learning disabilities, ADHD, autism, or emotional disturbance; high IQ is neither a protective factor against disabilities nor a contraindication for special education eligibility. This skill enables school psychologists to select theoretically appropriate measures, interpret scores within linguistic and cultural context, integrate multiple criteria responsibly, and communicate caveats that prevent both over-identification and under-identification of students with disabilities."
+  }
+]

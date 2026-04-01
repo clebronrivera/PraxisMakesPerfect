@@ -1,0 +1,141 @@
+PHASE C ERROR PATTERN SYNTHESIS — DBD-08
+Specific Learning Disabilities — Reading Profiles
+Curriculum-Based Measurement (CBM) & RTI Concepts
+================================================================================
+
+SKILL: DBD-08
+TOTAL QUESTIONS: 24 (distributed across 3 batches)
+BATCHES PRODUCED: 3
+
+OUTPUT FILES:
+  1. DBD-08-phase-C-batch1.csv (10 rows: questions 1–10)
+  2. DBD-08-phase-C-batch2.csv (10 rows: questions 11–20)
+  3. DBD-08-phase-C-batch3.csv (4 rows: questions 21–24)
+
+================================================================================
+BATCH 1 (Questions 1–10)
+================================================================================
+
+Dominant Error Patterns Addressed:
+  • ORF construct conflation (rate-accuracy vs. comprehension/sight-words/decoding)
+  • Below-aimline trend masked by upward point noise
+  • Overstatement of early literacy CBM scope (cognitive screeners, full eval replacement)
+  • SEM-precision relationship inversion/irrelevance
+  • Six-week downward trajectory rationalization
+  • Overstatement of RtI standard protocol advantage
+  • Normal scatter interpreted as measure invalidity
+  • Slope projection arithmetic errors
+  • Intensive-tier monitoring frequency misalignment
+  • ORF–Maze profile misinterpretation (comprehension as admin error/decoding deficit)
+
+Error Cluster Tags (All Unique):
+  model-conflation, sequence-inversion, scope-overgeneralization, 
+  validity-reliability-confusion, component-confusion, purpose-confusion,
+  overgeneralization, label-retrieval, tier-level-confusion, 
+  population-confusion
+
+Instructional Red Flags Pattern:
+  Each row specifies distractor(s), core misconception, and specific teaching move.
+  Example: "Distractor A (X) treats Y as Z instead of W. Clarify: [correct concept]."
+
+================================================================================
+BATCH 2 (Questions 11–20)
+================================================================================
+
+Dominant Error Patterns Addressed:
+  • Decision-rule misuse (delay, replacement for judgment, data-collection elimination)
+  • Slope calculation without aimline comparison
+  • CBM benchmark as absolute universal gate vs. local reference point
+  • Aimline conflation with baseline/observed trend/class median
+  • Below-aimline growth projection failures
+  • CBM coverage breadth overstating
+  • Maze performance attribution (decoding, sight-word, phoneme)
+  • Math CBM scoring (accuracy-only, speed-only, difficulty ratings)
+  • CBM screener purpose (exclusion, eval replacement, permanent tracking)
+  • Dual discrepancy element conflation (screening + response vs. other measures)
+
+Error Cluster Tags (All Unique):
+  indirect-direct-confusion, prerequisite-skipping, norm-criterion-confusion,
+  role-confusion, causation-correlation, scope-undergeneralization,
+  component-confusion, treatment-assessment-confusion, 
+  eligibility-criteria-confusion, consent-confidentiality-confusion
+
+Instructional Red Flags Pattern:
+  Multi-distractor remediation addressing core reasoning failure.
+  Structure: [Distractor claim] → [Reframe with specific math/comparison].
+
+================================================================================
+BATCH 3 (Questions 21–24)
+================================================================================
+
+Dominant Error Patterns Addressed:
+  • CBM scope redefinition (school-wide standards audit, teacher evaluation, test replacement)
+  • CBM purpose conflation (progress monitoring with norm comparison/quality proof/curriculum validation)
+  • CBM scope narrowing (reading-only, class-wide evaluation, special ed gate)
+  • CBM exemplar selection error (national norms, semester pre-post, state standards)
+
+Error Cluster Tags (All Unique):
+  indirect-direct-confusion, developmental-stage-mismatch, 
+  scope-undergeneralization, label-retrieval
+
+Instructional Red Flags Pattern:
+  Focused on concept boundary drawing (e.g., individual vs. school, CBA vs. CBM).
+  Concrete contrast teaching: "CBM measures this student's weekly rise, not [X]."
+
+================================================================================
+ANTI-COLLAPSE VALIDATION
+================================================================================
+
+Opening Phrase Uniqueness:
+  ✓ Batch 1: 10/10 unique opening phrases (first 4 words)
+  ✓ Batch 2: 10/10 unique opening phrases (first 4 words)
+  ✓ Batch 3: 4/4 unique opening phrases (first 4 words)
+
+Error Cluster Tag Uniqueness (Within Batch):
+  ✓ Batch 1: 10 unique tags (0 duplicates)
+  ✓ Batch 2: 10 unique tags (0 duplicates)
+  ✓ Batch 3: 4 unique tags (0 duplicates)
+
+No Filler Language:
+  ✓ All dominant_error_pattern entries name specific conceptual confusion
+  ✓ All instructional_red_flags entries link distractor → misconception → teaching move
+  ✓ No phrases like "students may confuse" or "often leads to"
+
+CSV Format Validation:
+  ✓ All rows parse with 4 required columns
+  ✓ All text properly quoted
+  ✓ No empty cells in any required field
+  ✓ Character counts reasonable (150–485 chars per red_flags entry)
+
+================================================================================
+SKILL DOMAIN SUMMARY
+================================================================================
+
+DBD-08 focuses on:
+  • Oral Reading Fluency (ORF) as words-correct-per-minute measure
+  • Maze comprehension fluency (cloze task under time)
+  • Early literacy CBMs (NWF, LNF, PSF) and their bounds
+  • Slope calculation, aimline projection, trend-vs-noise discrimination
+  • Standard Error of Measurement (SEM) confidence interpretation
+  • CBM benchmarks, universal screening, dual-discrepancy frameworks
+  • RtI standard-protocol advantages and limitations
+  • Progress-monitoring frequency by intensity tier
+  • Math CBM scoring (digits-correct-per-minute)
+  • CBM vs. CBA conceptual distinction
+
+Most Common Reasoning Failures:
+  1. Conflating constructs (e.g., ORF as comprehension proxy)
+  2. Skipping slope-to-aimline math before interpreting adequacy
+  3. Overstating scope of single measures
+  4. Misattributing responsibility (e.g., motivation vs. instruction)
+  5. Treating benchmarks as absolutes vs. local reference points
+
+Most Effective Teaching Moves:
+  • Explicit slope arithmetic with projection to goal
+  • Concept boundary drawing (individual progress vs. school audit)
+  • Emphasis on "frequent, short, local" as CBM's defining strength
+  • Distractor-specific remediations (not generic advice)
+
+================================================================================
+END OF SYNTHESIS SUMMARY
+================================================================================

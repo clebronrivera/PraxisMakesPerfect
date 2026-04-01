@@ -1,0 +1,132 @@
+[
+  {
+    "skill_id": "MBH-03",
+    "skill_name": "Cognitive-Behavioral and Applied Behavior Analysis",
+    "nasp_domain_primary": "NASP-4",
+    "skill_prerequisites": [
+      "Understanding of operant conditioning principles (reinforcement, punishment, extinction) \u2014 foundational to ABA",
+      "Ability to conduct functional behavior assessment and identify behavior-consequence relationships",
+      "Knowledge of anxiety disorders and trauma presentations to recognize targets for exposure therapy",
+      "Familiarity with cognitive distortion patterns and thought-feeling-behavior linkages",
+      "Competence in designing reinforcement hierarchies and scheduling for discrete trial training"
+    ],
+    "prereq_chain_narrative": "CBT and ABA both rely on understanding how consequences shape behavior and how cognition influences emotion; without grounding in operant conditioning principles and functional assessment (skill DBDM-01 level), clinicians cannot identify which techniques target the maintaining condition. The core challenge is matching intervention selection to the specific topography: cognitive restructuring for thought-driven anxiety versus graduated exposure for avoidance maintained by negative reinforcement. Mastery of CBT and ABA techniques (MBH-03) unlocks the ability to design multimodal treatment plans that integrate behavioral, cognitive, and contextual interventions for complex presentations like school refusal and autism-spectrum behavioral support."
+  },
+  {
+    "skill_id": "MBH-04",
+    "skill_name": "Autism and Neurodevelopmental Interventions",
+    "nasp_domain_primary": "NASP-4",
+    "skill_prerequisites": [
+      "Comprehensive understanding of autism spectrum disorder diagnostic criteria and developmental trajectories",
+      "Competence in functional behavior assessment for students with significant communication or sensory differences",
+      "Knowledge of evidence-based ABA and naturalistic teaching strategies (skill MBH-03 foundational)",
+      "Ability to interpret pragmatic language deficits distinct from syntax/semantics using language assessment data",
+      "Familiarity with AAC device types, initialization, and principles of communication motivation"
+    ],
+    "prereq_chain_narrative": "Autism interventions require deep understanding of the neurodevelopmental profile\u2014sensory processing, social motivation, communication modality\u2014because interventions must be tailored to each domain's presentation rather than applied uniformly. Students with autism present with heterogeneous profiles: some have strong cognitive abilities but profound social-pragmatic deficits, others have significant intellectual disability plus behavioral challenges. The core challenge is selecting the right intervention modality (visual supports for transitions, peer-modeling for social skills, naturalistic reinforcement for AAC initiation) based on the specific developmental profile. Mastery of autism-specific interventions (MBH-04) allows school psychologists to design individualized comprehensive support systems that address communication, behavior, and social learning across school settings."
+  },
+  {
+    "skill_id": "MBH-05",
+    "skill_name": "Crisis Intervention",
+    "nasp_domain_primary": "NASP-6",
+    "skill_prerequisites": [
+      "Thorough knowledge of suicide risk assessment protocols and the distinction between ideation, intent, and plan/means",
+      "Understanding of acute behavioral crisis de-escalation techniques and environmental safety modifications",
+      "Competence in trauma-informed grief response principles and post-crisis debriefing protocols (PREPaRE, NOVA)",
+      "Familiarity with legal and ethical duty-to-warn requirements and mandatory reporting obligations",
+      "Knowledge of crisis triage and appropriate emergency/community mental health referral pathways"
+    ],
+    "prereq_chain_narrative": "Crisis intervention demands rapid decision-making under conditions of high emotional intensity and imminent risk; without clear protocols for risk assessment and safety planning, school psychologists may inadvertently escalate behavior or miss signs of imminent danger. The core challenge is distinguishing true imminent suicide risk (active plan and means with intent to act) from passive ideation or behavioral threats, then implementing the correct response level (no-harm agreements are insufficient; immediate safe referral is required). Competence in crisis intervention (MBH-05) positions school psychologists to serve as the first-response stabilizing force in acute situations, protecting student safety while activating appropriate referral networks and initiating school-wide trauma response protocols when needed."
+  },
+  {
+    "skill_id": "PSY-01",
+    "skill_name": "Psychometric Theory and Norm-Referenced Score Interpretation",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "Understanding of normal distribution, z-scores, standard deviations, and the meaning of percentile ranks",
+      "Knowledge of reliability types (internal consistency, test-retest, inter-rater) and their calculation and interpretation",
+      "Familiarity with validity types (construct, criterion, convergent, discriminant) and the relationship between reliability and validity",
+      "Ability to interpret test manuals, norming sample characteristics, and sample representativeness",
+      "Understanding of scaled scores, composite scores, and how subtest performances aggregate into broader ability indices"
+    ],
+    "prereq_chain_narrative": "Norm-referenced score interpretation is the foundation of all standardized assessment in school psychology; without fluency in converting raw scores to standard scores, percentiles, and scaled scores, clinicians cannot communicate student performance to teachers, families, or other professionals. The core challenge is understanding that a standard score is meaningful only in relation to the reference group's mean and variability, and that percentile ranks are ordinal (a jump from 50th to 75th percentile is not equivalent in distance to a jump from 75th to 90th). Mastery of psychometric theory and score interpretation (PSY-01) enables accurate translation of assessment results into actionable educational and clinical interpretations, preventing both underidentification (missing genuine deficits) and overidentification (pathologizing normal variation)."
+  },
+  {
+    "skill_id": "PSY-02",
+    "skill_name": "Neurodevelopmental Disorders \u2014 Diagnosis and Presentation",
+    "nasp_domain_primary": "NASP-8",
+    "skill_prerequisites": [
+      "Comprehensive knowledge of DSM-5 diagnostic criteria for ADHD, specific learning disabilities, and intellectual disability",
+      "Understanding of cognitive-achievement discrepancy models and pattern-of-strengths-and-weaknesses (PSW) interpretation",
+      "Competence in interpreting reliability and validity indices (Cronbach's alpha, inter-rater correlation, sensitivity) for assessment instruments",
+      "Ability to distinguish neurodevelopmental presentations from secondary effects (e.g., learning disability versus English language learner status)",
+      "Familiarity with how developmental stage, cultural factors, and comorbidity influence presentation and identification"
+    ],
+    "prereq_chain_narrative": "Neurodevelopmental diagnosis requires integration of multiple data sources\u2014cognitive profiles, achievement testing, behavioral observations, medical/developmental history\u2014interpreted through the lens of diagnostic criteria and measurement quality. The core challenge is recognizing that score discrepancies alone do not diagnose; clinicians must evaluate whether the pattern fits the conceptual model (e.g., working memory deficit + slow processing + achievement lag for ADHD-type presentation versus specific math facts weakness for dyscalculia) while accounting for measurement error and sample representativeness. Mastery of neurodevelopmental diagnosis (PSY-02) allows school psychologists to generate accurate, evidence-based diagnostic hypotheses that inform appropriate special education eligibility decisions and differentiate disability from cultural, linguistic, or instructional factors."
+  },
+  {
+    "skill_id": "PSY-03",
+    "skill_name": "Social-Emotional Learning and Internalizing Disorders",
+    "nasp_domain_primary": "NASP-4",
+    "skill_prerequisites": [
+      "Thorough understanding of DSM-5 diagnostic criteria for major depressive disorder, anxiety disorders, and trauma-related disorders",
+      "Knowledge of how internalizing disorders present in school contexts (e.g., school refusal as avoidance maintained by anxiety reduction)",
+      "Competence in universal and targeted mental health screening using validated rating scales (e.g., SDQ, EMAS, RCADS)",
+      "Ability to assess and interpret social-emotional competencies (emotional regulation, social awareness, responsible decision-making) using both quantitative and observational methods",
+      "Familiarity with evidence-based treatment protocols (CBT, exposure therapy, parent psychoeducation) for anxiety and depression in school-age populations"
+    ],
+    "prereq_chain_narrative": "Internalizing disorders often go unidentified in schools because their behavioral manifestations are subtle\u2014low mood, withdrawal, or somatic complaints\u2014compared to externalizing behavior; without understanding the diagnostic criteria and school-context presentations (e.g., separation anxiety expressed as school refusal rather than overt panic), school psychologists may misinterpret symptoms as motivation or compliance issues. The core challenge is recognizing that screening identifies risk but does not diagnose, and that intervention selection must match the specific disorder pathology: panic disorder requires in-vivo exposure and breathing training; social anxiety requires graduated peer interaction and cognitive restructuring; depression requires behavioral activation and thought challenging. Mastery of internalizing disorders and SEL (PSY-03) enables early identification, accurate differential diagnosis, and selection of evidence-based interventions that address the specific maintaining factors driving the student's emotional and behavioral difficulties."
+  },
+  {
+    "skill_id": "PSY-04",
+    "skill_name": "School-Based Mental Health Intervention",
+    "nasp_domain_primary": "NASP-4",
+    "skill_prerequisites": [
+      "Understanding of BICS (Basic Interpersonal Communication Skills) versus CALP (Cognitive Academic Language Proficiency) and their developmental timelines",
+      "Competence in selecting and interpreting bilingual assessment instruments (both languages assessed, culturally adapted norms when available)",
+      "Knowledge of how language of instruction, acculturation stress, and literacy exposure in home language affect academic performance",
+      "Ability to distinguish language difference from language disorder and language disorder from learning disability",
+      "Familiarity with how cognitive assessment must be interpreted within the bilingual context (nonverbal batteries, culture-fair instruments) to avoid misdiagnosis"
+    ],
+    "prereq_chain_narrative": "Bilingual students are at heightened risk for overidentification as disabled because their academic language development is still emerging, their processing of multiple linguistic systems adds cognitive load, and many assessment instruments are normed on monolingual English speakers, making culturally adapted interpretation essential. The core challenge is recognizing that academic language proficiency (CALP) takes 5\u20137 years to develop even in typically developing bilinguals, while conversational fluency (BICS) emerges in 1\u20133 years, so early academic struggles may reflect language development rather than disability. Mastery of bilingual assessment and intervention (PSY-04) enables clinicians to accurately distinguish bilingual language development patterns from true learning or developmental disabilities, preventing inappropriate special education placement while ensuring genuine needs are identified and addressed through culturally congruent interventions."
+  },
+  {
+    "skill_id": "RES-02",
+    "skill_name": "Research Literacy and Evidence-Based Practice",
+    "nasp_domain_primary": "NASP-9",
+    "skill_prerequisites": [
+      "Understanding of research design types (randomized controlled trials, quasi-experimental, single-case) and their internal validity strengths",
+      "Competence in interpreting effect size (Cohen's d, odds ratios) as a measure of practical significance independent of p-values and sample size",
+      "Knowledge of meta-analysis methodology, heterogeneity, and how pooled effect sizes are calculated and interpreted across studies",
+      "Familiarity with evidence hierarchy frameworks (ESSA, What Works Clearinghouse tiers) and how to situate single studies within broader evidence base",
+      "Ability to critically evaluate study quality, sample representativeness, and generalizability to school populations"
+    ],
+    "prereq_chain_narrative": "Statistical significance does not equal practical significance; a study showing p < .05 may have a trivial effect size (d = 0.10) that provides minimal clinical benefit, while a non-significant finding with a large effect (d = 0.60) in a small sample may warrant implementation if the intervention is low-cost and reversible. The core challenge is recognizing that a single randomized controlled trial, while stronger than observational data, may reflect one researcher's context and population, and that meta-analyses of multiple RCTs provide stronger evidence but require assessment of study heterogeneity to determine whether the pooled effect is applicable to a given school. Mastery of research literacy and evidence-based practice (RES-02) empowers school psychologists to distinguish genuinely effective interventions from those with weak or limited evidence, ensuring that limited resources and student instructional time are invested in strategies with demonstrated effectiveness rather than fads or single-study claims."
+  },
+  {
+    "skill_id": "RES-03",
+    "skill_name": "Data-Based Decision Making",
+    "nasp_domain_primary": "NASP-1",
+    "skill_prerequisites": [
+      "Understanding of universal screening cut scores and how they identify risk thresholds for Tier 2 intervention consideration",
+      "Competence in progress monitoring data interpretation: identifying flat, decreasing, or accelerating growth trajectories and their implications for intervention adjustment",
+      "Knowledge of single-case design logic: baseline phase stability, intervention introduction, demonstration of experimental control via repeated measures",
+      "Ability to aggregate and interpret benchmark assessment data (percent at benchmark, percent below) to evaluate Tier 1 effectiveness across the school",
+      "Familiarity with Response to Intervention (RTI) frameworks and the logic of successive intervention intensification based on data"
+    ],
+    "prereq_chain_narrative": "Data-based decision making is the operational bridge between assessment and intervention; without systematic collection and interpretation of screening and progress monitoring data, schools default to intuition or luck in determining which students need intervention and whether current interventions are effective. The core challenge is distinguishing normal variability from true inadequate response: a single off-benchmark score does not trigger Tier 2, but a consistent pattern of performance below cut across multiple assessments signals need for intensified instruction. Single-case design adds experimental rigor by establishing stable baseline behavior, introducing the intervention, and measuring whether the change in behavior occurs in conjunction with intervention introduction (demonstrating functional relationship rather than coincidence). Mastery of data-based decision making (RES-03) enables school psychologists to use assessment data as a real-time feedback loop that guides intervention selection, intensity, and adjustments, ensuring that every student receives instruction or intervention matched to their current skill level and response trajectory."
+  },
+  {
+    "skill_id": "SAF-01",
+    "skill_name": "PBIS and Positive Behavioral Supports",
+    "nasp_domain_primary": "NASP-5",
+    "skill_prerequisites": [
+      "Understanding of the three-tiered behavior support framework (Tier 1 universal, Tier 2 targeted group, Tier 3 intensive individual)",
+      "Knowledge of core Tier 1 PBIS features: explicit behavioral expectations, direct teaching, positive reinforcement systems, and data monitoring",
+      "Competence in office discipline referral (ODR) data analysis: identifying students and behaviors with highest frequency, recognizing the 80/15/5 distribution as typical",
+      "Familiarity with the Tiered Fidelity Inventory (TFI) or similar fidelity tools for assessing PBIS implementation integrity across all three tiers",
+      "Understanding of the relationship between Tier 1 success rate (80% of students meeting behavioral expectations) and readiness to develop Tier 2 and Tier 3 supports"
+    ],
+    "prereq_chain_narrative": "PBIS is a systems-level framework built on the principle that behavior is learned and can be taught, and that proactive, universal positive reinforcement prevents more students from developing behavioral concerns than reactive punishment alone; without understanding the three-tier architecture and how to measure implementation fidelity, schools implement isolated behavioral practices without the integrated system needed for scalable impact. The core challenge is recognizing that ODR data showing 25% of students accounting for 75% of referrals is not evidence of failure but evidence that Tier 1 is working well enough to direct resources to the students with greater need, and that reaching 80% of students meeting behavioral expectations is the threshold for sustainable Tier 2 and Tier 3 development. Mastery of PBIS (SAF-01) enables school psychologists to help schools build evidence-based, data-driven behavior support systems that prevent behavioral crises through explicit teaching and reinforcement, reduce disproportionality by embedding universal expectations equitably, and create the capacity for intensive individualized support for students with the greatest needs."
+  }
+]

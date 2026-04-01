@@ -1,0 +1,77 @@
+[
+  {
+    "skill_id": "SAF-03",
+    "skill_name": "Threat Assessment and School Safety",
+    "nasp_domain_primary": "NASP-6",
+    "skill_prerequisites": [
+      "DBDM-01 (interpreting risk behavior within structured assessment frameworks)",
+      "MBH-02 (understanding risk and protective factors in mental health contexts)",
+      "LEGA-01 (legal requirements for threat assessment and mandated reporting)",
+      "SWP-01 (school safety planning context and universal threat awareness protocols)",
+      "Distinguishing transient crisis statements from substantive threats",
+      "Understanding social media as a communication channel for threat expression",
+      "Knowledge of confidentiality limits in threat disclosure scenarios"
+    ],
+    "prereq_chain_narrative": "Threat assessment integrates data-based decision-making (DBDM-01) with risk-protective factor analysis (MBH-02) within a structured legal framework (LEGA-01) that governs school jurisdiction and mandated reporting obligations. The Virginia Model and similar K-12 frameworks require professionals to evaluate threat severity, access to means, and communication context\u2014skills that depend on prior understanding of how universal safety protocols (SWP-01) frame threat reporting and investigation. Mastering threat assessment unlocks the ability to conduct rapid safety decision-making that determines whether a student poses imminent risk or requires crisis response integration (SAF-04) and family-school collaboration (COLLAB-02)."
+  },
+  {
+    "skill_id": "SAF-04",
+    "skill_name": "Suicide Prevention and Crisis Response",
+    "nasp_domain_primary": "NASP-6",
+    "skill_prerequisites": [
+      "SAF-03 (threat assessment and risk severity distinction frameworks)",
+      "MBH-02 (risk and protective factor identification in mental health)",
+      "MBH-03 (therapeutic communication and alliance-building under crisis)",
+      "LEGA-02 (duty to warn, confidentiality limits, and involuntary commitment criteria)",
+      "Understanding passive versus active suicidal ideation and plan-intent assessment",
+      "Knowledge of evidence-based prevention programs (SOS, Sources of Strength)",
+      "Suicide contagion prevention and safe postvention messaging protocols"
+    ],
+    "prereq_chain_narrative": "Suicide prevention builds directly on threat assessment (SAF-03) and extends risk-protective factor analysis (MBH-02) to the specific domain of ideation and intent evaluation, paired with therapeutic communication skills (MBH-03) for disclosure and safety planning. Legal obligations around duty to warn and involuntary commitment (LEGA-02) define the crisis boundary and family notification requirements. Professionals must discern passive ideation risk levels, select evidence-based programs (SOS, Sources of Strength), and execute postvention protocols that prevent contagion\u2014competencies that unlock school-wide suicide prevention program design and integration with emergency response (SWP-01)."
+  },
+  {
+    "skill_id": "SWP-02",
+    "skill_name": "MTSS Tier 2 \u2014 Targeted Intervention",
+    "nasp_domain_primary": "NASP-5",
+    "skill_prerequisites": [
+      "SWP-01 (MTSS architecture, universal screening, and Tier 1 benchmark expectations)",
+      "DBDM-02 (progress monitoring data collection and decision rules)",
+      "ACAD-01 or equivalent (academic intervention characteristics and evidence-base selection)",
+      "PSYCH-02 or equivalent (behavioral intervention design and group delivery formats)",
+      "Understanding universal screening result interpretation and below-benchmark identification",
+      "Fidelity monitoring using structured observation and intervention logs",
+      "Decision rules for adequacy of Tier 2 response (8-12 week progress monitoring windows)"
+    ],
+    "prereq_chain_narrative": "Tier 2 intervention design depends on mastery of MTSS architecture (SWP-01), which establishes the 80-15-5 population distribution and universal screening as the eligibility gate for targeted support. Progress monitoring competency (DBDM-02) is essential because Tier 2 decisions rest entirely on comparing baseline-to-current performance within defined windows (typically 8\u201312 weeks) to determine adequacy of response. Selection of evidence-based interventions requires understanding academic (ACAD-01) and behavioral (PSYCH-02) intervention characteristics matched to group delivery and dosage parameters. Mastery of Tier 2 assessment and decision-making enables schools to identify students requiring Tier 3 intensification (SWP-03) versus those ready for Tier 1 maintenance."
+  },
+  {
+    "skill_id": "SWP-03",
+    "skill_name": "MTSS Tier 3 \u2014 Intensive Support",
+    "nasp_domain_primary": "NASP-5",
+    "skill_prerequisites": [
+      "SWP-02 (Tier 2 entry criteria, progress monitoring data, and inadequate response determination)",
+      "DBDM-02 (weekly progress monitoring design and rapid decision-making protocols)",
+      "Comprehensive evaluation knowledge (applying dual-discrepancy framework to non-responders)",
+      "LEGA-03 or equivalent (special education referral criteria and response-to-intervention documentation)",
+      "Individual intervention design principles and goal-setting for intensive support",
+      "Distinguishing Tier 3 eligibility (inadequate Tier 2 response) from special education referral conditions",
+      "Understanding individualized dosage and frequency escalation beyond Tier 2 parameters"
+    ],
+    "prereq_chain_narrative": "Tier 3 interventions are triggered by data demonstrating inadequate response to Tier 2 (SWP-02), making prerequisite mastery of Tier 2 assessment and decision documentation essential for valid Tier 3 entry. Weekly progress monitoring (DBDM-02) becomes the decision engine at Tier 3, requiring more frequent data collection and rapid decision cycles to detect response patterns within days rather than weeks. The intersection of Tier 3 non-response with special education referral depends on understanding dual-discrepancy criteria and response-to-intervention documentation standards (LEGA-03) that feed eligibility evaluation. Proficiency in Tier 3 design\u2014individual delivery, escalated frequency, goal personalization\u2014prepares school psychologists to distinguish instructional/behavioral gaps amenable to intensive support from disabilities requiring special education."
+  },
+  {
+    "skill_id": "SWP-04",
+    "skill_name": "MTSS Architecture and Fidelity Monitoring",
+    "nasp_domain_primary": "NASP-5",
+    "skill_prerequisites": [
+      "SWP-01 (MTSS foundational structure and universal screening implementation)",
+      "SWP-02 and SWP-03 (Tier 2 and Tier 3 decision rules and data requirements)",
+      "DBDM-01 (data-based decision making and team-based data interpretation)",
+      "Understanding the 80-15-5 population distribution as a systems benchmark",
+      "Interpreting universal screening results: 30% below benchmark as Tier 1 systemic failure indicator",
+      "Fidelity assessment using validated tools (TFI, BoQ) versus informal observation",
+      "Data team role specification: screening review, intervention matching, progress decision-making"
+    ],
+    "prereq_chain_narrative": "MTSS architecture and fidelity monitoring represent the systems-level integration of Tier 1, Tier 2, and Tier 3 implementation (SWP-01, SWP-02, SWP-03), requiring comprehensive understanding of how screening results, intervention matching, and progress monitoring data flow through school-wide decision teams. The 80-15-5 population expectation and the interpretation of 30% below benchmark as a signal of Tier 1 systemic breakdown depend on foundational data-based decision-making competency (DBDM-01) applied at the whole-school level. Fidelity monitoring\u2014the use of validated observation tools (TFI, BoQ) rather than self-report alone\u2014is the accountability mechanism that ensures each tier is implemented with sufficient integrity to generate valid decision data. Mastery of MTSS architecture unlocks the role of the school psychologist as a systems leader driving data team meetings, interpreting screening and progress data, and recommending school-wide adjustments to intervention delivery."
+  }
+]

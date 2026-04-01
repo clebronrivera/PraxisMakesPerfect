@@ -37,22 +37,57 @@ The output is a `.txt` file like `CON-01-questions-for-agent.txt` — one questi
 
 ---
 
+## Current Status — As of 2026-04-01
+
+| Phase | What | Status | Applied to questions.json | Remaining |
+|-------|------|--------|--------------------------|-----------|
+| **A** | Distractor classification (4 fields per wrong answer) | ✅ Complete | 3,587 slots — 98.7% coverage | 15 residual gaps (accepted) |
+| **B** | Pedagogical rationale (2 fields per question) | ✅ Applied (quality gap) | `complexity_rationale` 1150/1150; `construct_actually_tested` 1142/1150 | 29 skills have template-collapse content (applied but low quality — regen improves them); 8 ACA-06 legacy questions have no CSV entry |
+| **C** | Error pattern synthesis (3 fields per question) | ⬜ Not started | 0 | All 1,150 questions |
+| **D** | Standards alignment + prerequisites (3 fields per skill) | ⬜ Not started | 0 | All 45 skills |
+
+**Phase B quality gap (not blocking):** 29 skills were applied from collapsed CSVs — `construct_actually_tested` strings are repeated across questions within each skill. The app functions, but regen will produce unique, specific constructs. Use `content-authoring/phase-B/PHASE-B-REGEN-WORKFLOW.md` + `extract_phase_b_batch.py` to regenerate and re-apply skill by skill (idempotent — `apply-phase-b.mjs` will log overwrites).
+
+**Phase B hard gap (8 questions):** `item_056`, `item_077`, `item_090`, `item_162`, `item_167`, `item_200`, `item_232`, `item_235` — all ACA-06 legacy-format questions. No Phase B CSV entry exists for them. Need manual authoring.
+
+---
+
+## Lessons Learned — Template Collapse (Phase B)
+
+**What happened:** When agents classified long batches (20–45 questions) in a single session, context fatigue caused them to converge on a generic construct string and reuse it across all remaining questions in the skill. In the worst cases, all 32 questions in a skill had identical `construct_actually_tested` values.
+
+**How we detect it:** Count `unique_construct_values / total_rows` per skill CSV file. Threshold: ≥80% = clean; <80% = collapsed.
+
+**How we prevent it:** Maximum 10 questions per agent session. Uniqueness check built into the Coworker prompt as an explicit constraint ("no two questions may share the same string"). Variety audit run before any CSV is applied to `questions.json`.
+
+**Why it matters:** A construct that reads "Interpretation of norm-referenced psychoeducational scores" for all 22 questions in PSY-01 tells us nothing about what each question actually tests. The field becomes useless for adaptive targeting and study plan personalization.
+
+---
+
 ## The Four Phases of Authoring Work
 
 | Phase | What | Per | Missing Count | Depends On |
 |-------|------|-----|---------------|------------|
-| **A** | Distractor classification (4 fields per wrong answer) | per wrong-answer option | ~3,948 slots (78%) | nothing |
-| **B** | Pedagogical rationale (2 fields per question) | per question | ~900 questions (78%) | nothing |
-| **C** | Error pattern synthesis (3 fields per question) | per question | ~900 questions (78%) | Phase A recommended first |
+| **A** | Distractor classification (4 fields per wrong answer) | per wrong-answer option | ✅ Complete (15 residual gaps accepted) | nothing |
+| **B** | Pedagogical rationale (2 fields per question) | per question | 692 questions — 29 collapsed skills need regen | nothing |
+| **C** | Error pattern synthesis (3 fields per question) | per question | ~1,150 questions (100%) | Phase A recommended first |
 | **D** | Standards alignment + prerequisites (3 fields per skill) | per skill (45 total) | 45 skills (100%) | nothing |
 
-Phases A, B, and D can run in parallel. Phase C is richer when Phase A is done first (it synthesizes across distractors), but it can start on well-understood questions.
+Phases B, C, and D can run in parallel. Phase C is richer when Phase A is done first (it synthesizes across distractors), but it can start on well-understood questions.
 
 ---
 
 ## Phase A — Distractor Classification
 
-**Scale:** ~900 questions not yet classified. **3,448 wrong-answer slots** remaining (confirmed by extraction script).
+**Status: COMPLETE as of 2026-04-01.** 3,587 distractor slots applied to `src/data/questions.json` at 98.7% coverage. All 44 active skill CSVs are archived in `content-authoring/phase-A/output/`. The GPT-4o pipeline that generated them is archived in `content-authoring/phase-A/pipeline/`.
+
+**Known quality issues (not yet corrected):**
+- 47 questions use a generic "Student may have confused X with Y" framing instead of the required first-person belief statement. Acceptable for now.
+- 3 questions have genuinely duplicate misconception text across two distractors in the same question.
+- 15 blank slots across 8 skills — unusual answer structures (E/F placeholders). Accepted as-is.
+
+For new Phase A work (if a future question bank expansion occurs), use `docs/DISTRACTOR_CLASSIFICATION_HANDOFF.md` as the agent-facing prompt document.
+
 **Work unit:** one wrong-answer option at a time.
 
 Every wrong-answer option needs **four fields** that describe the reasoning error a student makes when choosing it.
@@ -262,9 +297,11 @@ FBA components.
 
 ## Phase B — Pedagogical Rationale
 
-**Scale:** ~900 questions. **Two fields per question.**
-**Work unit:** one question at a time.
-**Can run in parallel with Phase A.**
+**Status: PARTIAL as of 2026-04-01.** 16 clean skills applied (458 rows). 29 collapsed skills need regeneration (692 questions). See `content-authoring/phase-B/PHASE-B-REGEN-WORKFLOW.md`.
+
+**Scale:** 692 questions remaining. **Two fields per question.**
+**Work unit:** 10 questions per agent session (larger batches cause template collapse — see Lessons Learned above).
+**Runs independently of Phase A.**
 
 These fields explain WHY this question works the way it does — for curriculum design and review purposes.
 
@@ -652,15 +689,14 @@ After every 10 questions in Phase B, check: are your `complexity_rationale` fiel
 
 ## Scope Summary
 
-| Phase | Fields | Questions Affected | Total Fields to Fill |
-|-------|--------|-------------------|----------------------|
-| A — Distractor classification | 4 per wrong answer | ~900 questions × ~3.5 wrong answers | **13,792 field entries** (3,448 slots × 4 fields) |
-| B — Pedagogical rationale | 2 per question | ~900 questions | ~1,800 field entries |
-| C — Error pattern synthesis | 3 per question | ~900 questions | ~2,700 field entries |
-| D — Standards alignment | 3 per skill | 45 skills | 135 field entries |
-| **Total** | | | **~17,235 field entries** |
+| Phase | Fields | Status | Remaining Work |
+|-------|--------|--------|----------------|
+| A — Distractor classification | 4 per wrong answer | ✅ Complete (98.7%) | 15 residual gaps accepted |
+| B — Pedagogical rationale | 2 per question | 🔄 Partial (39.8% construct, 49.6% rationale) | 692 questions × 29 skills |
+| C — Error pattern synthesis | 3 per question | ⬜ Not started | 1,150 questions |
+| D — Standards alignment | 3 per skill | ⬜ Not started | 45 skills |
 
-This is not a small project. The 250 questions already classified (the `is_foundational=true` set) represent approximately 21% of the total work and serve as the quality template. Use them as reference when in doubt about the expected level of specificity.
+Phase A is the largest completed body of work: 3,587 distractor slots classified across 44 skills. Phase B requires regen for 29 skills before it can be fully applied. Phases C and D have not been started.
 
 ---
 

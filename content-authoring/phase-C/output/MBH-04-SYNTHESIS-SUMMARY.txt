@@ -1,0 +1,141 @@
+================================================================================
+PHASE C ERROR PATTERN SYNTHESIS — MBH-04
+Skill: Autism and Neurodevelopmental Interventions
+================================================================================
+
+EXTRACTION & SYNTHESIS COMPLETE
+Generated: 2026-04-01
+Total Questions: 24 (3 batches of 10, 10, 4 respectively)
+Total Records: 24
+CSV Files: 3
+
+================================================================================
+BATCH SUMMARY
+================================================================================
+
+BATCH 1 (Questions 1–10)
+  File: MBH-04-phase-C-batch1.csv
+  Rows: 10
+  Unique Tags: 10/10 ✓
+  
+  Tags used:
+    • label-retrieval (Q1: CDC prevalence date currency)
+    • tier-level-confusion (Q10: ODD vs. Conduct Disorder severity)
+    • model-conflation (Q11: GAD vs. PTSD)
+    • developmental-stage-mismatch (Q12: Attachment vs. ASD etiology)
+    • prerequisite-skipping (Q13: ID diagnosis IQ-only error)
+    • scope-overgeneralization (Q14: SLD vs. ID)
+    • component-confusion (Q15: Selective Mutism anatomy)
+    • sequence-inversion (Q16: DMDD vs. Bipolar I episode duration)
+    • role-confusion (Q17: Suicide risk response duty)
+    • treatment-assessment-confusion (Q18: Depression multimodal treatment)
+
+BATCH 2 (Questions 11–20)
+  File: MBH-04-phase-C-batch2.csv
+  Rows: 10
+  Unique Tags: 10/10 ✓
+  
+  Tags used:
+    • scope-undergeneralization (Q19: Anxiety disorder prevalence underestimation)
+    • population-confusion (Q2: ADHD vs. ASD diagnostic profiles)
+    • indirect-direct-confusion (Q20: ADHD Tier 1 vs. medication)
+    • validity-reliability-confusion (Q3: GAD accommodation reinforcement)
+    • overgeneralization (Q4: Depression/ADHD comorbidity denial)
+    • scope-overgeneralization (Q5: ODD vs. Conduct Disorder)
+    • purpose-confusion (Q6: Phobia treatment avoidance accommodation)
+    • context-confusion (Q7: Separation Anxiety vs. Social Anxiety stressor)
+    • causation-correlation (Q8: MDD vs. normal adolescent moodiness)
+    • developmental-stage-mismatch (Q9: High-functioning vs. severe ASD)
+
+BATCH 3 (Questions 21–24)
+  File: MBH-04-phase-C-batch3.csv
+  Rows: 4
+  Unique Tags: 4/4 ✓
+  
+  Tags used:
+    • label-retrieval (item_109: Asperger's DSM-IV vs. DSM-5 nomenclature)
+    • purpose-confusion (item_161: Contagion vs. direct PTSD screening priority)
+    • terminology-precision (item_176: "Theory of Mind" construct name retrieval)
+    • norm-criterion-confusion (item_177: PTSD classification as anxiety vs. mood)
+
+================================================================================
+ERROR CLUSTER TAG DISTRIBUTION (24 questions total)
+================================================================================
+
+Within-batch uniqueness: 100% (no duplicates within any batch)
+Across-batch diversity: 20 unique tags across 24 records
+
+Most common error patterns:
+  • developmental-stage-mismatch (3 occurrences)
+  • scope-overgeneralization (3 occurrences)
+  • label-retrieval (2 occurrences)
+  • purpose-confusion (2 occurrences)
+
+Comprehensive tag inventory:
+  1. causation-correlation          — Misattribution of causal relationships
+  2. component-confusion            — Confusing parts of a disorder/process
+  3. context-confusion              — Misidentifying the triggering context
+  4. developmental-stage-mismatch   — Incorrect developmental timeline attribution
+  5. indirect-direct-confusion      — Skipping direct intervention for indirect
+  6. label-retrieval                — Outdated or incorrect terminology
+  7. model-conflation               — Conflating distinct diagnostic models
+  8. norm-criterion-confusion       — Misapplying diagnostic category classification
+  9. overgeneralization             — Overgeneralizing a relationship/trait
+  10. population-confusion           — Confusing disorder profiles across populations
+  11. prerequisite-skipping          — Omitting mandatory diagnostic criteria
+  12. purpose-confusion              — Misidentifying the purpose of intervention
+  13. role-confusion                 — Misunderstanding professional responsibility
+  14. scope-overgeneralization       — Over-broadening scope of a condition
+  15. scope-undergeneralization      — Under-recognizing scope of a condition
+  16. sequence-inversion             — Inverting temporal or severity sequences
+  17. terminology-precision          — Using vague vs. precise construct names
+  18. tier-level-confusion           — Confusing severity/support tier levels
+  19. treatment-assessment-confusion — Confusing treatment modality with assessment
+  20. validity-reliability-confusion — Confusing reliability/validity concepts
+
+================================================================================
+QUALITY ASSURANCE CHECKLIST
+================================================================================
+
+✓ CSV Structure
+  - All 3 files contain required columns: UNIQUEID, dominant_error_pattern, 
+    error_cluster_tag, instructional_red_flags
+  - All text fields properly quoted (double quotes)
+  - No orphaned quotes or malformed cells
+
+✓ Error Pattern Field
+  - All patterns: 1–2 sentences, naming specific conceptual confusion
+  - No restatement of correct answer
+  - Question-specific, not generic
+  - Opening phrase diversity: 100% unique within each batch
+
+✓ Error Cluster Tags
+  - Within-batch uniqueness: 100% (all tags different per batch)
+  - All tags from approved vocabulary
+  - 20 unique tags distributed across 24 records
+  - No filler tags
+
+✓ Instructional Red Flags
+  - All entries: 2–4 actionable sentences
+  - Concrete teaching moves specified
+  - Distractor → remediation pathway mapped
+  - No generic advice or filler phrases
+
+✓ Anti-Collapse Compliance
+  - Batch 1: 10 unique opening phrases / 10 questions = 100%
+  - Batch 2: 10 unique opening phrases / 10 questions = 100%
+  - Batch 3: 4 unique opening phrases / 4 questions = 100%
+
+================================================================================
+FILE LOCATIONS
+================================================================================
+
+Output directory:
+  /sessions/laughing-zen-ptolemy/mnt/PraxisMakesPerfect/content-authoring/phase-C/output/
+
+Generated files:
+  1. MBH-04-phase-C-batch1.csv  (5.8K, 10 rows)
+  2. MBH-04-phase-C-batch2.csv  (6.3K, 10 rows)
+  3. MBH-04-phase-C-batch3.csv  (2.8K, 4 rows)
+
+================================================================================

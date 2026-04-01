@@ -1,0 +1,137 @@
+[
+  {
+    "skill_id": "ETH-01",
+    "skill_name": "NASP Ethics \u2014 Foundations",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "Understanding of NASP's Principles for Professional Ethics and the 2020 Practice Model",
+      "Familiarity with FERPA confidentiality regulations and parent access rights",
+      "Recognition of dual relationships and conflict of interest as ethical boundary violations",
+      "Knowledge of professional misconduct reporting pathways and collegial obligation",
+      "Awareness of test security standards and raw data access limitations"
+    ],
+    "prereq_chain_narrative": "Before applying NASP ethical principles in complex situations, school psychologists must internalize the foundational NASP code, FERPA boundaries, and conflict-of-interest recognition. ETH-01 establishes the conceptual bedrock: understanding what constitutes professional misconduct, how confidentiality limits work, and when recusal is mandatory. This foundation is prerequisite to ETH-02 (application to high-stakes dilemmas) and informs all downstream decision-making in dual roles, data management, and reportable scenarios."
+  },
+  {
+    "skill_id": "ETH-02",
+    "skill_name": "NASP Ethics \u2014 Application",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "ETH-01: foundational understanding of NASP ethical principles and FERPA boundaries",
+      "Knowledge of mandatory reporting obligations under state child welfare laws",
+      "Understanding of duty-to-protect thresholds in mental health crisis assessment",
+      "Competence in cultural and linguistic assessment considerations",
+      "Recognition of educational purpose exception limits under FERPA disclosure rules"
+    ],
+    "prereq_chain_narrative": "Ethical application requires both conceptual mastery (ETH-01) and real-world judgment under pressure. ETH-02 presents scenarios where administrators claim educational purpose (challenging FERPA literacy), group disclosures trigger mandatory reporting complexity, and risk assessment evidence is indirect or contradicted. This skill demands that psychologists synthesize FERPA exceptions, duty-to-protect standards, and competence boundaries to navigate competing obligations without defaulting to administrative pressure or culture-bound assumptions."
+  },
+  {
+    "skill_id": "ETH-03",
+    "skill_name": "Professional Practices and Supervision",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "ETH-01 and ETH-02: mastery of ethical foundations and application",
+      "Understanding of scope of practice limitations and training requirements",
+      "Knowledge of assessment tool validity, norming standards, and outdated measure concerns",
+      "Familiarity with supervisory responsibilities in intern/trainee error correction",
+      "Awareness of evaluation objectivity threats from external stakeholder pressure"
+    ],
+    "prereq_chain_narrative": "ETH-03 extends ethical reasoning into professional accountability structures: scope boundaries, tool currency, supervisory duty, and pressure resistance. A psychologist cannot navigate competence limits (a tool 20 years old, a training gap, a predetermined outcome from administration) without understanding the ethical and legal difference between scope, training, and assessment validity. This skill unlocks gatekeeping in supervision and mentoring, ensuring that both the psychologist's own practice and trainees' practice align with standards."
+  },
+  {
+    "skill_id": "FAM-02",
+    "skill_name": "Family Engagement and Home-School Collaboration",
+    "nasp_domain_primary": "NASP-7",
+    "skill_prerequisites": [
+      "Understanding of cultural responsiveness frameworks and implicit bias recognition",
+      "Knowledge of accessibility accommodations: language services, logistics, scheduling flexibility",
+      "Familiarity with evidence-based behavior management and home generalization principles",
+      "Recognition of historical trust barriers in school systems and families from marginalized backgrounds",
+      "Competence in selecting and implementing validated parent training curricula"
+    ],
+    "prereq_chain_narrative": "Effective family engagement starts with recognizing systemic barriers: limited English proficiency, distrust rooted in prior negative experiences, and logistical access. FAM-02 requires that psychologists design home-school interventions (like behavior plans) not as one-size-fits-all downloads, but as culturally responsive partnerships where family voice is central and language/participation accommodations are proactive. Understanding behavior generalization across contexts (school-to-home transfer) and selecting evidence-backed parent skill-building tools completes the foundation for sustainable collaboration."
+  },
+  {
+    "skill_id": "FAM-03",
+    "skill_name": "Interagency Collaboration and Transition Planning",
+    "nasp_domain_primary": "NASP-7",
+    "skill_prerequisites": [
+      "FAM-02: foundational family engagement and collaboration skills",
+      "Knowledge of McKinney-Vento Act and Foster Care to Success requirements",
+      "Understanding of Memorandum of Understanding (MOU) frameworks and data-sharing protocols",
+      "Familiarity with FERPA exceptions for child protective services investigations",
+      "Competence in functional behavioral assessment (FBA) updates for re-entry planning",
+      "Recognition of residential treatment program transition and post-placement coordination requirements"
+    ],
+    "prereq_chain_narrative": "FAM-03 scales family collaboration from dyadic school-home partnerships (FAM-02) to multi-agency ecosystems: foster care systems, community mental health, residential facilities, and child protective services. The core challenge is coordinating student identity and educational continuity across system transitions while navigating FERPA exceptions, MOU role clarification, and reassessment protocols. Mastery of FAM-02 engagement strategies is essential, but FAM-03 adds legal complexity (McKinney-Vento), systems thinking (MOU negotiation), and transition-specific FBA updates that bridge institutional contexts."
+  },
+  {
+    "skill_id": "LEG-01",
+    "skill_name": "FERPA and Student Privacy",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "ETH-01: understanding of confidentiality as an ethical foundation",
+      "Knowledge of record definition under FERPA (educational records vs. personal notes)",
+      "Familiarity with legitimate educational interest exceptions and internal disclosure boundaries",
+      "Understanding of parent access rights timelines and requirements (45-day window)",
+      "Recognition of rights transfer at age of majority and consent implications"
+    ],
+    "prereq_chain_narrative": "FERPA is the legal architecture of confidentiality that underpins ethical practice (ETH-01). LEG-01 operationalizes ethical principles into statutory compliance: the 45-day access timeline, the distinction between records accessible to parents (educational) and those withheld (e.g., notes of personal clinical judgment), and the legitimate educational interest standard that gates internal disclosure. Understanding rights transfer at majority and managing subpoena procedures requires precise knowledge of federal statute and state law variations, making this the foundational legal skill for all downstream privacy-dependent work."
+  },
+  {
+    "skill_id": "LEG-02",
+    "skill_name": "IDEA \u2014 Core Principles",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "ETH-01 and ETH-02: ethical frameworks supporting due process and parental rights",
+      "LEG-01: FERPA and general legal/compliance literacy",
+      "Understanding of Child Find obligation and evaluation timeline requirements (60 calendar days)",
+      "Knowledge of LRE (Least Restrictive Environment) principle and continuum of placements",
+      "Familiarity with procedural safeguards: due process complaint, mediation, and resolution conferences",
+      "Competence in IEP team composition requirements and general education teacher role"
+    ],
+    "prereq_chain_narrative": "LEG-02 establishes the four foundational IDEA principles\u2014FAPE (Free Appropriate Public Education), LRE, procedural safeguards, and parent participation\u2014as the legal and ethical bedrock for all special education practice. Psychologists must recognize evaluation timeline violations (flagging Child Find failures), distinguish between LRE violations (full self-contained without justification) and programmatic design, and understand why general education teachers on IEP teams legally ensure connection to standards. This skill unlocks eligibility determination accuracy, placement defensibility, and procedural compliance in all subsequent IDEA-dependent assessments and IEPs."
+  },
+  {
+    "skill_id": "LEG-03",
+    "skill_name": "Section 504 and ADA",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "LEG-02: foundational understanding of IDEA and special education legal frameworks",
+      "Knowledge of the broader civil rights context: Section 504 and ADA as civil rights laws (distinct from IDEA)",
+      "Understanding of \"substantially limits major life activity\" standard and chronic health condition eligibility",
+      "Familiarity with accommodations design (vs. specialized instruction)",
+      "Recognition that academic performance alone does not determine 504 eligibility or functional limitation",
+      "Knowledge of ADA protection for individuals in recovery from substance use disorder"
+    ],
+    "prereq_chain_narrative": "Section 504 and ADA serve students outside IDEA eligibility\u2014those with chronic health conditions, physical access needs, or recovery status. Unlike IDEA (which focuses on special education eligibility and educational benefit), LEG-03 centers on civil rights access and functional limitation regardless of academic performance. A student passing all classes but unable to breathe in PE (asthma) or unable to access a classroom (wheelchair) still qualifies. Understanding the functional limitation standard (\"substantially limits\") and the scope of accommodations (physical access, scheduling, technology) separately from IDEA requires distinct legal knowledge that LEG-02 provides context for but does not fully address."
+  },
+  {
+    "skill_id": "LEG-04",
+    "skill_name": "NCLB/ESSA and Educational Accountability",
+    "nasp_domain_primary": "NASP-10",
+    "skill_prerequisites": [
+      "LEG-02: foundational understanding of IDEA and school compliance obligations",
+      "Knowledge of Title I eligibility criteria and funding mechanisms",
+      "Familiarity with evidence-based intervention tiers and What Works Clearinghouse standards",
+      "Understanding of accountability measures and subgroup performance tracking",
+      "Recognition of ESSA accountability triggers (bottom 5%, chronic subgroup gaps)",
+      "Awareness of historical No Child Left Behind (NCLB) Adequate Yearly Progress (AYP) framework"
+    ],
+    "prereq_chain_narrative": "LEG-04 shifts focus from individual IDEA/504 compliance (LEG-02, LEG-03) to systemic accountability under federal education law. ESSA replaced NCLB's rigid AYP model with flexible comprehensive support and improvement (CSI) designations, requiring schools to address bottom-5% performance or chronic subgroup gaps. School psychologists must understand evidence tiers (strong = Tier 1 research) to guide Title I intervention adoption, interpret school report card requirements for stakeholder communication, and recognize accountability triggers that drive resource allocation and intervention urgency."
+  },
+  {
+    "skill_id": "MBH-02",
+    "skill_name": "Social-Emotional and Behavioral Interventions",
+    "nasp_domain_primary": "NASP-4",
+    "skill_prerequisites": [
+      "Competence in conducting and interpreting functional behavioral assessment (FBA)",
+      "Understanding of evidence-based tiered intervention systems (PBIS, MTSS frameworks)",
+      "Knowledge of behavior change mechanisms: reinforcement, punishment, extinction, and antecedent manipulation",
+      "Familiarity with Check-In Check-Out (CICO) structure, target student criteria, and monitoring protocols",
+      "Competence in designing exposure hierarchies for anxiety-driven avoidance behavior",
+      "Understanding of social-emotional learning (SEL) curriculum selection and teacher implementation support"
+    ],
+    "prereq_chain_narrative": "MBH-02 operationalizes behavioral and social-emotional intervention design through FBA-to-intervention logic. A psychologist cannot select Check-In Check-Out without understanding function (attention-seeking, escape, sensory regulation), cannot implement class-wide SEL without teacher coaching, and cannot treat school cafeteria avoidance without constructing a graduated exposure hierarchy grounded in anxiety principles. This skill synthesizes assessment (FBA), intervention selection (CICO, SEL, exposure), and implementation support (teacher training, monitoring) into a coherent pathway from problem identification to sustained behavior change."
+  }
+]
