@@ -1,7 +1,10 @@
 import questionSkillMapData from '../data/question-skill-map.json';
 import questionVocabTagsData from '../data/question-vocabulary-tags.json';
+import skillPhaseDRaw from '../data/skill-phase-d.json';
 import { Distractor } from './answer-generator';
 import { resolveProgressDomainId } from '../utils/progressTaxonomy';
+
+const skillPhaseD = skillPhaseDRaw as Record<string, { nasp_domain_primary?: string }>;
 
 export interface Question {
   id: string;
@@ -63,6 +66,7 @@ export interface AnalyzedQuestion extends Question {
   isMultiSelect?: boolean;
   cognitiveComplexity?: 'Recall' | 'Application' | string;
   complexityRationale?: string;
+  naspDomainPrimary?: string;    // Phase D — NASP-1 through NASP-10
   distractors?: Distractor[];
   metadata?: any;
 }
@@ -257,6 +261,7 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
     primaryModuleId: (q as any).primaryModuleId || undefined,
     primarySnippet: (q as any).primarySnippet || undefined,
     moduleRefs: (q as any).moduleRefs || undefined,
-    source: 'bank' // Questions from questions.json are from the bank
+    source: 'bank', // Questions from questions.json are from the bank
+    naspDomainPrimary: resolvedSkillId ? skillPhaseD[resolvedSkillId]?.nasp_domain_primary : undefined,
   };
 }

@@ -24,6 +24,9 @@ import { getPrimaryModuleForSkill } from '../data/learningModules';
 import { getSkillProficiency, PROFICIENCY_META } from '../utils/skillProficiency';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
 import type { UserProfile } from '../hooks/useProgressTracking';
+import skillPhaseDRaw from '../data/skill-phase-d.json';
+
+const skillPhaseD = skillPhaseDRaw as Record<string, { nasp_domain_primary?: string; prereq_chain_narrative?: string }>;
 
 interface SkillNode {
   skillId: string;
@@ -194,12 +197,20 @@ function NodeCard({
   const isMastered = node.lpStatus === 'mastered' || node.overallTier === 'proficient';
   const tileStatus = statusLabel(node.lpStatus, node.overallTier);
 
+  // Phase D: prerequisite tooltip and NASP domain badge
+  const phaseD = skillPhaseD[node.skillId];
+  const naspDomain = phaseD?.nasp_domain_primary;
+  const prereqNarrative = phaseD?.prereq_chain_narrative;
+  const tooltipText = prereqNarrative
+    ? `${node.fullLabel}\n\nPrerequisites: ${prereqNarrative}`
+    : node.fullLabel;
+
   return (
     <button
       type="button"
       onClick={isMastered ? undefined : onClick}
       disabled={isMastered}
-      title={node.fullLabel}
+      title={tooltipText}
       className={`
         relative flex min-h-[120px] w-full flex-col items-start gap-3 rounded-[1.6rem] border p-3.5 text-left shadow-sm transition-all duration-200 sm:min-h-[128px]
         ${style.ring} ${style.bg}
@@ -233,6 +244,11 @@ function NodeCard({
         </p>
         {node.moduleId && (
           <p className="mt-1 text-[11px] font-mono text-slate-500">{node.moduleId}</p>
+        )}
+        {naspDomain && (
+          <span className="mt-0.5 inline-block rounded-full bg-indigo-50 px-1.5 py-0.5 text-[9px] font-semibold text-indigo-600">
+            {naspDomain}
+          </span>
         )}
       </div>
 
