@@ -1,3 +1,7 @@
+# Developer audit/scratch documents (contain sensitive context, not needed in builds)
+CODEBASE_AUDIT.md
+REFACTOR_PLAN_LEARNING_SCIENCE.md
+
 # Dependencies
 node_modules/
 package-lock.json
