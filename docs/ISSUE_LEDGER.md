@@ -34,6 +34,44 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-04-01 - Phase B construct_actually_tested: 29 collapsed skills need regeneration
+
+- Status: open
+- Area: Content authoring / question bank
+- Summary: 29 of 45 Phase B skill files have template collapse — LLM context fatigue caused 1–5 unique strings to be reused across all questions in those files (variety: 3–43%, threshold: ≥80%). These files were blocked from applying to `questions.json`. 16 clean skills were applied (458 rows). The 29 collapsed skills represent 692 questions that need `construct_actually_tested` and `complexity_rationale` regenerated. Regeneration workflow and batch extraction script are ready.
+- Source of truth: `content-authoring/phase-B/PHASE-B-REGEN-WORKFLOW.md`
+- Code anchors:
+  - `content-authoring/phase-B/output/` — 29 collapsed CSVs awaiting replacement
+  - `content-authoring/phase-B/pipeline/extract_phase_b_batch.py` — generates 10-question batches for Coworker agents
+  - `src/data/questions.json` — `construct_actually_tested` currently 458/1150 (39.8%), `complexity_rationale` 570/1150 (49.6%)
+- Resolution / next step: Run Claude.ai Coworker multi-agent regen using the workflow doc. 10 questions per agent, ~80 batches total. Replace collapsed CSVs, run variety audit (≥80% threshold), then apply.
+
+---
+
+## 2026-04-01 - Phase A distractor classification: 15 residual coverage gaps
+
+- Status: watch
+- Area: Content authoring / question bank
+- Summary: Phase A applied at 98.7% coverage (3,587 of ~3,630 expected slots). 15 distractor slots remain blank across 8 skills. These are questions with unusual answer structures (E/F placeholder options detected via "this option was relevant" filler text) or multi-select items where the slot count varies. Not actively blocking anything. Accepted as-is unless a future pass is warranted.
+- Source of truth: `content-authoring/STATUS.md`
+- Code anchors:
+  - `src/data/questions.json` — search for skills with blank `distractor_tier_*` fields
+- Resolution / next step: No action required. Monitor if the adaptive misconception-detection system shows gaps in specific questions.
+
+---
+
+## 2026-04-01 - Phase A quality issues: 47 non-standard framing items, 3 real duplicates
+
+- Status: watch
+- Area: Content authoring / question bank
+- Summary: Post-apply audit of Phase A CSVs found two known quality issues that were not corrected before apply: (1) 47 questions have `distractor_misconception` text using a generic framing pattern ("Student may have confused X with Y") instead of the required first-person belief statement format ("Student believed X"); (2) 3 questions have genuinely duplicate misconception text across two distractors in the same question. Correction prompts were written but not run. These issues reduce the specificity of the misconception-detection system for affected questions but do not cause crashes or data errors.
+- Source of truth: `content-authoring/STATUS.md`
+- Code anchors:
+  - `src/data/questions.json` — `distractor_misconception_*` fields in affected skills
+- Resolution / next step: Low priority. Run a targeted Coworker correction pass if misconception-detection quality becomes a product concern. Correction prompts are documented in prior session history.
+
+---
+
 ## 2026-03-31 - Phase 2 complete: adaptive practice, SRS routing, study plan enrichment, difficulty tiers
 
 - Status: resolved

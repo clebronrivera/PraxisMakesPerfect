@@ -1,12 +1,15 @@
 # Document Registry
 
-Reviewed on 2026-03-14.
+Reviewed on 2026-03-14. Last updated 2026-04-01 (added PHASE_C_HANDOFF.md; Phase D complete; updated CONTENT_AUTHORING_HANDOFF.md Phase B status).
 
 This registry records the classification and final disposition of every reviewed root-level markdown file. Each file is represented exactly once.
 
 | File | Bucket | Status | Disposition | Replacement / Active Reference | Stale Assumptions | Notes |
 |---|---|---|---|---|---|---|
 | `AGENTS.md` | Canonical source | Active | Keep in root | Self, `docs/WORKFLOW_GROUNDING.md`, `docs/ISSUE_LEDGER.md` | No | Repo-local grounding entrypoint for IDE/agent workflow and where durable rules vs issue notes belong. |
+| `docs/CONTENT_AUTHORING_HANDOFF.md` | Canonical source | Active | Keep in docs/ | Self, `content-authoring/STATUS.md`, `docs/DISTRACTOR_CLASSIFICATION_HANDOFF.md` | No — updated 2026-04-01 | Four-phase authoring plan for 1,150-question bank. Phase A complete; Phase B applied (quality gap: 29 collapsed skills + 8 missing ACA-06 items); C and D not started. |
+| `docs/DISTRACTOR_CLASSIFICATION_HANDOFF.md` | Canonical source | Active | Keep in docs/ | Self, `content-authoring/phase-A/output/` | No | Standalone agent-facing prompt for Phase A distractor classification. Field definitions, tier rules, 3 worked examples, batching strategy, quality standards. Added 2026-04-01. |
+| `docs/PHASE_C_HANDOFF.md` | Canonical source | Active | Keep in docs/ | Self, `content-authoring/phase-C/`, `content-authoring/TAG_GLOSSARY.md` | No | Phase C authoring handoff: 3 error-synthesis fields (dominant_error_pattern, error_cluster_tag, instructional_red_flags), 1,150 questions / 138 batches, full TAG_GLOSSARY, app wiring instructions for 3 surfaces (study guide, AI tutor, admin item analysis). Added 2026-04-01. |
 | `ARCHITECTURE.md` | Archive as historical | Superseded | Archive to `archive/docs-legacy-2026-03-14/` | `REWRITE_DEVELOPMENT_GUIDE.md`, `CODEBASE_OVERVIEW.md` | Yes | Older NASP-centric architecture and local-first assumptions no longer match current direction. |
 | `ASSESSMENT_DATA_FLOW_ANALYSIS.md` | Canonical source | Active | Keep in root | Self | Partial | Valid as a risk analysis; line references may drift, so code still wins. |
 | `AUTHENTICATION_ENHANCEMENTS.md` | Merge into master report | Historical | Archive to `archive/docs-legacy-2026-03-14/` | `README.md`, `CHANGELOG.md` | Yes | Describes completed Firebase-era auth changes but is no longer active setup guidance. |

@@ -151,7 +151,7 @@ For every one of the 45 skills:
 - **Total attempts** — how many times you've been tested on it
 - **Accuracy** — percentage correct
 - **Confidence signals** — whether answers are chosen confidently or appear to be guesses
-- **Distractor patterns** — which wrong answer keeps getting selected (reveals specific misconceptions)
+- **Distractor patterns** — which wrong answer keeps getting selected. When the same wrong option is chosen 2+ times, the system flags a repeated misconception pattern. Every wrong-answer option in the bank carries pre-authored distractor data: a tier (L1 = fundamental knowledge gap / L2 = procedural application error / L3 = nuanced judgment call), an error type (Conceptual / Procedural / Lexical), the specific misconception it exploits, and the knowledge gap it reveals. This classification drives both the explanation panel feedback and the study guide's misconception context.
 - **Trend** — improving or declining over time (requires at least 6 attempts to calculate)
 - **Spaced repetition schedule** — the system internally calculates when each skill is next due for review, using a Leitner box algorithm (5 levels, intervals of 1 / 3 / 7 / 14 / 30 days). This data is collected now and will surface as a Review Suggestions feature in a future update. It does not currently affect practice queuing or any visible badge.
 
@@ -246,6 +246,44 @@ Every practice session includes an automatic follow-up loop when you get a quest
 3. **Third consecutive wrong on the same skill** — the follow-up loop ends. A **domain warning banner** appears in the session: *"This domain needs extra attention."* The domain name is called out, signaling that a dedicated study session on that domain is needed.
 
 A correct answer at any point clears the follow-up state for that skill and returns to normal question selection.
+
+---
+
+## Wrong Answer Explanation — What You See After a Miss
+
+When you submit an incorrect answer in any practice mode, the app displays a structured explanation panel. Each section is grounded in pre-authored content specific to that question — not generic copy:
+
+**Correct answer and rationale**
+Identifies the right answer and explains why, drawn from the question's authored rationale.
+
+**Complexity**
+Explains the cognitive demand of the item: whether it tests direct **Recall** (factual recognition of a concept or definition) or **Application** (using a concept to reason through a scenario or case). This is a per-question classification authored for each item — not a label inferred from the stem length.
+
+**What this tests**
+The specific sub-construct the question measures — narrower than the broad skill label. For example, a question tagged to the Consultation skill might specify *"model-goal discrimination in Caplan consultation: identifying consultee internal vs. external factors."* This tells you exactly which competency gap the question is probing.
+
+**Key concepts**
+Vocabulary terms associated with this question, drawn from the 396-term master glossary.
+
+**Why this was wrong** *(only shown on incorrect answers, when data is available)*
+The specific misconception associated with the distractor you chose, and the knowledge gap it signals. This text was authored for that particular wrong-answer option — not derived generically. It answers: *what belief led you to that answer, and what do you need to understand instead?*
+
+### The Distractor Classification System
+
+Every wrong-answer option in the bank has been individually analyzed and classified across four dimensions:
+
+| Field | What It Captures |
+|-------|-----------------|
+| **Tier** | How fundamental the error is: L1 (foundational knowledge gap) / L2 (procedural application error) / L3 (nuanced judgment call requiring fine distinctions) |
+| **Error type** | The category of mistake: Conceptual (wrong mental model) / Procedural (correct concept, wrong application) / Lexical (terminology confusion) |
+| **Misconception** | The specific incorrect belief the distractor exploits — written for that answer option |
+| **Knowledge gap** | The specific knowledge deficit underlying the error |
+
+This distractor data is used in three places:
+
+1. **Explanation panel** — surfaces the misconception and knowledge gap for the specific distractor you chose after a wrong answer
+2. **AI Study Guide** — when a skill is flagged as Misconception status (same wrong answer selected 2+ times), the dominant misconception and knowledge gap are passed directly to Claude, allowing the guide to name the specific incorrect belief rather than giving generic advice
+3. **Admin Item Analysis** — each distractor's tier and error type appear alongside frequency counts so educators can see which error categories students are most commonly making
 
 ---
 
@@ -367,7 +405,7 @@ Requires: adaptive diagnostic complete — OR — legacy screener complete + at 
 ### How It Gets Generated (Three Phases)
 
 **Phase 1 — Deterministic preprocessing (no AI)**
-The system processes all your responses. It calculates every skill's status label, detects trends, ranks skills by urgency, groups related skills into "priority clusters," estimates available study time from your settings, and lays out a weekly schedule frame. All pure calculation — no AI involved.
+The system processes all your responses. It calculates every skill's status label, detects trends, ranks skills by urgency, groups related skills into "priority clusters," estimates available study time from your settings, and lays out a weekly schedule frame. For skills flagged as Misconception status, it also identifies the dominant wrong answer you selected most repeatedly, looks up the specific misconception text and knowledge gap for that distractor, and passes it to Claude in Phase 3 — so the guide can name the exact incorrect belief rather than giving generic advice. All pure calculation — no AI involved.
 
 **Phase 2 — Content retrieval (no AI)**
 For each skill you need to work on, the system pulls pre-written expert content: vocabulary terms, common misconceptions, case study archetypes, relevant laws and frameworks. This content library was built specifically for Praxis 5403.
@@ -589,7 +627,10 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 |------|--------|
 | Exam domains | 4 |
 | Tracked skills | 45 |
-| Question bank size | ~1,150 questions |
+| Question bank size | 1,150 questions |
+| Wrong-answer options with distractor classification | 3,587 (98.7% of slots) |
+| Questions with complexity rationale | 1,150 (100%) |
+| Questions with construct classification | 1,142 (99.3%) |
 | Adaptive diagnostic length | 45–90 questions (adaptive follow-ups) |
 | Legacy screener length | 50 questions |
 | Legacy full assessment length | 125 questions |
@@ -619,15 +660,17 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 
 ## What Makes It Different
 
-1. **It diagnoses, not just scores.** It doesn't just report a percentage — it identifies *which* mental models are wrong and labels them.
+1. **It diagnoses, not just scores.** It doesn't just report a percentage — it identifies *which* mental models are wrong and labels them. Every wrong-answer option in the bank has been individually classified for the misconception it exploits and the knowledge gap it reveals. When you choose a wrong answer, the app tells you the specific belief behind that choice — not a generic explanation.
 
-2. **The study plan is built from your data, not a template.** Two students using this app will get completely different study guides because their answer patterns are different.
+2. **The study plan is built from your data, not a template.** Two students using this app will get completely different study guides because their answer patterns are different. When the system detects a misconception pattern, it names the exact incorrect belief in the study guide — not just "work on this skill."
 
 3. **The AI has guardrails.** Claude doesn't invent session lengths or priorities — the code calculates those from hard thresholds. The AI writes narrative around a mathematical foundation. The advice is grounded, not hallucinated.
 
 4. **It gets smarter as you use it.** Every question sharpens the skill states. Every guide regeneration reflects the most current performance profile.
 
 5. **It retires what you know.** You're never stuck grinding questions you've already mastered. The system moves the work to where it matters.
+
+6. **The feedback is distractor-specific.** The explanation you see after a wrong answer is written for the specific choice you made — not the same text regardless of which option you selected. Tier, error type, misconception, and knowledge gap are all authored per distractor, covering 3,587 wrong-answer slots across the bank.
 
 ---
 
