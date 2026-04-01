@@ -13,6 +13,7 @@
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { isAdminEmail } from '../src/config/admin';
+import questionsRaw from '../src/data/questions.json';
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json',
@@ -61,6 +62,13 @@ interface RawResponse {
   user_id: string;
 }
 
+export interface DistractorDetail {
+  freq: number;
+  tier: string | null;       // L1 | L2 | L3
+  errorType: string | null;  // Conceptual | Procedural | Lexical
+  misconception: string | null;
+}
+
 export interface ItemStat {
   questionId: string;
   skillId: string | null;
@@ -69,8 +77,14 @@ export interface ItemStat {
   discrimination: number;   // approx point-biserial
   avgTime: number | null;   // seconds
   distractorFreqs: Record<string, number>;
+  distractorDetails: Record<string, DistractorDetail>; // enriched with tier/errorType/misconception
   flags: string[];
 }
+
+// Build a lookup map from UNIQUEID → question object (loaded once at cold-start).
+const questionIndex = new Map<string, Record<string, string>>(
+  (questionsRaw as Record<string, string>[]).map(q => [q.UNIQUEID, q])
+);
 
 export const handler = async (event: {
   httpMethod?: string;
@@ -238,6 +252,18 @@ export const handler = async (event: {
         }
       }
 
+      // Build enriched distractor details from questions.json classification data
+      const distractorDetails: Record<string, DistractorDetail> = {};
+      const qBank = questionIndex.get(questionId);
+      for (const [letter, freq] of Object.entries(q.distractorFreqs)) {
+        distractorDetails[letter] = {
+          freq,
+          tier:         qBank ? (qBank[`distractor_tier_${letter}`] || null) : null,
+          errorType:    qBank ? (qBank[`distractor_error_type_${letter}`] || null) : null,
+          misconception: qBank ? (qBank[`distractor_misconception_${letter}`] || null) : null,
+        };
+      }
+
       items.push({
         questionId,
         skillId: q.skillId,
@@ -246,6 +272,7 @@ export const handler = async (event: {
         discrimination,
         avgTime: itemAvgTime,
         distractorFreqs: q.distractorFreqs,
+        distractorDetails,
         flags
       });
     }

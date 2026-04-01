@@ -27,6 +27,8 @@ import {
 } from '../types/studyPlanTypes';
 import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
 import { toMetadataId } from '../data/skillIdMap';
+import questionsRaw from '../data/questions.json';
+import skillPhaseDRaw from '../data/skill-phase-d.json';
 import { findMisconceptionByText, getMisconceptionsByProgressSkill } from './misconceptionRegistry';
 import {
   computeFragilityFlag,
@@ -152,6 +154,29 @@ export function computeStudentSkillStates(
     }
     const repeatedDistractorPattern = [...distractorCounts.values()].some(c => c >= 2);
 
+    // Find the dominant wrong-answer letter (most selected, >= 2 times) and a representative question.
+    // Only computed when a repeat pattern exists. Used to surface the specific misconception in study plan.
+    let dominantMisconceptionKey: { questionId: string; letter: string } | undefined;
+    if (repeatedDistractorPattern) {
+      const dominantLetter = [...distractorCounts.entries()]
+        .filter(([, count]) => count >= 2)
+        .sort((a, b) => b[1] - a[1])[0]?.[0];
+      if (dominantLetter) {
+        // Among wrong answers with that letter, find the most-repeated question ID
+        const qCounts = new Map<string, number>();
+        for (const r of skillResponses) {
+          if (!r.isCorrect && r.distractorSelected === dominantLetter && r.questionId) {
+            qCounts.set(r.questionId, (qCounts.get(r.questionId) ?? 0) + 1);
+          }
+        }
+        const dominantQuestionId = [...qCounts.entries()]
+          .sort((a, b) => b[1] - a[1])[0]?.[0];
+        if (dominantQuestionId) {
+          dominantMisconceptionKey = { questionId: dominantQuestionId, letter: dominantLetter };
+        }
+      }
+    }
+
     const missedQuestionIds = skillResponses
       .filter(r => !r.isCorrect && r.questionId)
       .map(r => r.questionId as string);
@@ -182,6 +207,7 @@ export function computeStudentSkillStates(
       status: assignStatus(attempts, accuracy, confidenceIssue, repeatedDistractorPattern),
       fragilityFlag,
       uncertainSkillFlag,
+      dominantMisconceptionKey,
     };
   });
 }
@@ -297,6 +323,29 @@ function retrieveSkillContent(skillIds: string[]): {
 
 // ─── Main: group skill states into precomputed clusters ───────────────────────
 
+// Lazy index for questions.json — keyed by UNIQUEID.
+// Built once on first use to avoid repeated array scans.
+let _questionIndex: Map<string, Record<string, string>> | null = null;
+function getQuestionIndex(): Map<string, Record<string, string>> {
+  if (!_questionIndex) {
+    _questionIndex = new Map(
+      (questionsRaw as Record<string, string>[]).map(q => [q.UNIQUEID, q])
+    );
+  }
+  return _questionIndex;
+}
+
+// Lazy index for Phase D skill metadata (nasp_domain_primary, skill_prerequisites, prereq_chain_narrative)
+let _skillPhaseDIndex: Map<string, Record<string, string>> | null = null;
+function getSkillPhaseD(skillId: string): Record<string, string> | undefined {
+  if (!_skillPhaseDIndex) {
+    _skillPhaseDIndex = new Map(
+      Object.entries(skillPhaseDRaw as Record<string, Record<string, string>>)
+    );
+  }
+  return _skillPhaseDIndex.get(skillId);
+}
+
 /**
  * Groups skill states by contentCluster, ranks by aggregate urgency,
  * retrieves skill content, and assigns allocated study minutes.
@@ -343,14 +392,32 @@ export function buildPrecomputedClusters(
       clusterId,
       clusterName: CONTENT_CLUSTER_LABELS[clusterId] ?? clusterId,
       urgency,
-      skills: sorted.map(s => ({
-        skillId: s.skillId,
-        skillName: s.skillId, // caller can enrich with real name from skill lookup
-        status: s.status,
-        accuracy: s.currentAccuracy,
-        trend: s.trend,
-        fragilityFlag: s.fragilityFlag,
-      })),
+      skills: sorted.map(s => {
+        let dominantMisconception: string | undefined;
+        let dominantSkillDeficit: string | undefined;
+        if (s.dominantMisconceptionKey) {
+          const { questionId, letter } = s.dominantMisconceptionKey;
+          const q = getQuestionIndex().get(questionId);
+          if (q) {
+            dominantMisconception = q[`distractor_misconception_${letter}`] || undefined;
+            dominantSkillDeficit  = q[`distractor_skill_deficit_${letter}`] || undefined;
+          }
+        }
+        const phaseD = getSkillPhaseD(s.skillId);
+        return {
+          skillId: s.skillId,
+          skillName: s.skillId, // caller can enrich with real name from skill lookup
+          status: s.status,
+          accuracy: s.currentAccuracy,
+          trend: s.trend,
+          fragilityFlag: s.fragilityFlag,
+          dominantMisconception,
+          dominantSkillDeficit,
+          nasp_domain_primary:    phaseD?.nasp_domain_primary    || undefined,
+          skill_prerequisites:    phaseD?.skill_prerequisites    || undefined,
+          prereq_chain_narrative: phaseD?.prereq_chain_narrative || undefined,
+        };
+      }),
       retrievedVocabulary:       content.vocabulary,
       retrievedMisconceptions:   content.misconceptions,
       resolvedMisconceptionIds:  content.resolvedMisconceptionIds,

@@ -3,6 +3,13 @@ import { AlertTriangle, ChevronDown, ChevronUp, Filter, RefreshCw, TrendingDown 
 import { supabase } from '../config/supabase';
 import { PROGRESS_SKILL_LOOKUP, PROGRESS_DOMAINS } from '../utils/progressTaxonomy';
 
+interface DistractorDetail {
+  freq: number;
+  tier: string | null;
+  errorType: string | null;
+  misconception: string | null;
+}
+
 interface ItemStat {
   questionId: string;
   skillId: string | null;
@@ -11,6 +18,7 @@ interface ItemStat {
   discrimination: number;
   avgTime: number | null;
   distractorFreqs: Record<string, number>;
+  distractorDetails?: Record<string, DistractorDetail>;
   flags: string[];
 }
 
@@ -390,15 +398,25 @@ export default function ItemAnalysisTab() {
                                 .map(([ans, count]) => {
                                   const totalIncorrect = Object.values(item.distractorFreqs).reduce((s, c) => s + c, 0);
                                   const pct = totalIncorrect > 0 ? Math.round((count / totalIncorrect) * 100) : 0;
+                                  const detail = item.distractorDetails?.[ans];
+                                  const tierColor =
+                                    detail?.tier === 'L1' ? 'text-rose-600' :
+                                    detail?.tier === 'L2' ? 'text-amber-600' :
+                                    detail?.tier === 'L3' ? 'text-slate-400' : '';
                                   return (
                                     <div
                                       key={ans}
                                       className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs"
+                                      title={detail?.misconception ?? undefined}
                                     >
                                       <span className="font-mono font-semibold text-slate-900">{ans}</span>
-                                      <span className="ml-2 text-slate-500">
-                                        {count}× ({pct}%)
-                                      </span>
+                                      <span className="ml-2 text-slate-500">{count}× ({pct}%)</span>
+                                      {detail?.tier && (
+                                        <span className={`ml-2 font-semibold ${tierColor}`}>{detail.tier}</span>
+                                      )}
+                                      {detail?.errorType && (
+                                        <span className="ml-1 text-slate-400">· {detail.errorType}</span>
+                                      )}
                                     </div>
                                   );
                                 })}

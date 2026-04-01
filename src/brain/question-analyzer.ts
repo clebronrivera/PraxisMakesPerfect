@@ -62,6 +62,7 @@ export interface AnalyzedQuestion extends Question {
   templateId?: string;
   isMultiSelect?: boolean;
   cognitiveComplexity?: 'Recall' | 'Application' | string;
+  complexityRationale?: string;
   distractors?: Distractor[];
   metadata?: any;
 }
@@ -251,6 +252,7 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
     keyConcepts,
     isMultiSelect: q.isMultiSelect ?? String(q.is_multi_select).toLowerCase() === 'true',
     cognitiveComplexity: q.cognitiveComplexity || q.cognitive_complexity,
+    complexityRationale: (q as any).complexityRationale || (q as any).complexity_rationale || undefined,
     isFoundational: (q as any).is_foundational === true || (q as any).is_foundational === 'true',
     primaryModuleId: (q as any).primaryModuleId || undefined,
     primarySnippet: (q as any).primarySnippet || undefined,

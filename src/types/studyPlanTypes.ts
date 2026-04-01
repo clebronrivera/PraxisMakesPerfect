@@ -65,6 +65,9 @@ export interface StudentSkillState {
    * See audit-confidence-timing.md Rule 5 and diagnostic-synthesis-2026-03-29.md.
    */
   uncertainSkillFlag: boolean;
+  /** Present only when repeatedDistractorPattern=true and a dominant wrong-answer question can be identified.
+   *  Used to look up distractor_misconception_* and distractor_skill_deficit_* from the question bank. */
+  dominantMisconceptionKey?: { questionId: string; letter: string };
 }
 
 // ─── Study constraints ────────────────────────────────────────────────────────
@@ -125,6 +128,11 @@ export interface PrecomputedCluster {
     accuracy: number | null;
     trend: TrendDirection;
     fragilityFlag: boolean;           // Low-confidence correct >= 50% of last 6. Feeds study plan prompt.
+    dominantMisconception?: string;   // distractor_misconception_* for the most-repeated wrong answer
+    dominantSkillDeficit?: string;    // distractor_skill_deficit_* for the same distractor
+    nasp_domain_primary?: string;     // Phase D — NASP-1 through NASP-10
+    skill_prerequisites?: string;     // Phase D — bulleted prerequisite knowledge list
+    prereq_chain_narrative?: string;  // Phase D — 2–4 sentence learning sequence
   }>;
   retrievedVocabulary: string[];     // from SkillMetadataV1 for skills in this cluster
   retrievedMisconceptions: string[]; // from SkillMetadataV1

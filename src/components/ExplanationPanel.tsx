@@ -64,6 +64,17 @@ export default function ExplanationPanel({
     }
   }
 
+  // Misconception lookup — only for wrong answers, reads flat fields from questions.json
+  const wrongLetter = !isCorrect
+    ? userAnswer.find(a => !getQuestionCorrectAnswers(question).includes(a))
+    : undefined;
+  const misconceptionText = wrongLetter
+    ? ((question as any)[`distractor_misconception_${wrongLetter}`] as string | undefined) || ''
+    : '';
+  const skillDeficitText = wrongLetter
+    ? ((question as any)[`distractor_skill_deficit_${wrongLetter}`] as string | undefined) || ''
+    : '';
+
   return (
     <div className="space-y-4">
       {/* Original Rationale Panel */}
@@ -128,6 +139,13 @@ export default function ExplanationPanel({
               </div>
             )}
 
+            {(question as any).construct_actually_tested && (
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">What this tests</p>
+                <p className="text-sm leading-relaxed text-slate-700">{(question as any).construct_actually_tested}</p>
+              </div>
+            )}
+
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
               <div className="mt-4 border-t border-slate-200 pt-4">
@@ -139,6 +157,21 @@ export default function ExplanationPanel({
                     </span>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Why this was wrong — misconception + knowledge gap from distractor classification */}
+            {(misconceptionText || skillDeficitText) && (
+              <div className="mt-4 border-t border-rose-200 pt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-rose-400">Why this was wrong</p>
+                {misconceptionText && (
+                  <p className="text-sm leading-relaxed text-slate-700">{misconceptionText}</p>
+                )}
+                {skillDeficitText && (
+                  <p className="mt-1.5 text-xs text-slate-500">
+                    <span className="font-semibold">Knowledge gap:</span> {skillDeficitText}
+                  </p>
+                )}
               </div>
             )}
           </div>
