@@ -674,6 +674,65 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 
 ---
 
+## Tutorial Walkthrough
+
+New users see an **8-slide tutorial** automatically after completing onboarding. Each slide covers a major feature:
+
+1. **Welcome** — overview of what the app offers
+2. **Adaptive Diagnostic** — how it works and why to start here
+3. **Dashboard** — domain cards, proficiency levels, color meanings
+4. **Practice Modes** — By Domain, By Skill, Learning Path
+5. **AI Tutor** — quizzes, remediation, practice activities
+6. **Progress Tracking** — score report, skill breakdown, trends
+7. **AI Study Guide** — personalized plan, 6 tabs, side rail
+8. **Redemption Rounds** — quarantine mechanics, credits, clearing
+
+The tutorial can be replayed anytime from the **Help** page.
+
+---
+
+## Subscription Tiers (Planned)
+
+The app uses a **freemium model** with two tiers:
+
+| Feature | Free | Premium |
+|---------|------|---------|
+| Adaptive Diagnostic | Full | Full |
+| Practice Questions | 10/day | Unlimited |
+| AI Tutor Messages | 3/day | Unlimited |
+| Glossary | Full | Full |
+| AI Study Guide | Locked | Full |
+| Redemption Rounds | Locked | Full |
+| Score Export | Locked | Full |
+| Learning Path | Basic (2 modules) | Full |
+
+**Pricing:** $14.99/month or $99.99/year (save $79.89).
+
+Payments are processed via **Stripe Checkout**. Subscription state is synced to Supabase via webhooks. The paywall is currently behind a feature flag (`paywall: false`) and not active in production.
+
+---
+
+## NASP Domain Alignment
+
+Each of the 45 skills is mapped to a **NASP Practice Model domain** (NASP-1 through NASP-10). These appear as small badges on Learning Path tiles and are used in the study guide to provide professional context (e.g., "This cluster maps to NASP-3: Interventions and Instructional Support"). Prerequisite knowledge for each skill is shown as a tooltip on hover.
+
+---
+
+## Error Pattern Analysis (Phase C)
+
+Every question in the bank has three error-pattern fields:
+
+- **error_cluster_tag** — a categorical label for the type of error (e.g., "scope-overgeneralization", "definition-confusion")
+- **dominant_error_pattern** — a sentence describing the most common way students get this question wrong
+- **instructional_red_flags** — a teaching move to address the specific confusion
+
+These are surfaced in three places:
+1. **Admin Item Analysis** — colored chip + expanded detail per question
+2. **AI Tutor** — injected into remediation mode when a student misses the same skill twice
+3. **Study Guide** — aggregated across missed questions per cluster; dominant patterns called out in the narrative when 3+ misses share the same tag
+
+---
+
 ## Maintenance Checklist
 
 When any of the following change, update this document in the same pull request or commit:
