@@ -714,7 +714,9 @@ Payments are processed via **Stripe Checkout**. Subscription state is synced to 
 
 ## NASP Domain Alignment
 
-Each of the 45 skills is mapped to a **NASP Practice Model domain** (NASP-1 through NASP-10). These appear as small badges on Learning Path tiles and are used in the study guide to provide professional context (e.g., "This cluster maps to NASP-3: Interventions and Instructional Support"). Prerequisite knowledge for each skill is shown as a tooltip on hover.
+Each of the 45 skills is mapped to a **NASP Practice Model domain** (NASP-1 through NASP-10). These appear as small badges on Learning Path tiles and are used in the study guide to provide professional context (e.g., "This cluster maps to NASP-3: Interventions and Instructional Support"). Prerequisite knowledge for each skill is shown as a tooltip on hover and as a "Prerequisites" section at the top of each Learning Path module page.
+
+The Phase D data is also injected into the AI Study Guide prompt: `prereq_chain_narrative` and `nasp_domain_primary` are passed per skill so Claude can write richer narrative about prerequisite knowledge gaps and align recommendations to NASP professional domains. The Learning Path sorts non-mastered skills by prerequisite depth (foundational skills first) so students encounter prerequisites before the skills that depend on them.
 
 ---
 

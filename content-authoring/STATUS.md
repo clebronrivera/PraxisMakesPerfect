@@ -257,31 +257,34 @@ Use `ETH-01-phase-A.csv` (largest, most recent) as canonical. Delete the others 
 `src/data/questions.json`. 3,587 distractor slots written (98.7% coverage).
 
 ### Phase B — construct_actually_tested + complexity_rationale
-**APPLIED** as of 2026-04-01 via `scripts/apply-phase-b.mjs --force-mismatches`.
+**COMPLETE** as of 2026-04-02.
 
 Final coverage:
 - `complexity_rationale`: **1150/1150** (100%)
-- `construct_actually_tested`: **1142/1150** (8 legacy ACA-06 questions — `item_056`, `item_077`, `item_090`, `item_162`, `item_167`, `item_200`, `item_232`, `item_235` — have no Phase B CSV entry; these are the only remaining gap)
+- `construct_actually_tested`: **1150/1150** (100%)
 
-**Apply log summary:** 1,368 field writes (includes 104 overwrites of legacy generic stubs such as "Brief stem asking for direct factual retrieval." with substantive Phase B rationales via `--force-mismatches`). 916 skipped (already present and matching). 8 missing UNIQUEIDs.
+All 29 previously collapsed skills were confirmed regenerated (100% unique per skill). The 8 ACA-06 legacy questions (`item_056`, `item_077`, `item_090`, `item_162`, `item_167`, `item_200`, `item_232`, `item_235`) had their Phase B CSV UNIQUEIDs corrected from `PQ_ACA-06_21–28` and were applied on 2026-04-02 (16 field writes).
 
-**Quality note:** 29 skills in the applied CSV set had template collapse in Phase B (repeated `construct_actually_tested` strings). Their data IS applied and represents the current best available content. Regeneration via Coworker (`phase-B/PHASE-B-REGEN-WORKFLOW.md`) will replace these with unique, substantive constructs. Not blocking — the app functions with the current data.
-
-**Remaining Phase B work:**
-- Regen the 29 collapsed skills via `phase-B/PHASE-B-REGEN-WORKFLOW.md` + `phase-B/pipeline/extract_phase_b_batch.py`
-- Manually author `construct_actually_tested` for the 8 missing ACA-06 legacy questions
+**Quality cleanup (2026-04-02):**
+- 682 "Student..." → "The student..." framing fixes (missing article)
+- 211 verb-first misconceptions reframed ("Frames X" → "The student frames X")
+- 46 noun-first misconceptions reframed ("Transition planning..." → "The student believed that transition planning...")
+- 250 "CORRECT" placeholder misconceptions cleared to ""
+- 5 double-nested "believed that students believed" entries fixed
+- 1 duplicate misconception pair (item_221 A+C) differentiated
+- 2000 UNUSED E/F distractor fields cleared
 
 ### Phase C — Error Pattern Synthesis
-Not started for any skill. Infrastructure is now in place.
-Status: ⬜ All 45 pending (content not yet authored).
+**COMPLETE** as of 2026-04-02. All 44 active skills authored and applied to `src/data/questions.json`.
 
-Infrastructure built 2026-04-01:
-- `content-authoring/phase-C/pipeline/extract_phase_c_batch.py` — generates 10-question batches with Phase A distractor classifications included (required for synthesis)
-- `content-authoring/phase-C/PHASE-C-WORKFLOW.md` — agent workflow doc + Coworker prompt template + anti-collapse rules
-- `scripts/apply-phase-c.mjs` — 4-category apply script; validates `error_cluster_tag` against TAG_GLOSSARY.md
-- Output directory: `content-authoring/phase-C/output/` (empty — awaiting content)
+Final coverage: **1149/1150** questions (99.9%). The 1 missing question is `PQ_ACA-03_21` which does not exist in the question bank.
 
-To start: `python3 content-authoring/phase-C/pipeline/extract_phase_c_batch.py CON-01 1`
+Fields applied per question:
+- `dominant_error_pattern` — 1–2 sentence description of the most diagnostic reasoning failure
+- `error_cluster_tag` — categorical label from TAG_GLOSSARY.md (all validated)
+- `instructional_red_flags` — 2–4 sentence coaching guidance
+
+CSVs in `content-authoring/phase-C/output/` (~130 batch files across 44 skills). Applied via `scripts/apply-phase-c.mjs --force-mismatches`.
 
 ### Phase D — Standards Alignment
 **APPLIED** as of 2026-04-01 via `scripts/apply-phase-d.mjs`.
@@ -297,7 +300,13 @@ Output: `src/data/skill-phase-d.json` (created on first apply — 45 skill entri
 Content was authored via 5 parallel Coworker sessions using `PHASE-D-WORKFLOW.md` + `extract_phase_d_batch.py`.
 Batches: phase-D-batch1.json through phase-D-batch5.json in `content-authoring/phase-D/output/`.
 
-**Remaining:** Wiring `skill-phase-d.json` into the app (study plan prompt, learning path sequence). Not started — separate from content authoring.
+**App wiring (COMPLETE as of 2026-04-02):**
+- `src/data/skillPhaseDLookup.ts` — shared typed lookup utility (`getSkillPhaseDEntry()`)
+- `src/data/skillPrereqGraph.ts` — machine-readable prerequisite dependency graph with `getPrereqDepth()` BFS function
+- `src/utils/studyPlanPreprocessor.ts` — injects `nasp_domain_primary`, `skill_prerequisites`, `prereq_chain_narrative` into study plan prompt
+- `src/components/LearningPathNodeMap.tsx` — prereq-aware sort order (foundational skills first) + NASP domain badge + prereq tooltip
+- `src/components/LearningPathModulePage.tsx` — "Prerequisites" display block in module header
+- `src/brain/question-analyzer.ts` — `naspDomainPrimary` annotation on analyzed questions
 
 ---
 

@@ -4,6 +4,28 @@ This file captures hard-won context so Claude doesn't have to rediscover it.
 
 ---
 
+## UI Redesign Workflow — Mandatory Mockup-First Rule
+
+**When redesigning any UI screen or section, you MUST follow this sequence. No exceptions.**
+
+1. **Build a standalone HTML mockup** (Tailwind CDN, no build step) in `public/` so Vite serves it as a static file
+2. **Get it rendering in the preview panel** — confirm you can see it at `http://localhost:5173/mockup-*.html`
+3. **Walk through every screen** with the user — screenshot each state, get explicit approval
+4. **Only after visual approval**, start modifying React components
+
+**Why this rule exists:** In April 2026, Claude repeatedly jumped from mockup creation straight to React refactoring (migrations, new components, App.tsx surgery) before the user had verified the mockup rendered correctly. The user couldn't see any visual change because:
+- The Netlify SPA redirect swallowed mockup URLs
+- React changes required authentication to verify
+- The loop repeated across multiple turns, wasting time and creating confusion
+
+**Key constraints:**
+- The mockup must be viewable WITHOUT authentication (static HTML, not behind Supabase auth)
+- Each screen must be visually confirmed before its React counterpart is touched
+- Do NOT modify `LoginScreen.tsx`, `App.tsx`, or other live components based on an unverified mockup
+- When the user says "I want to use this setup" they mean "implement the visual I can see," not "start backend work"
+
+---
+
 ## HOW_THE_APP_WORKS.md — Mandatory Update Rule
 
 `docs/HOW_THE_APP_WORKS.md` is the canonical plain-language description of the product.
@@ -314,8 +336,17 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0000` – `0003` | Core tables (users, responses, assessments, study plans) |
 | `0004_assessment_reset_archive.sql` | Archive table for admin assessment resets |
 | `0005_module_interactions.sql` | `module_visit_sessions`, `section_interactions`, `learning_path_progress` — module engagement tracking with RLS |
+| `0006_module_notes_and_focus_items.sql` | `module_notes`, `focus_items` — per-module student notes and AI-generated focus items |
+| `0007_admin_read_policies.sql` | RLS read policies for admin dashboard queries |
+| `0008_glossary_entries.sql` | `glossary_entries` — skill vocabulary/glossary storage |
 | `0009_redemption_rounds.sql` | `practice_missed_questions`, `redemption_sessions`, user_progress credit columns |
+| `0010_tutor_chat.sql` | `tutor_sessions`, `tutor_messages`, `tutor_artifacts` — AI Tutor conversation storage |
+| `0011_add_global_scores.sql` | `global_scores` columns on `user_progress` for cross-skill aggregate tracking |
+| `0012_adaptive_diagnostic_columns.sql` | Adaptive diagnostic metadata columns on `responses` (confidence, timing, key concepts) |
 | `0013_redemption_v2.sql` | Adds `wrong_count`, `entry_reason`, `in_redemption` columns + `increment_wrong_count` RPC to `practice_missed_questions` |
+| `0014_user_subscriptions.sql` | `user_subscriptions` — Stripe subscription tracking for paywall |
+| `0015_adaptive_audit_columns.sql` | `is_followup`, `cognitive_complexity`, `skill_question_index` on `responses` — diagnostic audit trail |
+| `0016_baseline_snapshot.sql` | `baseline_snapshot` JSONB column on `user_progress` — pre/post comparison |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 
