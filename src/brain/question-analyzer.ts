@@ -1,10 +1,8 @@
 import questionSkillMapData from '../data/question-skill-map.json';
 import questionVocabTagsData from '../data/question-vocabulary-tags.json';
-import skillPhaseDRaw from '../data/skill-phase-d.json';
+import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
 import { Distractor } from './answer-generator';
 import { resolveProgressDomainId } from '../utils/progressTaxonomy';
-
-const skillPhaseD = skillPhaseDRaw as Record<string, { nasp_domain_primary?: string }>;
 
 export interface Question {
   id: string;
@@ -262,6 +260,6 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
     primarySnippet: (q as any).primarySnippet || undefined,
     moduleRefs: (q as any).moduleRefs || undefined,
     source: 'bank', // Questions from questions.json are from the bank
-    naspDomainPrimary: resolvedSkillId ? skillPhaseD[resolvedSkillId]?.nasp_domain_primary : undefined,
+    naspDomainPrimary: resolvedSkillId ? getSkillPhaseDEntry(resolvedSkillId)?.nasp_domain_primary : undefined,
   };
 }

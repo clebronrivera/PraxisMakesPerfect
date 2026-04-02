@@ -106,3 +106,70 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
     ],
   },
 ];
+
+/**
+ * Separate tutorial shown before the adaptive diagnostic starts.
+ * Focused on explaining how the diagnostic works — confidence, adaptive length, etc.
+ */
+export const DIAGNOSTIC_TUTORIAL_SLIDES: TutorialSlide[] = [
+  {
+    id: 'diag-what',
+    title: 'What the Diagnostic Measures',
+    description: 'This assessment maps your knowledge across all 45 skills in 4 domains. Each question targets a specific skill so we know exactly where you stand.',
+    icon: 'Target',
+    highlights: [
+      '45 skills across 4 Praxis 5403 domains',
+      'Each question is tagged to a specific skill',
+      'Your results unlock a personalized dashboard',
+      'This is your starting baseline \u2014 every feature builds on it',
+    ],
+  },
+  {
+    id: 'diag-adapts',
+    title: 'How It Adapts',
+    description: 'If you miss a question, you may see follow-up questions on the same skill \u2014 up to 3 per skill. That\u2019s why the test can range from 45 to 90+ questions.',
+    icon: 'GitBranch',
+    highlights: [
+      'Start with 1 question per skill (45 total)',
+      'Wrong answers can trigger up to 2 follow-ups per skill',
+      'The better you do, the shorter the diagnostic',
+      'Follow-ups help us distinguish a gap from a one-off miss',
+    ],
+  },
+  {
+    id: 'diag-confidence',
+    title: 'Confidence Matters',
+    description: 'After each answer, rate your confidence: Low, Medium, or High. This helps us distinguish lucky guesses from solid knowledge and improves your study plan.',
+    icon: 'Gauge',
+    highlights: [
+      'Be honest \u2014 overconfidence hides real gaps',
+      'Low-confidence correct answers flag unstable knowledge',
+      'High-confidence wrong answers flag misconceptions',
+      'Your study guide uses confidence to prioritize skills',
+    ],
+  },
+  {
+    id: 'diag-pause',
+    title: 'You Can Pause Anytime',
+    description: 'Your progress saves automatically. Close the browser, come back tomorrow \u2014 you\u2019ll pick up exactly where you left off. No pressure.',
+    icon: 'PauseCircle',
+    highlights: [
+      'Progress auto-saves after every question',
+      'Resume from any device by logging in',
+      'Take it in one sitting or spread it across days',
+      'The pause button in the top bar saves and exits safely',
+    ],
+  },
+  {
+    id: 'diag-after',
+    title: 'What Happens After',
+    description: 'When you finish, your full dashboard unlocks \u2014 personalized practice modes, an AI study guide, progress tracking, and a tutor that knows your gaps.',
+    icon: 'Rocket',
+    highlights: [
+      'Practice by domain, by skill, or follow a learning path',
+      'AI Study Guide with priority clusters and weekly schedule',
+      'Progress tracking with proficiency levels per skill',
+      'AI Tutor that adapts quizzes to your weakest areas',
+    ],
+  },
+];

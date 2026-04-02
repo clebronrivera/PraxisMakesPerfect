@@ -99,6 +99,9 @@ export interface UserProfile {
   redemptionCredits?: number;
   practiceQuestionsSinceCredit?: number;
   redemptionHighScore?: number;
+
+  // Baseline snapshot (captured on first diagnostic completion)
+  baselineSnapshot?: Record<string, { score: number; attempts: number; correct: number }>;
 }
 
 export interface ResponseLog {
@@ -115,9 +118,13 @@ export interface ResponseLog {
   selectedAnswers: string[];
   correctAnswers: string[];
   distractorPatternId?: string;
-  createdAt?: any; 
+  createdAt?: any;
   selectedAnswer?: string;
   domainId?: number;
+  // Adaptive diagnostic audit fields
+  is_followup?: boolean;
+  cognitive_complexity?: string;
+  skill_question_index?: number;
 }
 
 interface AssessmentResponseBundle {
@@ -305,6 +312,9 @@ export function useProgressTracking() {
           redemptionCredits: data.redemption_credits ?? 0,
           practiceQuestionsSinceCredit: data.practice_questions_since_credit ?? 0,
           redemptionHighScore: data.redemption_high_score ?? 0,
+
+          // Baseline snapshot
+          baselineSnapshot: data.baseline_snapshot ?? undefined,
         });
       } else {
         setProfileState(defaultProfile);
@@ -362,6 +372,9 @@ export function useProgressTracking() {
         redemption_credits: newProfile.redemptionCredits ?? 0,
         practice_questions_since_credit: newProfile.practiceQuestionsSinceCredit ?? 0,
         redemption_high_score: newProfile.redemptionHighScore ?? 0,
+
+        // Baseline snapshot
+        baseline_snapshot: newProfile.baselineSnapshot ?? null,
 
         updated_at: new Date().toISOString()
       };
@@ -496,7 +509,10 @@ export function useProgressTracking() {
         time_on_item_seconds: response.time_on_item_seconds,
         selected_answers: response.selectedAnswers || (response.selectedAnswer ? [response.selectedAnswer] : []),
         correct_answers: response.correctAnswers || [],
-        distractor_pattern_id: response.distractorPatternId
+        distractor_pattern_id: response.distractorPatternId,
+        is_followup: response.is_followup ?? false,
+        cognitive_complexity: response.cognitive_complexity ?? null,
+        skill_question_index: response.skill_question_index ?? null
       }]);
     } catch (error) {
       console.error('[logResponse] Error logging Supabase response:', error);

@@ -24,6 +24,10 @@ interface ResponseRow {
   correct_answers: string[] | null;
   session_id: string | null;
   created_at: string | null;
+  // Adaptive audit fields
+  is_followup: boolean | null;
+  cognitive_complexity: string | null;
+  skill_question_index: number | null;
 }
 
 interface DomainStat {
@@ -433,7 +437,101 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
               )}
             </section>
 
-            {/* ── Panel 5: Most Missed Skills ── */}
+            {/* ── Panel 5: Adaptive Diagnostic Audit ── */}
+            {(() => {
+              const adaptiveRows = responses.filter((r: ResponseRow) => r.assessment_type === 'adaptive');
+              if (adaptiveRows.length === 0) return null;
+              const followUpCount = adaptiveRows.filter((r: ResponseRow) => r.is_followup).length;
+              const recallCount = adaptiveRows.filter((r: ResponseRow) => r.cognitive_complexity === 'Recall').length;
+              const applicationCount = adaptiveRows.filter((r: ResponseRow) => r.cognitive_complexity === 'Application').length;
+              return (
+                <section>
+                  <div className="mb-3 flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-amber-700" />
+                    <h3 className="font-semibold text-slate-900">Adaptive Diagnostic Audit</h3>
+                    <span className="text-xs text-slate-400">{adaptiveRows.length} questions</span>
+                  </div>
+                  <div className="mb-3 grid grid-cols-4 gap-2">
+                    <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+                      <p className="text-xs text-slate-500">Initial</p>
+                      <p className="mt-1 text-lg font-semibold text-slate-900">{adaptiveRows.length - followUpCount}</p>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+                      <p className="text-xs text-slate-500">Follow-ups</p>
+                      <p className="mt-1 text-lg font-semibold text-purple-600">{followUpCount}</p>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+                      <p className="text-xs text-slate-500">Recall</p>
+                      <p className="mt-1 text-lg font-semibold text-blue-600">{recallCount}</p>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+                      <p className="text-xs text-slate-500">Application</p>
+                      <p className="mt-1 text-lg font-semibold text-amber-600">{applicationCount}</p>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 text-sm">
+                      <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                        <tr>
+                          <th className="px-3 py-2 text-left">Q#</th>
+                          <th className="px-3 py-2 text-left">Skill</th>
+                          <th className="px-3 py-2 text-center">Skill Q#</th>
+                          <th className="px-3 py-2 text-center">Follow-up?</th>
+                          <th className="px-3 py-2 text-center">Type</th>
+                          <th className="px-3 py-2 text-center">Result</th>
+                          <th className="px-3 py-2 text-right">Time</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 bg-white">
+                        {adaptiveRows.map((r: ResponseRow, idx: number) => (
+                          <tr key={`${r.question_id}-${idx}`} className="text-slate-700">
+                            <td className="px-3 py-2 text-xs text-slate-400">{idx + 1}</td>
+                            <td className="px-3 py-2 text-xs">
+                              <span className="font-mono text-slate-500">{r.skill_id || '—'}</span>
+                            </td>
+                            <td className="px-3 py-2 text-center text-xs">
+                              {r.skill_question_index != null ? (
+                                <span className={`rounded-full px-2 py-0.5 font-medium ${
+                                  r.skill_question_index === 1 ? 'bg-slate-100 text-slate-600' :
+                                  r.skill_question_index === 2 ? 'bg-amber-50 text-amber-700' :
+                                  'bg-rose-50 text-rose-700'
+                                }`}>{r.skill_question_index}</span>
+                              ) : '—'}
+                            </td>
+                            <td className="px-3 py-2 text-center text-xs">
+                              {r.is_followup ? (
+                                <span className="rounded-full bg-purple-50 px-2 py-0.5 font-medium text-purple-700">Yes</span>
+                              ) : (
+                                <span className="text-slate-400">No</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-center text-xs">
+                              {r.cognitive_complexity ? (
+                                <span className={`rounded-full px-2 py-0.5 font-medium ${
+                                  r.cognitive_complexity === 'Recall' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
+                                }`}>{r.cognitive_complexity}</span>
+                              ) : <span className="text-slate-400">—</span>}
+                            </td>
+                            <td className="px-3 py-2 text-center text-xs">
+                              {r.is_correct ? (
+                                <span className="font-semibold text-emerald-600">✓</span>
+                              ) : (
+                                <span className="font-semibold text-rose-600">✗</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-right font-mono text-xs text-slate-600">
+                              {r.time_on_item_seconds != null ? `${r.time_on_item_seconds}s` : '—'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              );
+            })()}
+
+            {/* ── Panel 6: Most Missed Skills ── */}
             <section>
               <div className="mb-3 flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-700" />

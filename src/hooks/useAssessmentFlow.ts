@@ -501,6 +501,11 @@ export function useAssessmentFlow({
         .filter((q): q is AnalyzedQuestion => q !== undefined);
       setFullAssessmentQuestions(diagnosticQuestions);
 
+      // Capture baseline snapshot on first diagnostic completion (never overwrite)
+      const baselineUpdate = !profile.baselineSnapshot && profile.skillScores
+        ? { baselineSnapshot: JSON.parse(JSON.stringify(profile.skillScores)) }
+        : {};
+
       await updateProfile({
         screenerComplete: true,
         fullAssessmentComplete: true,
@@ -510,6 +515,7 @@ export function useAssessmentFlow({
         lastDiagnosticCompletedAt: new Date().toISOString(),
         lastSession: null,
         ...(analysis as Partial<UserProfile>),
+        ...baselineUpdate,
       });
 
       if (currentUserName && selectedSessionId) {

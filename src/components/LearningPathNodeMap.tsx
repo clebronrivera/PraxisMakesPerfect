@@ -24,9 +24,8 @@ import { getPrimaryModuleForSkill } from '../data/learningModules';
 import { getSkillProficiency, PROFICIENCY_META } from '../utils/skillProficiency';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
 import type { UserProfile } from '../hooks/useProgressTracking';
-import skillPhaseDRaw from '../data/skill-phase-d.json';
-
-const skillPhaseD = skillPhaseDRaw as Record<string, { nasp_domain_primary?: string; prereq_chain_narrative?: string }>;
+import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
+import { getPrereqDepth, prereqGraph } from '../data/skillPrereqGraph';
 
 interface SkillNode {
   skillId: string;
@@ -164,8 +163,17 @@ function buildNodes(
     const aMastered = isMastered(a);
     const bMastered = isMastered(b);
 
+    // Mastered skills always sink to the end.
     if (aMastered && !bMastered) return 1;
     if (!aMastered && bMastered) return -1;
+
+    // Among non-mastered skills, sort more foundational skills (lower prereq
+    // depth) earlier so learners encounter prerequisites before dependents.
+    const aDepth = getPrereqDepth(a.skillId, prereqGraph);
+    const bDepth = getPrereqDepth(b.skillId, prereqGraph);
+    if (aDepth !== bDepth) return aDepth - bDepth;
+
+    // Within the same prereq depth, surface weakest skills first.
     if (a.overallScore === null && b.overallScore === null) return a.skillId.localeCompare(b.skillId);
     if (a.overallScore === null) return 1;
     if (b.overallScore === null) return -1;
@@ -198,7 +206,7 @@ function NodeCard({
   const tileStatus = statusLabel(node.lpStatus, node.overallTier);
 
   // Phase D: prerequisite tooltip and NASP domain badge
-  const phaseD = skillPhaseD[node.skillId];
+  const phaseD = getSkillPhaseDEntry(node.skillId);
   const naspDomain = phaseD?.nasp_domain_primary;
   const prereqNarrative = phaseD?.prereq_chain_narrative;
   const tooltipText = prereqNarrative

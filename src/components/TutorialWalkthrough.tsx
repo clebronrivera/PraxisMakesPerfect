@@ -6,12 +6,15 @@ import {
   X, ChevronLeft, ChevronRight,
   Sparkles, ClipboardCheck, LayoutDashboard, Dumbbell,
   Bot, TrendingUp, BookOpen, RotateCcw,
+  Target, GitBranch, Gauge, PauseCircle, Rocket,
 } from 'lucide-react';
-import { TUTORIAL_SLIDES } from '../data/tutorial-slides';
+import { TUTORIAL_SLIDES, DIAGNOSTIC_TUTORIAL_SLIDES } from '../data/tutorial-slides';
+import type { TutorialSlide } from '../data/tutorial-slides';
 
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   Sparkles, ClipboardCheck, LayoutDashboard, Dumbbell,
   Bot, TrendingUp, BookOpen, RotateCcw,
+  Target, GitBranch, Gauge, PauseCircle, Rocket,
 };
 
 const GRADIENT_CLASSES = [
@@ -27,13 +30,15 @@ const GRADIENT_CLASSES = [
 
 interface TutorialWalkthroughProps {
   onDismiss: () => void;
+  variant?: 'full' | 'diagnostic';
 }
 
-export default function TutorialWalkthrough({ onDismiss }: TutorialWalkthroughProps) {
+export default function TutorialWalkthrough({ onDismiss, variant = 'full' }: TutorialWalkthroughProps) {
+  const slides: TutorialSlide[] = variant === 'diagnostic' ? DIAGNOSTIC_TUTORIAL_SLIDES : TUTORIAL_SLIDES;
   const [currentIndex, setCurrentIndex] = useState(0);
-  const slide = TUTORIAL_SLIDES[currentIndex];
+  const slide = slides[currentIndex];
   const isFirst = currentIndex === 0;
-  const isLast = currentIndex === TUTORIAL_SLIDES.length - 1;
+  const isLast = currentIndex === slides.length - 1;
 
   const goNext = useCallback(() => {
     if (isLast) {
@@ -68,7 +73,7 @@ export default function TutorialWalkthrough({ onDismiss }: TutorialWalkthroughPr
             </button>
             {/* Slide counter */}
             <span className="absolute bottom-3 right-4 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white">
-              {currentIndex + 1} / {TUTORIAL_SLIDES.length}
+              {currentIndex + 1} / {slides.length}
             </span>
           </div>
 
@@ -88,7 +93,7 @@ export default function TutorialWalkthrough({ onDismiss }: TutorialWalkthroughPr
 
             {/* Dot indicators */}
             <div className="mt-5 flex items-center justify-center gap-1.5">
-              {TUTORIAL_SLIDES.map((_, i) => (
+              {slides.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentIndex(i)}

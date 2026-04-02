@@ -1,13 +1,11 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, CheckCircle, Activity, Clock3, Layers, Map as MapIcon, Target, User, PanelLeftClose, PanelLeft, RotateCcw, Trophy, HelpCircle, Bot, Shuffle, MessageCircle } from 'lucide-react';
-import { formatStudyTime } from './src/hooks/useDailyStudyTime';
+import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
-// Import questions and analysis
-import { getRandomAffirmation } from './src/data/affirmations';
 import { analyzeQuestion } from './src/brain/question-analyzer';
 
 // Import components
 const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
+const DashboardHome = lazy(() => import('./src/components/DashboardHome'));
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 const FeedbackModal = lazy(() => import('./src/components/FeedbackModal'));
 const ResultsDashboard = lazy(() => import('./src/components/ResultsDashboard'));
@@ -393,6 +391,72 @@ function PraxisStudyAppContent() {
     () => recentActivityDays.reduce((total, day) => total + day.seconds, 0),
     [recentActivityDays]
   );
+
+  // ── Dashboard Home computed values ────────────────────────────────────────
+  const srsOverdueSkills = useMemo(() => {
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return Object.entries(profile.skillScores ?? {})
+      .filter(([, perf]) => perf.nextReviewDate && perf.nextReviewDate <= today && perf.attempts > 0)
+      .map(([skillId]) => ({
+        skillId,
+        name: getSkillById(skillId as any)?.name
+          ?? getProgressSkillDefinition(skillId)?.fullLabel
+          ?? skillId,
+      }));
+  }, [profile.skillScores]);
+
+  const weakestSkillInfo = useMemo(() => {
+    const top5 = Object.entries(profile.skillScores ?? {})
+      .filter(([, p]) => p.attempts >= 1 && p.score < 0.7)
+      .sort((a, b) => a[1].score - b[1].score);
+    if (top5.length === 0) return null;
+    const [skillId] = top5[0];
+    const skill = getSkillById(skillId as any);
+    const progressDef = getProgressSkillDefinition(skillId);
+    const domainId = progressDef?.domainId;
+    const domain = domainId ? PROGRESS_DOMAINS.find(d => d.id === domainId) : null;
+    const emergingInDomain = domainId
+      ? Object.entries(profile.skillScores ?? {})
+          .filter(([sid, p]) => {
+            const pd = getProgressSkillDefinition(sid);
+            return pd?.domainId === domainId && p.attempts >= 1 && p.score < 0.6;
+          }).length
+      : 0;
+    return {
+      skillId,
+      name: skill?.name ?? progressDef?.fullLabel ?? skillId,
+      domain: domain?.name ?? 'Unknown',
+      emergingCount: emergingInDomain,
+    };
+  }, [profile.skillScores]);
+
+  const weeklyQuestionCount = useMemo(
+    () => recentActivityDays.reduce((total, day) => total + day.questions, 0),
+    [recentActivityDays]
+  );
+
+  const weeklyAccuracy = useMemo(() => {
+    // Overall accuracy from skill scores (not weekly-specific, but best available)
+    const entries = Object.values(profile.skillScores ?? {});
+    const totalA = entries.reduce((s, p) => s + p.attempts, 0);
+    const totalC = entries.reduce((s, p) => s + p.correct, 0);
+    return totalA > 0 ? Math.round((totalC / totalA) * 100) : null;
+  }, [profile.skillScores]);
+
+  const handleStartRedemption = useCallback(async () => {
+    const rows = await redemption.startRound();
+    if (!rows || rows.length === 0) return;
+    const matched = rows
+      .map((row: any) => ({
+        q: analyzedQuestions.find(q => q.id === row.question_id),
+        row,
+      }))
+      .filter((item: any) => item.q != null);
+    setRedemptionQuestions(matched.map((item: any) => item.q));
+    setRedemptionMissedRows(matched.map((item: any) => item.row));
+    setMode('redemption-round');
+  }, [redemption, analyzedQuestions]);
 
   useEffect(() => {
     if (canonicalLoading || contentLoading || canonicalQuestions.length === 0 || fetchedQuestions.length === 0) {
@@ -872,11 +936,6 @@ function PraxisStudyAppContent() {
                 ? PROFICIENCY_META.approaching.label
                 : PROFICIENCY_META.emerging.label;
 
-            const top5Target = Object.entries(profile.skillScores)
-              .filter(([, performance]) => performance.attempts >= 1 && performance.score < 0.7)
-              .sort((a, b) => a[1].score - b[1].score)
-              .slice(0, 5);
-
             const weakestDomain = progressSummary.weakestDomainId
               ? PROGRESS_DOMAINS.find(domain => domain.id === progressSummary.weakestDomainId) ?? null
               : null;
@@ -1115,321 +1174,33 @@ function PraxisStudyAppContent() {
                 )}
 
                 {isFullyUnlocked && (
-                  <>
-                    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
-                      <div className="editorial-surface p-6 lg:p-7">
-                        <p className="editorial-overline">Dashboard</p>
-                        <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">
-                          {firstName ? `Greetings, ${firstName}.` : 'Welcome back.'}
-                        </h2>
-                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
-                          Keep building your skill bank with focused practice. Use the learning path and domain practice to zero in on your biggest gaps.
-                        </p>
-                        <div className="mt-6 grid gap-3 md:grid-cols-2">
-                          <div className="editorial-surface-soft p-4">
-                            <p className="editorial-overline">Readiness</p>
-                            <p className="mt-2 text-base font-bold text-slate-900">{readinessPhase}</p>
-                            <p className="mt-2 text-sm text-slate-500">
-                              {skillsToReadiness === 0
-                                ? `You have reached the current goal of ${readinessTarget} skills ${PROFICIENCY_META.proficient.label}.`
-                                : `${skillsToReadiness} more skills to reach your current goal.`}
-                            </p>
-                          </div>
-                          <div className="editorial-surface-soft p-4">
-                            <p className="editorial-overline">Next focus</p>
-                            <p className="mt-2 text-base font-bold text-slate-900">
-                              {weakestDomain ? weakestDomain.name : 'Follow your learning path'}
-                            </p>
-                            <p className="mt-2 text-sm text-slate-500">
-                              {weakestDomain
-                                ? `This is the lowest-performing domain right now, so it is a strong place to keep building.`
-                                : 'Choose a skill or domain and keep practicing a little at a time.'}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* ── Redemption Rounds button ── */}
-                        {redemption.bankCount > 0 && (
-                          <div className="mt-4">
-                            <button
-                              onClick={async () => {
-                                const rows = await redemption.startRound();
-                                if (!rows || rows.length === 0) return;
-                                const matched = rows
-                                  .map((row: any) => ({
-                                    q: analyzedQuestions.find(q => q.id === row.question_id),
-                                    row,
-                                  }))
-                                  .filter((item: any) => item.q != null);
-                                setRedemptionQuestions(matched.map((item: any) => item.q));
-                                setRedemptionMissedRows(matched.map((item: any) => item.row));
-                                setMode('redemption-round');
-                              }}
-                              disabled={redemption.credits <= 0}
-                              className={`editorial-button-dark flex min-h-[4.25rem] w-full items-center justify-between rounded-[1.75rem] px-5 py-4 text-left ${redemption.credits <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                              <span>
-                                <span className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-amber-400">
-                                  <RotateCcw className="h-4 w-4" />
-                                  Redemption Rounds
-                                </span>
-                                <span className="mt-2 block text-sm font-medium leading-normal text-slate-300">
-                                  {redemption.credits > 0
-                                    ? `${redemption.credits} credit${redemption.credits !== 1 ? 's' : ''} · ${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} in quarantine · 1 credit = full pass through all`
-                                    : `${redemption.bankCount} question${redemption.bankCount !== 1 ? 's' : ''} in quarantine · earn a credit with ${redemption.questionsToNextCredit} more practice answers`}
-                                </span>
-                              </span>
-                              <ChevronRight className="h-4 w-4 shrink-0 text-amber-300" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="editorial-surface-soft p-5 lg:p-6">
-                        <div className="flex items-center justify-between">
-                          <p className="editorial-overline">Daily goal</p>
-                          <span className="text-sm font-black italic text-amber-700">{dailyQuestionCount} / {DAILY_GOAL}</span>
-                        </div>
-                        <div className="mt-4 editorial-progress-track border border-amber-100 p-0.5 shadow-inner">
-                          <div
-                            className="editorial-progress-fill"
-                            style={{ width: `${Math.min((dailyQuestionCount / DAILY_GOAL) * 100, 100)}%` }}
-                          />
-                        </div>
-                        <p className="mt-4 text-sm leading-normal text-slate-500">
-                          {dailyQuestionCount >= DAILY_GOAL
-                            ? <span className="italic">"{getRandomAffirmation()}"</span>
-                            : "Keep moving toward today's question goal while leaving room to read the lesson content and explanations that support it."}
-                        </p>
-                        <div className="mt-4 rounded-[1.5rem] border border-amber-100 bg-white p-4">
-                          <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">Weekly usage</p>
-                          <p className="mt-2 text-sm font-bold text-slate-900">
-                            {weeklyUsageSeconds > 0 ? formatStudyTime(weeklyUsageSeconds) : '0m'} this week
-                          </p>
-                          <p className="mt-1 text-xs font-medium text-slate-500">Stay steady and keep showing up.</p>
-                        </div>
-
-                        <div className="mt-6 flex flex-col gap-3 border-t border-slate-200 pt-6">
-                          <button
-                            onClick={() => {
-                              if (top5Target[0]) openLearningPathModule(top5Target[0][0]);
-                              else setMode('practice-hub');
-                            }}
-                            className="group flex items-center justify-between rounded-[1.5rem] border border-amber-100 bg-white px-4 py-4 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50 active:scale-95"
-                          >
-                            <span className="flex items-center gap-3">
-                              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50 text-amber-700">
-                                <MapIcon className="h-5 w-5" />
-                              </span>
-                              <span>
-                                <span className="block text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">Learning path</span>
-                                <span className="mt-1 block text-sm font-bold text-slate-900">Pick up your next skill</span>
-                              </span>
-                            </span>
-                            <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (weakestDomain) startPractice(weakestDomain.id);
-                              else setMode('practice-hub');
-                            }}
-                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
-                          >
-                            <Layers className="h-4 w-4" />
-                            Go directly to domain practice
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (top5Target[0]) startSkillPractice(top5Target[0][0]);
-                              else setMode('practice-hub');
-                            }}
-                            className="flex items-center justify-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500 transition-all hover:border-amber-200 hover:text-amber-700"
-                          >
-                            <Target className="h-4 w-4" />
-                            Go directly to skill practice
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                      {[
-                        {
-                          label: 'Number of questions answered',
-                          value: (profile.totalQuestionsSeen ?? 0).toLocaleString(),
-                          supporting: 'Across assessment and practice sessions so far',
-                          icon: Activity,
-                          accent: 'bg-slate-100 text-slate-800',
-                        },
-                        {
-                          label: 'Readiness phase',
-                          value: readinessPhase,
-                          supporting: `Working toward ${PROFICIENCY_META.proficient.label}`,
-                          icon: Target,
-                          accent: 'bg-amber-50 text-amber-700',
-                        },
-                        {
-                          label: 'Skills to reach goal',
-                          value: String(skillsToReadiness),
-                          supporting: `Goal: ${readinessTarget} skills ${PROFICIENCY_META.proficient.label}`,
-                          icon: CheckCircle,
-                          accent: 'bg-emerald-50 text-emerald-700',
-                        },
-                        {
-                          label: 'Weekly usage',
-                          value: weeklyUsageSeconds > 0 ? formatStudyTime(weeklyUsageSeconds) : '0m',
-                          supporting: 'Keep showing up a little at a time',
-                          icon: Clock3,
-                          accent: 'bg-blue-50 text-blue-700',
-                        },
-                      ].map(stat => (
-                        <div key={stat.label} className="editorial-stat-card">
-                          <div className="flex items-center justify-between">
-                            <div className={`rounded-2xl border border-white p-2.5 shadow-sm ${stat.accent}`}>
-                              <stat.icon className="h-4.5 w-4.5" />
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-slate-300" />
-                          </div>
-                          <div>
-                            <p className="mb-1.5 text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">{stat.label}</p>
-                            <p className="text-xl font-black italic tracking-tighter text-slate-900 sm:text-[1.6rem]">{stat.value}</p>
-                            <p className="mt-1.5 text-[13px] font-medium leading-normal text-slate-500">{stat.supporting}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
-                      <div className="space-y-6">
-                        <div className="px-1 sm:px-2">
-                          <div className="flex items-center gap-3">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">High-Impact Skills</h3>
-                            <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)] animate-pulse" />
-                          </div>
-                          <p className="mt-2 max-w-3xl text-sm font-medium leading-normal text-slate-500">
-                            High-impact skills are the lowest-performing skills in your skill bank. These skills change dynamically as you improve. If you want to see a full readout of every skill, go to Progress and expand the domains.
-                          </p>
-                        </div>
-
-                        <div className="editorial-surface overflow-hidden">
-                          {top5Target.length > 0 ? top5Target.map(([skillId]) => {
-                            const skill = getSkillById(skillId as any);
-                            const progressDef = getProgressSkillDefinition(skillId);
-                            const displayName = skill?.name ?? progressDef?.fullLabel ?? skillId;
-                            return (
-                              <div
-                                key={skillId}
-                                className="group flex items-center justify-between gap-4 border-b border-slate-100 p-4 transition-all last:border-0 hover:bg-[#fbfaf7]"
-                              >
-                                <div className="flex min-w-0 items-center gap-4">
-                                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 transition-colors group-hover:border-amber-300">
-                                    <span className="text-xs font-black italic tracking-tighter text-slate-400 transition-colors group-hover:text-amber-600">
-                                      {skillId.split('-')[0]}
-                                    </span>
-                                  </div>
-                                  <div className="min-w-0">
-                                    <h4 className="truncate text-[15px] font-bold text-slate-900 transition-colors group-hover:text-amber-700">{displayName}</h4>
-                                    <p className="mt-1 text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 italic">
-                                      {skillId}
-                                    </p>
-                                  </div>
-                                </div>
-                                <button
-                                  onClick={() => openLearningPathModule(skillId)}
-                                  className="editorial-button-secondary shrink-0"
-                                >
-                                  Practice
-                                </button>
-                              </div>
-                            );
-                          }) : (
-                            <div className="p-8 text-sm text-slate-500">No high-impact skills are available yet. Keep practicing and this list will populate.</div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        {/* Practice mode shortcuts */}
-                        <div className="editorial-surface-soft p-5">
-                          <p className="editorial-overline">Start a session</p>
-                          <div className="mt-4 space-y-2">
-                            {/* Domain Review */}
-                            <button
-                              onClick={() => weakestDomain ? startPractice(weakestDomain.id) : setMode('practice-hub')}
-                              className="group flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3.5 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
-                            >
-                              <span className="flex items-center gap-3">
-                                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
-                                  <Layers className="h-4 w-4" />
-                                </span>
-                                <span>
-                                  <span className="block text-sm font-bold text-slate-900">Domain Review</span>
-                                  {weakestDomain && (
-                                    <span className="block text-xs text-slate-500 mt-0.5">{weakestDomain.name}</span>
-                                  )}
-                                </span>
-                              </span>
-                              <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
-                            </button>
-
-                            {/* By Skill */}
-                            <button
-                              onClick={() => top5Target[0] ? startSkillPractice(top5Target[0][0]) : setMode('practice-hub')}
-                              className="group flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3.5 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
-                            >
-                              <span className="flex items-center gap-3">
-                                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
-                                  <Target className="h-4 w-4" />
-                                </span>
-                                <span>
-                                  <span className="block text-sm font-bold text-slate-900">Practice by Skill</span>
-                                  {top5Target[0] && (() => {
-                                    const s = getSkillById(top5Target[0][0] as any);
-                                    return s ? <span className="block text-xs text-slate-500 mt-0.5">{s.name}</span> : null;
-                                  })()}
-                                </span>
-                              </span>
-                              <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
-                            </button>
-
-                            {/* Random Questions */}
-                            <button
-                              onClick={() => startPractice()}
-                              className="group flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3.5 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
-                            >
-                              <span className="flex items-center gap-3">
-                                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
-                                  <Shuffle className="h-4 w-4" />
-                                </span>
-                                <span>
-                                  <span className="block text-sm font-bold text-slate-900">Random Questions</span>
-                                  <span className="block text-xs text-slate-500 mt-0.5">Based on your level of need</span>
-                                </span>
-                              </span>
-                              <ChevronRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-amber-700" />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* AI Tutor shortcut */}
-                        <button
-                          onClick={() => setMode('tutor')}
-                          className="editorial-button-dark flex w-full items-center justify-between rounded-[1.75rem] px-5 py-4 text-left"
-                        >
-                          <span>
-                            <span className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-amber-400">
-                              <MessageCircle className="h-4 w-4" />
-                              AI Tutor
-                            </span>
-                            <span className="mt-1.5 block text-sm font-medium leading-normal text-slate-300">
-                              Ask a question about any skill
-                            </span>
-                          </span>
-                          <ChevronRight className="h-4 w-4 shrink-0 text-amber-300" />
-                        </button>
-                      </div>
-                    </div>
-                  </>
+                  <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading dashboard...</div>}>
+                    <DashboardHome
+                      firstName={firstName}
+                      demonstratingCount={demonstratingCount}
+                      readinessTarget={readinessTarget}
+                      readinessPhase={readinessPhase}
+                      skillsToReadiness={skillsToReadiness}
+                      srsOverdueSkills={srsOverdueSkills}
+                      weakestSkill={weakestSkillInfo}
+                      weakestDomain={weakestDomain}
+                      dailyQuestionCount={dailyQuestionCount}
+                      dailyGoal={DAILY_GOAL}
+                      weeklyUsageSeconds={weeklyUsageSeconds}
+                      weeklyQuestionCount={weeklyQuestionCount}
+                      weeklyAccuracy={weeklyAccuracy}
+                      redemptionBankCount={redemption.bankCount}
+                      redemptionCredits={redemption.credits}
+                      questionsToNextCredit={redemption.questionsToNextCredit}
+                      redemptionHighScore={redemption.highScore}
+                      progressSummary={progressSummary}
+                      onStartPractice={startPractice}
+                      onStartSkillPractice={startSkillPractice}
+                      onOpenLearningPathModule={openLearningPathModule}
+                      onStartRedemption={handleStartRedemption}
+                      onNavigate={setMode as any}
+                    />
+                  </Suspense>
                 )}
               </div>
             );

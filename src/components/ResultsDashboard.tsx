@@ -127,12 +127,36 @@ export default function ResultsDashboard({
   const [expandedDomains, setExpandedDomains] = useState<Set<number>>(new Set()); // all collapsed by default
   const [advancedExpanded, setAdvancedExpanded] = useState(false);
   const [conceptsExpanded, setConceptsExpanded] = useState(false);
+  const [showBaseline, setShowBaseline] = useState(false);
 
   // ── Progress data ───────────────────────────────────────────────────────────
   const progress = useMemo(
     () => buildProgressSummary(userProfile.skillScores, skills),
     [userProfile.skillScores, skills]
   );
+
+  // ── Baseline comparison ────────────────────────────────────────────────────
+  const hasBaseline = Boolean(userProfile.baselineSnapshot);
+  const baselineProgress = useMemo(
+    () => userProfile.baselineSnapshot
+      ? buildProgressSummary(userProfile.baselineSnapshot as any, skills)
+      : null,
+    [userProfile.baselineSnapshot, skills]
+  );
+
+  // Compute growth metrics: skills that improved since baseline
+  const growthMetrics = useMemo(() => {
+    if (!baselineProgress) return null;
+    let emergedToApproaching = 0;
+    let approachingToDemo = 0;
+    for (const skill of progress.skills) {
+      const baseSkill = baselineProgress.skills.find(s => s.skillId === skill.skillId);
+      if (!baseSkill) continue;
+      if (baseSkill.colorState === 'red' && (skill.colorState === 'yellow' || skill.colorState === 'green')) emergedToApproaching++;
+      if ((baseSkill.colorState === 'red' || baseSkill.colorState === 'yellow') && skill.colorState === 'green') approachingToDemo++;
+    }
+    return { emergedToApproaching, approachingToDemo };
+  }, [progress, baselineProgress]);
 
   const demonstratingCount = progress.skills.filter(s => s.colorState === 'green').length;
   const approachingCount = progress.skills.filter(s => s.colorState === 'yellow').length;
@@ -300,6 +324,42 @@ export default function ResultsDashboard({
         </button>
       )}
 
+      {/* ── Growth since baseline ─────────────────────────────────────────── */}
+      {hasBaseline && growthMetrics && (
+        <div className="editorial-surface p-4 sm:p-5">
+          <div className="flex items-center justify-between mb-3">
+            <p className="editorial-overline">Growth since diagnostic</p>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <span className="text-[11px] text-slate-500">Show baseline</span>
+              <input
+                type="checkbox"
+                checked={showBaseline}
+                onChange={e => setShowBaseline(e.target.checked)}
+                className="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              />
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-3 text-center">
+              <p className="text-2xl font-extrabold text-emerald-600">{growthMetrics.approachingToDemo}</p>
+              <p className="text-[11px] text-slate-500 mt-1">Skills reached Demonstrating</p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-3 text-center">
+              <p className="text-2xl font-extrabold text-amber-600">{growthMetrics.emergedToApproaching}</p>
+              <p className="text-[11px] text-slate-500 mt-1">Skills improved a tier</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+              <p className="text-2xl font-extrabold text-slate-800">{demonstratingCount}</p>
+              <p className="text-[11px] text-slate-500 mt-1">Currently Demonstrating</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+              <p className="text-2xl font-extrabold text-slate-800">{baselineProgress ? baselineProgress.skills.filter(s => s.colorState === 'green').length : 0}</p>
+              <p className="text-[11px] text-slate-500 mt-1">Baseline Demonstrating</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Domain breakdown ─────────────────────────────────────────────────── */}
       <div className="space-y-2">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -307,6 +367,7 @@ export default function ResultsDashboard({
           <p className="text-[11px] text-slate-500">
             Goal: {READINESS_TARGET} of {TOTAL_SKILLS} skills {PROFICIENCY_META.proficient.label} ·{' '}
             <span className="text-amber-700/80">marker = target</span>
+            {showBaseline && hasBaseline && <> · <span className="text-indigo-500/80">ghost = baseline</span></>}
           </p>
         </div>
 
@@ -316,6 +377,14 @@ export default function ResultsDashboard({
           const barPct = Math.round((demonstrating / Math.max(domain.activeSkillCount, 1)) * 100);
           const barColor = barPct >= 70 ? 'bg-emerald-400' : barPct >= 50 ? 'bg-amber-400' : 'bg-rose-400';
           const examWeight = EXAM_WEIGHTS[domain.domainId] ?? 0;
+
+          // Baseline ghost bar
+          const baselineDomain = showBaseline && baselineProgress
+            ? baselineProgress.domains.find(d => d.domainId === domain.domainId)
+            : null;
+          const baselineBarPct = baselineDomain
+            ? Math.round((baselineDomain.strongerSkillCount / Math.max(baselineDomain.activeSkillCount, 1)) * 100)
+            : 0;
 
           return (
             <div
@@ -340,11 +409,18 @@ export default function ResultsDashboard({
                     </div>
                   </div>
 
-                  {/* Progress bar with 70% goal line */}
+                  {/* Progress bar with 70% goal line + optional baseline ghost */}
                   <div className="relative h-2" style={{ overflow: 'visible' }}>
                     <div className="absolute inset-0 rounded-full overflow-hidden bg-slate-100">
+                      {/* Baseline ghost bar (shown behind current) */}
+                      {showBaseline && baselineDomain && baselineBarPct > 0 && (
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-full bg-indigo-200/60"
+                          style={{ width: `${baselineBarPct}%` }}
+                        />
+                      )}
                       <div
-                        className={`h-full rounded-full transition-all duration-700 ${barColor}`}
+                        className={`h-full rounded-full transition-all duration-700 ${barColor} relative z-[1]`}
                         style={{ width: `${barPct}%` }}
                       />
                     </div>

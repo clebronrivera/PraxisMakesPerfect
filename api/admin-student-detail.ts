@@ -88,7 +88,8 @@ export const handler = async (event: {
       .from('responses')
       .select(
         'question_id, skill_id, domain_id, assessment_type, is_correct, confidence, ' +
-        'time_on_item_seconds, selected_answers, correct_answers, session_id, created_at'
+        'time_on_item_seconds, selected_answers, correct_answers, session_id, created_at, ' +
+        'is_followup, cognitive_complexity, skill_question_index'
       )
       .eq('user_id', targetUserId)
       .order('created_at', { ascending: true });

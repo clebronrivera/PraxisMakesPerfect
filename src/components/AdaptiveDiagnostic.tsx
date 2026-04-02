@@ -1,9 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import { UserResponse } from '../brain/weakness-detector';
 import { clearSession } from '../utils/sessionStorage';
 import { deleteUserSession, loadUserSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
+
+const TutorialWalkthrough = lazy(() => import('./TutorialWalkthrough'));
 import {
   AnalyzedQuestion,
   getQuestionChoiceText,
@@ -36,6 +38,9 @@ interface AdaptiveDiagnosticProps {
     selectedAnswers: string[];
     correctAnswers: string[];
     distractorPatternId?: string;
+    is_followup?: boolean;
+    cognitive_complexity?: string;
+    skill_question_index?: number;
   }) => Promise<void>;
   updateSkillProgress?: (
     skillId: SkillId,
@@ -129,12 +134,28 @@ export default function AdaptiveDiagnostic({
     return counts;
   });
 
+  // Track which question IDs are follow-ups (adaptive) vs initial queue
+  const [followUpIds] = useState<Set<string>>(() => {
+    if (isResuming) {
+      const initialIds = new Set(initialQueue.map(q => q.id));
+      return new Set(queue.filter(q => !initialIds.has(q.id)).map(q => q.id));
+    }
+    return new Set<string>();
+  });
+
   const [currentIndex, setCurrentIndex] = useState(isResuming ? savedSession!.currentIndex : 0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>(isResuming ? savedSession!.selectedAnswers : []);
   const [confidence, setConfidence] = useState<'low' | 'medium' | 'high'>(isResuming ? savedSession!.confidence : 'medium');
   const [startTime] = useState<number>(isResuming ? savedSession!.startTime : Date.now());
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Show diagnostic tutorial on first-ever diagnostic (not on resume)
+  const diagTutorialKey = sessionId ? `pmp-diagnostic-tutorial-seen-${sessionId.split('-')[0]}` : 'pmp-diagnostic-tutorial-seen';
+  const [showDiagTutorial, setShowDiagTutorial] = useState(() => {
+    if (isResuming) return false; // Don't show on resume
+    try { return !localStorage.getItem(diagTutorialKey); } catch { return false; }
+  });
 
   const currentQuestion = queue[currentIndex];
   const [isSubmitted, setIsSubmitted] = useState(
@@ -279,9 +300,10 @@ export default function AdaptiveDiagnostic({
       }
 
       if (logResponse && sessionId) {
+        const skillId = currentQuestion.skillId || '';
         await logResponse({
           questionId: currentQuestion.id,
-          skillId: currentQuestion.skillId || '',
+          skillId,
           domainIds: currentQuestion.domains || [],
           assessmentType: 'adaptive',
           sessionId,
@@ -292,7 +314,10 @@ export default function AdaptiveDiagnostic({
           timestamp,
           selectedAnswers,
           correctAnswers: correctAnswersList,
-          distractorPatternId
+          distractorPatternId,
+          is_followup: followUpIds.has(currentQuestion.id),
+          cognitive_complexity: currentQuestion.cognitiveComplexity || undefined,
+          skill_question_index: skillId ? (skillQuestionCount[skillId] || 1) : undefined
         });
       }
 
@@ -327,6 +352,7 @@ export default function AdaptiveDiagnostic({
           const pool = followUpPool[skillId];
           if (pool && pool.length > 0) {
             const followUp = pool[0];
+            followUpIds.add(followUp.id); // Track as follow-up for audit
             const updatedPool = { ...followUpPool, [skillId]: pool.slice(1) };
             setFollowUpPool(updatedPool);
             setQueue(prev => [...prev, followUp]);
@@ -371,6 +397,18 @@ export default function AdaptiveDiagnostic({
 
   return (
     <div className="space-y-3">
+      {/* Diagnostic Tutorial (shown once before first question) */}
+      {showDiagTutorial && (
+        <Suspense fallback={null}>
+          <TutorialWalkthrough
+            variant="diagnostic"
+            onDismiss={() => {
+              setShowDiagTutorial(false);
+              try { localStorage.setItem(diagTutorialKey, '1'); } catch {}
+            }}
+          />
+        </Suspense>
+      )}
       {/* Resume Notice */}
       {isResuming && currentIndex > 0 && (
         <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-3">

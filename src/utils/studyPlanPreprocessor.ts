@@ -28,7 +28,7 @@ import {
 import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
 import { toMetadataId } from '../data/skillIdMap';
 import questionsRaw from '../data/questions.json';
-import skillPhaseDRaw from '../data/skill-phase-d.json';
+import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
 import { findMisconceptionByText, getMisconceptionsByProgressSkill } from './misconceptionRegistry';
 import {
   computeFragilityFlag,
@@ -358,16 +358,6 @@ function getQuestionIndex(): Map<string, Record<string, string>> {
   return _questionIndex;
 }
 
-// Lazy index for Phase D skill metadata (nasp_domain_primary, skill_prerequisites, prereq_chain_narrative)
-let _skillPhaseDIndex: Map<string, Record<string, string>> | null = null;
-function getSkillPhaseD(skillId: string): Record<string, string> | undefined {
-  if (!_skillPhaseDIndex) {
-    _skillPhaseDIndex = new Map(
-      Object.entries(skillPhaseDRaw as Record<string, Record<string, string>>)
-    );
-  }
-  return _skillPhaseDIndex.get(skillId);
-}
 
 /**
  * Groups skill states by contentCluster, ranks by aggregate urgency,
@@ -426,7 +416,7 @@ export function buildPrecomputedClusters(
             dominantSkillDeficit  = q[`distractor_skill_deficit_${letter}`] || undefined;
           }
         }
-        const phaseD = getSkillPhaseD(s.skillId);
+        const phaseD = getSkillPhaseDEntry(s.skillId);
         return {
           skillId: s.skillId,
           skillName: s.skillId, // caller can enrich with real name from skill lookup

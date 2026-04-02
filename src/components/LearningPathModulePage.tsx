@@ -47,6 +47,7 @@ import { useModuleVisitTracking } from '../hooks/useModuleVisitTracking';
 import { useSectionObserver } from '../hooks/useSectionObserver';
 import type { InteractiveResult } from '../hooks/useModuleVisitTracking';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
+import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
 import type { UserProfile } from '../hooks/useProgressTracking';
@@ -313,6 +314,7 @@ export default function LearningPathModulePage({
   const focusItems = useFocusItems(userId, skillId, latestStudyPlan);
 
   const skillDef = getProgressSkillDefinition(skillId);
+  const phaseD = getSkillPhaseDEntry(skillId);
   const modules = getAllModulesForSkill(skillId);
   const skillTerms = (skillVocabMap as { skills: Record<string, { vocabularyTerms: string[] }> })
     .skills[skillId]?.vocabularyTerms ?? [];
@@ -591,6 +593,14 @@ export default function LearningPathModulePage({
           </div>
         )}
       </div>
+
+      {/* ── Prerequisites ────────────────────────────────────────────────── */}
+      {phaseD?.skill_prerequisites && (
+        <div className="editorial-surface-soft px-4 py-3 no-print">
+          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-1.5">Prerequisites</p>
+          <p className="text-xs text-slate-600 whitespace-pre-line leading-relaxed">{phaseD.skill_prerequisites}</p>
+        </div>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════════════
           SECTION 1 — LESSON CONTENT
