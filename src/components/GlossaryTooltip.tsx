@@ -26,14 +26,14 @@ export default function GlossaryTooltip({ term, definition }: GlossaryTooltipPro
       onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
     >
       {/* Term — dotted underline signals "this is a vocabulary word" */}
-      <span className="border-b border-dotted border-indigo-400 text-indigo-700 cursor-help">
+      <span className="border-b border-dotted border-amber-400 text-amber-700 cursor-help">
         {term}
       </span>
 
       {/* Tooltip panel — positioned above the term */}
       {open && (
         <span className="absolute bottom-full left-0 z-50 mb-2 block w-56 rounded-xl bg-slate-900 px-3 py-2.5 shadow-2xl text-left pointer-events-none">
-          <span className="block text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">
+          <span className="block text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-1">
             {term}
           </span>
           <span className="block text-xs text-slate-200 leading-relaxed">

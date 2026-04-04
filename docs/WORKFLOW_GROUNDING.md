@@ -341,6 +341,57 @@ Some historical exports or merges produced **structurally invalid MCQ rows** wit
 
 **Incident (2026-03-19):** Four IDs had this corruption and were repaired: `PQ_SWP-02_11`, `PQ_DBD-09_20`, `PQ_SAF-01_18`, `PQ_ETH-03_17`. Details: [ISSUE_LEDGER.md](./ISSUE_LEDGER.md) (entry dated 2026-03-19).
 
+### 3.10 Admin dashboard and progress visualization design rules
+
+These rules capture decisions made during the April 2026 admin dashboard audit and UI improvement sprint.
+
+**Two-tone progress bars (ResultsDashboard + admin StudentDetailDrawer)**
+- Replace the old ghost-bar overlay (two absolutely-positioned divs) with a single flex-row bar.
+- Left segment = baseline at diagnostic: `bg-indigo-900` (dark indigo).
+- Right segment = growth since diagnostic: `bg-indigo-500` (bright indigo).
+- Regression case (current < baseline): full bar `bg-rose-500/70`; show a thin vertical tick at the baseline position labeled "baseline".
+- No-baseline case: retain existing single-color bar behavior.
+- Code anchor: `src/components/ResultsDashboard.tsx` lines 382–426.
+
+**Admin Growth panel (StudentDetailDrawer)**
+- `api/admin-student-detail.ts` must query `user_progress` for `baseline_snapshot`, `skill_scores`, and `adaptive_diagnostic_completed_at` in addition to the existing `responses` query.
+- A "Growth Since Diagnostic" panel appears between Domain Performance and Skill Breakdown.
+- Panel shows: per-skill two-tone bars, summary counts (improved / regressed / unchanged), and days since diagnostic.
+- `baseline_snapshot` is read-only — never overwrite it in admin views.
+- Code anchors: `api/admin-student-detail.ts`, `src/components/StudentDetailDrawer.tsx`.
+
+**Simplified onboarding (6 fields)**
+- New users collect: first name, last name, zip code, school attending (with "Not enrolled" checkbox), purpose (dropdown), how did you hear (dropdown).
+- Email is already collected at signup — do not re-collect.
+- Old onboarding fields (`account_role`, `study_goals`, etc.) remain in `user_progress` for existing users — do not drop columns.
+- New columns added in migration `0017_simplified_onboarding.sql`: `first_name`, `last_name`, `zip_code`, `school_attending`, `purpose`, `how_did_you_hear`.
+- Backfill: if `first_name` is null but `full_name` exists, split on first space: `first_name = parts[0], last_name = parts.slice(1).join(' ')`.
+- Remove `NASP_PROGRAMS_BY_STATE` import from `OnboardingFlow.tsx` after verifying it is not imported elsewhere.
+- Code anchors: `src/components/OnboardingFlow.tsx`, `src/hooks/useProgressTracking.ts`, `src/utils/onboardingFormToSavePayload.ts`, `src/utils/onboardingProfileMapping.ts`.
+
+**Post-assessment trigger**
+- When `demonstratingCount >= READINESS_TARGET (32)` AND `post_assessment_snapshot` is null, show a readiness banner on `DashboardHome`.
+- Post-assessment reuses the adaptive diagnostic engine with `assessment_type = 'post_assessment'` and `excludeQuestionIds = profile.diagnosticQuestionIds`.
+- On completion write `post_assessment_snapshot` one time only (same pattern as baseline capture in `useAssessmentFlow.ts`).
+- New columns added in migration `0018_post_assessment_snapshot.sql`: `post_assessment_snapshot`, `post_assessment_completed_at`.
+- `formatMode()` in `StudentDetailDrawer.tsx` must handle `'post_assessment'` → `'Post-Assessment'`.
+- Code anchors: `src/components/DashboardHome.tsx`, `src/hooks/useAssessmentFlow.ts`, `src/components/PostAssessmentReport.tsx` (new).
+
+**Admin dashboard charting (recharts)**
+- recharts v3.8.1 is installed.
+- Overview tab: engagement funnel (horizontal `BarChart` layout="vertical" with `Cell` per bar) + cohort tier distribution (stacked `BarChart`, three bars: Demonstrating/Approaching/Emerging per domain).
+- Item Analysis tab: difficulty vs. discrimination scatter plot (`ScatterChart` with `ReferenceLine` at x=0.2, x=0.9, y=0).
+- StudentDetailDrawer: per-skill accuracy horizontal bar chart (`BarChart` layout="vertical" with `ReferenceLine` at x=0.8, `Cell` color by tier).
+- All `ResponsiveContainer` wrappers require explicit `height={260}` — silently renders 0px without it.
+- Code anchors: `src/components/AdminDashboard.tsx`, `src/components/ItemAnalysisTab.tsx`, `src/components/StudentDetailDrawer.tsx`.
+
+**Item Analysis pagination**
+- `api/admin-item-analysis.ts` accepts `page`, `pageSize` (50), `domain`, `flag`, `minAttempts` query params.
+- Full aggregation still happens server-side (discrimination requires full user-score distribution); only the result slice and summary stats are returned per page.
+- Response shape: `{ items: ItemStat[], totalCount: number, page: number, pageSize: number, summaryStats: {...} }`.
+- Client adds 300ms debounce on filter inputs; resets `page` to 1 on any filter change.
+- StudentDetailDrawer adaptive audit table: client-side pagination only, 50 rows/page, reset on user change.
+
 ### 3.10 Repo hygiene for local-only artifacts
 
 - Canonical runtime inputs belong in tracked source locations such as `src/data/`, `src/brain/`, `scripts/`, and the active docs set.

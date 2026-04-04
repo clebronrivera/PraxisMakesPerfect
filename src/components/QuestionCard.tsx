@@ -104,6 +104,7 @@ export default function QuestionCard({
             onClick={() => setShowReportModal(true)}
             className="rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
             title="Report this question"
+            aria-label="Report this question"
           >
             <AlertTriangle className="w-4 h-4" />
           </button>

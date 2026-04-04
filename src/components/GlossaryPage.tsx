@@ -121,7 +121,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
               <CheckCircle2 size={10} /> Revealed
             </span>
           ) : hasDef ? (
-            <span className="flex items-center gap-1 text-[10px] text-indigo-500 font-medium">
+            <span className="flex items-center gap-1 text-[10px] text-amber-500 font-medium">
               <Circle size={10} /> Defined
             </span>
           ) : (
@@ -140,7 +140,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
           onBlur={handleBlur}
           rows={3}
           placeholder="Write what this term means to you…"
-          className="w-full text-sm text-slate-700 bg-white border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 placeholder:text-slate-400 transition"
+          className="w-full text-sm text-slate-700 bg-white border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 placeholder:text-slate-400 transition"
         />
         <div className="h-4 flex items-center">
           {saving && (
@@ -159,7 +159,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
       {/* ── Column 3: Official definition ──────────────────────────────── */}
       <div className="px-4 py-4 flex flex-col gap-2 justify-start">
         {isRevealed ? (
-          <div className="text-sm text-slate-700 leading-relaxed bg-indigo-50/60 border border-indigo-100 rounded-lg px-3 py-2">
+          <div className="text-sm text-slate-700 leading-relaxed bg-amber-50/60 border border-amber-100 rounded-lg px-3 py-2">
             {officialDef}
           </div>
         ) : (
@@ -171,7 +171,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
             <button
               onClick={handleReveal}
               disabled={revealing}
-              className="self-start flex items-center gap-1.5 text-xs font-medium text-indigo-600 border border-indigo-200 rounded-lg px-3 py-1.5 hover:bg-indigo-50 active:scale-95 transition disabled:opacity-50"
+              className="self-start flex items-center gap-1.5 text-xs font-medium text-amber-700 border border-amber-200 rounded-lg px-3 py-1.5 hover:bg-amber-50 active:scale-95 transition disabled:opacity-50"
             >
               {revealing ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -267,7 +267,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center py-24">
-        <Loader2 className="animate-spin text-indigo-400" size={28} />
+        <Loader2 className="animate-spin text-amber-400" size={28} />
       </div>
     );
   }
@@ -281,14 +281,14 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
             onClick={() => setActiveTab('terms')}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
               activeTab === 'terms'
-                ? 'bg-white text-indigo-700 border-slate-200 relative z-10 -mb-px'
+                ? 'bg-white text-amber-700 border-slate-200 relative z-10 -mb-px'
                 : 'bg-slate-50 text-slate-500 border-transparent hover:text-slate-700'
             }`}
           >
             <BookMarked size={14} />
             My Terms
             {total > 0 && (
-              <span className="ml-1 text-[10px] bg-indigo-100 text-indigo-600 rounded-full px-1.5 py-0.5 font-bold">
+              <span className="ml-1 text-[10px] bg-amber-100 text-amber-700 rounded-full px-1.5 py-0.5 font-bold">
                 {total}
               </span>
             )}
@@ -327,8 +327,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
           <div className="sticky top-[53px] z-10">
             <div className="px-6 pt-4 pb-4 bg-white border-b border-slate-200">
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
-                  <BookMarked size={18} className="text-indigo-600" />
+                <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <BookMarked size={18} className="text-amber-600" />
                 </div>
                 <div>
                   <h1 className="text-lg font-bold text-slate-800">My Glossary</h1>
@@ -344,7 +344,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                 <div className="mt-3 flex flex-wrap gap-3">
                   <StatChip label="Total" value={total} color="slate" />
                   <StatChip label="To Define" value={totalToDo} color="amber" />
-                  <StatChip label="Defined" value={totalDefined} color="indigo" />
+                  <StatChip label="Defined" value={totalDefined} color="amber" />
                   <StatChip label="Revealed" value={totalRevealed} color="emerald" />
                 </div>
               )}
@@ -363,7 +363,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search terms…"
-                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-200"
                     />
                   </div>
 
@@ -382,8 +382,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                         onClick={() => setFilter(id)}
                         className={`text-xs px-3 py-1 rounded-full border transition font-medium ${
                           filter === id
-                            ? 'bg-indigo-600 text-white border-indigo-600'
-                            : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+                            ? 'bg-amber-500 text-slate-900 border-amber-500'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-amber-300 hover:text-amber-700'
                         }`}
                       >
                         {label}
@@ -466,8 +466,8 @@ function StatChip({
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-24 px-6 text-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center">
-        <Sparkles size={28} className="text-indigo-400" />
+      <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center">
+        <Sparkles size={28} className="text-amber-400" />
       </div>
       <div>
         <h2 className="text-base font-semibold text-slate-700 mb-1">
@@ -494,7 +494,7 @@ function EmptyState() {
 function Step({ n, text }: { n: number; text: string }) {
   return (
     <div className="flex items-start gap-2 text-xs text-slate-600">
-      <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+      <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
         {n}
       </span>
       {text}

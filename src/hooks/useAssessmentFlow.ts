@@ -377,18 +377,7 @@ export function useAssessmentFlow({
   // ── handleScreenerComplete ──────────────────────────────────────────────────
   const handleScreenerComplete = useCallback(
     async (responses: UserResponse[]) => {
-      const questionCount = responses.length;
-      const correctCount = responses.filter(r => r.isCorrect).length;
-      const durationMs = assessmentStartTime > 0 ? Date.now() - assessmentStartTime : 0;
       const questionIds = screenerQuestions.map(q => q.id);
-
-      console.log('[ScreenerAssessment] Complete', {
-        questionCount,
-        correctCount,
-        durationMs,
-        questionIds: questionIds.length,
-        responsesSaved: responses.length,
-      });
 
       const analysis = detectWeaknesses(responses, analyzedQuestions);
 
@@ -418,7 +407,7 @@ export function useAssessmentFlow({
       clearSession();
       setSelectedSessionId(undefined);
 
-      console.log('[ScreenerAssessment] Results saved to Supabase, navigating to score report');
+      // Results saved to Supabase — navigating to score report
 
       setLastAssessmentResponses(responses);
       setLastAssessmentType('screener');
@@ -440,18 +429,7 @@ export function useAssessmentFlow({
   // ── handleFullAssessmentComplete ────────────────────────────────────────────
   const handleFullAssessmentComplete = useCallback(
     async (responses: UserResponse[]) => {
-      const questionCount = responses.length;
-      const correctCount = responses.filter(r => r.isCorrect).length;
-      const durationMs = assessmentStartTime > 0 ? Date.now() - assessmentStartTime : 0;
       const questionIds = fullAssessmentQuestions.map(q => q.id);
-
-      console.log('[FullAssessment] Complete', {
-        questionCount,
-        correctCount,
-        durationMs,
-        questionIds: questionIds.length,
-        responsesSaved: responses.length,
-      });
 
       const analysis = detectWeaknesses(responses, analyzedQuestions);
 
@@ -469,8 +447,6 @@ export function useAssessmentFlow({
       }
       clearSession();
       setSelectedSessionId(undefined);
-
-      console.log('[FullAssessment] Results saved to Supabase, navigating to score report');
 
       setLastAssessmentResponses(responses);
       setLastAssessmentType('full-assessment');

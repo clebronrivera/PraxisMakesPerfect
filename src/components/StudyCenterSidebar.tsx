@@ -56,6 +56,7 @@ export default function StudyCenterSidebar({
           <button
             onClick={onClose}
             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            aria-label="Close study center"
           >
             <X className="w-4 h-4" />
           </button>

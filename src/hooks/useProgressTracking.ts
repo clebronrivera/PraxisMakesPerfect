@@ -647,7 +647,7 @@ export function useProgressTracking() {
     try {
       await saveProfile(defaultProfile);
       setProfileState(defaultProfile);
-      console.log('[ResetProgress] All progress cleared in Supabase');
+      // Progress cleared
     } catch (error) {
       console.error('Error resetting Supabase progress:', error);
       setProfileState(defaultProfile);
@@ -892,7 +892,7 @@ export function useProgressTracking() {
       if (!user) return null;
       try {
         const result = await calculateAndSaveGlobalScores(user.id);
-        console.log('[GlobalScores] Recalculated and saved:', result);
+        // Global scores recalculated
         return result;
       } catch (error) {
         console.error('[GlobalScores] Error recalculating:', error);

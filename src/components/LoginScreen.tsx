@@ -11,9 +11,7 @@ import {
   Loader2,
   Mail,
   Shield,
-  Sparkles,
   Target,
-  TrendingUp,
   Zap,
 } from 'lucide-react';
 import { PRIMARY_ADMIN_EMAIL } from '../config/admin';
@@ -21,7 +19,7 @@ import { PRIMARY_ADMIN_EMAIL } from '../config/admin';
 type PreviewTab = 'question' | 'skills' | 'plan';
 
 const stats = [
-  { icon: BookOpen, value: '450+', label: 'Practice questions' },
+  { icon: BookOpen, value: '1,150+', label: 'Practice questions' },
   { icon: Target, value: '45', label: 'Skills tracked' },
   { icon: BarChart3, value: '4', label: 'Domains covered' },
   { icon: Clock3, value: '15 min', label: 'Average session' },
@@ -31,33 +29,6 @@ const previewTabs: Array<{ key: PreviewTab; label: string; icon: typeof Zap }> =
   { key: 'question', label: 'Practice', icon: Zap },
   { key: 'skills', label: 'Skill map', icon: BarChart3 },
   { key: 'plan', label: 'Study plan', icon: Brain },
-];
-
-const featureCards = [
-  {
-    icon: Target,
-    title: 'Adaptive diagnostic',
-    description: 'An assessment that adapts to your responses across all 45 skills. Strong areas go fast, weaker areas get more attention.',
-    accent: 'bg-amber-50 text-amber-700 border-amber-200',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Start practicing immediately',
-    description: 'No gates or waitlists. Jump into practice the moment you sign up, even before finishing the diagnostic.',
-    accent: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  },
-  {
-    icon: Sparkles,
-    title: 'Learning path & skill tracking',
-    description: 'A structured learning path ordered by your biggest gaps, with progress tracked across all four exam domains.',
-    accent: 'bg-blue-50 text-blue-700 border-blue-200',
-  },
-];
-
-const heroProofPoints = [
-  'Built specifically for Praxis School Psychology 5403',
-  'Tracks progress across all 45 testable skills',
-  'Start practicing immediately — no waiting required',
 ];
 
 const heroJourney = [
@@ -257,6 +228,7 @@ export default function LoginScreen() {
   const { signInWithEmail, signUpWithEmail, resetPassword, error, loading, clearError } = useAuth();
 
   const [mode, setMode] = useState<'login' | 'signup' | 'reset'>('login');
+  const [formOpen, setFormOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -314,464 +286,377 @@ export default function LoginScreen() {
     setMode('login');
   };
 
-  const focusAccountPanel = (nextMode: 'login' | 'signup') => {
+  const openForm = (nextMode: 'login' | 'signup') => {
     clearError();
     setResetEmailSent(false);
     setMode(nextMode);
+    setFormOpen(true);
+  };
 
-    window.requestAnimationFrame(() => {
-      document.getElementById('account-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  const closeForm = () => {
+    clearError();
+    setFormOpen(false);
   };
 
   const inputClassName =
     'w-full rounded-[1.35rem] border border-slate-200 bg-[#fbfaf7] px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-200/70';
 
   return (
-    <div className="editorial-shell relative h-screen overflow-hidden" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-[24rem] bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.12),_transparent_45%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.08),_transparent_35%)]" />
-        <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-200/20 blur-3xl" />
+    <div className="min-h-screen bg-[#f7f6f2]" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
+
+      {/* ── Top Nav ─────────────────────────────────────────── */}
+      <div className="max-w-5xl mx-auto px-4 pt-6 pb-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white font-black text-xs">P</div>
+          <span className="font-bold text-slate-900 text-sm">Praxis Makes Perfect</span>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => openForm('login')}
+            className="rounded-full border border-[#e6dfd4] bg-[#fffaf0] px-4 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-colors"
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            onClick={() => openForm('signup')}
+            className="rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-amber-600 hover:text-white transition-colors"
+          >
+            Create account
+          </button>
+        </div>
       </div>
 
-      <div className="relative z-10 flex h-full flex-col lg:flex-row">
-        <aside className="hidden lg:flex lg:w-72 lg:flex-shrink-0 lg:flex-col lg:overflow-y-auto lg:bg-[#0f172a] lg:shadow-2xl">
-          <div className="p-8">
-            <div className="group flex items-center gap-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-amber-500 opacity-20 blur-lg transition-opacity group-hover:opacity-60" />
-                <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
-                  <Brain className="h-5 w-5 text-white" />
-                </div>
+      {/* ── Hero ────────────────────────────────────────────── */}
+      <div className="max-w-5xl mx-auto px-4 pt-10 pb-16 space-y-12">
+
+        {/* Hero copy */}
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="flex justify-center gap-2 mb-4 flex-wrap">
+            <span className="editorial-pill">Built for School Psychology Candidates</span>
+            <span className="editorial-pill">Adaptive Diagnostic</span>
+            <span className="editorial-pill">Practice Any Time</span>
+          </div>
+          <p className="editorial-overline mb-2">PRAXIS 5403 PREP</p>
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-4">
+            Stop guessing what to study for Praxis 5403.
+          </h1>
+          <p className="text-base text-slate-500 leading-relaxed mb-6">
+            Praxis Study gives you a clear baseline, targeted practice, and a personalized next-step plan so each session moves the weakest skills forward instead of wasting time on random review.
+          </p>
+          <div className="flex justify-center gap-3 flex-wrap">
+            <button
+              type="button"
+              onClick={() => openForm('signup')}
+              className="rounded-full bg-amber-500 px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-amber-600 hover:text-white transition-colors"
+            >
+              Create account →
+            </button>
+            <button
+              type="button"
+              onClick={() => openForm('login')}
+              className="rounded-full border border-[#e6dfd4] bg-[#fffaf0] px-6 py-3 text-sm font-semibold text-amber-700 hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-colors"
+            >
+              Sign in
+            </button>
+          </div>
+        </div>
+
+        {/* Why It Feels Different */}
+        <div>
+          <p className="editorial-overline text-center mb-6">WHY IT FEELS DIFFERENT</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="editorial-surface p-5">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-3 border border-amber-200">
+                <Target className="h-5 w-5 text-amber-700" />
               </div>
-              <div>
-                <p className="text-xl font-bold italic tracking-tight text-white">
-                  Praxis<span className="text-amber-500">.</span>Ai
-                </p>
-                <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">School Psychology 5403</p>
-              </div>
+              <p className="font-bold text-slate-800 text-sm mb-1">Built specifically for Praxis School Psychology 5403</p>
             </div>
-
-            <div className="mt-8 space-y-5">
-              <div>
-                <p className="editorial-overline text-slate-500">Why learners use it</p>
-                <p className="mt-3 text-3xl font-bold tracking-tight text-white">
-                  A Praxis 5403 study system, not another generic quiz app.
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-slate-400">
-                  The product is designed to show school psychology candidates what to study next, why it matters, and how close they are to real readiness.
-                </p>
+            <div className="editorial-surface p-5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3 border border-emerald-200">
+                <BarChart3 className="h-5 w-5 text-emerald-700" />
               </div>
+              <p className="font-bold text-slate-800 text-sm mb-1">Tracks progress across all 45 testable skills</p>
+            </div>
+            <div className="editorial-surface p-5">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3 border border-blue-200">
+                <Zap className="h-5 w-5 text-blue-700" />
+              </div>
+              <p className="font-bold text-slate-800 text-sm mb-1">Start practicing immediately — no waiting required</p>
+            </div>
+          </div>
+        </div>
 
-              <div className="space-y-3">
-                {[
-                  'Adaptive diagnostic that adjusts to your performance',
-                  '45-skill tracking with one shared readiness vocabulary',
-                  'Start practicing immediately — pause and resume any time',
-                ].map((item) => (
-                  <div key={item} className="rounded-[1.5rem] border border-white/10 bg-white/5 px-4 py-4">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/15">
-                        <CheckCircle2 className="h-4 w-4 text-amber-300" />
-                      </div>
-                      <p className="text-sm font-medium leading-relaxed text-white">{item}</p>
+        {/* How It Works */}
+        <div>
+          <p className="editorial-overline text-center mb-6">HOW IT WORKS</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {heroJourney.map((item) => (
+              <div key={item.step} className="editorial-surface-soft p-5">
+                <div className="text-2xl font-black text-amber-500 mb-2">{item.step}</div>
+                <p className="font-bold text-slate-800 text-sm mb-1">{item.title}</p>
+                <p className="text-xs text-slate-500">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats Bar */}
+        <div className="editorial-surface p-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div key={stat.label}>
+                  <div className="flex justify-center mb-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-200 bg-amber-50">
+                      <Icon className="h-4 w-4 text-amber-700" />
                     </div>
                   </div>
-                ))}
+                  <div className="text-2xl font-black text-slate-900">{stat.value}</div>
+                  <div className="text-xs text-slate-400 uppercase font-bold tracking-wider mt-1">{stat.label}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Preview Carousel */}
+        <div className="max-w-xl mx-auto">
+          <p className="editorial-overline text-center mb-4">PREVIEW THE EXPERIENCE</p>
+          <PreviewCarousel />
+        </div>
+      </div>
+
+      {/* ── Auth Modal ──────────────────────────────────────── */}
+      {formOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) closeForm(); }}
+        >
+          <div className="editorial-surface w-full max-w-md p-6 sm:p-7 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-start justify-between mb-1">
+              <div>
+                <p className="editorial-overline">Account</p>
+                <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+                  {mode === 'login' && 'Welcome back'}
+                  {mode === 'signup' && 'Create your account'}
+                  {mode === 'reset' && 'Reset your password'}
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                  {mode === 'login' && 'Sign in to return to your dashboard, practice history, and saved study guidance.'}
+                  {mode === 'signup' && 'Create an account to save your baseline and unlock the full practice experience.'}
+                  {mode === 'reset' && 'Enter your email and we will send a secure password reset link.'}
+                </p>
               </div>
+              <button
+                type="button"
+                onClick={closeForm}
+                className="ml-4 shrink-0 rounded-full border border-slate-200 bg-white p-2 text-slate-400 hover:text-slate-700 transition-colors"
+                aria-label="Close"
+              >
+                ✕
+              </button>
             </div>
-          </div>
 
-          <div className="mt-auto border-t border-white/5 bg-black/20 p-6">
-            <div className="rounded-[1.75rem] border border-white/5 bg-white/5 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">How it opens up</p>
-              <p className="mt-3 text-sm font-bold text-white">Create an account, take the adaptive diagnostic, and everything unlocks immediately.</p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                Dashboard, Practice, Progress, and Study Guide all share one readiness view so you always know where to focus.
-              </p>
-            </div>
-          </div>
-        </aside>
-
-        <main className="relative z-10 flex-1 overflow-y-auto">
-          <header className="sticky top-0 z-20 border-b border-slate-200 bg-[#f7f6f2]/85 backdrop-blur-md">
-            <div className="mx-auto max-w-[92rem] px-5 py-3.5 sm:px-8">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 lg:hidden">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
-                    <Brain className="h-5 w-5 text-white" />
-                  </div>
+            {resetEmailSent && !error && (
+              <div className="mt-5 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-4">
+                <div className="flex items-start gap-3">
+                  <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
                   <div>
-                    <p className="text-base font-bold tracking-tight text-slate-900">Praxis Study</p>
-                    <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">School Psychology 5403</p>
+                    <p className="text-sm font-bold text-emerald-800">Reset email sent</p>
+                    <p className="mt-1 text-sm leading-relaxed text-emerald-700">
+                      Check {email} for instructions to reset your password.
+                    </p>
                   </div>
                 </div>
+              </div>
+            )}
 
-                <div className="hidden flex-wrap items-center gap-2 md:flex">
-                  <span className="editorial-pill">Adaptive practice</span>
-                  <span className="editorial-pill">Shared progress view</span>
-                  <span className="editorial-pill">Learning path</span>
+            {error && (
+              <div className="mt-5 rounded-[1.5rem] border border-rose-200 bg-rose-50 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-1 text-sm font-medium leading-relaxed text-rose-700">{error}</div>
+                  <button
+                    type="button"
+                    onClick={clearError}
+                    className="text-lg leading-none text-rose-500 transition-colors hover:text-rose-700"
+                    aria-label="Dismiss error"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {mode === 'reset' ? (
+              <form onSubmit={handlePasswordReset} className="mt-5 space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="you@example.com"
+                    required
+                    className={inputClassName}
+                  />
                 </div>
 
                 <button
-                  type="button"
-                  onClick={() => focusAccountPanel('login')}
-                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500 cursor-pointer hover:border-amber-300 hover:text-amber-700 transition-colors"
+                  type="submit"
+                  disabled={loading || !email}
+                  className="editorial-button-primary flex w-full items-center justify-center gap-2 py-3 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Sign in to continue
-                </button>
-              </div>
-            </div>
-          </header>
-
-          <div className="mx-auto max-w-[92rem] px-5 py-5 sm:px-8 sm:py-7">
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_26rem]">
-              <div className="space-y-6">
-                <section className="editorial-surface relative overflow-hidden p-7 lg:p-8">
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.14),_transparent_55%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.06),_transparent_38%)]" />
-                  <div className="relative">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="editorial-pill">Built for school psychology candidates</span>
-                      <span className="editorial-pill">Adaptive diagnostic</span>
-                      <span className="editorial-pill">Practice any time</span>
-                    </div>
-
-                    <p className="editorial-overline mt-6">Praxis 5403 prep</p>
-                    <h1 className="mt-4 max-w-4xl text-4xl font-bold tracking-tight text-slate-900 lg:text-[3.25rem]">
-                      Stop guessing what to study for Praxis 5403.
-                    </h1>
-                    <p className="mt-5 max-w-3xl text-base font-medium leading-relaxed text-slate-600 lg:text-lg">
-                      Praxis Study gives you a clear baseline, targeted practice, and a personalized next-step plan so each session moves the weakest skills forward instead of wasting time on random review.
-                    </p>
-
-                    <div className="mt-7 flex flex-wrap gap-3">
-                      <button type="button" onClick={() => focusAccountPanel('signup')} className="editorial-button-primary px-6 py-3">
-                        Create account
-                        <ChevronRight className="h-4 w-4" />
-                      </button>
-                      <button type="button" onClick={() => focusAccountPanel('login')} className="editorial-button-secondary px-6 py-3">
-                        Sign in
-                      </button>
-                    </div>
-
-                    <div className="mt-7 grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
-                      <div className="editorial-surface-soft p-5">
-                        <p className="editorial-overline">Why it feels different</p>
-                        <div className="mt-4 space-y-3">
-                          {heroProofPoints.map((point) => (
-                            <div key={point} className="flex items-start gap-3">
-                              <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full border border-amber-200 bg-amber-50">
-                                <CheckCircle2 className="h-4 w-4 text-amber-700" />
-                              </div>
-                              <p className="text-sm font-medium leading-relaxed text-slate-700">{point}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="editorial-panel-dark p-5">
-                        <p className="editorial-overline text-slate-500">How it works</p>
-                        <div className="mt-4 space-y-4">
-                          {heroJourney.map((item) => (
-                            <div key={item.step} className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
-                              <div className="flex items-start gap-3">
-                                <span className="rounded-full border border-amber-500/30 bg-amber-500/15 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-amber-300">
-                                  {item.step}
-                                </span>
-                                <div>
-                                  <p className="text-sm font-bold text-white">{item.title}</p>
-                                  <p className="mt-1 text-sm leading-relaxed text-slate-400">{item.description}</p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-7 grid gap-4 md:grid-cols-4">
-                    {stats.map((stat) => {
-                      const Icon = stat.icon;
-
-                      return (
-                        <div key={stat.label} className="editorial-surface-soft p-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-200 bg-amber-50">
-                            <Icon className="h-4 w-4 text-amber-700" />
-                          </div>
-                          <p className="mt-4 text-2xl font-black italic tracking-tight text-slate-900">{stat.value}</p>
-                          <p className="mt-1 text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">{stat.label}</p>
-                        </div>
-                      );
-                    })}
-                    </div>
-                  </div>
-                </section>
-
-                <section className="editorial-surface p-7 lg:p-8">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <p className="editorial-overline">Preview</p>
-                      <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">See what unlocks after you start</h2>
-                    </div>
-                    <p className="max-w-md text-sm font-medium leading-relaxed text-slate-500">
-                      Preview the practice flow, readiness tracking, and bigger study-plan view before you create an account.
-                    </p>
-                  </div>
-
-                  <div className="mt-6">
-                    <PreviewCarousel />
-                  </div>
-                </section>
-
-                <section className="grid gap-4 md:grid-cols-3">
-                  {featureCards.map((card) => {
-                    const Icon = card.icon;
-
-                    return (
-                      <div key={card.title} className="editorial-surface p-5">
-                        <div className={`inline-flex rounded-2xl border p-3 ${card.accent}`}>
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <p className="mt-4 text-lg font-bold text-slate-900">{card.title}</p>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-500">{card.description}</p>
-                      </div>
-                    );
-                  })}
-                </section>
-              </div>
-
-              <aside id="account-panel" className="xl:sticky xl:top-[4.5rem] xl:self-start">
-                <div className="editorial-surface p-6 sm:p-7">
-                  <div>
-                    <p className="editorial-overline">Account</p>
-                    <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">
-                      {mode === 'login' && 'Welcome back'}
-                      {mode === 'signup' && 'Create your account'}
-                      {mode === 'reset' && 'Reset your password'}
-                    </h2>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-500">
-                      {mode === 'login' && 'Sign in to return to your dashboard, practice history, and saved study guidance.'}
-                      {mode === 'signup' && 'Create an account to save your baseline, unlock the guided practice flow, and keep your study plan across devices.'}
-                      {mode === 'reset' && 'Enter your email and we will send a secure password reset link.'}
-                    </p>
-                  </div>
-
-                  {resetEmailSent && !error && (
-                    <div className="mt-6 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-4">
-                      <div className="flex items-start gap-3">
-                        <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
-                        <div>
-                          <p className="text-sm font-bold text-emerald-800">Reset email sent</p>
-                          <p className="mt-1 text-sm leading-relaxed text-emerald-700">
-                            Check {email} for instructions to reset your password.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {error && (
-                    <div className="mt-6 rounded-[1.5rem] border border-rose-200 bg-rose-50 p-4">
-                      <div className="flex items-start gap-3">
-                        <div className="flex-1 text-sm font-medium leading-relaxed text-rose-700">{error}</div>
-                        <button
-                          type="button"
-                          onClick={clearError}
-                          className="text-lg leading-none text-rose-500 transition-colors hover:text-rose-700"
-                          aria-label="Dismiss error"
-                        >
-                          x
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {mode === 'reset' ? (
-                    <form onSubmit={handlePasswordReset} className="mt-6 space-y-4">
-                      <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(event) => setEmail(event.target.value)}
-                          placeholder="you@example.com"
-                          required
-                          className={inputClassName}
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={loading || !email}
-                        className="editorial-button-primary flex w-full items-center justify-center gap-2 py-3 disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Sending
-                          </>
-                        ) : (
-                          <>
-                            <Mail className="h-4 w-4" />
-                            Send reset email
-                          </>
-                        )}
-                      </button>
-
-                      <div className="pt-1 text-center">
-                        <button
-                          type="button"
-                          onClick={switchToLogin}
-                          className="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800"
-                        >
-                          <ArrowLeft className="h-3.5 w-3.5" />
-                          Back to sign in
-                        </button>
-                      </div>
-                    </form>
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Sending
+                    </>
                   ) : (
                     <>
-                      <form onSubmit={handleEmailSubmit} className="mt-6 space-y-4">
-                        {mode === 'signup' && (
-                          <div>
-                            <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full name</label>
-                            <input
-                              type="text"
-                              value={displayName}
-                              onChange={(event) => setDisplayName(event.target.value)}
-                              placeholder="Your name"
-                              className={inputClassName}
-                            />
-                          </div>
-                        )}
-
-                        <div>
-                          <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
-                          <input
-                            type="email"
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                            placeholder="you@example.com"
-                            required
-                            className={inputClassName}
-                          />
-                        </div>
-
-                        <div>
-                          <div className="mb-1.5 flex items-center justify-between gap-3">
-                            <label className="block text-sm font-semibold text-slate-700">Password</label>
-                            {mode === 'login' && (
-                              <button
-                                type="button"
-                                onClick={switchToReset}
-                                className="shrink-0 text-xs font-semibold text-amber-700 transition-colors hover:text-amber-800"
-                              >
-                                Forgot password
-                              </button>
-                            )}
-                          </div>
-
-                          <input
-                            type="password"
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                            placeholder="At least 6 characters"
-                            required
-                            minLength={6}
-                            className={inputClassName}
-                          />
-
-                          {mode === 'signup' && (
-                            <p className="mt-2 text-sm text-slate-500">Use at least 6 characters.</p>
-                          )}
-                        </div>
-
-                        <button
-                          type="submit"
-                          disabled={loading || !email || !password}
-                          className="editorial-button-primary flex w-full items-center justify-center gap-2 py-3 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              {mode === 'login' ? 'Signing in' : 'Creating account'}
-                            </>
-                          ) : (
-                            <>
-                              {mode === 'login' ? 'Sign in' : 'Create account'}
-                              <ChevronRight className="h-4 w-4" />
-                            </>
-                          )}
-                        </button>
-                      </form>
-
-                      <div className="mt-5 text-center">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            clearError();
-                            setMode(mode === 'login' ? 'signup' : 'login');
-                          }}
-                          className="text-sm font-medium text-slate-500 transition-colors hover:text-amber-700"
-                        >
-                          {mode === 'login' ? (
-                            <>
-                              Need an account? <span className="font-semibold text-amber-700">Sign up</span>
-                            </>
-                          ) : (
-                            <>
-                              Already have an account? <span className="font-semibold text-amber-700">Sign in</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
+                      <Mail className="h-4 w-4" />
+                      Send reset email
                     </>
                   )}
+                </button>
 
-                  <div className="mt-8 space-y-4 border-t border-slate-200 pt-6">
-                    <div className="rounded-[1.5rem] border border-slate-200 bg-[#fbfaf7] p-4">
-                      <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">Included with your account</p>
-                      <div className="mt-3 space-y-3">
-                        {[
-                          'Saved progress across diagnostic and practice',
-                          'One shared readiness view across Dashboard, Practice, and Progress',
-                          'Learning path ordered by your biggest gaps',
-                        ].map((item) => (
-                          <div key={item} className="flex items-start gap-3">
-                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
-                            <p className="text-sm leading-relaxed text-slate-600">{item}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <p className="text-center text-xs leading-relaxed text-slate-500">
-                      An account is required to save progress across devices.
-                    </p>
-                    <p className="mt-2 text-center text-[11px] leading-relaxed text-amber-700 font-semibold">
-                      Currently in beta. Not responsible for loss of data during the beta period.
-                    </p>
-                  </div>
-
-                  {mode === 'login' && showAdminEntry && (
-                    <div className="mt-4 text-center">
-                      <button
-                        type="button"
-                        onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-amber-200 hover:text-amber-700"
-                        title="Admin sign in"
-                      >
-                        <Shield className="h-3.5 w-3.5" />
-                        Admin sign in
-                      </button>
+                <div className="pt-1 text-center">
+                  <button
+                    type="button"
+                    onClick={switchToLogin}
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5" />
+                    Back to sign in
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <form onSubmit={handleEmailSubmit} className="mt-5 space-y-4">
+                  {mode === 'signup' && (
+                    <div>
+                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full name</label>
+                      <input
+                        type="text"
+                        value={displayName}
+                        onChange={(event) => setDisplayName(event.target.value)}
+                        placeholder="Your name"
+                        className={inputClassName}
+                      />
                     </div>
                   )}
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      placeholder="you@example.com"
+                      required
+                      className={inputClassName}
+                    />
+                  </div>
+
+                  <div>
+                    <div className="mb-1.5 flex items-center justify-between gap-3">
+                      <label className="block text-sm font-semibold text-slate-700">Password</label>
+                      {mode === 'login' && (
+                        <button
+                          type="button"
+                          onClick={switchToReset}
+                          className="shrink-0 text-xs font-semibold text-amber-700 transition-colors hover:text-amber-800"
+                        >
+                          Forgot password
+                        </button>
+                      )}
+                    </div>
+
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      placeholder="At least 6 characters"
+                      required
+                      minLength={6}
+                      className={inputClassName}
+                    />
+
+                    {mode === 'signup' && (
+                      <p className="mt-2 text-sm text-slate-500">Use at least 6 characters.</p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading || !email || !password}
+                    className="editorial-button-primary flex w-full items-center justify-center gap-2 py-3 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {mode === 'login' ? 'Signing in' : 'Creating account'}
+                      </>
+                    ) : (
+                      <>
+                        {mode === 'login' ? 'Sign in' : 'Create account'}
+                        <ChevronRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                <div className="mt-4 text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      clearError();
+                      setMode(mode === 'login' ? 'signup' : 'login');
+                    }}
+                    className="text-sm font-medium text-slate-500 transition-colors hover:text-amber-700"
+                  >
+                    {mode === 'login' ? (
+                      <>
+                        Need an account? <span className="font-semibold text-amber-700">Sign up</span>
+                      </>
+                    ) : (
+                      <>
+                        Already have an account? <span className="font-semibold text-amber-700">Sign in</span>
+                      </>
+                    )}
+                  </button>
                 </div>
-              </aside>
+              </>
+            )}
+
+            <div className="mt-6 space-y-3 border-t border-slate-200 pt-5">
+              <p className="text-center text-xs leading-relaxed text-slate-500">
+                An account is required to save progress across devices.
+              </p>
+              <p className="text-center text-[11px] leading-relaxed text-amber-700 font-semibold">
+                Currently in beta. Not responsible for loss of data during the beta period.
+              </p>
             </div>
+
+            {mode === 'login' && showAdminEntry && (
+              <div className="mt-4 text-center">
+                <button
+                  type="button"
+                  onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-amber-200 hover:text-amber-700"
+                  title="Admin sign in"
+                >
+                  <Shield className="h-3.5 w-3.5" />
+                  Admin sign in
+                </button>
+              </div>
+            )}
           </div>
-        </main>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

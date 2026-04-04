@@ -67,10 +67,10 @@ export function FloatingTutorWidget({
   const latestAssistantIdx = chat.messages.reduce<number>((acc, m, i) => m.role === 'assistant' ? i : acc, -1);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3">
       {/* Expanded panel */}
       {isOpen && (
-        <div className="w-[360px] bg-white rounded-2xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden"
+        <div className="w-[calc(100vw-2rem)] max-w-[360px] bg-white rounded-2xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden"
           style={{ height: '520px' }}>
 
           {/* Panel header */}
@@ -87,6 +87,7 @@ export function FloatingTutorWidget({
             <button
               onClick={() => setIsOpen(false)}
               className="w-7 h-7 rounded-full hover:bg-stone-200 flex items-center justify-center transition-colors"
+              aria-label="Minimize chat"
             >
               <ChevronDown className="w-4 h-4 text-stone-500" />
             </button>
@@ -148,6 +149,7 @@ export function FloatingTutorWidget({
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask anything about Praxis 5403…"
+                aria-label="Ask the AI tutor a question"
                 className="flex-1 rounded-xl border border-stone-200 px-3 py-2 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                 disabled={chat.isSending}
               />
@@ -155,6 +157,7 @@ export function FloatingTutorWidget({
                 onClick={handleSend}
                 disabled={!input.trim() || chat.isSending}
                 className="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center hover:bg-amber-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                aria-label="Send message"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>

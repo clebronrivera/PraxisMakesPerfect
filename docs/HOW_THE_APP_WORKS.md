@@ -92,7 +92,33 @@ Collected for everyone:
 
 Users can also tap **Skip for now** on the first step to bypass the wizard entirely and go straight to the app. Profile data is stored in the user's account and can inform future study plan generation. The user's name is collected at sign-up (not repeated in onboarding).
 
-### Step 2: Take the Adaptive Diagnostic
+### Step 2: The Pre-Assessment Gateway — Two Ways to Start
+
+Every time a user logs in before completing the adaptive diagnostic, they land on the **Pre-Assessment Gateway**. This page presents two options:
+
+**Option 1: Adaptive Diagnostic** (primary, recommended)
+The full 45-skill assessment. Maps strengths and gaps across every testable competency. Unlocks all features on completion. 45–90 questions, 25–45 minutes, pausable anytime. This is the path that opens up the entire platform.
+
+**Option 2: Feeling Spicy — Question Preview** (secondary)
+A no-commitment way to try the platform before starting the diagnostic. The user answers random questions from the full 1,150-question bank in a continuous loop — as many as they want, for as long as they want. Every question shows full feedback (correct answer, explanation, distractor analysis) and hints, exactly like real practice.
+
+**What Spicy Mode does:**
+- Delivers random questions across all 45 skills
+- Shows the same feedback, hints, and explanations as regular practice
+- Tracks all responses with the same logic as practice (wrong-answer counting, time, confidence)
+- Persists progress across sessions — does not reset on each login
+- Data renders in the dashboard once the diagnostic is completed
+
+**What Spicy Mode does NOT do:**
+- Unlock any features (no practice modes, no study guide, no AI tutor, no learning path)
+- Replace the diagnostic — the gateway page keeps showing both options until the diagnostic is complete
+- Affect the diagnostic's ability to function — the diagnostic can still draw from the full question bank regardless of how many Spicy Mode questions the user has seen
+
+**Returning users (diagnostic paused):** If a user started the diagnostic and paused halfway, the gateway shows "Resume Diagnostic" with a progress bar (X of 45 skills, Y questions answered, estimated time remaining) alongside the Spicy Mode option with their prior session stats (questions answered, accuracy, skills seen).
+
+**Key behavior:** The user can freely switch between Spicy Mode and the diagnostic. Starting Spicy Mode does not interrupt or reset diagnostic progress. The diagnostic pauses cleanly, and Spicy Mode is accessible without breaking anything.
+
+### Step 3: Take the Adaptive Diagnostic
 The adaptive diagnostic is your **baseline map**. It starts with one question per skill (45 questions total), interleaved across all four domains.
 
 **How it adapts:** When you answer a question incorrectly, the system queues a follow-up question for that skill — with alternating cognitive complexity (if the first was Recall, the follow-up is Application, and vice versa). A maximum of 3 questions per skill (1 initial + 2 follow-ups). This means:
@@ -108,7 +134,7 @@ After completing the diagnostic, you get a **Score Report** — a breakdown of w
 
 > **Legacy assessment path:** The app also supports a legacy two-step assessment flow (Skills Screener + Full Assessment) for users who started before the adaptive diagnostic was introduced. Legacy users are shown a "Baseline recorded" state on the dashboard and prompted to take the adaptive diagnostic to unlock all features. New users always see the adaptive diagnostic directly.
 
-### Step 4: Study, Practice, and Track
+### Step 5: Study, Practice, and Track
 From this point on, every session and every question feeds back into your profile. The system keeps learning about you as you go.
 
 ### The Main App Layout
@@ -287,9 +313,9 @@ This distractor data is used in three places:
 
 ---
 
-## The Three Practice Modes
+## The Practice Modes
 
-The Practice Hub offers three distinct modes. All three live under the **Practice** tab and are accessible from the same screen via a three-tab selector: **By Domain / By Skill / Learning Path**.
+The Practice Hub offers four distinct modes plus Redemption Rounds. All modes live under the **Practice** tab: **By Domain / By Skill / Learning Path / Feeling Spicy**, plus the Redemption Rounds section.
 
 The **Home dashboard also has direct shortcuts** to the three most common session starts (see Home Dashboard section above), so users can begin practicing without going through the Practice Hub.
 
@@ -392,6 +418,17 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 
 ---
 
+### Feeling Spicy (Post-Diagnostic)
+After the diagnostic, Feeling Spicy shifts from its pre-assessment preview role into a **45-skill recalibration cycle**. The user cycles through all 45 skills in a shuffled random order, one question per skill. After completing a full cycle, it reshuffles into a new order and starts again — generating fresh signal for every skill on each pass.
+
+This is for users who want broad, low-stakes exposure across the entire skill map without choosing a specific domain or skill. It's the "I don't know what to practice, just give me something" mode.
+
+**Persistence:** Cycle state (shuffled skill order + current position) is saved in `localStorage` per user. Progress survives browser refreshes and returns across sessions.
+
+**Unlocks after:** completing the adaptive diagnostic. (Before the diagnostic, Spicy Mode is the question preview on the pre-assessment gateway — see Step 2 above.)
+
+---
+
 ## The AI Study Guide — The Core Differentiator
 
 After completing the adaptive diagnostic (or the legacy screener + full assessment), you can generate a **personalized study guide** written specifically about you — not a generic "how to study for Praxis 5403" template, but a document that reads your actual performance data, identifies your exact problem areas, explains why they're problems, and gives you a week-by-week action plan.
@@ -481,7 +518,7 @@ The AI Tutor (PraxisBot) is a conversational study assistant built on top of the
 ### Quiz Mode
 
 When the user asks to be quizzed:
-- Questions are selected from the 466-question bank using weighted random selection: 60% from Emerging skills, 25% from Approaching, 15% from Demonstrating/maintenance
+- Questions are selected from the 1,150-question bank using weighted random selection: 60% from Emerging skills, 25% from Approaching, 15% from Demonstrating/maintenance
 - Questions already used in the current session are excluded
 - Answer evaluation is **all-or-nothing** for multi-select questions — computed deterministically before Claude is called
 - Claude writes explanation prose around the pre-computed correctness result; it cannot change the scored outcome
@@ -499,7 +536,7 @@ When a student misses a quiz question, the tutor forces a same-skill follow-up b
 4. **Remediation trigger** — if the retry answer is also wrong (two consecutive misses on the same skill), the server appends a remediation instruction to the system prompt. Claude then provides: (a) plain-language concept explanation, (b) key terms/distinctions, (c) memory anchor or mnemonic, (d) one realistic Praxis scenario. The remediation trigger is deterministic in code — Claude only writes the prose.
 
 **Key constraints:**
-- No AI-generated questions — only the existing 466-question bank
+- No AI-generated questions — only the existing 1,150-question bank
 - `prioritySkillId` is sent only on quiz-request turns, not general chat
 - `quizRetryContext` is sent only on the retry answer submission, guarded by a skill-match check against `pendingQuizRef`
 - Retry state clears on session switch or new session creation

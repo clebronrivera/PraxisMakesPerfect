@@ -1,5 +1,5 @@
 // src/components/DashboardHome.tsx
-// Post-diagnostic dashboard home tab — matches mockup-dashboard.html layout.
+// Post-diagnostic dashboard home tab — matches mockup-user-flow.html Screen 6.
 // Replaces the isFullyUnlocked inline JSX in App.tsx.
 
 import { Zap, BookOpen, Map as MapIcon, ClipboardList, MessageCircle } from 'lucide-react';

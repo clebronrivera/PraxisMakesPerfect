@@ -34,6 +34,35 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-04-04 - Admin dashboard + UI improvement sprint — pending implementation
+
+- Status: in_progress
+- Area: Admin dashboard, ResultsDashboard, OnboardingFlow, post-assessment
+- Summary: Full audit of admin dashboard conducted. Six improvement areas identified and planned. recharts installed (v3.8.1). Four HTML mockups built in `public/` and verified rendering. Implementation not yet started — awaiting visual approval of mockups.
+- Source of truth: `/Users/lebron/.claude/plans/sorted-humming-gem.md`
+- Code anchors:
+  - `src/components/AdminDashboard.tsx` — 7-tab admin UI
+  - `src/components/ResultsDashboard.tsx` lines 382–426 — baseline ghost bar (replace with two-tone)
+  - `src/components/StudentDetailDrawer.tsx` — add Growth panel
+  - `src/components/OnboardingFlow.tsx` — replace 4-step 27-field form
+  - `src/components/ItemAnalysisTab.tsx` — add server-side pagination
+  - `api/admin-student-detail.ts` — add user_progress query for baseline_snapshot
+  - `api/admin-item-analysis.ts` — add server-side filter/page params
+  - `supabase/migrations/0017_simplified_onboarding.sql` — new columns (not yet created)
+  - `supabase/migrations/0018_post_assessment_snapshot.sql` — new columns (not yet created)
+  - `public/mockup-admin-charts.html` — funnel + tier distribution + scatter + skill bars
+  - `public/mockup-twotone-bars.html` — 4 cases: growth, regression, no-baseline, no-change + admin Growth panel
+  - `public/mockup-onboarding.html` — simplified single-page 5-field form
+  - `public/mockup-post-assessment.html` — readiness banner + 3-color comparison report
+- Open questions (must be answered before implementation):
+  1. **Two-tone bar colors**: baseline segment uses dark indigo, growth uses bright indigo. Approve or change? (Alternative: gray for baseline, green for growth.)
+  2. **Onboarding skip**: keep "Skip for now" link, or require all new users to complete the form?
+  3. **Post-assessment report**: 3-segment bars (diagnostic baseline + practice growth + post-assessment) or simpler before/after 2-segment only?
+  4. **Post-assessment timing**: trigger when user hits 32/45 skills Demonstrating, or add a different condition (e.g. also require minimum time elapsed)?
+- Resolution / next step: User to review 4 mockups at `http://localhost:5173/mockup-*.html`, answer open questions, then approve for React implementation.
+
+---
+
 ## 2026-04-01 - Phase B construct_actually_tested: 29 collapsed skills need regeneration
 
 - Status: open

@@ -98,7 +98,7 @@ export default function TutorialWalkthrough({ onDismiss, variant = 'full' }: Tut
                   key={i}
                   onClick={() => setCurrentIndex(i)}
                   className={`h-2 rounded-full transition-all duration-200 ${
-                    i === currentIndex ? 'w-6 bg-indigo-500' : 'w-2 bg-slate-200 hover:bg-slate-300'
+                    i === currentIndex ? 'w-6 bg-amber-500' : 'w-2 bg-slate-200 hover:bg-slate-300'
                   }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
@@ -129,7 +129,7 @@ export default function TutorialWalkthrough({ onDismiss, variant = 'full' }: Tut
 
               <button
                 onClick={goNext}
-                className="flex items-center gap-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+                className="flex items-center gap-1 rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-600 transition-colors"
               >
                 {isLast ? 'Get Started' : 'Next'}
                 {!isLast && <ChevronRight className="h-4 w-4" />}

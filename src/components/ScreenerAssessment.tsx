@@ -96,7 +96,7 @@ export default function ScreenerAssessment({
     initialElapsedSeconds: savedSession?.elapsedSeconds || 0,
     onAutoPause: () => {
       // Logic for persistent save on auto-pause if needed
-      console.log('[ScreenerAssessment] Auto-paused due to inactivity');
+      // Auto-paused due to inactivity
     }
   });
 

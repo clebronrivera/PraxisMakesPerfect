@@ -10,6 +10,7 @@
 
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import { UserResponse } from '../brain/weakness-detector';
+import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from './skillProficiency';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -200,12 +201,12 @@ export function buildConceptAnalytics(
   // Sort by accuracy ascending (worst first)
   allConcepts.sort((a, b) => a.accuracy - b.accuracy);
 
-  // Gap concepts: accuracy < 60%, 3+ attempts
-  const gapConcepts = allConcepts.filter(c => c.accuracy < 0.60 && c.attempted >= 3);
+  // Gap concepts: accuracy below Approaching threshold, 3+ attempts
+  const gapConcepts = allConcepts.filter(c => c.accuracy < APPROACHING_THRESHOLD && c.attempted >= 3);
 
-  // Strength concepts: accuracy >= 80%, 3+ attempts
+  // Strength concepts: accuracy at or above Demonstrating threshold, 3+ attempts
   const strengthConcepts = allConcepts
-    .filter(c => c.accuracy >= 0.80 && c.attempted >= 3)
+    .filter(c => c.accuracy >= DEMONSTRATING_THRESHOLD && c.attempted >= 3)
     .sort((a, b) => b.accuracy - a.accuracy);
 
   // Cross-skill gaps: concepts weak (< 60%) across 2+ skills
@@ -218,7 +219,7 @@ export function buildConceptAnalytics(
     for (const [skillId, perf] of skillPerf) {
       totalCorrectAcross += perf.correct;
       totalAttemptedAcross += perf.total;
-      if (perf.total >= 2 && perf.correct / perf.total < 0.60) {
+      if (perf.total >= 2 && perf.correct / perf.total < APPROACHING_THRESHOLD) {
         weakSkills.push(skillId);
       }
     }

@@ -22,6 +22,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
+import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,11 +57,11 @@ export function deriveLearningPathStatus(
 ): LearningPathStatus {
   if (!lessonViewed) return 'not_started';
   if (!questionsSubmitted || accuracy === null) return 'emerging';
-  if (accuracy >= 0.8) {
+  if (accuracy >= DEMONSTRATING_THRESHOLD) {
     // Preserve mastered if already set
     return currentStatus === 'mastered' ? 'mastered' : 'demonstrating';
   }
-  if (accuracy >= 0.6) return 'approaching';
+  if (accuracy >= APPROACHING_THRESHOLD) return 'approaching';
   return 'emerging';
 }
 

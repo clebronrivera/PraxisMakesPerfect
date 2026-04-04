@@ -254,7 +254,7 @@ function NodeCard({
           <p className="mt-1 text-[11px] font-mono text-slate-500">{node.moduleId}</p>
         )}
         {naspDomain && (
-          <span className="mt-0.5 inline-block rounded-full bg-indigo-50 px-1.5 py-0.5 text-[9px] font-semibold text-indigo-600">
+          <span className="mt-0.5 inline-block rounded-full bg-amber-50 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600">
             {naspDomain}
           </span>
         )}

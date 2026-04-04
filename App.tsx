@@ -1,11 +1,12 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
+import { Brain, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 import { analyzeQuestion } from './src/brain/question-analyzer';
 
 // Import components
 const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
 const DashboardHome = lazy(() => import('./src/components/DashboardHome'));
+const PreAssessmentGateway = lazy(() => import('./src/components/PreAssessmentGateway'));
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 const FeedbackModal = lazy(() => import('./src/components/FeedbackModal'));
 const ResultsDashboard = lazy(() => import('./src/components/ResultsDashboard'));
@@ -1047,130 +1048,20 @@ function PraxisStudyAppContent() {
 
             return (
               <div className="space-y-8 pb-12">
-                {sessionResumeCard}
+                {isFullyUnlocked && sessionResumeCard}
 
-                {isNewUser && (
-                  <>
-                    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
-                      <div className="editorial-surface p-6 lg:p-7">
-                        <p className="editorial-overline">Dashboard</p>
-                        <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to Praxis Study</h2>
-                        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
-                          Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.
-                        </p>
-                        <div className="mt-6 grid gap-3 md:grid-cols-2">
-                          {!hasAssessmentInProgress && (
-                            <div className="editorial-surface-soft p-4">
-                              <p className="editorial-overline">Diagnostic</p>
-                              <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
-                              <p className="mt-2 text-sm text-slate-500">Starting with 45 questions (one per skill), it adapts based on your answers. Pause any time and come back without penalty.</p>
-                              <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
-                                <Zap className="h-4 w-4" />
-                                Start diagnostic
-                              </button>
-                            </div>
-                          )}
-                          <div className="editorial-surface-soft p-4">
-                            <p className="editorial-overline">Practice</p>
-                            <p className="mt-2 text-base font-bold text-slate-900">Start practicing right away</p>
-                            <p className="mt-2 text-sm text-slate-500">No need to wait — jump into practice immediately. The diagnostic gives deeper insights, but you can practice any time.</p>
-                            <ul className="mt-3 space-y-1.5">
-                              <li className="flex items-center gap-2 text-xs text-slate-500">
-                                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
-                                Random questions — based on your level of need
-                              </li>
-                              <li className="flex items-center gap-2 text-xs text-slate-500">
-                                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
-                                Domain review — focus on one section
-                              </li>
-                              <li className="flex items-center gap-2 text-xs text-slate-500">
-                                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shrink-0" />
-                                Skill practice — ordered by your gaps
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="editorial-surface-soft p-5 lg:p-6">
-                        <p className="editorial-overline">Quick start</p>
-                        <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Jump right in.</p>
-                        <p className="mt-3 text-sm leading-normal text-slate-500">
-                          Start practicing immediately — no assessment required.
-                        </p>
-                        <div className="mt-5 space-y-3">
-                          <button
-                            onClick={() => startPractice()}
-                            className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
-                          >
-                            <span className="text-sm font-semibold text-slate-900">Random Questions</span>
-                            <ChevronRight className="h-4 w-4 text-slate-400" />
-                          </button>
-                          <button
-                            onClick={() => setMode('practice-hub')}
-                            className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
-                          >
-                            <span className="text-sm font-semibold text-slate-900">Browse by Domain or Skill</span>
-                            <ChevronRight className="h-4 w-4 text-slate-400" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {isScreenerDone && (
-                  <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
-                    <div className="editorial-surface p-6 lg:p-7">
-                      <p className="editorial-overline">Dashboard</p>
-                      <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">
-                        {firstName ? `Nice work, ${firstName}.` : 'Baseline complete.'}
-                      </h2>
-                      <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
-                        Your initial baseline is recorded. Take the adaptive diagnostic for deeper skill-level insights, or jump straight into practice.
-                      </p>
-                      <div className="mt-6 grid gap-3 md:grid-cols-2">
-                        <div className="editorial-surface-soft border-emerald-200 bg-emerald-50/60 p-4">
-                          <p className="editorial-overline text-emerald-700">Complete</p>
-                          <p className="mt-2 text-base font-bold text-slate-900">Baseline recorded</p>
-                          <p className="mt-2 text-sm text-slate-600">You can already jump into practice and keep building momentum.</p>
-                        </div>
-                        <div className="editorial-surface-soft p-4">
-                          <p className="editorial-overline">Recommended</p>
-                          <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
-                          <p className="mt-2 text-sm text-slate-500">Deeper skill-level data to unlock your personalized learning path. Adapts to your performance.</p>
-                          {!hasAssessmentInProgress && (
-                            <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
-                              <BarChart3 className="h-4 w-4" />
-                              Start adaptive diagnostic
-                            </button>
-                          )}
-                          {hasAssessmentInProgress && (
-                            <p className="mt-4 text-sm font-medium text-amber-700">Diagnostic in progress — use the Resume card above.</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="editorial-surface-soft p-5 lg:p-6">
-                      <p className="editorial-overline">Practice</p>
-                      <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">Keep building momentum.</p>
-                      <div className="mt-5 space-y-3">
-                        <button
-                          onClick={() => startPractice()}
-                          className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
-                        >
-                          <span className="text-sm font-semibold text-slate-900">Random Questions</span>
-                          <ChevronRight className="h-4 w-4 text-slate-400" />
-                        </button>
-                        <button
-                          onClick={() => setMode('practice-hub')}
-                          className="flex w-full items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-amber-300 hover:bg-amber-50"
-                        >
-                          <span className="text-sm font-semibold text-slate-900">Browse by Domain or Skill</span>
-                          <ChevronRight className="h-4 w-4 text-slate-400" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                {(isNewUser || isScreenerDone) && (
+                  <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading...</div>}>
+                    <PreAssessmentGateway
+                      firstName={firstName}
+                      onStartDiagnostic={() => startAdaptiveDiagnostic()}
+                      onStartSpicy={() => startPractice()}
+                      onBrowsePractice={() => setMode('practice-hub')}
+                      hasAssessmentInProgress={Boolean(hasAssessmentInProgress)}
+                      sessionResumeCard={sessionResumeCard}
+                      isScreenerDone={isScreenerDone}
+                    />
+                  </Suspense>
                 )}
 
                 {isFullyUnlocked && (

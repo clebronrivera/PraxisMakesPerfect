@@ -405,6 +405,63 @@ Two engagement indicators live in the authenticated header (`App.tsx`).
 
 ---
 
+## Pending Design Decisions
+
+### OPEN: Spicy Mode + Diagnostic Question Pool Overlap
+
+**Status:** Awaiting decision from product owner.
+
+**Context:** Spicy Mode (random question preview) and the Adaptive Diagnostic both pull from the same 466-question bank. If a user answers questions in Spicy Mode first, then starts the diagnostic, should the diagnostic:
+
+- **Option A:** Avoid questions the user already saw in Spicy Mode (shrinks the available pool, may limit adaptive follow-ups for some skills)
+- **Option B:** Re-ask them (the diagnostic measures skill, not novelty — but the user may remember answers)
+
+**Why it matters:** The diagnostic is adaptive — wrong answers trigger follow-up questions for that skill (max 3 per skill). If Spicy Mode has already used up questions for a skill, the diagnostic may not have enough follow-ups available.
+
+**Blocked items:** Final implementation of Spicy Mode question selection logic and diagnostic queue builder.
+
+---
+
+## Pending Redesign — Pre-Assessment Flow + Tutorials (April 2026)
+
+### Spicy Mode Repositioned
+
+Spicy Mode moves from the Practice tab to the **pre-assessment page**, displayed alongside the Adaptive Diagnostic as an alternative path:
+
+- **Purpose:** Let users preview question format, feedback, and hints before committing to the diagnostic
+- **Behavior:** Continuous random question loop, no end point, full feedback/hints
+- **Persistence:** Remembers progress across sessions (does NOT reset on each login)
+- **Tracking:** All responses are stored with the same logic as regular practice (wrong-answer tracking, time, confidence). Data renders in dashboard once diagnostic is complete.
+- **Feature gates:** Spicy Mode does NOT unlock any features (no practice modes, no study guide, no tutor, nothing)
+
+### Pre-Assessment Page Flow
+
+Every time the user logs in (until diagnostic is complete), they land on the pre-assessment page showing:
+1. **Adaptive Diagnostic** — full 45-skill assessment, unlocks everything
+2. **Spicy Mode** — random question preview, no unlocks
+
+If user starts the diagnostic and pauses midway, they return to this page. The diagnostic pauses cleanly and Spicy Mode is accessible without interruption.
+
+### Tutorial System (Two Tutorials)
+
+**Tutorial 1: Pre-Assessment Tutorial**
+- Triggers on first visit to pre-assessment page
+- Explains the adaptive diagnostic and Spicy Mode
+- Shows what each path does and what gets unlocked
+
+**Tutorial 2: Dashboard Tutorial**
+- Triggers after diagnostic completion (first dashboard visit)
+- Numbered indicators on each UI feature (1, 2, 3, 4...)
+- Each number opens an info panel explaining:
+  - What the feature is
+  - How to get started
+  - Optional hint/tip
+- Feature stays visible while info panel is open (user sees both the tool and the explanation)
+- Sequential progression through all features
+- **Depends on finalized dashboard layout** — implement after mockup approval
+
+---
+
 ## Stack
 
 | Layer | Tech |
