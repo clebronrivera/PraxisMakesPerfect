@@ -26,6 +26,26 @@ This file captures hard-won context so Claude doesn't have to rediscover it.
 
 ---
 
+## UI Redesign Completion Rule — BLOCKING (April 2026)
+
+**The visual redesign from `mockup-user-flow.html` is INCOMPLETE. Only 1 of 14 screens has been implemented. This is a BLOCKING task.**
+
+**DO NOT start any backend work, data migrations, test suites, content authoring, paywall features, or any other category of work until every screen in `MOCKUP_STATUS.md` shows "Done" in the Implemented column.**
+
+This rule exists because this redesign has stalled 5+ times. Each time:
+1. LoginScreen gets updated
+2. Claude pivots to backend work (feels productive, easier to verify)
+3. Remaining 10+ screens stay on old navy design
+4. User rediscovers the mismatch, wastes a session diagnosing it
+
+**Before doing ANYTHING in a new session, check `MOCKUP_STATUS.md`.** If any screen shows "Not yet", the redesign is the only priority.
+
+**Completion tracking:** `MOCKUP_STATUS.md` (root of repo)
+**Full rule:** `docs/WORKFLOW_GROUNDING.md` section 3.11
+**Issue history:** `docs/ISSUE_LEDGER.md` entry 2026-04-04
+
+---
+
 ## HOW_THE_APP_WORKS.md — Mandatory Update Rule
 
 `docs/HOW_THE_APP_WORKS.md` is the canonical plain-language description of the product.

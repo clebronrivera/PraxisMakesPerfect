@@ -486,6 +486,23 @@ Use this template when adding a new durable rule:
 - **Code anchor:** `src/utils/tutorContextBuilder.ts` → `buildTutorContext()`.
 - **Notes / limits:** If a skill is added/removed from `progressTaxonomy.ts`, the tutor context automatically reflects it on next API call.
 
+### 3.11 UI redesign completion rule — MANDATORY
+
+**Rule: When a visual redesign is in progress, NO other work (backend, data, migrations, tests, content authoring) may be started until every screen in the approved mockup has been implemented in React and visually verified.**
+
+- **Decision:** UI redesign is treated as a blocking task. The mockup-to-React pipeline must run to completion for all screens before any other work category is touched.
+- **Why:** As of April 2026, this redesign has stalled at least 5 times. Each time, the LoginScreen gets updated, then work pivots to backend tasks, and the remaining 10+ screens are left on the old design. The user has to rediscover the problem each session. This is the single most repeated failure mode in this project.
+- **Enforcement:**
+  1. `MOCKUP_STATUS.md` tracks every mockup screen and whether its React counterpart has been updated. Check this file before starting any new task.
+  2. If any row in `MOCKUP_STATUS.md` shows "Not yet" in the Implemented column, the redesign is incomplete. Do not start other work.
+  3. Each screen must be screenshot-verified by the user before marking it done.
+  4. The sidebar/header shell (`App.tsx`) counts as a screen — it must also match the mockup.
+- **What "done" means:** The React app, when viewed in the browser, is visually indistinguishable from the mockup for that screen. Same colors, same layout, same typography, same spacing. Business logic and data wiring stay the same — only the visual layer changes.
+- **Source of truth:** `public/mockup-user-flow.html` (14-screen reference), `MOCKUP_STATUS.md` (completion tracker)
+- **Code anchors:** All component files listed in `MOCKUP_STATUS.md`
+
+---
+
 ### Rule: FloatingTutorWidget suppressed during active assessments
 
 - **Decision:** Widget is not rendered when `mode` is `'adaptive-diagnostic'`, `'screener'`, or `'fullassessment'`.

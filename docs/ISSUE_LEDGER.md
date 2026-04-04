@@ -34,6 +34,43 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-04-04 - RECURRING: Mockup-to-React implementation keeps stalling after 1 screen
+
+- Status: open
+- Area: All UI screens (ResultsDashboard, DashboardHome, StudyModesSection, ScoreReport, PracticeSession, TutorChatPage, StudyPlanCard, OnboardingFlow, LearningPathNodeMap, PreAssessmentGateway)
+- Summary: This is the **5th+ time** the user has attempted a full UI redesign from mockup to React. Each time, the pattern is the same:
+  1. Mockups are created (HTML files in `public/`)
+  2. LoginScreen.tsx gets updated to match the mockup
+  3. Work pivots to backend tasks (data migrations, Phase D wiring, test suites, paywall, content authoring) before any other screens are converted
+  4. The remaining 10+ screens stay on the old design system
+  5. Next session, the user sees the mismatch and asks why it wasn't done
+
+  **Root cause:** There is no enforcement mechanism to ensure all mockup screens are implemented before moving to other work. Claude (the AI assistant) treats each conversation as independent and does not carry forward the incomplete visual redesign as a blocking task. Backend work feels "productive" and gets prioritized over the tedious screen-by-screen conversion.
+
+  **What exists as of 2026-04-04:**
+  - `mockup-user-flow.html` has 14 screens (Hero through Modals)
+  - Only Screen 1 (LoginScreen.tsx) matches the mockup
+  - Screens 2–14 still use the old navy/slate design from March 2026
+  - The mockups were never even committed until this session
+
+- Source of truth: `public/mockup-user-flow.html` (14-screen reference), `MOCKUP_STATUS.md` (tracking table)
+- Code anchors:
+  - `src/components/LoginScreen.tsx` — DONE (matches mockup)
+  - `src/components/ResultsDashboard.tsx` — NOT DONE (old navy design)
+  - `src/components/DashboardHome.tsx` — NOT DONE
+  - `src/components/StudyModesSection.tsx` — NOT DONE
+  - `src/components/ScoreReport.tsx` — NOT DONE
+  - `src/components/PracticeSession.tsx` / `QuestionCard.tsx` — NOT DONE
+  - `src/components/TutorChatPage.tsx` — NOT DONE
+  - `src/components/StudyPlanCard.tsx` — NOT DONE
+  - `src/components/OnboardingFlow.tsx` — NOT DONE
+  - `src/components/LearningPathNodeMap.tsx` — NOT DONE
+  - `src/components/PreAssessmentGateway.tsx` — NOT DONE
+  - `App.tsx` (sidebar/header shell) — NOT DONE
+- Resolution / next step: Implement mockup screen-by-screen. DO NOT start any other work until all screens match. See WORKFLOW_GROUNDING.md rule 3.11 and CLAUDE.md mandatory rule.
+
+---
+
 ## 2026-04-04 - Admin dashboard + UI improvement sprint — pending implementation
 
 - Status: in_progress
