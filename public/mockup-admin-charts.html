@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Charts Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem; }
+    .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 1rem; font-weight: 600; }
+  </style>
+</head>
+<body class="p-6 space-y-6">
+
+  <h1 class="text-lg font-bold text-slate-200">Admin Dashboard — Chart Mockups</h1>
+  <p class="text-sm text-slate-500">These charts will be added to the Overview tab and Item Analysis tab. Verify layout and data shapes before React implementation.</p>
+
+  <!-- ===== CHART 1: ENGAGEMENT FUNNEL ===== -->
+  <div class="card">
+    <div class="section-title">Overview Tab — Engagement Funnel</div>
+    <p class="text-xs text-slate-500 mb-5">Shows how many users reached each milestone (recharts BarChart, layout=vertical)</p>
+    <div class="space-y-2.5">
+      <!-- Each row: label, bar, count -->
+      <div class="flex items-center gap-3 text-xs">
+        <div class="text-slate-400 w-40 text-right shrink-0">Signed Up</div>
+        <div class="flex-1 h-6 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full rounded bg-indigo-400" style="width:100%; opacity:0.95"></div>
+        </div>
+        <div class="text-slate-300 w-16 shrink-0">148 (100%)</div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <div class="text-slate-400 w-40 text-right shrink-0">Onboarding Done</div>
+        <div class="flex-1 h-6 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full rounded bg-indigo-400" style="width:82%; opacity:0.87"></div>
+        </div>
+        <div class="text-slate-300 w-16 shrink-0">121 (82%)</div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <div class="text-slate-400 w-40 text-right shrink-0">Diagnostic Started</div>
+        <div class="flex-1 h-6 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full rounded bg-indigo-500" style="width:66%; opacity:0.87"></div>
+        </div>
+        <div class="text-slate-300 w-16 shrink-0">98 (66%)</div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <div class="text-slate-400 w-40 text-right shrink-0">Diagnostic Complete</div>
+        <div class="flex-1 h-6 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full rounded bg-indigo-500" style="width:50%; opacity:0.87"></div>
+        </div>
+        <div class="text-slate-300 w-16 shrink-0">74 (50%)</div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <div class="text-slate-400 w-40 text-right shrink-0">First Practice</div>
+        <div class="flex-1 h-6 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full rounded bg-indigo-600" style="width:41%; opacity:0.87"></div>
+        </div>
+        <div class="text-slate-300 w-16 shrink-0">61 (41%)</div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <div class="text-slate-400 w-40 text-right shrink-0">Study Guide Generated</div>
+        <div class="flex-1 h-6 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full rounded bg-indigo-700" style="width:20%; opacity:0.9"></div>
+        </div>
+        <div class="text-slate-300 w-16 shrink-0">29 (20%)</div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <div class="text-slate-400 w-40 text-right shrink-0">Readiness Reached</div>
+        <div class="flex-1 h-6 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full rounded bg-emerald-600" style="width:8%; opacity:0.9"></div>
+        </div>
+        <div class="text-slate-300 w-16 shrink-0">12 (8%)</div>
+      </div>
+    </div>
+    <p class="text-[10px] text-slate-600 mt-4">Implementation: recharts &lt;BarChart layout="vertical"&gt; with &lt;Cell&gt; coloring per bar</p>
+  </div>
+
+  <!-- ===== CHART 2: COHORT TIER DISTRIBUTION ===== -->
+  <div class="card">
+    <div class="section-title">Overview Tab — Cohort Skill Tier Distribution</div>
+    <p class="text-xs text-slate-500 mb-5">How many users at each proficiency tier per domain (recharts stacked BarChart)</p>
+
+    <!-- Stacked bar chart -->
+    <div class="space-y-3">
+      <!-- Domain labels + bars -->
+      <div class="flex items-end gap-1.5 h-44 relative">
+        <!-- Y axis hint -->
+        <div class="flex flex-col justify-between h-full text-[10px] text-slate-600 w-6 text-right pr-1">
+          <span>40</span><span>30</span><span>20</span><span>10</span><span>0</span>
+        </div>
+        <!-- Grid lines -->
+        <div class="absolute inset-y-0 left-8 right-0 flex flex-col justify-between pointer-events-none">
+          <div class="border-t border-slate-700/50 w-full"></div>
+          <div class="border-t border-slate-700/50 w-full"></div>
+          <div class="border-t border-slate-700/50 w-full"></div>
+          <div class="border-t border-slate-700/50 w-full"></div>
+          <div class="border-t border-slate-700/50 w-full"></div>
+        </div>
+
+        <!-- 4 domain bars -->
+        <div class="flex-1 flex items-end justify-around gap-2 h-full relative z-10">
+          <!-- Domain 1 -->
+          <div class="flex flex-col items-center gap-0 flex-1">
+            <div class="w-full rounded-t overflow-hidden flex flex-col justify-end" style="height:85%">
+              <div class="w-full bg-rose-400/80" style="height:32%"></div>
+              <div class="w-full bg-amber-400/80" style="height:24%"></div>
+              <div class="w-full bg-emerald-400/80" style="height:44%"></div>
+            </div>
+            <div class="text-[9px] text-slate-500 text-center mt-1.5 leading-tight">Data-Based<br>Decision</div>
+          </div>
+          <!-- Domain 2 -->
+          <div class="flex flex-col items-center gap-0 flex-1">
+            <div class="w-full rounded-t overflow-hidden flex flex-col justify-end" style="height:75%">
+              <div class="w-full bg-rose-400/80" style="height:30%"></div>
+              <div class="w-full bg-amber-400/80" style="height:33%"></div>
+              <div class="w-full bg-emerald-400/80" style="height:37%"></div>
+            </div>
+            <div class="text-[9px] text-slate-500 text-center mt-1.5 leading-tight">Consultation<br>&amp; Collab</div>
+          </div>
+          <!-- Domain 3 -->
+          <div class="flex flex-col items-center gap-0 flex-1">
+            <div class="w-full rounded-t overflow-hidden flex flex-col justify-end" style="height:75%">
+              <div class="w-full bg-rose-400/80" style="height:37%"></div>
+              <div class="w-full bg-amber-400/80" style="height:37%"></div>
+              <div class="w-full bg-emerald-400/80" style="height:26%"></div>
+            </div>
+            <div class="text-[9px] text-slate-500 text-center mt-1.5 leading-tight">Academic<br>Interventions</div>
+          </div>
+          <!-- Domain 4 -->
+          <div class="flex flex-col items-center gap-0 flex-1">
+            <div class="w-full rounded-t overflow-hidden flex flex-col justify-end" style="height:75%">
+              <div class="w-full bg-rose-400/80" style="height:43%"></div>
+              <div class="w-full bg-amber-400/80" style="height:30%"></div>
+              <div class="w-full bg-emerald-400/80" style="height:27%"></div>
+            </div>
+            <div class="text-[9px] text-slate-500 text-center mt-1.5 leading-tight">Mental Health<br>Services</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="flex gap-5 justify-center text-xs text-slate-400 pt-1">
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-emerald-400/80 inline-block"></span>Demonstrating</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-amber-400/80 inline-block"></span>Approaching</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-rose-400/80 inline-block"></span>Emerging</span>
+      </div>
+    </div>
+    <p class="text-[10px] text-slate-600 mt-3">Implementation: recharts &lt;BarChart&gt; stackId="a" with Demonstrating/Approaching/Emerging bars</p>
+  </div>
+
+  <!-- ===== CHART 3: DIFFICULTY vs DISCRIMINATION SCATTER ===== -->
+  <div class="card">
+    <div class="section-title">Item Analysis Tab — Difficulty vs. Discrimination Scatter Plot</div>
+    <p class="text-xs text-slate-500 mb-4">Each dot = one question. X = p-value (higher = easier). Y = discrimination (higher = better). Dashed lines show flag thresholds.</p>
+
+    <div class="relative border border-slate-700/50 rounded-lg overflow-hidden" style="height: 280px; background: #0f172a;">
+      <!-- Axes labels -->
+      <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-slate-600">Difficulty (p-value) →</div>
+      <div class="absolute left-1 top-1/2 -translate-y-1/2 text-[10px] text-slate-600" style="writing-mode:vertical-rl; transform: rotate(180deg) translateY(50%);">Discrimination ↑</div>
+
+      <!-- Grid -->
+      <div class="absolute inset-8 grid grid-cols-5 grid-rows-4 opacity-20">
+        <div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-b border-slate-500"></div>
+        <div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-b border-slate-500"></div>
+        <div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-r border-b border-slate-500"></div><div class="border-b border-slate-500"></div>
+        <div class="border-r border-slate-500"></div><div class="border-r border-slate-500"></div><div class="border-r border-slate-500"></div><div class="border-r border-slate-500"></div><div></div>
+      </div>
+
+      <!-- y=0 discrimination reference line -->
+      <div class="absolute left-8 right-4 border-t border-dashed border-slate-500/50" style="bottom: 38%"></div>
+
+      <!-- x=0.2 (too hard) reference line -->
+      <div class="absolute top-4 bottom-8 border-l border-dashed border-amber-700/50" style="left: 22%"></div>
+
+      <!-- x=0.9 (too easy) reference line -->
+      <div class="absolute top-4 bottom-8 border-l border-dashed border-amber-700/50" style="left: 88%"></div>
+
+      <!-- Scatter dots — normal (indigo) -->
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:25%;top:28%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:33%;top:35%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:40%;top:22%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:47%;top:42%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:52%;top:18%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:58%;top:30%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:62%;top:52%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:67%;top:24%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:70%;top:38%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:72%;top:16%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:76%;top:44%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:78%;top:28%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:30%;top:48%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:43%;top:60%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:55%;top:40%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:65%;top:55%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:74%;top:36%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:82%;top:20%"></div>
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-indigo-400/80" style="left:84%;top:48%"></div>
+
+      <!-- Flagged dots (rose) — outside the ideal zone -->
+      <div class="absolute w-3 h-3 rounded-full bg-rose-500 border border-rose-300/40" style="left:90%;top:68%"></div>
+      <div class="absolute w-3 h-3 rounded-full bg-rose-500 border border-rose-300/40" style="left:92%;top:50%"></div>
+      <div class="absolute w-3 h-3 rounded-full bg-rose-500 border border-rose-300/40" style="left:12%;top:72%"></div>
+      <div class="absolute w-3 h-3 rounded-full bg-rose-500 border border-rose-300/40" style="left:15%;top:65%"></div>
+      <div class="absolute w-3 h-3 rounded-full bg-rose-500 border border-rose-300/40" style="left:88%;top:72%"></div>
+
+      <!-- Axis labels -->
+      <div class="absolute bottom-2 left-12 text-[9px] text-slate-600">0.0</div>
+      <div class="absolute bottom-2 text-[9px] text-slate-600" style="left:48%">0.5</div>
+      <div class="absolute bottom-2 right-4 text-[9px] text-slate-600">1.0</div>
+      <div class="absolute left-9 top-4 text-[9px] text-slate-600">High</div>
+      <div class="absolute left-9 text-[9px] text-slate-600" style="top:48%">0</div>
+    </div>
+
+    <div class="flex gap-5 mt-3 text-xs text-slate-500">
+      <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-400/80 inline-block"></span>Normal</span>
+      <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>Flagged</span>
+      <span class="flex items-center gap-1.5"><span class="w-4 border-t-2 border-dashed border-amber-700/60 inline-block"></span>Flag thresholds (p&lt;0.2, p&gt;0.9)</span>
+    </div>
+    <p class="text-[10px] text-slate-600 mt-2">Implementation: recharts &lt;ScatterChart&gt; with &lt;ReferenceLine&gt; at x=0.2 and x=0.9 and y=0</p>
+  </div>
+
+  <!-- ===== CHART 4: STUDENT SKILL BARS ===== -->
+  <div class="card" style="max-width: 600px;">
+    <div class="section-title">StudentDetailDrawer — Per-Skill Accuracy Bar Chart</div>
+    <p class="text-xs text-slate-500 mb-4">Replaces the existing text-only domain bars. Color = proficiency tier.</p>
+    <div class="space-y-2">
+      <!-- skill rows -->
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">COG-01 Cognitive Assess.</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-emerald-400/80 rounded" style="width:88%"></div>
+        </div>
+        <div class="text-emerald-400 w-8 shrink-0 text-right">88%</div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">COG-02 Norm-Referenced</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-rose-400/80 rounded" style="width:42%"></div>
+        </div>
+        <div class="text-rose-400 w-8 shrink-0 text-right">42%</div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">INT-01 Intervention Design</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-amber-400/80 rounded" style="width:75%"></div>
+        </div>
+        <div class="text-amber-400 w-8 shrink-0 text-right">75%</div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">INT-03 Intervention Fidelity</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-rose-400/80 rounded" style="width:33%"></div>
+        </div>
+        <div class="text-rose-400 w-8 shrink-0 text-right">33%</div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">CON-01 Family Engagement</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-emerald-400/80 rounded" style="width:90%"></div>
+        </div>
+        <div class="text-emerald-400 w-8 shrink-0 text-right">90%</div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">CON-03 Consultation Models</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-amber-400/80 rounded" style="width:60%"></div>
+        </div>
+        <div class="text-amber-400 w-8 shrink-0 text-right">60%</div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">FOC-02 Progress Monitoring</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-rose-400/80 rounded" style="width:52%"></div>
+        </div>
+        <div class="text-rose-400 w-8 shrink-0 text-right">52%</div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="text-slate-400 w-36 text-right shrink-0 truncate">DAT-01 Data Collection</div>
+        <div class="flex-1 h-5 bg-slate-800 rounded overflow-hidden">
+          <div class="h-full bg-amber-400/80 rounded" style="width:70%"></div>
+        </div>
+        <div class="text-amber-400 w-8 shrink-0 text-right">70%</div>
+      </div>
+
+      <!-- 80% goal marker overlay description -->
+      <div class="flex items-center gap-2 text-xs mt-1">
+        <div class="w-36 shrink-0"></div>
+        <div class="flex-1 relative h-1">
+          <div class="absolute top-0 bottom-0 w-0.5 bg-emerald-500/40 rounded" style="left:80%"></div>
+        </div>
+        <div class="w-8"></div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <div class="w-36 shrink-0"></div>
+        <div class="flex-1 flex justify-end pr-4 text-[9px] text-emerald-600/60" style="padding-right: calc(20% - 8px)">↑ 80% threshold</div>
+        <div class="w-8"></div>
+      </div>
+    </div>
+    <p class="text-[10px] text-slate-600 mt-3">Implementation: recharts &lt;BarChart layout="vertical"&gt; with &lt;ReferenceLine x={0.8}&gt; and &lt;Cell&gt; color by tier</p>
+  </div>
+
+</body>
+</html>

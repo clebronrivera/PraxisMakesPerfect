@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMP — Pre-Assessment: Spicy Mode + Diagnostic</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .screen { display: none; width: 100%; min-height: 100vh; }
+    .screen.active { display: flex; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .screen-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 1px solid #334155; border-radius: 30px; padding: 8px 16px; display: flex; gap: 8px; z-index: 100; }
+    .snav-btn { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; color: #94a3b8; border: 1px solid transparent; transition: all 0.15s; }
+    .snav-btn:hover { color: #e2e8f0; border-color: #475569; }
+    .snav-btn.active { background: #4f46e5; color: white; }
+    .card-dark { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; }
+    .answer-choice { padding: 14px 18px; border: 1px solid #334155; border-radius: 12px; cursor: pointer; color: #cbd5e1; transition: all 0.15s; margin-bottom: 8px; }
+    .answer-choice:hover { border-color: #6366f1; background: #1e1b4b; color: white; }
+    .answer-choice.sel { border-color: #6366f1; background: #1e1b4b; color: white; }
+    .answer-choice.correct { border-color: #22c55e; background: #052e16; color: #bbf7d0; }
+    .answer-choice.incorrect { border-color: #ef4444; background: #450a0a; color: #fca5a5; }
+    .confidence-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid #334155; font-size: 12px; cursor: pointer; color: #94a3b8; transition: all 0.15s; }
+    .confidence-btn:hover, .confidence-btn.sel { background: #4f46e5; border-color: #4f46e5; color: white; }
+    .glow-amber { box-shadow: 0 0 30px rgba(245, 158, 11, 0.15), 0 0 60px rgba(245, 158, 11, 0.05); }
+    .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.15), 0 0 60px rgba(99, 102, 241, 0.05); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+
+<!-- SCREEN NAV -->
+<div class="screen-nav">
+  <span class="snav-btn active" onclick="goTo('preassess-fresh')">① Fresh User</span>
+  <span class="snav-btn" onclick="goTo('preassess-returning')">② Returning</span>
+  <span class="snav-btn" onclick="goTo('spicy-question')">③ Spicy Q</span>
+  <span class="snav-btn" onclick="goTo('spicy-feedback')">④ Feedback</span>
+  <span class="snav-btn" onclick="goTo('spicy-hint')">⑤ Hint</span>
+  <span class="snav-btn" onclick="goTo('tutorial-1')">⑥ Tutorial</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 1: PRE-ASSESSMENT — FRESH USER (never started diagnostic) -->
+<!-- ============================================================ -->
+<div id="screen-preassess-fresh" class="screen active flex-col items-center justify-start bg-slate-950 px-4 py-8">
+  <div class="w-full max-w-lg">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="text-3xl mb-2">🎓</div>
+      <h1 class="text-2xl font-bold text-white mb-2">Welcome to Praxis Makes Perfect</h1>
+      <p class="text-slate-400 text-sm max-w-sm mx-auto">Choose how you'd like to start. You can switch between these anytime.</p>
+    </div>
+
+    <!-- OPTION 1: Adaptive Diagnostic (Primary) -->
+    <div class="card-dark p-5 mb-4 glow-indigo">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <h2 class="text-lg font-bold text-white">Adaptive Diagnostic</h2>
+            <span class="text-xs font-semibold bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full">Recommended</span>
+          </div>
+          <p class="text-sm text-slate-400 mb-3">Maps your strengths and gaps across all 45 skills. The engine adapts — strong areas go fast, weaker areas get follow-ups.</p>
+
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="text-center p-2 bg-slate-800/50 rounded-lg">
+              <div class="text-xs font-bold text-white">45–90</div>
+              <div class="text-xs text-slate-500">questions</div>
+            </div>
+            <div class="text-center p-2 bg-slate-800/50 rounded-lg">
+              <div class="text-xs font-bold text-white">25–45</div>
+              <div class="text-xs text-slate-500">minutes</div>
+            </div>
+            <div class="text-center p-2 bg-slate-800/50 rounded-lg">
+              <div class="text-xs font-bold text-white">Pause</div>
+              <div class="text-xs text-slate-500">anytime</div>
+            </div>
+          </div>
+
+          <!-- What unlocks -->
+          <div class="mb-4">
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Unlocks Everything</div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">🎯 Skill Practice</span>
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">🗺️ Learning Path</span>
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">🤖 AI Tutor</span>
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">📊 Study Guide</span>
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">🔁 SRS Review</span>
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">📈 Full Dashboard</span>
+            </div>
+          </div>
+
+          <button onclick="goTo('tutorial-1')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors text-sm">
+            Start Diagnostic →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 my-4">
+      <div class="flex-1 h-px bg-slate-800"></div>
+      <span class="text-xs text-slate-600 font-medium">or preview first</span>
+      <div class="flex-1 h-px bg-slate-800"></div>
+    </div>
+
+    <!-- OPTION 2: Feeling Spicy — Question Preview -->
+    <div class="card-dark p-5 glow-amber">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center shrink-0">
+          <span class="text-2xl">🌶️</span>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <h2 class="text-lg font-bold text-white">Feeling Spicy?</h2>
+            <span class="text-xs font-semibold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">Preview</span>
+          </div>
+          <p class="text-sm text-slate-400 mb-3">Not ready to commit? Try random questions from the full bank. You'll see feedback, hints, and explanations — just like the real thing.</p>
+
+          <div class="space-y-2 mb-4">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-xs text-slate-300">Random questions, continuous loop — take as many as you want</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-xs text-slate-300">Full feedback, hints, and explanations after each question</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-xs text-slate-300">Progress saved — data shows up on your dashboard after diagnostic</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-slate-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="text-xs text-slate-500">Does not unlock practice modes, study guide, or AI tutor</span>
+            </div>
+          </div>
+
+          <button onclick="goTo('spicy-question')" class="w-full border border-amber-500/40 hover:border-amber-400 text-amber-400 hover:bg-amber-500/10 font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+            <span>🌶️</span> Try Random Questions
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom note -->
+    <p class="text-center text-xs text-slate-600 mt-6">You'll see this page each time you log in until the diagnostic is complete.</p>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 2: PRE-ASSESSMENT — RETURNING USER (diagnostic in progress) -->
+<!-- ============================================================ -->
+<div id="screen-preassess-returning" class="screen flex-col items-center justify-start bg-slate-950 px-4 py-8">
+  <div class="w-full max-w-lg">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="text-3xl mb-2">👋</div>
+      <h1 class="text-2xl font-bold text-white mb-2">Welcome Back</h1>
+      <p class="text-slate-400 text-sm">Pick up where you left off, or preview more questions.</p>
+    </div>
+
+    <!-- Resume Diagnostic (Primary) -->
+    <div class="card-dark p-5 mb-4 glow-indigo">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-lg font-bold text-white mb-1">Resume Diagnostic</h2>
+
+          <!-- Progress indicator -->
+          <div class="mb-3">
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="text-slate-400">Progress</span>
+              <span class="text-indigo-400 font-semibold">28 of 45 skills · 34 questions answered</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-500 rounded-full" style="width: 62%"></div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-500 mb-3">~15–20 minutes remaining. Auto-saved — start exactly where you paused.</p>
+
+          <button class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors text-sm">
+            Continue Diagnostic →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 my-4">
+      <div class="flex-1 h-px bg-slate-800"></div>
+      <span class="text-xs text-slate-600 font-medium">or keep previewing</span>
+      <div class="flex-1 h-px bg-slate-800"></div>
+    </div>
+
+    <!-- Spicy Mode with session history -->
+    <div class="card-dark p-5 glow-amber">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center shrink-0">
+          <span class="text-2xl">🌶️</span>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <h2 class="text-lg font-bold text-white">Feeling Spicy?</h2>
+          </div>
+          <p class="text-sm text-slate-400 mb-3">Continue previewing random questions at your own pace.</p>
+
+          <!-- Previous session stats -->
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="text-center p-2 bg-slate-800/50 rounded-lg">
+              <div class="text-sm font-bold text-amber-400">12</div>
+              <div class="text-xs text-slate-500">answered</div>
+            </div>
+            <div class="text-center p-2 bg-slate-800/50 rounded-lg">
+              <div class="text-sm font-bold text-emerald-400">75%</div>
+              <div class="text-xs text-slate-500">correct</div>
+            </div>
+            <div class="text-center p-2 bg-slate-800/50 rounded-lg">
+              <div class="text-sm font-bold text-indigo-400">8</div>
+              <div class="text-xs text-slate-500">skills seen</div>
+            </div>
+          </div>
+
+          <button onclick="goTo('spicy-question')" class="w-full border border-amber-500/40 hover:border-amber-400 text-amber-400 hover:bg-amber-500/10 font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+            <span>🌶️</span> Keep Going
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-slate-600 mt-6">Complete the diagnostic to unlock all features.</p>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 3: SPICY MODE — QUESTION (answering) -->
+<!-- ============================================================ -->
+<div id="screen-spicy-question" class="screen flex-col items-center justify-start bg-slate-950 px-4 py-6">
+  <div class="w-full max-w-2xl">
+
+    <!-- Top bar -->
+    <div class="flex items-center justify-between mb-6">
+      <button onclick="goTo('preassess-fresh')" class="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to menu
+      </button>
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-amber-400 font-semibold bg-amber-500/10 px-3 py-1 rounded-full flex items-center gap-1.5">
+          <span>🌶️</span> Spicy Mode
+        </span>
+        <span class="text-xs text-slate-500">Q13</span>
+      </div>
+    </div>
+
+    <!-- Skill & Domain tag -->
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2.5 py-1 rounded-md font-medium">Consultation & Collaboration</span>
+      <span class="text-xs bg-slate-700 text-slate-400 px-2.5 py-1 rounded-md">CON-01</span>
+    </div>
+
+    <!-- Question -->
+    <div class="card-dark p-6 mb-4">
+      <p class="text-base text-slate-100 leading-relaxed">A school psychologist utilizes consultee-centered consultation to help a teacher who lacks objectivity regarding a student's behavior. The primary goal is:</p>
+    </div>
+
+    <!-- Answer choices -->
+    <div class="space-y-2 mb-5">
+      <div class="answer-choice flex items-start gap-3" onclick="this.classList.toggle('sel')">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">A</span>
+        <span class="text-sm">To change the student's behavior through direct environmental modification and behavioral intervention strategies</span>
+      </div>
+      <div class="answer-choice flex items-start gap-3" onclick="this.classList.toggle('sel')">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">B</span>
+        <span class="text-sm">To improve the teacher's ability to handle similar cases in the future by addressing their professional objectivity</span>
+      </div>
+      <div class="answer-choice flex items-start gap-3" onclick="this.classList.toggle('sel')">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">C</span>
+        <span class="text-sm">To develop a comprehensive behavior intervention plan that can be implemented across multiple settings</span>
+      </div>
+      <div class="answer-choice flex items-start gap-3" onclick="this.classList.toggle('sel')">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">D</span>
+        <span class="text-sm">To collect data about the student's behavior for use in a special education eligibility decision</span>
+      </div>
+    </div>
+
+    <!-- Confidence + Submit row -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-500 mr-1">Confidence:</span>
+        <button class="confidence-btn">Low</button>
+        <button class="confidence-btn sel">Medium</button>
+        <button class="confidence-btn">High</button>
+      </div>
+      <button onclick="goTo('spicy-feedback')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors">
+        Submit
+      </button>
+    </div>
+
+    <!-- Hint button -->
+    <div class="mt-4 text-center">
+      <button onclick="goTo('spicy-hint')" class="text-xs text-amber-400/60 hover:text-amber-400 transition-colors flex items-center gap-1 mx-auto">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        Need a hint?
+      </button>
+    </div>
+
+    <!-- Session counter -->
+    <div class="mt-6 pt-4 border-t border-slate-800/50 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="text-xs text-slate-600"><span class="text-slate-400 font-medium">12</span> answered</div>
+        <div class="text-xs text-slate-600"><span class="text-emerald-400 font-medium">9</span> correct</div>
+        <div class="text-xs text-slate-600"><span class="text-red-400 font-medium">3</span> missed</div>
+      </div>
+      <div class="text-xs text-slate-600">From 1,150 questions</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 4: SPICY MODE — FEEDBACK (after answering correctly) -->
+<!-- ============================================================ -->
+<div id="screen-spicy-feedback" class="screen flex-col items-center justify-start bg-slate-950 px-4 py-6">
+  <div class="w-full max-w-2xl">
+
+    <!-- Top bar -->
+    <div class="flex items-center justify-between mb-6">
+      <button onclick="goTo('preassess-fresh')" class="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to menu
+      </button>
+      <span class="text-xs text-amber-400 font-semibold bg-amber-500/10 px-3 py-1 rounded-full flex items-center gap-1.5">
+        <span>🌶️</span> Spicy Mode
+      </span>
+    </div>
+
+    <!-- Result banner -->
+    <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 mb-4 flex items-center gap-3">
+      <div class="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div>
+        <div class="text-sm font-bold text-emerald-400">Correct!</div>
+        <div class="text-xs text-emerald-400/60">Consultee-centered consultation · CON-01</div>
+      </div>
+    </div>
+
+    <!-- Question recap (collapsed) -->
+    <div class="card-dark p-4 mb-4">
+      <p class="text-sm text-slate-400 leading-relaxed">A school psychologist utilizes consultee-centered consultation to help a teacher who lacks objectivity…</p>
+      <div class="mt-3 space-y-1.5">
+        <div class="flex items-start gap-2 text-sm">
+          <span class="text-emerald-400 font-bold shrink-0">B ✓</span>
+          <span class="text-emerald-300">To improve the teacher's ability to handle similar cases in the future by addressing their professional objectivity</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explanation -->
+    <div class="card-dark p-5 mb-4">
+      <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Why This Is Correct</div>
+      <p class="text-sm text-slate-300 leading-relaxed mb-3">
+        In <strong class="text-white">consultee-centered consultation</strong>, the focus is on improving the consultee's (teacher's) ability to handle the current case AND similar future cases. When the consultee "lacks objectivity," the consultant works to identify and address the source of that objectivity loss — which could be:
+      </p>
+      <ul class="space-y-1.5 text-sm text-slate-300 ml-4">
+        <li class="flex items-start gap-2">
+          <span class="text-indigo-400 mt-1">•</span>
+          <span><strong class="text-slate-200">Theme interference</strong> — personal issues projected onto the professional situation</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-indigo-400 mt-1">•</span>
+          <span><strong class="text-slate-200">Simple identification</strong> — over-identifying with the student</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-indigo-400 mt-1">•</span>
+          <span><strong class="text-slate-200">Transference</strong> — reacting to the student based on past experiences</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Distractor analysis -->
+    <div class="card-dark p-5 mb-4">
+      <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Why Not the Others?</div>
+      <div class="space-y-3">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold text-red-400">A</span>
+            <span class="text-xs text-slate-500">— Confuses with client-centered consultation</span>
+          </div>
+          <p class="text-xs text-slate-400 ml-5">Direct behavior change targets the <em>client</em> (student), not the consultee. This describes <strong>client-centered</strong> consultation.</p>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold text-red-400">C</span>
+            <span class="text-xs text-slate-500">— Confuses with behavioral consultation</span>
+          </div>
+          <p class="text-xs text-slate-400 ml-5">Developing a BIP is the hallmark of <strong>behavioral consultation</strong>, which follows a structured problem-solving model.</p>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold text-red-400">D</span>
+            <span class="text-xs text-slate-500">— Confuses with assessment role</span>
+          </div>
+          <p class="text-xs text-slate-400 ml-5">Data collection for eligibility is an <strong>assessment</strong> function, not a consultation goal.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core concept callout -->
+    <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 mb-6">
+      <div class="text-xs font-semibold text-indigo-400 mb-1">💡 Core Concept</div>
+      <p class="text-xs text-slate-300">Caplan's four consultation types are distinguished by <strong class="text-white">who/what is the focus</strong>: client-centered (fix the student), consultee-centered (fix the teacher), program-centered (fix the system), and consultee-centered administrative (fix the administrator).</p>
+    </div>
+
+    <!-- Next question button -->
+    <button onclick="goTo('spicy-question')" class="w-full bg-amber-500/20 border border-amber-500/30 hover:bg-amber-500/30 text-amber-400 font-semibold py-3.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+      <span>🌶️</span> Next Random Question →
+    </button>
+
+    <!-- Session counter -->
+    <div class="mt-4 pt-4 border-t border-slate-800/50 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="text-xs text-slate-600"><span class="text-slate-400 font-medium">13</span> answered</div>
+        <div class="text-xs text-slate-600"><span class="text-emerald-400 font-medium">10</span> correct</div>
+        <div class="text-xs text-slate-600"><span class="text-red-400 font-medium">3</span> missed</div>
+      </div>
+      <button onclick="goTo('preassess-fresh')" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Done for now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 5: SPICY MODE — HINT REVEALED -->
+<!-- ============================================================ -->
+<div id="screen-spicy-hint" class="screen flex-col items-center justify-start bg-slate-950 px-4 py-6">
+  <div class="w-full max-w-2xl">
+
+    <!-- Top bar -->
+    <div class="flex items-center justify-between mb-6">
+      <button onclick="goTo('preassess-fresh')" class="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to menu
+      </button>
+      <span class="text-xs text-amber-400 font-semibold bg-amber-500/10 px-3 py-1 rounded-full flex items-center gap-1.5">
+        <span>🌶️</span> Spicy Mode
+      </span>
+    </div>
+
+    <!-- Hint banner -->
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-4">
+      <div class="flex items-start gap-3">
+        <div class="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-amber-400 mb-1">Hint</div>
+          <p class="text-sm text-amber-200/80 leading-relaxed">Think about <strong>whose</strong> problem is being addressed. The stem says the teacher "lacks objectivity" — so the intervention target is the teacher's professional functioning, not the student's behavior.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hint usage warning -->
+    <div class="flex items-center gap-2 bg-slate-800/50 rounded-lg px-3 py-2 mb-4">
+      <svg class="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span class="text-xs text-slate-500">Using a hint sends this question to your Redemption bank after the diagnostic.</span>
+    </div>
+
+    <!-- Question (still answerable) -->
+    <div class="card-dark p-5 mb-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2.5 py-1 rounded-md font-medium">Consultation & Collaboration</span>
+        <span class="text-xs bg-slate-700 text-slate-400 px-2.5 py-1 rounded-md">CON-01</span>
+      </div>
+      <p class="text-sm text-slate-200 leading-relaxed">A school psychologist utilizes consultee-centered consultation to help a teacher who lacks objectivity regarding a student's behavior. The primary goal is:</p>
+    </div>
+
+    <!-- Answer choices (still selectable) -->
+    <div class="space-y-2 mb-5">
+      <div class="answer-choice flex items-start gap-3">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">A</span>
+        <span class="text-sm">To change the student's behavior through direct environmental modification and behavioral intervention strategies</span>
+      </div>
+      <div class="answer-choice sel flex items-start gap-3">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">B</span>
+        <span class="text-sm">To improve the teacher's ability to handle similar cases in the future by addressing their professional objectivity</span>
+      </div>
+      <div class="answer-choice flex items-start gap-3">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">C</span>
+        <span class="text-sm">To develop a comprehensive behavior intervention plan that can be implemented across multiple settings</span>
+      </div>
+      <div class="answer-choice flex items-start gap-3">
+        <span class="text-sm font-bold text-slate-500 mt-0.5 shrink-0">D</span>
+        <span class="text-sm">To collect data about the student's behavior for use in a special education eligibility decision</span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end">
+      <button onclick="goTo('spicy-feedback')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors">
+        Submit Answer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 6: PRE-ASSESSMENT TUTORIAL (first-time overlay) -->
+<!-- ============================================================ -->
+<div id="screen-tutorial-1" class="screen flex-col items-center justify-start bg-slate-950 px-4 py-8">
+  <div class="w-full max-w-lg relative">
+
+    <!-- Tutorial overlay card -->
+    <div class="fixed inset-0 bg-black/60 z-40" style="pointer-events: none;"></div>
+
+    <!-- Semi-transparent version of the pre-assessment page behind -->
+    <div class="opacity-30 pointer-events-none">
+      <div class="text-center mb-8">
+        <div class="text-3xl mb-2">🎓</div>
+        <h1 class="text-2xl font-bold text-white mb-2">Welcome to Praxis Makes Perfect</h1>
+        <p class="text-slate-400 text-sm">Choose how you'd like to start.</p>
+      </div>
+      <div class="card-dark p-5 mb-4">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white">Adaptive Diagnostic</h2>
+            <p class="text-sm text-slate-400">Maps your strengths and gaps…</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-dark p-5">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center shrink-0">
+            <span class="text-2xl">🌶️</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white">Feeling Spicy?</h2>
+            <p class="text-sm text-slate-400">Try random questions…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tutorial card (floating over content) -->
+    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md px-4">
+      <div class="bg-slate-800 border border-slate-600 rounded-2xl p-6 shadow-2xl">
+        <!-- Step indicator -->
+        <div class="flex items-center gap-2 mb-4">
+          <div class="flex gap-1">
+            <div class="w-8 h-1 rounded-full bg-indigo-500"></div>
+            <div class="w-8 h-1 rounded-full bg-slate-600"></div>
+            <div class="w-8 h-1 rounded-full bg-slate-600"></div>
+          </div>
+          <span class="text-xs text-slate-500 ml-auto">1 of 3</span>
+        </div>
+
+        <div class="text-lg font-bold text-white mb-2">👋 Two Ways to Start</div>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          You have two options on this page. You'll come back here each time you log in until you finish the diagnostic.
+        </p>
+
+        <div class="space-y-3 mb-5">
+          <div class="flex items-start gap-3 bg-indigo-500/10 rounded-xl p-3">
+            <div class="w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+              <span class="text-xs font-bold text-white">1</span>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-white">Adaptive Diagnostic</div>
+              <div class="text-xs text-slate-400">Maps all 45 skills, unlocks every feature. Takes 25–45 min, pausable.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-amber-500/10 rounded-xl p-3">
+            <div class="w-6 h-6 bg-amber-500 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+              <span class="text-xs font-bold text-white">2</span>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-white">Feeling Spicy (Preview)</div>
+              <div class="text-xs text-slate-400">Try random questions with full feedback and hints. No commitment, no unlocks — just a taste.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <button class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Skip tutorial</button>
+          <button onclick="goTo('preassess-fresh')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">
+            Next →
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const screens = ['preassess-fresh','preassess-returning','spicy-question','spicy-feedback','spicy-hint','tutorial-1'];
+
+  function goTo(id) {
+    screens.forEach(s => {
+      const el = document.getElementById('screen-' + s);
+      if (el) el.classList.remove('active');
+    });
+    const target = document.getElementById('screen-' + id);
+    if (target) target.classList.add('active');
+
+    // Update nav buttons
+    document.querySelectorAll('.snav-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.snav-btn').forEach(btn => {
+      if (btn.textContent.toLowerCase().includes(id.split('-')[0]) ||
+          btn.getAttribute('onclick')?.includes(id)) {
+        btn.classList.add('active');
+      }
+    });
+    // More reliable: match by onclick
+    document.querySelectorAll('.snav-btn').forEach(btn => {
+      const oc = btn.getAttribute('onclick') || '';
+      if (oc.includes("'" + id + "'")) btn.classList.add('active');
+    });
+
+    window.scrollTo(0, 0);
+  }
+</script>
+
+</body>
+</html>

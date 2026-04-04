@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simplified Onboarding Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    input, select { background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; color: #e2e8f0; padding: 0.625rem 0.875rem; width: 100%; outline: none; font-size: 0.875rem; }
+    input::placeholder { color: #475569; }
+    input:focus, select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
+    select option { background: #1e293b; }
+    label { font-size: 0.8rem; font-weight: 500; color: #94a3b8; display: block; margin-bottom: 0.35rem; }
+    .field-error { font-size: 0.72rem; color: #f87171; margin-top: 0.25rem; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-lg space-y-6">
+
+    <!-- Header -->
+    <div class="text-center space-y-1">
+      <h1 class="text-2xl font-bold text-slate-100">Welcome to Praxis Makes Perfect</h1>
+      <p class="text-sm text-slate-500">Tell us a little about yourself — this takes less than a minute.</p>
+    </div>
+
+    <!-- Form card -->
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-7 space-y-5 shadow-xl">
+
+      <!-- Name row -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label>First name <span class="text-rose-400">*</span></label>
+          <input type="text" placeholder="Jordan" value="Jordan" />
+        </div>
+        <div>
+          <label>Last name <span class="text-rose-400">*</span></label>
+          <input type="text" placeholder="Rivera" value="" />
+          <!-- Error state example -->
+          <p class="field-error hidden">Last name is required</p>
+        </div>
+      </div>
+
+      <!-- Zip code -->
+      <div class="grid grid-cols-2 gap-4 items-start">
+        <div>
+          <label>Zip code <span class="text-rose-400">*</span></label>
+          <input type="text" placeholder="90210" value="10001" maxlength="10" />
+        </div>
+      </div>
+
+      <!-- School attending -->
+      <div>
+        <label>School / university attending</label>
+        <input type="text" placeholder="e.g. Temple University" value="Rutgers University" />
+        <div class="flex items-center gap-2 mt-2">
+          <input type="checkbox" id="not-in-school" class="w-3.5 h-3.5 accent-indigo-500 cursor-pointer" style="width:1rem;height:1rem;margin:0;" />
+          <label for="not-in-school" class="text-slate-500 cursor-pointer" style="margin:0;font-size:0.75rem;">Not currently enrolled in a program</label>
+        </div>
+      </div>
+
+      <!-- Purpose -->
+      <div>
+        <label>What brings you here? <span class="text-rose-400">*</span></label>
+        <select>
+          <option value="" disabled>Select a purpose…</option>
+          <option value="grad" selected>Graduate program requirement</option>
+          <option value="cert">Certification exam prep</option>
+          <option value="pd">Professional development</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <!-- How did you hear -->
+      <div>
+        <label>How did you hear about us?</label>
+        <select>
+          <option value="" disabled>Select one…</option>
+          <option value="google" selected>Google / Search</option>
+          <option value="social">Social media</option>
+          <option value="prof">Professor / Instructor</option>
+          <option value="friend">Friend / Colleague</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <!-- Submit -->
+      <button class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl transition-colors text-sm mt-2">
+        Continue to your dashboard →
+      </button>
+
+    </div>
+
+    <!-- Skip link -->
+    <p class="text-center text-xs text-slate-600">
+      <a href="#" class="hover:text-slate-400 underline underline-offset-2">Skip for now</a>
+    </p>
+
+    <!-- ====== STATE 2: Validation errors ====== -->
+    <div class="mt-12 space-y-1">
+      <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">↓ Validation error state</p>
+    </div>
+    <div class="bg-slate-800/60 border border-rose-500/40 rounded-2xl p-7 space-y-5 shadow-xl">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label>First name <span class="text-rose-400">*</span></label>
+          <input type="text" placeholder="Jordan" value="Jordan" />
+        </div>
+        <div>
+          <label>Last name <span class="text-rose-400">*</span></label>
+          <input type="text" placeholder="Rivera" value="" style="border-color: #f87171; box-shadow: 0 0 0 2px rgba(248,113,113,0.2);" />
+          <p class="field-error">Last name is required</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label>Zip code <span class="text-rose-400">*</span></label>
+          <input type="text" placeholder="90210" value="" style="border-color: #f87171; box-shadow: 0 0 0 2px rgba(248,113,113,0.2);" />
+          <p class="field-error">Zip code is required</p>
+        </div>
+      </div>
+      <div>
+        <label>School / university attending</label>
+        <input type="text" placeholder="e.g. Temple University" value="" />
+        <div class="flex items-center gap-2 mt-2">
+          <input type="checkbox" id="not-in-school2" checked class="w-3.5 h-3.5 accent-indigo-500" style="width:1rem;height:1rem;margin:0;" />
+          <label for="not-in-school2" class="text-slate-500 cursor-pointer" style="margin:0;font-size:0.75rem;">Not currently enrolled in a program</label>
+        </div>
+      </div>
+      <div>
+        <label>What brings you here? <span class="text-rose-400">*</span></label>
+        <select style="border-color: #f87171; box-shadow: 0 0 0 2px rgba(248,113,113,0.2);">
+          <option value="" disabled selected>Select a purpose…</option>
+          <option value="grad">Graduate program requirement</option>
+          <option value="cert">Certification exam prep</option>
+          <option value="pd">Professional development</option>
+          <option value="other">Other</option>
+        </select>
+        <p class="field-error">Please select a purpose</p>
+      </div>
+      <div>
+        <label>How did you hear about us?</label>
+        <select><option value="" disabled selected>Select one…</option><option>Google / Search</option><option>Social media</option><option>Professor / Instructor</option><option>Friend / Colleague</option><option>Other</option></select>
+      </div>
+      <button class="w-full bg-indigo-600/50 text-white/50 font-semibold py-3 rounded-xl text-sm cursor-not-allowed">
+        Continue to your dashboard →
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

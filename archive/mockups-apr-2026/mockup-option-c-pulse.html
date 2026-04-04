@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMP — Option C: Pulse (AI-Forward, Notification-Rich)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .screen { display: none; width: 100%; min-height: 100vh; }
+    .screen.active { display: flex; }
+    .screen-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f0a2e; border: 1px solid #4c1d95; box-shadow: 0 4px 24px rgba(79,70,229,0.3); border-radius: 30px; padding: 8px 16px; display: flex; gap: 8px; z-index: 100; }
+    .snav-btn { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; color: #a78bfa; border: 1px solid transparent; transition: all 0.15s; }
+    .snav-btn:hover { color: #ede9fe; border-color: #6d28d9; }
+    .snav-btn.active { background: #7c3aed; color: white; }
+    .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; backdrop-filter: blur(10px); }
+    .card-solid { background: #1a0f3e; border: 1px solid #2d1b69; border-radius: 16px; }
+    .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .pill-red { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .pill-amber { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .pill-green { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .pill-violet { background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.4); }
+    .pill-gray { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+    .badge { position: absolute; top: -7px; right: -7px; background: #ef4444; color: white; font-size: 10px; font-weight: 700; min-width: 19px; height: 19px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0f0a2e; }
+    .notification-banner { display: flex; align-items: center; gap-10px; padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; }
+    .notif-red { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); }
+    .notif-amber { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); }
+    .notif-violet { background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 50; }
+    .modal-box { background: #1a0f3e; border: 1px solid #4c1d95; border-radius: 20px; padding: 28px; max-width: 440px; width: 90%; box-shadow: 0 25px 60px rgba(79,70,229,0.4); }
+    .hidden-modal { display: none; }
+    .answer-opt { padding: 13px 16px; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; cursor: pointer; transition: all 0.15s; color: #c4b5fd; font-size: 14px; }
+    .answer-opt:hover { border-color: #7c3aed; background: rgba(124,58,237,0.15); color: #ede9fe; }
+    .answer-opt.sel { border-color: #7c3aed; background: rgba(124,58,237,0.2); color: white; }
+    .mode-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 18px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+    .mode-card:hover { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.08); transform: translateY(-2px); }
+    .mode-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; opacity: 0; transition: opacity 0.2s; }
+    .mode-card:hover::before { opacity: 1; }
+    .mc-spicy::before { background: linear-gradient(90deg, #f97316, #ef4444); }
+    .mc-redeem::before { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    .mc-srs::before { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+    .mc-domain::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+    .mc-skill::before { background: linear-gradient(90deg, #10b981, #059669); }
+    .mc-path::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+    .file-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 6px; }
+    .glow-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.25); animation: pulse-glow 2s infinite; }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 0 3px rgba(34,197,94,0.25); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0.1); } }
+    .radial-ring { transform: rotate(-90deg); }
+    .notification-toast { position: fixed; top: 16px; right: 16px; background: #1a0f3e; border: 1px solid #4c1d95; border-radius: 14px; padding: 12px 16px; box-shadow: 0 8px 32px rgba(79,70,229,0.4); z-index: 200; display: flex; align-items: start; gap: 10px; max-width: 300px; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+</head>
+<body style="background: #0a0520; color: #e2d9f3;">
+
+<!-- Toast notification (shown on some screens) -->
+<div id="toast" class="notification-toast" style="display:none;">
+  <span class="text-xl shrink-0">🔁</span>
+  <div>
+    <div class="text-sm font-bold text-white">5 reviews overdue</div>
+    <div class="text-xs text-violet-300">Tap to start spaced review now</div>
+  </div>
+  <button onclick="document.getElementById('toast').style.display='none'" class="ml-2 text-violet-400 hover:text-white text-lg leading-none shrink-0">×</button>
+</div>
+
+<div class="screen-nav">
+  <span class="snav-btn active" onclick="goTo('hero')">① Hero</span>
+  <span class="snav-btn" onclick="goTo('pre-assess')">② Pre-Test</span>
+  <span class="snav-btn" onclick="goTo('assess')">③ Diagnostic</span>
+  <span class="snav-btn" onclick="goTo('loading')">④ Loading</span>
+  <span class="snav-btn" onclick="goTo('home')">⑤ Dashboard</span>
+  <span class="snav-btn" onclick="goTo('practice')">⑥ Practice</span>
+  <span class="snav-btn" onclick="goTo('tutor')">⑦ AI Tutor</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 1: HERO — PULSE / VIBRANT -->
+<!-- ============================================================ -->
+<div id="screen-hero" class="screen active flex-col" style="background: #061206; min-height: 100vh;">
+  <style>
+    .hero-c-nav-border { border-bottom: 1px solid rgba(132,204,22,0.12); }
+    .hero-c-domain-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .hero-c-domain-fill { height: 8px; border-radius: 4px; transition: width 1.6s cubic-bezier(0.16,1,0.3,1); }
+    .btn-lime { background: #84cc16; color: #0a1a04; font-weight: 900; padding: 16px 36px; border-radius: 14px; font-size: 16px; cursor: pointer; transition: all 0.15s; box-shadow: 0 6px 30px rgba(132,204,22,0.35); letter-spacing: -0.01em; border: none; }
+    .btn-lime:hover { background: #a3e635; transform: translateY(-3px); box-shadow: 0 12px 40px rgba(132,204,22,0.45); }
+    .feature-chip-c { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; background: rgba(255,255,255,0.04); border: 1px solid rgba(132,204,22,0.15); color: rgba(255,255,255,0.55); }
+    .domain-tag-c { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .tag-c-red { background: rgba(239,68,68,0.15); color: #f87171; }
+    .tag-c-amber { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .tag-c-lime { background: rgba(132,204,22,0.15); color: #a3e635; }
+    .ticker-c { display: flex; gap: 32px; animation: marquee 22s linear infinite; white-space: nowrap; }
+    .ticker-item-c { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.25); white-space: nowrap; }
+    .ticker-sep-c { color: rgba(132,204,22,0.25); }
+  </style>
+
+  <!-- Nav -->
+  <header class="flex items-center justify-between px-8 py-4 hero-c-nav-border">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm" style="background: #84cc16; color: #0a1a04;">P</div>
+      <span class="font-black text-white tracking-tight">Praxis Makes Perfect</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full" style="color: #4ade80; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);">
+        <div class="glow-dot" style="width:6px;height:6px;"></div> 4 studying now
+      </div>
+      <button class="text-sm font-medium" style="color: rgba(255,255,255,0.4);">Sign In</button>
+      <button onclick="goTo('pre-assess')" class="font-bold text-sm transition-all hover:-translate-y-0.5" style="background: #84cc16; color: #0a1a04; padding: 8px 18px; border-radius: 10px; box-shadow: 0 3px 16px rgba(132,204,22,0.3);">Start Free \u2192</button>
+    </div>
+  </header>
+
+  <!-- Hero split -->
+  <div class="flex-1 flex items-center px-10 py-10 gap-16" style="max-width: 1280px; margin: 0 auto; width: 100%;">
+
+    <!-- Left: Copy -->
+    <div class="flex-1 min-w-0">
+      <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest mb-6 px-3 py-1.5 rounded-full" style="background: rgba(132,204,22,0.1); border: 1px solid rgba(132,204,22,0.25); color: #84cc16;">
+        Praxis 5403 \u00b7 School Psychology
+      </div>
+      <h1 class="font-black text-white mb-2" style="font-size: clamp(2.6rem, 4.8vw, 4rem); line-height: 1.05; letter-spacing: -0.03em;">
+        Stop guessing<br/>what to study.
+      </h1>
+      <h2 class="font-black mb-5" style="font-size: clamp(2.6rem, 4.8vw, 4rem); line-height: 1.05; letter-spacing: -0.03em; color: #84cc16;">
+        Know in 30 minutes.
+      </h2>
+      <p class="text-base leading-relaxed mb-8" style="color: rgba(255,255,255,0.45); max-width: 440px;">
+        Most test-takers practice for weeks without knowing which exam areas are actually costing them points. The adaptive diagnostic changes that.
+      </p>
+      <div class="flex items-center gap-3 mb-10">
+        <button onclick="goTo('pre-assess')" class="btn-lime">Take the Free Diagnostic \u2192</button>
+        <button onclick="goTo('pre-assess')" class="text-sm font-bold transition-colors" style="color: rgba(255,255,255,0.35);">Try sample questions</button>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="feature-chip-c">\ud83d\udd0d Adaptive Diagnostic</span>
+        <span class="feature-chip-c">\ud83e\udd16 PraxisBot AI Tutor</span>
+        <span class="feature-chip-c">\ud83d\uddfa\ufe0f AI Study Plan</span>
+        <span class="feature-chip-c">\ud83d\udd01 Auto Review Scheduling</span>
+        <span class="feature-chip-c">\u2694\ufe0f Redemption Rounds</span>
+      </div>
+    </div>
+
+    <!-- Right: Domain result preview -->
+    <div class="shrink-0" style="width: 360px;">
+      <div class="rounded-2xl p-6" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(132,204,22,0.15);">
+        <div class="flex items-center gap-2 mb-5">
+          <div class="w-2 h-2 rounded-full animate-pulse" style="background: #84cc16;"></div>
+          <span class="text-xs font-bold uppercase tracking-wider" style="color: #84cc16;">Sample Diagnostic Result</span>
+        </div>
+        <div class="mb-5 rounded-xl p-4" style="background: rgba(132,204,22,0.07); border: 1px solid rgba(132,204,22,0.15);">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-bold text-white">Exam Readiness</span>
+            <span class="text-lg font-black" style="color: #84cc16;">47%</span>
+          </div>
+          <div class="hero-c-domain-bar"><div class="hero-c-domain-fill" id="cReadyBar" style="width: 0%; background: linear-gradient(90deg, #4ade80, #84cc16);"></div></div>
+          <div class="text-[10px] mt-1.5" style="color: rgba(255,255,255,0.25);">15 of 32 exam areas at passing level</div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: rgba(255,255,255,0.6);">Professional Practice</span>
+              <span class="domain-tag-c tag-c-lime">Strong</span>
+            </div>
+            <div class="hero-c-domain-bar"><div class="hero-c-domain-fill" id="cBar1" style="width: 0%; background: #84cc16;"></div></div>
+            <div class="text-[9px] mt-1" style="color: rgba(255,255,255,0.2);">64% demonstrated</div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: rgba(255,255,255,0.6);">Assessment</span>
+              <span class="domain-tag-c tag-c-red">Focus Here</span>
+            </div>
+            <div class="hero-c-domain-bar"><div class="hero-c-domain-fill" id="cBar2" style="width: 0%; background: #ef4444;"></div></div>
+            <div class="text-[9px] mt-1" style="color: rgba(255,255,255,0.2);">29% demonstrated</div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: rgba(255,255,255,0.6);">Intervention &amp; Mental Health</span>
+              <span class="domain-tag-c tag-c-red">Focus Here</span>
+            </div>
+            <div class="hero-c-domain-bar"><div class="hero-c-domain-fill" id="cBar3" style="width: 0%; background: #ef4444;"></div></div>
+            <div class="text-[9px] mt-1" style="color: rgba(255,255,255,0.2);">25% demonstrated</div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: rgba(255,255,255,0.6);">Foundations</span>
+              <span class="domain-tag-c tag-c-amber">Approaching</span>
+            </div>
+            <div class="hero-c-domain-bar"><div class="hero-c-domain-fill" id="cBar4" style="width: 0%; background: #f59e0b;"></div></div>
+            <div class="text-[9px] mt-1" style="color: rgba(255,255,255,0.2);">63% demonstrated</div>
+          </div>
+        </div>
+        <div class="mt-5 pt-4" style="border-top: 1px solid rgba(255,255,255,0.06);">
+          <div class="text-[10px] mb-2" style="color: rgba(255,255,255,0.3);">AI identified top priorities:</div>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="domain-tag-c tag-c-red">Eligibility</span>
+            <span class="domain-tag-c tag-c-red">FBA</span>
+            <span class="domain-tag-c tag-c-amber">Crisis Intervention</span>
+          </div>
+          <button onclick="goTo('pre-assess')" class="w-full text-sm font-black py-3 rounded-xl transition-all hover:-translate-y-0.5" style="background: #84cc16; color: #0a1a04; border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(132,204,22,0.3);">Get My Real Results \u2192</button>
+        </div>
+      </div>
+      <div class="text-center mt-2 text-[10px]" style="color: rgba(255,255,255,0.18);">Free \u00b7 No account needed \u00b7 30 min</div>
+    </div>
+  </div>
+
+  <!-- Ticker -->
+  <div style="border-top: 1px solid rgba(132,204,22,0.08); overflow: hidden; padding: 10px 0; background: #040d04;">
+    <div class="ticker-c">
+      <span class="ticker-item-c">\u2713 Adaptive Diagnostic</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 AI Study Plan</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 PraxisBot Coaching</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 Auto Review Scheduling</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 Redemption Rounds</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 4 Exam Domains</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 Adaptive Diagnostic</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 AI Study Plan</span><span class="ticker-sep-c">\u00b7</span>
+      <span class="ticker-item-c">\u2713 PraxisBot Coaching</span>
+    </div>
+  </div>
+
+  <script>
+    setTimeout(function() {
+      AOS.init({ once: true, offset: 20 });
+      setTimeout(function() {
+        document.getElementById('cReadyBar').style.width = '47%';
+        document.getElementById('cBar1').style.width = '64%';
+        document.getElementById('cBar2').style.width = '29%';
+        document.getElementById('cBar3').style.width = '25%';
+        document.getElementById('cBar4').style.width = '63%';
+      }, 500);
+    }, 100);
+  </script>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 2: PRE-ASSESSMENT -->
+<!-- ============================================================ -->
+<div id="screen-pre-assess" class="screen flex-col items-center justify-center px-8 py-12" style="background: radial-gradient(ellipse at top, #1a0f3e 0%, #050210 100%);">
+
+  <div class="w-full max-w-lg">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-black text-white mb-2">How do you want to start?</h2>
+      <p style="color: #a78bfa; font-size: 14px;">Both paths lead to the same dashboard. Choose what fits your readiness right now.</p>
+    </div>
+
+    <!-- Spicy first — bold, energetic -->
+    <div class="card p-5 mb-3 cursor-pointer hover:border-orange-500/50 transition-all hover:-translate-y-0.5" style="border-color: rgba(249,115,22,0.3); background: rgba(249,115,22,0.05);">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0" style="background: linear-gradient(135deg, #f97316, #ef4444);">🌶️</div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <h3 class="font-black text-white">Feeling Spicy?</h3>
+            <span class="pill pill-amber">Fast start</span>
+          </div>
+          <p style="color: #94a3b8; font-size: 13px;">Jump straight in. One question per skill, all 45 in random order. Good warm-up if you've already studied some material.</p>
+        </div>
+      </div>
+      <button onclick="goTo('assess')" class="w-full font-bold text-sm py-3 rounded-xl transition-all hover:-translate-y-0.5" style="background: linear-gradient(135deg, #f97316, #ef4444); color: white; box-shadow: 0 4px 20px rgba(249,115,22,0.3);">
+        🌶️ Start Spicy Mode — All 45 skills
+      </button>
+    </div>
+
+    <!-- Diagnostic — recommended -->
+    <div class="card p-5 mb-5 cursor-pointer hover:border-violet-500/60 transition-all hover:-translate-y-0.5" style="border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.06);">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">🔍</div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <h3 class="font-black text-white">Adaptive Diagnostic</h3>
+            <span class="pill pill-violet">Recommended</span>
+          </div>
+          <p style="color: #94a3b8; font-size: 13px;">45–90 adaptive questions, ~30 min. Builds a real skill map with follow-ups where you struggle. Unlocks AI Tutor + Study Guide.</p>
+        </div>
+      </div>
+
+      <!-- What unlocks -->
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <div class="text-center p-2 rounded-xl" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <div class="text-base">🤖</div>
+          <div class="text-[10px] text-white font-semibold mt-0.5">AI Tutor</div>
+        </div>
+        <div class="text-center p-2 rounded-xl" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <div class="text-base">📊</div>
+          <div class="text-[10px] text-white font-semibold mt-0.5">Study Guide</div>
+        </div>
+        <div class="text-center p-2 rounded-xl" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <div class="text-base">🔁</div>
+          <div class="text-[10px] text-white font-semibold mt-0.5">Smart Review</div>
+        </div>
+      </div>
+
+      <button onclick="goTo('assess')" class="w-full font-bold text-sm py-3 rounded-xl transition-all hover:-translate-y-0.5" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; box-shadow: 0 4px 20px rgba(124,58,237,0.3);">
+        Start Adaptive Diagnostic →
+      </button>
+    </div>
+
+    <div class="text-center text-xs" style="color: #4c1d95;">Can pause and resume anytime · No feedback during assessment · Results load immediately</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 3: ASSESSMENT -->
+<!-- ============================================================ -->
+<div id="screen-assess" class="screen flex-col" style="background: #050210;">
+
+  <!-- Header bar -->
+  <div class="flex items-center justify-between px-6 py-3 sticky top-0 z-10" style="background: rgba(10,5,32,0.9); border-bottom: 1px solid rgba(139,92,246,0.2); backdrop-filter: blur(10px);">
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-semibold" style="color: #7c3aed;">Adaptive Diagnostic</span>
+      <span style="color: #3b0764; font-size: 18px;">·</span>
+      <span class="text-xs font-bold" style="color: #c4b5fd;">Assessment · Eligibility Determination</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 text-xs font-bold" style="color: #4ade80; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); padding: 4px 10px; border-radius: 20px;">
+        ✓ On Track
+      </div>
+      <button class="text-xs px-3 py-1 rounded-lg transition-colors" style="border: 1px solid rgba(139,92,246,0.3); color: #a78bfa;">Pause</button>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="px-6 pt-4 pb-2">
+    <div class="flex justify-between text-xs mb-1.5" style="color: #6d28d9;">
+      <span>Q14</span><span style="color: #4c1d95;">~60 estimated</span>
+    </div>
+    <div class="w-full h-1.5 rounded-full" style="background: rgba(139,92,246,0.1);">
+      <div class="h-1.5 rounded-full" style="width: 23%; background: linear-gradient(90deg, #7c3aed, #4f46e5);"></div>
+    </div>
+    <!-- Domain mini-progress -->
+    <div class="flex gap-3 mt-2">
+      <div class="flex items-center gap-1 text-[10px] font-semibold" style="color: #4ade80;">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>Prof. Practice
+      </div>
+      <div class="flex items-center gap-1 text-[10px] font-semibold" style="color: #c4b5fd;">
+        <span class="w-1.5 h-1.5 rounded-full bg-violet-400 inline-block"></span>Assessment ← now
+      </div>
+      <div class="flex items-center gap-1 text-[10px]" style="color: #4c1d95;">
+        <span class="w-1.5 h-1.5 rounded-full inline-block" style="background: #2d1b69;"></span>Intervention
+      </div>
+      <div class="flex items-center gap-1 text-[10px]" style="color: #4c1d95;">
+        <span class="w-1.5 h-1.5 rounded-full inline-block" style="background: #2d1b69;"></span>Foundations
+      </div>
+    </div>
+  </div>
+
+  <!-- Question card -->
+  <div class="flex-1 flex items-start justify-center px-6 py-6">
+    <div class="w-full max-w-2xl">
+      <div class="card p-8 mb-4">
+        <div class="text-xs font-bold mb-4 uppercase tracking-wider" style="color: #7c3aed;">Question 14</div>
+        <p class="leading-relaxed mb-6" style="color: #ede9fe; font-size: 15px;">
+          A school psychologist is conducting a comprehensive evaluation for a student suspected of having a specific learning disability. Under IDEA, which of the following is the most important consideration when determining eligibility?
+        </p>
+        <div class="space-y-2.5">
+          <div class="answer-opt" onclick="selectAns(this)">A. The student's performance on IQ tests compared to age-equivalent peers</div>
+          <div class="answer-opt sel" onclick="selectAns(this)">B. Evidence that the learning problem is not primarily due to lack of appropriate instruction</div>
+          <div class="answer-opt" onclick="selectAns(this)">C. Discrepancy between the student's aptitude and their academic achievement scores</div>
+          <div class="answer-opt" onclick="selectAns(this)">D. Parent and teacher reports indicating the student has always struggled in school</div>
+        </div>
+      </div>
+
+      <!-- Confidence -->
+      <div class="card p-4 mb-4">
+        <div class="flex items-center gap-4">
+          <span class="text-sm font-bold shrink-0" style="color: #a78bfa;">Confidence</span>
+          <div class="flex gap-2 flex-1">
+            <button class="flex-1 py-2 rounded-xl text-sm font-semibold transition-colors" style="border: 1px solid rgba(255,255,255,0.1); color: #94a3b8;" onclick="selectConfC(this)">🤔 Low</button>
+            <button class="flex-1 py-2 rounded-xl text-sm font-bold transition-colors" style="border: 1px solid #7c3aed; background: rgba(124,58,237,0.2); color: #c4b5fd;" onclick="selectConfC(this)">🙂 Medium</button>
+            <button class="flex-1 py-2 rounded-xl text-sm font-semibold transition-colors" style="border: 1px solid rgba(255,255,255,0.1); color: #94a3b8;" onclick="selectConfC(this)">💪 High</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <button class="text-sm transition-colors" style="color: #6d28d9;">Skip</button>
+        <span class="text-xs" style="color: #3b0764;">No feedback during diagnostic</span>
+        <button onclick="goTo('loading')" class="font-bold text-white text-sm px-8 py-3 rounded-xl transition-all hover:-translate-y-0.5" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); box-shadow: 0 4px 16px rgba(124,58,237,0.4);">
+          Next →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 4: LOADING -->
+<!-- ============================================================ -->
+<div id="screen-loading" class="screen flex-col items-center justify-center px-8" style="background: radial-gradient(ellipse at center, #1a0f3e 0%, #050210 100%);">
+  <div class="w-full max-w-md text-center">
+
+    <!-- Pulsing orb -->
+    <div class="relative w-24 h-24 mx-auto mb-6">
+      <div class="absolute inset-0 rounded-full animate-ping opacity-20" style="background: #7c3aed;"></div>
+      <div class="absolute inset-2 rounded-full animate-pulse" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); opacity: 0.8;"></div>
+      <div class="absolute inset-0 flex items-center justify-center text-3xl">🤖</div>
+    </div>
+
+    <h2 class="text-xl font-black text-white mb-2">PraxisBot is reading your results</h2>
+    <p class="text-sm mb-8" style="color: #7c6fa0;">Calibrating 45 skills · building your study plan · scheduling spaced reviews…</p>
+
+    <!-- Animated bars -->
+    <div class="space-y-3 mb-6 text-left">
+      <div>
+        <div class="flex justify-between text-xs mb-1.5">
+          <span style="color: #a78bfa;">Professional Practice</span>
+          <span style="color: #4ade80;">✓ 7/11 Demonstrating</span>
+        </div>
+        <div class="w-full h-1.5 rounded-full" style="background: rgba(255,255,255,0.06);">
+          <div class="h-1.5 rounded-full bg-green-400" style="width: 100%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-xs mb-1.5">
+          <span style="color: #a78bfa;">Assessment</span>
+          <span style="color: #4ade80;">✓ 4/14 Demonstrating</span>
+        </div>
+        <div class="w-full h-1.5 rounded-full" style="background: rgba(255,255,255,0.06);">
+          <div class="h-1.5 rounded-full bg-green-400" style="width: 100%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-xs mb-1.5">
+          <span style="color: #a78bfa;">Intervention &amp; Mental Health</span>
+          <span style="color: #fbbf24; animation: pulse 1s infinite;">Calibrating…</span>
+        </div>
+        <div class="w-full h-1.5 rounded-full" style="background: rgba(255,255,255,0.06);">
+          <div class="h-1.5 rounded-full" style="width: 65%; background: linear-gradient(90deg, #7c3aed, #c4b5fd);"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-xs mb-1.5">
+          <span style="color: #4c1d95;">Foundations</span>
+          <span style="color: #4c1d95;">Queued</span>
+        </div>
+        <div class="w-full h-1.5 rounded-full" style="background: rgba(255,255,255,0.06);">
+          <div class="h-1.5 rounded-full" style="width: 8%; background: rgba(124,58,237,0.4);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI building checklist -->
+    <div class="card p-4 mb-6 text-left">
+      <div class="space-y-2.5">
+        <div class="flex items-center gap-2.5 text-sm" style="color: #4ade80;"><span>✓</span> Skill map calibrated</div>
+        <div class="flex items-center gap-2.5 text-sm" style="color: #4ade80;"><span>✓</span> Priority clusters identified (8 high-urgency skills)</div>
+        <div class="flex items-center gap-2.5 text-sm" style="color: #c4b5fd;"><span class="animate-spin inline-block">⟳</span> AI composing your weekly study plan…</div>
+        <div class="flex items-center gap-2.5 text-sm" style="color: #3b0764;"><span>○</span> Scheduling spaced reviews</div>
+      </div>
+    </div>
+
+    <button onclick="goTo('home')" class="w-full font-bold text-white text-sm py-3.5 rounded-xl transition-all hover:-translate-y-0.5" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); box-shadow: 0 4px 24px rgba(124,58,237,0.4);">
+      View My Dashboard →
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 5: DASHBOARD HOME — NOTIFICATION HUB -->
+<!-- ============================================================ -->
+<div id="screen-home" class="screen flex-col" style="background: #050210; min-height: 100vh;">
+
+  <!-- Top bar -->
+  <div class="px-5 py-3 sticky top-0 z-10" style="background: rgba(5,2,16,0.9); border-bottom: 1px solid rgba(139,92,246,0.15); backdrop-filter: blur(10px);">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs text-white" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">P</div>
+        <span class="font-black text-white text-sm">Praxis Makes Perfect</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Streak -->
+        <div class="px-2.5 py-1 rounded-full text-xs font-bold" style="background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3); color: #fb923c;">🔥 7-day streak</div>
+        <!-- Days to exam -->
+        <div class="px-2.5 py-1 rounded-full text-xs font-bold" style="background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd;">📅 47 days</div>
+        <!-- Online -->
+        <div class="flex items-center gap-1.5 text-xs" style="color: #4ade80;">
+          <div class="glow-dot" style="width:6px;height:6px;"></div>4 online
+        </div>
+        <!-- Notification bell with badge -->
+        <button class="relative p-1.5 rounded-xl transition-colors" style="color: #a78bfa;" onclick="toggleNotifPanel()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <div class="badge">3</div>
+        </button>
+        <!-- Avatar -->
+        <div class="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">C</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav tabs (compact) -->
+  <div class="flex items-center px-5 py-0 overflow-x-auto" style="border-bottom: 1px solid rgba(139,92,246,0.1); background: rgba(5,2,16,0.7);">
+    <button class="px-4 py-2.5 text-sm font-bold whitespace-nowrap transition-colors" style="color: #c4b5fd; border-bottom: 2px solid #7c3aed;" onclick="goTo('home')">Home</button>
+    <button class="relative px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" style="color: #7c6fa0; border-bottom: 2px solid transparent;" onclick="goTo('practice')">
+      Practice
+      <span class="absolute top-1.5 right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style="background: #ef4444;">5</span>
+    </button>
+    <button class="relative px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" style="color: #7c6fa0; border-bottom: 2px solid transparent;">
+      Glossary
+      <span class="absolute top-1.5 right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style="background: #f59e0b;">12</span>
+    </button>
+    <button class="px-4 py-2.5 text-sm font-semibold whitespace-nowrap" style="color: #7c6fa0; border-bottom: 2px solid transparent;">Progress</button>
+    <button class="px-4 py-2.5 text-sm font-semibold whitespace-nowrap" style="color: #7c6fa0; border-bottom: 2px solid transparent;">Study Guide</button>
+    <button class="relative px-4 py-2.5 text-sm font-semibold whitespace-nowrap" style="color: #7c6fa0; border-bottom: 2px solid transparent;" onclick="goTo('tutor')">
+      AI Tutor
+      <span class="absolute top-1.5 right-0 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white" style="background: #7c3aed;">NEW</span>
+    </button>
+    <button class="px-4 py-2.5 text-sm font-semibold whitespace-nowrap" style="color: #7c6fa0; border-bottom: 2px solid transparent;">Notebook</button>
+  </div>
+
+  <div class="flex-1 p-5 overflow-auto">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- Notification stack — always visible, prominent -->
+      <div class="mb-5">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider" style="color: #7c3aed;">🔔 Your Alerts (3)</span>
+          <button class="text-xs" style="color: #4c1d95;">Dismiss all</button>
+        </div>
+
+        <div class="notification-banner notif-red flex items-center gap-3 p-3 rounded-xl" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);">
+          <span class="text-xl shrink-0">🔁</span>
+          <div class="flex-1">
+            <span class="text-sm font-bold" style="color: #f87171;">5 skills overdue for spaced review</span>
+            <span class="text-xs ml-2" style="color: rgba(248,113,113,0.7);">Ethics, FBA, Eligibility, Crisis Intervention, Counseling</span>
+          </div>
+          <button onclick="goTo('practice')" class="text-xs font-bold text-white px-3 py-1.5 rounded-lg shrink-0" style="background: #ef4444;">Start Now</button>
+        </div>
+
+        <div class="notification-banner flex items-center gap-3 p-3 rounded-xl mt-2" style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);">
+          <span class="text-xl shrink-0">⚔️</span>
+          <div class="flex-1">
+            <span class="text-sm font-bold" style="color: #fbbf24;">7 questions queued in Redemption Rounds</span>
+            <span class="text-xs ml-2" style="color: rgba(251,191,36,0.7);">1 credit available — ready to redeem</span>
+          </div>
+          <button onclick="goTo('practice')" class="text-xs font-bold text-white px-3 py-1.5 rounded-lg shrink-0" style="background: #d97706;">Redeem</button>
+        </div>
+
+        <div class="notification-banner flex items-center gap-3 p-3 rounded-xl mt-2" style="background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.3);">
+          <span class="text-xl shrink-0">🤖</span>
+          <div class="flex-1">
+            <span class="text-sm font-bold" style="color: #c4b5fd;">AI Tutor is ready — you haven't tried it yet</span>
+            <span class="text-xs ml-2" style="color: rgba(196,181,253,0.7);">PraxisBot knows your top 3 weak skills</span>
+          </div>
+          <button onclick="goTo('tutor')" class="text-xs font-bold text-white px-3 py-1.5 rounded-lg shrink-0" style="background: #7c3aed;">Open Tutor</button>
+        </div>
+      </div>
+
+      <!-- Main content grid -->
+      <div class="grid grid-cols-3 gap-4">
+
+        <!-- Readiness ring -->
+        <div class="card-solid p-5">
+          <div class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #4c1d95;">Readiness</div>
+          <div class="flex items-center gap-4 mb-4">
+            <div class="relative">
+              <svg class="radial-ring" width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="33" fill="none" stroke="rgba(124,58,237,0.1)" stroke-width="8"/>
+                <circle cx="40" cy="40" r="33" fill="none" stroke="url(#grad)" stroke-width="8" stroke-dasharray="207" stroke-dashoffset="110" stroke-linecap="round"/>
+                <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#818cf8"/></linearGradient></defs>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <div class="text-base font-black text-white">47%</div>
+                <div class="text-[8px]" style="color: #7c3aed;">Ready</div>
+              </div>
+            </div>
+            <div>
+              <div class="text-2xl font-black text-white">15<span class="text-base font-normal" style="color: #4c1d95;">/32</span></div>
+              <div class="text-xs" style="color: #7c6fa0;">Skills Demonstrating</div>
+              <div class="text-xs mt-1" style="color: #c4b5fd; font-weight: 700;">Developing</div>
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span style="color: #7c6fa0;">Prof. Practice</span>
+              <span style="color: #4ade80; font-weight: 700;">7/11</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span style="color: #7c6fa0;">Assessment</span>
+              <span style="color: #fbbf24; font-weight: 700;">4/14</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span style="color: #7c6fa0;">Intervention</span>
+              <span style="color: #f87171; font-weight: 700;">3/12</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span style="color: #7c6fa0;">Foundations</span>
+              <span style="color: #4ade80; font-weight: 700;">5/8</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's quick actions -->
+        <div class="card-solid p-5">
+          <div class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #4c1d95;">Focus Today</div>
+          <div class="space-y-2 mb-4">
+            <div class="flex items-center justify-between p-2.5 rounded-xl" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
+              <div>
+                <div class="text-xs font-bold text-white">Eligibility</div>
+                <div class="text-[10px]" style="color: #f87171;">33% · Emerging</div>
+              </div>
+              <button onclick="goTo('practice')" class="text-xs text-white px-2 py-1 rounded-lg font-bold" style="background: rgba(239,68,68,0.4);">→</button>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-xl" style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);">
+              <div>
+                <div class="text-xs font-bold text-white">FBA</div>
+                <div class="text-[10px]" style="color: #fbbf24;">40% · Emerging</div>
+              </div>
+              <button onclick="goTo('practice')" class="text-xs text-white px-2 py-1 rounded-lg font-bold" style="background: rgba(245,158,11,0.4);">→</button>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-xl" style="background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2);">
+              <div>
+                <div class="text-xs font-bold text-white">Crisis Intervention</div>
+                <div class="text-[10px]" style="color: #c4b5fd;">55% · Approaching</div>
+              </div>
+              <button onclick="goTo('practice')" class="text-xs text-white px-2 py-1 rounded-lg font-bold" style="background: rgba(124,58,237,0.4);">→</button>
+            </div>
+          </div>
+          <button onclick="goTo('practice')" class="w-full text-sm font-bold py-2.5 rounded-xl transition-colors" style="background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4); color: #c4b5fd;">All Practice Modes →</button>
+        </div>
+
+        <!-- AI Tutor entry -->
+        <div class="card-solid p-5" style="border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.06);">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-lg" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">🤖</div>
+            <div>
+              <div class="text-sm font-black text-white">PraxisBot</div>
+              <div class="text-[10px]" style="color: #7c3aed;">AI Tutor · Ready for you</div>
+            </div>
+            <span class="ml-auto text-[10px] font-bold text-white px-2 py-0.5 rounded-full" style="background: #7c3aed;">NEW</span>
+          </div>
+          <p class="text-xs mb-3" style="color: #7c6fa0; line-height: 1.5;">PraxisBot analyzed your diagnostic. It's ready to explain your weak skills, run custom quizzes, and build practice activities.</p>
+          <div class="space-y-1.5 mb-3">
+            <div class="text-[10px] py-1.5 px-2.5 rounded-lg cursor-pointer transition-colors" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #c4b5fd;">"Explain IDEA eligibility criteria"</div>
+            <div class="text-[10px] py-1.5 px-2.5 rounded-lg cursor-pointer transition-colors" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #c4b5fd;">"Create a matching vocabulary activity"</div>
+          </div>
+          <button onclick="goTo('tutor')" class="w-full text-sm font-bold py-2.5 rounded-xl text-white transition-all hover:-translate-y-0.5" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); box-shadow: 0 4px 16px rgba(124,58,237,0.35);">
+            Open AI Tutor →
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-4 gap-3 mt-4">
+        <div class="card p-4 text-center">
+          <div class="text-xl font-black text-white">284</div>
+          <div class="text-xs" style="color: #4c1d95;">Questions answered</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="text-xl font-black" style="color: #4ade80;">71%</div>
+          <div class="text-xs" style="color: #4c1d95;">Overall accuracy</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="text-xl font-black text-white">2.4h</div>
+          <div class="text-xs" style="color: #4c1d95;">Study time this week</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="text-xl font-black" style="color: #fbbf24;">47</div>
+          <div class="text-xs" style="color: #4c1d95;">Days to exam</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 6: PRACTICE — NOTIFICATION-FORWARD -->
+<!-- ============================================================ -->
+<div id="screen-practice" class="screen flex-col" style="background: #050210; min-height: 100vh;">
+
+  <div class="px-5 py-3 sticky top-0 z-10" style="background: rgba(5,2,16,0.9); border-bottom: 1px solid rgba(139,92,246,0.15); backdrop-filter: blur(10px);">
+    <div class="flex items-center justify-between mb-1">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs text-white" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">P</div>
+        <span class="font-black text-white text-sm">Praxis Makes Perfect</span>
+      </div>
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">C</div>
+    </div>
+    <div class="flex items-center gap-0">
+      <button class="px-4 py-2 text-sm font-semibold" style="color: #7c6fa0;" onclick="goTo('home')">Home</button>
+      <button class="px-4 py-2 text-sm font-bold" style="color: #c4b5fd; border-bottom: 2px solid #7c3aed;" onclick="goTo('practice')">Practice</button>
+      <button class="px-4 py-2 text-sm font-semibold" style="color: #7c6fa0;">Glossary</button>
+      <button class="px-4 py-2 text-sm font-semibold" style="color: #7c6fa0;">Progress</button>
+      <button class="px-4 py-2 text-sm font-semibold" style="color: #7c6fa0;">Study Guide</button>
+      <button class="px-4 py-2 text-sm font-semibold" style="color: #7c6fa0;" onclick="goTo('tutor')">AI Tutor</button>
+    </div>
+  </div>
+
+  <div class="flex-1 p-5">
+    <div class="max-w-5xl mx-auto">
+
+      <div class="mb-4">
+        <h1 class="text-xl font-black text-white">Practice Modes</h1>
+        <p class="text-sm" style="color: #7c6fa0;">5 ways to build mastery — sorted by urgency</p>
+      </div>
+
+      <!-- Urgent actions banner -->
+      <div class="card p-4 mb-5" style="background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25);">
+        <div class="flex items-start gap-3">
+          <span class="text-xl shrink-0">⚠️</span>
+          <div class="flex-1">
+            <div class="text-sm font-bold" style="color: #f87171;">2 urgent items need attention</div>
+            <div class="flex gap-2 mt-2 flex-wrap">
+              <button onclick="goTo('practice')" class="text-xs font-bold text-white px-3 py-1.5 rounded-lg" style="background: rgba(239,68,68,0.4); border: 1px solid rgba(239,68,68,0.5);">🔁 5 reviews overdue</button>
+              <button onclick="goTo('practice')" class="text-xs font-bold text-white px-3 py-1.5 rounded-lg" style="background: rgba(245,158,11,0.3); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24;">⚔️ 7 redemption questions · 1 credit ready</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode grid -->
+      <div class="grid grid-cols-3 gap-4">
+
+        <!-- Spaced Review — URGENT -->
+        <div class="mode-card mc-srs" style="border-color: rgba(239,68,68,0.3);">
+          <div class="badge" style="position:absolute;top:10px;right:10px;">5</div>
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl mb-3" style="background: rgba(124,58,237,0.2);">🔁</div>
+          <div class="text-sm font-black text-white mb-1">Spaced Review</div>
+          <div class="text-xs mb-3" style="color: #7c6fa0;">5 skills overdue. Smart Review surfaces topics at exactly the right moment before memory fades.</div>
+          <div class="pill pill-red text-[10px] mb-3">5 overdue</div>
+          <div class="text-[10px] mt-1" style="color: #7c6fa0;">Box 1: 8 · Box 2: 12 · Box 3: 5</div>
+        </div>
+
+        <!-- Redemption — HIGH PRIORITY -->
+        <div class="mode-card mc-redeem" style="border-color: rgba(245,158,11,0.3);">
+          <div class="badge badge-amber" style="position:absolute;top:10px;right:10px;background:#d97706;">7</div>
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl mb-3" style="background: rgba(239,68,68,0.15);">⚔️</div>
+          <div class="text-sm font-black text-white mb-1">Redemption Rounds</div>
+          <div class="text-xs mb-3" style="color: #7c6fa0;">7 quarantined questions. 90s, no hints, 3× correct to clear.</div>
+          <div class="pill pill-amber text-[10px] mb-2">1 credit ready</div>
+          <div class="text-[10px]" style="color: #7c6fa0;">High score: 71%</div>
+        </div>
+
+        <!-- Spicy Mode -->
+        <div class="mode-card mc-spicy">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl mb-3" style="background: rgba(249,115,22,0.2);">🌶️</div>
+          <div class="text-sm font-black text-white mb-1">Feeling Spicy</div>
+          <div class="text-xs mb-3" style="color: #7c6fa0;">One question per skill, randomized 45-skill cycle. Fast recalibration across all domains.</div>
+          <div class="w-full rounded-full h-1.5 mb-1.5" style="background: rgba(255,255,255,0.07);">
+            <div class="h-1.5 rounded-full" style="width:51%; background: linear-gradient(90deg, #f97316, #ef4444);"></div>
+          </div>
+          <div class="text-[10px]" style="color: #fb923c;">Cycle 1 · 23/45 complete</div>
+        </div>
+
+        <!-- Domain Review -->
+        <div class="mode-card mc-domain">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl mb-3" style="background: rgba(59,130,246,0.15);">🗂️</div>
+          <div class="text-sm font-black text-white mb-1">Domain Review</div>
+          <div class="text-xs mb-3" style="color: #7c6fa0;">Focus on one domain at a time. Covers all skills within it.</div>
+          <div class="flex gap-1.5 flex-wrap">
+            <span class="pill pill-red" style="font-size: 10px;">Assessment 4/14</span>
+            <span class="pill pill-red" style="font-size: 10px;">Intervention 3/12</span>
+          </div>
+        </div>
+
+        <!-- Skill Deep Dive -->
+        <div class="mode-card mc-skill">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl mb-3" style="background: rgba(16,185,129,0.15);">🎯</div>
+          <div class="text-sm font-black text-white mb-1">Skill Deep-Dive</div>
+          <div class="text-xs mb-3" style="color: #7c6fa0;">Target any of 45 skills. Most direct path from Emerging → Demonstrating.</div>
+          <div class="text-[10px]" style="color: #7c6fa0;">15 Emerging · 8 Approaching · 15 Demonstrating</div>
+        </div>
+
+        <!-- Learning Path -->
+        <div class="mode-card mc-path">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl mb-3" style="background: rgba(99,102,241,0.15);">🗺️</div>
+          <div class="text-sm font-black text-white mb-1">Learning Path</div>
+          <div class="text-xs mb-3" style="color: #7c6fa0;">Guided micro-lessons in skill order: Read → Quiz → Complete.</div>
+          <div class="text-[10px] font-bold" style="color: #818cf8;">▶ Next: FBA Module · Lesson 1</div>
+        </div>
+
+      </div>
+
+      <!-- Credit tracker -->
+      <div class="card mt-4 p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style="background: rgba(124,58,237,0.2);">⚔️</div>
+          <div class="flex-1">
+            <div class="flex justify-between mb-1">
+              <span class="text-xs font-bold text-white">Toward next Redemption credit</span>
+              <span class="text-xs" style="color: #7c6fa0;">8/20 answers</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full" style="background: rgba(255,255,255,0.06);">
+              <div class="h-1.5 rounded-full" style="width:40%; background: linear-gradient(90deg, #7c3aed, #818cf8);"></div>
+            </div>
+            <div class="text-[10px] mt-1" style="color: #4c1d95;">12 more non-hint practice answers = 1 credit</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 7: AI TUTOR -->
+<!-- ============================================================ -->
+<div id="screen-tutor" class="screen" style="background: #050210; min-height: 100vh;">
+
+  <!-- Activity modal -->
+  <div id="activityModal" class="modal-overlay hidden-modal">
+    <div class="modal-box">
+      <div class="text-base font-black text-white mb-1">How do you want this activity?</div>
+      <div class="text-sm mb-5" style="color: #a78bfa;">"Match IDEA Eligibility Terms" · 8 pairs</div>
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <button onclick="closeModal('activityModal')" class="p-5 rounded-2xl text-center transition-all hover:-translate-y-0.5 cursor-pointer" style="border: 2px solid rgba(124,58,237,0.5); background: rgba(124,58,237,0.1);">
+          <div class="text-3xl mb-2">💻</div>
+          <div class="font-bold text-white">Digital</div>
+          <div class="text-xs mt-1" style="color: #a78bfa;">Interactive drag-to-match<br/>in this chat</div>
+        </button>
+        <button onclick="showPDFConfirm()" class="p-5 rounded-2xl text-center transition-all hover:-translate-y-0.5 cursor-pointer" style="border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);">
+          <div class="text-3xl mb-2">📄</div>
+          <div class="font-bold text-white">PDF</div>
+          <div class="text-xs mt-1" style="color: #a78bfa;">Print-ready worksheet<br/>saved to My Files</div>
+        </button>
+      </div>
+      <!-- Free tier -->
+      <div class="rounded-xl p-3 mb-3" style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);">
+        <div class="text-xs font-bold" style="color: #fbbf24;">Free Plan · 2/3 activity generations this week</div>
+        <div class="text-xs mt-0.5" style="color: rgba(251,191,36,0.7);">Upgrade: unlimited activities + 30-day file storage</div>
+      </div>
+      <button onclick="closeModal('activityModal')" class="text-xs w-full text-center transition-colors" style="color: #4c1d95;">Cancel</button>
+    </div>
+  </div>
+
+  <div class="flex flex-1" style="min-height: 100vh;">
+
+    <!-- Sessions sidebar -->
+    <div class="w-60 shrink-0 flex flex-col p-4" style="background: rgba(26,15,62,0.8); border-right: 1px solid rgba(124,58,237,0.2);">
+
+      <!-- First-time prompt -->
+      <div class="rounded-xl p-3 mb-4" style="background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4);">
+        <div class="text-xs font-black mb-1.5" style="color: #c4b5fd;">👋 First time with PraxisBot?</div>
+        <p class="text-[10px] mb-2 leading-relaxed" style="color: #7c6fa0;">Diagnostic complete. PraxisBot knows your weakest skills. Try one:</p>
+        <div class="space-y-1.5">
+          <button class="w-full text-left text-[10px] px-2.5 py-1.5 rounded-lg font-semibold transition-colors" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd;">"Explain eligibility criteria"</button>
+          <button onclick="document.getElementById('activityModal').classList.remove('hidden-modal')" class="w-full text-left text-[10px] px-2.5 py-1.5 rounded-lg font-semibold transition-colors" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd;">"Build a matching activity"</button>
+          <button class="w-full text-left text-[10px] px-2.5 py-1.5 rounded-lg font-semibold transition-colors" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd;">"Quiz me on my weak skills"</button>
+        </div>
+      </div>
+
+      <!-- Sessions list -->
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold uppercase tracking-wider" style="color: #4c1d95;">Sessions</span>
+        <button class="text-xs font-bold text-white px-2 py-1 rounded-lg" style="background: rgba(124,58,237,0.4); border: 1px solid rgba(124,58,237,0.6);">+ New</button>
+      </div>
+      <div class="space-y-1.5 flex-1">
+        <div class="p-2.5 rounded-xl cursor-pointer" style="background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4);">
+          <div class="text-xs font-bold text-white">Eligibility Deep Dive</div>
+          <div class="text-[10px] mt-0.5" style="color: #7c6fa0;">Chat · 12 msgs · Today</div>
+        </div>
+        <div class="p-2.5 rounded-xl cursor-pointer hover:bg-white/5 transition-colors">
+          <div class="text-xs font-semibold" style="color: #a78bfa;">FBA Overview</div>
+          <div class="text-[10px] mt-0.5" style="color: #4c1d95;">Chat · 8 msgs · Yesterday</div>
+        </div>
+      </div>
+
+      <!-- Files panel -->
+      <div class="border-t pt-3 mt-3" style="border-color: rgba(124,58,237,0.2);">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider" style="color: #4c1d95;">My Files</span>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background: rgba(245,158,11,0.2); color: #fbbf24;">Free 2/3</span>
+        </div>
+
+        <div class="file-row">
+          <span class="text-sm">📄</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-[10px] font-bold text-white truncate">eligibility-match.pdf</div>
+            <div class="text-[9px] font-bold" style="color: #f87171;">Expires tomorrow</div>
+          </div>
+          <button class="text-xs font-bold shrink-0" style="color: #818cf8;">↓</button>
+        </div>
+        <div class="file-row">
+          <span class="text-sm">📄</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-[10px] font-bold text-white truncate">fba-sort-activity.pdf</div>
+            <div class="text-[9px]" style="color: #7c6fa0;">Expires in 2 days</div>
+          </div>
+          <button class="text-xs font-bold shrink-0" style="color: #818cf8;">↓</button>
+        </div>
+        <div class="text-[10px] text-center mt-1" style="color: #3b0764;">Free files expire in 3 days</div>
+        <button class="mt-2 w-full text-center text-[10px] font-bold transition-colors" style="color: #a78bfa;">✦ Pro: 30-day storage + unlimited</button>
+      </div>
+    </div>
+
+    <!-- Chat area -->
+    <div class="flex-1 flex flex-col">
+
+      <!-- Chat header -->
+      <div class="flex items-center justify-between px-5 py-3" style="border-bottom: 1px solid rgba(124,58,237,0.2); background: rgba(26,15,62,0.5);">
+        <div>
+          <div class="text-sm font-black text-white">Eligibility Deep Dive</div>
+          <div class="text-xs" style="color: #7c6fa0;">Chat · 12 messages</div>
+        </div>
+        <div class="flex gap-2">
+          <button class="text-xs px-3 py-1.5 rounded-lg font-semibold" style="border: 1px solid rgba(255,255,255,0.1); color: #a78bfa;">Chat</button>
+          <button class="text-xs px-3 py-1.5 rounded-lg font-bold" style="border: 1px solid rgba(124,58,237,0.5); background: rgba(124,58,237,0.2); color: #c4b5fd;">Quiz Mode</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="flex-1 overflow-auto p-5 space-y-4">
+
+        <!-- Bot -->
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">P</div>
+          <div class="flex-1 max-w-lg">
+            <div class="text-xs mb-1" style="color: #7c3aed;">PraxisBot</div>
+            <div class="card p-4 text-sm leading-relaxed" style="color: #e2d9f3;">
+              Your diagnostic showed <strong style="color: #c4b5fd;">Eligibility Determination at 33%</strong> — that's your #1 priority in the Assessment domain. Under IDEA, the 3 key pillars are: (1) qualifying disability category, (2) adverse educational impact, and (3) need for special education. Want examples, a quiz, or a practice activity?
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <button onclick="document.getElementById('activityModal').classList.remove('hidden-modal')" class="text-[11px] px-2.5 py-1 rounded-full font-semibold transition-colors" style="border: 1px solid rgba(124,58,237,0.4); color: #c4b5fd; background: rgba(124,58,237,0.08);">Create activity</button>
+              <button class="text-[11px] px-2.5 py-1 rounded-full font-semibold transition-colors" style="border: 1px solid rgba(124,58,237,0.4); color: #c4b5fd; background: rgba(124,58,237,0.08);">Quiz me</button>
+              <button class="text-[11px] px-2.5 py-1 rounded-full font-semibold transition-colors" style="border: 1px solid rgba(124,58,237,0.4); color: #c4b5fd; background: rgba(124,58,237,0.08);">Common mistakes?</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- User -->
+        <div class="flex gap-3 flex-row-reverse">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5" style="background: rgba(255,255,255,0.1);">C</div>
+          <div class="max-w-sm">
+            <div class="text-xs mb-1 text-right" style="color: #7c6fa0;">Carlos</div>
+            <div class="px-4 py-3 rounded-2xl text-sm" style="background: rgba(124,58,237,0.3); border: 1px solid rgba(124,58,237,0.5); color: #ede9fe;">Create a matching activity for IDEA terms</div>
+          </div>
+        </div>
+
+        <!-- Bot with artifact -->
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">P</div>
+          <div class="flex-1 max-w-lg">
+            <div class="text-xs mb-1" style="color: #7c3aed;">PraxisBot</div>
+            <div class="card p-4 text-sm mb-2" style="color: #e2d9f3;">
+              Done! 8-pair matching activity for IDEA eligibility. How do you want to work with it?
+            </div>
+            <!-- Activity artifact card -->
+            <div class="rounded-2xl p-4" style="border: 1px solid rgba(124,58,237,0.5); background: rgba(124,58,237,0.1);">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-xl">📋</span>
+                <div>
+                  <div class="text-sm font-black text-white">Match the Terms</div>
+                  <div class="text-[10px]" style="color: #a78bfa;">IDEA Eligibility · 8 vocabulary pairs</div>
+                </div>
+                <span class="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style="background: rgba(124,58,237,0.4); color: #c4b5fd;">Generated</span>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="document.getElementById('activityModal').classList.remove('hidden-modal')" class="flex-1 text-xs font-bold text-white py-2 rounded-xl transition-colors" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);">Open Activity →</button>
+                <button onclick="document.getElementById('activityModal').classList.remove('hidden-modal')" class="text-xs px-3 py-2 rounded-xl transition-colors font-semibold" style="border: 1px solid rgba(255,255,255,0.15); color: #a78bfa;">PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="p-4" style="border-top: 1px solid rgba(124,58,237,0.2); background: rgba(26,15,62,0.6);">
+        <div class="flex gap-2">
+          <input type="text" placeholder="Ask PraxisBot…" class="flex-1 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(124,58,237,0.3); color: #ede9fe; placeholder-color: #4c1d95;" />
+          <button class="text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all hover:-translate-y-0.5" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); box-shadow: 0 4px 16px rgba(124,58,237,0.3);">Send</button>
+        </div>
+        <div class="text-[10px] text-center mt-1.5" style="color: #3b0764;">Free: 3 activity generations/week · <span style="color: #7c3aed; cursor: pointer; font-weight: 700;">Upgrade for unlimited</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const screens = ['hero','pre-assess','assess','loading','home','practice','tutor'];
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('screen-' + id);
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.snav-btn').forEach((b,i) => b.classList.toggle('active', screens[i] === id));
+    window.scrollTo(0,0);
+    // Show toast on home and practice
+    const toast = document.getElementById('toast');
+    if (id === 'home' || id === 'practice') {
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 5000);
+    } else {
+      toast.style.display = 'none';
+    }
+  }
+  function selectAns(el) {
+    el.closest('.space-y-2\\.5').querySelectorAll('.answer-opt').forEach(a => a.classList.remove('sel'));
+    el.classList.add('sel');
+  }
+  function selectConfC(btn) {
+    const siblings = btn.closest('div').querySelectorAll('button');
+    siblings.forEach(b => {
+      b.style.borderColor = 'rgba(255,255,255,0.1)';
+      b.style.background = 'transparent';
+      b.style.color = '#94a3b8';
+    });
+    btn.style.borderColor = '#7c3aed';
+    btn.style.background = 'rgba(124,58,237,0.2)';
+    btn.style.color = '#c4b5fd';
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden-modal'); }
+  function showPDFConfirm() { closeModal('activityModal'); alert('PDF queued! Will appear in My Files momentarily.'); }
+  function toggleNotifPanel() { /* just a stub */ }
+</script>
+</body>
+</html>

@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMP — Option A: Atlas (Dark Data Dashboard)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .screen { display: none; width: 100%; min-height: 100vh; }
+    .screen.active { display: flex; }
+    .badge { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .badge-amber { background: #f59e0b; }
+    .skill-bar { height: 6px; border-radius: 3px; background: #1e293b; }
+    .skill-bar-fill { height: 6px; border-radius: 3px; transition: width 0.6s ease; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; color: #94a3b8; transition: all 0.15s; position: relative; }
+    .nav-item:hover { background: #1e293b; color: #e2e8f0; }
+    .nav-item.active { background: #312e81; color: #a5b4fc; }
+    .card-dark { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; }
+    .card-mid { background: #1e293b; border: 1px solid #334155; border-radius: 12px; }
+    .tag-green { background: #14532d; color: #86efac; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+    .tag-amber { background: #78350f; color: #fcd34d; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+    .tag-red { background: #450a0a; color: #fca5a5; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+    .tag-gray { background: #1e293b; color: #94a3b8; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; }
+    .modal-box { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; max-width: 420px; width: 90%; }
+    .hidden-modal { display: none; }
+    .file-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: #0f172a; border-radius: 8px; margin-bottom: 6px; }
+    .radial-progress { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+    svg.ring { transform: rotate(-90deg); }
+    .heatmap-cell { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+    .screen-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 1px solid #334155; border-radius: 30px; padding: 8px 16px; display: flex; gap: 8px; z-index: 100; }
+    .snav-btn { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; color: #94a3b8; border: 1px solid transparent; transition: all 0.15s; }
+    .snav-btn:hover { color: #e2e8f0; border-color: #475569; }
+    .snav-btn.active { background: #4f46e5; color: white; }
+    .confidence-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid #334155; font-size: 12px; cursor: pointer; color: #94a3b8; transition: all 0.15s; }
+    .confidence-btn:hover, .confidence-btn.sel { background: #4f46e5; border-color: #4f46e5; color: white; }
+    .answer-choice { padding: 12px 16px; border: 1px solid #334155; border-radius: 10px; cursor: pointer; color: #cbd5e1; transition: all 0.15s; margin-bottom: 8px; }
+    .answer-choice:hover { border-color: #6366f1; background: #1e1b4b; color: white; }
+    .answer-choice.sel { border-color: #6366f1; background: #1e1b4b; color: white; }
+    .notification-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; position: absolute; top: 2px; right: 2px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+
+<!-- ============================================================ -->
+<!-- SCREEN NAV (always visible) -->
+<!-- ============================================================ -->
+<div class="screen-nav" id="screenNav">
+  <span class="snav-btn active" onclick="goTo('hero')">① Hero</span>
+  <span class="snav-btn" onclick="goTo('pre-assess')">② Pre-Test</span>
+  <span class="snav-btn" onclick="goTo('assess')">③ Diagnostic</span>
+  <span class="snav-btn" onclick="goTo('loading')">④ Loading</span>
+  <span class="snav-btn" onclick="goTo('home')">⑤ Dashboard</span>
+  <span class="snav-btn" onclick="goTo('practice')">⑥ Practice</span>
+  <span class="snav-btn" onclick="goTo('tutor')">⑦ AI Tutor</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 1: HERO -->
+<!-- ============================================================ -->
+<div id="screen-hero" class="screen active flex-col" style="background: #000; min-height: 100vh;">
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+  <style>
+    .hero-a-rule { border-top: 1px solid #222; }
+    .domain-bar-a { height: 6px; border-radius: 3px; background: #1e1e1e; overflow: hidden; }
+    .domain-bar-a-fill { height: 6px; border-radius: 3px; transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
+    .marquee-track { display: flex; gap: 40px; animation: marquee 18s linear infinite; white-space: nowrap; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .score-card-a { background: #111; border: 1px solid #333; border-radius: 16px; box-shadow: 0 0 0 1px rgba(79,70,229,0.12), 0 8px 40px rgba(0,0,0,0.6); }
+    .tag-a { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+    .tag-a-red { background: rgba(239,68,68,0.12); color: #f87171; }
+    .tag-a-amber { background: rgba(245,158,11,0.12); color: #fbbf24; }
+    .tag-a-green { background: rgba(34,197,94,0.12); color: #4ade80; }
+  </style>
+
+  <!-- Nav — stark, minimal -->
+  <header class="flex items-center justify-between px-8 py-4 hero-a-rule" style="border-bottom: 1px solid #1a1a1a;">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">P</div>
+      <span class="font-bold text-white tracking-tight text-sm">Praxis Makes Perfect</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 text-xs" style="color: #555;">
+        <span class="pulse-dot"></span>
+        <span>4 studying now</span>
+      </div>
+      <button class="text-sm transition-colors" style="color: #555;">Sign In</button>
+      <button onclick="goTo('pre-assess')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg font-semibold transition-colors">Get Started</button>
+    </div>
+  </header>
+
+  <!-- Hero — editorial split layout -->
+  <div style="flex: 1; display: flex; flex-direction: row; align-items: center; flex-wrap: nowrap; padding: 40px; gap: 48px; max-width: 1280px; margin: 0 auto; width: 100%; box-sizing: border-box;">
+
+    <!-- Left: Massive typography -->
+    <div style="flex: 1; min-width: 0;">
+      <div class="text-xs font-bold uppercase tracking-widest mb-6" style="color: #4f46e5; letter-spacing: 0.15em;">
+        Praxis 5403 · School Psychology Exam Prep
+      </div>
+
+      <h1 class="font-black text-white mb-5" style="font-size: clamp(2.8rem, 5vw, 4.2rem); line-height: 1.05; letter-spacing: -0.03em;">
+        Tired of practicing<br/>
+        and still not knowing<br/>
+        <span style="color: #4f46e5;">what to focus on?</span>
+      </h1>
+
+      <p class="text-base mb-8 leading-relaxed max-w-lg" style="color: #666;">
+        A 30-minute adaptive diagnostic pinpoints exactly which exam areas are costing you points across all four domains — then AI builds your study plan from there.
+      </p>
+
+      <div class="flex items-center gap-3 mb-10">
+        <button onclick="goTo('pre-assess')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-7 py-3.5 rounded-xl text-sm transition-all hover:-translate-y-0.5" style="box-shadow: 0 4px 24px rgba(79,70,229,0.4);">
+          Start Free Diagnostic →
+        </button>
+        <button onclick="goTo('pre-assess')" class="font-semibold text-sm px-5 py-3.5 rounded-xl border transition-colors" style="border-color: #222; color: #777; background: #0a0a0a;">
+          Try Sample Questions
+        </button>
+      </div>
+
+      <!-- 4 domain callouts — not raw numbers -->
+      <div class="grid grid-cols-2 gap-2 max-w-sm">
+        <div class="flex items-center gap-2 text-xs" style="color: #555;">
+          <span style="color: #4f46e5; font-size: 16px;">◆</span> Professional Practice
+        </div>
+        <div class="flex items-center gap-2 text-xs" style="color: #555;">
+          <span style="color: #4f46e5; font-size: 16px;">◆</span> Assessment
+        </div>
+        <div class="flex items-center gap-2 text-xs" style="color: #555;">
+          <span style="color: #4f46e5; font-size: 16px;">◆</span> Intervention &amp; Mental Health
+        </div>
+        <div class="flex items-center gap-2 text-xs" style="color: #555;">
+          <span style="color: #4f46e5; font-size: 16px;">◆</span> Foundations
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Domain score preview card — the "proof of concept" -->
+    <div class="shrink-0" style="width: 340px;">
+      <div class="score-card-a p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <div class="text-xs font-bold text-white mb-0.5">Your Diagnostic Results</div>
+            <div class="text-[10px]" style="color: #444;">Sample · After 30 minutes</div>
+          </div>
+          <div class="text-[10px] font-bold px-2.5 py-1 rounded" style="background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2);">Developing</div>
+        </div>
+
+        <!-- Readiness bar -->
+        <div class="mb-5 p-3 rounded-xl" style="background: #0d0d0d; border: 1px solid #2a2a2a;">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-white">Exam Readiness</span>
+            <span class="text-xs font-black" style="color: #4f46e5;">47%</span>
+          </div>
+          <div class="domain-bar-a"><div class="domain-bar-a-fill" id="readyBarA" style="width: 0%; background: linear-gradient(90deg, #4f46e5, #818cf8);"></div></div>
+          <div class="text-[10px] mt-1.5" style="color: #444;">15 of 32 exam areas demonstrated</div>
+        </div>
+
+        <!-- 4 domain scores -->
+        <div class="space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: #aaa;">Professional Practice</span>
+              <span class="tag-a tag-a-green">Strong · 64%</span>
+            </div>
+            <div class="domain-bar-a"><div class="domain-bar-a-fill" id="barA1" style="width: 0%; background: #22c55e;"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: #aaa;">Assessment</span>
+              <span class="tag-a tag-a-red">Needs Work · 29%</span>
+            </div>
+            <div class="domain-bar-a"><div class="domain-bar-a-fill" id="barA2" style="width: 0%; background: #ef4444;"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: #aaa;">Intervention &amp; MH</span>
+              <span class="tag-a tag-a-red">Needs Work · 25%</span>
+            </div>
+            <div class="domain-bar-a"><div class="domain-bar-a-fill" id="barA3" style="width: 0%; background: #ef4444;"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-semibold" style="color: #aaa;">Foundations</span>
+              <span class="tag-a tag-a-amber">Approaching · 63%</span>
+            </div>
+            <div class="domain-bar-a"><div class="domain-bar-a-fill" id="barA4" style="width: 0%; background: #f59e0b;"></div></div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4" style="border-top: 1px solid #2a2a2a;">
+          <div class="text-[10px] mb-2" style="color: #444;">Top areas to address first:</div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="tag-a tag-a-red">Eligibility Determination</span>
+            <span class="tag-a tag-a-red">FBA</span>
+            <span class="tag-a tag-a-amber">Crisis Intervention</span>
+          </div>
+        </div>
+
+        <button onclick="goTo('pre-assess')" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black py-2.5 rounded-xl transition-colors">
+          Get Your Real Results →
+        </button>
+      </div>
+
+      <div class="text-center mt-3 text-[10px]" style="color: #333;">No account needed to start · Results in 30 minutes</div>
+    </div>
+  </div>
+
+  <!-- Bottom marquee strip -->
+  <div style="border-top: 1px solid #111; overflow: hidden; padding: 12px 0; background: #050505;">
+    <div class="marquee-track text-xs font-semibold" style="color: #333;">
+      <span>✓ Adaptive diagnostic</span>
+      <span>·</span>
+      <span>✓ AI-generated study plan</span>
+      <span>·</span>
+      <span>✓ PraxisBot AI Tutor</span>
+      <span>·</span>
+      <span>✓ Automated review scheduling</span>
+      <span>·</span>
+      <span>✓ Redemption Rounds</span>
+      <span>·</span>
+      <span>✓ Domain-by-domain breakdown</span>
+      <span>·</span>
+      <span>✓ Adaptive diagnostic</span>
+      <span>·</span>
+      <span>✓ AI-generated study plan</span>
+      <span>·</span>
+      <span>✓ PraxisBot AI Tutor</span>
+      <span>·</span>
+      <span>✓ Automated review scheduling</span>
+      <span>·</span>
+      <span>✓ Redemption Rounds</span>
+      <span>·</span>
+      <span>✓ Domain-by-domain breakdown</span>
+      <span>·</span>
+    </div>
+  </div>
+
+  <script>
+    // Animate bars after a short delay
+    setTimeout(() => {
+      AOS.init({ once: true, offset: 20 });
+      setTimeout(() => {
+        document.getElementById('readyBarA').style.width = '47%';
+        document.getElementById('barA1').style.width = '64%';
+        document.getElementById('barA2').style.width = '29%';
+        document.getElementById('barA3').style.width = '25%';
+        document.getElementById('barA4').style.width = '63%';
+      }, 600);
+    }, 100);
+  </script>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 2: PRE-ASSESSMENT -->
+<!-- ============================================================ -->
+<div id="screen-pre-assess" class="screen flex-col items-center justify-center bg-slate-950 px-8 py-12">
+  <div class="w-full max-w-xl">
+
+    <div class="text-center mb-8">
+      <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Your Adaptive Diagnostic</h2>
+      <p class="text-slate-400 text-sm">One question per skill — the engine adapts as you go, adding follow-ups only where needed.</p>
+    </div>
+
+    <!-- How It Works -->
+    <div class="card-dark p-5 mb-5 space-y-3">
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-indigo-900 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</div>
+        <div>
+          <div class="text-sm font-semibold text-white">45–90 questions</div>
+          <div class="text-xs text-slate-400 mt-0.5">One question per skill minimum. Wrong answers generate up to 3 follow-ups per skill.</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-indigo-900 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</div>
+        <div>
+          <div class="text-sm font-semibold text-white">~25–45 minutes</div>
+          <div class="text-xs text-slate-400 mt-0.5">Can pause and resume anytime. Your progress is saved automatically.</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-indigo-900 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</div>
+        <div>
+          <div class="text-sm font-semibold text-white">No feedback during the test</div>
+          <div class="text-xs text-slate-400 mt-0.5">Correct answers are hidden to keep results clean. Full breakdown unlocks immediately after.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unlocks preview -->
+    <div class="card-dark p-5 mb-6">
+      <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">What Unlocks After</div>
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="p-3 bg-slate-800/40 rounded-xl">
+          <div class="text-lg mb-1">🎯</div>
+          <div class="text-xs font-semibold text-white">Skill Practice</div>
+          <div class="text-xs text-slate-500 mt-0.5">All 45 skills</div>
+        </div>
+        <div class="p-3 bg-slate-800/40 rounded-xl">
+          <div class="text-lg mb-1">🗺️</div>
+          <div class="text-xs font-semibold text-white">Learning Path</div>
+          <div class="text-xs text-slate-500 mt-0.5">Guided modules</div>
+        </div>
+        <div class="p-3 bg-slate-800/40 rounded-xl">
+          <div class="text-lg mb-1">🤖</div>
+          <div class="text-xs font-semibold text-white">AI Tutor</div>
+          <div class="text-xs text-slate-500 mt-0.5">PraxisBot</div>
+        </div>
+        <div class="p-3 bg-slate-800/40 rounded-xl">
+          <div class="text-lg mb-1">📊</div>
+          <div class="text-xs font-semibold text-white">Study Guide</div>
+          <div class="text-xs text-slate-500 mt-0.5">AI-generated plan</div>
+        </div>
+        <div class="p-3 bg-slate-800/40 rounded-xl">
+          <div class="text-lg mb-1">🔁</div>
+          <div class="text-xs font-semibold text-white">Spaced Review</div>
+          <div class="text-xs text-slate-500 mt-0.5">Smart Review system</div>
+        </div>
+        <div class="p-3 bg-slate-800/40 rounded-xl">
+          <div class="text-lg mb-1">🌶️</div>
+          <div class="text-xs font-semibold text-white">Spicy Mode</div>
+          <div class="text-xs text-slate-500 mt-0.5">45-skill cycles</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="space-y-3">
+      <button onclick="goTo('assess')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl transition-colors text-sm">
+        Start Adaptive Diagnostic →
+      </button>
+      <button onclick="goTo('assess')" class="w-full border border-slate-700 hover:border-amber-500/50 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+        <span>🌶️</span> Jump to Spicy Mode (skip diagnostic)
+      </button>
+      <p class="text-center text-xs text-slate-600">Spicy cycles through all 45 skills in random order — good for warm-up practice, but diagnostic gives you a real skill map.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 3: ASSESSMENT IN PROGRESS -->
+<!-- ============================================================ -->
+<div id="screen-assess" class="screen flex-col bg-slate-950">
+
+  <!-- Top bar -->
+  <div class="flex items-center justify-between px-6 py-3 border-b border-slate-800 bg-slate-900/80 sticky top-0">
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-slate-500">Adaptive Diagnostic</span>
+      <span class="text-slate-700">·</span>
+      <span class="text-xs font-semibold text-indigo-400">Assessment · Eligibility Determination</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 text-xs text-slate-500">
+        <svg class="w-3.5 h-3.5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        <span class="text-green-400 font-semibold">On Track</span>
+      </div>
+      <button class="text-xs text-slate-500 hover:text-slate-300 border border-slate-700 px-3 py-1 rounded-lg transition-colors">Pause</button>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="px-6 pt-4 pb-2">
+    <div class="flex items-center justify-between mb-1.5">
+      <span class="text-xs text-slate-500">Question 14</span>
+      <span class="text-xs text-slate-500">~60 total estimated</span>
+    </div>
+    <div class="w-full h-2 bg-slate-800 rounded-full">
+      <div class="h-2 bg-indigo-600 rounded-full" style="width: 23%"></div>
+    </div>
+    <!-- Domain mini-bars -->
+    <div class="flex gap-1 mt-2">
+      <div class="flex-1 text-center">
+        <div class="h-1 bg-green-500 rounded-full mb-0.5" style="width: 100%"></div>
+        <span class="text-[9px] text-slate-600">Prof. Practice</span>
+      </div>
+      <div class="flex-1 text-center">
+        <div class="h-1 bg-indigo-500 rounded-full mb-0.5" style="width: 40%"></div>
+        <span class="text-[9px] text-slate-600">Assessment</span>
+      </div>
+      <div class="flex-1 text-center">
+        <div class="h-1 bg-slate-700 rounded-full mb-0.5"></div>
+        <span class="text-[9px] text-slate-600">Intervention</span>
+      </div>
+      <div class="flex-1 text-center">
+        <div class="h-1 bg-slate-700 rounded-full mb-0.5"></div>
+        <span class="text-[9px] text-slate-600">Foundations</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question Area -->
+  <div class="flex-1 flex items-start justify-center px-6 py-6">
+    <div class="w-full max-w-2xl">
+      <div class="card-dark p-8 mb-5">
+        <p class="text-slate-200 text-base leading-relaxed mb-6">
+          A school psychologist is conducting a comprehensive evaluation for a student suspected of having a specific learning disability. Under IDEA, which of the following is the most important consideration when determining eligibility?
+        </p>
+
+        <!-- Answer choices -->
+        <div class="space-y-2">
+          <div class="answer-choice" onclick="this.classList.toggle('sel')">A. The student's performance on IQ tests compared to age-equivalent peers</div>
+          <div class="answer-choice" onclick="this.classList.toggle('sel')">B. Evidence that the learning problem is not primarily due to lack of appropriate instruction</div>
+          <div class="answer-choice" onclick="this.classList.toggle('sel')">C. Discrepancy between the student's aptitude and their academic achievement scores</div>
+          <div class="answer-choice" onclick="this.classList.toggle('sel')">D. Parent and teacher reports indicating the student has always struggled in school</div>
+        </div>
+      </div>
+
+      <!-- Confidence selector -->
+      <div class="card-dark p-4 mb-5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Confidence Level</span>
+          <div class="flex gap-2">
+            <button class="confidence-btn" onclick="selectConf(this)">Low</button>
+            <button class="confidence-btn sel" onclick="selectConf(this)">Medium</button>
+            <button class="confidence-btn" onclick="selectConf(this)">High</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex items-center justify-between">
+        <button class="text-sm text-slate-500 hover:text-slate-300 transition-colors">Skip for now</button>
+        <button onclick="goTo('loading')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3 rounded-xl transition-colors">
+          Submit Answer →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 4: LOADING / RESULTS PROCESSING -->
+<!-- ============================================================ -->
+<div id="screen-loading" class="screen flex-col items-center justify-center bg-slate-950 px-8">
+  <div class="w-full max-w-md text-center">
+
+    <div class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center mx-auto mb-6 animate-pulse">
+      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.001 3.001 0 01-4.243 0l-.347-.347a5 5 0 01-.172-7.072z"/></svg>
+    </div>
+
+    <h2 class="text-xl font-bold text-white mb-2">Analyzing Your Results</h2>
+    <p class="text-slate-400 text-sm mb-8">Building your personalized skill map across all 4 domains…</p>
+
+    <!-- Domain loading bars -->
+    <div class="space-y-3 mb-8 text-left">
+      <div>
+        <div class="flex justify-between mb-1.5">
+          <span class="text-xs text-slate-400">Professional Practice</span>
+          <span class="text-xs text-green-400 font-semibold">Complete ✓</span>
+        </div>
+        <div class="skill-bar w-full"><div class="skill-bar-fill bg-green-500" style="width: 100%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between mb-1.5">
+          <span class="text-xs text-slate-400">Assessment</span>
+          <span class="text-xs text-green-400 font-semibold">Complete ✓</span>
+        </div>
+        <div class="skill-bar w-full"><div class="skill-bar-fill bg-green-500" style="width: 100%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between mb-1.5">
+          <span class="text-xs text-slate-400">Intervention &amp; Mental Health</span>
+          <span class="text-xs text-amber-400 font-semibold">Processing…</span>
+        </div>
+        <div class="skill-bar w-full"><div class="skill-bar-fill bg-amber-500" style="width: 70%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between mb-1.5">
+          <span class="text-xs text-slate-400">Foundations</span>
+          <span class="text-xs text-slate-500">Queued</span>
+        </div>
+        <div class="skill-bar w-full"><div class="skill-bar-fill bg-slate-700" style="width: 10%"></div></div>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div class="space-y-2 text-sm mb-8">
+      <div class="flex items-center gap-2 text-green-400"><span>✓</span> Calibrating 45 skill scores</div>
+      <div class="flex items-center gap-2 text-green-400"><span>✓</span> Computing baseline snapshot</div>
+      <div class="flex items-center gap-2 text-amber-400"><span class="animate-spin inline-block">⟳</span> Generating AI study plan</div>
+      <div class="flex items-center gap-2 text-slate-500"><span>○</span> Scheduling spaced reviews</div>
+    </div>
+
+    <button onclick="goTo('home')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors text-sm">
+      View My Dashboard →
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 5: DASHBOARD HOME -->
+<!-- ============================================================ -->
+<div id="screen-home" class="screen bg-slate-950" style="min-height: 100vh;">
+  <!-- Sidebar -->
+  <div class="w-56 shrink-0 bg-slate-900/80 border-r border-slate-800 flex flex-col py-4 px-3" style="min-height: 100vh;">
+    <div class="flex items-center gap-2 px-2 mb-6">
+      <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">P</div>
+      <span class="font-bold text-sm text-white">PraxisMakesPerfect</span>
+    </div>
+
+    <nav class="space-y-0.5 flex-1">
+      <div class="nav-item active" onclick="goTo('home')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span class="text-sm font-medium">Home</span>
+      </div>
+      <div class="nav-item relative" onclick="goTo('practice')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-sm font-medium">Practice</span>
+        <div class="badge">5</div>
+      </div>
+      <div class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span class="text-sm font-medium">Fluency</span>
+        <span class="ml-auto text-[10px] bg-slate-700 text-slate-400 px-1.5 py-0.5 rounded">Soon</span>
+      </div>
+      <div class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span class="text-sm font-medium">Glossary</span>
+        <div class="badge badge-amber">12</div>
+      </div>
+      <div class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span class="text-sm font-medium">Progress</span>
+      </div>
+      <div class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span class="text-sm font-medium">Study Guide</span>
+      </div>
+      <div class="nav-item relative" onclick="goTo('tutor')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        <span class="text-sm font-medium">AI Tutor</span>
+        <div class="notification-dot"></div>
+      </div>
+      <div class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        <span class="text-sm font-medium">Notebook</span>
+      </div>
+    </nav>
+
+    <!-- User card -->
+    <div class="mt-4 p-3 bg-slate-800/50 rounded-xl">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-7 h-7 rounded-full bg-indigo-700 flex items-center justify-center text-xs font-bold text-white">C</div>
+        <div>
+          <div class="text-xs font-semibold text-white">Carlos R.</div>
+          <div class="text-[10px] text-slate-500">47 days to exam</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <div class="text-[10px] text-slate-500">🔥 7-day streak</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-1 overflow-auto p-6" style="max-width: calc(100vw - 224px);">
+
+    <!-- Header row -->
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h1 class="text-lg font-bold text-white">Good morning, Carlos 👋</h1>
+        <p class="text-sm text-slate-400">Diagnostic complete · 15/32 skills at Demonstrating · Early readiness</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full text-xs">
+          <div class="pulse-dot"></div>
+          <span class="text-slate-400">4 online</span>
+        </div>
+        <button class="relative p-2 text-slate-400 hover:text-white">
+          🏆
+          <span class="badge">3</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Top stats row -->
+    <div class="grid grid-cols-4 gap-3 mb-5">
+      <div class="card-dark p-4">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">Readiness</div>
+        <div class="text-2xl font-black text-white">47%</div>
+        <div class="text-xs text-amber-400 mt-1">Developing · 17 more to go</div>
+      </div>
+      <div class="card-dark p-4">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">Overall Accuracy</div>
+        <div class="text-2xl font-black text-green-400">71%</div>
+        <div class="text-xs text-slate-500 mt-1">284 questions answered</div>
+      </div>
+      <div class="card-dark p-4">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">This Week</div>
+        <div class="text-2xl font-black text-white">83</div>
+        <div class="text-xs text-slate-500 mt-1">questions · 2.4h study time</div>
+      </div>
+      <div class="card-dark p-4">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">Days to Exam</div>
+        <div class="text-2xl font-black text-indigo-400">47</div>
+        <div class="text-xs text-slate-500 mt-1">May 19, 2026 · Praxis 5403</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-5">
+      <!-- Readiness ring + domain breakdown -->
+      <div class="card-dark p-5 col-span-1">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Readiness to 32 Skills</div>
+        <!-- Circular progress -->
+        <div class="flex flex-col items-center mb-4">
+          <div class="radial-progress">
+            <svg class="ring" width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#1e293b" stroke-width="10"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#4f46e5" stroke-width="10" stroke-dasharray="264" stroke-dashoffset="140" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute text-center">
+              <div class="text-xl font-black text-white">15</div>
+              <div class="text-[9px] text-slate-500">of 32</div>
+            </div>
+          </div>
+          <span class="tag-amber mt-2">Developing</span>
+        </div>
+        <!-- Domain bars -->
+        <div class="space-y-2">
+          <div>
+            <div class="flex justify-between text-[10px] mb-0.5">
+              <span class="text-slate-400">Prof. Practice</span><span class="text-green-400">7/11</span>
+            </div>
+            <div class="skill-bar"><div class="skill-bar-fill bg-green-500" style="width:64%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-0.5">
+              <span class="text-slate-400">Assessment</span><span class="text-amber-400">4/14</span>
+            </div>
+            <div class="skill-bar"><div class="skill-bar-fill bg-amber-500" style="width:29%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-0.5">
+              <span class="text-slate-400">Intervention</span><span class="text-amber-400">3/12</span>
+            </div>
+            <div class="skill-bar"><div class="skill-bar-fill bg-amber-500" style="width:25%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-0.5">
+              <span class="text-slate-400">Foundations</span><span class="text-green-400">5/8</span>
+            </div>
+            <div class="skill-bar"><div class="skill-bar-fill bg-green-500" style="width:63%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's focus -->
+      <div class="card-dark p-5 col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Focus</div>
+          <!-- SRS alert -->
+          <div class="flex items-center gap-1.5 bg-red-950 border border-red-800 text-red-400 text-xs font-semibold px-2.5 py-1 rounded-lg">
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+            5 skills overdue for review
+          </div>
+        </div>
+
+        <div class="space-y-2 mb-4">
+          <div class="flex items-center justify-between p-3 bg-red-950/40 border border-red-900/50 rounded-xl">
+            <div>
+              <div class="text-sm font-semibold text-white">Eligibility Determination</div>
+              <div class="text-xs text-slate-400">Assessment · 3 attempts · 33% accuracy</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="tag-red">Emerging</span>
+              <button onclick="goTo('practice')" class="text-xs bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors">Practice</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-amber-950/30 border border-amber-900/40 rounded-xl">
+            <div>
+              <div class="text-sm font-semibold text-white">FBA / Behavior Assessment</div>
+              <div class="text-xs text-slate-400">Assessment · 5 attempts · 60% accuracy</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="tag-amber">Approaching</span>
+              <button onclick="goTo('practice')" class="text-xs bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors">Practice</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between p-3 card-mid">
+            <div>
+              <div class="text-sm font-semibold text-white">Crisis Intervention</div>
+              <div class="text-xs text-slate-400">Intervention · 4 attempts · 50% accuracy</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="tag-red">Emerging</span>
+              <button onclick="goTo('practice')" class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors">Practice</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity bar -->
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Last 30 Days</div>
+        <div class="flex gap-0.5">
+          <!-- Generate 30 days of fake activity -->
+          <script>
+            const heatValues = [0,2,5,8,3,0,0,12,7,4,6,2,0,0,9,11,3,5,1,0,0,8,14,6,3,2,0,0,10,7];
+            document.write(heatValues.map(v => {
+              const colors = ['bg-slate-800','bg-indigo-900','bg-indigo-700','bg-indigo-500','bg-indigo-400'];
+              const c = v === 0 ? colors[0] : v < 5 ? colors[1] : v < 8 ? colors[2] : v < 12 ? colors[3] : colors[4];
+              return `<div class="heatmap-cell ${c}" title="${v} questions"></div>`;
+            }).join(''));
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill heatmap preview -->
+    <div class="card-dark p-5">
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Skill Heatmap — All 45 Skills</div>
+        <div class="flex gap-3 text-xs text-slate-500">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-green-500 inline-block"></span>Demonstrating</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block"></span>Approaching</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-red-600 inline-block"></span>Emerging</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-slate-700 inline-block"></span>Not Started</span>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        <!-- 45 skill cells -->
+        <script>
+          const statuses = ['green','green','green','green','amber','amber','amber','red','red','red','green','green','amber','amber','amber','red','red','red','red','gray','gray','gray','green','green','amber','red','red','gray','gray','gray','green','green','amber','amber','red','red','gray','gray','green','green','green','amber','red','red','gray'];
+          const colorMap = {green:'bg-green-500',amber:'bg-amber-500',red:'bg-red-600',gray:'bg-slate-700'};
+          document.write(statuses.map((s,i) => `<div class="w-9 h-9 rounded-lg ${colorMap[s]} flex items-center justify-center text-[9px] font-bold text-white/70 cursor-pointer hover:opacity-80" title="Skill ${i+1}">${i+1}</div>`).join(''));
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 6: PRACTICE MODES -->
+<!-- ============================================================ -->
+<div id="screen-practice" class="screen bg-slate-950">
+  <!-- Reuse sidebar structure -->
+  <div class="w-56 shrink-0 bg-slate-900/80 border-r border-slate-800 flex flex-col py-4 px-3" style="min-height: 100vh;">
+    <div class="flex items-center gap-2 px-2 mb-6">
+      <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">P</div>
+      <span class="font-bold text-sm text-white">PraxisMakesPerfect</span>
+    </div>
+    <nav class="space-y-0.5">
+      <div class="nav-item" onclick="goTo('home')"><span class="text-sm font-medium">Home</span></div>
+      <div class="nav-item active" onclick="goTo('practice')"><span class="text-sm font-medium">Practice</span></div>
+      <div class="nav-item"><span class="text-sm font-medium">Glossary</span></div>
+      <div class="nav-item"><span class="text-sm font-medium">Progress</span></div>
+      <div class="nav-item"><span class="text-sm font-medium">Study Guide</span></div>
+      <div class="nav-item" onclick="goTo('tutor')"><span class="text-sm font-medium">AI Tutor</span></div>
+    </nav>
+  </div>
+
+  <div class="flex-1 p-6">
+    <div class="mb-5">
+      <h1 class="text-lg font-bold text-white">Practice Modes</h1>
+      <p class="text-sm text-slate-400">Choose how you want to practice today</p>
+    </div>
+
+    <!-- Alert banner: spaced review overdue -->
+    <div class="flex items-center gap-3 bg-red-950 border border-red-800 rounded-xl p-3.5 mb-5">
+      <svg class="w-5 h-5 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <div class="flex-1">
+        <div class="text-sm font-semibold text-red-300">5 skills are overdue for spaced review</div>
+        <div class="text-xs text-red-400/70">These skills were scheduled for review 2–4 days ago. Reviewing now improves long-term retention.</div>
+      </div>
+      <button class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shrink-0">Review Now</button>
+    </div>
+
+    <!-- Mode cards grid -->
+    <div class="grid grid-cols-3 gap-4">
+
+      <!-- Domain Review -->
+      <div class="card-dark p-5 cursor-pointer hover:border-indigo-700 transition-colors relative">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-900 flex items-center justify-center text-xl">🗂️</div>
+          <span class="tag-amber">2 domains need work</span>
+        </div>
+        <h3 class="font-bold text-white mb-1">Domain Review</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">Practice by exam domain. Covers all skills within the domain.</p>
+        <div class="mt-3 flex gap-1 flex-wrap">
+          <span class="tag-red text-[10px]">Assessment: 4/14</span>
+          <span class="tag-red text-[10px]">Intervention: 3/12</span>
+        </div>
+      </div>
+
+      <!-- Skill Review -->
+      <div class="card-dark p-5 cursor-pointer hover:border-indigo-700 transition-colors">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-green-900 flex items-center justify-center text-xl">🎯</div>
+          <span class="tag-gray">Focus mode</span>
+        </div>
+        <h3 class="font-bold text-white mb-1">Skill Deep-Dive</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">Pick any of the 45 skills for targeted practice. Best for weak spots.</p>
+        <div class="mt-3 text-xs text-slate-500">30 skills available · 15 emerging</div>
+      </div>
+
+      <!-- Learning Path -->
+      <div class="card-dark p-5 cursor-pointer hover:border-indigo-700 transition-colors relative">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-900 flex items-center justify-center text-xl">🗺️</div>
+          <div class="badge badge-amber" style="position:relative;top:0;right:0;">New</div>
+        </div>
+        <h3 class="font-bold text-white mb-1">Learning Path</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">Guided micro-lessons: Read → Practice Quiz → Complete. Prerequisite-ordered.</p>
+        <div class="mt-3 text-xs text-indigo-400 font-semibold">▶ Up next: FBA Module</div>
+      </div>
+
+      <!-- Spicy Mode -->
+      <div class="card-dark p-5 cursor-pointer hover:border-amber-700 transition-colors" style="border-color: #78350f;">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-orange-900 flex items-center justify-center text-xl">🌶️</div>
+          <span class="tag-amber">Cycle 1: 23/45</span>
+        </div>
+        <h3 class="font-bold text-white mb-1">Feeling Spicy</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">One question per skill in random order. Complete a full cycle to reshuffle. Best for broad calibration.</p>
+        <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5"><div class="h-1.5 bg-orange-500 rounded-full" style="width:51%"></div></div>
+      </div>
+
+      <!-- Redemption Rounds -->
+      <div class="card-dark p-5 cursor-pointer hover:border-red-700 transition-colors relative" style="border-color: #450a0a;">
+        <div class="badge">7</div>
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-red-950 flex items-center justify-center text-xl">⚔️</div>
+          <span class="tag-red">1 credit available</span>
+        </div>
+        <h3 class="font-bold text-white mb-1">Redemption Rounds</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">7 quarantined questions. 90s each, no hints, 3× correct to clear. High stakes, high reward.</p>
+        <div class="mt-3 text-xs text-slate-500">High score: 71% · 2 credits until next round</div>
+      </div>
+
+      <!-- Spaced Review -->
+      <div class="card-dark p-5 cursor-pointer hover:border-red-700 transition-colors relative" style="border-color: #7f1d1d;">
+        <div class="badge">5</div>
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-900 flex items-center justify-center text-xl">🔁</div>
+          <span class="tag-red">5 overdue</span>
+        </div>
+        <h3 class="font-bold text-white mb-1">Spaced Review</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">Auto-scheduled reviews based on Leitner boxes. Skills surface exactly when you're about to forget.</p>
+        <div class="mt-3 flex gap-1 text-[9px] text-slate-500">
+          <span>Box 1: 8 skills</span>
+          <span>·</span>
+          <span>Box 2: 12</span>
+          <span>·</span>
+          <span>Box 3: 5</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Credit progress bar -->
+    <div class="card-dark p-4 mt-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-slate-400">Progress to Next Redemption Credit</span>
+        <span class="text-xs text-slate-500">8 / 20 answers</span>
+      </div>
+      <div class="w-full bg-slate-800 rounded-full h-2">
+        <div class="h-2 bg-indigo-500 rounded-full" style="width: 40%"></div>
+      </div>
+      <div class="text-xs text-slate-500 mt-1.5">12 more non-hint practice answers = 1 Redemption credit</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 7: AI TUTOR -->
+<!-- ============================================================ -->
+<div id="screen-tutor" class="screen bg-slate-950" style="min-height:100vh;">
+
+  <!-- Activity type modal -->
+  <div id="activityModal" class="modal-overlay hidden-modal">
+    <div class="modal-box">
+      <div class="text-sm font-bold text-white mb-1">PraxisBot created an activity</div>
+      <div class="text-xs text-slate-400 mb-4">"Match the vocabulary term with its definition (IDEA eligibility)"</div>
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <button onclick="closeModal('activityModal')" class="p-4 border border-indigo-700 bg-indigo-950 rounded-xl text-center hover:bg-indigo-900 transition-colors">
+          <div class="text-2xl mb-1">💻</div>
+          <div class="text-sm font-bold text-white">Digital</div>
+          <div class="text-xs text-slate-400">Interactive, drag-to-match</div>
+        </button>
+        <button onclick="showPDFConfirm()" class="p-4 border border-slate-600 bg-slate-800/50 rounded-xl text-center hover:bg-slate-800 transition-colors">
+          <div class="text-2xl mb-1">📄</div>
+          <div class="text-sm font-bold text-white">PDF Download</div>
+          <div class="text-xs text-slate-400">Print-ready worksheet</div>
+        </button>
+      </div>
+      <div class="bg-amber-950/60 border border-amber-800/50 rounded-lg p-3 mb-3">
+        <div class="text-xs text-amber-300 font-semibold">Free Plan · 2/3 activities used this week</div>
+        <div class="text-xs text-amber-400/70 mt-0.5">Upgrade for unlimited activities + 30-day file storage</div>
+      </div>
+      <button onclick="closeModal('activityModal')" class="text-xs text-slate-500 hover:text-slate-300 transition-colors w-full text-center">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Sessions sidebar -->
+  <div class="w-56 shrink-0 bg-slate-900/80 border-r border-slate-800 flex flex-col py-4 px-3" style="min-height:100vh;">
+    <div class="flex items-center justify-between mb-4">
+      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">AI Tutor</span>
+      <button class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded-lg transition-colors">+ New</button>
+    </div>
+
+    <!-- New user prompt box -->
+    <div class="bg-indigo-950 border border-indigo-800 rounded-xl p-3 mb-4">
+      <div class="text-xs font-bold text-indigo-300 mb-1">👋 First time here?</div>
+      <p class="text-[10px] text-indigo-400/80 leading-relaxed mb-2">PraxisBot knows your skill gaps from the diagnostic. Try asking about your weakest domain.</p>
+      <div class="space-y-1">
+        <button class="w-full text-left text-[10px] bg-indigo-900/60 hover:bg-indigo-900 text-indigo-300 px-2 py-1.5 rounded-lg transition-colors">"Quiz me on Eligibility"</button>
+        <button class="w-full text-left text-[10px] bg-indigo-900/60 hover:bg-indigo-900 text-indigo-300 px-2 py-1.5 rounded-lg transition-colors">"Explain FBA to me"</button>
+        <button class="w-full text-left text-[10px] bg-indigo-900/60 hover:bg-indigo-900 text-indigo-300 px-2 py-1.5 rounded-lg transition-colors">"Create a matching activity"</button>
+      </div>
+    </div>
+
+    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sessions</div>
+    <div class="space-y-1 flex-1">
+      <div class="p-2 bg-slate-800 rounded-lg border border-slate-700">
+        <div class="text-xs font-semibold text-white truncate">Eligibility Deep Dive</div>
+        <div class="text-[10px] text-slate-500">12 messages · Today</div>
+      </div>
+      <div class="p-2 hover:bg-slate-800/60 rounded-lg cursor-pointer transition-colors">
+        <div class="text-xs font-semibold text-slate-300 truncate">FBA Overview</div>
+        <div class="text-[10px] text-slate-500">8 messages · Yesterday</div>
+      </div>
+    </div>
+
+    <!-- My Files Panel -->
+    <div class="mt-4 border-t border-slate-800 pt-3">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">My Files</span>
+        <span class="text-[10px] bg-amber-900 text-amber-400 px-1.5 py-0.5 rounded font-semibold">Free: 2/3</span>
+      </div>
+
+      <div class="file-row">
+        <div class="flex-1 min-w-0">
+          <div class="text-[10px] font-semibold text-white truncate">eligibility-match.pdf</div>
+          <div class="text-[9px] text-red-400">Expires in 1 day</div>
+        </div>
+        <button class="ml-2 text-[10px] text-indigo-400 hover:text-indigo-300 shrink-0">↓</button>
+      </div>
+      <div class="file-row">
+        <div class="flex-1 min-w-0">
+          <div class="text-[10px] font-semibold text-white truncate">fba-sort-activity.pdf</div>
+          <div class="text-[9px] text-slate-500">Expires in 2 days</div>
+        </div>
+        <button class="ml-2 text-[10px] text-indigo-400 hover:text-indigo-300 shrink-0">↓</button>
+      </div>
+      <div class="mt-2 text-[10px] text-slate-600 text-center">Free files expire in 3 days</div>
+      <button class="mt-1.5 w-full text-[10px] text-amber-400 hover:text-amber-300 text-center transition-colors font-semibold">✦ Upgrade for 30-day storage</button>
+    </div>
+  </div>
+
+  <!-- Chat area -->
+  <div class="flex-1 flex flex-col" style="min-height:100vh; max-width: calc(100vw - 224px);">
+
+    <!-- Chat header -->
+    <div class="flex items-center justify-between px-5 py-3 border-b border-slate-800 bg-slate-900/60">
+      <div>
+        <div class="text-sm font-bold text-white">Eligibility Deep Dive</div>
+        <div class="text-xs text-slate-500">Chat mode · 12 messages</div>
+      </div>
+      <div class="flex gap-2">
+        <button class="text-xs border border-slate-700 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-colors">Chat</button>
+        <button class="text-xs border border-indigo-700 bg-indigo-950 text-indigo-400 px-3 py-1.5 rounded-lg">Quiz Mode</button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="flex-1 overflow-auto p-5 space-y-4">
+
+      <!-- Bot message -->
+      <div class="flex gap-3">
+        <div class="w-7 h-7 bg-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">P</div>
+        <div class="flex-1">
+          <div class="text-xs text-slate-500 mb-1">PraxisBot</div>
+          <div class="card-mid p-4 text-sm text-slate-200 leading-relaxed">
+            Based on your diagnostic, Eligibility Determination is one of your weakest skills (33% accuracy). Under IDEA, the key determination factors include: rule out exclusionary factors, document that the disability adversely affects educational performance, and show need for special education. Want me to break down the eligibility criteria with examples, or create a practice activity?
+          </div>
+          <!-- Follow-up chips -->
+          <div class="flex flex-wrap gap-2 mt-2">
+            <button onclick="document.getElementById('activityModal').classList.remove('hidden-modal')" class="text-xs border border-slate-700 hover:border-indigo-600 text-slate-400 hover:text-indigo-400 px-2.5 py-1 rounded-full transition-colors">Create matching activity</button>
+            <button class="text-xs border border-slate-700 hover:border-indigo-600 text-slate-400 hover:text-indigo-400 px-2.5 py-1 rounded-full transition-colors">Quiz me on this</button>
+            <button class="text-xs border border-slate-700 hover:border-indigo-600 text-slate-400 hover:text-indigo-400 px-2.5 py-1 rounded-full transition-colors">Common misconceptions?</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- User message -->
+      <div class="flex gap-3 flex-row-reverse">
+        <div class="w-7 h-7 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">C</div>
+        <div class="max-w-md">
+          <div class="text-xs text-slate-500 mb-1 text-right">Carlos</div>
+          <div class="bg-indigo-950 border border-indigo-800/50 p-3 rounded-xl text-sm text-slate-200">Create a matching activity for IDEA eligibility terms</div>
+        </div>
+      </div>
+
+      <!-- Bot with activity artifact -->
+      <div class="flex gap-3">
+        <div class="w-7 h-7 bg-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">P</div>
+        <div class="flex-1">
+          <div class="text-xs text-slate-500 mb-1">PraxisBot</div>
+          <div class="card-mid p-4 text-sm text-slate-200 mb-2">
+            I've created a matching activity with 8 key IDEA eligibility terms and definitions. How would you like to work with it?
+          </div>
+          <!-- Activity card -->
+          <div class="border border-indigo-800 bg-indigo-950/50 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <div class="text-xs font-bold text-indigo-300">📋 Activity: Match the Terms</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">IDEA Eligibility Determination · 8 pairs</div>
+              </div>
+              <span class="text-[10px] bg-indigo-900 text-indigo-400 px-2 py-0.5 rounded font-semibold">Generated</span>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="document.getElementById('activityModal').classList.remove('hidden-modal')" class="flex-1 bg-indigo-700 hover:bg-indigo-600 text-white text-xs font-bold py-2 rounded-lg transition-colors">Open Activity →</button>
+              <button onclick="document.getElementById('activityModal').classList.remove('hidden-modal')" class="text-xs border border-slate-600 text-slate-400 hover:text-white px-3 py-2 rounded-lg transition-colors">Download PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input area -->
+    <div class="p-4 border-t border-slate-800 bg-slate-900/60">
+      <div class="flex gap-2">
+        <input type="text" placeholder="Ask PraxisBot anything about your skills…" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-600" />
+        <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors">Send</button>
+      </div>
+      <div class="text-[10px] text-slate-600 text-center mt-2">Free plan: 3 activity generations/week · <span class="text-amber-500 cursor-pointer">Upgrade for unlimited</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const screens = ['hero','pre-assess','assess','loading','home','practice','tutor'];
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('screen-' + id);
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.snav-btn').forEach((b,i) => {
+      b.classList.toggle('active', screens[i] === id);
+    });
+    window.scrollTo(0,0);
+  }
+  function selectConf(btn) {
+    btn.closest('div').querySelectorAll('.confidence-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.add('hidden-modal');
+  }
+  function showPDFConfirm() {
+    closeModal('activityModal');
+    alert('PDF queued! It will appear in My Files within 30 seconds.');
+  }
+</script>
+</body>
+</html>

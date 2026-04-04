@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post-Assessment Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem; }
+    .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 1rem; font-weight: 600; }
+  </style>
+</head>
+<body class="p-6 space-y-10 max-w-3xl mx-auto">
+
+  <h1 class="text-lg font-bold text-slate-200">Post-Assessment — Mockup</h1>
+  <p class="text-sm text-slate-500">Two screens: (1) readiness banner on the dashboard, (2) post-assessment comparison report.</p>
+
+  <!-- ===== SCREEN 1: READINESS BANNER ===== -->
+  <section class="space-y-3">
+    <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Screen 1 — Readiness Banner (appears on DashboardHome)</p>
+
+    <!-- Simulate a dashboard-looking container -->
+    <div class="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-5 space-y-4">
+      <!-- existing dashboard header area -->
+      <div class="flex items-center gap-3 pb-3 border-b border-slate-700/50">
+        <div class="w-8 h-8 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-sm">J</div>
+        <div>
+          <p class="text-sm font-semibold text-slate-200">Jordan Rivera</p>
+          <p class="text-xs text-slate-500">Praxis 5403 · Graduate Program</p>
+        </div>
+      </div>
+
+      <!-- READINESS BANNER -->
+      <div class="relative overflow-hidden rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-900/40 to-indigo-900/40 p-5">
+        <!-- Animated glow ring top-right -->
+        <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-2xl"></div>
+
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="text-base font-bold text-emerald-300">You've reached readiness!</h3>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-semibold">32/45 skills</span>
+            </div>
+            <p class="text-sm text-slate-400 mb-4">You've demonstrated mastery across 32 of 45 skills — the readiness threshold. Take the post-assessment to officially measure your growth since Day 1.</p>
+            <div class="flex items-center gap-3">
+              <button class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+                Start Post-Assessment →
+              </button>
+              <button class="text-slate-500 text-xs hover:text-slate-400 transition-colors">Remind me later</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- rest of dashboard looks normal -->
+      <div class="grid grid-cols-3 gap-3 opacity-50 pointer-events-none">
+        <div class="bg-slate-800 border border-slate-700/50 rounded-xl p-3">
+          <p class="text-xs text-slate-500">Questions answered</p>
+          <p class="text-xl font-bold text-slate-200 mt-1">1,247</p>
+        </div>
+        <div class="bg-slate-800 border border-slate-700/50 rounded-xl p-3">
+          <p class="text-xs text-slate-500">Skills Demonstrating</p>
+          <p class="text-xl font-bold text-emerald-400 mt-1">32 / 45</p>
+        </div>
+        <div class="bg-slate-800 border border-slate-700/50 rounded-xl p-3">
+          <p class="text-xs text-slate-500">Study sessions</p>
+          <p class="text-xl font-bold text-slate-200 mt-1">48</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN 2: POST-ASSESSMENT COMPARISON REPORT ===== -->
+  <section class="space-y-3">
+    <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Screen 2 — Post-Assessment Comparison Report (after completion)</p>
+
+    <div class="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-6 space-y-6">
+
+      <!-- Report header -->
+      <div class="text-center space-y-1 pb-4 border-b border-slate-700/50">
+        <h2 class="text-xl font-bold text-slate-100">Your Growth Report</h2>
+        <p class="text-sm text-slate-500">Diagnostic completed Jan 15 → Post-Assessment completed Apr 4 · 79 days</p>
+      </div>
+
+      <!-- Top-level stat tiles -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-emerald-900/30 border border-emerald-500/30 rounded-xl p-4 text-center">
+          <p class="text-3xl font-extrabold text-emerald-400">+19</p>
+          <p class="text-xs text-slate-400 mt-1">Skills improved</p>
+          <p class="text-[10px] text-slate-600">across all tiers</p>
+        </div>
+        <div class="bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-4 text-center">
+          <p class="text-3xl font-extrabold text-indigo-400">32</p>
+          <p class="text-xs text-slate-400 mt-1">Now Demonstrating</p>
+          <p class="text-[10px] text-slate-600">was 5 at diagnostic</p>
+        </div>
+        <div class="bg-slate-700/40 border border-slate-600/40 rounded-xl p-4 text-center">
+          <p class="text-3xl font-extrabold text-slate-300">2</p>
+          <p class="text-xs text-slate-400 mt-1">Regressed</p>
+          <p class="text-[10px] text-slate-600">needs attention</p>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="flex items-center gap-5 text-xs text-slate-400 bg-slate-800/50 rounded-lg px-4 py-2.5">
+        <span class="flex items-center gap-1.5">
+          <span class="inline-block w-3 h-3 rounded-sm bg-indigo-900 border border-indigo-400"></span>
+          At diagnostic (Jan 15)
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="inline-block w-3 h-3 rounded-sm bg-indigo-500"></span>
+          Growth during practice
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="inline-block w-3 h-3 rounded-sm bg-emerald-500"></span>
+          Post-assessment result
+        </span>
+      </div>
+
+      <!-- Domain comparison bars -->
+      <div>
+        <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold mb-3">Domain breakdown</p>
+        <div class="space-y-4">
+
+          <!-- Domain 1: big improvement -->
+          <div>
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-medium text-slate-200">Data-Based Decision Making</span>
+              <div class="flex items-center gap-3">
+                <span class="text-slate-600">Jan: 22%</span>
+                <span class="text-indigo-400">Practice: 68%</span>
+                <span class="text-emerald-400 font-semibold">Post: 82%</span>
+              </div>
+            </div>
+            <div class="relative h-4 rounded-full bg-slate-700/50 overflow-hidden flex">
+              <!-- diagnostic baseline -->
+              <div class="bg-indigo-900 border-r border-indigo-500/40" style="width: 22%"></div>
+              <!-- practice growth -->
+              <div class="bg-indigo-500/70" style="width: 46%"></div>
+              <!-- post-assessment confirmed -->
+              <div class="bg-emerald-500/80" style="width: 14%"></div>
+            </div>
+            <div class="relative h-2">
+              <div class="absolute top-0 h-2 w-0.5 bg-amber-500/70" style="left: 70%"></div>
+            </div>
+          </div>
+
+          <!-- Domain 2: moderate improvement -->
+          <div>
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-medium text-slate-200">Consultation & Collaboration</span>
+              <div class="flex items-center gap-3">
+                <span class="text-slate-600">Jan: 44%</span>
+                <span class="text-indigo-400">Practice: 65%</span>
+                <span class="text-emerald-400 font-semibold">Post: 71%</span>
+              </div>
+            </div>
+            <div class="relative h-4 rounded-full bg-slate-700/50 overflow-hidden flex">
+              <div class="bg-indigo-900 border-r border-indigo-500/40" style="width: 44%"></div>
+              <div class="bg-indigo-500/70" style="width: 21%"></div>
+              <div class="bg-emerald-500/80" style="width: 6%"></div>
+            </div>
+            <div class="relative h-2">
+              <div class="absolute top-0 h-2 w-0.5 bg-amber-500/70" style="left: 70%"></div>
+            </div>
+          </div>
+
+          <!-- Domain 3: regression -->
+          <div>
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-medium text-slate-200">Academic Interventions</span>
+              <div class="flex items-center gap-3">
+                <span class="text-slate-600">Jan: 75%</span>
+                <span class="text-indigo-400">Practice: 70%</span>
+                <span class="text-rose-400 font-semibold">Post: 62%</span>
+              </div>
+            </div>
+            <div class="relative h-4 rounded-full bg-slate-700/50 overflow-hidden flex">
+              <!-- regression shown as rose bar, baseline tick shown separately -->
+              <div class="bg-rose-500/70" style="width: 62%"></div>
+            </div>
+            <div class="relative h-3 mt-0.5">
+              <div class="absolute top-0 flex flex-col items-center" style="left: 75%">
+                <div class="h-2 w-0.5 bg-indigo-400/60"></div>
+                <span class="text-[9px] text-indigo-400/60 -translate-x-1/2 whitespace-nowrap">baseline</span>
+              </div>
+              <div class="absolute top-0 flex flex-col items-center" style="left: 70%">
+                <div class="h-2 w-0.5 bg-amber-500/70"></div>
+                <span class="text-[9px] text-amber-500/70 -translate-x-1/2">goal</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Domain 4: solid growth -->
+          <div>
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-medium text-slate-200">Mental Health & Counseling</span>
+              <div class="flex items-center gap-3">
+                <span class="text-slate-600">Jan: 18%</span>
+                <span class="text-indigo-400">Practice: 58%</span>
+                <span class="text-amber-400 font-semibold">Post: 66%</span>
+              </div>
+            </div>
+            <div class="relative h-4 rounded-full bg-slate-700/50 overflow-hidden flex">
+              <div class="bg-indigo-900 border-r border-indigo-500/40" style="width: 18%"></div>
+              <div class="bg-indigo-500/70" style="width: 40%"></div>
+              <div class="bg-amber-500/80" style="width: 8%"></div>
+            </div>
+            <div class="relative h-2">
+              <div class="absolute top-0 h-2 w-0.5 bg-amber-500/70" style="left: 70%"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
+        <p class="text-xs text-slate-500">Full per-skill breakdown available in the Progress tab</p>
+        <div class="flex gap-3">
+          <button class="text-xs text-slate-400 border border-slate-600 px-3 py-1.5 rounded-lg hover:border-slate-500">View Progress Tab</button>
+          <button class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-500">Download Report</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>

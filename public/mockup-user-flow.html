@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Praxis Makes Perfect — Full User Flow Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ── Editorial Design Tokens ────────────────────────────── */
+    html, body { background-color: #f7f6f2; }
+    .ed-surface { background: white; border: 1px solid #e6dfd4; border-radius: 2rem; box-shadow: 0 18px 50px rgba(15,23,42,0.08); }
+    .ed-soft { background: #fbfaf7; border: 1px solid #ece4d7; border-radius: 1.75rem; }
+    .ed-dark { background: #0f172a; color: white; border-radius: 2.5rem; box-shadow: 0 24px 70px rgba(15,23,42,0.18); }
+    .ed-overline { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; }
+    .ed-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(251,191,36,0.22); background: rgba(251,191,36,0.14); color: #b45309; }
+    .ed-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 2.5rem; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+    .ed-btn-amber { background: #f59e0b; color: #1a1a1a; }
+    .ed-btn-amber:hover { background: #d97706; color: white; }
+    .ed-btn-dark { background: #1a1a1a; color: white; }
+    .ed-btn-dark:hover { background: #0f172a; }
+    .ed-btn-secondary { background: #fffaf0; border: 1px solid #f0d7a7; color: #b45309; }
+    .ed-btn-secondary:hover { background: #f59e0b; color: white; }
+    .ed-btn-indigo { background: #4f46e5; color: white; }
+    .ed-btn-indigo:hover { background: #4338ca; }
+    .ed-progress-track { height: 8px; border-radius: 9999px; background: #ece8df; overflow: hidden; }
+    .ed-progress-fill { height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%); }
+
+    /* ── Screen visibility ─────────────────────────────────── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Nav bar ───────────────────────────────────────────── */
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #0f172a; padding: 8px 12px; display: flex; align-items: center; gap: 4px; overflow-x: auto; justify-content: center; flex-wrap: wrap; }
+    .nav-btn { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; color: #94a3b8; cursor: pointer; border: none; background: transparent; white-space: nowrap; transition: all 0.15s; }
+    .nav-btn:hover { color: white; background: rgba(255,255,255,0.08); }
+    .nav-btn.active { background: #f59e0b; color: #0f172a; }
+    .nav-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.12); margin: 0 4px; flex-shrink: 0; }
+  </style>
+</head>
+<body class="pb-20">
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 1: HERO / MARKETING PAGE
+     ════════════════════════════════════════════════════════════ -->
+<div id="hero" class="screen active">
+  <div class="max-w-5xl mx-auto px-4 pt-8 pb-12">
+
+    <!-- Top bar -->
+    <div class="flex items-center justify-between mb-12">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white font-black text-xs">P</div>
+        <span class="font-bold text-slate-900 text-sm">Praxis Makes Perfect</span>
+      </div>
+      <div class="flex gap-2">
+        <button class="ed-btn ed-btn-secondary text-xs" onclick="goTo('hero')">Sign in</button>
+        <button class="ed-btn ed-btn-amber text-xs">Create account</button>
+      </div>
+    </div>
+
+    <!-- Hero section -->
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="flex justify-center gap-2 mb-4 flex-wrap">
+        <span class="ed-pill">Built for School Psychology Candidates</span>
+        <span class="ed-pill">Adaptive Diagnostic</span>
+        <span class="ed-pill">Practice Any Time</span>
+      </div>
+      <p class="ed-overline mb-2">PRAXIS 5403 PREP</p>
+      <h1 class="text-4xl font-bold tracking-tight text-slate-900 mb-4">Stop guessing what to study for Praxis 5403.</h1>
+      <p class="text-base text-slate-500 leading-relaxed mb-6">Praxis Study gives you a clear baseline, targeted practice, and a personalized next-step plan so each session moves the weakest skills forward instead of wasting time on random review.</p>
+      <div class="flex justify-center gap-3">
+        <button class="ed-btn ed-btn-amber" onclick="goTo('onboarding')">Create account →</button>
+        <button class="ed-btn ed-btn-secondary">Sign in</button>
+      </div>
+    </div>
+
+    <!-- Why It Feels Different -->
+    <div class="mb-12">
+      <p class="ed-overline text-center mb-6">WHY IT FEELS DIFFERENT</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="ed-surface p-5">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-3 border border-amber-200">
+            <span class="text-amber-700 font-bold text-lg">🎯</span>
+          </div>
+          <p class="font-bold text-slate-800 text-sm mb-1">Built specifically for Praxis School Psychology 5403</p>
+        </div>
+        <div class="ed-surface p-5">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3 border border-emerald-200">
+            <span class="text-emerald-700 font-bold text-lg">📊</span>
+          </div>
+          <p class="font-bold text-slate-800 text-sm mb-1">Tracks progress across all 45 testable skills</p>
+        </div>
+        <div class="ed-surface p-5">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3 border border-blue-200">
+            <span class="text-blue-700 font-bold text-lg">⚡</span>
+          </div>
+          <p class="font-bold text-slate-800 text-sm mb-1">Start practicing immediately — no waiting required</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="mb-12">
+      <p class="ed-overline text-center mb-6">HOW IT WORKS</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="ed-soft p-5">
+          <div class="text-2xl font-black text-amber-500 mb-2">01</div>
+          <p class="font-bold text-slate-800 text-sm mb-1">Take the adaptive diagnostic</p>
+          <p class="text-xs text-slate-500">An assessment that adjusts to your strengths and weaknesses across all 45 skills.</p>
+        </div>
+        <div class="ed-soft p-5">
+          <div class="text-2xl font-black text-amber-500 mb-2">02</div>
+          <p class="font-bold text-slate-800 text-sm mb-1">Practice where it counts</p>
+          <p class="text-xs text-slate-500">Jump into domain or skill practice at any time, even before finishing the diagnostic.</p>
+        </div>
+        <div class="ed-soft p-5">
+          <div class="text-2xl font-black text-amber-500 mb-2">03</div>
+          <p class="font-bold text-slate-800 text-sm mb-1">Track your readiness</p>
+          <p class="text-xs text-slate-500">Watch your proficiency grow across all four exam domains with your learning path.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="ed-surface p-5 mb-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div><div class="text-2xl font-black text-slate-900">1,150+</div><div class="text-xs text-slate-400 uppercase font-bold tracking-wider mt-1">Practice Questions</div></div>
+        <div><div class="text-2xl font-black text-slate-900">45</div><div class="text-xs text-slate-400 uppercase font-bold tracking-wider mt-1">Skills Tracked</div></div>
+        <div><div class="text-2xl font-black text-slate-900">4</div><div class="text-xs text-slate-400 uppercase font-bold tracking-wider mt-1">Domains Covered</div></div>
+        <div><div class="text-2xl font-black text-slate-900">15 min</div><div class="text-xs text-slate-400 uppercase font-bold tracking-wider mt-1">Average Session</div></div>
+      </div>
+    </div>
+
+    <!-- Preview Carousel -->
+    <div class="max-w-xl mx-auto">
+      <p class="ed-overline text-center mb-4">PREVIEW THE EXPERIENCE</p>
+      <div class="flex gap-2 justify-center mb-4">
+        <button class="ed-btn ed-btn-amber text-xs" onclick="showPreview('question')">Practice</button>
+        <button class="ed-btn ed-btn-secondary text-xs" onclick="showPreview('skills')">Skill Map</button>
+        <button class="ed-btn ed-btn-secondary text-xs" onclick="showPreview('plan')">Study Plan</button>
+      </div>
+
+      <!-- Mock Question -->
+      <div id="preview-question" class="ed-soft p-5">
+        <div class="flex gap-2 mb-3">
+          <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-amber-700">Domain 3</span>
+          <span class="ed-overline py-1">Question 12</span>
+        </div>
+        <p class="text-sm text-slate-800 font-medium mb-4">A teacher refers a third-grade student for reading difficulties. What is the <span class="font-bold text-amber-700">most appropriate first step</span> for the school psychologist?</p>
+        <div class="space-y-2">
+          <div class="flex gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600"><span class="font-black text-[11px] text-slate-400">A</span> Conduct a full psychoeducational evaluation immediately</div>
+          <div class="flex gap-3 rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"><span class="font-black text-[11px]">B</span> Review records and consult with teachers before moving forward <span class="ml-auto">✓</span></div>
+          <div class="flex gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600"><span class="font-black text-[11px] text-slate-400">C</span> Refer the student directly to special education</div>
+          <div class="flex gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600"><span class="font-black text-[11px] text-slate-400">D</span> Administer an IQ test without parent consent</div>
+        </div>
+        <div class="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          Reviewing records and consulting first keeps the decision grounded in existing data and prereferral context.
+        </div>
+      </div>
+
+      <!-- Mock Skill Panel (hidden by default) -->
+      <div id="preview-skills" class="ed-soft p-5" style="display:none">
+        <div class="flex justify-between items-center mb-4">
+          <div><p class="ed-overline">Skill Mastery</p><p class="font-bold text-lg text-slate-900 mt-1">Shared readiness view</p></div>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-black uppercase text-slate-500">32 / 45</span>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">Eligibility Determination</span><span class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-700">Demonstrating</span></div>
+            <div class="ed-progress-track"><div class="ed-progress-fill" style="width:88%;background:rgb(16,185,129)"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">Cognitive Assessment</span><span class="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-black uppercase text-amber-700">Approaching</span></div>
+            <div class="ed-progress-track"><div class="ed-progress-fill" style="width:72%;background:rgb(245,158,11)"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">Behavioral Intervention</span><span class="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-black uppercase text-rose-700">Emerging</span></div>
+            <div class="ed-progress-track"><div class="ed-progress-fill" style="width:54%;background:rgb(244,63,94)"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">Consultation & Collaboration</span><span class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-700">Demonstrating</span></div>
+            <div class="ed-progress-track"><div class="ed-progress-fill" style="width:91%;background:rgb(16,185,129)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mock Study Plan (hidden by default) -->
+      <div id="preview-plan" class="ed-dark p-5" style="display:none">
+        <div class="flex justify-between items-center mb-4">
+          <div><p class="ed-overline text-slate-500">Study Guide</p><p class="font-bold text-xl text-white mt-1">AI Study Guide</p></div>
+          <span class="rounded-full border border-amber-500/30 bg-amber-500/15 px-3 py-1 text-[10px] font-black uppercase text-amber-300">Personalized</span>
+        </div>
+        <div class="space-y-3">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4"><p class="ed-overline text-slate-500">Week 1</p><p class="text-sm font-semibold text-white mt-1">Cognitive assessment foundations</p><p class="text-xs text-slate-400 mt-1">Completed 3 of 3 sessions</p></div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4"><p class="ed-overline text-slate-500">Week 2</p><p class="text-sm font-semibold text-white mt-1">Behavioral and social-emotional supports</p><p class="text-xs text-slate-400 mt-1">Completed 2 of 4 sessions</p></div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4"><p class="ed-overline text-slate-500">Week 3</p><p class="text-sm font-semibold text-white mt-1">Legal frameworks and IDEA review</p><p class="text-xs text-slate-400 mt-1">Ready when you are</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 2: ONBOARDING WIZARD
+     ════════════════════════════════════════════════════════════ -->
+<div id="onboarding" class="screen">
+  <div class="max-w-lg mx-auto px-4 pt-12 pb-12">
+    <div class="text-center mb-8">
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white font-black text-xs">P</div>
+        <span class="font-bold text-slate-900 text-sm">Praxis Makes Perfect</span>
+      </div>
+      <p class="ed-overline mb-2">STEP 2 OF 4</p>
+      <h2 class="text-2xl font-bold text-slate-900">Tell us about your program</h2>
+      <p class="text-sm text-slate-500 mt-1">This helps us personalize your experience.</p>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="flex justify-center gap-2 mb-8">
+      <div class="w-8 h-1 rounded-full bg-amber-500"></div>
+      <div class="w-8 h-1 rounded-full bg-amber-500"></div>
+      <div class="w-8 h-1 rounded-full bg-slate-200"></div>
+      <div class="w-8 h-1 rounded-full bg-slate-200"></div>
+    </div>
+
+    <div class="ed-surface p-6">
+      <div class="space-y-5">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">University / Program</label>
+          <input type="text" value="University of Oregon" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-800" readonly />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Program Delivery</label>
+          <div class="flex gap-2">
+            <span class="rounded-full border border-amber-300 bg-amber-50 px-4 py-2 text-xs font-bold text-amber-700">In-person</span>
+            <span class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-500">Online</span>
+            <span class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-500">Hybrid</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Training Stage</label>
+          <div class="flex gap-2 flex-wrap">
+            <span class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-500">First year</span>
+            <span class="rounded-full border border-amber-300 bg-amber-50 px-4 py-2 text-xs font-bold text-amber-700">Second year</span>
+            <span class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-500">Practicum</span>
+            <span class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-500">Internship</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between mt-8">
+        <button class="ed-btn ed-btn-secondary text-xs">← Back</button>
+        <button class="ed-btn ed-btn-amber text-xs" onclick="goTo('gateway')">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 3: PRE-ASSESSMENT GATEWAY
+     ════════════════════════════════════════════════════════════ -->
+<div id="gateway" class="screen">
+  <div class="max-w-lg mx-auto px-4 pt-12 pb-12">
+    <div class="text-center mb-8">
+      <span class="text-4xl">👋</span>
+      <h2 class="text-2xl font-bold text-slate-900 mt-3">Welcome, Jordan.</h2>
+      <p class="text-sm text-slate-500 mt-1">Let's find your starting point so you're never practicing the wrong things.</p>
+    </div>
+
+    <!-- Diagnostic Card -->
+    <div class="ed-surface p-6 mb-4">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+          <span class="text-indigo-600 font-bold text-lg">📋</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-lg text-slate-900">Adaptive Diagnostic</h3>
+            <span class="rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-700">Recommended</span>
+          </div>
+          <p class="text-sm text-slate-500 mt-1">Maps your strengths and gaps across all 45 skills. The engine adapts — strong areas go fast, weaker areas get follow-ups.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="ed-soft p-3 text-center"><div class="text-lg font-black text-slate-800">45–90</div><div class="text-[10px] text-slate-400 uppercase font-bold">questions</div></div>
+        <div class="ed-soft p-3 text-center"><div class="text-lg font-black text-slate-800">25–45</div><div class="text-[10px] text-slate-400 uppercase font-bold">minutes</div></div>
+        <div class="ed-soft p-3 text-center"><div class="text-lg font-black text-slate-800">∞</div><div class="text-[10px] text-slate-400 uppercase font-bold">pause</div></div>
+      </div>
+
+      <p class="ed-overline text-indigo-600 mb-2">UNLOCKS EVERYTHING</p>
+      <div class="flex flex-wrap gap-1.5 mb-5">
+        <span class="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-600">🎯 Skill Practice</span>
+        <span class="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-600">🗺️ Learning Path</span>
+        <span class="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-600">🤖 AI Tutor</span>
+        <span class="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-600">📊 Study Guide</span>
+        <span class="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-600">📈 Full Dashboard</span>
+      </div>
+
+      <button class="ed-btn ed-btn-indigo w-full py-3" onclick="goTo('assessment')">Start Diagnostic →</button>
+      <p class="text-center text-xs text-slate-400 mt-3">Can save and resume any time. No pressure.</p>
+    </div>
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 my-5">
+      <div class="flex-1 h-px bg-slate-200"></div>
+      <span class="text-xs text-slate-400">or preview first</span>
+      <div class="flex-1 h-px bg-slate-200"></div>
+    </div>
+
+    <!-- Spicy Card -->
+    <div class="ed-surface p-5 border-orange-100">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">🌶️</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-base text-slate-900">Feeling Spicy?</h3>
+            <span class="rounded-full bg-orange-100 border border-orange-200 px-2 py-0.5 text-[10px] font-black uppercase text-orange-700">Preview</span>
+          </div>
+          <p class="text-sm text-slate-500 mt-1">Not ready to commit? Try random questions from the full bank. You'll see feedback, hints, and explanations — just like the real thing.</p>
+        </div>
+      </div>
+      <div class="flex gap-2 text-[10px] text-slate-400 mb-3">
+        <span>✓ Full feedback</span><span>✓ Hints</span><span>✓ Progress saved</span><span>✗ No unlocks</span>
+      </div>
+      <button class="ed-btn ed-btn-secondary w-full text-xs">Try a Random Question →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 4: ASSESSMENT IN PROGRESS
+     ════════════════════════════════════════════════════════════ -->
+<div id="assessment" class="screen">
+  <div class="max-w-2xl mx-auto px-4 pt-8 pb-12">
+    <!-- Progress -->
+    <div class="flex justify-between text-sm text-slate-500 mb-2">
+      <span>Adaptive Diagnostic</span>
+      <span>12 of 45</span>
+    </div>
+    <div class="ed-progress-track mb-6"><div class="ed-progress-fill" style="width:27%"></div></div>
+
+    <!-- Timer & Pacing -->
+    <div class="ed-soft p-4 flex items-center justify-between mb-6">
+      <div class="flex items-center gap-6">
+        <div>
+          <span class="ed-overline">Elapsed</span>
+          <div class="text-xl font-mono text-slate-900">08:42</div>
+        </div>
+        <div class="h-8 w-px bg-slate-200"></div>
+        <div>
+          <span class="ed-overline">Pacing</span>
+          <div class="text-sm font-medium text-slate-700">✅ On track — steady pacing maintained.</div>
+        </div>
+      </div>
+      <button class="ed-btn ed-btn-secondary text-xs">⏸ Pause</button>
+    </div>
+
+    <!-- Question Card -->
+    <div class="ed-surface p-6">
+      <div class="flex gap-2 mb-3">
+        <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase text-amber-700">Domain 2 · Student-Level Services</span>
+        <span class="ed-overline py-1">Q12 · COG-02</span>
+      </div>
+      <p class="text-sm text-slate-800 font-medium mb-5">When interpreting a Wechsler IQ scale, the school psychologist notes a significant discrepancy between Verbal Comprehension and Processing Speed indices. What is the <span class="font-bold text-amber-700">most appropriate interpretation</span>?</p>
+
+      <div class="space-y-2.5">
+        <button class="flex w-full gap-3 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-left text-amber-800 font-medium">
+          <span class="font-black text-[11px] mt-0.5">A</span>
+          <span>The Full Scale IQ is the best summary of overall ability</span>
+        </button>
+        <button class="flex w-full gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-left text-slate-600">
+          <span class="font-black text-[11px] mt-0.5 text-slate-400">B</span>
+          <span>Individual index scores should be reported rather than the composite</span>
+        </button>
+        <button class="flex w-full gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-left text-slate-600">
+          <span class="font-black text-[11px] mt-0.5 text-slate-400">C</span>
+          <span>The test is invalid and should be re-administered</span>
+        </button>
+        <button class="flex w-full gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-left text-slate-600">
+          <span class="font-black text-[11px] mt-0.5 text-slate-400">D</span>
+          <span>Only the highest index score should be reported to parents</span>
+        </button>
+      </div>
+
+      <!-- Confidence -->
+      <div class="flex items-center gap-3 mt-5 pt-4 border-t border-slate-100">
+        <span class="ed-overline">Confidence</span>
+        <div class="flex gap-1.5">
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-500">Low</span>
+          <span class="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">Medium</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-500">High</span>
+        </div>
+        <button class="ed-btn ed-btn-amber text-xs ml-auto" onclick="goTo('score-report')">Submit →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 5: SCORE REPORT
+     ════════════════════════════════════════════════════════════ -->
+<div id="score-report" class="screen">
+  <div class="max-w-2xl mx-auto px-4 pt-8 pb-12">
+    <div class="text-center mb-8">
+      <span class="text-4xl">🎉</span>
+      <h2 class="text-2xl font-bold text-slate-900 mt-3">Diagnostic Complete</h2>
+      <p class="text-sm text-slate-500 mt-1">Here's your baseline across all 4 exam domains and 45 skills.</p>
+    </div>
+
+    <!-- Overall -->
+    <div class="ed-surface p-6 mb-5 text-center">
+      <p class="ed-overline mb-2">Overall Accuracy</p>
+      <div class="text-5xl font-black text-indigo-600 mb-1">68%</div>
+      <p class="text-sm text-slate-500">42 of 62 questions correct · 28 minutes</p>
+      <div class="flex justify-center gap-3 mt-3">
+        <span class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase text-emerald-700">18 Demonstrating</span>
+        <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase text-amber-700">15 Approaching</span>
+        <span class="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-[10px] font-black uppercase text-rose-700">12 Emerging</span>
+      </div>
+    </div>
+
+    <!-- Domain Breakdown -->
+    <div class="ed-surface p-6 mb-5">
+      <p class="ed-overline mb-4">DOMAIN BREAKDOWN</p>
+      <div class="space-y-4">
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="font-medium text-slate-700">D1 · Professional Practices (36%)</span><span class="font-bold text-emerald-600">78%</span></div>
+          <div class="ed-progress-track"><div style="width:78%;height:100%;border-radius:9999px;background:rgb(16,185,129)"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="font-medium text-slate-700">D2 · Student-Level Services (21%)</span><span class="font-bold text-amber-600">65%</span></div>
+          <div class="ed-progress-track"><div style="width:65%;height:100%;border-radius:9999px;background:rgb(245,158,11)"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="font-medium text-slate-700">D3 · Systems-Level Services (19%)</span><span class="font-bold text-rose-500">52%</span></div>
+          <div class="ed-progress-track"><div style="width:52%;height:100%;border-radius:9999px;background:rgb(244,63,94)"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="font-medium text-slate-700">D4 · Foundations (24%)</span><span class="font-bold text-amber-600">71%</span></div>
+          <div class="ed-progress-track"><div style="width:71%;height:100%;border-radius:9999px;background:rgb(245,158,11)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weakest Skills -->
+    <div class="ed-surface p-6 mb-5">
+      <p class="ed-overline mb-3">TOP PRIORITY SKILLS</p>
+      <div class="space-y-2">
+        <div class="flex justify-between items-center rounded-xl bg-rose-50 border border-rose-100 px-4 py-2.5"><span class="text-sm font-semibold text-slate-700">Crisis Intervention</span><span class="text-xs font-bold text-rose-600">33%</span></div>
+        <div class="flex justify-between items-center rounded-xl bg-rose-50 border border-rose-100 px-4 py-2.5"><span class="text-sm font-semibold text-slate-700">Program Evaluation</span><span class="text-xs font-bold text-rose-600">40%</span></div>
+        <div class="flex justify-between items-center rounded-xl bg-amber-50 border border-amber-100 px-4 py-2.5"><span class="text-sm font-semibold text-slate-700">Social-Emotional Assessment</span><span class="text-xs font-bold text-amber-600">55%</span></div>
+      </div>
+    </div>
+
+    <button class="ed-btn ed-btn-amber w-full py-3" onclick="goTo('dashboard')">Go to Dashboard →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 6: DASHBOARD HOME (Post-Diagnostic)
+     ════════════════════════════════════════════════════════════ -->
+<div id="dashboard" class="screen">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div class="hidden md:flex w-56 flex-col shrink-0 p-4 gap-1" style="background:#0f172a;border-radius:0">
+      <div class="flex items-center gap-2 mb-6 px-2">
+        <div class="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center text-white font-black text-[10px]">P</div>
+        <span class="font-bold text-white text-sm">Praxis Makes Perfect</span>
+      </div>
+      <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold bg-amber-500 text-slate-900" style="box-shadow:0 14px 28px rgba(120,53,15,0.18)">🧠 Dashboard</button>
+      <button onclick="goTo('practice-hub')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition">📝 Practice</button>
+      <button onclick="goTo('progress')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition">📊 Progress</button>
+      <button onclick="goTo('study-guide')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition">📖 Study Plan</button>
+      <button onclick="goTo('tutor')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition">🤖 AI Tutor</button>
+      <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition">📓 Notebook</button>
+      <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition">📚 Glossary</button>
+      <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition mt-auto">❓ Help</button>
+    </div>
+
+    <!-- Main content -->
+    <div class="flex-1 p-6 max-w-4xl">
+      <!-- Readiness Banner -->
+      <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm mb-5">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-sm font-semibold text-slate-700">Exam Readiness</span>
+              <span class="text-sm font-bold text-indigo-600">18 of 45 skills at Demonstrating</span>
+            </div>
+            <div class="w-full rounded-full bg-slate-100 h-2.5"><div class="h-2.5 rounded-full bg-indigo-500" style="width:56%"></div></div>
+          </div>
+          <div class="flex items-center gap-4 shrink-0">
+            <div class="text-right"><div class="text-2xl font-extrabold text-indigo-600">56%</div><div class="text-xs text-slate-400">Developing</div></div>
+            <div class="hidden sm:block w-px h-10 bg-slate-200"></div>
+            <div class="hidden sm:block text-right"><div class="text-xs text-slate-400 mb-0.5">Readiness target: 32</div><div class="text-xs font-medium text-emerald-600">14 more to close the gap</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column: Today's Focus + Stats -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+        <!-- Today's Focus -->
+        <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-2 mb-3">
+            <span>🎯</span><span class="text-sm font-bold text-slate-800">Today's Focus</span>
+            <span class="ml-auto text-xs text-slate-400">Based on your weakest areas</span>
+          </div>
+          <!-- SRS Alert -->
+          <div class="mb-3 flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50 px-4 py-3">
+            <div class="flex-1"><div class="text-xs font-semibold uppercase tracking-wider text-violet-600 mb-0.5">Spaced Review · 3 skills overdue</div><div class="text-sm font-bold text-slate-800">Skills due for review</div><div class="text-xs text-slate-500 mt-0.5">Crisis Intervention, Program Evaluation, MTSS — spacing strengthens long-term retention</div></div>
+            <button class="shrink-0 rounded-lg bg-violet-600 px-3 py-2 text-xs font-semibold text-white">Review Now →</button>
+          </div>
+          <!-- Priority skill -->
+          <div class="mb-3 flex items-center gap-3 rounded-xl border border-orange-100 bg-orange-50 px-4 py-3">
+            <div class="flex-1"><div class="text-xs font-semibold uppercase tracking-wider text-orange-600 mb-0.5">Priority · Emerging</div><div class="text-sm font-bold text-slate-800">Crisis Intervention</div><div class="text-xs text-slate-500 mt-0.5">Domain: Systems-Level Services · 12 skills below 60%</div></div>
+            <button class="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white" onclick="goTo('practice-session')">Practice →</button>
+          </div>
+          <!-- Vocab -->
+          <div class="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
+            <div class="flex-1"><div class="text-xs font-semibold uppercase tracking-wider text-blue-600 mb-0.5">Then · Vocab Review</div><div class="text-sm font-bold text-slate-800">Vocabulary Quiz</div><div class="text-xs text-slate-500 mt-0.5">Review terms from your recent sessions</div></div>
+            <button class="shrink-0 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white">Quiz Now →</button>
+          </div>
+        </div>
+
+        <!-- Right: Stats + Redemption -->
+        <div class="flex flex-col gap-3">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">This Week</div>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm"><span class="text-slate-600">Questions</span><span class="font-bold text-slate-800">47</span></div>
+              <div class="flex justify-between text-sm"><span class="text-slate-600">Accuracy</span><span class="font-bold text-emerald-600">72%</span></div>
+              <div class="flex justify-between text-sm"><span class="text-slate-600">Study time</span><span class="font-bold text-slate-800">1h 23m</span></div>
+              <div class="flex justify-between text-sm"><span class="text-slate-600">Daily goal</span><span class="font-bold text-amber-700">8 / 10</span></div>
+            </div>
+          </div>
+          <div class="rounded-2xl border border-purple-100 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-2"><span>🧠</span><span class="text-xs font-bold uppercase tracking-wider text-purple-700">Redemption</span></div>
+            <div class="text-sm font-bold text-slate-800 mb-1">Ready to test your memory?</div>
+            <div class="text-xs text-slate-500 mb-2">5 questions waiting · See what's sticking</div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-xs font-bold text-purple-600">2 credits</span>
+              <div class="flex-1 h-1.5 rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-purple-400" style="width:65%"></div></div>
+              <span class="text-[10px] text-slate-400">7/20 to next</span>
+            </div>
+            <button class="w-full rounded-lg bg-purple-600 py-2 text-xs font-bold text-white">Enter Redemption →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Tiles -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5">
+        <button class="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-orange-200 hover:bg-orange-50 transition">
+          <div class="mb-3 w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">⚡</div>
+          <div class="text-xs font-bold uppercase text-orange-600 mb-0.5">NEW</div>
+          <div class="text-sm font-bold text-slate-800 mb-1">Fluency Drill</div>
+          <div class="text-xs text-slate-500">Rapid-fire cases & concepts</div>
+        </button>
+        <button class="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-blue-200 hover:bg-blue-50 transition">
+          <div class="mb-3 w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">📖</div>
+          <div class="text-sm font-bold text-slate-800 mb-1">Vocab Quiz</div>
+          <div class="text-xs text-slate-500">Review terms from practice</div>
+        </button>
+        <button onclick="goTo('learning-path')" class="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-emerald-200 hover:bg-emerald-50 transition">
+          <div class="mb-3 w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">🗺️</div>
+          <div class="text-sm font-bold text-slate-800 mb-1">Learning Path</div>
+          <div class="text-xs text-slate-500">Structured modules by gap</div>
+        </button>
+        <button onclick="goTo('study-guide')" class="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-purple-200 hover:bg-purple-50 transition">
+          <div class="mb-3 w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">📋</div>
+          <div class="text-sm font-bold text-slate-800 mb-1">Study Guide</div>
+          <div class="text-xs text-slate-500">AI-generated plan from your data</div>
+        </button>
+        <button onclick="goTo('tutor')" class="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-amber-200 hover:bg-amber-50 transition">
+          <div class="mb-3 w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">💬</div>
+          <div class="text-xs text-amber-500 mb-0.5">AI-powered</div>
+          <div class="text-sm font-bold text-slate-800 mb-1">AI Tutor</div>
+          <div class="text-xs text-slate-500">Ask anything, get quizzed</div>
+        </button>
+      </div>
+
+      <!-- Domain Performance -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-sm font-bold text-slate-800">Domain Performance</span>
+          <button onclick="goTo('progress')" class="text-xs text-indigo-600 hover:underline">Full report →</button>
+        </div>
+        <div class="space-y-3">
+          <div class="rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer"><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Professional Practices</span><span class="font-semibold text-emerald-600">78% · Demonstrating</span></div><div class="h-2 w-full rounded-full bg-slate-100"><div class="h-2 rounded-full bg-emerald-400" style="width:78%"></div></div></div>
+          <div class="rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer"><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Student-Level Services</span><span class="font-semibold text-amber-600">65% · Approaching</span></div><div class="h-2 w-full rounded-full bg-slate-100"><div class="h-2 rounded-full bg-amber-400" style="width:65%"></div></div></div>
+          <div class="rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer"><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Systems-Level Services</span><span class="font-semibold text-rose-500">52% · Emerging</span></div><div class="h-2 w-full rounded-full bg-slate-100"><div class="h-2 rounded-full bg-rose-400" style="width:52%"></div></div></div>
+          <div class="rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer"><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Foundations</span><span class="font-semibold text-amber-600">71% · Approaching</span></div><div class="h-2 w-full rounded-full bg-slate-100"><div class="h-2 rounded-full bg-amber-400" style="width:71%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 7: PRACTICE HUB
+     ════════════════════════════════════════════════════════════ -->
+<div id="practice-hub" class="screen">
+  <div class="max-w-3xl mx-auto px-4 pt-8 pb-12">
+    <h2 class="text-2xl font-bold text-slate-900 mb-1">Practice Hub</h2>
+    <p class="text-sm text-slate-500 mb-6">Choose how you want to practice. Skills are sorted by weakest first.</p>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6">
+      <button class="ed-btn ed-btn-amber text-xs" onclick="showPracticeTab('domain')">By Domain</button>
+      <button class="ed-btn ed-btn-secondary text-xs" onclick="showPracticeTab('skill')">By Skill</button>
+      <button class="ed-btn ed-btn-secondary text-xs" onclick="showPracticeTab('path')">Learning Path</button>
+    </div>
+
+    <!-- By Domain -->
+    <div id="practice-domain" class="space-y-3">
+      <div class="ed-surface p-5 cursor-pointer hover:border-emerald-200 transition">
+        <div class="flex justify-between items-center"><div><p class="font-bold text-slate-800">Domain 1 · Professional Practices</p><p class="text-xs text-slate-500 mt-0.5">13 skills · 335 questions</p></div><div class="text-right"><span class="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase text-emerald-700">Demonstrating</span><div class="text-sm font-bold text-emerald-600 mt-1">78%</div></div></div>
+      </div>
+      <div class="ed-surface p-5 cursor-pointer hover:border-amber-200 transition">
+        <div class="flex justify-between items-center"><div><p class="font-bold text-slate-800">Domain 2 · Student-Level Services</p><p class="text-xs text-slate-500 mt-0.5">12 skills · 289 questions</p></div><div class="text-right"><span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase text-amber-700">Approaching</span><div class="text-sm font-bold text-amber-600 mt-1">65%</div></div></div>
+      </div>
+      <div class="ed-surface p-5 cursor-pointer hover:border-rose-200 transition">
+        <div class="flex justify-between items-center"><div><p class="font-bold text-slate-800">Domain 3 · Systems-Level Services</p><p class="text-xs text-slate-500 mt-0.5">8 skills · 209 questions</p></div><div class="text-right"><span class="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[10px] font-black uppercase text-rose-700">Emerging</span><div class="text-sm font-bold text-rose-500 mt-1">52%</div></div></div>
+      </div>
+      <div class="ed-surface p-5 cursor-pointer hover:border-amber-200 transition">
+        <div class="flex justify-between items-center"><div><p class="font-bold text-slate-800">Domain 4 · Foundations</p><p class="text-xs text-slate-500 mt-0.5">12 skills · 317 questions</p></div><div class="text-right"><span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase text-amber-700">Approaching</span><div class="text-sm font-bold text-amber-600 mt-1">71%</div></div></div>
+      </div>
+    </div>
+
+    <!-- By Skill (hidden) -->
+    <div id="practice-skill" style="display:none" class="space-y-2">
+      <div class="ed-surface p-4 flex justify-between items-center cursor-pointer hover:border-rose-200 transition"><div><p class="text-sm font-bold text-slate-800">Crisis Intervention</p><p class="text-xs text-slate-500">D3 · 18 questions</p></div><div class="flex items-center gap-3"><div class="w-20 h-1.5 rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-rose-400" style="width:33%"></div></div><span class="text-xs font-bold text-rose-600">33%</span></div></div>
+      <div class="ed-surface p-4 flex justify-between items-center cursor-pointer hover:border-rose-200 transition"><div><p class="text-sm font-bold text-slate-800">Program Evaluation</p><p class="text-xs text-slate-500">D3 · 22 questions</p></div><div class="flex items-center gap-3"><div class="w-20 h-1.5 rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-rose-400" style="width:40%"></div></div><span class="text-xs font-bold text-rose-600">40%</span></div></div>
+      <div class="ed-surface p-4 flex justify-between items-center cursor-pointer hover:border-amber-200 transition"><div><p class="text-sm font-bold text-slate-800">Social-Emotional Assessment</p><p class="text-xs text-slate-500">D2 · 30 questions</p></div><div class="flex items-center gap-3"><div class="w-20 h-1.5 rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-amber-400" style="width:55%"></div></div><span class="text-xs font-bold text-amber-600">55%</span></div></div>
+      <div class="ed-surface p-4 flex justify-between items-center cursor-pointer hover:border-amber-200 transition"><div><p class="text-sm font-bold text-slate-800">Cognitive Assessment</p><p class="text-xs text-slate-500">D2 · 28 questions</p></div><div class="flex items-center gap-3"><div class="w-20 h-1.5 rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-amber-400" style="width:72%"></div></div><span class="text-xs font-bold text-amber-600">72%</span></div></div>
+      <div class="ed-surface p-4 flex justify-between items-center cursor-pointer hover:border-emerald-200 transition"><div><p class="text-sm font-bold text-slate-800">Eligibility Determination</p><p class="text-xs text-slate-500">D1 · 25 questions</p></div><div class="flex items-center gap-3"><div class="w-20 h-1.5 rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-emerald-400" style="width:88%"></div></div><span class="text-xs font-bold text-emerald-600">88%</span></div></div>
+    </div>
+
+    <!-- Learning Path (hidden) -->
+    <div id="practice-path" style="display:none" class="space-y-2">
+      <p class="text-xs text-slate-500 mb-3">Ordered from lowest to highest proficiency. Complete each module to progress.</p>
+      <div class="ed-surface p-4 flex items-center gap-4 border-rose-200 cursor-pointer"><div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-xs font-bold text-rose-700">1</div><div class="flex-1"><p class="text-sm font-bold text-slate-800">Crisis Intervention</p><p class="text-xs text-slate-500">33% · Lesson → Quiz → Extend</p></div><span class="text-xs font-bold text-rose-600">Start →</span></div>
+      <div class="ed-surface p-4 flex items-center gap-4 border-rose-200 cursor-pointer"><div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-xs font-bold text-rose-700">2</div><div class="flex-1"><p class="text-sm font-bold text-slate-800">Program Evaluation</p><p class="text-xs text-slate-500">40% · Lesson → Quiz → Extend</p></div><span class="text-xs font-bold text-rose-600">Start →</span></div>
+      <div class="ed-surface p-4 flex items-center gap-4 border-amber-200 cursor-pointer"><div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-xs font-bold text-amber-700">3</div><div class="flex-1"><p class="text-sm font-bold text-slate-800">Social-Emotional Assessment</p><p class="text-xs text-slate-500">55% · Lesson → Quiz → Extend</p></div><span class="text-xs font-bold text-amber-600">Continue →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 8: PRACTICE SESSION
+     ════════════════════════════════════════════════════════════ -->
+<div id="practice-session" class="screen">
+  <div class="max-w-2xl mx-auto px-4 pt-8 pb-12">
+    <div class="flex justify-between text-sm text-slate-500 mb-2"><span>Skill Practice · Crisis Intervention</span><span>3 of 18</span></div>
+    <div class="ed-progress-track mb-4"><div class="ed-progress-fill" style="width:17%"></div></div>
+
+    <!-- Streak -->
+    <div class="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-2 mb-4 text-center">
+      <span class="text-sm font-bold text-emerald-700">🔥 3 in a row! Keep it up!</span>
+    </div>
+
+    <!-- Question with feedback shown -->
+    <div class="ed-surface p-6">
+      <div class="flex gap-2 mb-3">
+        <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase text-amber-700">D3 · Systems-Level</span>
+      </div>
+      <p class="text-sm text-slate-800 font-medium mb-5">A school psychologist is developing a crisis response plan. Which of the following should be the <span class="font-bold text-amber-700">first priority</span>?</p>
+
+      <div class="space-y-2.5">
+        <div class="flex gap-3 rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"><span class="font-black text-[11px]">A</span> Ensuring student and staff physical safety ✓</div>
+        <div class="flex gap-3 rounded-2xl border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-700"><span class="font-black text-[11px]">B</span> <span class="line-through opacity-60">Documenting the incident for the school board</span> ✗</div>
+        <div class="flex gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600"><span class="font-black text-[11px] text-slate-400">C</span> Conducting individual counseling sessions</div>
+        <div class="flex gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600"><span class="font-black text-[11px] text-slate-400">D</span> Notifying parents of all students</div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+        <p class="text-sm font-semibold text-emerald-800 mb-1">Correct! Physical safety is always the top priority in crisis response.</p>
+        <p class="text-xs text-emerald-700">PREPaRE model (Brock et al.) establishes physical safety as the foundational step before any psychological intervention.</p>
+      </div>
+
+      <!-- Hint toggle -->
+      <div class="mt-3 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3">
+        <p class="text-xs font-bold text-amber-700 mb-1">💡 Hint</p>
+        <p class="text-xs text-amber-800">Think about Maslow's hierarchy — what needs to be met before anything else?</p>
+      </div>
+
+      <div class="flex justify-end mt-5">
+        <button class="ed-btn ed-btn-amber text-xs">Next Question →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 9: PROGRESS DASHBOARD
+     ════════════════════════════════════════════════════════════ -->
+<div id="progress" class="screen">
+  <div class="max-w-4xl mx-auto px-4 pt-8 pb-12">
+    <h2 class="text-2xl font-bold text-slate-900 mb-1">Progress Dashboard</h2>
+    <p class="text-sm text-slate-500 mb-6">Your performance across all 4 domains and 45 skills.</p>
+
+    <!-- Domain Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="ed-surface p-4 text-center"><p class="ed-overline mb-2">D1 Professional</p><div class="text-3xl font-black text-emerald-600 mb-1">78%</div><div class="ed-progress-track"><div style="width:78%;height:100%;border-radius:9999px;background:rgb(16,185,129)"></div></div><p class="text-[10px] text-slate-400 mt-2">10/13 skills · 36% of exam</p></div>
+      <div class="ed-surface p-4 text-center"><p class="ed-overline mb-2">D2 Student-Level</p><div class="text-3xl font-black text-amber-600 mb-1">65%</div><div class="ed-progress-track"><div style="width:65%;height:100%;border-radius:9999px;background:rgb(245,158,11)"></div></div><p class="text-[10px] text-slate-400 mt-2">6/12 skills · 21% of exam</p></div>
+      <div class="ed-surface p-4 text-center"><p class="ed-overline mb-2">D3 Systems-Level</p><div class="text-3xl font-black text-rose-500 mb-1">52%</div><div class="ed-progress-track"><div style="width:52%;height:100%;border-radius:9999px;background:rgb(244,63,94)"></div></div><p class="text-[10px] text-slate-400 mt-2">2/8 skills · 19% of exam</p></div>
+      <div class="ed-surface p-4 text-center"><p class="ed-overline mb-2">D4 Foundations</p><div class="text-3xl font-black text-amber-600 mb-1">71%</div><div class="ed-progress-track"><div style="width:71%;height:100%;border-radius:9999px;background:rgb(245,158,11)"></div></div><p class="text-[10px] text-slate-400 mt-2">7/12 skills · 24% of exam</p></div>
+    </div>
+
+    <!-- Skill Heatmap -->
+    <div class="ed-surface p-5 mb-6">
+      <p class="text-sm font-bold text-slate-800 mb-4">Skill Proficiency Map</p>
+      <div class="grid grid-cols-5 sm:grid-cols-9 gap-1.5">
+        <!-- Simulated heatmap cells -->
+        <div class="h-8 rounded bg-emerald-400 flex items-center justify-center text-[8px] font-bold text-white" title="88%">88</div>
+        <div class="h-8 rounded bg-emerald-400 flex items-center justify-center text-[8px] font-bold text-white">91</div>
+        <div class="h-8 rounded bg-emerald-300 flex items-center justify-center text-[8px] font-bold text-white">82</div>
+        <div class="h-8 rounded bg-amber-400 flex items-center justify-center text-[8px] font-bold text-white">72</div>
+        <div class="h-8 rounded bg-amber-400 flex items-center justify-center text-[8px] font-bold text-white">65</div>
+        <div class="h-8 rounded bg-amber-300 flex items-center justify-center text-[8px] font-bold text-white">61</div>
+        <div class="h-8 rounded bg-rose-400 flex items-center justify-center text-[8px] font-bold text-white">55</div>
+        <div class="h-8 rounded bg-rose-400 flex items-center justify-center text-[8px] font-bold text-white">52</div>
+        <div class="h-8 rounded bg-rose-500 flex items-center justify-center text-[8px] font-bold text-white">40</div>
+        <div class="h-8 rounded bg-emerald-400 flex items-center justify-center text-[8px] font-bold text-white">85</div>
+        <div class="h-8 rounded bg-emerald-300 flex items-center justify-center text-[8px] font-bold text-white">80</div>
+        <div class="h-8 rounded bg-amber-400 flex items-center justify-center text-[8px] font-bold text-white">78</div>
+        <div class="h-8 rounded bg-amber-400 flex items-center justify-center text-[8px] font-bold text-white">70</div>
+        <div class="h-8 rounded bg-amber-300 flex items-center justify-center text-[8px] font-bold text-white">68</div>
+        <div class="h-8 rounded bg-amber-300 flex items-center justify-center text-[8px] font-bold text-white">62</div>
+        <div class="h-8 rounded bg-rose-400 flex items-center justify-center text-[8px] font-bold text-white">58</div>
+        <div class="h-8 rounded bg-rose-400 flex items-center justify-center text-[8px] font-bold text-white">50</div>
+        <div class="h-8 rounded bg-rose-500 flex items-center justify-center text-[8px] font-bold text-white">33</div>
+      </div>
+      <div class="flex gap-4 mt-3 text-[10px]">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-400"></span> Demonstrating (≥80%)</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-400"></span> Approaching (60-79%)</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-rose-400"></span> Emerging (&lt;60%)</span>
+      </div>
+    </div>
+
+    <!-- Time Stats -->
+    <div class="ed-surface p-5">
+      <p class="text-sm font-bold text-slate-800 mb-4">Session Stats</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div><div class="text-2xl font-black text-slate-900">247</div><div class="text-xs text-slate-400">Total Questions</div></div>
+        <div><div class="text-2xl font-black text-slate-900">68%</div><div class="text-xs text-slate-400">Overall Accuracy</div></div>
+        <div><div class="text-2xl font-black text-slate-900">4h 12m</div><div class="text-xs text-slate-400">Total Study Time</div></div>
+        <div><div class="text-2xl font-black text-slate-900">42s</div><div class="text-xs text-slate-400">Avg per Question</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 10: LEARNING PATH MODULE
+     ════════════════════════════════════════════════════════════ -->
+<div id="learning-path" class="screen">
+  <div class="max-w-2xl mx-auto px-4 pt-8 pb-12">
+    <button onclick="goTo('practice-hub')" class="text-xs text-amber-700 font-bold mb-4 inline-block">← Back to Practice Hub</button>
+    <h2 class="text-xl font-bold text-slate-900 mb-1">Crisis Intervention</h2>
+    <p class="text-sm text-slate-500 mb-6">Domain 3 · Systems-Level Services · 33% accuracy</p>
+
+    <!-- Section 1: Lesson -->
+    <div class="ed-surface p-5 mb-4">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700">1</div>
+        <div><p class="text-sm font-bold text-slate-800">Lesson</p><p class="text-xs text-slate-500">Core concepts and frameworks</p></div>
+        <span class="ml-auto rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-700">Complete</span>
+      </div>
+      <div class="ed-soft p-4 text-sm text-slate-600 leading-relaxed">
+        <p class="font-bold text-slate-800 mb-2">Key Concepts</p>
+        <p>The <strong>PREPaRE model</strong> (Brock et al.) provides a framework for school-based crisis response. The acronym stands for: <strong>P</strong>revent, <strong>R</strong>eaffirm, <strong>E</strong>valuate, <strong>P</strong>rovide interventions, <strong>a</strong>nd <strong>R</strong>efer, <strong>E</strong>xamine...</p>
+      </div>
+    </div>
+
+    <!-- Section 2: Practice Quiz -->
+    <div class="ed-surface p-5 mb-4 border-amber-200">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-xs font-bold text-amber-700">2</div>
+        <div><p class="text-sm font-bold text-slate-800">Practice Quiz</p><p class="text-xs text-slate-500">Test your understanding</p></div>
+        <span class="ml-auto rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-black uppercase text-amber-700">In Progress</span>
+      </div>
+      <button class="ed-btn ed-btn-amber w-full text-xs">Continue Quiz (2/5 complete) →</button>
+    </div>
+
+    <!-- Section 3: Coming Soon -->
+    <div class="ed-surface p-5 opacity-50">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-400">3</div>
+        <div><p class="text-sm font-bold text-slate-400">Extend</p><p class="text-xs text-slate-400">Application scenarios — coming soon</p></div>
+        <span class="ml-auto text-[10px] text-slate-400">🔒 Locked</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 11: AI STUDY GUIDE
+     ════════════════════════════════════════════════════════════ -->
+<div id="study-guide" class="screen">
+  <div class="max-w-3xl mx-auto px-4 pt-8 pb-12">
+    <h2 class="text-2xl font-bold text-slate-900 mb-1">AI Study Guide</h2>
+    <p class="text-sm text-slate-500 mb-6">Personalized plan generated from your diagnostic data. Updates weekly.</p>
+
+    <!-- Tabs -->
+    <div class="flex gap-1.5 mb-6 overflow-x-auto">
+      <button class="ed-btn ed-btn-amber text-xs whitespace-nowrap">Overview</button>
+      <button class="ed-btn ed-btn-secondary text-xs whitespace-nowrap">Priorities</button>
+      <button class="ed-btn ed-btn-secondary text-xs whitespace-nowrap">Domains</button>
+      <button class="ed-btn ed-btn-secondary text-xs whitespace-nowrap">Concepts</button>
+      <button class="ed-btn ed-btn-secondary text-xs whitespace-nowrap">Weekly Plan</button>
+      <button class="ed-btn ed-btn-secondary text-xs whitespace-nowrap">Milestones</button>
+    </div>
+
+    <!-- Overview content -->
+    <div class="ed-surface p-6 mb-5">
+      <p class="ed-overline mb-3">READINESS SNAPSHOT</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-5">
+        <div><div class="text-2xl font-black text-indigo-600">56%</div><div class="text-xs text-slate-400">Readiness</div></div>
+        <div><div class="text-2xl font-black text-emerald-600">18</div><div class="text-xs text-slate-400">Demonstrating</div></div>
+        <div><div class="text-2xl font-black text-amber-600">15</div><div class="text-xs text-slate-400">Approaching</div></div>
+        <div><div class="text-2xl font-black text-rose-500">12</div><div class="text-xs text-slate-400">Emerging</div></div>
+      </div>
+      <div class="ed-soft p-4 text-sm text-slate-700 leading-relaxed">
+        <p class="font-bold text-slate-900 mb-2">Data Interpretation</p>
+        <p>You've demonstrated strong command of professional practices but show significant gaps in systems-level services, particularly crisis intervention and program evaluation. Your diagnostic results suggest a pattern common among candidates in their second year: strong theoretical knowledge but limited exposure to application-level scenarios.</p>
+      </div>
+    </div>
+
+    <!-- Priority Clusters -->
+    <div class="ed-surface p-6">
+      <p class="ed-overline mb-3">PRIORITY CLUSTERS</p>
+      <div class="space-y-3">
+        <div class="rounded-xl border border-rose-100 bg-rose-50 p-4">
+          <div class="flex items-center gap-2 mb-1"><span class="text-xs font-black uppercase tracking-wider text-rose-600">Urgent</span></div>
+          <p class="text-sm font-bold text-slate-800">Crisis & Prevention Skills</p>
+          <p class="text-xs text-slate-500 mt-1">Crisis Intervention (33%), Program Evaluation (40%), Prevention & Wellness (48%)</p>
+        </div>
+        <div class="rounded-xl border border-amber-100 bg-amber-50 p-4">
+          <div class="flex items-center gap-2 mb-1"><span class="text-xs font-black uppercase tracking-wider text-amber-600">Growth Zone</span></div>
+          <p class="text-sm font-bold text-slate-800">Assessment Interpretation</p>
+          <p class="text-xs text-slate-500 mt-1">Social-Emotional Assessment (55%), Behavioral Assessment (62%), Report Writing (65%)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 12: AI TUTOR
+     ════════════════════════════════════════════════════════════ -->
+<div id="tutor" class="screen">
+  <div class="max-w-4xl mx-auto px-4 pt-8 pb-12">
+    <div class="flex gap-6 min-h-[600px]">
+      <!-- Session Sidebar -->
+      <div class="hidden md:block w-56 shrink-0">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-sm font-bold text-slate-800">Sessions</span>
+          <button class="ed-btn ed-btn-amber text-[10px] py-1 px-3">+ New</button>
+        </div>
+        <div class="flex gap-1.5 mb-4">
+          <button class="rounded-full bg-amber-500 px-3 py-1 text-[10px] font-bold text-slate-900">Chat</button>
+          <button class="rounded-full border border-slate-200 px-3 py-1 text-[10px] font-bold text-slate-500">Quiz</button>
+        </div>
+        <div class="space-y-1.5">
+          <div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2.5 cursor-pointer">
+            <p class="text-xs font-bold text-slate-800 truncate">Crisis intervention frameworks</p>
+            <p class="text-[10px] text-slate-400">Today · 8 messages</p>
+          </div>
+          <div class="rounded-xl bg-white border border-slate-100 px-3 py-2.5 cursor-pointer hover:bg-slate-50 transition">
+            <p class="text-xs font-bold text-slate-800 truncate">IDEA eligibility requirements</p>
+            <p class="text-[10px] text-slate-400">Yesterday · 12 messages</p>
+          </div>
+          <div class="rounded-xl bg-white border border-slate-100 px-3 py-2.5 cursor-pointer hover:bg-slate-50 transition">
+            <p class="text-xs font-bold text-slate-800 truncate">Cognitive assessment basics</p>
+            <p class="text-[10px] text-slate-400">Apr 1 · 5 messages</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="flex-1 ed-surface flex flex-col overflow-hidden" style="border-radius:1.5rem">
+        <!-- Chat Header -->
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-xs">🤖</div>
+          <span class="text-sm font-bold text-slate-800">PraxisBot</span>
+          <span class="text-xs text-slate-400">· AI Study Assistant</span>
+        </div>
+
+        <!-- Messages -->
+        <div class="flex-1 p-5 space-y-4 overflow-y-auto">
+          <!-- Bot message -->
+          <div class="flex gap-3">
+            <div class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-xs shrink-0">🤖</div>
+            <div class="ed-soft p-4 max-w-md">
+              <p class="text-sm text-slate-700">The PREPaRE model is the go-to framework for school-based crisis intervention. Let me break it down for you:</p>
+              <ul class="text-sm text-slate-700 mt-2 space-y-1 list-disc ml-4">
+                <li><strong>P</strong>revent and prepare</li>
+                <li><strong>R</strong>eaffirm physical health</li>
+                <li><strong>E</strong>valuate psychological trauma</li>
+                <li><strong>P</strong>rovide interventions</li>
+                <li><strong>R</strong>efer and <strong>E</strong>xamine</li>
+              </ul>
+            </div>
+          </div>
+          <!-- User message -->
+          <div class="flex gap-3 justify-end">
+            <div class="rounded-2xl bg-indigo-600 text-white p-4 max-w-md">
+              <p class="text-sm">How is PREPaRE different from the NASP crisis model?</p>
+            </div>
+            <div class="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-xs shrink-0 font-bold text-indigo-600">J</div>
+          </div>
+          <!-- Bot typing -->
+          <div class="flex gap-3">
+            <div class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-xs shrink-0">🤖</div>
+            <div class="ed-soft p-4"><span class="text-sm text-slate-400">Typing...</span></div>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="px-5 py-3 border-t border-slate-100 flex gap-3 items-center">
+          <input type="text" placeholder="Ask PraxisBot anything about Praxis 5403..." class="flex-1 rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          <button class="ed-btn ed-btn-amber text-xs py-2.5">Send →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 13: MOBILE DASHBOARD
+     ════════════════════════════════════════════════════════════ -->
+<div id="mobile" class="screen">
+  <div class="max-w-sm mx-auto px-3 pt-4 pb-12" style="max-width:375px">
+    <p class="ed-overline text-center mb-3">MOBILE VIEW (375px)</p>
+
+    <!-- Mobile header -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-amber-500 flex items-center justify-center text-white text-[9px] font-black">P</div><span class="font-bold text-slate-900 text-xs">Praxis</span></div>
+      <div class="flex gap-1.5"><button class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-xs">☰</button></div>
+    </div>
+
+    <!-- Readiness (compact) -->
+    <div class="rounded-xl border border-slate-200 bg-white p-3 mb-3 shadow-sm">
+      <div class="flex justify-between items-center mb-1.5"><span class="text-xs font-semibold text-slate-700">Exam Readiness</span><span class="text-xs font-bold text-indigo-600">56%</span></div>
+      <div class="w-full rounded-full bg-slate-100 h-2"><div class="h-2 rounded-full bg-indigo-500" style="width:56%"></div></div>
+      <div class="text-[10px] text-slate-400 mt-1">18/45 skills at Demonstrating · 14 more to go</div>
+    </div>
+
+    <!-- Today's Focus (compact) -->
+    <div class="rounded-xl border border-slate-200 bg-white p-3 mb-3 shadow-sm">
+      <div class="flex items-center gap-1.5 mb-2"><span class="text-xs">🎯</span><span class="text-xs font-bold text-slate-800">Today's Focus</span></div>
+      <div class="rounded-lg border border-orange-100 bg-orange-50 px-3 py-2 mb-2">
+        <div class="text-[10px] font-bold uppercase text-orange-600">Priority · Emerging</div>
+        <div class="text-xs font-bold text-slate-800">Crisis Intervention</div>
+      </div>
+      <div class="rounded-lg border border-violet-100 bg-violet-50 px-3 py-2">
+        <div class="text-[10px] font-bold uppercase text-violet-600">3 skills overdue for review</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions (2-col) -->
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <button class="rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm"><div class="text-sm mb-1">⚡</div><div class="text-[10px] font-bold text-slate-800">Fluency Drill</div></button>
+      <button class="rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm"><div class="text-sm mb-1">📖</div><div class="text-[10px] font-bold text-slate-800">Vocab Quiz</div></button>
+      <button class="rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm"><div class="text-sm mb-1">🗺️</div><div class="text-[10px] font-bold text-slate-800">Learning Path</div></button>
+      <button class="rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm"><div class="text-sm mb-1">💬</div><div class="text-[10px] font-bold text-slate-800">AI Tutor</div></button>
+    </div>
+
+    <!-- Domain bars (compact) -->
+    <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+      <div class="text-xs font-bold text-slate-800 mb-2">Domains</div>
+      <div class="space-y-2">
+        <div><div class="flex justify-between text-[10px] mb-0.5"><span class="text-slate-600">D1 Professional</span><span class="font-bold text-emerald-600">78%</span></div><div class="h-1.5 w-full rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-emerald-400" style="width:78%"></div></div></div>
+        <div><div class="flex justify-between text-[10px] mb-0.5"><span class="text-slate-600">D2 Student-Level</span><span class="font-bold text-amber-600">65%</span></div><div class="h-1.5 w-full rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-amber-400" style="width:65%"></div></div></div>
+        <div><div class="flex justify-between text-[10px] mb-0.5"><span class="text-slate-600">D3 Systems-Level</span><span class="font-bold text-rose-500">52%</span></div><div class="h-1.5 w-full rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-rose-400" style="width:52%"></div></div></div>
+        <div><div class="flex justify-between text-[10px] mb-0.5"><span class="text-slate-600">D4 Foundations</span><span class="font-bold text-amber-600">71%</span></div><div class="h-1.5 w-full rounded-full bg-slate-100"><div class="h-1.5 rounded-full bg-amber-400" style="width:71%"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 14: MODALS
+     ════════════════════════════════════════════════════════════ -->
+<div id="modals" class="screen">
+  <div class="max-w-lg mx-auto px-4 pt-8 pb-12 space-y-8">
+    <p class="ed-overline text-center mb-4">MODAL EXAMPLES</p>
+
+    <!-- Feedback Modal -->
+    <div class="ed-surface p-6">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Share Feedback</h3>
+      <p class="text-xs text-slate-500 mb-4">Help us improve Praxis Makes Perfect.</p>
+      <div class="space-y-3">
+        <div><label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Type</label><div class="flex gap-2"><span class="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">Bug</span><span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-bold text-slate-500">Feature</span><span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-bold text-slate-500">Content</span></div></div>
+        <div><label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Message</label><textarea class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm h-20" placeholder="Describe the issue..."></textarea></div>
+      </div>
+      <div class="flex gap-2 mt-4"><button class="ed-btn ed-btn-amber text-xs flex-1">Submit</button><button class="ed-btn ed-btn-secondary text-xs">Cancel</button></div>
+    </div>
+
+    <!-- Session Resume Modal -->
+    <div class="ed-surface p-6">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Resume Session?</h3>
+      <p class="text-sm text-slate-500 mb-4">You have an unfinished adaptive diagnostic from 2 hours ago.</p>
+      <div class="ed-soft p-4 mb-4">
+        <div class="flex justify-between text-sm"><span class="text-slate-600">Progress</span><span class="font-bold text-slate-800">28 of 45 questions</span></div>
+        <div class="ed-progress-track mt-2"><div class="ed-progress-fill" style="width:62%"></div></div>
+      </div>
+      <div class="flex gap-2"><button class="ed-btn ed-btn-amber flex-1 text-xs">Resume →</button><button class="ed-btn ed-btn-secondary text-xs">Start Over</button></div>
+    </div>
+
+    <!-- Redemption Entry Modal -->
+    <div class="ed-surface p-6 border-purple-100">
+      <div class="flex items-center gap-2 mb-2"><span>🧠</span><h3 class="text-lg font-bold text-slate-900">Redemption Round</h3></div>
+      <p class="text-sm text-slate-500 mb-4">You have 5 questions in quarantine. Answer 3 correctly to redeem each one.</p>
+      <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+        <div><div class="text-xl font-black text-purple-600">5</div><div class="text-[10px] text-slate-400">In Quarantine</div></div>
+        <div><div class="text-xl font-black text-purple-600">2</div><div class="text-[10px] text-slate-400">Credits</div></div>
+        <div><div class="text-xl font-black text-emerald-600">87%</div><div class="text-[10px] text-slate-400">High Score</div></div>
+      </div>
+      <button class="ed-btn w-full py-3 text-xs font-bold text-white" style="background:#7c3aed">Start Redemption Round →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     BOTTOM NAV BAR
+     ════════════════════════════════════════════════════════════ -->
+<div class="nav-bar">
+  <button class="nav-btn active" onclick="goTo('hero')">1 Hero</button>
+  <span class="nav-divider"></span>
+  <button class="nav-btn" onclick="goTo('onboarding')">2 Onboard</button>
+  <button class="nav-btn" onclick="goTo('gateway')">3 Gateway</button>
+  <button class="nav-btn" onclick="goTo('assessment')">4 Assess</button>
+  <button class="nav-btn" onclick="goTo('score-report')">5 Score</button>
+  <span class="nav-divider"></span>
+  <button class="nav-btn" onclick="goTo('dashboard')">6 Dash</button>
+  <button class="nav-btn" onclick="goTo('practice-hub')">7 Practice</button>
+  <button class="nav-btn" onclick="goTo('practice-session')">8 Session</button>
+  <button class="nav-btn" onclick="goTo('progress')">9 Progress</button>
+  <span class="nav-divider"></span>
+  <button class="nav-btn" onclick="goTo('learning-path')">10 Learn</button>
+  <button class="nav-btn" onclick="goTo('study-guide')">11 Guide</button>
+  <button class="nav-btn" onclick="goTo('tutor')">12 Tutor</button>
+  <span class="nav-divider"></span>
+  <button class="nav-btn" onclick="goTo('mobile')">13 Mobile</button>
+  <button class="nav-btn" onclick="goTo('modals')">14 Modals</button>
+</div>
+
+<script>
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if (b.textContent.toLowerCase().includes(id.substring(0,4))) b.classList.add('active'); });
+  window.scrollTo(0, 0);
+}
+
+function showPreview(tab) {
+  ['question','skills','plan'].forEach(t => {
+    document.getElementById('preview-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+function showPracticeTab(tab) {
+  ['domain','skill','path'].forEach(t => {
+    document.getElementById('practice-' + t).style.display = t === tab ? '' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>
