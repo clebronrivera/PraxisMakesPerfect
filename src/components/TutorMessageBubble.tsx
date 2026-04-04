@@ -27,14 +27,14 @@ function renderMarkdown(text: string): ReactNode[] {
 
     if (line.startsWith('- ') || line.startsWith('* ')) {
       result.push(
-        <li key={key} className="text-stone-700 ml-4 list-disc">
+        <li key={key} className="text-slate-700 ml-4 list-disc">
           {renderInline(line.slice(2))}
         </li>
       );
     } else if (line.startsWith('## ')) {
-      result.push(<h3 key={key} className="font-semibold text-stone-900 mt-2 mb-1">{line.slice(3)}</h3>);
+      result.push(<h3 key={key} className="font-semibold text-slate-900 mt-2 mb-1">{line.slice(3)}</h3>);
     } else if (line.startsWith('# ')) {
-      result.push(<h2 key={key} className="font-bold text-stone-900 mt-2 mb-1">{line.slice(2)}</h2>);
+      result.push(<h2 key={key} className="font-bold text-slate-900 mt-2 mb-1">{line.slice(2)}</h2>);
     } else if (line.trim() === '') {
       result.push(<br key={key} />);
     } else {
@@ -57,9 +57,9 @@ function renderInline(text: string): ReactNode[] {
       parts.push(text.slice(lastIndex, match.index));
     }
     if (match[1] !== undefined) {
-      parts.push(<strong key={match.index} className="font-semibold text-stone-900">{match[1]}</strong>);
+      parts.push(<strong key={match.index} className="font-semibold text-slate-900">{match[1]}</strong>);
     } else if (match[2] !== undefined) {
-      parts.push(<code key={match.index} className="bg-stone-100 px-1 rounded text-xs font-mono">{match[2]}</code>);
+      parts.push(<code key={match.index} className="bg-slate-100 px-1 rounded text-xs font-mono">{match[2]}</code>);
     }
     lastIndex = regex.lastIndex;
   }
@@ -83,9 +83,12 @@ export function TutorMessageBubble({
 
   if (isUser) {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[80%] bg-amber-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm">
+      <div className="flex justify-end items-start gap-2">
+        <div className="rounded-2xl bg-indigo-600 text-white p-4 max-w-md text-sm">
           {message.content}
+        </div>
+        <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 shrink-0">
+          U
         </div>
       </div>
     );
@@ -93,9 +96,13 @@ export function TutorMessageBubble({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="max-w-[90%]">
+      <div className="flex items-start gap-2 max-w-[90%]">
+        <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-xs shrink-0">
+          🤖
+        </div>
+        <div>
         {/* Markdown content */}
-        <div className="editorial-surface bg-stone-50 border border-stone-200 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-stone-800">
+        <div className="editorial-surface-soft p-4 max-w-md text-sm text-slate-800">
           {renderMarkdown(message.content)}
         </div>
 
@@ -120,6 +127,7 @@ export function TutorMessageBubble({
             payload={message.artifactPayload}
           />
         )}
+        </div>
       </div>
 
       {/* Suggested follow-ups (only on latest assistant message) */}

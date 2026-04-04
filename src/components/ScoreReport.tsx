@@ -1,14 +1,21 @@
-import { Trophy, Clock, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, Zap, RotateCcw, Lightbulb } from 'lucide-react';
+import { AlertTriangle, Home, RotateCcw } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
 import { detectWeaknesses, UserResponse } from '../brain/weakness-detector';
-import { AnalyzedQuestion, getQuestionIdentifierLabel, getQuestionPrompt } from '../brain/question-analyzer';
-import { getDomainColor } from '../utils/domainColors';
+import type { AnalyzedQuestion } from '../brain/question-analyzer';
+// getQuestionIdentifierLabel, getQuestionPrompt removed — not needed in redesigned layout
 import { getDomainLabel } from '../utils/domainLabels';
 import { useProgressTracking } from '../hooks/useProgressTracking';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
 import { loadSession, clearSession } from '../utils/sessionStorage';
 import type { DiagnosticSummary } from '../types/diagnosticSummary';
+
+const EXAM_WEIGHTS: Record<number, number> = {
+  1: 36, // Professional Practices
+  2: 21, // Student-Level Services
+  3: 19, // Systems-Level Services
+  4: 24, // Foundations of School Psychology
+};
 
 interface ScoreReportProps {
   responses: UserResponse[];
@@ -28,27 +35,23 @@ interface ScoreReportProps {
 }
 
 
-const getScoreColor = (score: number) => {
-  if (score >= DEMONSTRATING_THRESHOLD) return { text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' };
-  if (score >= APPROACHING_THRESHOLD) return { text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' };
-  return { text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' };
-};
-
 export default function ScoreReport({
   responses,
   questions,
   totalTime,
-  onStartPractice,
-  onRetakeAssessment,
+  onStartPractice: _onStartPractice,
+  onRetakeAssessment: _onRetakeAssessment,
   onGoHome,
   diagnosticSummary,
 }: ScoreReportProps) {
+  // Keep handler refs accessible for potential future use
+  void _onStartPractice;
+  void _onRetakeAssessment;
+
   const engine = useEngine();
   const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
 
-
   const { profile } = useProgressTracking();
-  const hideRetake = Boolean(profile.screenerComplete && profile.fullAssessmentComplete);
 
   // Safety check: Handle missing or corrupted data
   if (!responses || responses.length === 0 || !questions || questions.length === 0) {
@@ -106,7 +109,7 @@ export default function ScoreReport({
     );
   }
 
-  // questionMap is always needed for longestQuestions (current-session timing data).
+  // questionMap is needed for fallback domain score computation.
   const questionMap = new Map(questions.map(q => [q.id, q]));
 
   // ── Scores ──────────────────────────────────────────────────────────────────
@@ -150,255 +153,131 @@ export default function ScoreReport({
             .sort((a, b) => a.score - b.score);
         })();
 
-  // weakestDomains: highestNeedDomains already sorted score-asc; slice to 3.
-  const weakestDomains = diagnosticSummary
-    ? diagnosticSummary.highestNeedDomains.map(d => d.id)
-    : domainArray.slice(0, 3).map(d => d.domain);
+  // ── Skill tier counts ───────────────────────────────────────────────────────
+  const { currentSkillScores } = detectWeaknesses(responses, questions);
+  const skillEntries = Object.values(currentSkillScores).filter(s => s.total > 0);
+  let demonstratingCount = 0;
+  let approachingCount = 0;
+  let emergingCount = 0;
+  for (const s of skillEntries) {
+    const ratio = s.correct / s.total;
+    if (ratio >= DEMONSTRATING_THRESHOLD) demonstratingCount++;
+    else if (ratio >= APPROACHING_THRESHOLD) approachingCount++;
+    else emergingCount++;
+  }
 
-  // Calculate average time per question
-  const avgTimePerQuestion = totalQuestions > 0 
-    ? Math.round(responses.reduce((sum, r) => sum + r.timeSpent, 0) / totalQuestions)
-    : 0;
+  // ── Top priority (weakest) skills ──────────────────────────────────────────
+  const prioritySkills = diagnosticSummary
+    ? diagnosticSummary.weaknesses.slice(0, 3)
+    : Object.entries(currentSkillScores)
+        .filter(([, s]) => s.total > 0)
+        .map(([id, s]) => ({
+          skillId: id,
+          skillName: id,
+          score: s.correct / s.total,
+          attempted: s.total,
+          correct: s.correct,
+          incorrect: s.total - s.correct,
+          missedConcepts: [],
+        }))
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 3);
 
-  // Find questions that took the longest
-  const questionTimeMap = new Map<string, number>();
-  responses.forEach(response => {
-    const existing = questionTimeMap.get(response.questionId) || 0;
-    questionTimeMap.set(response.questionId, existing + response.timeSpent);
-  });
-
-  const longestQuestions = Array.from(questionTimeMap.entries())
-    .map(([questionId, totalTime]) => {
-      const question = questionMap.get(questionId);
-      const response = responses.find(r => r.questionId === questionId);
-      return {
-        questionId,
-        questionLabel: question ? getQuestionIdentifierLabel(question) : questionId,
-        prompt: question ? getQuestionPrompt(question) : '',
-        timeSpent: totalTime,
-        isCorrect: response?.isCorrect || false
-      };
-    })
-    .sort((a, b) => b.timeSpent - a.timeSpent)
-    .slice(0, 5); // Top 5 longest questions
-
-  // Format time
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins}m ${secs}s`;
-    }
-    return `${mins}m ${secs}s`;
+  // ── Domain bar color helper ────────────────────────────────────────────────
+  const getDomainBarColor = (score: number) => {
+    if (score >= DEMONSTRATING_THRESHOLD) return 'rgb(16,185,129)';  // emerald
+    if (score >= APPROACHING_THRESHOLD) return 'rgb(245,158,11)';   // amber
+    return 'rgb(244,63,94)';                                         // rose
   };
 
-  const scoreStyle = getScoreColor(overallScore);
+  const getDomainPctColor = (score: number) => {
+    if (score >= DEMONSTRATING_THRESHOLD) return 'text-emerald-600';
+    if (score >= APPROACHING_THRESHOLD) return 'text-amber-600';
+    return 'text-rose-500';
+  };
+
+  const totalMinutes = Math.round(totalTime / 60);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 px-1 py-2 sm:px-0">
+    <div className="mx-auto max-w-2xl px-4 pt-8 pb-12">
       {/* Header */}
-      <div className="space-y-4 text-center">
-        <div className="flex items-center justify-center gap-3">
-          <Trophy className={`w-10 h-10 ${scoreStyle.text}`} />
-          <h2 className="editorial-heading text-3xl sm:text-4xl">Diagnostic Complete!</h2>
-        </div>
-        <p className="editorial-copy">
-          {`You completed all ${totalQuestions} questions`}
+      <div className="mb-8 text-center">
+        <span className="text-4xl">🎉</span>
+        <h2 className="mt-3 text-2xl font-bold text-slate-900">Diagnostic Complete</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Here's your baseline across all 4 exam domains and 45 skills.
         </p>
-        <button
-          onClick={() => {
-            const { currentSkillScores } = detectWeaknesses(responses, questions);
-            downloadScoreReport(responses, profile, currentSkillScores);
-          }}
-          className="editorial-button-secondary mx-auto"
-        >
-          Download Detailed Report
-        </button>
       </div>
 
-      {/* Overall Score Card */}
-      <div className="editorial-panel-dark p-8 text-center">
+      {/* Overall Accuracy */}
+      <div className="editorial-surface mb-5 p-6 text-center">
+        <p className="editorial-overline mb-2">Overall Accuracy</p>
+        <div className="mb-1 text-5xl font-black text-indigo-600">{scorePercentage}%</div>
+        <p className="text-sm text-slate-500">
+          {correctAnswers} of {totalQuestions} questions correct · {totalMinutes} minutes
+        </p>
+        <div className="mt-3 flex flex-wrap justify-center gap-3">
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase text-emerald-700">
+            {demonstratingCount} Demonstrating
+          </span>
+          <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase text-amber-700">
+            {approachingCount} Approaching
+          </span>
+          <span className="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[10px] font-black uppercase text-rose-700">
+            {emergingCount} Emerging
+          </span>
+        </div>
+      </div>
+
+      {/* Domain Breakdown */}
+      <div className="editorial-surface mb-5 p-6">
+        <p className="editorial-overline mb-4">Domain Breakdown</p>
         <div className="space-y-4">
-          <div>
-            <p className="mb-2 text-sm text-slate-300">Overall Score</p>
-            <p className={`text-6xl font-bold ${scoreStyle.text}`}>
-              {scorePercentage}%
-            </p>
-          </div>
-          <div className="flex items-center justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span className="text-slate-200">{correctAnswers} Correct</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-rose-400" />
-              <span className="text-slate-200">{totalQuestions - correctAnswers} Incorrect</span>
-            </div>
-          </div>
-
-          {/* Readiness context — only when diagnosticSummary is present */}
-          {diagnosticSummary && (
-            <div className="border-t border-slate-600 pt-4 space-y-2">
-              <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
-                diagnosticSummary.readiness.tone === 'ready'
-                  ? 'bg-emerald-500/20 text-emerald-300'
-                  : diagnosticSummary.readiness.tone === 'building'
-                  ? 'bg-amber-500/20 text-amber-300'
-                  : 'bg-rose-500/20 text-rose-300'
-              }`}>
-                {diagnosticSummary.readiness.label}
-              </span>
-              <p className="text-sm text-slate-300">{diagnosticSummary.readiness.description}</p>
-              <p className="text-xs text-slate-400 italic">{diagnosticSummary.readiness.nextAction}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Confidence callout — only when overconfidence pattern detected */}
-      {diagnosticSummary?.confidence?.interpretation === 'possible_overconfidence' && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-700 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-amber-900">Confidence Pattern Detected</p>
-              <p className="mt-1 text-sm text-amber-800">
-                {diagnosticSummary.confidence.totalHighWrong > 0
-                  ? `${diagnosticSummary.confidence.totalHighWrong} high-confidence wrong answer${diagnosticSummary.confidence.totalHighWrong !== 1 ? 's' : ''} detected. `
-                  : ''}
-                These may indicate misconceptions rather than simple knowledge gaps. Your study plan will prioritize them.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="editorial-stat-card">
-          <div className="flex items-center gap-3 mb-2">
-            <Clock className="w-5 h-5 text-amber-700" />
-            <p className="text-sm text-slate-500">Total Time</p>
-          </div>
-          <p className="text-2xl font-bold text-slate-900">{formatTime(totalTime)}</p>
-        </div>
-        <div className="editorial-stat-card">
-          <div className="flex items-center gap-3 mb-2">
-            <Timer className="w-5 h-5 text-amber-700" />
-            <p className="text-sm text-slate-500">Avg Time/Question</p>
-          </div>
-          <p className="text-2xl font-bold text-slate-900">{formatTime(avgTimePerQuestion)}</p>
-        </div>
-      </div>
-
-      {/* Longest Questions */}
-      {longestQuestions.length > 0 && (
-        <div className="editorial-surface p-6">
-          <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
-            <Timer className="w-5 h-5 text-amber-700" />
-            Questions That Took the Longest
-          </h3>
-          <div className="space-y-3">
-            {longestQuestions.map((item, index) => (
-              <div 
-                key={item.questionId} 
-                className={`p-4 rounded-xl border ${
-                  item.isCorrect 
-                    ? 'bg-emerald-50 border-emerald-200' 
-                    : 'bg-rose-50 border-rose-200'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-4 mb-2">
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-900">
-                      {index + 1}. {item.questionLabel}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-500 line-clamp-2">
-                      {item.prompt
-                        ? `${item.prompt.substring(0, 100)}${item.prompt.length > 100 ? '...' : ''}`
-                        : 'Question text unavailable for this report.'}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {item.isCorrect ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
-                    )}
-                    <span className="text-sm font-semibold text-slate-700 whitespace-nowrap">
-                      {formatTime(item.timeSpent)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Domain Scores */}
-      <div className="editorial-surface p-6">
-        <h3 className="mb-6 flex items-center gap-2 font-semibold text-slate-900">
-          <BarChart3 className="w-5 h-5 text-amber-700" />
-          Performance by Domain
-        </h3>
-        <div className="space-y-4">
-          {domainArray.map(({ domain, score, correct, total }) => {
+          {domainArray.map(({ domain, score }) => {
             const pct = Math.round(score * 100);
-            const domainStyle = getScoreColor(score);
             const domainInfo = NASP_DOMAINS[domain as keyof typeof NASP_DOMAINS];
-            
+            const weight = EXAM_WEIGHTS[domain] ?? 0;
             return (
-              <div key={domain} className="editorial-surface-soft space-y-2 p-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-700">
-                    {getDomainLabel(domainInfo)}
+              <div key={domain}>
+                <div className="mb-1 flex justify-between text-sm">
+                  <span className="font-medium text-slate-700">
+                    D{domain} · {getDomainLabel(domainInfo)} ({weight}%)
                   </span>
-                  <span className={`text-sm font-bold ${domainStyle.text}`}>
-                    {pct}%
-                  </span>
+                  <span className={`font-bold ${getDomainPctColor(score)}`}>{pct}%</span>
                 </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full rounded-full transition-all"
-                    style={{ 
-                      width: `${pct}%`,
-                      backgroundColor: getDomainColor(domain)
-                    }}
+                <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${pct}%`, backgroundColor: getDomainBarColor(score) }}
                   />
                 </div>
-                <p className="text-xs text-slate-500">
-                  {correct} of {total} correct
-                </p>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Weakest Areas */}
-      {weakestDomains.length > 0 && (
-        <div className="editorial-surface p-6">
-          <h3 className="mb-4 flex items-center gap-2 font-semibold text-amber-700">
-            <AlertTriangle className="w-5 h-5" />
-            Areas for Improvement
-          </h3>
-          <div className="space-y-3">
-            {weakestDomains.map(domain => {
-              const domainInfo = NASP_DOMAINS[domain as keyof typeof NASP_DOMAINS];
-              const domainScore = domainArray.find(d => d.domain === domain);
+      {/* Top Priority Skills */}
+      {prioritySkills.length > 0 && (
+        <div className="editorial-surface mb-5 p-6">
+          <p className="editorial-overline mb-3">Top Priority Skills</p>
+          <div className="space-y-2">
+            {prioritySkills.map(skill => {
+              const pct = Math.round(skill.score * 100);
+              const isEmerging = skill.score < APPROACHING_THRESHOLD;
               return (
-                <div key={domain} className="editorial-surface-soft p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="font-medium text-slate-900">{domainInfo?.name}</p>
-                    <span className="text-sm text-amber-700 font-semibold">
-                      {Math.round((domainScore?.score || 0) * 100)}%
-                    </span>
-                  </div>
-                  <p className="text-sm text-slate-500">
-                    {domainInfo?.keyConcepts?.slice(0, 3).join(', ')}
-                  </p>
+                <div
+                  key={skill.skillId}
+                  className={`flex items-center justify-between rounded-xl border px-4 py-2.5 ${
+                    isEmerging
+                      ? 'border-rose-100 bg-rose-50'
+                      : 'border-amber-100 bg-amber-50'
+                  }`}
+                >
+                  <span className="text-sm font-semibold text-slate-700">{skill.skillName}</span>
+                  <span className={`text-xs font-bold ${isEmerging ? 'text-rose-600' : 'text-amber-600'}`}>
+                    {pct}%
+                  </span>
                 </div>
               );
             })}
@@ -406,84 +285,24 @@ export default function ScoreReport({
         </div>
       )}
 
-      {/* Key Concepts to Review */}
-      {(diagnosticSummary?.missedConcepts?.length ?? 0) > 0 && (
-        <div className="editorial-surface p-6">
-          <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
-            <Lightbulb className="w-5 h-5 text-amber-700" />
-            Key Concepts to Review
-          </h3>
-          <div className="space-y-2">
-            {diagnosticSummary!.missedConcepts.slice(0, 8).map((mc, i) => (
-              <div
-                key={`${mc.concept}-${mc.skillId}-${i}`}
-                className="editorial-surface-soft flex items-center justify-between gap-3 p-3"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{mc.concept}</p>
-                  <p className="text-xs text-slate-500 truncate">{mc.skillName}</p>
-                </div>
-                <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
-                  {mc.count}×
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Go to Dashboard button */}
+      <button
+        onClick={onGoHome}
+        className="w-full rounded-full bg-amber-500 px-6 py-3 text-base font-bold text-slate-900 transition hover:bg-amber-600"
+      >
+        Go to Dashboard →
+      </button>
 
-      {/* Foundational Gaps */}
-      {(diagnosticSummary?.foundationalGaps?.length ?? 0) > 0 && (
-        <div className="editorial-surface p-6">
-          <h3 className="mb-4 flex items-center gap-2 font-semibold text-amber-700">
-            <AlertTriangle className="w-5 h-5" />
-            Foundational Gaps
-          </h3>
-          <div className="space-y-3">
-            {diagnosticSummary!.foundationalGaps.map((gap, i) => (
-              <div key={`${gap.skillId}-${i}`} className="editorial-surface-soft p-4">
-                <p className="font-medium text-slate-900">{gap.skillName}</p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Flagged by: {gap.triggeredBy.join(', ')}
-                </p>
-                {gap.reason && (
-                  <p className="mt-1 text-xs text-slate-400 italic">{gap.reason}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className="space-y-4">
-        <div className="space-y-3">
-          <button
-            onClick={() => onStartPractice(weakestDomains[0])}
-            className="editorial-button-primary w-full p-6"
-          >
-            <Zap className="w-5 h-5" />
-            Start Domain Review in Weakest Domain
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          {!hideRetake && (
-            <button
-              onClick={onRetakeAssessment}
-              className="editorial-button-dark p-4"
-            >
-              Retake Assessment
-            </button>
-          )}
-          <button
-            onClick={onGoHome}
-            className={`editorial-button-secondary p-4 ${hideRetake ? 'col-span-2' : ''}`}
-          >
-            <Home className="w-4 h-4" />
-            Home
-          </button>
-        </div>
+      {/* Download report link (secondary) */}
+      <div className="mt-4 text-center">
+        <button
+          onClick={() => {
+            downloadScoreReport(responses, profile, currentSkillScores);
+          }}
+          className="text-sm font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-800"
+        >
+          Download Detailed Report
+        </button>
       </div>
     </div>
   );

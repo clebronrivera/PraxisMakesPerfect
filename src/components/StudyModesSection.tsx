@@ -1,6 +1,6 @@
 // src/components/StudyModesSection.tsx
 //
-// Practice tab: stats strip, readiness bar, three-mode selector.
+// Practice Hub: editorial-design Practice page with three tab modes.
 //
 // ─── Practice Modes ──────────────────────────────────────────────────────────
 //   By Domain      — practice questions scoped to one of the 4 Praxis domains
@@ -26,23 +26,20 @@
 
 import { useState } from 'react';
 import {
-  BookOpen, Layers, Lock, Target, TrendingUp,
+  Lock,
   HelpCircle, RefreshCw,
 } from 'lucide-react';
-import { getDomainColor } from '../utils/domainColors';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
 import {
   getSkillProficiency,
   PROFICIENCY_META,
-  TOTAL_SKILLS,
   READINESS_TARGET,
   DEMONSTRATING_THRESHOLD,
   APPROACHING_THRESHOLD,
 } from '../utils/skillProficiency';
-import { formatStudyTime } from '../hooks/useDailyStudyTime';
-import {
-  getPrimaryModuleForSkill,
-} from '../data/learningModules';
+// formatStudyTime and getPrimaryModuleForSkill available if needed:
+// import { formatStudyTime } from '../hooks/useDailyStudyTime';
+// import { getPrimaryModuleForSkill } from '../data/learningModules';
 import SkillHelpDrawer from './SkillHelpDrawer';
 import LearningPathNodeMap from './LearningPathNodeMap';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
@@ -54,11 +51,28 @@ import type { UserProfile } from '../hooks/useProgressTracking';
 // Light-surface equivalents for PROFICIENCY_META badge/text tokens.
 // PROFICIENCY_META uses dark-mode colours; these overrides apply when
 // badges are rendered on white/editorial-surface backgrounds.
-const LIGHT_BADGE: Record<string, { badge: string; text: string }> = {
-  proficient:  { badge: 'bg-emerald-50 border border-emerald-200 text-emerald-700', text: 'text-emerald-700' },
-  approaching: { badge: 'bg-amber-50 border border-amber-200 text-amber-700',       text: 'text-amber-700'   },
-  emerging:    { badge: 'bg-rose-50 border border-rose-200 text-rose-600',           text: 'text-rose-600'    },
-  unstarted:   { badge: 'bg-slate-100 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
+// Proficiency badge styles matching the mockup
+const PROF_BADGE_STYLES: Record<string, string> = {
+  proficient:  'rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase text-emerald-700',
+  approaching: 'rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase text-amber-700',
+  emerging:    'rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[10px] font-black uppercase text-rose-700',
+  unstarted:   'rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase text-slate-500',
+};
+
+// Percentage label color per tier
+const PROF_PCT_COLOR: Record<string, string> = {
+  proficient:  'text-emerald-600',
+  approaching: 'text-amber-600',
+  emerging:    'text-rose-500',
+  unstarted:   'text-slate-400',
+};
+
+// Hover border color per tier
+const PROF_HOVER_BORDER: Record<string, string> = {
+  proficient:  'hover:border-emerald-200',
+  approaching: 'hover:border-amber-200',
+  emerging:    'hover:border-rose-200',
+  unstarted:   'hover:border-slate-300',
 };
 
 // ─── Date helpers ────────────────────────────────────────────────────────────
@@ -70,12 +84,6 @@ function getLocalDateStr(): string {
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
-}
-
-function formatShortDate(dateStr: string): string {
-  // Add noon offset so timezone shifts don't flip the displayed day.
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -112,6 +120,10 @@ interface DomainStat {
   emergingCount: number;
   unstartedCount: number;
   demonstratingPct: number;
+  /** Overall accuracy across all skills in this domain (0–100), null if no attempts */
+  overallAccuracyPct: number | null;
+  /** Proficiency tier for the domain overall */
+  overallTier: ReturnType<typeof getSkillProficiency>;
 }
 
 function buildDomainStats(profile: UserProfile): DomainStat[] {
@@ -121,6 +133,8 @@ function buildDomainStats(profile: UserProfile): DomainStat[] {
     let approachingCount = 0;
     let emergingCount = 0;
     let unstartedCount = 0;
+    let totalCorrect = 0;
+    let totalAttempts = 0;
 
     for (const s of skills) {
       const perf = profile.skillScores?.[s.skillId];
@@ -129,7 +143,17 @@ function buildDomainStats(profile: UserProfile): DomainStat[] {
       else if (tier === 'approaching') approachingCount++;
       else if (tier === 'emerging') emergingCount++;
       else unstartedCount++;
+      totalCorrect += perf?.correct ?? 0;
+      totalAttempts += perf?.attempts ?? 0;
     }
+
+    const overallAccuracyPct = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : null;
+    const overallScore = overallAccuracyPct !== null ? overallAccuracyPct / 100 : 0;
+    const overallTier = totalAttempts > 0
+      ? (overallScore >= DEMONSTRATING_THRESHOLD ? 'proficient' as const
+        : overallScore >= APPROACHING_THRESHOLD ? 'approaching' as const
+        : 'emerging' as const)
+      : 'unstarted' as const;
 
     return {
       domain,
@@ -139,6 +163,8 @@ function buildDomainStats(profile: UserProfile): DomainStat[] {
       emergingCount,
       unstartedCount,
       demonstratingPct: Math.round((demonstratingCount / Math.max(skills.length, 1)) * 100),
+      overallAccuracyPct,
+      overallTier,
     };
   }).sort((a, b) => {
     if (a.demonstratingPct !== b.demonstratingPct) return a.demonstratingPct - b.demonstratingPct;
@@ -156,6 +182,7 @@ interface SkillRow {
   tier: ReturnType<typeof getSkillProficiency>;
   nextReviewDate?: string;
   srsBox?: number;
+  domainId: number;
 }
 
 function buildAllSkillRows(profile: UserProfile): SkillRow[] {
@@ -173,6 +200,7 @@ function buildAllSkillRows(profile: UserProfile): SkillRow[] {
         tier: getSkillProficiency(score ?? 0, attempts, perf?.weightedAccuracy),
         nextReviewDate: perf?.nextReviewDate,
         srsBox: perf?.srsBox,
+        domainId: domain.id,
       });
     }
   }
@@ -226,74 +254,40 @@ function DomainPanel({
 
   return (
     <div className="space-y-3">
-      <p className="editorial-overline flex items-center gap-1.5">
-        <TrendingUp className="w-3 h-3 text-amber-700" />
-        Domain overview — most concern first
-      </p>
-      <div className="space-y-2.5">
-        {stats.map((stat) => {
-          const color = getDomainColor(stat.domain.id);
-          const barPct = stat.demonstratingPct;
-          const barColor = barPct >= 70 ? 'bg-emerald-400' : barPct >= 50 ? 'bg-amber-400' : 'bg-rose-400';
-          const labelColor = barPct >= 70 ? 'text-emerald-700' : barPct >= 50 ? 'text-amber-700' : 'text-rose-600';
+      {stats.map((stat) => {
+        const tier = stat.overallTier;
+        const hoverBorder = PROF_HOVER_BORDER[tier] ?? PROF_HOVER_BORDER.unstarted;
+        const badgeStyle = PROF_BADGE_STYLES[tier] ?? PROF_BADGE_STYLES.unstarted;
+        const pctColor = PROF_PCT_COLOR[tier] ?? PROF_PCT_COLOR.unstarted;
+        const pctDisplay = stat.overallAccuracyPct !== null ? `${stat.overallAccuracyPct}%` : '--';
 
-          return (
-            <div
-              key={stat.domain.id}
-              className="editorial-surface relative overflow-hidden p-4"
-            >
-              <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl" style={{ backgroundColor: color }} />
-              <div className="flex items-start justify-between gap-3 mb-3 pl-2">
-                <div className="min-w-0 flex-1">
-                  <p className="text-base font-semibold leading-tight text-slate-900">{stat.domain.name}</p>
-                  <p className="mt-0.5 text-[11px] text-slate-500">{stat.totalSkills} skills</p>
-                </div>
-                <button
-                  onClick={() => onDomainSelect(stat.domain.id)}
-                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
-                >
-                  Practice
-                </button>
-              </div>
-              <div className="relative h-1.5 mb-2" style={{ overflow: 'visible' }}>
-                <div className="absolute inset-0 overflow-hidden rounded-full bg-slate-100">
-                  <div
-                    className={`h-full rounded-full transition-all duration-700 ${barColor}`}
-                    style={{ width: `${barPct}%` }}
-                  />
-                </div>
-                <div
-                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-amber-500/70"
-                  style={{ left: '70%' }}
-                  title="70% mastery goal"
-                />
-              </div>
-              <div className="flex items-center justify-between pl-2">
-                <p className={`text-sm font-semibold ${labelColor}`}>
-                  {stat.demonstratingCount} of {stat.totalSkills} skills {PROFICIENCY_META.proficient.label}
+        return (
+          <div
+            key={stat.domain.id}
+            onClick={() => onDomainSelect(stat.domain.id)}
+            className={`editorial-surface p-5 cursor-pointer transition ${hoverBorder}`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-bold text-slate-800">
+                  Domain {stat.domain.id} &middot; {stat.domain.name}
                 </p>
-                <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                  {stat.emergingCount > 0 && (
-                    <span className="rounded-full bg-rose-50 border border-rose-200 px-1.5 py-0.5 text-[11px] font-medium text-rose-600">
-                      {stat.emergingCount} {PROFICIENCY_META.emerging.label}
-                    </span>
-                  )}
-                  {stat.approachingCount > 0 && (
-                    <span className="rounded-full bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[11px] font-medium text-amber-700">
-                      {stat.approachingCount} {PROFICIENCY_META.approaching.label}
-                    </span>
-                  )}
-                  {stat.demonstratingCount > 0 && (
-                    <span className="rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[11px] font-medium text-emerald-700">
-                      {stat.demonstratingCount} {PROFICIENCY_META.proficient.label}
-                    </span>
-                  )}
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {stat.totalSkills} skills
+                </p>
+              </div>
+              <div className="text-right">
+                <span className={badgeStyle}>
+                  {PROFICIENCY_META[tier]?.label ?? 'Not started'}
+                </span>
+                <div className={`text-sm font-bold mt-1 ${pctColor}`}>
+                  {pctDisplay}
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -374,37 +368,13 @@ function SkillPanel({
 
   return (
     <div className="space-y-4">
-      {/* Stats row */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {[
-          { label: 'Assessed', value: assessedRows.length, css: 'text-slate-900' },
-          { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-rose-600' },
-          { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-amber-700' },
-          { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-emerald-600' },
-        ].map(stat => (
-          <div
-            key={stat.label}
-            className="editorial-surface px-3 py-3 text-center"
-          >
-            <p className={`text-lg font-bold tabular-nums ${stat.css}`}>{stat.value}</p>
-            <p className="mt-0.5 text-[11px] leading-tight text-slate-500">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Usage hint */}
-      <p className="flex items-center gap-1.5 text-sm text-slate-500">
-        <HelpCircle className="w-3 h-3 shrink-0 text-amber-700" />
-        Tap Practice for questions · tap the help icon to open the skill lesson
-      </p>
-
       {/* Filter buttons */}
       <div className="flex gap-1.5 flex-wrap">
         {filterButtons.map(btn => (
           <button
             key={btn.id}
             onClick={() => onFilterChange(btn.id)}
-            className={`px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all ${
               filter === btn.id ? btn.activeCss : `bg-transparent ${btn.css} hover:opacity-80`
             }`}
           >
@@ -415,83 +385,60 @@ function SkillPanel({
         ))}
       </div>
 
-      {/* Skill grid */}
+      {/* Skill list */}
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-0.5">
         {displayed.length === 0 ? (
           <p className="py-4 text-center text-sm italic text-slate-500">No skills in this level yet.</p>
         ) : (
           displayed.map(row => {
-            const meta = PROFICIENCY_META[row.tier];
             const pct = row.score !== null ? Math.round(row.score * 100) : null;
-            const primaryModule = getPrimaryModuleForSkill(row.skillId);
+            const barColor = row.tier === 'proficient'
+              ? 'bg-emerald-400'
+              : row.tier === 'approaching'
+                ? 'bg-amber-400'
+                : row.tier === 'emerging'
+                  ? 'bg-rose-400'
+                  : 'bg-slate-200';
+            const pctColor = row.tier === 'proficient'
+              ? 'text-emerald-600'
+              : row.tier === 'approaching'
+                ? 'text-amber-600'
+                : row.tier === 'emerging'
+                  ? 'text-rose-600'
+                  : 'text-slate-400';
+            const hoverBorder = PROF_HOVER_BORDER[row.tier] ?? PROF_HOVER_BORDER.unstarted;
 
-            const lightBadge = LIGHT_BADGE[row.tier] ?? LIGHT_BADGE.unstarted;
             return (
               <div
                 key={row.skillId}
-                className="editorial-surface flex items-center gap-3 px-3 py-3"
+                onClick={() => onStartSkillPractice(row.skillId)}
+                className={`editorial-surface p-4 flex justify-between items-center cursor-pointer transition ${hoverBorder}`}
               >
-                {/* Skill label + module code */}
-                <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm leading-snug text-slate-700">
-                    {row.fullLabel}
-                  </p>
-                  {primaryModule && (
-                    <p className="mt-0.5 text-[11px] font-mono text-slate-500">{primaryModule.id}</p>
-                  )}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-slate-800 truncate">{row.fullLabel}</p>
+                  <p className="text-xs text-slate-500">D{row.domainId}</p>
                 </div>
-
-                {/* Proficiency + score */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${lightBadge.badge}`}>
-                    {meta.label}
-                  </span>
+                <div className="flex items-center gap-3 shrink-0">
                   {pct !== null && (
-                    <span className={`text-[11px] font-bold tabular-nums ${lightBadge.text}`}>{pct}%</span>
+                    <>
+                      <div className="w-20 h-1.5 rounded-full bg-slate-100">
+                        <div
+                          className={`h-1.5 rounded-full ${barColor}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className={`text-xs font-bold ${pctColor}`}>{pct}%</span>
+                    </>
                   )}
+                  {/* Help button */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onOpenHelp(row.skillId, row.fullLabel); }}
+                    className="shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-amber-50 hover:text-amber-700"
+                    title="View skill lesson"
+                  >
+                    <HelpCircle className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-
-                {/* SRS chip — only for skills with attempts and a near/past review date */}
-                {(() => {
-                  if (!row.nextReviewDate || row.attempts === 0) return null;
-                  const daysOut = Math.round(
-                    (new Date(row.nextReviewDate + 'T12:00:00').getTime() - new Date(today + 'T12:00:00').getTime())
-                    / 86_400_000
-                  );
-                  if (daysOut < 0) return (
-                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-200 text-amber-700 shrink-0">
-                      Overdue
-                    </span>
-                  );
-                  if (daysOut === 0) return (
-                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-200 text-amber-700 shrink-0">
-                      Due today
-                    </span>
-                  );
-                  if (daysOut <= 3) return (
-                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-violet-50 border border-violet-200 text-violet-700 shrink-0">
-                      Due {formatShortDate(row.nextReviewDate)}
-                    </span>
-                  );
-                  return null;
-                })()}
-
-                {/* Help button — opens SkillHelpDrawer */}
-                <button
-                  onClick={() => onOpenHelp(row.skillId, row.fullLabel)}
-                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-amber-50 hover:text-amber-700"
-                  title="View skill lesson"
-                >
-                  <HelpCircle className="w-3.5 h-3.5" />
-                </button>
-
-                {/* Practice button — launches question practice */}
-                <button
-                  onClick={() => onStartSkillPractice(row.skillId)}
-                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
-                >
-                  Practice
-                </button>
               </div>
             );
           })
@@ -560,8 +507,8 @@ function LearningPathPanel({
 export default function StudyModesSection({
   profile,
   userId,
-  weeklyAvgSeconds = 0,
-  totalQuestionsSeen,
+  weeklyAvgSeconds: _weeklyAvgSeconds = 0,
+  totalQuestionsSeen: _totalQuestionsSeen,
   onDomainSelect,
   onStartSkillPractice,
   onNodeClick,
@@ -577,17 +524,21 @@ export default function StudyModesSection({
 
   const fullAssessmentComplete = Boolean(profile.fullAssessmentComplete);
 
-  // ── Stats strip ──────────────────────────────────────────────────────────
+  // ── Stats computation (kept for data availability) ──────────────────────
   const allEntries = Object.entries(profile.skillScores ?? {});
   const totalAttempts = allEntries.reduce((s, [, p]) => s + p.attempts, 0);
   const totalCorrect = allEntries.reduce((s, [, p]) => s + p.correct, 0);
-  const overallAccuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : null;
+  // Overall accuracy — kept for future use / data availability
+  void _weeklyAvgSeconds; void _totalQuestionsSeen;
+  const _overallAccuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : null;
+  void _overallAccuracy;
 
-  // ── Readiness bar ────────────────────────────────────────────────────────
+  // ── Readiness computation (kept for data availability) ──────────────────
   const demonstratingCount = allEntries.filter(
     ([, p]) => getSkillProficiency(p.score ?? 0, p.attempts ?? 0, p.weightedAccuracy) === 'proficient'
   ).length;
-  const readinessBarPct = Math.min(Math.round((demonstratingCount / READINESS_TARGET) * 100), 100);
+  const _readinessBarPct = Math.min(Math.round((demonstratingCount / READINESS_TARGET) * 100), 100);
+  void _readinessBarPct;
 
   // ── SRS: skills due for review ────────────────────────────────────────
   const today = getLocalDateStr();
@@ -598,93 +549,44 @@ export default function StudyModesSection({
   const tabs: Array<{
     id: PracticeMode;
     label: string;
-    sublabel: string;
     locked: boolean;
-    lockReason: string;
-    icon: React.ReactNode;
   }> = [
-    {
-      id: 'domain',
-      label: 'By Domain',
-      sublabel: '4 sections · Praxis structure',
-      locked: !fullAssessmentComplete,
-      lockReason: 'Requires adaptive diagnostic',
-      icon: <Layers className="w-3.5 h-3.5" />,
-    },
-    {
-      id: 'skill',
-      label: 'By Skill',
-      sublabel: '45 skills · targeted',
-      locked: !fullAssessmentComplete,
-      lockReason: 'Requires adaptive diagnostic',
-      icon: <Target className="w-3.5 h-3.5" />,
-    },
-    {
-      id: 'path',
-      label: 'Learning Path',
-      sublabel: 'Deficit-first · micro-lessons',
-      locked: !fullAssessmentComplete,
-      lockReason: 'Requires adaptive diagnostic',
-      icon: <BookOpen className="w-3.5 h-3.5" />,
-    },
+    { id: 'domain',  label: 'By Domain',     locked: !fullAssessmentComplete },
+    { id: 'skill',   label: 'By Skill',      locked: !fullAssessmentComplete },
+    { id: 'path',    label: 'Learning Path',  locked: !fullAssessmentComplete },
   ];
 
   return (
-    <section className="space-y-4">
+    <section className="max-w-3xl mx-auto space-y-6">
 
-      {/* ── Stats strip ─────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-        {[
-          {
-            label: 'Questions answered',
-            value: (totalQuestionsSeen ?? totalAttempts).toLocaleString(),
-            css: 'text-cyan-700',
-          },
-          {
-            label: 'Avg study time / day',
-            value: weeklyAvgSeconds > 0 ? formatStudyTime(weeklyAvgSeconds) : '—',
-            css: 'text-violet-700',
-          },
-          {
-            label: 'Overall accuracy',
-            value: overallAccuracy !== null ? `${overallAccuracy}%` : '—',
-            css: overallAccuracy !== null && overallAccuracy >= DEMONSTRATING_THRESHOLD * 100
-              ? 'text-emerald-700'
-              : overallAccuracy !== null && overallAccuracy >= APPROACHING_THRESHOLD * 100
-                ? 'text-amber-700'
-                : 'text-rose-600',
-          },
-        ].map(stat => (
-          <div key={stat.label} className="editorial-surface p-3 text-center">
-            <p className={`text-lg font-bold tabular-nums ${stat.css}`}>{stat.value}</p>
-            <p className="mt-0.5 text-[11px] leading-tight text-slate-500">{stat.label}</p>
-          </div>
-        ))}
+      {/* ── Header ─────────────────────────────────────────────────────── */}
+      <div>
+        <h2 className="text-2xl font-bold text-slate-900 mb-1">Practice Hub</h2>
+        <p className="text-sm text-slate-500">
+          Choose how you want to practice. Skills are sorted by weakest first.
+        </p>
       </div>
 
-      {/* ── Zero-data welcome nudge ─────────────────────────────────────── */}
-      {totalAttempts === 0 && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-normal">
-          No data yet — your stats will appear here as soon as you answer your first question.
-          Start with the baseline assessment on the Dashboard, or jump straight into practice to get going.
-        </div>
-      )}
-
-      {/* ── Readiness bar ───────────────────────────────────────────────── */}
-      <div className="editorial-surface p-3.5">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-semibold text-slate-700">Praxis Readiness</p>
-          <p className={`text-sm font-bold tabular-nums ${demonstratingCount >= READINESS_TARGET ? 'text-emerald-600' : 'text-slate-500'}`}>
-            {demonstratingCount} / {READINESS_TARGET} {PROFICIENCY_META.proficient.label}
-          </p>
-        </div>
-        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-          <div
-            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-500' : 'bg-amber-500'}`}
-            style={{ width: `${readinessBarPct}%` }}
-          />
-        </div>
-        <p className="mt-1.5 text-[11px] text-slate-500">Goal: {READINESS_TARGET} of {TOTAL_SKILLS} skills {PROFICIENCY_META.proficient.label}</p>
+      {/* ── Tab pills ──────────────────────────────────────────────────── */}
+      <div className="flex gap-2">
+        {tabs.map((tab) => {
+          const isActive = selectedMode === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setSelectedMode(tab.id)}
+              className={`
+                inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-all border
+                ${isActive
+                  ? 'bg-amber-500 border-amber-500 text-white shadow-sm'
+                  : 'bg-white border-amber-200 text-amber-700 hover:bg-amber-50'}
+              `}
+            >
+              {tab.locked && <Lock className="w-3 h-3" />}
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* ── SRS due-for-review nudge ─────────────────────────────────────── */}
@@ -696,44 +598,10 @@ export default function StudyModesSection({
           <RefreshCw className="w-3.5 h-3.5 shrink-0 text-violet-600" />
           <p className="text-sm text-violet-800">
             <span className="font-semibold">{srsOverdueCount} skill{srsOverdueCount !== 1 ? 's' : ''} due for spaced review</span>
-            {' '}— tap to view them now.
+            {' '}&mdash; tap to view them now.
           </p>
         </button>
       )}
-
-      {/* ── Tab selector ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-        {tabs.map((tab) => {
-          const isActive = selectedMode === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setSelectedMode(tab.id)}
-              className={`
-                p-3 rounded-xl border text-left transition-all
-                ${isActive
-                  ? 'bg-amber-50 border-amber-300 shadow-sm'
-                  : 'bg-white border-slate-200 hover:border-amber-200'}
-              `}
-            >
-              <div className={`flex items-center gap-1.5 mb-1 ${
-                isActive ? 'text-amber-700' : tab.locked ? 'text-slate-400' : 'text-slate-500'
-              }`}>
-                {tab.locked ? <Lock className="w-3 h-3" /> : tab.icon}
-                <p className={`text-sm font-semibold truncate ${
-                  isActive ? 'text-slate-900' : tab.locked ? 'text-slate-500' : 'text-slate-700'
-                }`}>
-                  {tab.label}
-                </p>
-              </div>
-              <p className="truncate text-[11px] leading-tight text-slate-500">{tab.sublabel}</p>
-              {tab.locked && (
-                <p className="mt-0.5 truncate text-[11px] text-slate-400">{tab.lockReason}</p>
-              )}
-            </button>
-          );
-        })}
-      </div>
 
       {/* ── Tab content ─────────────────────────────────────────────────── */}
       <div className="min-h-[200px]">

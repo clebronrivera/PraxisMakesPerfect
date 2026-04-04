@@ -132,6 +132,12 @@ scripts/apply-item-bank-corrections.py
 deno.lock
 vite.config.ts.timestamp-*
 
+# Playwright
+e2e/.auth/
+playwright-report/
+test-results/
+.env.test
+
 # Content authoring pipeline state
 content-authoring/pipeline/pipeline_state.db
 content-authoring/pipeline/.env

@@ -53,39 +53,53 @@ export default function QuestionCard({
     }
   };
 
-  const getChoiceTone = (isSelected: boolean, isCorrect: boolean) => {
+  const getChoiceStyles = (isSelected: boolean, isCorrect: boolean) => {
+    // Correct answer after submit
     if (showFeedback && isCorrect) {
       return {
         container: 'border-emerald-300 bg-emerald-50',
         chip: 'bg-emerald-600 text-white',
-        text: 'text-emerald-900',
-        icon: 'text-emerald-600',
+        text: 'text-emerald-800 font-medium',
+        strikethrough: false,
       };
     }
 
+    // Wrong answer selected after submit
     if (showFeedback && isSelected && !isCorrect) {
       return {
         container: 'border-rose-300 bg-rose-50',
         chip: 'bg-rose-500 text-white',
-        text: 'text-rose-900',
-        icon: 'text-rose-500',
+        text: 'text-rose-700',
+        strikethrough: true,
       };
     }
 
+    // Unselected after submit (dim)
+    if (showFeedback && !isSelected) {
+      return {
+        container: 'border-slate-200 bg-white opacity-60',
+        chip: 'border border-slate-200 bg-white text-slate-400',
+        text: 'text-slate-500',
+        strikethrough: false,
+      };
+    }
+
+    // Selected before submit
     if (isSelected) {
       return {
-        container: 'border-amber-300 bg-amber-50 shadow-sm',
+        container: 'border-amber-300 bg-amber-50',
         chip: 'bg-amber-500 text-white',
-        text: 'text-slate-900',
-        icon: 'text-amber-600',
+        text: 'text-amber-800',
+        strikethrough: false,
       };
     }
 
+    // Default unselected
     return {
-      container: 'border-slate-200 bg-[#fbfaf7] hover:border-amber-300 hover:bg-amber-50/70',
+      container: 'border-slate-200 bg-white hover:border-amber-300 hover:bg-amber-50/50',
       chip: 'border border-slate-200 bg-white text-slate-500',
       text: 'text-slate-700',
-      icon: 'text-slate-300',
+      strikethrough: false,
     };
   };
 
@@ -93,39 +107,50 @@ export default function QuestionCard({
     <>
       {/* Question Card */}
       <div className="editorial-surface overflow-hidden">
-        {/* Header with source and flag */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-3">
+        {/* Header: domain pill + report button */}
+        <div className="flex items-center justify-between border-b border-[#e6dfd4] bg-[#fbfaf7] px-6 py-3">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700">
+            <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700">
               {getSourceDisplay()}
             </span>
           </div>
           <button
             onClick={() => setShowReportModal(true)}
-            className="rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
+            className="rounded-xl border border-transparent p-2 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
             title="Report this question"
             aria-label="Report this question"
           >
-            <AlertTriangle className="w-4 h-4" />
+            <AlertTriangle className="h-4 w-4" />
           </button>
         </div>
-        
+
+        {/* Case Vignette */}
         {question.hasCaseVignette && question.caseText && (
           <div className="px-6 pt-6">
-            <div className="rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5">
-              <h4 className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700">Case Vignette</h4>
-              <p className="text-sm leading-relaxed italic text-slate-700">{question.caseText}</p>
+            <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5">
+              <h4 className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700">
+                Case Vignette
+              </h4>
+              <p className="text-sm italic leading-relaxed text-slate-700">
+                {question.caseText}
+              </p>
             </div>
           </div>
         )}
-        
-        <div className="px-6 pb-1 pt-4">
-          <p className="text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]">
+
+        {/* Question ID overline + question text */}
+        <div className="px-6 pb-1 pt-5">
+          {question.id && (
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+              {question.id}
+            </p>
+          )}
+          <p className="text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.2rem]">
             {getQuestionPrompt(question)}
           </p>
         </div>
-        
-        {/* Answer Format Indicator */}
+
+        {/* Multi-select indicator */}
         {correctAnswersList.length > 1 && (
           <div className="px-6 pb-2">
             <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
@@ -133,71 +158,85 @@ export default function QuestionCard({
             </span>
           </div>
         )}
-        
-        {/* Answer Choices */}
-        <div className="space-y-3 p-4 pt-3">
+
+        {/* Answer Options */}
+        <div className="space-y-3 px-6 pb-6 pt-3">
           {(() => {
-            // Handle new array of objects or old record of strings
-            const optionsList = question.options 
+            const optionsList = question.options
               ? question.options.map(opt => [opt.letter, opt.text] as [string, string])
               : Object.entries(question.choices || {});
-              
+
             return optionsList
               .filter(([_, v]) => v && v.trim() && v.trim().toUpperCase() !== 'UNUSED')
               .map(([letter, text], index) => {
                 const isSelected = selectedAnswers.includes(letter);
                 const isCorrect = correctAnswersList.includes(letter);
                 const displayLabel = String.fromCharCode(65 + index);
-                const tone = getChoiceTone(isSelected, isCorrect);
-                
+                const style = getChoiceStyles(isSelected, isCorrect);
+
                 return (
                   <button
                     key={letter}
                     onClick={() => onSelectAnswer(letter)}
                     disabled={disabled || showFeedback || isSubmitting}
-                    className={`flex w-full items-start gap-4 rounded-[1.5rem] border px-4 py-3 text-left transition-all ${tone.container} ${
+                    className={`flex w-full items-center gap-4 rounded-2xl border px-4 py-3 text-left transition-all ${style.container} ${
                       disabled || showFeedback || isSubmitting ? '' : 'hover:-translate-y-0.5'
                     }`}
                   >
-                    <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-bold ${tone.chip}`}>
+                    {/* Letter chip */}
+                    <span
+                      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-sm font-bold ${style.chip}`}
+                    >
                       {displayLabel}
                     </span>
-                    <span className={`flex-1 pt-0.5 text-sm leading-relaxed ${tone.text}`}>{text}</span>
+
+                    {/* Answer text */}
+                    <span
+                      className={`flex-1 text-sm leading-relaxed ${style.text} ${
+                        style.strikethrough ? 'line-through' : ''
+                      }`}
+                    >
+                      {text}
+                    </span>
+
+                    {/* Result icon */}
                     {showFeedback && isCorrect && (
-                      <CheckCircle className={`ml-auto mt-0.5 h-5 w-5 flex-shrink-0 ${tone.icon}`} />
+                      <CheckCircle className="ml-auto h-5 w-5 flex-shrink-0 text-emerald-600" />
                     )}
                     {showFeedback && isSelected && !isCorrect && (
-                      <XCircle className={`ml-auto mt-0.5 h-5 w-5 flex-shrink-0 ${tone.icon}`} />
+                      <XCircle className="ml-auto h-5 w-5 flex-shrink-0 text-rose-500" />
                     )}
                   </button>
                 );
-            });
+              });
           })()}
         </div>
       </div>
-      
-      {/* Confidence Selection (before submit) */}
+
+      {/* Confidence Selector (before submit) */}
       {isConfidenceVisible && (
-        <div className="editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-4 py-3">
-          <span className="text-sm font-semibold text-slate-700">Confidence</span>
-          <div className="flex flex-wrap items-center gap-2">
-          {CONFIDENCE_DISPLAY_ORDER.map(level => (
-            <button
-              key={level}
-              onClick={() => onConfidenceChange(level)}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
-                confidence === level 
+        <div className="editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-5 py-3">
+          <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
+            Confidence
+          </span>
+          <div className="flex items-center gap-2">
+            {CONFIDENCE_DISPLAY_ORDER.map(level => (
+              <button
+                key={level}
+                onClick={() => onConfidenceChange(level)}
+                className={`rounded-full border px-3 py-1 text-xs font-bold transition-all ${
+                  confidence === level
                     ? 'border-slate-900 bg-slate-900 text-white'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900'
-              }`}
-            >
-              {getConfidenceDisplayLabel(level)}
-            </button>
-          ))}
+                    : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-amber-700'
+                }`}
+              >
+                {getConfidenceDisplayLabel(level)}
+              </button>
+            ))}
           </div>
         </div>
       )}
-      
+
       {/* Submit / Next Button */}
       {!hideFooterControls && (
         <div className={`flex justify-center ${isConfidenceVisible ? 'mt-6' : 'mt-4'}`}>
@@ -215,7 +254,7 @@ export default function QuestionCard({
               className="editorial-button-dark min-w-[12rem]"
             >
               Next Question
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="h-5 w-5" />
             </button>
           )}
         </div>
