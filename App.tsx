@@ -19,6 +19,7 @@ const PracticeSession = lazy(() => import('./src/components/PracticeSession'));
 const LearningPathModulePage = lazy(() => import('./src/components/LearningPathModulePage'));
 const StudyNotebookPage = lazy(() => import('./src/components/StudyNotebookPage'));
 const GlossaryPage = lazy(() => import('./src/components/GlossaryPage'));
+const TermSprintIntro = lazy(() => import('./src/components/TermSprintIntro'));
 const MyFocusTermsPage = lazy(() => import('./src/components/MyFocusTermsPage'));
 const HelpFAQ = lazy(() => import('./src/components/HelpFAQ'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
@@ -82,7 +83,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'my-focus-terms' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor' | 'post-assessment';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'my-focus-terms' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor' | 'post-assessment' | 'term-sprint';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -1166,6 +1167,7 @@ function PraxisStudyAppContent() {
                 setMode('study-guide');
               }}
               studyPlanExists={studyPlanHistory.length > 0}
+              onNavigate={(m) => setMode(m as AppMode)}
             />
           </div>
         )}
@@ -1245,6 +1247,16 @@ function PraxisStudyAppContent() {
         {mode === 'glossary' && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading glossary…</div>}>
             <GlossaryPage userId={user?.id ?? null} />
+          </Suspense>
+        )}
+
+        {/* TERM SPRINT */}
+        {mode === 'term-sprint' && user && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading Term Sprint…</div>}>
+            <TermSprintIntro
+              userId={user.id}
+              onExit={() => setMode('practice-hub')}
+            />
           </Suspense>
         )}
 

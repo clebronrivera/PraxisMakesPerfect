@@ -319,22 +319,22 @@ export default function DashboardHome({
             </div>
           )}
 
-          {/* Vocab quiz suggestion */}
+          {/* Term Sprint suggestion */}
           <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
             <div className="flex-1 min-w-0">
               <div className="text-xs font-semibold uppercase tracking-wider text-blue-600 mb-0.5">
-                Then · Vocab Review
+                Then · Term Sprint
               </div>
-              <div className="text-sm font-bold text-slate-800">Vocabulary Quiz</div>
+              <div className="text-sm font-bold text-slate-800">Rapid-fire Vocab</div>
               <div className="mt-0.5 text-xs text-slate-500">
-                Review terms from your recent sessions
+                20 questions, 10 seconds each — both directions
               </div>
             </div>
             <button
-              onClick={() => onNavigate('glossary')}
+              onClick={() => onNavigate('term-sprint')}
               className="shrink-0 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
             >
-              Quiz Now →
+              Sprint Now →
             </button>
           </div>
         </div>
@@ -468,29 +468,29 @@ export default function DashboardHome({
 
       {/* ── Feature Tiles (5-card grid) ──────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-        {/* Fluency Drill */}
+        {/* Fluency Drill / Term Sprint */}
         <button
-          onClick={() => onNavigate('glossary')}
+          onClick={() => onNavigate('term-sprint')}
           className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-orange-200 hover:bg-orange-50"
         >
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 transition group-hover:bg-orange-200">
             <Zap className="h-5 w-5 text-orange-600" />
           </div>
           <div className="text-xs font-bold uppercase tracking-wider text-orange-600 mb-0.5">NEW</div>
-          <div className="text-sm font-bold leading-tight text-slate-800 mb-1">Fluency Drill</div>
-          <div className="text-xs text-slate-500">Rapid-fire cases, terms & concepts</div>
+          <div className="text-sm font-bold leading-tight text-slate-800 mb-1">Term Sprint</div>
+          <div className="text-xs text-slate-500">20 Qs, 10 sec each — rapid-fire vocab</div>
         </button>
 
-        {/* Vocab Quiz */}
+        {/* Vocab Quiz → Term Sprint */}
         <button
-          onClick={() => onNavigate('glossary')}
+          onClick={() => onNavigate('term-sprint')}
           className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-blue-200 hover:bg-blue-50"
         >
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 transition group-hover:bg-blue-200">
             <BookOpen className="h-5 w-5 text-blue-600" />
           </div>
           <div className="text-sm font-bold leading-tight text-slate-800 mb-1">Vocab Quiz</div>
-          <div className="text-xs text-slate-500">Review terms from practice</div>
+          <div className="text-xs text-slate-500">Term Sprint — 396 terms, both directions</div>
         </button>
 
         {/* Learning Path */}
