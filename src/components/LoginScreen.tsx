@@ -39,8 +39,8 @@ const heroJourney = [
   },
   {
     step: '02',
-    title: 'Practice where it counts',
-    description: 'Jump into domain or skill practice at any time, even before finishing the diagnostic.',
+    title: 'Follow your skill-based progression path',
+    description: 'Your dashboard, practice modes, and learning path modules are personalized to the exact skills where your performance data shows the most need.',
   },
   {
     step: '03',
@@ -334,16 +334,16 @@ export default function LoginScreen() {
         {/* Hero copy */}
         <div className="text-center max-w-2xl mx-auto">
           <div className="flex justify-center gap-2 mb-4 flex-wrap">
-            <span className="editorial-pill">Built for School Psychology Candidates</span>
             <span className="editorial-pill">Adaptive Diagnostic</span>
-            <span className="editorial-pill">Practice Any Time</span>
+            <span className="editorial-pill">Skill-Based Progression</span>
+            <span className="editorial-pill">Personalized Practice</span>
           </div>
           <p className="editorial-overline mb-2">PRAXIS 5403 PREP</p>
           <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-4">
-            Stop guessing what to study for Praxis 5403.
+            Master every skill. Adapt as you grow.
           </h1>
           <p className="text-base text-slate-500 leading-relaxed mb-6">
-            Praxis Study gives you a clear baseline, targeted practice, and a personalized next-step plan so each session moves the weakest skills forward instead of wasting time on random review.
+            An adaptive diagnostic maps your strengths and gaps across all 45 exam skills. Then your practice, learning path, and study guide adapt continuously — based on your accuracy, confidence, and progress over time. Built for Praxis 5403 school psychology candidates.
           </p>
           <div className="flex justify-center gap-3 flex-wrap">
             <button
@@ -365,25 +365,28 @@ export default function LoginScreen() {
 
         {/* Why It Feels Different */}
         <div>
-          <p className="editorial-overline text-center mb-6">WHY IT FEELS DIFFERENT</p>
+          <p className="editorial-overline text-center mb-6">BUILT FOR ADAPTIVE LEARNING</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="editorial-surface p-5">
               <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-3 border border-amber-200">
                 <Target className="h-5 w-5 text-amber-700" />
               </div>
-              <p className="font-bold text-slate-800 text-sm mb-1">Built specifically for Praxis School Psychology 5403</p>
+              <p className="font-bold text-slate-800 text-sm mb-1">Adaptive Diagnostic</p>
+              <p className="text-xs text-slate-500 leading-relaxed">Starts with a 45-skill baseline assessment that adjusts to your responses, pinpointing exactly where you're strong and where foundational gaps remain.</p>
             </div>
             <div className="editorial-surface p-5">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3 border border-emerald-200">
                 <BarChart3 className="h-5 w-5 text-emerald-700" />
               </div>
-              <p className="font-bold text-slate-800 text-sm mb-1">Tracks progress across all 45 testable skills</p>
+              <p className="font-bold text-slate-800 text-sm mb-1">Skill-Based Progression</p>
+              <p className="text-xs text-slate-500 leading-relaxed">Every practice session, learning path module, and study plan update is driven by your real performance data — not a generic one-size-fits-all schedule.</p>
             </div>
             <div className="editorial-surface p-5">
               <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3 border border-blue-200">
                 <Zap className="h-5 w-5 text-blue-700" />
               </div>
-              <p className="font-bold text-slate-800 text-sm mb-1">Start practicing immediately — no waiting required</p>
+              <p className="font-bold text-slate-800 text-sm mb-1">Printable Study Materials</p>
+              <p className="text-xs text-slate-500 leading-relaxed">Generate a personalized AI study guide — covering priority skills, vocabulary, case patterns, and a week-by-week schedule — designed to print and use offline.</p>
             </div>
           </div>
         </div>
@@ -416,6 +419,11 @@ export default function LoginScreen() {
                   </div>
                   <div className="text-2xl font-black text-slate-900">{stat.value}</div>
                   <div className="text-xs text-slate-400 uppercase font-bold tracking-wider mt-1">{stat.label}</div>
+                  {stat.label === 'Domains covered' && (
+                    <p className="text-xs text-slate-400 mt-1 leading-snug">
+                      Professional Practices · Student-Level Services · Systems-Level Services · Foundations
+                    </p>
+                  )}
                 </div>
               );
             })}

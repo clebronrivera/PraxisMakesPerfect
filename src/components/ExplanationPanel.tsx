@@ -74,6 +74,14 @@ export default function ExplanationPanel({
   const skillDeficitText = wrongLetter
     ? ((question as any)[`distractor_skill_deficit_${wrongLetter}`] as string | undefined) || ''
     : '';
+  const hasDistractorContent = !!(misconceptionText || skillDeficitText);
+
+  // Derive the text of the correct answer for the fallback block
+  const correctAnswers = getQuestionCorrectAnswers(question);
+  const choices = getQuestionChoices(question);
+  const correctAnswerText = correctAnswers.length > 0
+    ? (choices[correctAnswers[0]] ?? correctAnswers[0])
+    : '';
 
   return (
     <div className="space-y-4">
@@ -139,13 +147,6 @@ export default function ExplanationPanel({
               </div>
             )}
 
-            {(question as any).construct_actually_tested && (
-              <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">What this tests</p>
-                <p className="text-sm leading-relaxed text-slate-700">{(question as any).construct_actually_tested}</p>
-              </div>
-            )}
-
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
               <div className="mt-4 border-t border-slate-200 pt-4">
@@ -172,6 +173,17 @@ export default function ExplanationPanel({
                     <span className="font-semibold">Knowledge gap:</span> {skillDeficitText}
                   </p>
                 )}
+              </div>
+            )}
+
+            {/* Fallback explanation for wrong answers without per-distractor content */}
+            {!isCorrect && wrongLetter && !hasDistractorContent && (
+              <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 mb-1">Why this answer is incorrect</p>
+                <p className="text-sm text-slate-700">
+                  Review the rationale above for a full explanation. The correct answer is{' '}
+                  <span className="font-semibold">{correctAnswerText}</span>.
+                </p>
               </div>
             )}
           </div>

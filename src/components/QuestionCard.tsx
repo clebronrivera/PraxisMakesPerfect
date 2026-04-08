@@ -215,16 +215,14 @@ export default function QuestionCard({
 
       {/* Confidence Selector (before submit) */}
       {isConfidenceVisible && (
-        <div className="editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-5 py-3">
-          <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
-            Confidence
-          </span>
+        <div className="editorial-surface-soft mt-4 px-5 py-4">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">How confident are you?</p>
           <div className="flex items-center gap-2">
             {CONFIDENCE_DISPLAY_ORDER.map(level => (
               <button
                 key={level}
                 onClick={() => onConfidenceChange(level)}
-                className={`rounded-full border px-3 py-1 text-xs font-bold transition-all ${
+                className={`min-h-[40px] rounded-full border px-4 py-1.5 text-xs font-bold transition-all ${
                   confidence === level
                     ? 'border-slate-900 bg-slate-900 text-white'
                     : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-amber-700'
