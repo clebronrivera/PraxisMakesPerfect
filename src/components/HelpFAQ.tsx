@@ -21,7 +21,7 @@ const FAQ_ENTRIES: FAQEntry[] = [
   },
   {
     question: 'What are the 4 domains?',
-    answer: 'Domain 1: Data-Based Decision Making & Accountability. Domain 2: Consultation & Collaboration. Domain 3: Interventions & Instructional Support. Domain 4: School-Wide Practices to Promote Learning.',
+    answer: 'Professional Practices: Assessment, consultation, and data-based decision making. Student-Level Services: Academic, developmental, and mental health supports. Systems-Level Services: Family, schoolwide, and systems practice. Foundations of School Psychology: Ethics, law, diversity, and research.',
   },
   {
     question: 'What is Redemption Rounds?',

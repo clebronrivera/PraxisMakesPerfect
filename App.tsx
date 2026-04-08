@@ -1,11 +1,12 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
+import { Brain, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, Library, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 import { analyzeQuestion } from './src/brain/question-analyzer';
 
 // Import components
 const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
 const DashboardHome = lazy(() => import('./src/components/DashboardHome'));
+const PostAssessmentReport = lazy(() => import('./src/components/PostAssessmentReport'));
 const PreAssessmentGateway = lazy(() => import('./src/components/PreAssessmentGateway'));
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 const FeedbackModal = lazy(() => import('./src/components/FeedbackModal'));
@@ -33,6 +34,7 @@ import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { useContent } from './src/context/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
+import type { SimplifiedOnboardingPayload } from './src/components/SimplifiedOnboardingFlow';
 import { useStudyPlanManager } from './src/hooks/useStudyPlanManager';
 import { useAssessmentFlow } from './src/hooks/useAssessmentFlow';
 import { usePracticeFlow } from './src/hooks/usePracticeFlow';
@@ -59,7 +61,12 @@ import { buildDiagnosticSummary } from './src/utils/diagnosticSelectors';
 import { onboardingFormToSavePayload } from './src/utils/onboardingFormToSavePayload';
 import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
-const OnboardingFlow = lazy(() => import('./src/components/OnboardingFlow'));
+// OnboardingFlow.tsx (legacy 4-step wizard) is intentionally NOT imported here.
+// The initial onboarding flow now uses SimplifiedOnboardingFlow (single-page,
+// 6 fields, no skip) per docs/WORKFLOW_GROUNDING.md section 3.10. The legacy
+// component is still consumed by ProfileEditorPanel for profile edits, where
+// the larger 27-field UI still makes sense.
+const SimplifiedOnboardingFlow = lazy(() => import('./src/components/SimplifiedOnboardingFlow'));
 const ProfileEditorPanel = lazy(() => import('./src/components/ProfileEditorPanel'));
 
 const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.meta.url).href;
@@ -73,7 +80,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor' | 'post-assessment';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -552,22 +559,28 @@ function PraxisStudyAppContent() {
     );
   }
 
-  // Show onboarding flow for new users who haven't completed profile setup
+  // Show onboarding flow for new users who haven't completed profile setup.
+  // Uses the new single-page 6-field SimplifiedOnboardingFlow per
+  // docs/WORKFLOW_GROUNDING.md section 3.10. Per the 2026-04-08 product
+  // decision, there is NO "Skip for now" path — all 6 fields are required.
   if (!profile.onboardingComplete) {
-    const handleOnboardingComplete = async (data: UserProfileData) => {
-      await saveOnboardingData(onboardingFormToSavePayload(data));
-    };
-
-    const handleOnboardingSkip = async () => {
-      await saveOnboardingData({});
+    const handleSimplifiedComplete = async (data: SimplifiedOnboardingPayload) => {
+      await saveOnboardingData({
+        first_name: data.first_name,
+        last_name: data.last_name,
+        zip_code: data.zip_code,
+        school_attending: data.school_attending ?? undefined,
+        purpose: data.purpose,
+        how_did_you_hear: data.how_did_you_hear,
+        full_name: data.full_name,
+      });
     };
 
     return (
       <Suspense fallback={null}>
-        <OnboardingFlow
+        <SimplifiedOnboardingFlow
           displayName={currentUserName}
-          onComplete={handleOnboardingComplete}
-          onSkip={handleOnboardingSkip}
+          onComplete={handleSimplifiedComplete}
         />
       </Suspense>
     );
@@ -639,15 +652,18 @@ function PraxisStudyAppContent() {
           <nav className="space-y-1.5">
             {(() => {
               const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
-              const notebookHasNew = studyPlanHistory.length > 0; // Show dot when study plan exists
+              // TODO: Replace with a real saved-notes count once module_notes data is surfaced
+              // to App.tsx (e.g. via a useModuleNotes hook). The badge should be truthy when
+              // the user has at least one saved note in the module_notes table.
+              const notebookHasNew = false; // placeholder — studyPlanHistory was the wrong source
               const tabs = [
                 { label: 'Dashboard', icon: <Brain className="w-4 h-4" />, onClick: () => setMode('home'), active: mode === 'home', show: true },
                 { label: 'Practice', icon: <Zap className="w-4 h-4" />, onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                 { label: 'Progress', icon: <BarChart3 className="w-4 h-4" />, onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
                 { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
                 { label: 'AI Tutor', icon: <Bot className="w-4 h-4" />, onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
-                { label: 'Study Notebook', icon: <BookMarked className="w-4 h-4" />, onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
-                { label: 'Glossary', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
+                { label: 'My Notes', icon: <BookMarked className="w-4 h-4" />, onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
+                { label: 'Glossary', icon: <Library className="w-4 h-4" />, onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
                 { label: 'Help', icon: <HelpCircle className="w-4 h-4" />, onClick: () => setMode('help'), active: mode === 'help', show: true },
               ];
               return tabs.filter(tab => tab.show).map(tab => (
@@ -703,7 +719,7 @@ function PraxisStudyAppContent() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-white">{displayName}</p>
                   {profileRoleLabel && (
-                    <p className="truncate text-[11px] font-black uppercase tracking-[0.1em] text-amber-500">{profileRoleLabel}</p>
+                    <p className="text-[11px] font-black uppercase tracking-[0.1em] text-amber-500">{profileRoleLabel}</p>
                   )}
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-slate-500">Profile &amp; onboarding</p>
                 </div>
@@ -880,7 +896,7 @@ function PraxisStudyAppContent() {
                   { label: 'Progress', onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
                   { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
                   { label: 'AI Tutor', onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
-                  { label: 'Notebook', onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true },
+                  { label: 'My Notes', onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true },
                   { label: 'Glossary', onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
                   { label: 'Help', onClick: () => setMode('help'), active: mode === 'help', show: true },
                 ];
@@ -1085,6 +1101,9 @@ function PraxisStudyAppContent() {
                       questionsToNextCredit={redemption.questionsToNextCredit}
                       redemptionHighScore={redemption.highScore}
                       progressSummary={progressSummary}
+                      postAssessmentSnapshot={profile.postAssessmentSnapshot ?? null}
+                      onStartPostAssessment={() => setMode('post-assessment')}
+                      onViewPostAssessmentReport={() => setMode('post-assessment')}
                       onStartPractice={startPractice}
                       onStartSkillPractice={startSkillPractice}
                       onOpenLearningPathModule={openLearningPathModule}
@@ -1096,6 +1115,21 @@ function PraxisStudyAppContent() {
               </div>
             );
           })()}
+
+        {/* POST-ASSESSMENT REPORT */}
+        {mode === 'post-assessment' && (
+          <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading report...</div>}>
+            <PostAssessmentReport
+              baselineSnapshot={profile.baselineSnapshot ?? null}
+              postAssessmentSnapshot={profile.postAssessmentSnapshot ?? null}
+              currentSkillScores={profile.skillScores as any}
+              diagnosticCompletedAt={(profile as any).lastDiagnosticCompletedAt ?? null}
+              postAssessmentCompletedAt={profile.postAssessmentCompletedAt ?? null}
+              onBack={() => setMode('home')}
+              onViewProgress={() => setMode('results')}
+            />
+          </Suspense>
+        )}
 
         {/* PRACTICE HUB */}
         {mode === 'practice-hub' && (

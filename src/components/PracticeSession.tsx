@@ -655,7 +655,7 @@ export default function PracticeSession({
                 className="text-amber-700"
                 title={`Answered wrong despite selecting ${getConfidenceDisplayLabel('high')} - worth extra review`}
               >
-                Overconfident: {sessionStats.highConfidenceWrong}
+                Sure but wrong: {sessionStats.highConfidenceWrong}
               </span>
             )}
           </div>
@@ -697,9 +697,11 @@ export default function PracticeSession({
               title="Open module hint — answer won't count toward score"
             >
               <Lightbulb className="w-4 h-4" />
-              <span className="hidden sm:inline">Hint</span>
-              {hintUsedIds.has(currentQuestion?.id ?? '') && (
+              <span>Hint</span>
+              {hintUsedIds.has(currentQuestion?.id ?? '') ? (
                 <span className="ml-0.5 text-[10px] text-amber-600">(used)</span>
+              ) : (
+                <span className="ml-0.5 text-[10px] text-slate-400">won't count</span>
               )}
             </button>
           )}
@@ -709,10 +711,10 @@ export default function PracticeSession({
             <button
               onClick={() => setHelpDrawerOpen(true)}
               className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
-              title="Open skill lesson for help"
+              title="Open the lesson for this skill"
             >
               <BookOpen className="w-4 h-4" />
-              <span className="hidden sm:inline text-xs font-semibold">Help</span>
+              <span className="text-xs font-semibold">Open Lesson</span>
             </button>
           )}
 

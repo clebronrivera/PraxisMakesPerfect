@@ -63,7 +63,7 @@ function MockQuestionCard() {
     <div className="editorial-surface-soft p-5">
       <div className="flex flex-wrap items-center gap-2">
         <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-amber-700">
-          Domain 3
+          Systems-Level Services
         </span>
         <span className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">
           Question 12
@@ -167,7 +167,7 @@ function MockStudyPlan() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="editorial-overline text-slate-500">Study guide</p>
-          <p className="mt-2 text-xl font-bold tracking-tight text-white">AI Study Guide (Coming Soon)</p>
+          <p className="mt-2 text-xl font-bold tracking-tight text-white">AI Study Guide</p>
         </div>
         <span className="rounded-full border border-amber-500/30 bg-amber-500/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-amber-300">
           Personalized
