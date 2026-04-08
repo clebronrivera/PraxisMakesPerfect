@@ -143,18 +143,11 @@ Depending on the user's state, Home can show:
 - A baseline-recorded state for users who completed a legacy screener (prompted to take the adaptive diagnostic)
 - A fully unlocked dashboard after the adaptive diagnostic is complete
 
-On the fully unlocked dashboard, the main sections are:
-- A greeting hero card with readiness summary and your weakest domain as next focus
-- Four summary cards: Number of questions answered, Readiness phase, Skills to reach goal, and Weekly usage
-- A Daily goal card showing progress toward the daily question target
-- A High-Impact Skills list showing the current lowest-performing skills
-- A **Practice shortcuts rail** (right side) — three one-tap buttons to start a session immediately:
-  - **Domain Review** — launches practice for your weakest domain
-  - **Practice by Skill** — launches practice for your top gap skill
-  - **Random Questions** — adaptive practice across all skills, weighted by need level
-- An **AI Tutor** button — opens the tutor directly from the dashboard
-
-The High-Impact Skills list is intentionally action-oriented. On Home, each row uses a simple **Practice** button instead of exposing raw accuracy percentages. Those buttons drop the user into the existing skill-focused learning path or practice flow for that skill.
+On the fully unlocked dashboard, sections appear in this order:
+- **Exam Readiness Banner** — current readiness tier, skill count toward the 32/45 goal
+- **Domain Performance** — four domain bars showing baseline (Day 1) vs. current accuracy, each with a vertical mastery-line marker at 80%. A legend row labels the two bar colors and the threshold line.
+- **Today's Focus + Quick Stats** — a two-column block: left column has SRS overdue nudge and high-impact skill suggestions; right column has a persistent **Spaced Review** card (shows next review due date, or overdue count when skills are past due) and a persistent **Redemption Rounds** card (three states: inactive/grey when bank is empty; active/purple with credit count when credits and questions are both available; muted-purple when questions are queued but no credits yet)
+- **Feature Tiles** — quick-access grid for Fluency Drill (Term Sprint), Vocab reference, Notebook, and other secondary features
 
 ---
 
@@ -285,14 +278,11 @@ Identifies the right answer and explains why, drawn from the question's authored
 **Complexity**
 Explains the cognitive demand of the item: whether it tests direct **Recall** (factual recognition of a concept or definition) or **Application** (using a concept to reason through a scenario or case). This is a per-question classification authored for each item — not a label inferred from the stem length.
 
-**What this tests**
-The specific sub-construct the question measures — narrower than the broad skill label. For example, a question tagged to the Consultation skill might specify *"model-goal discrimination in Caplan consultation: identifying consultee internal vs. external factors."* This tells you exactly which competency gap the question is probing.
-
 **Key concepts**
 Vocabulary terms associated with this question, drawn from the 396-term master glossary.
 
-**Why this was wrong** *(only shown on incorrect answers, when data is available)*
-The specific misconception associated with the distractor you chose, and the knowledge gap it signals. This text was authored for that particular wrong-answer option — not derived generically. It answers: *what belief led you to that answer, and what do you need to understand instead?*
+**Why this was wrong** *(shown on incorrect answers)*
+When per-distractor content is available: the specific misconception associated with the distractor you chose and the knowledge gap it signals (authored for that wrong-answer option specifically). When per-distractor content is not available: a fallback amber callout appears pointing back to the rationale and naming the correct answer — so you always get an explanation after a wrong answer, even for questions without detailed distractor data.
 
 ### The Distractor Classification System
 
@@ -315,27 +305,31 @@ This distractor data is used in three places:
 
 ## The Practice Modes
 
-The Practice Hub offers four distinct modes plus Redemption Rounds. All modes live under the **Practice** tab: **By Domain / By Skill / Learning Path / Feeling Spicy**, plus the Redemption Rounds section.
+The Practice Hub shows a **grid of five entry tiles**. Clicking a tile either opens a modal picker or navigates directly:
 
-The **Home dashboard also has direct shortcuts** to the three most common session starts (see Home Dashboard section above), so users can begin practicing without going through the Practice Hub.
+- **By Domain** — opens a modal showing all 4 domains with baseline vs. current progress bars; choose a domain to start practice
+- **By Skill** — opens a modal showing all 45 skills with filter pills (All / Emerging / Approaching / Demonstrating); choose a skill to start practice
+- **Learning Path** — opens the prioritized skill list inline (skills ordered by deficit, mastered skills at the bottom)
+- **Term Sprint** — launches the rapid-fire vocabulary game (see below)
+- **My Focus Terms** — shows terms from questions you answered incorrectly (see below)
+
+The entire hub is locked when the adaptive diagnostic has not been completed. A locked banner appears instead of the tiles.
+
+The **domain and skill modal pickers** show two-tone progress bars (baseline Day 1 color + current growth color) with a vertical mastery-line marker at 80%, so users can see at a glance which areas have improved since the diagnostic.
 
 ---
 
 ### By Domain
-Practice by Praxis section. Choose from the 4 domains and work through questions in that category. Progress bars show your percentage score per domain, color-coded (green = ≥ 80%, amber = 60–79%, red = < 60%).
+Practice by Praxis section. Opens the **Domain Picker modal** — choose from the 4 domains and work through questions in that category. Each domain card shows a two-tone baseline-vs-current bar with a mastery threshold line at 80%, so you can see your growth since Day 1 before choosing.
 
 **Unlocks after:** completing the adaptive diagnostic.
 
 ---
 
 ### By Skill
-Practice on a specific skill — any of the 45 individual competency areas. The skill list is sorted from lowest-performing to highest-performing. Each skill row shows:
-- The skill name and its primary module code (e.g. `MOD-D1-03`)
-- The user's current proficiency level (Emerging / Approaching / Demonstrating / Not started)
-- A **Practice** button — launches question practice for that skill
-- A **Help icon** — opens a slide-up lesson drawer with the micro-lesson content for that skill
+Practice on a specific skill — any of the 45 individual competency areas. Opens the **Skill Picker modal** — a scrollable list of all 45 skills with filter pills (All / Emerging / Approaching / Demonstrating). Each skill row shows the skill name, domain badge, current accuracy %, and status label. Click any skill to start practice.
 
-**The Help drawer (Skill lesson during practice):** When a user is answering questions in By Skill mode, tapping **Help** in the session header opens the same lesson drawer. This drawer shows the full micro-lesson so users can review concept content while practicing — but does not reveal answers. Users must scroll through the lesson to find what they need.
+**During a practice session:** tapping **Open Lesson** in the session header opens a lesson drawer with the micro-lesson content for that skill. Tapping **Hint** shows a hint (and marks the question as "won't count" — the question moves to Redemption).
 
 **Unlocks after:** completing the adaptive diagnostic.
 
@@ -418,6 +412,26 @@ A personalized **visual node map** — a winding road of skill nodes ordered fro
 
 ---
 
+### Term Sprint
+
+A rapid-fire vocabulary game. Each session presents **20 questions** drawn from the 396-term master glossary, with a **10-second countdown** per question. Questions alternate between two modes: term → definition (you see the term, pick the correct definition) and definition → term (you see the definition, pick the correct term). Four answer choices per question; distractors are terms from similar skill neighborhoods.
+
+After each answer (or when time expires), the correct answer is highlighted for 1.5 seconds before auto-advancing. A results screen shows your score (correct / total) at the end.
+
+**Unlocks after:** completing the adaptive diagnostic.
+
+---
+
+### My Focus Terms
+
+A filtered view of the glossary showing **only terms added from questions you answered incorrectly**. Every time you get a practice question wrong, the vocabulary terms associated with that question are automatically added to your Focus Terms list. This gives you a personalized study list of the concepts you're actively struggling with.
+
+If no focus terms have been added yet, an empty state explains how they accumulate.
+
+**Unlocks after:** completing the adaptive diagnostic.
+
+---
+
 ### Feeling Spicy (Post-Diagnostic)
 After the diagnostic, Feeling Spicy shifts from its pre-assessment preview role into a **45-skill recalibration cycle**. The user cycles through all 45 skills in a shuffled random order, one question per skill. After completing a full cycle, it reshuffles into a new order and starts again — generating fresh signal for every skill on each pass.
 
@@ -434,7 +448,9 @@ This is for users who want broad, low-stakes exposure across the entire skill ma
 After completing the adaptive diagnostic (or the legacy screener + full assessment), you can generate a **personalized study guide** written specifically about you — not a generic "how to study for Praxis 5403" template, but a document that reads your actual performance data, identifies your exact problem areas, explains why they're problems, and gives you a week-by-week action plan.
 
 ### Unlock Condition
-Requires: adaptive diagnostic complete — OR — legacy screener complete + at least one full assessment on record.
+Requires: adaptive diagnostic complete AND study guide activation ($5 one-time fee). The Study Guide nav item is always visible, but clicking it shows a paywall/preview screen explaining the feature and the activation price. Payment processing is coming soon; the activation button is currently in "Coming soon" state.
+
+*The $5 fee covers the AI generation cost — it is not a subscription. Once activated, the study guide can be regenerated as performance data improves (up to once every 7 days).*
 
 ### Generation Limit
 1 generation per 7 days. (Disabled during testing — see `CLAUDE.md` for the rate-limit toggle location.)
@@ -570,39 +586,17 @@ When a student misses a quiz question, the tutor forces a same-skill follow-up b
 
 ---
 
-## Glossary & Vocabulary Quiz
+## Glossary
 
-The **Glossary** page is a personal vocabulary study tool, accessible from the main sidebar. It has two tabs: **My Terms** and **Quiz Mode**.
+The **Glossary** page is a pure A-Z reference for the 396-term master glossary, accessible from the main sidebar ("Glossary" with a library icon). It is a read-only reference tool — not a practice mode.
 
-### My Terms Tab
+Each term row shows the vocabulary word, skill association, and the official definition. A search bar filters by term name; filter pills narrow by All / To Define / Defined / Revealed status.
 
-When a student answers a practice question **incorrectly**, the vocabulary terms associated with that skill are automatically added to their personal glossary. Each term row has three columns:
+**Adding your own definition:** Each term row has an editable "What does this mean to you?" text area (auto-saved on blur) and a "Reveal" button to show the official definition for self-comparison.
 
-1. **Term** — the vocabulary word, with skill ID and status indicator
-2. **What does this mean to you?** — editable text area where the student writes their own definition (auto-saved on blur)
-3. **Official Definition** — hidden by default; the student clicks "Reveal" to see the glossary definition and compare it with their own
+**Vocabulary practice:** For rapid-fire vocabulary practice, use **Term Sprint** in the Practice Hub (see above). For a personal study list of terms from your missed questions, use **My Focus Terms** in the Practice Hub.
 
-Filter options: All, To Define, Defined, Revealed. A search bar filters by term name.
-
-Stats chips at the top show total terms, to define, defined, and revealed counts.
-
-### Quiz Mode Tab
-
-An interactive vocabulary knowledge check using terms from the **master glossary** (396 Praxis terms with official definitions).
-
-**Configuration options:**
-- **Term Source**: "My Glossary Terms" (restricted to the user's personal word list) or "Full Glossary" (all 396 terms). "My Glossary Terms" requires at least 4 terms.
-- **Quiz Type**: Mixed (both types randomly), "Know the Definition" (see a term → pick its definition), or "Name the Term" (see a definition → pick the correct term)
-- **Number of Questions**: 5, 10, 15, or 20
-
-**How it works:**
-- Each question presents 4 multiple-choice answers
-- Distractors are drawn from the same skill neighborhood for plausibility (terms that share the same skill as the correct answer are preferred over random terms)
-- Immediate feedback after each answer: correct/incorrect with the right answer shown
-- Progress bar and running score during the quiz
-- End-of-quiz review screen: overall percentage, per-question breakdown showing correct answers and the user's wrong picks
-
-**Scoring:** Quiz results are session-only — they do not affect skill proficiency scores or any persistent data. The quiz is a study tool, not an assessment.
+*Note: Quiz Mode was removed from the Glossary in the April 2026 audit. Vocabulary quizzes are now the Term Sprint feature in the Practice Hub, which provides a faster and more game-like experience.*
 
 ---
 
