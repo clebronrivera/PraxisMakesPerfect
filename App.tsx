@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { Brain, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, Library, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
+import { Brain, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, Library, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot, Lock } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 import { analyzeQuestion } from './src/brain/question-analyzer';
 
@@ -19,9 +19,11 @@ const PracticeSession = lazy(() => import('./src/components/PracticeSession'));
 const LearningPathModulePage = lazy(() => import('./src/components/LearningPathModulePage'));
 const StudyNotebookPage = lazy(() => import('./src/components/StudyNotebookPage'));
 const GlossaryPage = lazy(() => import('./src/components/GlossaryPage'));
+const MyFocusTermsPage = lazy(() => import('./src/components/MyFocusTermsPage'));
 const HelpFAQ = lazy(() => import('./src/components/HelpFAQ'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
+const StudyGuidePaywallScreen = lazy(() => import('./src/components/StudyGuidePaywallScreen'));
 const TutorChatPage = lazy(() => import('./src/components/TutorChatPage').then(m => ({ default: m.TutorChatPage })));
 const FloatingTutorWidget = lazy(() => import('./src/components/FloatingTutorWidget').then(m => ({ default: m.FloatingTutorWidget })));
 
@@ -80,7 +82,7 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor' | 'post-assessment';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'my-focus-terms' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor' | 'post-assessment';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -660,7 +662,7 @@ function PraxisStudyAppContent() {
                 { label: 'Dashboard', icon: <Brain className="w-4 h-4" />, onClick: () => setMode('home'), active: mode === 'home', show: true },
                 { label: 'Practice', icon: <Zap className="w-4 h-4" />, onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                 { label: 'Progress', icon: <BarChart3 className="w-4 h-4" />, onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
-                { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
+                { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: true, lockIcon: !ACTIVE_LAUNCH_FEATURES.studyGuide },
                 { label: 'AI Tutor', icon: <Bot className="w-4 h-4" />, onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
                 { label: 'My Notes', icon: <BookMarked className="w-4 h-4" />, onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
                 { label: 'Glossary', icon: <Library className="w-4 h-4" />, onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
@@ -679,7 +681,12 @@ function PraxisStudyAppContent() {
                       <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-500" />
                     )}
                   </span>
-                  {!sidebarCollapsed && tab.label}
+                  {!sidebarCollapsed && (
+                    <span className="flex items-center gap-1.5">
+                      {tab.label}
+                      {'lockIcon' in tab && tab.lockIcon && <Lock className="w-3 h-3 opacity-50" />}
+                    </span>
+                  )}
                 </button>
               ));
             })()}
@@ -894,7 +901,7 @@ function PraxisStudyAppContent() {
                   { label: 'Dashboard', onClick: () => setMode('home'), active: mode === 'home', show: true },
                   { label: 'Practice', onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
                   { label: 'Progress', onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
-                  { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
+                  { label: 'Study Plan', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: true },
                   { label: 'AI Tutor', onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
                   { label: 'My Notes', onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true },
                   { label: 'Glossary', onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
@@ -1101,6 +1108,7 @@ function PraxisStudyAppContent() {
                       questionsToNextCredit={redemption.questionsToNextCredit}
                       redemptionHighScore={redemption.highScore}
                       progressSummary={progressSummary}
+                      baselineSnapshot={profile.baselineSnapshot ?? null}
                       postAssessmentSnapshot={profile.postAssessmentSnapshot ?? null}
                       onStartPostAssessment={() => setMode('post-assessment')}
                       onViewPostAssessmentReport={() => setMode('post-assessment')}
@@ -1193,22 +1201,30 @@ function PraxisStudyAppContent() {
 
         {/* STUDY GUIDE PAGE */}
         {mode === 'study-guide' && (
-          <div className="space-y-6 pb-16">
-            <div className="pt-4">
-              <p className="editorial-overline mb-2">Study Plan</p>
-              <h2 className="text-4xl font-bold tracking-tight text-slate-900">AI Study Guide.</h2>
+          ACTIVE_LAUNCH_FEATURES.studyGuide ? (
+            <div className="space-y-6 pb-16">
+              <div className="pt-4">
+                <p className="editorial-overline mb-2">Study Plan</p>
+                <h2 className="text-4xl font-bold tracking-tight text-slate-900">AI Study Guide.</h2>
+              </div>
+              <Suspense fallback={<div className="text-slate-500 text-sm">Loading study guide...</div>}>
+                <StudyPlanCard
+                  history={studyPlanHistory}
+                  isGenerating={studyPlanGenerating}
+                  isLoading={studyPlanLoading}
+                  error={studyPlanError}
+                  canGenerate={canGenerateStudyPlan}
+                  onGenerate={handleGenerateStudyPlan}
+                />
+              </Suspense>
             </div>
-            <Suspense fallback={<div className="text-slate-500 text-sm">Loading study guide...</div>}>
-              <StudyPlanCard
-                history={studyPlanHistory}
-                isGenerating={studyPlanGenerating}
-                isLoading={studyPlanLoading}
-                error={studyPlanError}
-                canGenerate={canGenerateStudyPlan}
-                onGenerate={handleGenerateStudyPlan}
-              />
-            </Suspense>
-          </div>
+          ) : (
+            <div className="pb-16 pt-4">
+              <Suspense fallback={<div className="text-slate-500 text-sm">Loading...</div>}>
+                <StudyGuidePaywallScreen onBack={() => setMode('home')} />
+              </Suspense>
+            </div>
+          )
         )}
 
         {/* STUDY NOTEBOOK PAGE */}
@@ -1229,6 +1245,13 @@ function PraxisStudyAppContent() {
         {mode === 'glossary' && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading glossary…</div>}>
             <GlossaryPage userId={user?.id ?? null} />
+          </Suspense>
+        )}
+
+        {/* MY FOCUS TERMS PAGE */}
+        {mode === 'my-focus-terms' && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading focus terms…</div>}>
+            <MyFocusTermsPage userId={user?.id ?? null} />
           </Suspense>
         )}
 

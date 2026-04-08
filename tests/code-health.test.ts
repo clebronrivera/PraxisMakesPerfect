@@ -15,7 +15,6 @@ import { calculateGlobalScoresFromData } from '../src/utils/globalScoreCalculato
 import { normalizeStudyInputs } from '../src/services/studyPlanService';
 import type { UserProfile } from '../src/hooks/useProgressTracking';
 import type { EngineConfig } from '../src/types/engine';
-import { getTeachingContext } from '../src/components/TeachMode';
 
 interface TestResult {
   name: string;
@@ -113,11 +112,6 @@ function testDiagnosticFeedback(): TestResult[] {
 
       assert(feedback.isCorrect === false, 'Expected incorrect feedback');
       assert(feedback.selectedAnswerText.length > 0, 'Expected selected answer text');
-    }),
-    runTest('TeachMode teaching context handles normalized bank question shape', () => {
-      const context = getTeachingContext(question, testEngine);
-      assert(context.concept.length > 0, 'Expected teaching context concept');
-      assert(context.explanation.length > 0, 'Expected teaching context explanation');
     })
   ];
 }

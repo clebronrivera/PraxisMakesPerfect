@@ -8,6 +8,32 @@
 
 ---
 
+## ⚠ Accuracy Audit — 2026-04-08
+
+The following items were verified against the live codebase on 2026-04-08. Items marked **STALE** describe things that are no longer coded as described (but have not been deleted from the document, per policy). Items marked **MINOR FIX** are small factual corrections. Items marked **CONFIRMED** were verified accurate.
+
+| # | Section | Status | Finding |
+|---|---------|--------|---------|
+| 1 | Streak Tracking | **STALE** | "Consecutive correct answers build a streak. Shown on the dashboard" — `streak` appears in `useProgressTracking` and `PracticeSession` (internal counter) but is **not rendered anywhere on DashboardHome**. There is no visible streak UI on the dashboard. The tracking field exists; the display does not. |
+| 2 | Question Retirement | **CONFIRMED** | Mechanics match: `times_correct >= 2`, first-pass gate, pool reset on exhaustion — all confirmed in `PracticeSession.tsx`. Retired count is shown during a session, not on the dashboard. `localStorage` storage confirmed. |
+| 3 | Inactivity Auto-Logout | **STALE** | Described as "15 minutes." Actual implementation in `useElapsedTimer.ts` is an **auto-PAUSE** at **120 seconds** (2 minutes) of inactivity — not a logout, and not 15 minutes. The 15-minute figure may come from Supabase session timeout, not an in-app timer. |
+| 4 | Master Glossary Terms | **MINOR FIX** | Document says "396-term master glossary" in two places. `master-glossary.json` has `396` terms (confirmed). Accurate. |
+| 5 | Leitner / Spaced Repetition | **STALE** | Document says spaced repetition is "collected now and will surface as a Review Suggestions feature." `src/utils/srsEngine.ts` and `src/brain/learning-state.ts` have SRS logic, but it is not wired into any UI component or visible user surface. No Review Suggestions badge or section exists anywhere. This is correctly flagged as future-facing but may never have been connected. |
+| 6 | NASP Domain Badges on Learning Path Tiles | **STALE** | Document says "Each of the 45 skills is mapped to a NASP Practice Model domain. These appear as small badges on Learning Path tiles." No NASP badge rendering was found in `LearningPathNodeMap.tsx`. The `nasp_domain_primary` and `prereq_chain_narrative` fields exist in `skillPhaseDLookup.ts` and are used in the **study guide prompt** — but the badge UI on LP tiles is not present. |
+| 7 | Study Guide — 6 Tabs | **CONFIRMED** | Overview / Priorities / Domains / Concepts / Weekly Plan / Milestones — all 6 confirmed in `StudyPlanViewer.tsx` line 103–111. |
+| 8 | AI Tutor Feature Flag | **MINOR FIX** | Document says `tutorChat: false` (implied: not active). Actual value in `launchConfig.ts`: `tutorChat: true`. The tutor is live in production. |
+| 9 | Home Dashboard — Practice Shortcuts Rail | **STALE** | Document describes a "Practice shortcuts rail (right side) — three one-tap buttons: Domain Review / Practice by Skill / Random Questions." The redesigned `DashboardHome.tsx` does not have a right-side rail with those three buttons. The dashboard structure changed during the April 2026 redesign. |
+| 10 | Home Dashboard — Greeting Hero / 4 Summary Cards | **STALE** | Document describes "A greeting hero card… Four summary cards: Questions answered, Readiness phase, Skills to reach goal, Weekly usage." The actual DashboardHome props and JSX do not map exactly to this layout — the redesigned dashboard has Today's Focus, Weekly stats, SRS overdue, and Redemption sections, not a 4-tile hero layout. |
+| 11 | Subscription Tiers | **STALE (by design)** | Section describes a planned freemium model at $14.99/month. `paywall: false` in `launchConfig.ts` — the paywall is confirmed not active. This section is intentionally future-facing. |
+| 12 | High-Impact Skills "Practice" Button | **STALE** | Document says Home shows High-Impact Skills with a **Practice** button (not raw accuracy). The redesigned DashboardHome shows skill info via `weakestSkill` prop — the specific button wording should be verified against the actual rendered UI. |
+| 13 | Proficiency — Confidence-Weighted Scoring | **STALE** | Document says "Proficiency tiers are calculated from confidence-weighted accuracy when available." Actual code in `skillProficiency.ts` uses raw accuracy only. The confidence-weighted score appears in **Advanced Statistics** (ResultsDashboard) but does not feed into the Emerging/Approaching/Demonstrating tier calculation. |
+| 14 | Follow-Up Question System | **CONFIRMED** | 3-level follow-up logic (second chance → distractor hint → domain warning) confirmed in `PracticeSession.tsx` lines 176–530. |
+| 15 | Interactive Exercises — 5 Types | **CONFIRMED** | ScenarioSorter, DragToOrder, TermMatcher, ClickSelector, CardFlip — all 5 confirmed as live components in `src/components/ModuleInteractives/`. |
+| 16 | Concept Insights | **CONFIRMED + UPDATED** | `conceptAnalytics.ts` confirmed. UI was redesigned 2026-04-08 to add summary tiles, mini-bars, cross-skill gaps bars, strength chip cloud, and empty state. |
+| 17 | question-vocabulary-tags.json | **CONFIRMED** | File exists at `src/data/question-vocabulary-tags.json`, used by `question-analyzer.ts`. |
+
+---
+
 ## What It Is
 
 Praxis Study is a personalized exam prep platform built specifically for the **Praxis School Psychology exam (5403)**. Unlike a generic flashcard app or a static practice test, it tracks every answer you give, builds a real-time picture of your strengths and weaknesses across all 45 exam skills, and generates an AI-powered study guide that is uniquely yours — not a template, but a plan built from your actual performance data.
@@ -41,56 +67,20 @@ Before sign-in, the public entry page leads with an outcome-first hero for Praxi
 
 That page also previews the signed-in practice and skill-tracking surfaces. A beta disclaimer is shown near the sign-up form: "Currently in beta. Not responsible for loss of data during the beta period."
 
-### Step 1b: Complete Your Profile (Onboarding Wizard)
-Immediately after creating an account, new users are guided through a **3- or 4-step onboarding wizard** before reaching the main app. The step count depends on the role selected — users who choose "Other" get 3 steps (Role → Exam → Goals), while Graduate Students and Certification-Only candidates get 4 steps (Role → Pathway Details → Exam → Goals). This is how the platform personalizes the experience from day one.
+### Step 1b: Complete Your Profile (Simplified Onboarding)
+Immediately after creating an account, new users see a **single-page onboarding form** with six fields. The form is short by design — it takes less than a minute. All six fields are required; there is **no skip option**.
 
-**Step 1 — Role**
-The user identifies which path they're on:
-- Graduate Student (enrolled in a school psychology graduate program)
-- Certification-Only / Alternative Route (working in education, pursuing certification without a full graduate program)
-- Other
+**The six fields:**
+1. **First name** (required)
+2. **Last name** (required)
+3. **Zip code** (required)
+4. **School / university attending** (required) — with a "Not currently enrolled in a program" checkbox that disables the field for users who don't apply
+5. **What brings you here?** (required dropdown) — Graduate program requirement, Certification exam prep, Professional development, or Other
+6. **How did you hear about us?** (required dropdown) — Google / Search, Social media, Professor / Instructor, Friend / Colleague, or Other
 
-**Step 2 — Program or Pathway Details**
-Fields shown depend on the role selected.
+The user's name is split into First and Last for cleaner cohort data and personalized greetings. Email is collected at sign-up and is not repeated in onboarding. Profile data is stored in the user's account and can inform future study plan generation and admin reporting.
 
-*Graduate students provide:*
-- Program state chosen from a dropdown of NASP-listed jurisdictions
-- School psychology program chosen from a NASP-backed dropdown filtered to that state
-- Program type (Ed.S., Ph.D., M.A./M.S., or Other)
-- Delivery mode (On-campus, Hybrid, or Online)
-- Training stage (Early Program, Mid Program, Approaching Internship, or In Internship)
-
-*Certification-only candidates provide:*
-- Target certification state chosen from a dropdown
-- Current role (Teacher, School Counselor, Psychologist Trainee, or Other)
-- Certification route (Initial, Add-on, Reciprocity/Transfer, or Other)
-
-Users who selected "Other" skip Step 2 entirely.
-
-**Step 3 — Exam Details**
-Collected for everyone:
-- Primary exam (Praxis 5403, FTCE School Psychologist PK-12, or Other)
-- Planned test date
-- Attempt status (First attempt or Retake)
-- Number of prior attempts (shown only if Retake selected)
-- Target score
-
-**Step 4 — Goals and Study Habits**
-- Study goals (multi-select): Pass the exam, Improve weak domains, Build timed practice, Build confidence
-- Weekly study availability: 1–2, 3–5, 6–10, or 10+ hours per week
-- Biggest challenge (multi-select): Test anxiety, Content knowledge gaps, Time management, Not enough good questions, No clear study plan, Staying motivated
-- Whether the user has used other prep resources (Yes/No)
-- If Yes: which resources (ETS/Pearson study guide, YouTube/videos, Flashcards/Quizlet, Another prep app, Private tutoring, Other)
-- If Yes: what was missing from those resources (open text)
-
-**Required fields by step:**
-- Step 1: Role (required)
-- Step 2 — Graduate students: Program type, Delivery mode, Training stage (required); State, University (optional)
-- Step 2 — Certification candidates: Current role, Certification route (required); State (optional)
-- Step 3: Primary exam, Retake status (required); Test date, Prior attempts, Target score (optional)
-- Step 4: Study goals, Weekly availability (required); others optional
-
-Users can also tap **Skip for now** on the first step to bypass the wizard entirely and go straight to the app. Profile data is stored in the user's account and can inform future study plan generation. The user's name is collected at sign-up (not repeated in onboarding).
+> **Note for product/marketing copy:** the legacy 4-step onboarding wizard (Role → Pathway → Exam → Goals, with 27 fields including study goals, target score, biggest challenge, etc.) still exists in the codebase as the **Profile Editor** for users who want to add detail later, but it is no longer the initial onboarding flow. Initial onboarding is the 6-field form described above.
 
 ### Step 2: The Pre-Assessment Gateway — Two Ways to Start
 
@@ -211,6 +201,16 @@ This means a large gap between how confidently you answer and whether you are ac
 
 ### Readiness Target
 70% of all 45 skills must reach Demonstrating (≥ 80% accuracy) for overall exam readiness. That's 32 out of 45 skills.
+
+### Reaching Readiness — The Post-Assessment
+When a user crosses the readiness threshold (32 of 45 skills at Demonstrating), a **readiness banner** appears at the top of the dashboard inviting them to take the **post-assessment**. The post-assessment is a fresh adaptive diagnostic that re-measures every skill — the goal is to officially confirm growth since Day 1 by comparing baseline (frozen at original diagnostic completion) to post-assessment results.
+
+After completing the post-assessment, the dashboard banner is replaced with a link to the **Growth Report**, a dedicated page that shows:
+- Top-level stat tiles: skills improved, skills now at Demonstrating, skills regressed
+- Per-domain three-segment bars showing Diagnostic baseline → Practice growth → Post-assessment result, color-coded for growth (emerald), regression (rose), or near-target (amber)
+- A 70% goal marker on every domain bar
+
+The post-assessment can only be taken once. Its results are written to a one-shot snapshot and the Growth Report becomes the user's permanent before/after view.
 
 ### Question Retirement
 Once you've answered a question correctly at least **twice** and have seen every question in the pool at least once (completing the first pass), it gets **retired** — removed from your active practice rotation. Specific rules:
@@ -671,7 +671,7 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 | Adaptive diagnostic length | 45–90 questions (adaptive follow-ups) |
 | Legacy screener length | 50 questions |
 | Legacy full assessment length | 125 questions |
-| Onboarding wizard steps | 3 or 4 (depends on role) |
+| Onboarding form fields | 6 (single page, all required, no skip) |
 | Interactive exercise types | 5 (ScenarioSorter, DragToOrder, TermMatcher, ClickSelector, CardFlip) |
 | Skill status categories | 6 (internal AI/preprocessor labels) |
 | User-facing proficiency levels | 3 (Emerging / Approaching / Demonstrating) |
@@ -681,7 +681,9 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 | Study guide tabs | 6 + side rail |
 | Readiness levels | 4 (Early / Developing / Approaching / Ready) |
 | Time between guide regenerations | 7 days (once live) |
-| Supabase migrations applied | 8 (0000–0005, 0009, 0013) |
+| Supabase migrations applied | 19 (0000 through 0018) |
+| Post-assessment trigger | demonstratingCount ≥ 32 of 45 (the readiness target) |
+| Post-assessment snapshot | one-shot, written once on completion to `post_assessment_snapshot` |
 | Redemption entry threshold (miss) | 3rd cumulative wrong answer on a question |
 | Redemption entry (hint) | Immediate — any hint use quarantines the question |
 | Redemption clearance threshold | 3 correct answers inside Redemption Rounds |
@@ -788,6 +790,9 @@ When any of the following change, update this document in the same pull request 
 - [ ] Practice mode unlock conditions
 - [ ] Question retirement behavior
 - [ ] Any stat shown on the login/marketing page
-- [ ] Onboarding wizard step count, field names, or answer options
+- [ ] Onboarding form field count, names, or answer options
 - [ ] Which onboarding fields are required vs. optional
-- [ ] Role types or pathway branches in the onboarding flow
+- [ ] Whether the onboarding flow can be skipped
+- [ ] Post-assessment trigger condition (currently `demonstratingCount >= 32`)
+- [ ] Post-assessment Growth Report sections or per-domain bar segments
+- [ ] Number of Supabase migrations applied (currently 0000–0018)

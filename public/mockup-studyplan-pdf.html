@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Plan PDF — Preview Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ── App shell ── */
+    html, body { background: #2d2d2d; font-family: system-ui, -apple-system, sans-serif; }
+
+    /* ── Toolbar ── */
+    .toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: #1a1a1a; padding: 10px 20px; display: flex; align-items: center; gap: 10px; }
+    .tb-btn { padding: 5px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; transition: all .15s; }
+    .tb-btn-amber { background: #f59e0b; color: #1a1a1a; }
+    .tb-btn-amber:hover { background: #d97706; }
+    .tb-btn-ghost { background: rgba(255,255,255,.1); color: #cbd5e1; }
+    .tb-btn-ghost:hover { background: rgba(255,255,255,.18); }
+
+    /* ── Tab toggle ── */
+    .tab-pill { padding: 5px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; color: #64748b; background: transparent; transition: all .15s; }
+    .tab-pill.active { background: #f59e0b; color: #1a1a1a; }
+
+    /* ── Page wrapper (simulates PDF paper) ── */
+    .page-wrap { padding: 60px 16px 40px; }
+
+    /* ── Letter-size page simulation ── */
+    .pdf-page {
+      width: 816px;
+      margin: 0 auto 32px;
+      background: white;
+      box-shadow: 0 8px 40px rgba(0,0,0,.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .pdf-page-inner { padding: 56px 64px; }
+
+    /* ── Print media ── */
+    @media print {
+      html, body { background: white; }
+      .toolbar { display: none; }
+      .page-wrap { padding: 0; }
+      .pdf-page { box-shadow: none; margin: 0; width: 100%; }
+      .pdf-page-inner { padding: 0.75in 1in; }
+      .no-print { display: none !important; }
+    }
+
+    /* ── Typography ── */
+    .pdf-h1 { font-size: 22px; font-weight: 900; color: #0f172a; line-height: 1.2; }
+    .pdf-h2 { font-size: 14px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: .07em; border-bottom: 2px solid #f59e0b; padding-bottom: 6px; margin-bottom: 16px; }
+    .pdf-h3 { font-size: 12px; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
+    .pdf-body { font-size: 11.5px; color: #334155; line-height: 1.65; }
+    .pdf-small { font-size: 10px; color: #64748b; }
+    .pdf-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: #94a3b8; }
+
+    /* ── Skill bar ── */
+    .skill-bar-track { height: 6px; border-radius: 9999px; background: #f1f5f9; flex: 1; overflow: hidden; }
+    .skill-bar-fill  { height: 100%; border-radius: 9999px; }
+    .fill-red    { background: #ef4444; }
+    .fill-amber  { background: #f59e0b; }
+    .fill-emerald { background: #10b981; }
+
+    /* ── Status chip ── */
+    .chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 9999px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .chip-red    { background: #fee2e2; color: #991b1b; }
+    .chip-amber  { background: #fef3c7; color: #92400e; }
+    .chip-violet { background: #ede9fe; color: #5b21b6; }
+    .chip-slate  { background: #f1f5f9; color: #475569; }
+    .chip-green  { background: #d1fae5; color: #065f46; }
+
+    /* ── Weekly table ── */
+    .week-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+    .week-table th { background: #0f172a; color: white; padding: 7px 10px; text-align: left; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; }
+    .week-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; }
+    .week-table tr:nth-child(even) td { background: #fafafa; }
+
+    /* ── Domain bar ── */
+    .domain-bar { height: 10px; border-radius: 6px; background: #f1f5f9; overflow: hidden; margin-top: 6px; }
+    .domain-fill { height: 100%; border-radius: 6px; }
+
+    /* ── Amber accent bar ── */
+    .accent-bar { width: 32px; height: 3px; border-radius: 9999px; background: #f59e0b; margin-bottom: 10px; }
+
+    /* ── Dotted separator ── */
+    .dot-sep { border: none; border-top: 1.5px dashed #e2e8f0; margin: 20px 0; }
+
+    /* ── Print note ── */
+    .print-note { font-size: 9px; color: #94a3b8; }
+
+    /* ── Checkbox ── */
+    .check-box { width: 12px; height: 12px; border: 1.5px solid #94a3b8; border-radius: 3px; flex-shrink: 0; margin-top: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Toolbar ── -->
+<div class="toolbar no-print">
+  <div class="flex items-center gap-2">
+    <div class="w-6 h-6 rounded bg-amber-500 flex items-center justify-center text-white font-black text-xs">P</div>
+    <span class="text-white font-bold text-xs">Study Plan Preview</span>
+  </div>
+
+  <div class="flex gap-1 ml-4 bg-black/30 p-1 rounded-lg">
+    <button class="tab-pill active" onclick="setDepth('standard', this)">Standard (5 sections)</button>
+    <button class="tab-pill" onclick="setDepth('quick', this)">Quick Focus (3 sections)</button>
+    <button class="tab-pill" onclick="setDepth('full', this)">Comprehensive (9 sections)</button>
+  </div>
+
+  <div class="ml-auto flex gap-2">
+    <button class="tb-btn tb-btn-ghost" onclick="window.print()">🖨 Print</button>
+    <button class="tb-btn tb-btn-amber">⬇ Download PDF</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 1: COVER + READINESS SNAPSHOT
+════════════════════════════════════════════════════════ -->
+<div class="page-wrap">
+
+<div class="pdf-page" id="page1">
+<div class="pdf-page-inner">
+
+  <!-- Cover header -->
+  <div style="border-bottom: 3px solid #0f172a; padding-bottom: 20px; margin-bottom: 28px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div>
+        <div class="pdf-label" style="margin-bottom:6px;">Praxis Makes Perfect · Personalized Study Plan</div>
+        <div class="pdf-h1">School Psychology Exam Prep<br><span style="color:#f59e0b;">Praxis 5403</span></div>
+        <div style="margin-top:10px; display:flex; gap:20px; flex-wrap:wrap;">
+          <div>
+            <div class="pdf-label">Student</div>
+            <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:2px;">Carlos Rivera</div>
+          </div>
+          <div>
+            <div class="pdf-label">Generated</div>
+            <div style="font-size:12px; font-weight:600; color:#334155; margin-top:2px;">April 7, 2026</div>
+          </div>
+          <div>
+            <div class="pdf-label">Target Exam</div>
+            <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:2px;">July 12, 2026 · 14 weeks</div>
+          </div>
+          <div>
+            <div class="pdf-label">Plan Depth</div>
+            <div style="font-size:12px; font-weight:600; color:#334155; margin-top:2px;">Standard</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="background:#0f172a; color:white; padding:10px 16px; border-radius:10px; text-align:center;">
+          <div style="font-size:28px; font-weight:900; color:#fbbf24; line-height:1;">58%</div>
+          <div style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#94a3b8; margin-top:2px;">Readiness Score</div>
+          <div style="font-size:10px; color:#fbbf24; font-weight:700; margin-top:4px;">Approaching</div>
+        </div>
+        <div style="margin-top:8px; font-size:9px; color:#94a3b8;">Refreshes after 100 questions</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: READINESS SNAPSHOT ── -->
+  <div style="margin-bottom:32px;" id="sec-readiness">
+    <div class="accent-bar"></div>
+    <div class="pdf-h2">Section 1 · Readiness Snapshot</div>
+
+    <!-- Summary cards row -->
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;">
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px; text-align:center;">
+        <div style="font-size:22px; font-weight:900; color:#10b981;">14</div>
+        <div class="pdf-label" style="margin-top:2px;">Skills Mastered</div>
+        <div style="font-size:9px; color:#64748b; margin-top:2px;">≥ 80% accuracy</div>
+      </div>
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px; text-align:center;">
+        <div style="font-size:22px; font-weight:900; color:#f59e0b;">9</div>
+        <div class="pdf-label" style="margin-top:2px;">Near Mastery</div>
+        <div style="font-size:9px; color:#64748b; margin-top:2px;">60–79% accuracy</div>
+      </div>
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:12px; text-align:center;">
+        <div style="font-size:22px; font-weight:900; color:#ef4444;">6</div>
+        <div class="pdf-label" style="margin-top:2px; color:#dc2626;">Misconception</div>
+        <div style="font-size:9px; color:#64748b; margin-top:2px;">Active error patterns</div>
+      </div>
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px; text-align:center;">
+        <div style="font-size:22px; font-weight:900; color:#8b5cf6;">23</div>
+        <div class="pdf-label" style="margin-top:2px;">In Redemption</div>
+        <div style="font-size:9px; color:#64748b; margin-top:2px;">Quarantined questions</div>
+      </div>
+    </div>
+
+    <!-- Readiness goal bar -->
+    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="font-size:11px; font-weight:700; color:#92400e;">Readiness goal: 32 of 45 skills at Demonstrating</div>
+        <div style="font-size:11px; font-weight:900; color:#f59e0b;">14 / 32 skills</div>
+      </div>
+      <div class="domain-bar">
+        <div class="domain-fill" style="width:44%; background:linear-gradient(90deg,#fbbf24,#f59e0b);"></div>
+      </div>
+      <div style="font-size:10px; color:#92400e; margin-top:6px;">18 more skills need to reach ≥ 80% before your exam. At your current pace (6–8 skills/month), you're on track with 14 weeks remaining.</div>
+    </div>
+
+    <div class="pdf-body">
+      You've answered 843 questions across all 45 Praxis 5403 skills, which gives the system a high-confidence picture of your strengths and gaps. Your strongest domain is <strong>Professional Practices</strong> — 7 of 11 skills are at Demonstrating. Your most urgent domain is <strong>Foundations</strong>, where 4 of 10 skills carry active misconception flags, meaning passive review won't correct them.
+    </div>
+  </div>
+
+  <hr class="dot-sep">
+
+  <!-- ── SECTION 2: PRIORITY CLUSTERS ── -->
+  <div id="sec-priorities">
+    <div class="accent-bar"></div>
+    <div class="pdf-h2">Section 2 · Priority Skill Clusters</div>
+    <div class="pdf-body" style="margin-bottom:16px;">
+      Your gaps cluster into two types that require different interventions. <strong>Misconception skills</strong> need active correction — reading explanations and re-attempting questions won't fix a wrong mental model. <strong>Unlearned skills</strong> need first-exposure content before any practice will stick.
+    </div>
+
+    <!-- Cluster A: Misconceptions -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span class="chip chip-red">Cluster A · Misconceptions — Fix First</span>
+        <span style="font-size:10px; color:#64748b;">6 skills · Active error patterns detected</span>
+      </div>
+
+      <div style="border:1px solid #e2e8f0; border-radius:10px; overflow:hidden;">
+        <table style="width:100%; border-collapse:collapse; font-size:10.5px;">
+          <thead>
+            <tr style="background:#0f172a;">
+              <th style="padding:7px 12px; text-align:left; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:white; width:30%;">Skill</th>
+              <th style="padding:7px 12px; text-align:left; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:white; width:15%;">Accuracy</th>
+              <th style="padding:7px 12px; text-align:left; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:white; width:55%;">Primary Misconception</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 12px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">Ethics & Legal Standards</td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9;"><span style="color:#ef4444; font-weight:700;">41%</span></td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#475569;">Conflating IDEA eligibility criteria with Section 504 accommodation standards — these are different legal frameworks with different thresholds.</td>
+            </tr>
+            <tr style="background:#fafafa;">
+              <td style="padding:8px 12px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">Consultation Models</td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9;"><span style="color:#ef4444; font-weight:700;">38%</span></td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#475569;">Misidentifying consultee-centered vs. client-centered focus in Caplan's model — the distinction depends on whether the gap is in knowledge, skills, or objectivity.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">Cognitive Assessment</td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9;"><span style="color:#ef4444; font-weight:700;">44%</span></td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#475569;">Confusing fluid vs. crystallized intelligence in CHC theory — selecting intervention types that match the wrong domain of cognitive functioning.</td>
+            </tr>
+            <tr style="background:#fafafa;">
+              <td style="padding:8px 12px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">Reliability & Validity</td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9;"><span style="color:#f59e0b; font-weight:700;">52%</span></td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#475569;">Applying test-retest reliability reasoning when construct validity is the correct framework — mixing up measurement stability with measurement accuracy.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">RTI / MTSS Tiers</td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9;"><span style="color:#f59e0b; font-weight:700;">50%</span></td>
+              <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9; color:#475569;">Misidentifying Tier 2 vs. Tier 3 interventions — specifically when small-group intensification triggers a Tier 3 reclassification vs. remaining supplemental.</td>
+            </tr>
+            <tr style="background:#fafafa;">
+              <td style="padding:8px 12px; color:#0f172a; font-weight:600;">Diversity & Multicultural Practice</td>
+              <td style="padding:8px 12px;"><span style="color:#f59e0b; font-weight:700;">53%</span></td>
+              <td style="padding:8px 12px; color:#475569;">Conflating culturally responsive assessment modifications (permissible) with standardization violations (not permissible) — a L3 nuanced-judgment error.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cluster B: Unlearned -->
+    <div>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span class="chip chip-slate">Cluster B · Unlearned — Content First</span>
+        <span style="font-size:10px; color:#64748b;">8 skills · Fewer than 3 attempts each</span>
+      </div>
+      <div class="pdf-body">
+        These skills need foundational exposure before practice questions will help. Work through the Learning Path modules for each, then return to practice. Recommended order: <strong>Behavioral Assessment</strong> → <strong>Academic Interventions</strong> → <strong>Social-Emotional Learning</strong> → <strong>Family Engagement</strong> → <strong>Program Evaluation</strong> → <strong>Crisis Intervention</strong> → <strong>School-Wide Prevention</strong> → <strong>Research Methods</strong>.
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 2: DOMAIN MAPS + WEEKLY SCHEDULE
+════════════════════════════════════════════════════════ -->
+
+<div class="pdf-page" id="page2">
+<div class="pdf-page-inner">
+
+  <!-- Page header continuation -->
+  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:24px;">
+    <div style="font-size:10px; font-weight:700; color:#0f172a;">Carlos Rivera · Praxis 5403 Study Plan</div>
+    <div style="font-size:10px; color:#94a3b8;">Page 2 of 3 · April 7, 2026</div>
+  </div>
+
+  <!-- ── SECTION 3: DOMAIN STUDY MAPS ── -->
+  <div style="margin-bottom:32px;" id="sec-domains">
+    <div class="accent-bar"></div>
+    <div class="pdf-h2">Section 3 · Domain Study Maps</div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+      <!-- Domain 1 -->
+      <div style="border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:#94a3b8; margin-bottom:2px;">Domain 1</div>
+            <div class="pdf-h3">Professional Practices</div>
+          </div>
+          <span class="chip chip-amber">Approaching · 68%</span>
+        </div>
+        <div class="domain-bar">
+          <div class="domain-fill" style="width:68%; background:#f59e0b;"></div>
+        </div>
+        <div class="pdf-body" style="margin-top:10px; font-size:10.5px;">
+          Your strongest domain, but two skills — <strong>Consultation Models</strong> and <strong>Cognitive Assessment</strong> — carry misconception flags that are pulling the domain score down. Everything else is at Approaching or better. Clear the misconceptions here first; the remaining skill-building will follow naturally.
+        </div>
+        <div style="margin-top:8px; font-size:9.5px; color:#64748b;">11 skills · 7 Demonstrating · 2 Misconception · 2 Developing</div>
+      </div>
+
+      <!-- Domain 2 -->
+      <div style="border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:#94a3b8; margin-bottom:2px;">Domain 2</div>
+            <div class="pdf-h3">Student-Level Services</div>
+          </div>
+          <span class="chip chip-amber">Approaching · 61%</span>
+        </div>
+        <div class="domain-bar">
+          <div class="domain-fill" style="width:61%; background:#f59e0b;"></div>
+        </div>
+        <div class="pdf-body" style="margin-top:10px; font-size:10.5px;">
+          This domain has the most unlearned skills — 4 of 12 have fewer than 3 attempts. Prioritize Learning Path modules before drilling questions. The well-practiced skills here are strong; the gaps are mostly untouched content rather than misconceptions.
+        </div>
+        <div style="margin-top:8px; font-size:9.5px; color:#64748b;">12 skills · 4 Demonstrating · 1 Misconception · 4 Unlearned · 3 Developing</div>
+      </div>
+
+      <!-- Domain 3 -->
+      <div style="border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:#94a3b8; margin-bottom:2px;">Domain 3</div>
+            <div class="pdf-h3">Systems-Level Services</div>
+          </div>
+          <span class="chip chip-amber">Approaching · 63%</span>
+        </div>
+        <div class="domain-bar">
+          <div class="domain-fill" style="width:63%; background:#f59e0b;"></div>
+        </div>
+        <div class="pdf-body" style="margin-top:10px; font-size:10.5px;">
+          RTI/MTSS is your main anchor here — it's both high-weight on the exam and flagged as a misconception. The <em>Tier 2 vs. Tier 3</em> distinction should be your first session. Family engagement and school-wide prevention are unlearned; tackle them in weeks 5–7.
+        </div>
+        <div style="margin-top:8px; font-size:9.5px; color:#64748b;">12 skills · 2 Demonstrating · 1 Misconception · 2 Unlearned · 7 Developing</div>
+      </div>
+
+      <!-- Domain 4 -->
+      <div style="border:1px solid #fecaca; border-radius:10px; padding:14px; background:#fff7f7;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:#94a3b8; margin-bottom:2px;">Domain 4 · Urgent</div>
+            <div class="pdf-h3">Foundations of School Psychology</div>
+          </div>
+          <span class="chip chip-red">Emerging · 44%</span>
+        </div>
+        <div class="domain-bar">
+          <div class="domain-fill" style="width:44%; background:#ef4444;"></div>
+        </div>
+        <div class="pdf-body" style="margin-top:10px; font-size:10.5px;">
+          Your weakest domain and the one requiring the most targeted intervention. Four misconception flags — Ethics, Cognitive Assessment, Reliability/Validity, and Diversity Practice — must be addressed through active correction, not passive review. Research Methods is fully unlearned. This domain should anchor weeks 1–4.
+        </div>
+        <div style="margin-top:8px; font-size:9.5px; color:#64748b;">10 skills · 1 Demonstrating · 4 Misconception · 2 Unlearned · 3 Developing</div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="dot-sep">
+
+  <!-- ── SECTION 4: WEEKLY STUDY PLAN ── -->
+  <div id="sec-schedule">
+    <div class="accent-bar"></div>
+    <div class="pdf-h2">Section 4 · Weekly Study Plan</div>
+    <div class="pdf-body" style="margin-bottom:14px;">
+      Based on 6–10 hours/week and 14 weeks remaining. Each week has a primary focus skill cluster and a minimum question target. Sessions average 25–40 minutes. The schedule is weighted toward misconception correction in early weeks — these won't resolve from practice volume alone.
+    </div>
+
+    <table class="week-table">
+      <thead>
+        <tr>
+          <th style="width:10%;">Weeks</th>
+          <th style="width:18%;">Focus Area</th>
+          <th style="width:38%;">Session Goals</th>
+          <th style="width:14%;">Min Questions</th>
+          <th style="width:20%;">Skills to Clear</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1–2</strong></td>
+          <td><strong>Domain 4 Misconceptions</strong></td>
+          <td>Ethics & Legal Standards + Cognitive Assessment — active correction only. Read each skill's misconception note, then complete 3 practice sessions per skill before moving on. Do NOT speed through.</td>
+          <td style="font-weight:700; color:#f59e0b;">80–100 Qs</td>
+          <td style="font-size:10px;">Ethics, Cog. Assessment, Reliability/Validity</td>
+        </tr>
+        <tr>
+          <td><strong>3–4</strong></td>
+          <td><strong>Domain 4 cont. + Research Methods</strong></td>
+          <td>Diversity Practice misconception correction. First-exposure pass through Research Methods (Learning Path module → 20 practice questions). Ethics re-test to confirm correction is holding.</td>
+          <td style="font-weight:700; color:#f59e0b;">80–100 Qs</td>
+          <td style="font-size:10px;">Diversity Practice, Research Methods</td>
+        </tr>
+        <tr>
+          <td><strong>5–6</strong></td>
+          <td><strong>Domain 3 — RTI/MTSS + Unlearned</strong></td>
+          <td>RTI/MTSS Tier 2 vs. Tier 3 misconception session. First-pass through Family Engagement and School-Wide Prevention modules. Random practice across Domain 3.</td>
+          <td style="font-weight:700; color:#f59e0b;">70–90 Qs</td>
+          <td style="font-size:10px;">RTI/MTSS, Family Engagement, SWP</td>
+        </tr>
+        <tr>
+          <td><strong>7–9</strong></td>
+          <td><strong>Domain 2 — Student Services</strong></td>
+          <td>Work through the 4 unlearned Student-Level skills in order. Interleave practice by domain to prevent forgetting gains from weeks 1–6. Weekly mixed session (all 4 domains, 25 questions each).</td>
+          <td style="font-weight:700; color:#f59e0b;">90–120 Qs</td>
+          <td style="font-size:10px;">Behavioral Assess., Academic Interv., SEL, Crisis</td>
+        </tr>
+        <tr>
+          <td><strong>10–12</strong></td>
+          <td><strong>Domain 1 + Mixed Practice</strong></td>
+          <td>Consultation Models and Cognitive Assessment re-test. Push near-mastery skills (9 currently) over the 80% line. Two mixed-domain sessions per week to build cross-domain fluency.</td>
+          <td style="font-weight:700; color:#f59e0b;">100–130 Qs</td>
+          <td style="font-size:10px;">Consult. Models, push 9 Near-Mastery skills</td>
+        </tr>
+        <tr>
+          <td><strong>13–14</strong></td>
+          <td><strong>Full Review + Exam Readiness</strong></td>
+          <td>No new content. Full mixed-domain practice only. Target: 40 questions/session, timed at 1.5 min/question. Complete Redemption Rounds on all remaining quarantined questions. Check readiness score daily.</td>
+          <td style="font-weight:700; color:#ef4444;">120–150 Qs</td>
+          <td style="font-size:10px;">Redeem quarantined Qs · verify 32 of 45 Demonstrating</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 3: CHECKPOINT LOGIC + FOOTER
+════════════════════════════════════════════════════════ -->
+
+<div class="pdf-page" id="page3">
+<div class="pdf-page-inner">
+
+  <!-- Page header continuation -->
+  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:24px;">
+    <div style="font-size:10px; font-weight:700; color:#0f172a;">Carlos Rivera · Praxis 5403 Study Plan</div>
+    <div style="font-size:10px; color:#94a3b8;">Page 3 of 3 · April 7, 2026</div>
+  </div>
+
+  <!-- ── SECTION 5: CHECKPOINT LOGIC ── -->
+  <div style="margin-bottom:36px;" id="sec-checkpoints">
+    <div class="accent-bar"></div>
+    <div class="pdf-h2">Section 5 · Checkpoint Logic</div>
+    <div class="pdf-body" style="margin-bottom:16px;">
+      Use these checkpoints to decide whether to advance, repeat, or escalate. The goal isn't completing sessions — it's confirming that corrections are holding and near-mastery skills are crossing the threshold.
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;">
+
+      <div style="border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+        <div class="pdf-h3" style="color:#ef4444; margin-bottom:8px;">🔴 Misconception skill — cleared when:</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#334155;">
+            <div class="check-box"></div>
+            <div>3 consecutive correct answers in practice (not just more attempts)</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#334155;">
+            <div class="check-box"></div>
+            <div>No repeat of the flagged wrong distractor in the last 5 attempts</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#334155;">
+            <div class="check-box"></div>
+            <div>Accuracy rises above 65% with "Sure" confidence on at least 2 correct answers</div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-size:10px; color:#64748b; background:#fef2f2; border-radius:6px; padding:8px;">
+          <strong>If not clearing:</strong> Re-read the misconception note for that skill, then do the Learning Path module section before any more practice questions.
+        </div>
+      </div>
+
+      <div style="border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+        <div class="pdf-h3" style="color:#f59e0b; margin-bottom:8px;">🟡 Near-mastery skill — pushed to Demonstrating when:</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#334155;">
+            <div class="check-box"></div>
+            <div>Accuracy crosses 80% on the dashboard (confidence-weighted)</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#334155;">
+            <div class="check-box"></div>
+            <div>Minimum 8 total attempts — don't call it mastered on 5 easy questions</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#334155;">
+            <div class="check-box"></div>
+            <div>Trend shows Improving or Stable over last 6 attempts</div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-size:10px; color:#64748b; background:#fffbeb; border-radius:6px; padding:8px;">
+          <strong>If stalling at 70–79%:</strong> Identify which domain of the skill is weak using the answer history. Likely a single conceptual sub-area, not the whole skill.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Weekly check-in -->
+    <div style="border:1px solid #bfdbfe; background:#eff6ff; border-radius:10px; padding:14px;">
+      <div class="pdf-h3" style="color:#1d4ed8; margin-bottom:8px;">📅 Weekly check-in (every 5–7 days)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#1e3a5f;">
+          <div class="check-box" style="border-color:#3b82f6;"></div>
+          <div>Open dashboard — check which skills moved tiers since last week</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#1e3a5f;">
+          <div class="check-box" style="border-color:#3b82f6;"></div>
+          <div>Review any new Redemption entries (hint used or 3rd wrong answer)</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#1e3a5f;">
+          <div class="check-box" style="border-color:#3b82f6;"></div>
+          <div>Are you on track for this week's question minimum from the schedule?</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:flex-start; font-size:10.5px; color:#1e3a5f;">
+          <div class="check-box" style="border-color:#3b82f6;"></div>
+          <div>Has the plan refresh counter reached your threshold? If so, recalibrate.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div style="border-top:2px solid #0f172a; padding-top:16px; display:flex; justify-content:space-between; align-items:flex-end;">
+    <div>
+      <div style="font-size:10px; font-weight:900; color:#0f172a; margin-bottom:3px;">Praxis Makes Perfect</div>
+      <div style="font-size:9px; color:#94a3b8;">Plan generated April 7, 2026 · Based on 843 questions answered · Standard depth</div>
+      <div style="font-size:9px; color:#94a3b8; margin-top:2px;">This plan recalibrates after 100 more questions. All data reflects performance through April 7, 2026.</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="display:flex; align-items:center; gap:6px; justify-content:flex-end; margin-bottom:3px;">
+        <div style="width:16px; height:16px; border-radius:4px; background:#f59e0b; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:900; color:#1a1a1a;">P</div>
+        <span style="font-size:10px; font-weight:700; color:#0f172a;">praxismakesperfect.com</span>
+      </div>
+      <div style="font-size:9px; color:#94a3b8;">Personalized for Praxis 5403 · Not a generic template</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── Depth switcher note ── -->
+<div class="no-print" style="max-width:816px; margin:0 auto 20px; padding:0 16px;">
+  <div style="background:#1e293b; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:10px;">
+    <div style="font-size:11px; color:#94a3b8; line-height:1.5;">
+      <strong style="color:#f59e0b;">Viewing: Standard Plan</strong> — use the depth switcher above to preview Quick Focus (3 sections, ~1 page) or Comprehensive (9 sections, ~6 pages). Section count, word budgets, and page count all change based on selection.
+    </div>
+    <button class="tb-btn tb-btn-amber no-print" style="white-space:nowrap; margin-left:auto;" onclick="window.scrollTo(0,0)">↑ Top</button>
+  </div>
+</div>
+
+</div><!-- end page-wrap -->
+
+<script>
+  function setDepth(depth, btn) {
+    document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // In the real implementation this would swap section visibility
+    // For mockup purposes, just scroll to top
+    window.scrollTo(0,0);
+  }
+</script>
+
+</body>
+</html>

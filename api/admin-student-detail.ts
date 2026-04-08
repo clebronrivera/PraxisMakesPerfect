@@ -84,22 +84,43 @@ export const handler = async (event: {
     }
 
     const svc = getServiceClient();
-    const { data: responses, error: respErr } = await svc
-      .from('responses')
-      .select(
-        'question_id, skill_id, domain_id, assessment_type, is_correct, confidence, ' +
-        'time_on_item_seconds, selected_answers, correct_answers, session_id, created_at, ' +
-        'is_followup, cognitive_complexity, skill_question_index'
-      )
-      .eq('user_id', targetUserId)
-      .order('created_at', { ascending: true });
 
-    if (respErr) {
-      console.error('[admin-student-detail] query error:', respErr);
-      return json(500, { error: 'Failed to fetch responses.', detail: respErr.message });
+    // Run responses + user_progress queries in parallel.
+    // user_progress provides baseline_snapshot for the Growth Since Diagnostic panel.
+    const [responsesResult, progressResult] = await Promise.all([
+      svc
+        .from('responses')
+        .select(
+          'question_id, skill_id, domain_id, assessment_type, is_correct, confidence, ' +
+          'time_on_item_seconds, selected_answers, correct_answers, session_id, created_at, ' +
+          'is_followup, cognitive_complexity, skill_question_index'
+        )
+        .eq('user_id', targetUserId)
+        .order('created_at', { ascending: true }),
+      svc
+        .from('user_progress')
+        .select(
+          'baseline_snapshot, skill_scores, ' +
+          'post_assessment_snapshot, post_assessment_completed_at'
+        )
+        .eq('user_id', targetUserId)
+        .maybeSingle(),
+    ]);
+
+    if (responsesResult.error) {
+      console.error('[admin-student-detail] responses query error:', responsesResult.error);
+      return json(500, { error: 'Failed to fetch responses.', detail: responsesResult.error.message });
     }
 
-    return json(200, { responses: responses || [] });
+    if (progressResult.error) {
+      // Non-fatal — drawer can still render responses without the growth panel.
+      console.warn('[admin-student-detail] user_progress query error:', progressResult.error);
+    }
+
+    return json(200, {
+      responses: responsesResult.data || [],
+      progress: progressResult.data || null,
+    });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     console.error('[admin-student-detail]', e);

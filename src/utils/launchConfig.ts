@@ -5,7 +5,7 @@
 
 export const ACTIVE_LAUNCH_FEATURES = {
   adaptivePractice: true,
-  studyGuide: false,        // AI study guide — set true when production-ready
+  studyGuide: false,        // false = locked behind paywall screen; set true only when Stripe activation is ready
   tutorChat: true,          // AI Tutor Chat — enabled for testing
   paywall: false,           // Stripe paywall — set true when payment infrastructure is live
 } as const;

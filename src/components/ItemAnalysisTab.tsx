@@ -1,5 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ChevronDown, ChevronUp, Filter, RefreshCw, TrendingDown } from 'lucide-react';
+import {
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  ZAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ReferenceLine,
+  ResponsiveContainer,
+} from 'recharts';
 import { supabase } from '../config/supabase';
 import { PROGRESS_SKILL_LOOKUP, PROGRESS_DOMAINS } from '../utils/progressTaxonomy';
 
@@ -255,6 +266,11 @@ export default function ItemAnalysisTab() {
         </div>
       </div>
 
+      {/* Difficulty vs. Discrimination scatter plot per public/mockup-admin-charts.html. */}
+      {/* Each dot is one question. ReferenceLines mark flag thresholds:                  */}
+      {/*   x = 0.20 (too hard), x = 0.90 (too easy), y = 0 (low discrimination).         */}
+      <ItemAnalysisScatter items={items} />
+
       {/* Filter bar */}
       <div className="editorial-surface p-4">
         <div className="flex flex-wrap items-end gap-4">
@@ -501,6 +517,99 @@ export default function ItemAnalysisTab() {
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ItemAnalysisScatter ────────────────────────────────────────────────────
+// Difficulty (p-value, x-axis) vs. Discrimination (y-axis) scatter plot.
+// One dot per question. Flagged questions render in rose; normal in indigo.
+// ReferenceLines mark p=0.20 (too hard), p=0.90 (too easy), and y=0
+// (low discrimination — better students are not outperforming weaker ones).
+function ItemAnalysisScatter({ items }: { items: ItemStat[] }) {
+  const { normal, flagged } = useMemo(() => {
+    const normalArr: Array<{ x: number; y: number; id: string }> = [];
+    const flaggedArr: Array<{ x: number; y: number; id: string }> = [];
+    for (const item of items) {
+      if (item.attempts < 5) continue; // ignore low-volume noise
+      const point = {
+        x: item.pValue,
+        y: item.discrimination,
+        id: item.questionId,
+      };
+      if (item.flags.length > 0) flaggedArr.push(point);
+      else normalArr.push(point);
+    }
+    return { normal: normalArr, flagged: flaggedArr };
+  }, [items]);
+
+  if (normal.length + flagged.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="editorial-surface p-5">
+      <div className="mb-1 flex items-baseline justify-between gap-3">
+        <h3 className="text-lg font-semibold text-slate-900">Difficulty vs. Discrimination</h3>
+        <span className="text-xs text-slate-500">{normal.length + flagged.length} items (≥5 attempts)</span>
+      </div>
+      <p className="mb-3 text-xs text-slate-500">
+        X = p-value (proportion correct, higher = easier). Y = discrimination index (higher = better-discriminating). Dashed lines mark flag thresholds.
+      </p>
+      <ResponsiveContainer width="100%" height={280}>
+        <ScatterChart margin={{ top: 12, right: 24, left: 0, bottom: 24 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#ece8df" />
+          <XAxis
+            type="number"
+            dataKey="x"
+            name="p-value"
+            domain={[0, 1]}
+            tickFormatter={(v) => v.toFixed(1)}
+            stroke="#475569"
+            fontSize={11}
+            label={{ value: 'Difficulty (p) →', position: 'insideBottom', offset: -8, fill: '#94a3b8', fontSize: 10 }}
+          />
+          <YAxis
+            type="number"
+            dataKey="y"
+            name="discrimination"
+            domain={['auto', 'auto']}
+            stroke="#475569"
+            fontSize={11}
+            label={{ value: 'Discrimination ↑', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 10 }}
+          />
+          <ZAxis range={[40, 40]} />
+          <RechartsTooltip
+            cursor={{ strokeDasharray: '3 3' }}
+            contentStyle={{
+              background: '#fff',
+              border: '1px solid #e6dfd4',
+              borderRadius: 8,
+              fontSize: 12,
+            }}
+            formatter={(value, name) => [
+              typeof value === 'number' ? value.toFixed(2) : String(value),
+              name === 'p-value' ? 'p-value' : 'discrimination',
+            ]}
+          />
+          <ReferenceLine x={0.2} stroke="#b45309" strokeDasharray="3 3" label={{ value: 'p=0.2', position: 'top', fill: '#b45309', fontSize: 10 }} />
+          <ReferenceLine x={0.9} stroke="#b45309" strokeDasharray="3 3" label={{ value: 'p=0.9', position: 'top', fill: '#b45309', fontSize: 10 }} />
+          <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="3 3" />
+          <Scatter name="Normal" data={normal} fill="#818cf8" fillOpacity={0.7} />
+          <Scatter name="Flagged" data={flagged} fill="#f43f5e" fillOpacity={0.85} />
+        </ScatterChart>
+      </ResponsiveContainer>
+      <div className="mt-2 flex flex-wrap gap-4 text-[10px] text-slate-500">
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-indigo-400" /> Normal
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-rose-500" /> Flagged
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-0.5 w-3 bg-amber-700" /> Flag threshold (p&lt;0.2 or p&gt;0.9)
+        </span>
       </div>
     </div>
   );

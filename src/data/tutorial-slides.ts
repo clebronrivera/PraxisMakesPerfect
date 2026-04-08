@@ -16,7 +16,7 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
     description: 'Your personalized study companion for the Praxis 5403 School Psychology exam. Here\'s a quick tour of everything you can do.',
     icon: 'Sparkles',
     highlights: [
-      '450+ practice questions across 45 skills',
+      '1,150 practice questions across 45 skills',
       'AI-powered study guides tailored to your gaps',
       'Real-time progress tracking with proficiency levels',
       'Adaptive practice that targets your weakest areas',
@@ -28,8 +28,8 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
     description: 'Your first step is taking the Adaptive Diagnostic. It tests all 45 skills with 45\u201390 questions and builds your baseline profile.',
     icon: 'ClipboardCheck',
     highlights: [
-      'Takes 30\u201360 minutes to complete',
-      'Adapts difficulty based on your answers',
+      '45 questions if you ace it, up to 90 if you need follow-ups',
+      'Wrong answers trigger follow-up questions on the same skill',
       'Unlocks all practice modes and your study guide',
       'You can pause and resume anytime',
     ],
@@ -72,13 +72,13 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
   {
     id: 'progress',
     title: 'Track Your Progress',
-    description: 'The Score Report breaks down your performance by domain and skill with trend indicators and time-on-task data.',
+    description: 'The Progress page breaks down your performance by domain and skill, with time-on-task data and a growth view that compares your current state to your diagnostic baseline.',
     icon: 'TrendingUp',
     highlights: [
-      'Domain-level accuracy bars with proficiency badges',
-      'Skill breakdown table: accuracy, attempts, trends',
-      'Time distribution stats per session',
-      'Top 10 most-missed skills highlighted',
+      'Domain accuracy cards with Emerging / Approaching / Demonstrating badges',
+      'Skill proficiency map: a color-coded grid of all 45 skills',
+      'Growth Since Diagnostic: two-tone bars per skill (baseline vs. now)',
+      'Concept insights: cross-skill gaps and weakest concepts',
     ],
   },
   {
@@ -139,12 +139,12 @@ export const DIAGNOSTIC_TUTORIAL_SLIDES: TutorialSlide[] = [
   {
     id: 'diag-confidence',
     title: 'Confidence Matters',
-    description: 'After each answer, rate your confidence: Low, Medium, or High. This helps us distinguish lucky guesses from solid knowledge and improves your study plan.',
+    description: 'After each answer, rate your confidence: Guess, Unsure, or Sure. This helps us distinguish lucky guesses from solid knowledge and improves your study plan.',
     icon: 'Gauge',
     highlights: [
       'Be honest \u2014 overconfidence hides real gaps',
-      'Low-confidence correct answers flag unstable knowledge',
-      'High-confidence wrong answers flag misconceptions',
+      'Guess + correct flags unstable knowledge that needs reinforcement',
+      'Sure + wrong flags a misconception we need to remediate',
       'Your study guide uses confidence to prioritize skills',
     ],
   },

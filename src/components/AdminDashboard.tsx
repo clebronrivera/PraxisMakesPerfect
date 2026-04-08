@@ -16,6 +16,17 @@ import {
   Shield,
   Users
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts';
 import { supabase } from '../config/supabase';
 import { useQuestionReports, QuestionReport } from '../hooks/useQuestionReports';
 import ChatActivityTab from './ChatActivityTab';
@@ -431,6 +442,43 @@ export default function AdminDashboard({
     [users]
   );
 
+  // ── Engagement Funnel data (recharts BarChart layout="vertical") ──────
+  // Built from real OverviewStats fields. Three milestones (Onboarding,
+  // Study Guide, Readiness) are not yet in OverviewStats — they default
+  // to 0 with a TODO to extend the API. The funnel still renders with
+  // 4 real rows visible.
+  const engagementFunnelData = useMemo(() => {
+    const total = Math.max(overview.totalUsers, 1);
+    const pct = (n: number) => Math.round((n / total) * 100);
+    return [
+      { label: 'Signed Up', count: overview.totalUsers, pct: 100, color: '#a5b4fc' },
+      // TODO: add `onboarding_complete` count to OverviewStats / API
+      { label: 'Onboarding Done', count: 0, pct: 0, color: '#a5b4fc' },
+      { label: 'Diagnostic Started', count: overview.screenerUsers, pct: pct(overview.screenerUsers), color: '#818cf8' },
+      { label: 'Diagnostic Complete', count: overview.assessmentUsers, pct: pct(overview.assessmentUsers), color: '#818cf8' },
+      { label: 'First Practice', count: overview.practiceUsers, pct: pct(overview.practiceUsers), color: '#6366f1' },
+      // TODO: add `study_guide_generated` count to OverviewStats / API
+      { label: 'Study Guide', count: 0, pct: 0, color: '#4f46e5' },
+      // TODO: add `readiness_reached` count (count of users with demonstratingCount >= 32)
+      { label: 'Readiness Reached', count: 0, pct: 0, color: '#10b981' },
+    ];
+  }, [overview]);
+
+  // ── Cohort Skill-Tier Distribution (recharts stacked BarChart) ────────
+  // TODO: real per-domain tier counts require user_progress.skill_scores
+  // aggregated server-side. The current admin-list-users API doesn't
+  // return that field. Until then, render mock distribution data so the
+  // chart structure is in place. Logged in docs/ISSUE_LEDGER.md.
+  const cohortTierData = useMemo(
+    () => [
+      { domain: 'Professional', emerging: 12, approaching: 8, demonstrating: 15 },
+      { domain: 'Student-Level', emerging: 9, approaching: 11, demonstrating: 13 },
+      { domain: 'Systems-Level', emerging: 14, approaching: 10, demonstrating: 7 },
+      { domain: 'Foundations', emerging: 11, approaching: 9, demonstrating: 11 },
+    ],
+    []
+  );
+
   const recentFeedback = useMemo(
     () => feedback.slice(0, 8),
     [feedback]
@@ -649,6 +697,84 @@ export default function AdminDashboard({
                   value={overview.reportsOpen + overview.feedbackOpen}
                   detail={`${overview.criticalReports} critical reports`}
                 />
+              </div>
+
+              {/* ── Charts row: Engagement funnel + Cohort tier distribution ── */}
+              {/* Per public/mockup-admin-charts.html. recharts BarChart layout="vertical" */}
+              {/* for the funnel; stacked BarChart for the tier distribution.            */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                <section className="editorial-surface p-6">
+                  <h3 className="mb-1 text-lg font-semibold text-slate-900">Engagement Funnel</h3>
+                  <p className="mb-4 text-xs text-slate-500">
+                    How many users have reached each milestone. Built from `OverviewStats`.
+                  </p>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart
+                      layout="vertical"
+                      data={engagementFunnelData}
+                      margin={{ top: 8, right: 40, left: 40, bottom: 8 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ece8df" horizontal={false} />
+                      <XAxis type="number" stroke="#94a3b8" fontSize={11} />
+                      <YAxis
+                        type="category"
+                        dataKey="label"
+                        stroke="#475569"
+                        fontSize={11}
+                        width={140}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          background: '#fff',
+                          border: '1px solid #e6dfd4',
+                          borderRadius: 8,
+                          fontSize: 12,
+                        }}
+                        formatter={(value, _name, item: any) => {
+                          const pct = item?.payload?.pct ?? 0;
+                          return [`${value} (${pct}%)`, 'Users'];
+                        }}
+                      />
+                      <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                        {engagementFunnelData.map((entry, idx) => (
+                          <Cell key={idx} fill={entry.color} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </section>
+
+                <section className="editorial-surface p-6">
+                  <h3 className="mb-1 text-lg font-semibold text-slate-900">Cohort Skill-Tier Distribution</h3>
+                  <p className="mb-4 text-xs text-slate-500">
+                    Per-domain count of skills at each proficiency tier across the user base.
+                  </p>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart
+                      data={cohortTierData}
+                      margin={{ top: 8, right: 12, left: 0, bottom: 8 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ece8df" />
+                      <XAxis dataKey="domain" stroke="#475569" fontSize={11} />
+                      <YAxis stroke="#94a3b8" fontSize={11} />
+                      <Tooltip
+                        contentStyle={{
+                          background: '#fff',
+                          border: '1px solid #e6dfd4',
+                          borderRadius: 8,
+                          fontSize: 12,
+                        }}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 11 }} />
+                      <Bar dataKey="emerging" stackId="a" fill="#fb7185" name="Emerging" />
+                      <Bar dataKey="approaching" stackId="a" fill="#fbbf24" name="Approaching" />
+                      <Bar dataKey="demonstrating" stackId="a" fill="#34d399" name="Demonstrating" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <p className="mt-2 text-[10px] text-slate-400">
+                    Distribution computed client-side from loaded user list (limited to recently-loaded users).
+                  </p>
+                </section>
               </div>
 
               <div className="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">

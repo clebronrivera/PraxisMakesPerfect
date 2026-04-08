@@ -1,8 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { X, RefreshCw, BarChart3, Clock, TrendingUp, AlertTriangle, BookOpen } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip,
+  ReferenceLine,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts';
 import { supabase } from '../config/supabase';
 import { PROGRESS_DOMAINS, PROGRESS_SKILL_LOOKUP } from '../utils/progressTaxonomy';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
+import { SkillProgressBar } from './SkillProgressBar';
 
 interface UserInfo {
   id: string;
@@ -101,7 +113,15 @@ function formatMode(mode: string | null): string {
   if (mode === 'screener') return 'Screener';
   if (mode === 'full_assessment') return 'Full Assessment';
   if (mode === 'adaptive_diagnostic') return 'Diagnostic';
+  if (mode === 'post_assessment') return 'Post-Assessment';
   return mode;
+}
+
+interface ProgressInfo {
+  baseline_snapshot: Record<string, { score?: number | null }> | null;
+  skill_scores: Record<string, { score?: number | null }> | null;
+  post_assessment_snapshot: Record<string, { score?: number | null }> | null;
+  post_assessment_completed_at: string | null;
 }
 
 function formatDate(iso: string | null): string {
@@ -116,6 +136,7 @@ interface StudentDetailDrawerProps {
 
 export default function StudentDetailDrawer({ user, onClose }: StudentDetailDrawerProps) {
   const [responses, setResponses] = useState<ResponseRow[]>([]);
+  const [progress, setProgress] = useState<ProgressInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [skillSort, setSkillSort] = useState<'accuracy' | 'attempts' | 'avgTime'>('accuracy');
@@ -136,7 +157,10 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
         });
         const body = await res.json();
         if (!res.ok) throw new Error(body.error || 'Failed to load student data');
-        if (active) setResponses(body.responses || []);
+        if (active) {
+          setResponses(body.responses || []);
+          setProgress(body.progress || null);
+        }
       } catch (err) {
         if (active) setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -146,6 +170,45 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
 
     return () => { active = false; };
   }, [user.id]);
+
+  // ── Growth Since Diagnostic (per-skill two-tone bars) ─────────────────────
+  // Built from baseline_snapshot (frozen at diagnostic completion) vs current
+  // skill_scores. Renders only for skills present in the baseline snapshot.
+  const growthRows = useMemo(() => {
+    if (!progress?.baseline_snapshot || !progress?.skill_scores) return [];
+    const baseline = progress.baseline_snapshot;
+    const current = progress.skill_scores;
+    const baselineSkillIds = Object.keys(baseline);
+    return baselineSkillIds
+      .map(skillId => {
+        const baseScore = baseline[skillId]?.score ?? null;
+        const currentScore = current[skillId]?.score ?? null;
+        const def = PROGRESS_SKILL_LOOKUP[skillId];
+        return {
+          skillId,
+          label: def?.shortLabel ?? skillId,
+          baseline: baseScore,
+          current: currentScore ?? 0,
+          delta: baseScore !== null && currentScore !== null ? currentScore - baseScore : null,
+        };
+      })
+      .filter(r => r.baseline !== null)
+      .sort((a, b) => (b.delta ?? 0) - (a.delta ?? 0));
+  }, [progress]);
+
+  const growthSummary = useMemo(() => {
+    if (growthRows.length === 0) return null;
+    let improved = 0;
+    let regressed = 0;
+    let unchanged = 0;
+    for (const r of growthRows) {
+      if (r.delta === null) continue;
+      if (r.delta > 0.005) improved++;
+      else if (r.delta < -0.005) regressed++;
+      else unchanged++;
+    }
+    return { improved, regressed, unchanged };
+  }, [growthRows]);
 
   // ── Domain Stats ──────────────────────────────────────────────────────────
   const domainStats: DomainStat[] = PROGRESS_DOMAINS.map((domain) => {
@@ -300,6 +363,61 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
               </div>
             </section>
 
+            {/* ── Growth Since Diagnostic (two-tone bars) ── */}
+            {/* Inserted per docs/WORKFLOW_GROUNDING.md section 3.10. */}
+            {growthRows.length > 0 && growthSummary && (
+              <section>
+                <div className="mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-indigo-600" />
+                  <h3 className="font-semibold text-slate-900">Growth Since Diagnostic</h3>
+                  <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                    {growthSummary.improved} improved
+                  </span>
+                  {growthSummary.regressed > 0 && (
+                    <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700">
+                      {growthSummary.regressed} regressed
+                    </span>
+                  )}
+                  {growthSummary.unchanged > 0 && (
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                      {growthSummary.unchanged} unchanged
+                    </span>
+                  )}
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-[#fbfaf7] p-4">
+                  <div className="mb-3 flex flex-wrap items-center gap-4 text-[10px] text-slate-500">
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block h-2.5 w-2.5 rounded-sm bg-indigo-900" />
+                      At diagnostic
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block h-2.5 w-2.5 rounded-sm bg-indigo-500" />
+                      Growth since
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block h-2.5 w-2.5 rounded-sm bg-rose-500/70" />
+                      Regression
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+                    {growthRows.map(row => (
+                      <SkillProgressBar
+                        key={row.skillId}
+                        label={
+                          <span className="text-[11px]">
+                            {row.skillId} {row.label}
+                          </span>
+                        }
+                        current={row.current}
+                        baseline={row.baseline}
+                        size="sm"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* ── Panel 2: Skill Drill-Down ── */}
             <section>
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -323,6 +441,74 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                   ))}
                 </div>
               </div>
+
+              {/* Per-skill horizontal bar chart per public/mockup-admin-charts.html.   */}
+              {/* Color cells by tier (rose = Emerging, amber = Approaching, emerald   */}
+              {/* = Demonstrating). 80% reference line marks the Demonstrating gate.   */}
+              {sortedSkillStats.length > 0 && (
+                <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-4">
+                  <ResponsiveContainer width="100%" height={Math.max(260, sortedSkillStats.length * 22)}>
+                    <BarChart
+                      layout="vertical"
+                      data={sortedSkillStats.map(s => ({
+                        ...s,
+                        accuracyFraction: s.accuracy / 100,
+                      }))}
+                      margin={{ top: 8, right: 40, left: 8, bottom: 8 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ece8df" horizontal={false} />
+                      <XAxis
+                        type="number"
+                        domain={[0, 1]}
+                        tickFormatter={(v) => `${Math.round(v * 100)}%`}
+                        stroke="#94a3b8"
+                        fontSize={10}
+                      />
+                      <YAxis
+                        type="category"
+                        dataKey="label"
+                        stroke="#475569"
+                        fontSize={10}
+                        width={140}
+                      />
+                      <RechartsTooltip
+                        contentStyle={{
+                          background: '#fff',
+                          border: '1px solid #e6dfd4',
+                          borderRadius: 8,
+                          fontSize: 12,
+                        }}
+                        formatter={(value) => [`${Math.round((Number(value) || 0) * 100)}%`, 'Accuracy']}
+                      />
+                      <ReferenceLine x={DEMONSTRATING_THRESHOLD} stroke="#10b981" strokeDasharray="3 3" />
+                      <Bar dataKey="accuracyFraction" radius={[0, 4, 4, 0]}>
+                        {sortedSkillStats.map((s, idx) => {
+                          const fill =
+                            s.accuracy >= 80 ? '#34d399'
+                            : s.accuracy >= 60 ? '#fbbf24'
+                            : '#fb7185';
+                          return <Cell key={idx} fill={fill} />;
+                        })}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <div className="mt-2 flex gap-4 text-[10px] text-slate-500">
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400" /> Demonstrating
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-sm bg-amber-400" /> Approaching
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-sm bg-rose-400" /> Emerging
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-0.5 w-3 bg-emerald-500" /> 80% threshold
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <div className="overflow-x-auto rounded-2xl border border-slate-200">
                 <table className="min-w-full divide-y divide-slate-200 text-sm">
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">

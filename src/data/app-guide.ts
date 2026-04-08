@@ -136,7 +136,7 @@ Q: How many total skills are there?
 A: 45 skills across 4 domains.
 
 Q: How many questions are in the question bank?
-A: Over 1,100 practice questions across all 45 skills.
+A: 1,150 practice questions across all 45 skills.
 `;
 
 export const PAGE_CONTEXT_HINTS: Record<string, string> = {

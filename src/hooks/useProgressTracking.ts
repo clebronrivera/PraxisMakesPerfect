@@ -95,6 +95,16 @@ export interface UserProfile {
   otherResourcesList?: string[];
   whatWasMissing?: string;
 
+  // Simplified onboarding (migration 0017) — single-page 6-field form.
+  // Coexists with the legacy fields above for existing users.
+  // See docs/WORKFLOW_GROUNDING.md section 3.10.
+  firstName?: string;
+  lastName?: string;
+  zipCode?: string;
+  schoolAttending?: string;
+  purpose?: string;
+  howDidYouHear?: string;
+
   // Redemption Rounds
   redemptionCredits?: number;
   practiceQuestionsSinceCredit?: number;
@@ -102,6 +112,13 @@ export interface UserProfile {
 
   // Baseline snapshot (captured on first diagnostic completion)
   baselineSnapshot?: Record<string, { score: number; attempts: number; correct: number }>;
+
+  // Post-assessment snapshot (captured once when readiness reaches 32/45 and the
+  // user completes the post-assessment retake). One-shot pattern, mirrors
+  // baselineSnapshot. Stored in supabase column `post_assessment_snapshot` (JSONB)
+  // added by migration 0018. See docs/WORKFLOW_GROUNDING.md section 3.10.
+  postAssessmentSnapshot?: Record<string, { score: number; attempts: number; correct: number }>;
+  postAssessmentCompletedAt?: string;
 }
 
 export interface ResponseLog {
@@ -315,6 +332,10 @@ export function useProgressTracking() {
 
           // Baseline snapshot
           baselineSnapshot: data.baseline_snapshot ?? undefined,
+
+          // Post-assessment snapshot (migration 0018)
+          postAssessmentSnapshot: data.post_assessment_snapshot ?? undefined,
+          postAssessmentCompletedAt: data.post_assessment_completed_at ?? undefined,
         });
       } else {
         setProfileState(defaultProfile);
@@ -376,6 +397,10 @@ export function useProgressTracking() {
         // Baseline snapshot
         baseline_snapshot: newProfile.baselineSnapshot ?? null,
 
+        // Post-assessment snapshot (migration 0018)
+        post_assessment_snapshot: newProfile.postAssessmentSnapshot ?? null,
+        post_assessment_completed_at: newProfile.postAssessmentCompletedAt ?? null,
+
         updated_at: new Date().toISOString()
       };
 
@@ -418,6 +443,13 @@ export function useProgressTracking() {
     used_other_resources?: boolean | null;
     other_resources_list?: string[];
     what_was_missing?: string;
+    // Simplified onboarding (migration 0017)
+    first_name?: string;
+    last_name?: string;
+    zip_code?: string;
+    school_attending?: string;
+    purpose?: string;
+    how_did_you_hear?: string;
   }) => {
     if (!user) return;
     try {
@@ -462,6 +494,13 @@ export function useProgressTracking() {
         usedOtherResources: data.used_other_resources ?? undefined,
         otherResourcesList: data.other_resources_list ?? [],
         whatWasMissing: data.what_was_missing,
+        // Simplified onboarding fields
+        firstName: data.first_name,
+        lastName: data.last_name,
+        zipCode: data.zip_code,
+        schoolAttending: data.school_attending,
+        purpose: data.purpose,
+        howDidYouHear: data.how_did_you_hear,
       });
     } catch (err) {
       console.error('[saveOnboardingData] Error:', err);

@@ -83,6 +83,4 @@ export async function runAllDiagnostics() {
   };
 }
 
-if (import.meta.main) {
-  runAllDiagnostics();
-}
+runAllDiagnostics();

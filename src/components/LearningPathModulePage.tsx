@@ -500,7 +500,7 @@ export default function LearningPathModulePage({
   const viewedCount = modules.filter(m => lpLocal.isViewed(m.id)).length;
 
   // ── Study Center sidebar state ───────────────────────────────────────────
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div className="flex gap-6">
@@ -534,16 +534,17 @@ export default function LearningPathModulePage({
         {/* Print button */}
         <button
           onClick={() => window.print()}
-          className="shrink-0 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-400 hover:border-amber-200 hover:text-amber-700 transition-all"
+          className="shrink-0 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-500 hover:border-amber-200 hover:text-amber-700 transition-all"
           title="Print lesson"
         >
           <Printer className="w-4 h-4" />
+          <span>Print</span>
         </button>
 
         {/* Study Center toggle */}
         <button
           onClick={() => setSidebarOpen(prev => !prev)}
-          className={`shrink-0 rounded-xl border p-2.5 transition-all relative ${
+          className={`shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all relative ${
             sidebarOpen
               ? 'border-amber-300 bg-amber-50 text-amber-700'
               : 'border-slate-200 bg-white text-slate-400 hover:border-amber-200 hover:text-amber-700'
@@ -551,8 +552,9 @@ export default function LearningPathModulePage({
           title="Toggle Study Center"
         >
           <PanelRight className="w-4 h-4" />
+          <span>Study Center</span>
           {focusItems.newCount > 0 && !sidebarOpen && (
-            <span className="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-amber-500 px-1 text-[8px] font-bold text-white">
+            <span className="flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-amber-500 px-1 text-[8px] font-bold text-white">
               {focusItems.newCount}
             </span>
           )}
