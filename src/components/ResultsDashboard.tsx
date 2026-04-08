@@ -2,7 +2,21 @@
 // Progress page — pure analytics. No practice entry points.
 
 import { useMemo, useState } from 'react';
-import { ChevronDown, ChevronUp, Clock, Lightbulb } from 'lucide-react';
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Gauge,
+  Hourglass,
+  Lightbulb,
+  Minus,
+  Sparkles,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Zap,
+} from 'lucide-react';
 import type { Skill } from '../types/content';
 import type { UserProfile } from '../hooks/useProgressTracking';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
@@ -10,6 +24,7 @@ import { buildProgressSummary } from '../utils/progressSummaries';
 import { TOTAL_SKILLS } from '../utils/skillProficiency';
 import { buildConceptAnalytics, type ConceptAnalyticsReport } from '../utils/conceptAnalytics';
 import { computeTimeStats, computeConfidenceStats } from '../utils/diagnosticSelectors';
+import { SkillProgressBar } from './SkillProgressBar';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -94,8 +109,6 @@ export default function ResultsDashboard({
     }
     return { emergedToApproaching, approachingToDemo };
   }, [progress, baselineProgress]);
-
-  const demonstratingCount = progress.skills.filter(s => s.colorState === 'green').length;
 
   const totalAttempts = progress.skills.reduce((s, sk) => s + sk.attempted, 0);
   const totalCorrect = progress.skills.reduce((s, sk) => s + sk.correct, 0);
@@ -217,23 +230,47 @@ export default function ResultsDashboard({
           <p className="text-sm font-bold text-slate-800 mb-4">Skill Proficiency Map</p>
           <div className="grid grid-cols-5 sm:grid-cols-9 gap-1.5">
             {progress.skills
-              .filter(s => s.attempted > 0)
-              .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+              .slice()
+              .sort((a, b) => {
+                // Unattempted skills go to the end
+                if (a.attempted === 0 && b.attempted > 0) return 1;
+                if (b.attempted === 0 && a.attempted > 0) return -1;
+                // Both attempted: sort by score descending
+                return (b.score ?? 0) - (a.score ?? 0);
+              })
               .map(skill => {
+                const isAttempted = skill.attempted > 0;
                 const pct = skill.score !== null ? Math.round(skill.score * 100) : 0;
-                const bg = pct >= 80 ? 'bg-emerald-400' : pct >= 60 ? 'bg-amber-400' : 'bg-rose-400';
+                const colorClass = !isAttempted
+                  ? 'bg-slate-200'
+                  : pct >= 80
+                  ? 'bg-emerald-400'
+                  : pct >= 60
+                  ? 'bg-amber-400'
+                  : 'bg-rose-400';
+                const tooltipScore = isAttempted ? `${pct}%` : 'Not started';
+                const tooltipStatus = isAttempted ? skill.statusLabel : 'Not started';
                 return (
-                  <div
-                    key={skill.skillId}
-                    className={`h-8 rounded ${bg} flex items-center justify-center text-[8px] font-bold text-white cursor-default`}
-                    title={`${skill.fullLabel}: ${pct}%`}
-                  >
-                    {pct}
+                  <div key={skill.skillId} className="group relative">
+                    {/* Colored square */}
+                    <div
+                      className={`h-7 w-7 sm:h-8 sm:w-8 rounded cursor-default transition-transform group-hover:scale-110 ${colorClass} ${isAttempted ? 'flex items-center justify-center' : ''}`}
+                    >
+                      {isAttempted && (
+                        <span className="text-[8px] font-bold text-white">{pct}</span>
+                      )}
+                    </div>
+                    {/* Hover tooltip */}
+                    <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 -translate-x-1/2 w-44 rounded-lg bg-slate-800 px-2.5 py-1.5 text-left opacity-0 shadow-lg group-hover:opacity-100 transition-opacity duration-150">
+                      <p className="text-[11px] font-semibold text-white leading-tight">{skill.shortLabel}</p>
+                      <p className="mt-0.5 text-[10px] text-slate-300">{skill.domainName}</p>
+                      <p className="text-[10px] text-slate-300">{tooltipScore} · {tooltipStatus}</p>
+                    </div>
                   </div>
                 );
               })}
           </div>
-          <div className="flex gap-4 mt-3 text-[10px]">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-[10px]">
             <span className="flex items-center gap-1">
               <span className="w-3 h-3 rounded bg-emerald-400" />
               Demonstrating (≥80%)
@@ -245,6 +282,10 @@ export default function ResultsDashboard({
             <span className="flex items-center gap-1">
               <span className="w-3 h-3 rounded bg-rose-400" />
               Emerging (&lt;60%)
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded bg-slate-200" />
+              Not started
             </span>
           </div>
         </div>
@@ -280,34 +321,104 @@ export default function ResultsDashboard({
       </div>
 
       {/* ── Growth since baseline (collapsible) ──────────────────────────────── */}
-      {hasBaseline && growthMetrics && (
+      {/* Two-tone bars per docs/WORKFLOW_GROUNDING.md section 3.10:               */}
+      {/*   indigo-900 baseline + indigo-500 growth, rose-500/70 for regression.   */}
+      {hasBaseline && baselineProgress && growthMetrics && (
         <div className="editorial-surface overflow-hidden">
           <button
             onClick={() => setShowBaseline(prev => !prev)}
             className="flex w-full items-center justify-between px-5 py-3 transition-colors hover:bg-[#fbfaf7]"
           >
-            <p className="text-sm font-bold text-slate-800">Growth Since Diagnostic</p>
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-bold text-slate-800">Growth Since Diagnostic</p>
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                {growthMetrics.approachingToDemo} reached Demonstrating
+              </span>
+              {growthMetrics.emergedToApproaching > 0 && (
+                <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                  +{growthMetrics.emergedToApproaching} tier
+                </span>
+              )}
+            </div>
             {showBaseline
               ? <ChevronUp className="w-4 h-4 text-slate-400" />
               : <ChevronDown className="w-4 h-4 text-slate-400" />}
           </button>
           {showBaseline && (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 border-t border-slate-200 px-5 pb-4 pt-3">
-              <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-3 text-center">
-                <p className="text-2xl font-extrabold text-emerald-600">{growthMetrics.approachingToDemo}</p>
-                <p className="text-[11px] text-slate-500 mt-1">Reached Demonstrating</p>
+            <div className="space-y-5 border-t border-slate-200 px-5 pb-5 pt-4">
+              {/* Legend */}
+              <div className="flex flex-wrap items-center gap-4 text-[10px] text-slate-500">
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm bg-indigo-900" />
+                  At diagnostic
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm bg-indigo-500" />
+                  Growth since
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm bg-rose-500/70" />
+                  Regression
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block h-2 w-0.5 bg-amber-500/70" />
+                  70% goal
+                </span>
               </div>
-              <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-3 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{growthMetrics.emergedToApproaching}</p>
-                <p className="text-[11px] text-slate-500 mt-1">Improved a tier</p>
+
+              {/* Per-domain two-tone bars */}
+              <div className="space-y-3">
+                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">By domain</p>
+                {progress.domains.map(domain => {
+                  const baseDomain = baselineProgress.domains.find(d => d.domainId === domain.domainId);
+                  const currentPct = domain.activeSkillCount > 0
+                    ? domain.strongerSkillCount / domain.activeSkillCount
+                    : 0;
+                  const baselinePct = baseDomain && baseDomain.activeSkillCount > 0
+                    ? baseDomain.strongerSkillCount / baseDomain.activeSkillCount
+                    : null;
+                  return (
+                    <SkillProgressBar
+                      key={domain.domainId}
+                      label={DOMAIN_SHORT_NAMES[domain.domainId] ?? domain.domainName}
+                      current={currentPct}
+                      baseline={baselinePct}
+                      target={0.7}
+                      size="md"
+                    />
+                  );
+                })}
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-                <p className="text-2xl font-extrabold text-slate-800">{demonstratingCount}</p>
-                <p className="text-[11px] text-slate-500 mt-1">Currently Demonstrating</p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-                <p className="text-2xl font-extrabold text-slate-800">{baselineProgress ? baselineProgress.skills.filter(s => s.colorState === 'green').length : 0}</p>
-                <p className="text-[11px] text-slate-500 mt-1">Baseline Demonstrating</p>
+
+              {/* Per-skill two-tone bars (only skills with attempts) */}
+              <div className="space-y-2">
+                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                  By skill ({progress.skills.filter(s => s.attempted > 0).length} active)
+                </p>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+                  {progress.skills
+                    .filter(s => s.attempted > 0)
+                    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+                    .map(skill => {
+                      const baseSkill = baselineProgress.skills.find(s => s.skillId === skill.skillId);
+                      const baselineFraction = baseSkill && baseSkill.score !== null ? baseSkill.score : null;
+                      const currentFraction = skill.score ?? 0;
+                      return (
+                        <SkillProgressBar
+                          key={skill.skillId}
+                          label={
+                            <span className="text-[11px]">
+                              {skill.skillId} {skill.fullLabel}
+                            </span>
+                          }
+                          current={currentFraction}
+                          baseline={baselineFraction}
+                          size="sm"
+                          sublabel={baselineFraction === null ? 'No baseline (not in diagnostic)' : undefined}
+                        />
+                      );
+                    })}
+                </div>
               </div>
             </div>
           )}
@@ -324,9 +435,17 @@ export default function ResultsDashboard({
             <div className="flex items-center gap-2">
               <Lightbulb className="w-3.5 h-3.5 text-cyan-600" />
               <p className="text-sm font-bold text-slate-800">Concept Insights</p>
+              <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-600">
+                {conceptReport.summary.totalConceptsTested} tested
+              </span>
               {conceptReport.summary.totalGaps > 0 && (
                 <span className="rounded-full bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-black uppercase text-rose-700">
                   {conceptReport.summary.totalGaps} gap{conceptReport.summary.totalGaps !== 1 ? 's' : ''}
+                </span>
+              )}
+              {conceptReport.summary.totalStrengths > 0 && (
+                <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-700">
+                  {conceptReport.summary.totalStrengths} strong
                 </span>
               )}
             </div>
@@ -336,38 +455,183 @@ export default function ResultsDashboard({
           </button>
 
           {conceptsExpanded && (
-            <div className="space-y-4 border-t border-slate-200 px-5 pb-4 pt-3">
+            <div className="space-y-5 border-t border-slate-200 px-5 pb-5 pt-4">
+              {/* Summary tiles */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="rounded-lg border border-slate-200 bg-[#fbfaf7] px-3 py-2">
+                  <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-500">Concepts</p>
+                  <p className="text-lg font-black tabular-nums text-slate-800">
+                    {conceptReport.summary.totalConceptsTested}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2">
+                  <p className="text-[9px] font-semibold uppercase tracking-wide text-rose-600">Gaps</p>
+                  <p className="text-lg font-black tabular-nums text-rose-700">
+                    {conceptReport.summary.totalGaps}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2">
+                  <p className="text-[9px] font-semibold uppercase tracking-wide text-amber-700">Cross-skill</p>
+                  <p className="text-lg font-black tabular-nums text-amber-700">
+                    {conceptReport.summary.totalCrossSkillGaps}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50/60 px-3 py-2">
+                  <p className="text-[9px] font-semibold uppercase tracking-wide text-emerald-700">Strong</p>
+                  <p className="text-lg font-black tabular-nums text-emerald-700">
+                    {conceptReport.summary.totalStrengths}
+                  </p>
+                </div>
+              </div>
+
+              {/* Overall concept accuracy bar */}
+              <div>
+                <div className="flex items-baseline justify-between mb-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Overall concept accuracy
+                  </p>
+                  <span className="text-sm font-bold tabular-nums text-slate-700">
+                    {Math.round(conceptReport.summary.overallConceptAccuracy * 100)}%
+                  </span>
+                </div>
+                <div className="h-2 rounded-full bg-[#ece8df] overflow-hidden">
+                  <div
+                    className={`h-full transition-all duration-700 ${
+                      conceptReport.summary.overallConceptAccuracy >= 0.8 ? 'bg-emerald-500'
+                      : conceptReport.summary.overallConceptAccuracy >= 0.6 ? 'bg-amber-500'
+                      : 'bg-rose-500'
+                    }`}
+                    style={{ width: `${Math.round(conceptReport.summary.overallConceptAccuracy * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Empty-state when there are no surfaced gaps or strengths yet */}
+              {conceptReport.crossSkillGaps.length === 0 &&
+                conceptReport.gapConcepts.length === 0 &&
+                conceptReport.strengthConcepts.length === 0 && (
+                <div className="rounded-lg border border-dashed border-slate-300 bg-[#fbfaf7] px-4 py-5 text-center">
+                  <Lightbulb className="mx-auto mb-2 h-5 w-5 text-slate-400" />
+                  <p className="text-sm font-semibold text-slate-700">Not enough signal yet</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Concepts need at least 3 attempts before we surface a strength or gap.
+                    Practice more questions to unlock insights here.
+                  </p>
+                </div>
+              )}
+
+              {/* Cross-skill gaps */}
               {conceptReport.crossSkillGaps.length > 0 && (
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-rose-600">Cross-skill gaps</p>
-                  <div className="space-y-1.5">
-                    {conceptReport.crossSkillGaps.slice(0, 8).map(gap => (
-                      <div key={gap.concept} className="flex items-center justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-700 truncate">{gap.concept}</p>
-                          <p className="text-[11px] text-slate-400 truncate">
-                            Weak in {gap.affectedSkills.length} skills
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <AlertTriangle className="h-3.5 w-3.5 text-rose-600" />
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-rose-600">
+                      Cross-skill gaps
+                    </p>
+                    <span className="text-[10px] text-slate-400">— concept is weak across multiple skills</span>
+                  </div>
+                  <div className="space-y-2.5">
+                    {conceptReport.crossSkillGaps.slice(0, 6).map(gap => {
+                      const pct = Math.round(gap.accuracy * 100);
+                      return (
+                        <div key={gap.concept}>
+                          <div className="flex items-baseline justify-between gap-3 mb-1">
+                            <p className="text-sm font-medium text-slate-800 truncate">{gap.concept}</p>
+                            <span className="shrink-0 text-sm font-bold tabular-nums text-rose-600">{pct}%</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-[#ece8df] overflow-hidden">
+                            <div
+                              className="h-full bg-rose-500/80 transition-all duration-700"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <p className="mt-0.5 text-[10px] text-slate-400">
+                            {gap.attempted} attempts · weak in {gap.affectedSkills.length} skill{gap.affectedSkills.length !== 1 ? 's' : ''}
                           </p>
                         </div>
-                        <span className="shrink-0 text-sm font-bold tabular-nums text-rose-600">
-                          {Math.round(gap.accuracy * 100)}%
-                        </span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
+
+              {/* Weakest concepts (gap concepts not already in cross-skill gaps) */}
               {conceptReport.gapConcepts.length > 0 && (
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-amber-700">Weakest concepts</p>
-                  <div className="space-y-1.5">
-                    {conceptReport.gapConcepts.slice(0, 8).map(c => (
-                      <div key={c.concept} className="flex items-center justify-between gap-3">
-                        <p className="flex-1 truncate text-sm text-slate-700">{c.concept}</p>
-                        <span className="text-sm font-bold tabular-nums text-amber-700">
-                          {Math.round(c.accuracy * 100)}%
-                        </span>
-                      </div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Target className="h-3.5 w-3.5 text-amber-700" />
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">
+                      Weakest concepts
+                    </p>
+                  </div>
+                  <div className="space-y-2.5">
+                    {conceptReport.gapConcepts.slice(0, 6).map(c => {
+                      const pct = Math.round(c.accuracy * 100);
+                      const TrendIcon = c.trend === 'improving' ? TrendingUp
+                        : c.trend === 'declining' ? TrendingDown
+                        : c.trend === 'stable' ? Minus
+                        : null;
+                      const trendColor = c.trend === 'improving' ? 'text-emerald-600'
+                        : c.trend === 'declining' ? 'text-rose-500'
+                        : 'text-slate-400';
+                      const highWrong = c.confidenceBreakdown.high.total - c.confidenceBreakdown.high.correct;
+                      return (
+                        <div key={c.concept}>
+                          <div className="flex items-baseline justify-between gap-3 mb-1">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <p className="text-sm font-medium text-slate-800 truncate">{c.concept}</p>
+                              {TrendIcon && (
+                                <TrendIcon className={`h-3 w-3 shrink-0 ${trendColor}`} />
+                              )}
+                              {highWrong > 0 && (
+                                <span
+                                  title={`${highWrong} high-confidence wrong — possible misconception`}
+                                  className="rounded-full border border-rose-200 bg-rose-50 px-1.5 py-0 text-[9px] font-bold uppercase tracking-wide text-rose-600"
+                                >
+                                  ⚠ {highWrong}
+                                </span>
+                              )}
+                            </div>
+                            <span className="shrink-0 text-sm font-bold tabular-nums text-amber-700">{pct}%</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-[#ece8df] overflow-hidden">
+                            <div
+                              className="h-full bg-amber-500/80 transition-all duration-700"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <p className="mt-0.5 text-[10px] text-slate-400">
+                            {c.correct}/{c.attempted} correct
+                            {c.avgTimeSeconds !== null && ` · ${formatTime(c.avgTimeSeconds)} avg`}
+                            {' · '}
+                            {c.relatedSkills.length} related skill{c.relatedSkills.length !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Strength concepts */}
+              {conceptReport.strengthConcepts.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+                      Strongest concepts
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {conceptReport.strengthConcepts.slice(0, 12).map(c => (
+                      <span
+                        key={c.concept}
+                        className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-800"
+                        title={`${c.correct}/${c.attempted} correct`}
+                      >
+                        {c.concept}
+                        <span className="font-bold tabular-nums">{Math.round(c.accuracy * 100)}%</span>
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -386,6 +650,16 @@ export default function ResultsDashboard({
           <div className="flex items-center gap-2">
             <Clock className="w-3.5 h-3.5 text-amber-700" />
             <p className="text-sm font-bold text-slate-800">Advanced Statistics</p>
+            {timeStats.avgOverall !== null && (
+              <span className="rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+                {formatTime(timeStats.avgOverall)} / Q
+              </span>
+            )}
+            {confidenceStats.interpretation === 'possible_overconfidence' && (
+              <span className="rounded-full bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-rose-700">
+                Overconfidence
+              </span>
+            )}
           </div>
           {advancedExpanded
             ? <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -393,53 +667,190 @@ export default function ResultsDashboard({
         </button>
 
         {advancedExpanded && (
-          <div className="space-y-4 border-t border-slate-200 px-5 pb-4 pt-3">
-            {timeStats.avgOverall === null ? (
-              <p className="text-sm italic text-slate-500">No timing data recorded yet.</p>
+          <div className="space-y-5 border-t border-slate-200 px-5 pb-5 pt-4">
+            {timeStats.avgOverall === null && rawPct === null ? (
+              <p className="text-sm italic text-slate-500">No timing or confidence data recorded yet.</p>
             ) : (
               <>
-                <div>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Avg time per question</p>
-                  <span className="tabular-nums text-2xl font-bold text-amber-700">{formatTime(timeStats.avgOverall)}</span>
+                {/* Top stat tiles */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="rounded-lg border border-slate-200 bg-[#fbfaf7] px-3 py-2">
+                    <div className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+                      <Hourglass className="h-3 w-3" /> Avg / Q
+                    </div>
+                    <p className="text-lg font-black tabular-nums text-amber-700">
+                      {timeStats.avgOverall !== null ? formatTime(timeStats.avgOverall) : '—'}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-slate-200 bg-[#fbfaf7] px-3 py-2">
+                    <div className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+                      <Clock className="h-3 w-3" /> Total time
+                    </div>
+                    <p className="text-lg font-black tabular-nums text-slate-800">
+                      {totalStudyFormatted}
+                    </p>
+                  </div>
+                  <div
+                    className="rounded-lg border border-slate-200 bg-[#fbfaf7] px-3 py-2"
+                    title="Answers logged in under 4 seconds — tap-fast guesses"
+                  >
+                    <div className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+                      <Zap className="h-3 w-3" /> Rapid taps
+                    </div>
+                    <p className={`text-lg font-black tabular-nums ${
+                      (timeStats.shadowMetrics?.rapidGuessCount ?? 0) > 5 ? 'text-rose-600' : 'text-slate-800'
+                    }`}>
+                      {timeStats.shadowMetrics?.rapidGuessCount ?? 0}
+                    </p>
+                  </div>
+                  <div
+                    className="rounded-lg border border-slate-200 bg-[#fbfaf7] px-3 py-2"
+                    title="High-confidence answers that turned out wrong — possible misconceptions"
+                  >
+                    <div className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+                      <AlertTriangle className="h-3 w-3" /> Sure-but-wrong
+                    </div>
+                    <p className={`text-lg font-black tabular-nums ${
+                      confidenceStats.totalHighWrong > 3 ? 'text-rose-600' : 'text-slate-800'
+                    }`}>
+                      {confidenceStats.totalHighWrong}
+                    </p>
+                  </div>
                 </div>
-                {Object.keys(timeStats.byDomain).length > 0 && (
+
+                {/* Time by domain — short names + relative bar */}
+                {Object.keys(timeStats.byDomain).length > 0 && (() => {
+                  const maxAvg = Math.max(
+                    ...Object.values(timeStats.byDomain).map(d => d.avg),
+                  );
+                  const domainsWithTime = progress.domains
+                    .filter(d => timeStats.byDomain[d.domainId])
+                    .sort((a, b) => (timeStats.byDomain[b.domainId]?.avg ?? 0) - (timeStats.byDomain[a.domainId]?.avg ?? 0));
+                  return (
+                    <div>
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                        Time by domain
+                      </p>
+                      <div className="space-y-2">
+                        {domainsWithTime.map(d => {
+                          const stat = timeStats.byDomain[d.domainId];
+                          const widthPct = maxAvg > 0 ? Math.round((stat.avg / maxAvg) * 100) : 0;
+                          return (
+                            <div key={d.domainId}>
+                              <div className="flex items-baseline justify-between gap-3 mb-1">
+                                <span className="text-xs font-medium text-slate-700 truncate">
+                                  {DOMAIN_SHORT_NAMES[d.domainId] ?? d.domainName}
+                                </span>
+                                <span className="shrink-0 text-xs font-bold tabular-nums text-slate-700">
+                                  {formatTime(stat.avg)}
+                                  <span className="ml-1 text-[10px] font-medium text-slate-400">
+                                    · {stat.count} Q
+                                  </span>
+                                </span>
+                              </div>
+                              <div className="h-1.5 rounded-full bg-[#ece8df] overflow-hidden">
+                                <div
+                                  className="h-full bg-amber-500/80 transition-all duration-700"
+                                  style={{ width: `${widthPct}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Confidence calibration — visual two-bar comparison */}
+                {rawPct !== null && weightedPct !== null && (
                   <div>
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">By domain</p>
-                    <div className="space-y-1.5">
-                      {progress.domains
-                        .filter(d => timeStats.byDomain[d.domainId])
-                        .sort((a, b) => (timeStats.byDomain[b.domainId]?.avg ?? 0) - (timeStats.byDomain[a.domainId]?.avg ?? 0))
-                        .map(d => (
-                          <div key={d.domainId} className="flex items-center justify-between gap-3">
-                            <p className="flex-1 truncate text-sm text-slate-600">{d.domainName}</p>
-                            <span className="shrink-0 text-sm font-bold tabular-nums text-slate-700">
-                              {formatTime(timeStats.byDomain[d.domainId].avg)}
-                            </span>
-                          </div>
-                        ))}
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <Gauge className="h-3.5 w-3.5 text-slate-500" />
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                          Confidence calibration
+                        </p>
+                      </div>
+                      {confidenceStats.interpretation !== 'insufficient_data' && (
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                          confidenceStats.interpretation === 'well_calibrated'
+                            ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                            : 'border border-rose-200 bg-rose-50 text-rose-700'
+                        }`}>
+                          {confidenceStats.interpretation === 'well_calibrated' ? 'Well calibrated' : 'Overconfidence risk'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <div className="flex items-baseline justify-between gap-3 mb-1">
+                          <span className="text-xs text-slate-600">Raw accuracy</span>
+                          <span className="text-xs font-bold tabular-nums text-slate-700">{rawPct}%</span>
+                        </div>
+                        <div className="h-2 rounded-full bg-[#ece8df] overflow-hidden">
+                          <div
+                            className="h-full bg-slate-500 transition-all duration-700"
+                            style={{ width: `${rawPct}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex items-baseline justify-between gap-3 mb-1">
+                          <span className="text-xs text-slate-600">Confidence-weighted</span>
+                          <span className={`text-xs font-bold tabular-nums ${
+                            confidenceDeltaPct !== null && confidenceDeltaPct < 0 ? 'text-rose-600'
+                            : confidenceDeltaPct !== null && confidenceDeltaPct > 0 ? 'text-emerald-600'
+                            : 'text-slate-700'
+                          }`}>
+                            {weightedPct}%
+                            {confidenceDeltaPct !== null && confidenceDeltaPct !== 0 && (
+                              <span className="ml-1 text-[10px] font-medium">
+                                ({confidenceDeltaPct > 0 ? '+' : ''}{confidenceDeltaPct})
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="h-2 rounded-full bg-[#ece8df] overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-700 ${
+                              confidenceDeltaPct !== null && confidenceDeltaPct < 0 ? 'bg-rose-500/80'
+                              : 'bg-indigo-500'
+                            }`}
+                            style={{ width: `${weightedPct}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-[10px] text-slate-400">
+                      Weighted accuracy double-counts high-confidence answers. A negative delta means
+                      sure-but-wrong responses are dragging your effective performance down.
+                    </p>
+                  </div>
+                )}
+
+                {/* Slowest questions */}
+                {timeStats.topSlowQuestions.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                      Slowest questions
+                    </p>
+                    <div className="space-y-1">
+                      {timeStats.topSlowQuestions.slice(0, 5).map(q => (
+                        <div key={q.questionId} className="flex items-center justify-between gap-3 text-xs">
+                          <span className="font-mono text-[11px] text-slate-500 truncate">
+                            {q.questionId}
+                          </span>
+                          <span className="shrink-0 tabular-nums text-slate-700">
+                            <span className="font-bold text-amber-700">{formatTime(q.avgSeconds)}</span>
+                            <span className="ml-1 text-[10px] text-slate-400">· {q.count}×</span>
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
               </>
-            )}
-
-            {rawPct !== null && weightedPct !== null && (
-              <div>
-                <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Confidence-adjusted accuracy</p>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm text-slate-600">Raw</p>
-                  <span className="text-sm font-bold tabular-nums text-slate-700">{rawPct}%</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 mt-1">
-                  <p className="text-sm text-slate-600">Weighted</p>
-                  <span className={`text-sm font-bold tabular-nums ${
-                    confidenceDeltaPct !== null && confidenceDeltaPct > 0 ? 'text-emerald-600' :
-                    confidenceDeltaPct !== null && confidenceDeltaPct < 0 ? 'text-rose-500' : 'text-slate-700'
-                  }`}>
-                    {weightedPct}%
-                  </span>
-                </div>
-              </div>
             )}
           </div>
         )}
