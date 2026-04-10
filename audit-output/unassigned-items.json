@@ -1,0 +1,2502 @@
+[
+  {
+    "UNIQUEID": "item_001",
+    "question_stem": "Marcus is a student in the third grade who shows marked difficulty with reading decoding and fluency. The building contains a reading specialist who happens to live in the same neighborhood. Without securing parental authorization, Marcus's teacher provided performance data from a standardized assessment to the specialist. Which statute has been violated through this casual information sharing?",
+    "current_skill_id": "LEG-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_002",
+    "question_stem": "Which pioneering theorist is best known for proposing that human brains contain innate biological structures that enable the acquisition of language and grammatical systems?",
+    "current_skill_id": "ACA-07",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_003",
+    "question_stem": "A superintendent plans to adopt an innovative mathematics curriculum that several parents find questionable. Seeking guidance, the district superintendent consults a school psychologist about recommended best practices for stakeholder involvement. Which recommendation should the psychologist prioritize?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_004",
+    "question_stem": "A school psychologist is facilitating an RTI committee that is examining data collection methods. What are the two primary types of data that must be gathered throughout the RTI process?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_005",
+    "question_stem": "A seventh-grade student in special education is exhibiting difficulty managing his behavior in the classroom setting. A school psychologist conducts a functional behavioral assessment which reveals the behavior is maintained by escape from difficult academic work. Based on these findings, what intervention would be most appropriate?",
+    "current_skill_id": "DBD-07",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_006",
+    "question_stem": "A school psychologist is explaining screening procedures to teachers at a professional development session. Universal screening measures are administered to all students at specified points to:",
+    "current_skill_id": "DBD-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_007",
+    "question_stem": "A young student was given a well-regarded cognitive test battery and scored a full-scale standard score of 85. Parent and teacher adaptive behavior ratings showed considerable variation: the teacher's Vineland score was 62, the mother's Vineland showed 87, and the father's Vineland revealed 80. The school psychologist attributed the discrepancy in adaptive ratings most likely to:",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_008",
+    "question_stem": "An effective system of service delivery aligns with the Multi-Tiered System of Supports (MTSS) model. According to NASP guidelines, which of the following is NOT a key element of Tier 1 universal support?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_009",
+    "question_stem": "A 9th-grade instructor has a student with visual impairment who receives an involved assignment requiring a poster project. How should the educator best proceed?",
+    "current_skill_id": "ACA-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_010",
+    "question_stem": "A recently hired school psychologist starts at an under-resourced urban school. The principal provides a new cognitive battery for use, though the psychologist has no formal training with it. Parents have secured an educational advocate who formally requests that the new instrument be used because it has updated norms and shows cultural responsiveness. The tool is widely respected and would apply well. What should the school psychologist do?",
+    "current_skill_id": "ETH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_011",
+    "question_stem": "A principal wants to enhance the school's suicide risk protocol to address students who create images showing death or self-injury. When incorporating new steps, what should the psychologist do if confronted with a student who has produced deeply concerning artwork about suicide?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_012",
+    "question_stem": "Following a comprehensive multi-method psychoeducational evaluation, a 12-year-old student receives cognitive and adaptive behavior scores indicating significant academic difficulties. Aware that testing focused on him, the student asks the psychologist to clarify the findings. What represents best practice?",
+    "current_skill_id": "LEG-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_013",
+    "question_stem": "A school psychologist works in a region where substance abuse is common among caregivers. The psychologist provides services at one elementary campus 2 days per week and has heard learners mention drugs and desire to experiment. What is the most impactful intervention?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_014",
+    "question_stem": "Which of the following memory strategies would be most beneficial for pupils learning extended material?",
+    "current_skill_id": "ACA-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_015",
+    "question_stem": "Professional Learning Communities (PLCs) represent an evidence-based professional development framework centered on systematic examination of student outcome data. PLCs function according to three foundational guiding questions that propel school improvement. Which option does NOT represent one of these three essential questions?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_016",
+    "question_stem": "Elena is a junior at a mid-sized public high school. Early in the school year, Elena felt ostracized by Jessica. The new principal quickly stepped in and ended the bullying. Several weeks later, Elena informs administration that Jessica is once more making severe and threatening statements to her. The principal suspends Jessica for 2 days and contacts Jessica's parents. What is the principal's most essential next step?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_017",
+    "question_stem": "A school district is looking to spend $10,000 to update its cognitive test library. For one particular test, the technical manual states that the 6-week test-retest reliability coefficient is 0.79. The psychologist also makes a note that the new test was correlated with a well-known test to determine convergent validity. The convergent validity correlation coefficient for the two tests is 0.58. Given the details of this case, the school psychologist can tell the school district which of the following?",
+    "current_skill_id": "PSY-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_018",
+    "question_stem": "A district-wide approach that receives broad administrative support and scientific evidence for effectiveness is most likely to be which of the following?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_019",
+    "question_stem": "Case example: Andre is a ninth-grade student with above-average cognitive abilities. Despite his intelligence, he is currently earning mostly Cs in his classes. His teachers are suggesting that he may benefit from special education placement and additional support. A school psychologist is consulting with the team.\n\nWhat should a school psychologist tell the teachers regarding special education placement for Andre?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_020",
+    "question_stem": "Case example: Andre is a ninth-grade student with above-average cognitive abilities. Despite his intelligence, he is currently earning mostly Cs in his classes. His parents are very upset that he is making mostly Cs and are threatening to sue the school district. They are demanding that the school provide extensive special education services and accommodations.\n\nUnder the Individuals with Disabilities Education Act (IDEA), how should the school respond to the parents' threat of legal action?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_021",
+    "question_stem": "A school psychologist administered a typical cognitive test battery to all 1st-grade pupils. The results reveal the psychologist is comparing all 1st-graders to a national norm group. The test manual provides standard score tables, percentile ranks, and growth scale values. The primary advantage of referencing standard scores is:",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_022",
+    "question_stem": "Which cognitive domain on standard psychometric batteries best assesses a person's capacity to maintain information in active memory while engaged in task completion?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_023",
+    "question_stem": "Cognitive-behavioral approaches to treatment are founded on which of the following core principles?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_024",
+    "question_stem": "School psychologists play a vital role in implementing antibullying programs in schools. At a staff training session, the school psychologist explains to staff that bullying is conceptualized as a type of which of the following?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_025",
+    "question_stem": "On a mainstream cognitive measure, a learner achieves a 9-point spread between the Language-Based Index and the Nonverbal-Reasoning Index. This gap is:",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_026",
+    "question_stem": "When administering formal assessments to students from culturally diverse backgrounds, which consideration is most important for school psychologists?",
+    "current_skill_id": "PSY-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_027",
+    "question_stem": "A widespread systems-based and multitier intervention that is typically employed to support students who are struggling to learn at school is called:",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_028",
+    "question_stem": "For what primary purpose are curriculum-based measurements (CBMs) employed in schools?",
+    "current_skill_id": "DBD-08",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_029",
+    "question_stem": "Which brain structure is primarily responsible for processing and responding to emotional stimuli?",
+    "current_skill_id": "MBH-05",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_030",
+    "question_stem": "A teacher expresses concern about a student who rarely participates verbally in class and appears withdrawn. During a parent conference, the student's father mentions that his daughter is characteristically reserved and inhibited in many different contexts. To best support this student, which intervention would be most appropriate?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_031",
+    "question_stem": "How do formative assessments fundamentally differ from summative assessments in their application?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_032",
+    "question_stem": "When administering a standardized cognitive assessment battery to a student whose primary language is other than English, a school psychologist should consider which factor?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_033",
+    "question_stem": "Which statement best characterizes the relationship between intelligence quotient (IQ) scores and student academic success?",
+    "current_skill_id": "SWP-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_034",
+    "question_stem": "What assessment tool (when paired with other data) would most appropriately evaluate a student suspected of having a nonverbal learning disability?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_035",
+    "question_stem": "Under the Individuals with Disabilities Education Act (IDEA), which principle is fundamental to how schools must provide services to students with disabilities?",
+    "current_skill_id": "DIV-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_036",
+    "question_stem": "A school psychologist is evaluating developmental milestones during a social-emotional screening of a 10-year-old fourth-grade student. The psychologist must recall various developmental stages. According to Erikson's theory, which psychosocial stage is characteristic of students in the upper elementary years?",
+    "current_skill_id": "DEV-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_037",
+    "question_stem": "During the implementation of a crisis intervention following an off-campus suicide death, what action should the school psychologist prioritize immediately after notifying the family?",
+    "current_skill_id": "SAF-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_038",
+    "question_stem": "The NASP organization actively supports a framework that emphasizes cultural responsiveness and data-informed service delivery. Which of the following best illustrates this commitment?",
+    "current_skill_id": "ETH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_039",
+    "question_stem": "Which federal statute mandates that school systems must actively search for and identify learners with disabilities?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_040",
+    "question_stem": "A school psychologist is delivering a workshop to faculty about strengthening home-school partnerships and increasing parent participation in school activities. Which approach is most effective for improving family engagement?",
+    "current_skill_id": "FAM-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_041",
+    "question_stem": "Projective personality tests such as the Rorschach and human figure drawing assessment are most appropriately used in school psychology to:",
+    "current_skill_id": "DBD-06",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_042",
+    "question_stem": "When parents file a formal complaint regarding their child's Section 504 plan implementation, the complaint should be directed to which entity for resolution?",
+    "current_skill_id": "LEG-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_043",
+    "question_stem": "How do aptitude instruments differ fundamentally from proficiency assessments?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_044",
+    "question_stem": "In operant conditioning, what is the term for removing an aversive stimulus following a target behavior to increase the probability of that behavior recurring?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_045",
+    "question_stem": "During a comprehensive developmental assessment, a third-grade student demonstrated strengths in verbal reasoning alongside significant weaknesses in phonological processing and word attack skills. At the parent conference, the student's guardians disputed the findings and demanded examination of the test protocol and individual assessment items. How should the psychologist respond in accordance with professional standards?",
+    "current_skill_id": "LEG-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_046",
+    "question_stem": "Case example: Parents requested an independent evaluation of their child after disagreeing with the school's assessment results. They believed the school's assessment was inaccurate and wanted an outside professional to re-evaluate their child.\n\nRegarding independent educational evaluations (IEE), what is the school district's obligation?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_047",
+    "question_stem": "A school psychologist notices that when a student is allowed to leave a reading assignment and engage in a highly preferred task, the student's resistance to reading activities decreases. What behavioral principle best explains this pattern?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_048",
+    "question_stem": "Which neural transmitter system plays the central role in reward-seeking and the formation of behavioral habits and routines?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_049",
+    "question_stem": "When completing an Individualized Education Program (IEP), the team documents the student's current performance across academic and functional areas. The primary purpose of this detailed profile is to:",
+    "current_skill_id": "DBD-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_050",
+    "question_stem": "The 'stay-put' safeguard comes into effect at which stage of due process?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_051",
+    "question_stem": "On most established cognitive test batteries, the Matrix Reasoning subtests are routinely classified as measuring:",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_052",
+    "question_stem": "A school psychologist is developing a comprehensive evaluation strategy for a student who experienced a recent head injury. Which should the psychologist prioritize?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_053",
+    "question_stem": "The Collaborative for Academic, Social, and Emotional Learning (CASEL) framework is most closely associated with which type of educational approach?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_054",
+    "question_stem": "A district administrator is designing professional development on instructional methods. Best practice research supports which instructional approach?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_055",
+    "question_stem": "According to widely acknowledged psychometricians and theorists, such as Kaufman and Sattler, which statement accurately reflects established assessment practice?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_056",
+    "question_stem": "Based on contemporary theories of motivation in educational settings, when an educator aims to nurture intrinsic motivation in learners, which teaching strategy should be emphasized?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_057",
+    "question_stem": "On comprehensive cognitive assessment batteries, nonverbal and visual-spatial problem-solving measures are typically thought to be relatively resistant to which type of influence?",
+    "current_skill_id": "DBD-05",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_058",
+    "question_stem": "When a student's disruptive behavior becomes more frequent after the teacher removes their recess privilege, this outcome is best described as:",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_059",
+    "question_stem": "Students in secondary grades who exhibit dysgraphia require which class of accommodation?",
+    "current_skill_id": "ACA-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_060",
+    "question_stem": "Which evidence-based technique is most effective for addressing selective mutism in students?",
+    "current_skill_id": "MBH-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_061",
+    "question_stem": "A second-grade teacher removes preferred activities (such as art period) to manage behavioral problems in a special education classroom. The teacher believes alternative approaches would be impractical. How should a school psychologist respond?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_062",
+    "question_stem": "Regarding organizations that represent school psychology, which statement is accurate?",
+    "current_skill_id": "ETH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_063",
+    "question_stem": "After a comprehensive evaluation substantiates special education eligibility, parents retained an attorney who demanded formal copies of all psychological instruments, raw data materials, and administration protocols. How should the school psychologist proceed?",
+    "current_skill_id": "LEG-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_064",
+    "question_stem": "When parents have engaged legal representation to examine psychological assessment documentation, which federal law specifically establishes the parental right to access student educational records?",
+    "current_skill_id": "LEG-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_065",
+    "question_stem": "A psychologist consults with the school administration and learning specialists about effective school-wide reading programs for beginning readers. The psychologist reviews four different types of reading programs. One program focuses on phonologic processes, one on whole-word reading, one on cognitive training, and the last program focuses on drill and practice. Research evidence indicates, which reading program should the psychologist recommend?",
+    "current_skill_id": "ACA-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_066",
+    "question_stem": "Executive function abilities are predominantly linked to which of the following cognitive processes?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_067",
+    "question_stem": "In the context of comprehensive crisis intervention frameworks, what constitutes the primary operational focus?",
+    "current_skill_id": "SAF-04",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_068",
+    "question_stem": "A teacher consistently refers behaviorally challenging students to the school psychologist. Within several months, the psychologist finds himself addressing multiple referrals weekly from this particular teacher. When the psychologist meets with the teacher to examine the pattern, what represents the most appropriate consultation approach?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_069",
+    "question_stem": "A seventh-grade student is sent to the school psychologist due to persistent off-task behavior and disruption in class. What should be the psychologist's first priority?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_070",
+    "question_stem": "How do informal assessment methods differ from standardized assessment approaches in their primary application?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_071",
+    "question_stem": "A school district is implementing a response-to-intervention framework and seeks to ensure that all students, particularly those from diverse cultural and linguistic backgrounds, receive equitable support. What must be the initial foundational step in designing such a system?",
+    "current_skill_id": "DBD-07",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_072",
+    "question_stem": "An upper elementary student achieves excellent scores on ability testing yet consistently earns low grades in the classroom. The school psychologist suspects the root cause involves factors related to which domain?",
+    "current_skill_id": "DEV-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_073",
+    "question_stem": "A school psychologist begins working at an urban elementary school where violence exposure is prevalent among the student population. What should be the initial focus of the school's crisis response efforts?",
+    "current_skill_id": "SAF-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_074",
+    "question_stem": "If a student obtains a standard score of 90 and the standard error of measurement (SEM) is 6 points, what conclusion can appropriately be drawn?",
+    "current_skill_id": "PSY-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_075",
+    "question_stem": "Case example: A seventh-grade male student who uses threatening language toward a peer has been reported to administration. In this situation, the school psychologist must do which of the following?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_076",
+    "question_stem": "A seventh-grade student named Devon was diagnosed with a speech-language impairment and has been attending pull-out speech therapy twice weekly for three months. Recently, the classroom teacher noted that Devon's voluntary participation in class discussions has decreased noticeably. During a meeting with the school psychologist, Devon explains that following his science presentation, some classmates made comments about his speech pattern, making him self-conscious about participating. A school psychologist should also do which of the following?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_077",
+    "question_stem": "A student arrives at the school psychologist's office reporting struggles with low self-confidence and discouragement in academic tasks. The student states, 'I'm just not smart enough.' This statement most directly suggests which type of attributional pattern?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_078",
+    "question_stem": "In the context of assessment, what does valid measurement primarily assess?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_079",
+    "question_stem": "Standard error of measurement (SEM) is primarily used to estimate which of the following?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_080",
+    "question_stem": "A parent submits a formal written request for her daughter to be evaluated for special education eligibility. The school has not yet collected response-to-intervention (RTI) data. What is the school psychologist's most appropriate response?",
+    "current_skill_id": "PSY-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_081",
+    "question_stem": "Why is a carefully selected, representative standardization sample essential when developing a norm-referenced test?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_082",
+    "question_stem": "A student must repeat a phone number aloud while performing the dialing task for the first time. This scenario exemplifies which type of memory process?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_083",
+    "question_stem": "An evidence-based school-wide social-emotional learning initiative aims to develop classroom strategies for fostering competence. Which of the following represents a core social-emotional skill taught in such programs?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_084",
+    "question_stem": "How do Response to Intervention (RTI) frameworks depart from traditional special education eligibility identification processes?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_085",
+    "question_stem": "What do current research findings indicate about grade retention as an academic intervention strategy?",
+    "current_skill_id": "MBH-05",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_086",
+    "question_stem": "During cognitive testing, an examiner presents an orally-delivered task in which the child hears a word and must immediately retrieve a rhyming word. This task primarily measures which cognitive domain?",
+    "current_skill_id": "DBD-05",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_087",
+    "question_stem": "A teacher requests consultation from the school psychologist regarding a student with significant behavioral challenges in the classroom. The school psychologist recognizes that the student has experienced trauma. When providing direct assistance to the teacher, what should be the foundational consideration?",
+    "current_skill_id": "DBD-07",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_088",
+    "question_stem": "Current research on school discipline practices suggests that out-of-school suspensions fail to produce lasting behavioral improvement. What alternative approach does research support?",
+    "current_skill_id": "SWP-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_089",
+    "question_stem": "School leadership consults the school psychologist regarding development of protocols aimed at establishing a safe, welcoming climate for all learners. The psychologist recommends implementing:",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_090",
+    "question_stem": "A preschool-age child reproduces aggressive behaviors after observing an adult role model displaying those same actions in the classroom setting. This scenario is most consistent with which theoretical perspective?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_091",
+    "question_stem": "Research on home-school partnerships identifies which combination of elements as essential for producing meaningful engagement and positive student outcomes?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_092",
+    "question_stem": "A school psychologist examines research articles describing correlational studies on anxiety and academic performance. One study reports a Pearson correlation of -0.98. What does this coefficient indicate?",
+    "current_skill_id": "RES-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_093",
+    "question_stem": "A teacher designs a classroom research study to examine the effect of instrumental background music on student concentration during independent reading time. The teacher randomly assigns 24 students to two groups: one group studies in complete silence, while the other group listens to classical background music played at moderate volume. At the end of a two-week period, the teacher compares reading comprehension test scores between the two groups. The group exposed to background music is referred to as which of the following?",
+    "current_skill_id": "RES-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_094",
+    "question_stem": "A researcher at a local university conducts a study examining the effect of ambient music on student focus during independent reading. The study includes two groups of students: one group works in silence, while the other group works with soft instrumental music playing in the background. The group that does NOT listen to background music is referred to as the:",
+    "current_skill_id": "RES-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_095",
+    "question_stem": "Using the same study design (teacher examining the effect of instrumental background music on student concentration): In this research study, the independent variable—the condition being manipulated—refers to which element?",
+    "current_skill_id": "RES-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_096",
+    "question_stem": "When a school psychologist conducts an evaluation to determine eligibility for special education services, which assessment approach best supports valid clinical decision-making?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_097",
+    "question_stem": "During cognitive assessment of a student, the examiner observes significant anxiety, fidgeting, and difficulty sustaining attention throughout testing. How should the psychologist interpret these behavioral observations in relation to the obtained test scores?",
+    "current_skill_id": "ACA-07",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_098",
+    "question_stem": "An instructor teaches a student a problem-solving method that narrows the set of feasible solutions to be examined. What is this category of problem-solving approach termed?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_099",
+    "question_stem": "Under which circumstance would a school psychologist be ethically justified in disclosing confidential student information to school personnel without first obtaining parental consent?",
+    "current_skill_id": "ACA-07",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_100",
+    "question_stem": "During a structured interview with a student who immigrated to Canada at age 7, the school psychologist notices that the student's articulate communication and polished manners lead the interviewer to rate the student's intellectual abilities higher than what the student's actual performance would suggest. This bias is best described as which of the following?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_101",
+    "question_stem": "In special education law, what does the provision of 'free appropriate public education' (FAPE) require of schools?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_102",
+    "question_stem": "Which factors most significantly influence the development of adolescent self-esteem and personal identity?",
+    "current_skill_id": "DBD-08",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_103",
+    "question_stem": "A building administrator asks the school psychologist to examine disaggregated outcome data across the district. What is the principal reason this analysis matters?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_104",
+    "question_stem": "According to Piaget's developmental framework, a 7-year-old child would most likely reason in which manner?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_105",
+    "question_stem": "Which standardized cognitive measure is chiefly grounded in Lurian neuropsychological principles and dynamic assessment?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_106",
+    "question_stem": "A school psychologist facilitates a small group for students experiencing low self-regard. The counselor's method is grounded in the premise that behavior originates from one's internal representation of self, personal interpretation of events, and striving toward aspirational targets. This counseling orientation reflects which theoretical foundation?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_107",
+    "question_stem": "Many contemporary cognitive assessments draw on the CHC model of reasoning and abilities. Which theoretical framework does this represent?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_108",
+    "question_stem": "The second tier of the Multi-Tiered System of Supports (MTSS) model typically addresses which student population and uses which intervention approach?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_109",
+    "question_stem": "A second-grade student is referred to the school psychologist by his teacher due to difficulties with peer interaction, limited eye contact during conversations, and an unusual interest in memorizing train schedules. Based on the presenting symptoms, which suspected condition would the psychologist most likely evaluate for?",
+    "current_skill_id": "MBH-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_110",
+    "question_stem": "Marcus, a fifth-grade student, is referred to the school psychologist because he has difficulty initiating conversations with peers and rarely participates in group activities. His parents provide written consent for direct intervention support. The school psychologist determines that Marcus would benefit most from a structured social skills training program. Which of the following best reflects the core components of evidence-based social skills training?",
+    "current_skill_id": "MBH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_111",
+    "question_stem": "Case example: An upper elementary student is referred to the school psychologist by the teacher because of ongoing difficulties with reading and math. The student shows significant gaps in foundational skills. Formal testing confirms these academic deficits. The team believes the student meets criteria for special education services.\n\nBefore offering special education services, what critical finding must the team demonstrate?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_112",
+    "question_stem": "During a parent-teacher conference, a parent requests that the school provide intensive tutoring and test-preparation coaching to raise their child's standardized test performance. Which response by the school psychologist is most appropriate?",
+    "current_skill_id": "DBD-07",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_113",
+    "question_stem": "What is most likely to result when an intervention for student conduct does not align with the student's underlying learning or emotional requirements?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_114",
+    "question_stem": "Across mainstream cognitive test batteries, what range is typically designated as the average full-scale composite?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_115",
+    "question_stem": "A student with severe visual impairment has been granted a formal waiver that exempts them from a particular graduation requirement. Which legal statute most directly authorizes such accommodations?",
+    "current_skill_id": "LEG-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_116",
+    "question_stem": "Which assertion most accurately characterizes threat assessment and school violence prevention?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_117",
+    "question_stem": "Which instructional strategy is generally considered the most effective approach for supporting students with learning disabilities?",
+    "current_skill_id": "ACA-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_118",
+    "question_stem": "The pedagogical method known as 'running record' is typically associated with which observational recording approach?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_119",
+    "question_stem": "What position does the National Association of School Psychologists (NASP) advocate regarding the education of students in homeschool settings?",
+    "current_skill_id": "ETH-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_120",
+    "question_stem": "The capacity to integrate multiple data points concurrently to derive meaning is characteristic of which cognitive processing style?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_121",
+    "question_stem": "It is considered best practice to maintain an established school-wide Multi-Tiered System of Supports (MTSS) to serve the full student population. Which of the following is typically NOT considered a component of an effective MTSS framework?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_122",
+    "question_stem": "While analyzing special education referral and enrollment data, a school psychologist observes that students from a particular ethnic or racial group are referred for special education evaluation disproportionately compared to their representation in the total school population. What should the psychologist do first in response to this pattern?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_123",
+    "question_stem": "When interpreting cognitive and academic achievement assessments for a student from a culturally and linguistically diverse background, a school psychologist must exercise careful professional judgment. Which aspect should receive primary consideration?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_124",
+    "question_stem": "A district-level practice or initiative that is broadly endorsed by NASP for reducing bias in special education referral is:",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_125",
+    "question_stem": "Which of the following landmark cases is most directly associated with the principle of least-restrictive environment (LRE) in special education?",
+    "current_skill_id": "LEG-04",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_126",
+    "question_stem": "Ms. Chen, the school psychologist, regularly receives multiple behavioral referrals for students in grades 2-3. Before initiating assessment or intervention planning, she wishes to efficiently clarify the nature and scope of each concern. What is her most effective initial action?",
+    "current_skill_id": "PSY-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_127",
+    "question_stem": "For the behavioral referrals Ms. Chen receives, she wants to collect data on a student's off-task behavior that occurs sporadically throughout the school day (rather than continuously). Which data collection method would be most appropriate for this sporadic behavior?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_128",
+    "question_stem": "Which crisis intervention approach emphasizes immediate stabilization and restoration of the individual's sense of control and safety?",
+    "current_skill_id": "SWP-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_129",
+    "question_stem": "Interviewing represents a valuable informal data-collection method in school psychology. Which interview format permits the interviewer to pursue emergent topics while maintaining general structure?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_130",
+    "question_stem": "In response-to-intervention (RTI) data analysis, three primary analytical dimensions are essential. Which of the following is NOT one of these standard dimensions?",
+    "current_skill_id": "PSY-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_131",
+    "question_stem": "In response-to-intervention (RTI) data interpretation, the term describing the direction and rate of change in student performance over time is which of the following?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_132",
+    "question_stem": "A school psychologist reviews response-to-intervention (RTI) data for a student showing extremely inconsistent performance (spikes and drops) with no clear pattern. What conclusion should be drawn before using this data for educational decision-making?",
+    "current_skill_id": "PSY-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_133",
+    "question_stem": "Caleb has been participating in his school's response-to-intervention (RTI) program for 8 weeks. Despite receiving the standard Tier 1 intervention three times per week, his data show minimal improvement. His accuracy rate remains below the target benchmark. What is the most appropriate next step?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_134",
+    "question_stem": "Continuing with Caleb's case, when deciding whether to intensify or modify the intervention, which factor would NOT be relevant to this clinical decision?",
+    "current_skill_id": "PSY-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_135",
+    "question_stem": "When conducting a comprehensive evaluation for special education eligibility, school psychologists should prioritize which assessment approach?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_136",
+    "question_stem": "A teacher institutes a reward structure where students earn tokens for adhering to classroom expectations and can exchange tokens for privileges. Which theoretical framework most accurately describes this approach?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_137",
+    "question_stem": "When establishing baseline performance data for response-to-intervention (RTI) monitoring, what guideline should be followed to ensure a stable starting point?",
+    "current_skill_id": "PSY-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_138",
+    "question_stem": "Under the Family Educational Rights and Privacy Act (FERPA), which parties may access student educational records without obtaining parental consent?",
+    "current_skill_id": "MBH-05",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_139",
+    "question_stem": "A school psychologist bases recommendations from a comprehensive psychoeducational evaluation almost exclusively on scores from standardized norm-referenced instruments. Which represents the most significant limitation of this assessment approach?",
+    "current_skill_id": "DBD-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_140",
+    "question_stem": "A school psychologist is supporting the development of a comprehensive family engagement program aimed at strengthening parent participation in school. Literature on effective family-school partnerships indicates the most successful initiatives share which characteristic?",
+    "current_skill_id": "DBD-07",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_141",
+    "question_stem": "An administrator notices that referrals for special education evaluation have increased substantially in a particular grade level over the last two school years. The school psychologist should recommend which action to understand the factors driving this increase?",
+    "current_skill_id": "DBD-07",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_142",
+    "question_stem": "Metacognition most accurately refers to a learner's capacity to:",
+    "current_skill_id": "DBD-08",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_143",
+    "question_stem": "A student with a reading disability receives specialized small-group instruction in a resource classroom while spending the majority of the school day in general education classes. Which special education principle is being implemented?",
+    "current_skill_id": "DBD-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_144",
+    "question_stem": "What term refers to a test's capacity to produce consistent results across multiple administrations?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_145",
+    "question_stem": "A school psychologist is evaluating a female student who may have a learning disability. The student speaks limited English and is proficient in Spanish. Which approach is most prudent when conducting this assessment?",
+    "current_skill_id": "PSY-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_146",
+    "question_stem": "A school district is modernizing its approach to special education identification and evaluation for specific learning disabilities. Evidence-based practice now recommends that evaluations should be founded primarily upon which component?",
+    "current_skill_id": "DBD-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_147",
+    "question_stem": "A school psychologist is training special education staff on culturally responsive and nondiscriminatory assessment. Which statement accurately reflects current best-practice standards regarding assessment bias and cultural factors?",
+    "current_skill_id": "DBD-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_148",
+    "question_stem": "In the systematic collection and analysis of student behavioral data, which three dimensions are typically monitored?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_149",
+    "question_stem": "A 4th-grade student was brought to the school psychologist for evaluation because of difficulties with foundational reading skills. The learner is currently in a general education classroom without extra support. What should the school psychologist consider first?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_150",
+    "question_stem": "A ninth-grade student has been identified with dyslexia. What accommodation ensures the student accesses content equitably?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_151",
+    "question_stem": "After a student with an IEP is suspended for five school days, what action must the school psychologist take?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_152",
+    "question_stem": "What does the least restrictive environment (LRE) principle require schools to provide?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_153",
+    "question_stem": "A school psychologist is implementing an antibullying initiative. Research indicates that traditional individual punishment approaches are ineffective and may increase school alienation. What intervention approach should the psychologist recommend?",
+    "current_skill_id": "SWP-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_154",
+    "question_stem": "Which statement most accurately reflects research findings on cultural bias in standardized assessment?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_155",
+    "question_stem": "Which therapeutic approach demonstrates substantial empirical evidence supporting its efficacy and has gained widespread adoption among mental health practitioners?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_156",
+    "question_stem": "Behavioral management practices in schools often draw from B. F. Skinner's theoretical contributions. Which statement most accurately reflects Skinner's central proposition?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_157",
+    "question_stem": "Rafael is a ninth-grade student enrolled in a peer support program where he works with students in the life skills program. Under teacher supervision, Rafael assists them with social interactions and accompanies them on community-based learning activities at local stores and public places. This structured volunteering experience with guided reflection is best described as which type of intervention?",
+    "current_skill_id": "ACA-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_158",
+    "question_stem": "Case example: A school psychologist is supporting a first-grade student named Marcus. Marcus demonstrates moderate autism characteristics and displays indicators of attention deficit hyperactivity disorder. The psychologist teaches Marcus a sequence of classroom transition routines. The intervention involves breaking the behavior into sequential components and using discrete trial training with repeated practice in a controlled setting. Which behavioral methodology best describes this intervention?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_159",
+    "question_stem": "Case example: A school psychologist is supporting a first-grade student named Marcus. Marcus demonstrates moderate autism characteristics and displays indicators of attention deficit hyperactivity disorder. The psychologist teaches Marcus a sequence of classroom transition routines. The intervention involves breaking the behavior into sequential components and using discrete trial training with repeated practice in a controlled setting. Which feature is essential to an effective behavioral intervention plan?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_160",
+    "question_stem": "School psychologists play a critical consulting role in developing, reviewing, and implementing school crisis management procedures. Which of the following should be the foremost consideration during crisis planning?",
+    "current_skill_id": "SAF-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_161",
+    "question_stem": "Following a crisis or traumatic incident in the school community, students may experience a range of emotional and behavioral responses. When conducting initial mental health screening with trauma-exposed students, school psychologists should prioritize assessment of which condition?",
+    "current_skill_id": "MBH-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_162",
+    "question_stem": "Students with an external locus-of-control orientation often experience particular challenges in which academic or behavioral domain?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_163",
+    "question_stem": "A school psychologist is employed by a well-resourced suburban public school district where the building counselor is assigned primarily to standardized test coordination and scheduling. Recognizing that the counselor has limited capacity to provide direct student mental health services, the psychologist proposes to expand which type of service?",
+    "current_skill_id": "SAF-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_164",
+    "question_stem": "In a well-funded suburban school setting, a school psychologist reviews data indicating that despite adequate school resources, certain student populations continue to show elevated risk for poor academic and social outcomes. Which approach will best help identify the precise sources of these disparities?",
+    "current_skill_id": "SAF-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_165",
+    "question_stem": "The Standard Response Protocol (SRP) has gained widespread adoption as a crisis response framework in schools. Which characteristic of SRP is considered a principal advantage of this model?",
+    "current_skill_id": "SAF-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_166",
+    "question_stem": "During a comprehensive evaluation of an intellectually advanced high school student seeking gifted program identification, the school psychologist encounters ceiling effects on standard norm-referenced measures. How should the psychologist respond to this assessment limitation?",
+    "current_skill_id": "DEV-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_167",
+    "question_stem": "A school psychologist is conducting a professional development session with school staff on the relationship between student stress levels and maladaptive behavioral responses. Which concept should be central to this presentation?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_168",
+    "question_stem": "Case example: A school psychologist is assessing a 6th-grade male learner named Marcus. During the evaluation, Marcus discloses that he has been experiencing intrusive thoughts about peers. The psychologist recognizes this as requiring further exploration. Which action is most appropriate?",
+    "current_skill_id": "DBD-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_169",
+    "question_stem": "A school psychologist has been requested to conduct a comprehensive evaluation of a student who may have a specific learning disability. During the initial phase of assessment planning, which information should the psychologist prioritize first?",
+    "current_skill_id": "DBD-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_170",
+    "question_stem": "A school psychologist is conducting an evaluation of a sixth-grade student, Kwame, who is suspected of having an emotional or behavioral disorder. Kwame's teacher reports concern about social withdrawal and occasional aggressive outbursts. What assessment combination would provide the most comprehensive information for differential diagnosis?",
+    "current_skill_id": "DBD-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_171",
+    "question_stem": "Under current special education law, if a student with an IEP is suspended beyond 10 consecutive school days, which legal standard requires that the school conduct a formal meeting to review the student's placement and the connection between the student's disability and the behavior?",
+    "current_skill_id": "LEG-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_172",
+    "question_stem": "A school psychologist meets with a parent to discuss their daughter's assessment results and notes that her attention difficulties are consistent with ADHD characteristics including difficulty focusing, restlessness, and impulsivity across multiple settings. The parent asks what the research shows about ADHD. Which statement represents the most accurate, research-based information about ADHD?",
+    "current_skill_id": "RES-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_173",
+    "question_stem": "A teacher informs the school psychologist about a high school student who has disclosed their gender identity transition. The teacher expresses concern about the student's well-being and classroom comfort. Which of the following is the school psychologist's primary responsibility?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_174",
+    "question_stem": "A third-grade pupil exhibits difficulty with impulse control and frequently interrupts peers. A multimodal intervention integrating behavioral support, teacher coaching, and parental involvement would be justified by which principle?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_175",
+    "question_stem": "During a comprehensive special education evaluation, assessment results demonstrate that a student's performance on auditory sequential memory tasks is significantly below grade-level expectations. This pattern most directly indicates a deficit in which processing domain?",
+    "current_skill_id": "DBD-05",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_176",
+    "question_stem": "A school psychologist gives a student a series of pictures of children in various social interactions and asks the student to identify and explain what each child is thinking or feeling in the situation. The student struggles with this task and provides unusual or inaccurate responses. This assessment task primarily measures which psychological construct?",
+    "current_skill_id": "MBH-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_177",
+    "question_stem": "Anxiety functions as a central, defining feature of which of the following psychiatric disorders?",
+    "current_skill_id": "MBH-04",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_178",
+    "question_stem": "A teacher announces that students may engage in computer time for recreational activities once they complete their math assignment. Which motivational principle does this teacher employ?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_179",
+    "question_stem": "What is the essential distinction between punishment and negative reinforcement?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_180",
+    "question_stem": "Which reinforcement schedule produces strong behavioral patterns but is notably challenging to eliminate once the schedule is discontinued?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_181",
+    "question_stem": "In a response-to-intervention model, what characterizes Tier 1 support?",
+    "current_skill_id": "SAF-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_182",
+    "question_stem": "Which of the following best characterizes evidence-based intervention approaches in school psychology practice?",
+    "current_skill_id": "ACA-07",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_183",
+    "question_stem": "A referral concern is raised for possible attention-deficit/hyperactivity disorder (ADHD). A school psychologist obtains behavior rating scales from the student's classroom teacher and parents. The teacher's responses indicate notable hyperactive and impulsive behaviors in the classroom, but the parent's responses from home do not show similar symptom severity. Which interpretation of this discrepancy is most accurate?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_184",
+    "question_stem": "Certain system-level interventions in education may yield limited effectiveness or inadvertently reinforce existing disparities. A school psychologist addressing this issue might:",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_185",
+    "question_stem": "A student is participating in a response-to-intervention (RTI) process to address reading fluency. At the start of the RTI process, her baseline score was 2 out of 10. Over the past six weeks, her monitoring scores are as follows: 2, 4, 6, 6, and 9. What is the arithmetic mean (average) of these six scores?",
+    "current_skill_id": "RES-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_186",
+    "question_stem": "A student began an RTI intervention with a baseline reading fluency score of 2 and has achieved an average score of 5.4 across recent weekly assessments. How should the school psychologist interpret this progress data?",
+    "current_skill_id": "RES-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_187",
+    "question_stem": "A student's standardized test performance shows marked inconsistency compared to classroom performance. What is the most appropriate next step?",
+    "current_skill_id": "PSY-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_188",
+    "question_stem": "Devon, a first-year school psychologist, is asked by a teacher to suggest evidence-based teaching practices to improve student learning outcomes. Which of the following recommendations would be LEAST supported by educational research?",
+    "current_skill_id": "ACA-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_189",
+    "question_stem": "Academic skills typically progress through identifiable phases as students learn and master new content. Which sequence accurately depicts the progression of skill development?",
+    "current_skill_id": "ACA-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_190",
+    "question_stem": "When implementing evidence-based instructional practice in the classroom, which approach to teaching has the strongest research support?",
+    "current_skill_id": "ACA-04",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_191",
+    "question_stem": "Trauma-informed care has become an increasingly important competency for school psychologists. NASP emphasizes a framework for trauma-responsive schools. Which sequence best captures this framework?",
+    "current_skill_id": "SWP-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_192",
+    "question_stem": "Research on factors contributing to student academic achievement has consistently identified multiple variables including student motivation, school climate, and institutional policies. Beyond these factors, what additional variable has been found to significantly predict academic success?",
+    "current_skill_id": "FAM-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_193",
+    "question_stem": "When an IEP team convenes to evaluate progress toward goals and make decisions about future services, what type of meeting is being conducted?",
+    "current_skill_id": "SWP-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_194",
+    "question_stem": "School-wide zero-tolerance discipline policies have been implemented in many districts. Which outcome is NOT typically associated with such policies?",
+    "current_skill_id": "SWP-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Schoolwide Practices to Promote Learning",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_195",
+    "question_stem": "Cooperative learning is recognized as an effective instructional strategy. What is considered the primary academic benefit of well-structured cooperative learning?",
+    "current_skill_id": "ACA-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_196",
+    "question_stem": "Although token economy systems are proven effective in behavioral change efforts, what challenge do educators most often encounter?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_197",
+    "question_stem": "A teacher who assigns substantial projects and lengthy work seeks the school psychologist's guidance regarding two academically capable but struggling students. Both students demonstrate appropriate behavior and succeed in other classes, but performance lags in her classroom. The school psychologist's assessment and recommendations should emphasize which approach?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_198",
+    "question_stem": "Which federal legislation specifically outlined the right to a free, appropriate public education for students with disabilities?",
+    "current_skill_id": "ACA-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_199",
+    "question_stem": "Which represents an accommodation suitable for a student who has difficulty with reading decoding?",
+    "current_skill_id": "ACA-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_200",
+    "question_stem": "Contemporary cognitive-behavioral perspectives on learning emphasize that academic skill development is fundamentally supported by the learner's ability to engage in which cognitive process?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_201",
+    "question_stem": "A school psychologist has become aware that a colleague violated established ethical guidelines in service delivery. What is the most appropriate initial response?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_202",
+    "question_stem": "A student presents to the psychologist's office requesting to discuss sensitive personal matters. Before proceeding with the conversation, the psychologist should clarify which fundamental limitation?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_203",
+    "question_stem": "A teacher observes one of his students at a community social event and engages the student in conversation. During the interaction, the student discloses a family problem that the teacher believes warrants school involvement. What should the teacher consider?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_204",
+    "question_stem": "A teacher exhibits increasing frustration and criticism toward a particular student and has begun isolating the student from classroom activities and peer interactions. When should a school psychologist intervene?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_205",
+    "question_stem": "When should a school psychologist recommend exploring pharmacological intervention as a possible treatment option for attention-related or behavioral concerns?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_206",
+    "question_stem": "A school psychologist is developing a universal screening tool for early identification of students at risk for reading difficulties. Which characteristic should the instrument prioritize?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_207",
+    "question_stem": "Which approach most accurately represents culturally responsive assessment practice?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_208",
+    "question_stem": "A school psychologist has been asked to evaluate the effectiveness of a newly implemented reading intervention program. What is the most rigorous and scientifically sound evaluation approach?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_209",
+    "question_stem": "When working with English Language Learners in assessment contexts, a school psychologist should recognize that performance difficulties may primarily reflect which factor?",
+    "current_skill_id": "LEG-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_210",
+    "question_stem": "What key advantage does curriculum-based assessment (CBA) offer over standardized testing instruments for creating instructional plans?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_211",
+    "question_stem": "According to professional standards, what is the recommended supervisory caseload ratio for a school psychologist overseeing intern trainees?",
+    "current_skill_id": "ETH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_212",
+    "question_stem": "A student performs very well on day-to-day classroom assignments but scores at or below average on standardized tests. What should a school psychologist prioritize investigating?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_213",
+    "question_stem": "After a formal ethics inquiry is raised against a NASP-credentialed psychologist, what procedure typically follows?",
+    "current_skill_id": "ETH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_214",
+    "question_stem": "Which characteristic most accurately defines a norm-referenced assessment instrument?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_215",
+    "question_stem": "When using behavioral observation in classroom settings, what is a principal advantage of interval time-sampling over complete continuous recording?",
+    "current_skill_id": "ETH-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Services to Promote Safe and Supportive Schools",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_216",
+    "question_stem": "A school psychologist uses curriculum-based measurement to monitor a student's reading fluency. What is the primary purpose of this ongoing assessment?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_217",
+    "question_stem": "When establishing the validity of an assessment tool for use with culturally diverse students, what critical consideration must be addressed?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_218",
+    "question_stem": "In a data-based decision making framework, which activity represents the essential first step before recommending and implementing an intervention?",
+    "current_skill_id": "LEG-01",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_219",
+    "question_stem": "A student exhibits a specific learning disability in mathematics but demonstrates typical performance in other academic domains. This profile is most consistent with which finding?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_220",
+    "question_stem": "Which approach to classroom behavior management is most grounded in applied behavior analysis principles?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_221",
+    "question_stem": "A student with autism spectrum disorder requires visual supports and structured transitions. These modifications reflect adherence to which educational principle?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_222",
+    "question_stem": "A school psychologist recommends that teachers implement a social-emotional learning (SEL) curriculum based on the Collaborative for Academic, Social, and Emotional Learning (CASEL) framework in all classrooms. Which CASEL competency would be the primary focus for a school-wide classroom instruction initiative?",
+    "current_skill_id": "DBD-09",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_223",
+    "question_stem": "To establish a school-wide anti-harassment initiative that creates a climate resistant to mistreatment, which student-focused lesson is most important?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_224",
+    "question_stem": "An urban school district maintains separate curriculum pathways: one for college-preparation and another for vocational/technical training. The vocational pathway disproportionately enrolls students from low-income families. A civil rights lawsuit challenging these tracking practices would most likely be decided using precedent from which landmark case?",
+    "current_skill_id": "LEG-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_225",
+    "question_stem": "A district psychologist is designated to coordinate a threat assessment concerning a high school learner who has made written remarks about bringing a weapon to campus. Which is the psychologist's most critical first action?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_226",
+    "question_stem": "Which landmark Supreme Court decision established the constitutional principle that the maintenance of segregated public schools based on race is inherently unequal and therefore unconstitutional?",
+    "current_skill_id": "LEG-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Equitable Practices for Diverse Student Populations",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_227",
+    "question_stem": "NASP advocates for school psychologists to participate in which form of professional activity to strengthen their competencies?",
+    "current_skill_id": "ETH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Legal, Ethical, and Professional Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_228",
+    "question_stem": "School psychologists function as leaders of organizational change and possess expertise in systemic transformation. The field has shifted from a traditional focus on individual student difficulties and treatment toward which model?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_229",
+    "question_stem": "A school psychologist learns that a teacher plans to lower academic grades for students who demonstrate behavior problems, regardless of demonstrated mastery of academic content. What should the psychologist do?",
+    "current_skill_id": "CON-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_230",
+    "question_stem": "Which therapeutic modality emphasizes identifying and modifying maladaptive beliefs and thought patterns to enhance emotional wellbeing?",
+    "current_skill_id": "MBH-05",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_231",
+    "question_stem": "A student frequently calls out answers without waiting to be recognized. In behavioral analysis, what is the most probable functional reinforcer sustaining this conduct?",
+    "current_skill_id": "MBH-05",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_232",
+    "question_stem": "The information-processing framework, originally developed within the field of cognitive psychology, conceptualizes human learning and memory as resembling which type of system?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_233",
+    "question_stem": "In standard score interpretation on commonly used cognitive assessment tools, a T-score of 64 falls within which range?",
+    "current_skill_id": "PSY-01",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_234",
+    "question_stem": "Following completion of a comprehensive psychoeducational evaluation, a school psychologist meets with parents to discuss findings and implications. The primary objective of this feedback session should be to:",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Consultation and Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_235",
+    "question_stem": "During a counseling session with a second-grade child who demonstrates marked reluctance to attend school and expresses somatic complaints each morning before class, the school psychologist suspects the underlying issue is most likely related to which psychological construct?",
+    "current_skill_id": "ACA-06",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_236",
+    "question_stem": "A school psychologist is designing a universal school-wide intervention targeting all students in grades 3-5. The intervention focuses on teaching cooperation, communication, and teamwork skills. This initiative would be most beneficial for students presenting with which primary concern?",
+    "current_skill_id": "MBH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_237",
+    "question_stem": "A school psychologist provides counsel to a high school student who was discovered using a sibling's prescription stimulant medication. The parents attribute the student's distress to rejection from a selective university. During their meeting, the psychologist emphasizes the student's agency in determining their response to adversity. Which theorist is most associated with this emphasis on personal choice in responding to difficult circumstances?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_238",
+    "question_stem": "When would it be most appropriate for a school psychologist to recommend that a teacher modify classroom expectations for a particular student?",
+    "current_skill_id": "MBH-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_239",
+    "question_stem": "A school psychologist has been tasked with helping the school create a comprehensive suicide prevention initiative. Which component is essential to include within an evidence-based, school-wide suicide prevention framework?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_240",
+    "question_stem": "When conducting a comprehensive problem-solving ecological assessment to understand why a student is struggling academically, which four domains should the school psychologist systematically evaluate? (Use the acronym ICEL as a guide.)",
+    "current_skill_id": "DBD-09",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_241",
+    "question_stem": "What is the primary objective of functional behavioral assessment (FBA) in school psychology?",
+    "current_skill_id": "LEG-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_242",
+    "question_stem": "A school psychologist works with a student experiencing identity concerns and peer relationship difficulties who has recently received a diagnosis of major depressive disorder. The psychologist will draw on multiple research-based strategies and interventions. Which technique would the psychologist most likely avoid using with this student?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_243",
+    "question_stem": "A student reports significant anxiety and avoidance related to insect-related fears. Which behavioral intervention would be the recommended treatment approach?",
+    "current_skill_id": "MBH-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_244",
+    "question_stem": "A school psychologist discusses with students the consequences of sacrificing sleep to engage in extended video gaming sessions. The psychologist alerts them to potential risks, including which of the following?",
+    "current_skill_id": "ACA-08",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Mental and Behavioral Health Services and Interventions",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_245",
+    "question_stem": "Prior to administering a newly adopted psychological assessment instrument, what action represents the most professional and legally defensible approach for a school psychologist?",
+    "current_skill_id": "ETH-03",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_246",
+    "question_stem": "A school district is developing a multi-tiered system of support. Which component would MOST strengthen the framework's effectiveness?",
+    "current_skill_id": "PSY-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_247",
+    "question_stem": "An IEP team is designing individualized goals and accommodations for a student with a documented disability. The team must consider providing both access to grade-level standards and ensuring measurable progress. Which guiding principle should direct these decisions?",
+    "current_skill_id": "SWP-04",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "2.0",
+    "domain_name": "Academic Interventions and Instructional Support",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_248",
+    "question_stem": "When a parent requests an independent educational evaluation (IEE), what obligation does the school district have?",
+    "current_skill_id": "PSY-02",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Research and Evidence-Based Practice",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_249",
+    "question_stem": "Which statistical measure describes the degree to which a test produces consistent results across multiple administrations or parallel test forms?",
+    "current_skill_id": "MBH-05",
+    "cognitive_complexity": "Application",
+    "DOMAIN": "4.0",
+    "domain_name": "Family-School Collaboration",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  },
+  {
+    "UNIQUEID": "item_250",
+    "question_stem": "Under the Virginia Threat Assessment Model, what constitute the three core evaluative dimensions?",
+    "current_skill_id": "SAF-03",
+    "cognitive_complexity": "Recall",
+    "DOMAIN": "1.0",
+    "domain_name": "Data-Based Decision Making",
+    "skill_nasp_domain": "",
+    "audit_status": "HUMAN_REVIEWED"
+  }
+]

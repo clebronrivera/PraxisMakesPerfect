@@ -4,6 +4,23 @@ Status: Active working ledger.
 
 Use this file to track discovered issues, reporting mismatches, and unresolved implementation risks so they do not get lost between sessions.
 
+## 2026-04-09 — Documentation Drift & Item Bank Reconciliation (Resolved)
+
+- Status: resolved
+- Area: documentation accuracy, item bank accounting
+- Summary: A psychometric audit surfaced documentation drift across CLAUDE.md and HOW_THE_APP_WORKS.md, plus a stale "466-question bank" claim. The actual bank is 1,150 items (all live-eligible). 250 items had blank `original_skill_id` (provenance gap only — `current_skill_id` was populated for all 1,150). Confidence-weighted proficiency scoring was confirmed accurate end-to-end despite being flagged as STALE in a prior audit table. Multiple body paragraphs in HOW_THE_APP_WORKS.md described features or behaviors that no longer matched code (SRS, streak UI, NASP badges on tiles, inactivity timer, tutorChat flag).
+- Changes made:
+  - `src/data/questions.json`: 250 items tagged with `provenance_status: "missing_original_skill_id"` (original_skill_id preserved as blank)
+  - `CLAUDE.md`: "466" replaced with "1,150" (2 locations), migration table updated (added 0017–0018), rate limit line number corrected, legacy note added, changelog entry added
+  - `docs/HOW_THE_APP_WORKS.md`: Audit table removed. Body text corrected for: SRS (internal tracking only), streak (tracked but not rendered), inactivity (120s auto-pause, not 15-min logout), tutorChat (true, not false), NASP badges (study guide only, not on tiles), VocabularyQuizMode vs Term Sprint distinction
+  - `docs/DISTRACTOR_CLASSIFICATION_HANDOFF.md`: "4 NASP domains" corrected to "4 Praxis 5403 domains"
+- Full findings: `audit-output/prerequisite-cleanup-findings.md`
+- Code anchors:
+  [src/data/questions.json](/Users/lebron/Documents/PraxisMakesPerfect/src/data/questions.json)
+  [src/utils/skillProficiency.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/skillProficiency.ts)
+  [src/brain/question-analyzer.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/brain/question-analyzer.ts)
+  [src/utils/assessment-builder.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessment-builder.ts)
+
 ## How To Use
 
 - Add newest entries near the top.

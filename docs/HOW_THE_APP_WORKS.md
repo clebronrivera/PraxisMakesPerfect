@@ -8,32 +8,6 @@
 
 ---
 
-## ⚠ Accuracy Audit — 2026-04-08
-
-The following items were verified against the live codebase on 2026-04-08. Items marked **STALE** describe things that are no longer coded as described (but have not been deleted from the document, per policy). Items marked **MINOR FIX** are small factual corrections. Items marked **CONFIRMED** were verified accurate.
-
-| # | Section | Status | Finding |
-|---|---------|--------|---------|
-| 1 | Streak Tracking | **STALE** | "Consecutive correct answers build a streak. Shown on the dashboard" — `streak` appears in `useProgressTracking` and `PracticeSession` (internal counter) but is **not rendered anywhere on DashboardHome**. There is no visible streak UI on the dashboard. The tracking field exists; the display does not. |
-| 2 | Question Retirement | **CONFIRMED** | Mechanics match: `times_correct >= 2`, first-pass gate, pool reset on exhaustion — all confirmed in `PracticeSession.tsx`. Retired count is shown during a session, not on the dashboard. `localStorage` storage confirmed. |
-| 3 | Inactivity Auto-Logout | **STALE** | Described as "15 minutes." Actual implementation in `useElapsedTimer.ts` is an **auto-PAUSE** at **120 seconds** (2 minutes) of inactivity — not a logout, and not 15 minutes. The 15-minute figure may come from Supabase session timeout, not an in-app timer. |
-| 4 | Master Glossary Terms | **MINOR FIX** | Document says "396-term master glossary" in two places. `master-glossary.json` has `396` terms (confirmed). Accurate. |
-| 5 | Leitner / Spaced Repetition | **STALE** | Document says spaced repetition is "collected now and will surface as a Review Suggestions feature." `src/utils/srsEngine.ts` and `src/brain/learning-state.ts` have SRS logic, but it is not wired into any UI component or visible user surface. No Review Suggestions badge or section exists anywhere. This is correctly flagged as future-facing but may never have been connected. |
-| 6 | NASP Domain Badges on Learning Path Tiles | **STALE** | Document says "Each of the 45 skills is mapped to a NASP Practice Model domain. These appear as small badges on Learning Path tiles." No NASP badge rendering was found in `LearningPathNodeMap.tsx`. The `nasp_domain_primary` and `prereq_chain_narrative` fields exist in `skillPhaseDLookup.ts` and are used in the **study guide prompt** — but the badge UI on LP tiles is not present. |
-| 7 | Study Guide — 6 Tabs | **CONFIRMED** | Overview / Priorities / Domains / Concepts / Weekly Plan / Milestones — all 6 confirmed in `StudyPlanViewer.tsx` line 103–111. |
-| 8 | AI Tutor Feature Flag | **MINOR FIX** | Document says `tutorChat: false` (implied: not active). Actual value in `launchConfig.ts`: `tutorChat: true`. The tutor is live in production. |
-| 9 | Home Dashboard — Practice Shortcuts Rail | **STALE** | Document describes a "Practice shortcuts rail (right side) — three one-tap buttons: Domain Review / Practice by Skill / Random Questions." The redesigned `DashboardHome.tsx` does not have a right-side rail with those three buttons. The dashboard structure changed during the April 2026 redesign. |
-| 10 | Home Dashboard — Greeting Hero / 4 Summary Cards | **STALE** | Document describes "A greeting hero card… Four summary cards: Questions answered, Readiness phase, Skills to reach goal, Weekly usage." The actual DashboardHome props and JSX do not map exactly to this layout — the redesigned dashboard has Today's Focus, Weekly stats, SRS overdue, and Redemption sections, not a 4-tile hero layout. |
-| 11 | Subscription Tiers | **STALE (by design)** | Section describes a planned freemium model at $14.99/month. `paywall: false` in `launchConfig.ts` — the paywall is confirmed not active. This section is intentionally future-facing. |
-| 12 | High-Impact Skills "Practice" Button | **STALE** | Document says Home shows High-Impact Skills with a **Practice** button (not raw accuracy). The redesigned DashboardHome shows skill info via `weakestSkill` prop — the specific button wording should be verified against the actual rendered UI. |
-| 13 | Proficiency — Confidence-Weighted Scoring | **STALE** | Document says "Proficiency tiers are calculated from confidence-weighted accuracy when available." Actual code in `skillProficiency.ts` uses raw accuracy only. The confidence-weighted score appears in **Advanced Statistics** (ResultsDashboard) but does not feed into the Emerging/Approaching/Demonstrating tier calculation. |
-| 14 | Follow-Up Question System | **CONFIRMED** | 3-level follow-up logic (second chance → distractor hint → domain warning) confirmed in `PracticeSession.tsx` lines 176–530. |
-| 15 | Interactive Exercises — 5 Types | **CONFIRMED** | ScenarioSorter, DragToOrder, TermMatcher, ClickSelector, CardFlip — all 5 confirmed as live components in `src/components/ModuleInteractives/`. |
-| 16 | Concept Insights | **CONFIRMED + UPDATED** | `conceptAnalytics.ts` confirmed. UI was redesigned 2026-04-08 to add summary tiles, mini-bars, cross-skill gaps bars, strength chip cloud, and empty state. |
-| 17 | question-vocabulary-tags.json | **CONFIRMED** | File exists at `src/data/question-vocabulary-tags.json`, used by `question-analyzer.ts`. |
-
----
-
 ## What It Is
 
 Praxis Study is a personalized exam prep platform built specifically for the **Praxis School Psychology exam (5403)**. Unlike a generic flashcard app or a static practice test, it tracks every answer you give, builds a real-time picture of your strengths and weaknesses across all 45 exam skills, and generates an AI-powered study guide that is uniquely yours — not a template, but a plan built from your actual performance data.
@@ -162,7 +136,7 @@ For every one of the 45 skills:
 - **Confidence signals** — whether answers are chosen confidently or appear to be guesses
 - **Distractor patterns** — which wrong answer keeps getting selected. When the same wrong option is chosen 2+ times, the system flags a repeated misconception pattern. Every wrong-answer option in the bank carries pre-authored distractor data: a tier (L1 = fundamental knowledge gap / L2 = procedural application error / L3 = nuanced judgment call), an error type (Conceptual / Procedural / Lexical), the specific misconception it exploits, and the knowledge gap it reveals. This classification drives both the explanation panel feedback and the study guide's misconception context.
 - **Trend** — improving or declining over time (requires at least 6 attempts to calculate)
-- **Spaced repetition schedule** — the system internally calculates when each skill is next due for review, using a Leitner box algorithm (5 levels, intervals of 1 / 3 / 7 / 14 / 30 days). This data is collected now and will surface as a Review Suggestions feature in a future update. It does not currently affect practice queuing or any visible badge.
+- **Spaced repetition schedule** — the codebase contains internal SRS tracking logic (`src/utils/srsEngine.ts`, `src/brain/learning-state.ts`) using a Leitner box algorithm (5 levels, intervals of 1 / 3 / 7 / 14 / 30 days). This logic is **not currently wired to any UI component or visible user surface**. It does not affect practice queuing, badge display, or any user-facing recommendation. If a Review Suggestions feature is added in the future, it would build on this internal tracking.
 
 ### The 6 Skill Status Labels
 Each skill is assigned one of six status labels, calculated by hard rules — not AI opinion:
@@ -216,7 +190,7 @@ Once you've answered a question correctly at least **twice** and have seen every
 Retirement state is stored per user in the browser (`localStorage`) and is separate per skill context. The retired count is shown on the dashboard.
 
 ### Streak Tracking
-Consecutive correct answers build a streak. Shown on the dashboard; resets when you answer incorrectly.
+Consecutive correct answers build a streak counter internally (`useProgressTracking`, `PracticeSession`). The streak resets when you answer incorrectly. **Note:** The streak counter is tracked in code but is not currently rendered on the dashboard or any other user-facing surface.
 
 ---
 
@@ -582,7 +556,7 @@ When a student misses a quiz question, the tutor forces a same-skill follow-up b
 
 ### Feature Flag
 
-`ACTIVE_LAUNCH_FEATURES.tutorChat` in `src/utils/launchConfig.ts` — set `false` until validated in production.
+`ACTIVE_LAUNCH_FEATURES.tutorChat` in `src/utils/launchConfig.ts` — currently set to `true` (live in production).
 
 ---
 
@@ -596,7 +570,7 @@ Each term row shows the vocabulary word, skill association, and the official def
 
 **Vocabulary practice:** For rapid-fire vocabulary practice, use **Term Sprint** in the Practice Hub (see above). For a personal study list of terms from your missed questions, use **My Focus Terms** in the Practice Hub.
 
-*Note: Quiz Mode was removed from the Glossary in the April 2026 audit. Vocabulary quizzes are now the Term Sprint feature in the Practice Hub, which provides a faster and more game-like experience.*
+*Note: Quiz Mode was removed from the Glossary page in the April 2026 audit. Vocabulary practice is now available in two forms: **Term Sprint** in the Practice Hub (a fixed 20-question rapid-fire game) and the standalone **Vocabulary Quiz** (`VocabularyQuizMode`) which offers selectable quiz sizes (5, 10, 15, or 20 questions). These are separate components with different UIs.*
 
 ---
 
@@ -687,7 +661,7 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 | Master glossary terms | 396 |
 | Avg vocabulary concepts per question | ~2.7 |
 | Vocabulary quiz sizes | 5, 10, 15, or 20 questions |
-| Inactivity auto-logout | 15 minutes (separate from the "15 min avg session" marketing stat) |
+| Inactivity auto-pause | 120 seconds (auto-pauses the session timer; not a logout) |
 
 ---
 
@@ -747,9 +721,9 @@ Payments are processed via **Stripe Checkout**. Subscription state is synced to 
 
 ## NASP Domain Alignment
 
-Each of the 45 skills is mapped to a **NASP Practice Model domain** (NASP-1 through NASP-10). These appear as small badges on Learning Path tiles and are used in the study guide to provide professional context (e.g., "This cluster maps to NASP-3: Interventions and Instructional Support"). Prerequisite knowledge for each skill is shown as a tooltip on hover and as a "Prerequisites" section at the top of each Learning Path module page.
+Each of the 45 skills is mapped to a **NASP Practice Model domain** (NASP-1 through NASP-10). This mapping is stored in `skillPhaseDLookup.ts` and is used in the **AI Study Guide prompt** to provide professional context (e.g., "This cluster maps to NASP-3: Interventions and Instructional Support"). NASP domain badges are **not currently rendered** on Learning Path tiles or any other user-facing surface.
 
-The Phase D data is also injected into the AI Study Guide prompt: `prereq_chain_narrative` and `nasp_domain_primary` are passed per skill so Claude can write richer narrative about prerequisite knowledge gaps and align recommendations to NASP professional domains. The Learning Path sorts non-mastered skills by prerequisite depth (foundational skills first) so students encounter prerequisites before the skills that depend on them.
+Prerequisite knowledge for each skill is shown as a "Prerequisites" section at the top of each Learning Path module page. The Phase D data (`prereq_chain_narrative` and `nasp_domain_primary`) is injected into the AI Study Guide prompt per skill so Claude can write richer narrative about prerequisite knowledge gaps and align recommendations to NASP professional domains. The Learning Path sorts non-mastered skills by prerequisite depth (foundational skills first) so students encounter prerequisites before the skills that depend on them.
 
 ---
 

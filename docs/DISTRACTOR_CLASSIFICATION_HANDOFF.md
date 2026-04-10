@@ -8,7 +8,7 @@
 
 ## What This Project Is
 
-**Praxis Makes Perfect** is an adaptive exam-prep platform for the **Praxis School Psychology (5403)** licensing exam. The question bank contains 1,150 multiple-choice questions covering school psychology practice across 45 skills in 4 NASP domains.
+**Praxis Makes Perfect** is an adaptive exam-prep platform for the **Praxis School Psychology (5403)** licensing exam. The question bank contains 1,150 multiple-choice questions covering school psychology practice across 45 skills in 4 Praxis 5403 domains.
 
 The platform has a misconception-detection system. It tracks which wrong answers students choose repeatedly. For that system to be useful, every wrong-answer option in every question needs four pieces of metadata:
 

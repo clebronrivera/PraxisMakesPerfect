@@ -113,7 +113,7 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | Beta Feedback | All user feedback with status management |
 | Question Reports | Per-question issue reports with severity triage |
 | Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
-| Item Analysis | Psychometric quality metrics for the 466-question bank (p-value, discrimination, distractor analysis) |
+| Item Analysis | Psychometric quality metrics for the 1,150-question bank (p-value, discrimination, distractor analysis) |
 | AI Tutor | AI Tutor chat sessions — session list with user/type/message count/artifacts, drill into full conversation with intent badges and inline artifact cards, CSV export |
 
 ### Student Detail Drawer
@@ -190,7 +190,7 @@ SERVICE_ROLE_KEY="eyJ..." node scripts/admin-delete-study-plan.mjs puppyheavenll
 
 The 1-generation-per-7-days rate limit lives in:
 ```
-src/services/studyPlanService.ts  ~line 728
+src/services/studyPlanService.ts  ~line 764
 ```
 
 The rate limit is **active** as of 2026-03-23. It was previously commented out for testing but has been re-enabled.
@@ -367,6 +367,8 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0014_user_subscriptions.sql` | `user_subscriptions` — Stripe subscription tracking for paywall |
 | `0015_adaptive_audit_columns.sql` | `is_followup`, `cognitive_complexity`, `skill_question_index` on `responses` — diagnostic audit trail |
 | `0016_baseline_snapshot.sql` | `baseline_snapshot` JSONB column on `user_progress` — pre/post comparison |
+| `0017_simplified_onboarding.sql` | Simplified onboarding flow columns |
+| `0018_post_assessment_snapshot.sql` | Post-assessment snapshot table for growth report comparison |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 
@@ -431,7 +433,9 @@ Two engagement indicators live in the authenticated header (`App.tsx`).
 
 **Status:** Awaiting decision from product owner.
 
-**Context:** Spicy Mode (random question preview) and the Adaptive Diagnostic both pull from the same 466-question bank. If a user answers questions in Spicy Mode first, then starts the diagnostic, should the diagnostic:
+**Context:** Spicy Mode (random question preview) and the Adaptive Diagnostic both pull from the same 1,150-question bank (`src/data/questions.json`). If a user answers questions in Spicy Mode first, then starts the diagnostic, should the diagnostic:
+
+> **Note:** Older documentation and `src/data/question-skill-map.json` reference a "466-question bank." That figure reflects the legacy fallback skill-mapping file (466 entries), which predates the expanded bank. The runtime bank has been 1,150 items since the content expansion. The legacy file is still loaded by `question-analyzer.ts` as a last-resort fallback but is never reached because all 1,150 items now carry `current_skill_id`.
 
 - **Option A:** Avoid questions the user already saw in Spicy Mode (shrinks the available pool, may limit adaptive follow-ups for some skills)
 - **Option B:** Re-ask them (the diagnostic measures skill, not novelty — but the user may remember answers)
@@ -492,3 +496,21 @@ If user starts the diagnostic and pauses midway, they return to this page. The d
 | AI | Anthropic Claude (via Netlify Background Function) |
 | Hosting | Netlify |
 | Functions | Netlify Background Functions (Lambda compat mode) |
+
+---
+
+## Changelog
+
+### 2026-04-09 — Documentation Drift & Item Bank Reconciliation
+
+**Branch:** `audit-fixes-april-2026`
+
+A psychometric audit revealed documentation drift and an item bank accounting discrepancy. Changes made:
+
+- **Item bank:** Total is 1,150 items (not 466). The "466" figure came from the legacy `src/data/question-skill-map.json` fallback file, which predates the bank expansion and is never reached in live code. All 1,150 items have `current_skill_id` populated and are live-eligible.
+- **Provenance tagging:** 250 items with blank `original_skill_id` were tagged with `provenance_status: "missing_original_skill_id"` in `questions.json`. The `original_skill_id` field was NOT backfilled — it remains blank to preserve provenance integrity.
+- **CLAUDE.md:** Replaced "466-question bank" with "1,150-question bank" (2 locations). Added legacy note explaining the 466 figure. Updated migration table (added 0017, 0018). Fixed rate limit line number (~728 to ~764).
+- **HOW_THE_APP_WORKS.md:** Removed the 2026-04-08 audit table (17 rows) that was causing split-brain with the document body. Corrected body text for: SRS/Leitner (internal tracking only, no UI surface), streak tracking (tracked but not rendered), inactivity (auto-pause at 120s, not 15-min logout), tutorChat flag (true, not false), NASP badges (study guide only, not on LP tiles), VocabularyQuizMode vs Term Sprint distinction.
+- **Proficiency-tier scoring (line 191):** Confirmed ACCURATE. `weightedAccuracy` IS populated end-to-end (confidence recorded in QuestionCard, aggregated via `calculateWeightedAccuracy`, persisted in Supabase, passed to `getSkillProficiency`). No change needed.
+- **DISTRACTOR_CLASSIFICATION_HANDOFF.md:** Fixed "4 NASP domains" to "4 Praxis 5403 domains".
+- **Full findings:** `audit-output/prerequisite-cleanup-findings.md`
