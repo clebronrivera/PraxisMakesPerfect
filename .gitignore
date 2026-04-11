@@ -135,3 +135,9 @@ vite.config.ts.timestamp-*
 # Content authoring pipeline state
 content-authoring/pipeline/pipeline_state.db
 content-authoring/pipeline/.env
+
+# Test artifacts and env files
+.env.test
+playwright-report/
+test-results/
+e2e/*.json
