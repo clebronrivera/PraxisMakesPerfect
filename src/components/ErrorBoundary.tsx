@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, Home, RotateCcw } from 'lucide-react';
 import { clearSession } from '../utils/sessionStorage';
+import { captureError } from '../utils/sentry';
 
 interface Props {
   children: ReactNode;
@@ -25,6 +26,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    captureError(error, { tags: { source: 'ErrorBoundary' }, extra: { componentStack: errorInfo.componentStack } });
   }
 
   handleReset = () => {

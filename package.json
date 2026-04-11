@@ -23,6 +23,7 @@
     "audit:answers": "npx tsx scripts/audit-answer-distribution.ts"
   },
   "dependencies": {
+    "@sentry/react": "^10.48.0",
     "@supabase/supabase-js": "^2.99.1",
     "csv-parse": "^6.1.0",
     "docx": "^9.6.1",

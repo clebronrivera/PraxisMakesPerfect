@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../config/supabase';
+import { captureError } from '../utils/sentry';
 
 interface AuthContextType {
   user: User | null;
@@ -109,6 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (signInError) throw signInError;
     } catch (err: any) {
+      captureError(err, { tags: { source: 'auth', action: 'signIn' } });
       if (err.message === 'Invalid login credentials') {
         setError('Incorrect email or password. Please try again.');
       } else if (err.message === 'Email not confirmed') {
@@ -140,6 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (signUpError) throw signUpError;
     } catch (err: any) {
+      captureError(err, { tags: { source: 'auth', action: 'signUp' } });
       if (err.message.includes('User already registered')) {
         setError('An account with this email already exists. Please sign in instead.');
       } else if (err.message.includes('Password')) {
