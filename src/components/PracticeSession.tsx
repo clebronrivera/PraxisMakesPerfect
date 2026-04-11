@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw, BookOpen, Lightbulb, X, AlertTriangle } from 'lucide-react';
+import { enqueueResponse, getQueuedResponses, clearQueue } from '../utils/responseRetryQueue';
 import ModuleSnippetCard from './ModuleSnippetCard';
 import SkillHelpDrawer from './SkillHelpDrawer';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
@@ -204,6 +205,7 @@ export default function PracticeSession({
   const [shuffledOrder, setShuffledOrder] = useState<string[]>([]);
   const [currentDistractorNote, setCurrentDistractorNote] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [responseSaveWarning, setResponseSaveWarning] = useState(false);
   const [poolResetMessage, setPoolResetMessage] = useState(false);
 
   // ── Streak state ─────────────────────────────────────────────────────────────
@@ -536,11 +538,11 @@ export default function PracticeSession({
       setShowFeedback(true);
 
       if (logResponse) {
-        await logResponse({
+        const responsePayload = {
           questionId: currentQuestion.id,
           skillId: currentQuestion.skillId || '',
           domainIds: currentQuestion.domains || [],
-          assessmentType: 'practice',
+          assessmentType: 'practice' as const,
           sessionId,
           isCorrect,
           confidence,
@@ -548,7 +550,23 @@ export default function PracticeSession({
           timestamp: Date.now(),
           selectedAnswers,
           correctAnswers: correctList,
-        });
+        };
+        try {
+          await logResponse(responsePayload);
+          setResponseSaveWarning(false);
+          // Flush any previously queued responses on success
+          const queued = getQueuedResponses();
+          if (queued.length > 0) {
+            for (const item of queued) {
+              try { await logResponse(item.payload as any); } catch { /* best effort */ }
+            }
+            clearQueue();
+          }
+        } catch (saveErr) {
+          console.error('[PracticeSession] Failed to save response:', saveErr);
+          enqueueResponse(responsePayload as any);
+          setResponseSaveWarning(true);
+        }
       }
 
       if (updateLastSession) {
@@ -885,6 +903,14 @@ export default function PracticeSession({
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── Response save warning ──────────────────────────────────────────── */}
+      {responseSaveWarning && (
+        <div className="mb-3 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span>Your last answer couldn't be saved. It's been queued and will retry automatically.</span>
         </div>
       )}
 
