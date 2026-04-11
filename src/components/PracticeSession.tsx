@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Zap, Pause, Home, Flame, ArrowLeft, RotateCcw, BookOpen, Lightbulb, X, AlertTriangle } from 'lucide-react';
+import { captureError } from '../utils/sentry';
 import ModuleSnippetCard from './ModuleSnippetCard';
 import SkillHelpDrawer from './SkillHelpDrawer';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
@@ -567,6 +568,7 @@ export default function PracticeSession({
       setHintOpenForQuestion(null);
     } catch (error) {
       console.error('[PracticeSession] Failed to submit answer:', error);
+      captureError(error, { tags: { source: 'PracticeSession', action: 'submitAnswer' } });
       setCurrentDistractorNote('We hit an error while processing this answer. Your session is still active, so try again.');
     } finally {
       setIsSubmitting(false);
