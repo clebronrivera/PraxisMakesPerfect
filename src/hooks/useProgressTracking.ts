@@ -388,11 +388,37 @@ export function useProgressTracking() {
     }
   }, [user]);
 
+  // Debounced profile save — batches rapid updates (e.g. answering multiple
+  // questions quickly) into a single DB write with a 2-second window.
+  const debouncedSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingProfileRef = useRef<UserProfile | null>(null);
+
+  const debouncedSave = useCallback((profile: UserProfile) => {
+    pendingProfileRef.current = profile;
+    if (debouncedSaveRef.current) clearTimeout(debouncedSaveRef.current);
+    debouncedSaveRef.current = setTimeout(() => {
+      if (pendingProfileRef.current) {
+        void saveProfile(pendingProfileRef.current);
+        pendingProfileRef.current = null;
+      }
+    }, 2000);
+  }, [saveProfile]);
+
+  // Flush any pending save on unmount
+  useEffect(() => {
+    return () => {
+      if (debouncedSaveRef.current) clearTimeout(debouncedSaveRef.current);
+      if (pendingProfileRef.current) {
+        void saveProfile(pendingProfileRef.current);
+      }
+    };
+  }, [saveProfile]);
+
   const updateProfile = useCallback(async (updates: Partial<UserProfile>) => {
     const newProfile = { ...profileRef.current, ...updates };
     setProfileState(newProfile);
-    await saveProfile(newProfile);
-  }, [saveProfile, setProfileState]);
+    debouncedSave(newProfile);
+  }, [debouncedSave, setProfileState]);
 
   // Save onboarding / extended profile data directly (upserts only the new columns)
   const saveOnboardingData = useCallback(async (data: {

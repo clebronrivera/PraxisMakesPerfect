@@ -32,11 +32,11 @@ export const progressToMetadataId: Record<string, string> = {
   'ACA-02': 'NEW-3-AccommodationsModifications', // Accommodations → accommodation, modification, assistive technology, extended time
   'ACA-03': 'NEW-3-MetacognitiveStrategies',    // Study Skills → metacognition, self-regulation, self-monitoring, executive function
   'ACA-04': 'NEW-3-InstructionalHierarchy',      // Instructional Strategies → acquisition, proficiency, generalization, modeling
-  'ACA-06': 'NEW-4-DevelopmentalInterventions',  // Learning Theory → developmental appropriateness, Piaget stages, cognitive development
+  'ACA-06': 'NEW-4-DevelopmentalInterventions',  // Learning Theory → developmental appropriateness, Piaget stages, cognitive development  [INTENTIONAL: shares metadata with DEV-01 — both map to developmental theory content]
   'ACA-07': 'ACAD-S02',                    // Language and Literacy → phonemic awareness, phonics, decoding, reading fluency
   'ACA-08': 'ACAD-S03',                    // Executive Function → error analysis, error pattern, diagnostic teaching — closest match for cognitive processes
   'ACA-09': 'NEW-3-AcademicProgressFactors',     // Health Impact → classroom climate, socioeconomic factors, environmental context
-  'DEV-01': 'NEW-4-DevelopmentalInterventions',  // Development (Erikson, Piaget) → developmental appropriateness, Piaget stages
+  'DEV-01': 'NEW-4-DevelopmentalInterventions',  // Development (Erikson, Piaget) → developmental appropriateness, Piaget stages  [INTENTIONAL: shares metadata with ACA-06]
   'MBH-02': 'NEW-4-GroupCounseling',       // Individual and Group Counseling → group formation, group stages, group cohesion
   'MBH-03': 'MBH-S05',                     // Intervention Models (CBT, ABA, Solution-Focused) → CBT, SFBT, DBT
   'MBH-04': 'NEW-4-Psychopathology',       // Psychopathology → ADHD, depression, anxiety, ASD, ODD
@@ -55,22 +55,26 @@ export const progressToMetadataId: Record<string, string> = {
   // ── Domain 4: Foundations ─────────────────────────────────────────────────
   'DIV-01': 'NEW-3-BioCulturalInfluences',  // Cultural Factors → biological factors, cultural learning styles, cultural capital
   'DIV-03': 'DIV-S01',                     // Implicit Bias → implicit bias, cultural bias, microaggression, stereotype
-  'DIV-05': 'NEW-10-EducationLaw',         // Special Education Services → Section 504, IDEA, disability definition
+  'DIV-05': 'NEW-10-EducationLaw',         // Special Education Services → Section 504, IDEA, disability definition  [INTENTIONAL: shares metadata with LEG-03 — both map to education law content]
   'ETH-01': 'NEW-10-EthicalProblemSolving', // NASP Ethics → ethical problem-solving model, competing principles, dual relationship
   'ETH-02': 'LEG-S06',                     // Professional Liability → ethical principles, beneficence, nonmaleficence, professional boundaries
   'ETH-03': 'NEW-10-ProfessionalGrowth',   // Advocacy, Lifelong Learning → continuing education, professional development, scope of competence
   'LEG-01': 'NEW-10-RecordKeeping',         // FERPA → FERPA, educational records, record access rights, directory information
   'LEG-02': 'LEG-S02',                     // IDEA → IDEA, FAPE, zero-reject, IEP, LRE
-  'LEG-03': 'NEW-10-EducationLaw',         // Section 504 / ADA → Section 504, IDEA, civil rights access — shared with DIV-05
+  'LEG-03': 'NEW-10-EducationLaw',         // Section 504 / ADA → Section 504, IDEA, civil rights access  [INTENTIONAL: shares metadata with DIV-05]
   'LEG-04': 'LEG-S01',                     // Case Law → Tarasoff, Larry P., Rowley, FAPE standard
   'RES-02': 'NEW-9-ProgramEvaluation',     // Applying Research to Practice → program evaluation, outcome data, formative/summative evaluation
   'RES-03': 'RES-S01',                     // Research Design & Statistics → single-subject design, A-B-A-B, multiple baseline
 };
 
-// Build reverse mapping
+// Build reverse mapping.
+// Note: 2 metadata IDs are intentionally shared by 2 progress IDs each
+// (NEW-4-DevelopmentalInterventions: ACA-06 + DEV-01,
+//  NEW-10-EducationLaw: DIV-05 + LEG-03).
+// The reverse map stores only the first match. This is safe because
+// toProgressId() is currently unused at runtime.
 const _reverse: Record<string, string> = {};
 for (const [progressId, metadataId] of Object.entries(progressToMetadataId)) {
-  // First mapping wins (some metadata IDs are shared by multiple progress IDs)
   if (!_reverse[metadataId]) {
     _reverse[metadataId] = progressId;
   }
