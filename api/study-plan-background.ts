@@ -80,6 +80,14 @@ const REQUIRED_V2_SECTIONS = [
   'checkpointLogic',
 ] as const;
 
+function isNonEmpty(value: unknown): boolean {
+  if (value === null || value === undefined) return false;
+  if (typeof value === 'string' && value.trim() === '') return false;
+  if (Array.isArray(value) && value.length === 0) return false;
+  if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value as object).length === 0) return false;
+  return true;
+}
+
 function parseAndValidateV2(rawContent: string): Record<string, unknown> {
   const jsonStr = extractJsonObject(rawContent);
   const parsed  = JSON.parse(jsonStr) as Record<string, unknown>;
@@ -87,6 +95,9 @@ function parseAndValidateV2(rawContent: string): Record<string, unknown> {
   for (const section of REQUIRED_V2_SECTIONS) {
     if (!(section in parsed)) {
       throw new Error(`Missing required section: ${section}`);
+    }
+    if (!isNonEmpty(parsed[section])) {
+      throw new Error(`Section "${section}" is structurally empty (null, empty string, empty array, or empty object)`);
     }
   }
 
@@ -177,10 +188,19 @@ export const handler = async (event: any) => {
 
     if (insertErr) {
       console.error('[study-plan-background] Insert error:', insertErr);
-    } else {
-      console.log(`[study-plan-background] v2 plan saved for user ${user.id}`);
+      // Persist a failure record so the client can detect it during polling
+      try {
+        await userClient.from('study_plans').insert([{
+          user_id: user.id,
+          plan_document: { error: true, errorMessage: insertErr.message, failedAt: new Date().toISOString() },
+        }]);
+      } catch (failRecordErr) {
+        console.error('[study-plan-background] Could not write failure record:', failRecordErr);
+      }
+      return json(500, { error: 'Failed to save study plan.' });
     }
 
+    console.log(`[study-plan-background] v2 plan saved for user ${user.id}`);
     return json(200, { ok: true });
 
   } catch (error) {
