@@ -35,6 +35,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
 import StudentDetailDrawer from './StudentDetailDrawer';
 import ItemAnalysisTab from './ItemAnalysisTab';
+import { SentryTestButton } from './SentryTestButton';
 
 type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users' | 'item-analysis' | 'chat-activity';
 
@@ -597,6 +598,7 @@ export default function AdminDashboard({
             >
               Teach Mode
             </button>
+            <SentryTestButton />
           </div>
         </div>
       </div>
