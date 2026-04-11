@@ -140,4 +140,4 @@ content-authoring/pipeline/.env
 .env.test
 playwright-report/
 test-results/
-e2e/*.json
+e2e/**/*.json
