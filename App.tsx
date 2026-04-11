@@ -84,6 +84,14 @@ function PraxisStudyAppContent() {
   const { selectNextQuestion } = useAdaptiveLearning();
   const [canonicalQuestions, setCanonicalQuestions] = useState<any[]>([]);
   const [canonicalLoading, setCanonicalLoading] = useState(true);
+
+  // Hash routing for privacy/terms — must be declared before any early returns
+  const [hashRoute, setHashRoute] = useState(window.location.hash.replace('#', ''));
+  useEffect(() => {
+    const onHashChange = () => setHashRoute(window.location.hash.replace('#', ''));
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
   const canonicalQuestionIds = useMemo(
     () => new Set(canonicalQuestions.map(question => question.id)),
     [canonicalQuestions]
@@ -545,13 +553,6 @@ function PraxisStudyAppContent() {
   }
   
   // ── Privacy & Terms pages (accessible without auth, hash-routed) ──────────
-  const [hashRoute, setHashRoute] = useState(window.location.hash.replace('#', ''));
-  useEffect(() => {
-    const onHashChange = () => setHashRoute(window.location.hash.replace('#', ''));
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
-  }, []);
-
   if (hashRoute === 'privacy') {
     return (
       <Suspense fallback={null}>
