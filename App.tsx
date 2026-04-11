@@ -1225,7 +1225,7 @@ function PraxisStudyAppContent() {
               onStartSkillPractice={(skillId) => startSkillPractice(skillId)}
               onNodeClick={openLearningPathModule}
               onStartScreener={() => startScreener(undefined)}
-              onStartDiagnostic={() => startFullAssessment(undefined)}
+              onStartDiagnostic={() => startAdaptiveDiagnostic()}
               onSkillReviewOpen={() => setMode('results')}
               onLearningPathOpen={() => setMode('study-guide')}
               onGenerateStudyPlan={() => {

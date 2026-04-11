@@ -325,7 +325,14 @@ export function useAssessmentFlow({
         ...Object.values(result.followUpPool).flat().map(q => q.id),
       ];
 
-      void updateProfile({ diagnosticQuestionIds: allQuestionIds });
+      // Capture baseline snapshot BEFORE the diagnostic starts scoring.
+      // This preserves the user's pre-diagnostic skill state for growth comparison.
+      // Guard: only capture once (never overwrite an existing baseline).
+      const baselineUpdate = !profile.baselineSnapshot && profile.skillScores
+        ? { baselineSnapshot: JSON.parse(JSON.stringify(profile.skillScores)) }
+        : {};
+
+      void updateProfile({ diagnosticQuestionIds: allQuestionIds, ...baselineUpdate });
 
       setAdaptiveDiagnosticData(result);
       setAssessmentStartTime(Date.now());
@@ -501,8 +508,10 @@ export function useAssessmentFlow({
         .filter((q): q is AnalyzedQuestion => q !== undefined);
       setFullAssessmentQuestions(diagnosticQuestions);
 
-      // Capture baseline snapshot on first diagnostic completion (never overwrite)
-      const baselineUpdate = !profile.baselineSnapshot && profile.skillScores
+      // Safety net: capture baseline at completion if it wasn't captured at start
+      // (e.g. users who started diagnostic before this fix was deployed).
+      // Primary baseline capture happens in startAdaptiveDiagnostic().
+      const baselineSafetyNet = !profile.baselineSnapshot && profile.skillScores
         ? { baselineSnapshot: JSON.parse(JSON.stringify(profile.skillScores)) }
         : {};
 
@@ -515,7 +524,7 @@ export function useAssessmentFlow({
         lastDiagnosticCompletedAt: new Date().toISOString(),
         lastSession: null,
         ...(analysis as Partial<UserProfile>),
-        ...baselineUpdate,
+        ...baselineSafetyNet,
       });
 
       if (currentUserName && selectedSessionId) {

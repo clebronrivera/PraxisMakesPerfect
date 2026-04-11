@@ -57,13 +57,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Listen for auth state changes
   useEffect(() => {
+    // Safety timeout — if getSession() hangs (e.g. Supabase unreachable),
+    // ensure the app exits the loading state within 10 seconds.
+    const safetyTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 10_000);
+
     // Check active session immediately
     supabase.auth.getSession().then(({ data: { session } }) => {
+      clearTimeout(safetyTimeout);
       setUser(session?.user ?? null);
       setLoading(false);
       if (session?.user) {
         void trackAuthenticatedSession(session.user);
       }
+    }).catch((err) => {
+      clearTimeout(safetyTimeout);
+      console.error('[AuthContext] getSession failed:', err);
+      setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
