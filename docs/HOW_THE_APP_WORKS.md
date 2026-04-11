@@ -34,6 +34,8 @@ Within those 4 domains there are **45 distinct skills** — specific competency 
 ### Step 1: Create an Account
 Sign in with an email and password. All data lives in the cloud, so you can pick up exactly where you left off on any device.
 
+**Consent requirement:** During signup, users must check a consent checkbox agreeing to the [Privacy Policy](#privacy) and [Terms of Service](#terms) before their account can be created. Existing users who signed up before this requirement are shown a non-dismissable consent gate on their next login. Both documents are accessible without authentication via `#privacy` and `#terms` hash routes.
+
 Before sign-in, the public entry page leads with an outcome-first hero for Praxis 5403 candidates. It frames the product around three promises:
 - take an adaptive diagnostic that adjusts to your performance across all 45 skills
 - start practicing immediately — no gates or waiting required

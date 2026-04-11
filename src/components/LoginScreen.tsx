@@ -262,6 +262,7 @@ export default function LoginScreen() {
   const [displayName, setDisplayName] = useState('');
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [showAdminEntry, setShowAdminEntry] = useState(false);
+  const [consentChecked, setConsentChecked] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -686,9 +687,38 @@ export default function LoginScreen() {
                           )}
                         </div>
 
+                        {mode === 'signup' && (
+                          <label className="flex items-start gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={consentChecked}
+                              onChange={(e) => setConsentChecked(e.target.checked)}
+                              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                            />
+                            <span className="text-xs leading-relaxed text-slate-600">
+                              I agree to the{' '}
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); window.location.hash = 'terms'; }}
+                                className="font-medium text-amber-700 underline hover:text-amber-800"
+                              >
+                                Terms of Service
+                              </button>{' '}
+                              and{' '}
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); window.location.hash = 'privacy'; }}
+                                className="font-medium text-amber-700 underline hover:text-amber-800"
+                              >
+                                Privacy Policy
+                              </button>
+                            </span>
+                          </label>
+                        )}
+
                         <button
                           type="submit"
-                          disabled={loading || !email || !password}
+                          disabled={loading || !email || !password || (mode === 'signup' && !consentChecked)}
                           className="editorial-button-primary flex w-full items-center justify-center gap-2 py-3 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           {loading ? (

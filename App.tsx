@@ -60,6 +60,8 @@ import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
 const OnboardingFlow = lazy(() => import('./src/components/OnboardingFlow'));
 const ProfileEditorPanel = lazy(() => import('./src/components/ProfileEditorPanel'));
+const PrivacyPolicy = lazy(() => import('./src/components/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./src/components/TermsOfService'));
 
 const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.meta.url).href;
 
@@ -542,12 +544,78 @@ function PraxisStudyAppContent() {
     );
   }
   
+  // ── Privacy & Terms pages (accessible without auth, hash-routed) ──────────
+  const [hashRoute, setHashRoute] = useState(window.location.hash.replace('#', ''));
+  useEffect(() => {
+    const onHashChange = () => setHashRoute(window.location.hash.replace('#', ''));
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  if (hashRoute === 'privacy') {
+    return (
+      <Suspense fallback={null}>
+        <PrivacyPolicy onBack={() => { window.location.hash = ''; }} />
+      </Suspense>
+    );
+  }
+  if (hashRoute === 'terms') {
+    return (
+      <Suspense fallback={null}>
+        <TermsOfService onBack={() => { window.location.hash = ''; }} />
+      </Suspense>
+    );
+  }
+
   // Show login screen if not authenticated
   if (!user) {
     return (
       <Suspense fallback={null}>
         <LoginScreen />
       </Suspense>
+    );
+  }
+
+  // ── Consent gate for existing users ──────────────────────────────────────
+  // Non-dismissable: no X button, no back nav. Only exit is "I agree."
+  // Skipped for brand-new users (consent captured at signup) or if already accepted.
+  const needsConsent = profile.onboardingComplete && !profile.consentAcceptedAt;
+  if (needsConsent) {
+    const handleAcceptConsent = async () => {
+      const now = new Date().toISOString();
+      await updateProfile({ consentAcceptedAt: now });
+    };
+
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-stone-50 p-6">
+        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h2 className="mb-2 text-xl font-bold text-slate-900">Updated Terms & Privacy Policy</h2>
+          <p className="mb-6 text-sm leading-relaxed text-slate-600">
+            We've published our Privacy Policy and Terms of Service. Please review and accept
+            them to continue using PraxisMakesPerfect.
+          </p>
+          <div className="mb-6 flex flex-col gap-2">
+            <button
+              onClick={() => { window.location.hash = 'privacy'; }}
+              className="text-left text-sm font-medium text-amber-700 underline hover:text-amber-800"
+            >
+              Read Privacy Policy
+            </button>
+            <button
+              onClick={() => { window.location.hash = 'terms'; }}
+              className="text-left text-sm font-medium text-amber-700 underline hover:text-amber-800"
+            >
+              Read Terms of Service
+            </button>
+          </div>
+          <button
+            onClick={handleAcceptConsent}
+            className="editorial-button-primary w-full py-3"
+          >
+            I agree to the Terms & Privacy Policy
+          </button>
+        </div>
+      </div>
     );
   }
 

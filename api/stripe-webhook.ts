@@ -74,6 +74,10 @@ function mapStripePlan(priceId: string): string {
 }
 
 export async function handler(event: { httpMethod: string; headers?: Record<string, string>; body?: string }) {
+  // Stripe integration is dormant — return early without processing.
+  // Re-enable when payment infrastructure is ready (ensure signature verification is active).
+  return json(200, { message: 'Stripe integration disabled' });
+
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
   try {

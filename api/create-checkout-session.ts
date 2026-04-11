@@ -38,6 +38,11 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: JSON_HEADERS, body: '' };
   }
+
+  // Stripe checkout is dormant — return early without processing.
+  // Re-enable when payment infrastructure is ready.
+  return json(503, { error: 'Checkout is not currently available' });
+
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
   try {
