@@ -102,6 +102,9 @@ export interface UserProfile {
 
   // Baseline snapshot (captured on first diagnostic completion)
   baselineSnapshot?: Record<string, { score: number; attempts: number; correct: number }>;
+
+  // Consent tracking
+  consentAcceptedAt?: string;
 }
 
 export interface ResponseLog {
