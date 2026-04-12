@@ -372,7 +372,6 @@ function PraxisStudyAppContent() {
       } catch { return { date: ymd, questions: 0, seconds: 0 }; }
     });
   // Recompute when mode changes so returning from practice updates the feed
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, mode]);
 
   const weeklyAvgSeconds = useMemo(() => {

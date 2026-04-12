@@ -174,7 +174,6 @@ function FocusSection({
       }
       setLoading(false);
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, latestStudyPlan?.id]);
 
   const toggleCheck = (itemId: string) => {
@@ -185,7 +184,7 @@ function FocusSection({
 
     const wasChecked = checkedIds.has(itemId);
     const newSet = new Set(checkedIds);
-    wasChecked ? newSet.delete(itemId) : newSet.add(itemId);
+    if (wasChecked) { newSet.delete(itemId); } else { newSet.add(itemId); }
     setCheckedIds(newSet);
 
     supabase.from('focus_item_checks').upsert(

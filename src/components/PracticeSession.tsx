@@ -182,7 +182,6 @@ export default function PracticeSession({
         addDailyStudySeconds(user.id, elapsed);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   // ── Follow-up question system ─────────────────────────────────────────────
@@ -357,7 +356,6 @@ export default function PracticeSession({
         setShuffledOrder([...letters].sort(() => Math.random() - 0.5));
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePool]);
 
   const loadNextQuestion = () => {

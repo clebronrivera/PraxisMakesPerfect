@@ -147,7 +147,6 @@ export function useAssessmentFlow({
         setActiveAssessmentType(null);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // intentionally mount-only — mirrors original App.tsx behaviour
 
   // NOTE: We intentionally do NOT auto-clear lastSession when localStorage is

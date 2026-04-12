@@ -335,7 +335,6 @@ export default function ModuleLessonViewer({
   // Build the highlight function once per skillTerms change (memoized)
   const highlight = useMemo(
     () => skillTerms ? buildHighlighter(skillTerms, OFFICIAL_DEFINITIONS) : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [skillTerms?.join(',')]
   );
 

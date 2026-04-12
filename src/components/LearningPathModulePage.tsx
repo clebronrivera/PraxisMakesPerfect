@@ -410,7 +410,6 @@ export default function LearningPathModulePage({
     }
     return arr.slice(0, LP_QUESTION_COUNT);
   // Shuffle once on mount — intentionally omit deps to avoid re-shuffle on re-render
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skillId]);
 
   // ── Section open/closed state ─────────────────────────────────────────────

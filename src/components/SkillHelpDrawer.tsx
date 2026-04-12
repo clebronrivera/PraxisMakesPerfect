@@ -65,7 +65,6 @@ export default function SkillHelpDrawer({
         progress.onOpenModule(startId);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, skillId, initialModuleId]);
 
   // Track time on active module change
@@ -75,7 +74,6 @@ export default function SkillHelpDrawer({
     return () => {
       progress.onCloseModule(activeModuleId);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeModuleId]);
 
   // Close tracking
@@ -83,7 +81,6 @@ export default function SkillHelpDrawer({
     if (!isOpen && activeModuleId) {
       progress.onCloseModule(activeModuleId);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const activeModule = activeModuleId ? MODULE_LOOKUP[activeModuleId] : null;
