@@ -1,5 +1,6 @@
 import { Trophy, Clock, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, Zap, RotateCcw, Lightbulb } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
+import type { Domain } from '../types/content';
 import { detectWeaknesses, UserResponse } from '../brain/weakness-detector';
 import { AnalyzedQuestion, getQuestionIdentifierLabel, getQuestionPrompt } from '../brain/question-analyzer';
 import { getDomainColor } from '../utils/domainColors';
@@ -44,7 +45,8 @@ export default function ScoreReport({
   diagnosticSummary,
 }: ScoreReportProps) {
   const engine = useEngine();
-  const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+  type DomainWithExtras = Domain & { keyConcepts?: string[] };
+  const NASP_DOMAINS = engine.domains.reduce<Record<number, DomainWithExtras>>((acc, d) => ({ ...acc, [Number(d.id)]: d }), {});
 
 
   const { profile } = useProgressTracking();

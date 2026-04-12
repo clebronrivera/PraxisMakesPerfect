@@ -106,7 +106,7 @@ function parseAndValidateV2(rawContent: string): Record<string, unknown> {
 
 // ─── Background handler ───────────────────────────────────────────────────────
 
-export const handler = async (event: any) => {
+export const handler = async (event: { httpMethod?: string; headers?: Record<string, string>; body?: string | Record<string, unknown> }) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' };
   }
@@ -157,8 +157,8 @@ export const handler = async (event: any) => {
 
     const rawContent: string = Array.isArray(anthropicBody?.content)
       ? anthropicBody.content
-          .filter((b: any) => b?.type === 'text' && typeof b.text === 'string')
-          .map((b: any) => b.text)
+          .filter((b: { type?: string; text?: string }) => b?.type === 'text' && typeof b.text === 'string')
+          .map((b: { text: string }) => b.text)
           .join('\n')
       : '';
 

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp, BarChart3, AlertTriangle } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
+import type { Domain } from '../types/content';
 import { UserProfile } from '../hooks/useProgressTracking';
 import { getDomainColor } from '../utils/domainColors';
 import { getDomainLabel } from '../utils/domainLabels';
@@ -80,7 +81,8 @@ export default function PraxisPerformanceView({
   sortBy = 'performance' 
 }: PraxisPerformanceViewProps) {
   const engine = useEngine();
-  const NASP_DOMAINS = engine.domains.reduce((acc, d) => ({ ...acc, [Number(d.id)]: d }), {} as Record<number, any>);
+  type DomainWithExtras = Domain & { description?: string; keyConcepts?: string[] };
+  const NASP_DOMAINS = engine.domains.reduce<Record<number, DomainWithExtras>>((acc, d) => ({ ...acc, [Number(d.id)]: d }), {});
 
   const [expandedSection, setExpandedSection] = useState<number | null>(null);
   const [sortMode, setSortMode] = useState<'performance' | 'deficiencies'>(sortBy);

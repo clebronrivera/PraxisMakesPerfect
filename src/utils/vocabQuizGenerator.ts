@@ -56,10 +56,7 @@ const ALL_TERMS: GlossaryEntry[] = (
 ).terms.filter((t) => t.definition && t.definition.length > 10);
 
 const TERM_TO_SKILLS = new Map<string, string[]>();
-const skillMap = (skillVocabData as any).skills as Record<
-  string,
-  { skillId: string; vocabularyTerms: string[] }
->;
+const skillMap = (skillVocabData as { skills: Record<string, { skillId: string; vocabularyTerms: string[] }> }).skills;
 for (const [skillId, data] of Object.entries(skillMap)) {
   for (const term of data.vocabularyTerms) {
     const lower = term.toLowerCase();

@@ -5,7 +5,8 @@
 import { calculateLearningState, checkPrerequisitesMet, SkillPerformance } from '../src/brain/learning-state';
 import { matchDistractorPattern } from '../src/brain/distractor-matcher';
 import { getErrorExplanation } from '../src/brain/error-library';
-import { SkillId, getSkillById, SKILL_MAP } from '../src/brain/skill-map';
+import type { SkillId, Skill, Domain } from '../src/brain/skill-map';
+import { getSkillById, SKILL_MAP } from '../src/brain/skill-map';
 import { PatternId } from '../src/brain/template-schema';
 
 // Simple test runner (since no Jest/Vitest configured)
@@ -168,8 +169,8 @@ function testCheckPrerequisitesMet(): TestResult[] {
 
     // Try to find a skill with prerequisites
     const allSkills = Object.values(SKILL_MAP)
-      .flatMap((domain: any) => domain.clusters.flatMap((c: any) => c.skills))
-      .find((s: any) => s.prerequisites && s.prerequisites.length > 0);
+      .flatMap((domain: Domain) => domain.clusters.flatMap((c) => c.skills))
+      .find((s: Skill) => s.prerequisites && s.prerequisites.length > 0);
 
     if (allSkills) {
       const met = checkPrerequisitesMet(allSkills.skillId, skillPerfLookup);
@@ -190,10 +191,10 @@ function testCheckPrerequisitesMet(): TestResult[] {
         learningState: 'emerging'
       };
     };
-    
+
     const allSkills = Object.values(SKILL_MAP)
-      .flatMap((domain: any) => domain.clusters.flatMap((c: any) => c.skills))
-      .find((s: any) => s.prerequisites && s.prerequisites.length > 0);
+      .flatMap((domain: Domain) => domain.clusters.flatMap((c) => c.skills))
+      .find((s: Skill) => s.prerequisites && s.prerequisites.length > 0);
     
     if (allSkills) {
       const met = checkPrerequisitesMet(allSkills.skillId, skillPerfLookup);

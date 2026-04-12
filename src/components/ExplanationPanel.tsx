@@ -69,10 +69,10 @@ export default function ExplanationPanel({
     ? userAnswer.find(a => !getQuestionCorrectAnswers(question).includes(a))
     : undefined;
   const misconceptionText = wrongLetter
-    ? ((question as any)[`distractor_misconception_${wrongLetter}`] as string | undefined) || ''
+    ? ((question as unknown as Record<string, unknown>)[`distractor_misconception_${wrongLetter}`] as string | undefined) || ''
     : '';
   const skillDeficitText = wrongLetter
-    ? ((question as any)[`distractor_skill_deficit_${wrongLetter}`] as string | undefined) || ''
+    ? ((question as unknown as Record<string, unknown>)[`distractor_skill_deficit_${wrongLetter}`] as string | undefined) || ''
     : '';
 
   return (
@@ -125,24 +125,24 @@ export default function ExplanationPanel({
               </div>
             )}
             
-            {(question as any).contentLimit && (
+            {(question as unknown as Record<string, string>).contentLimit && (
               <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Content rule</p>
-                <p className="text-sm leading-relaxed text-slate-700">{(question as any).contentLimit}</p>
+                <p className="text-sm leading-relaxed text-slate-700">{(question as unknown as Record<string, string>).contentLimit}</p>
               </div>
             )}
 
-            {(question as any).complexityRationale && (
+            {(question as unknown as Record<string, string>).complexityRationale && (
               <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Complexity</p>
-                <p className="text-sm leading-relaxed text-slate-700">{(question as any).complexityRationale}</p>
+                <p className="text-sm leading-relaxed text-slate-700">{(question as unknown as Record<string, string>).complexityRationale}</p>
               </div>
             )}
 
-            {(question as any).construct_actually_tested && (
+            {(question as unknown as Record<string, string>).construct_actually_tested && (
               <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">What this tests</p>
-                <p className="text-sm leading-relaxed text-slate-700">{(question as any).construct_actually_tested}</p>
+                <p className="text-sm leading-relaxed text-slate-700">{(question as unknown as Record<string, string>).construct_actually_tested}</p>
               </div>
             )}
 

@@ -5,6 +5,7 @@
 import { Question, getQuestionChoiceText, getQuestionChoices, getQuestionCorrectAnswers } from './question-analyzer';
 import { PatternId } from './template-schema';
 import { ErrorExplanation, FrameworkStepGuidance } from './error-library';
+import type { FrameworkStep } from './framework-definitions';
 import { matchDistractorPattern } from './distractor-matcher';
 import { SkillId } from './skill-map';
 import { LearningState, SkillPerformance, checkPrerequisitesMet } from './learning-state';
@@ -406,7 +407,7 @@ export function generateDiagnosticFeedback(
       const prereqSteps = frameworkStep.prerequisiteSteps
         .map((id: string) => engineConfig.frameworkSteps ? engineConfig.frameworkSteps[id] : null)
         .filter(Boolean)
-        .map((step: any) => step!.name);
+        .map((step: FrameworkStep | null) => step!.name);
       
       if (prereqSteps.length > 0) {
         nextSteps.push(`Ensure you've completed: ${prereqSteps.join(' → ')}`);

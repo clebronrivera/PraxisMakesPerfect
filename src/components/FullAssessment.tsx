@@ -182,7 +182,7 @@ export default function FullAssessment({
         selectedAnswers.every(a => correctAnswersList.includes(a)) &&
         selectedAnswers.length === correctAnswersList.length;
 
-      let selectedDistractor: { letter: string; text: string; patternId?: any } | undefined;
+      let selectedDistractor: { letter: string; text: string; patternId?: string } | undefined;
       let distractorPatternId: string | undefined;
       if (!isCorrect && selectedAnswers.length > 0) {
         const wrongAnswer = selectedAnswers.find(a => !correctAnswersList.includes(a));

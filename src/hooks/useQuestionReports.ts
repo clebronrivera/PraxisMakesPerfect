@@ -17,7 +17,7 @@ export interface QuestionReport {
   issueTypes: string[]; 
   severity: 'minor' | 'major' | 'critical';
   notes: string;
-  createdAt: any; 
+  createdAt: string | number | Date;
   status: 'open' | 'triaged' | 'fixed' | 'wont-fix';
   questionSnapshot?: {
     stem: string;
@@ -87,12 +87,12 @@ export function useQuestionReports() {
         userId: row.user_id,
         userEmail: row.user_email,
         userDisplayName: row.user_display_name,
-        assessmentType: row.assessment_type as any,
+        assessmentType: row.assessment_type as QuestionReport['assessmentType'],
         targets: row.targets || [],
         issueTypes: row.issue_types || [],
-        severity: row.severity as any,
+        severity: row.severity as QuestionReport['severity'],
         notes: row.notes,
-        status: row.status as any,
+        status: row.status as QuestionReport['status'],
         createdAt: row.created_at,
         questionSnapshot: row.question_snapshot,
         appVersion: row.app_version
@@ -120,12 +120,12 @@ export function useQuestionReports() {
         userId: row.user_id,
         userEmail: row.user_email,
         userDisplayName: row.user_display_name,
-        assessmentType: row.assessment_type as any,
+        assessmentType: row.assessment_type as QuestionReport['assessmentType'],
         targets: row.targets || [],
         issueTypes: row.issue_types || [],
-        severity: row.severity as any,
+        severity: row.severity as QuestionReport['severity'],
         notes: row.notes,
-        status: row.status as any,
+        status: row.status as QuestionReport['status'],
         createdAt: row.created_at,
         questionSnapshot: row.question_snapshot,
         appVersion: row.app_version

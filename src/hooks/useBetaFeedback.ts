@@ -31,7 +31,7 @@ export interface BetaFeedback {
   message: string;
   page?: string;
   status: BetaFeedbackStatus;
-  createdAt: any;
+  createdAt: string | number | Date;
   questionId?: string;
   appVersion?: string;
   session_id?: string;
@@ -92,7 +92,7 @@ export function useBetaFeedback() {
         userEmail: row.user_email,
         userDisplayName: row.user_display_name,
         category: row.category as BetaFeedbackCategory,
-        contextType: row.context_type as any,
+        contextType: row.context_type as BetaFeedback['contextType'],
         featureArea: row.feature_area,
         message: row.message,
         page: row.page,

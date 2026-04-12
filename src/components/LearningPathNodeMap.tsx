@@ -149,9 +149,9 @@ function buildNodes(
         overallTier,
         lpStatus: lp?.status ?? 'not_started',
         lpLessonViewed: lp?.lessonViewed ?? false,
-        visitCount: (lp as any)?.visitCount ?? 0,
-        interactivesDone: ((lp as any)?.interactiveExercisesCompleted ?? 0) > 0 &&
-          ((lp as any)?.interactiveExercisesCompleted ?? 0) >= ((lp as any)?.interactiveExercisesTotal ?? 1),
+        visitCount: (lp as LearningPathSkillRecord & { visitCount?: number })?.visitCount ?? 0,
+        interactivesDone: ((lp as LearningPathSkillRecord & { interactiveExercisesCompleted?: number })?.interactiveExercisesCompleted ?? 0) > 0 &&
+          ((lp as LearningPathSkillRecord & { interactiveExercisesCompleted?: number })?.interactiveExercisesCompleted ?? 0) >= ((lp as LearningPathSkillRecord & { interactiveExercisesTotal?: number })?.interactiveExercisesTotal ?? 1),
       });
     }
   }

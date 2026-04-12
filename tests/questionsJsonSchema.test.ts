@@ -52,9 +52,9 @@ describe('questions.json schema validation', () => {
 
   it('if error_cluster_tag is set, dominant_error_pattern is also set', () => {
     for (const q of questions) {
-      const tag = (q as any).error_cluster_tag ?? '';
+      const tag = q.error_cluster_tag ?? '';
       if (tag) {
-        const dep = (q as any).dominant_error_pattern ?? '';
+        const dep = q.dominant_error_pattern ?? '';
         expect(
           dep,
           `Question ${q.UNIQUEID} has error_cluster_tag="${tag}" but no dominant_error_pattern`,
@@ -67,7 +67,7 @@ describe('questions.json schema validation', () => {
     const violations: string[] = [];
     for (const q of questions) {
       for (const field of MISCONCEPTION_FIELDS) {
-        const val = (q as any)[field] ?? '';
+        const val = q[field] ?? '';
         if (val === 'UNUSED') {
           violations.push(`${q.UNIQUEID}.${field}`);
         }
@@ -80,7 +80,7 @@ describe('questions.json schema validation', () => {
     const violations: string[] = [];
     for (const q of questions) {
       for (const field of MISCONCEPTION_FIELDS) {
-        const val: string = (q as any)[field] ?? '';
+        const val: string = q[field] ?? '';
         if (val.includes('believed that students believed')) {
           violations.push(`${q.UNIQUEID}.${field}`);
         }
@@ -92,7 +92,7 @@ describe('questions.json schema validation', () => {
   it('all error_cluster_tag values are from the approved list', () => {
     const unknownTags: string[] = [];
     for (const q of questions) {
-      const tag = ((q as any).error_cluster_tag ?? '').trim();
+      const tag = (q.error_cluster_tag ?? '').trim();
       if (tag && !APPROVED_TAGS.has(tag)) {
         unknownTags.push(`${q.UNIQUEID}: "${tag}"`);
       }

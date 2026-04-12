@@ -281,7 +281,7 @@ export default function AdaptiveDiagnostic({
         selectedAnswers.length === correctAnswersList.length;
 
       let distractorPatternId: string | undefined;
-      let selectedDistractor: { letter: string; text: string; patternId?: any } | undefined;
+      let selectedDistractor: { letter: string; text: string; patternId?: string } | undefined;
       if (!isCorrect && selectedAnswers.length > 0) {
         const wrongAnswer = selectedAnswers.find(a => !correctAnswersList.includes(a));
         if (wrongAnswer) {

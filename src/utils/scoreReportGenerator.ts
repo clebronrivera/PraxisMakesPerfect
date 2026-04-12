@@ -198,7 +198,7 @@ export function buildDocument(responses: UserResponse[], scoreData: Record<strin
     if (r.isCorrect) totalCorrect++;
   });
 
-  const children: any[] = [
+  const children: (Paragraph | Table)[] = [
     new Paragraph({
       text: "Personalized Score & Study Report",
       heading: HeadingLevel.TITLE,
@@ -263,10 +263,10 @@ export function buildDocument(responses: UserResponse[], scoreData: Record<strin
   });
 }
 
-export async function downloadScoreReport(responses: UserResponse[], profile: any, scoreData: Record<string, { correct: number; total: number }>) {
+export async function downloadScoreReport(responses: UserResponse[], profile: { displayName?: string; preferredDisplayName?: string; fullName?: string } | null | undefined, scoreData: Record<string, { correct: number; total: number }>) {
   const doc = buildDocument(responses, scoreData);
   const buffer = await Packer.toBuffer(doc);
-  const blob = new Blob([buffer as any], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const blob = new Blob([buffer as BlobPart], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
   const name = profile?.displayName || "User";
   saveAs(blob, `Praxis_5403_Score_Report_${name}.docx`);
 }

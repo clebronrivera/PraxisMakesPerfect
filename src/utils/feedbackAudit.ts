@@ -10,7 +10,7 @@ import {
 
 export interface FeedbackAuditUser {
   id: string;
-  lastUpdated?: any;
+  lastUpdated?: string | Date | null;
   flaggedQuestions?: Record<string, string>;
   authMetrics?: {
     email?: string | null;
@@ -180,7 +180,7 @@ function normalizeMessage(value?: string | null): string {
   return normalizeText(value).toLowerCase();
 }
 
-function toIsoString(value: any): string | null {
+function toIsoString(value: string | number | Date | null | undefined): string | null {
   if (!value) {
     return null;
   }

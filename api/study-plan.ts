@@ -47,7 +47,7 @@ function getParsedRequestBody(body: string | null | undefined) {
 }
 
 // Netlify Lambda format: export const handler = async (event) => ({ statusCode, body })
-export const handler = async (event: any) => {
+export const handler = async (event: { httpMethod?: string; headers?: Record<string, string>; body?: string | null }) => {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: JSON_HEADERS, body: '' };

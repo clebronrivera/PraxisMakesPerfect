@@ -97,7 +97,7 @@ function mapRawLogsToGlobalInputs(rawLogs: Record<string, unknown>[]): GlobalSco
         : (row.domain_id !== undefined && row.domain_id !== null ? [row.domain_id] : []);
         
       const normalizedDomains: number[] = domainIds
-        .map((id: any) => Number(id))
+        .map((id: unknown) => Number(id))
         .filter((id: number) => Number.isFinite(id));
 
       return normalizedDomains.map((domain_id: number) => ({
