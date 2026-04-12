@@ -133,7 +133,7 @@ describe('apply-phase-c: UNIQUEID matching', () => {
 
     // CSV row targets PQ_CON-01_1
     const csvUid = 'PQ_CON-01_1';
-    const csvValue = 'New error pattern';
+    const _csvValue = 'New error pattern';
 
     const q = questionMap.get(csvUid);
     expect(q).toBeDefined();
