@@ -16,6 +16,7 @@ import {
   countRecentHighConfidenceWrong
 } from '../brain/learning-state';
 import { UserResponse } from '../brain/weakness-detector';
+import type { PatternId } from '../brain/template-schema';
 import { calculateAndSaveGlobalScores } from '../utils/globalScoreCalculator';
 import { calculateSrsUpdate } from '../utils/srsEngine';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
@@ -44,31 +45,31 @@ export interface UserProfile {
   recentPracticeQuestionIds?: string[];
   screenerItemIds?: string[];
   practiceResponseCount?: number;
-  lastPracticeAt?: any;
+  lastPracticeAt?: string;
   migrationVersion?: number;
   lastSession?: {
     sessionId: string;
     mode: SessionMode;
     questionIndex: number;
-    updatedAt: any;
+    updatedAt: string;
   } | null;
   lastPreAssessmentSessionId?: string;
   lastFullAssessmentSessionId?: string;
   lastScreenerSessionId?: string;
-  lastPreAssessmentCompletedAt?: any;
-  lastFullAssessmentCompletedAt?: any;
-  lastScreenerCompletedAt?: any;
+  lastPreAssessmentCompletedAt?: string;
+  lastFullAssessmentCompletedAt?: string;
+  lastScreenerCompletedAt?: string;
   screenerComplete?: boolean;
   screenerResults?: {
     domain_scores: Record<number, number>;
-    completed_at: any;
+    completed_at: string;
   };
   diagnosticComplete?: boolean;
   adaptiveDiagnosticComplete?: boolean;
   diagnosticQuestionIds?: string[];
   lastDiagnosticSessionId?: string;
   lastDiagnosticCompletedAt?: string;
-  lastUpdated?: any;
+  lastUpdated?: string;
 
   // Extended profile / onboarding fields
   onboardingComplete?: boolean;
@@ -121,7 +122,7 @@ export interface ResponseLog {
   selectedAnswers: string[];
   correctAnswers: string[];
   distractorPatternId?: string;
-  createdAt?: any;
+  createdAt?: string;
   selectedAnswer?: string;
   domainId?: number;
   // Adaptive diagnostic audit fields
@@ -210,7 +211,7 @@ export function useProgressTracking() {
         confidence: data.confidence,
         timestamp: data.timestamp,
         selectedDistractor: data.distractorPatternId
-          ? { letter: selectedAnswers[0] || '', text: '', patternId: data.distractorPatternId as any }
+          ? { letter: selectedAnswers[0] || '', text: '', patternId: data.distractorPatternId as PatternId | undefined }
           : undefined,
       });
     });

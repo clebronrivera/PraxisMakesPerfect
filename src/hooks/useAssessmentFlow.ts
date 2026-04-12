@@ -397,9 +397,9 @@ export function useAssessmentFlow({
         responsesSaved: responses.length,
       });
 
-      const analysis = detectWeaknesses(responses, analyzedQuestions);
+      const { currentSkillScores: _css, ...analysisForProfile } = detectWeaknesses(responses, analyzedQuestions);
 
-      const updates: any = { lastSession: null, ...analysis };
+      const updates: Partial<UserProfile> = { lastSession: null, ...analysisForProfile };
 
       if (activeAssessmentType === 'screener') {
         updates.screenerItemIds = questionIds;
@@ -408,7 +408,7 @@ export function useAssessmentFlow({
         updates.screenerComplete = true;
         updates.screenerResults = {
           domain_scores: Object.fromEntries(
-            Object.entries(analysis.domainScores).map(([id, stats]) => [
+            Object.entries(analysisForProfile.domainScores).map(([id, stats]) => [
               id,
               Math.round((stats.correct / stats.total) * 100),
             ]),
@@ -460,7 +460,7 @@ export function useAssessmentFlow({
         responsesSaved: responses.length,
       });
 
-      const analysis = detectWeaknesses(responses, analyzedQuestions);
+      const { currentSkillScores: _css2, ...analysisForProfile2 } = detectWeaknesses(responses, analyzedQuestions);
 
       await updateProfile({
         fullAssessmentComplete: true,
@@ -468,8 +468,8 @@ export function useAssessmentFlow({
         lastFullAssessmentSessionId: selectedSessionId,
         lastFullAssessmentCompletedAt: new Date().toISOString(),
         lastSession: null,
-        ...analysis,
-      } as any);
+        ...analysisForProfile2,
+      });
 
       if (currentUserName && selectedSessionId) {
         deleteUserSession(currentUserName, selectedSessionId);
