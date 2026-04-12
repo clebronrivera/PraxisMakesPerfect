@@ -192,7 +192,7 @@ function PraxisStudyAppContent() {
         const [min, max] = getHourRange(new Date().getHours());
         setUsersOnline(prev => {
           const roll = Math.random();
-          let drift = 0;
+          let drift;
           if (roll < 0.60) drift = Math.random() < 0.5 ? 1 : -1;
           else if (roll < 0.75) drift = 0;
           else drift = Math.random() < 0.5 ? 2 : -2;

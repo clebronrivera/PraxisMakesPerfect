@@ -376,8 +376,8 @@ export function generateDiagnosticFeedback(
 
   // Build framework guidance
   let frameworkGuidance: FrameworkGuidance | null = null;
-  let relationship = '';
-  let nextSteps: string[] = [];
+  let relationship: string;
+  let nextSteps: string[];
 
   if (frameworkStep && libEntry) {
     // Find matching framework step guidance

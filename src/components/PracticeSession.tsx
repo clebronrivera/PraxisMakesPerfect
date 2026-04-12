@@ -303,7 +303,7 @@ export default function PracticeSession({
       analyzedQuestions.forEach(q => {
         if (next[q.id]) next[q.id] = { ...next[q.id], retired: false };
       });
-      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch {}
+      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch { /* storage unavailable */ }
       return next;
     });
     // Clear question history so all questions are re-eligible immediately
@@ -389,7 +389,7 @@ export default function PracticeSession({
         last_seen_at: Date.now(),
       };
       const next = { ...prev, [questionId]: updated };
-      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch {}
+      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch { /* storage unavailable */ }
       return next;
     });
   };

@@ -634,7 +634,7 @@ export function buildWeeklyScheduleFrame(
 
   const frames: WeeklyScheduleFrame[] = [];
 
-  let clusterQueue = [...clusters.filter(c => c.urgency !== "maintain")];
+  const clusterQueue = [...clusters.filter(c => c.urgency !== "maintain")];
   // Append maintain clusters at the end for review weeks
   const maintainClusters = clusters.filter(c => c.urgency === "maintain");
 

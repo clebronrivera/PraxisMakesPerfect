@@ -404,7 +404,7 @@ export default function AdaptiveDiagnostic({
             variant="diagnostic"
             onDismiss={() => {
               setShowDiagTutorial(false);
-              try { localStorage.setItem(diagTutorialKey, '1'); } catch {}
+              try { localStorage.setItem(diagTutorialKey, '1'); } catch { /* storage unavailable */ }
             }}
           />
         </Suspense>

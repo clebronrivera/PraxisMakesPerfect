@@ -121,7 +121,7 @@ export function buildDetailedRationale(input: RationaleInput): string {
   }
 
   if (decisionRule) {
-    let appliedRule = applyRuleToContext(decisionRule, slotValues || {});
+    const appliedRule = applyRuleToContext(decisionRule, slotValues || {});
     rationale += `\n\nDecision Rule: ${appliedRule}`;
   }
 

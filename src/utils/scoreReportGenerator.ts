@@ -193,7 +193,7 @@ function createSkillBlock(skill: SkillStudyGuide, pct: number) {
 export function buildDocument(responses: UserResponse[], scoreData: Record<string, { correct: number; total: number }>) {
   // Compute overall
   let totalCorrect = 0;
-  let totalQuestions = responses.length;
+  const totalQuestions = responses.length;
   responses.forEach(r => {
     if (r.isCorrect) totalCorrect++;
   });
