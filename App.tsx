@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
 import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
-import { analyzeQuestion } from './src/brain/question-analyzer';
+import { analyzeQuestion, type Question as RawQuestion, type AnalyzedQuestion } from './src/brain/question-analyzer';
 
 // Import components
 const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
@@ -43,7 +43,7 @@ import { getSkillById } from './src/brain/skill-map';
 import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progressTaxonomy';
 
 import { isAdminEmail } from './src/config/admin';
-import { useRedemptionRounds } from './src/hooks/useRedemptionRounds';
+import { useRedemptionRounds, type MissedQuestion } from './src/hooks/useRedemptionRounds';
 import { useLeaderboard } from './src/hooks/useLeaderboard';
 import type { LbMode } from './src/hooks/useLeaderboard';
 const RedemptionRoundSession = lazy(() => import('./src/components/RedemptionRoundSession'));
@@ -82,7 +82,7 @@ function PraxisStudyAppContent() {
   const { questions: fetchedQuestions, isLoading: contentLoading, domains: fetchedDomains, skills: fetchedSkills } = useContent();
   const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, isLoaded } = useProgressTracking();
   const { selectNextQuestion } = useAdaptiveLearning();
-  const [canonicalQuestions, setCanonicalQuestions] = useState<any[]>([]);
+  const [canonicalQuestions, setCanonicalQuestions] = useState<RawQuestion[]>([]);
   const [canonicalLoading, setCanonicalLoading] = useState(true);
 
   // Hash routing for privacy/terms — must be declared before any early returns
@@ -110,7 +110,7 @@ function PraxisStudyAppContent() {
         if (!response.ok) {
           throw new Error(`Failed to load question bank (${response.status})`);
         }
-        return response.json() as Promise<any[]>;
+        return response.json() as Promise<RawQuestion[]>;
       })
       .then(loadedQuestions => {
         if (!active) return;
@@ -288,8 +288,8 @@ function PraxisStudyAppContent() {
     updateProfile,
   });
   // Questions loaded for the active round (AnalyzedQuestion[])
-  const [redemptionQuestions, setRedemptionQuestions] = useState<any[]>([]);
-  const [redemptionMissedRows, setRedemptionMissedRows] = useState<any[]>([]);
+  const [redemptionQuestions, setRedemptionQuestions] = useState<AnalyzedQuestion[]>([]);
+  const [redemptionMissedRows, setRedemptionMissedRows] = useState<MissedQuestion[]>([]);
 
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
@@ -410,7 +410,7 @@ function PraxisStudyAppContent() {
       .filter(([, perf]) => perf.nextReviewDate && perf.nextReviewDate <= today && perf.attempts > 0)
       .map(([skillId]) => ({
         skillId,
-        name: getSkillById(skillId as any)?.name
+        name: getSkillById(skillId)?.name
           ?? getProgressSkillDefinition(skillId)?.fullLabel
           ?? skillId,
       }));
@@ -422,7 +422,7 @@ function PraxisStudyAppContent() {
       .sort((a, b) => a[1].score - b[1].score);
     if (top5.length === 0) return null;
     const [skillId] = top5[0];
-    const skill = getSkillById(skillId as any);
+    const skill = getSkillById(skillId);
     const progressDef = getProgressSkillDefinition(skillId);
     const domainId = progressDef?.domainId;
     const domain = domainId ? PROGRESS_DOMAINS.find(d => d.id === domainId) : null;
@@ -458,13 +458,13 @@ function PraxisStudyAppContent() {
     const rows = await redemption.startRound();
     if (!rows || rows.length === 0) return;
     const matched = rows
-      .map((row: any) => ({
+      .map((row) => ({
         q: analyzedQuestions.find(q => q.id === row.question_id),
         row,
       }))
-      .filter((item: any) => item.q != null);
-    setRedemptionQuestions(matched.map((item: any) => item.q));
-    setRedemptionMissedRows(matched.map((item: any) => item.row));
+      .filter((item): item is { q: AnalyzedQuestion; row: MissedQuestion } => item.q != null);
+    setRedemptionQuestions(matched.map((item) => item.q));
+    setRedemptionMissedRows(matched.map((item) => item.row));
     setMode('redemption-round');
   }, [redemption, analyzedQuestions]);
 
@@ -1267,7 +1267,7 @@ function PraxisStudyAppContent() {
                       onStartSkillPractice={startSkillPractice}
                       onOpenLearningPathModule={openLearningPathModule}
                       onStartRedemption={handleStartRedemption}
-                      onNavigate={setMode as any}
+                      onNavigate={setMode as (mode: string) => void}
                     />
                   </Suspense>
                 )}
@@ -1316,7 +1316,7 @@ function PraxisStudyAppContent() {
                 profile={profile}
                 analyzedQuestions={analyzedQuestions}
                 onSkillProgressUpdate={(skillId, isCorrect) => {
-                  updateSkillProgress(skillId as any, isCorrect, 'medium');
+                  updateSkillProgress(skillId, isCorrect, 'medium');
                 }}
                 onBack={() => {
                   setLearningPathSkillId(null);
