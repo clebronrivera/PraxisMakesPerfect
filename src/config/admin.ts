@@ -1,4 +1,6 @@
-export const PRIMARY_ADMIN_EMAIL = 'clebronrivera@icloud.com';
+const viteEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
+
+export const PRIMARY_ADMIN_EMAIL = viteEnv?.VITE_ADMIN_EMAIL ?? 'clebronrivera@icloud.com';
 
 const ADMIN_EMAILS = [PRIMARY_ADMIN_EMAIL];
 
