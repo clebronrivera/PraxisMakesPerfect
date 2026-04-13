@@ -11,6 +11,9 @@ import {
   type StudyConstraints,
   type PrecomputedCluster,
   type WeeklyScheduleFrame,
+  type StudentSkillStatus,
+  type TrendDirection,
+  type SessionType,
 } from '../types/studyPlanTypes';
 import {
   computeStudentSkillStates,
@@ -66,6 +69,7 @@ export type {
   StudentSkillState,
   StudentSkillStatus,
   TrendDirection,
+  SessionType,
 } from '../types/studyPlanTypes';
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
@@ -160,7 +164,7 @@ export function normalizeStudyInputs(
         confidence:  response.confidence || 'unknown',
         distractor_selected: getDistractorSelected(response),
         assessment_type: 'screener' as const,
-        question_id: (response as any).question_id ?? undefined,
+        question_id: (response as Record<string, unknown>).question_id as string | undefined ?? undefined,
       };
     })
     .filter(isDefined);
@@ -186,7 +190,7 @@ export function normalizeStudyInputs(
         confidence:  response.confidence || 'unknown',
         distractor_selected: getDistractorSelected(response),
         assessment_type: assessType,
-        question_id: (response as any).questionId ?? undefined,
+        question_id: (response as Record<string, unknown>).questionId as string | undefined ?? undefined,
       }));
     });
 
@@ -505,9 +509,9 @@ function parseStudyPlanV2(rawContent: string): Omit<StudyPlanDocumentV2, 'genera
         return {
           skillId:   asString(skObj.skillId,   `...skills[${j}].skillId`),
           skillName: asString(skObj.skillName, `...skills[${j}].skillName`),
-          status:    asString(skObj.status,    `...skills[${j}].status`) as any,
+          status:    asString(skObj.status,    `...skills[${j}].status`) as StudentSkillStatus,
           accuracy:  asNullableNumber(skObj.accuracy, `...skills[${j}].accuracy`),
-          trend:     asString(skObj.trend,     `...skills[${j}].trend`) as any,
+          trend:     asString(skObj.trend,     `...skills[${j}].trend`) as TrendDirection,
         };
       }) : [],
       whyItMatters:             asString(s.whyItMatters, `priorityClusters[${i}].whyItMatters`),
@@ -569,7 +573,7 @@ function parseStudyPlanV2(rawContent: string): Omit<StudyPlanDocumentV2, 'genera
       return {
         sessionLabel:    asString(ssObj.sessionLabel, `...sessions[${j}].sessionLabel`),
         durationMinutes: asNumber(ssObj.durationMinutes, `...sessions[${j}].durationMinutes`),
-        sessionType:     asString(ssObj.sessionType, `...sessions[${j}].sessionType`) as any,
+        sessionType:     asString(ssObj.sessionType, `...sessions[${j}].sessionType`) as SessionType,
         focus:           asString(ssObj.focus, `...sessions[${j}].focus`),
         tasks:           asNullableStringArray(ssObj.tasks, `...sessions[${j}].tasks`),
       };
@@ -790,7 +794,7 @@ export async function generateStudyPlan({
 
   const profile = profileRow ? {
     screenerComplete: profileRow.screener_complete as boolean | undefined,
-    screenerResults:  profileRow.screener_results as any,
+    screenerResults:  profileRow.screener_results as UserProfileDoc['screenerResults'],
   } : {} as UserProfileDoc;
 
   if (!profile.screenerComplete) {

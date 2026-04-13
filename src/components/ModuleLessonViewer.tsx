@@ -253,15 +253,15 @@ function SectionRenderer({
       if (section.interactiveType === 'click-selector' && section.options) {
         return interactiveWrapper(section.label, (
           <ClickSelector
-            options={section.options.map(o => ({ ...o, isCorrect: (o as any).isCorrect }))}
+            options={section.options.map(o => ({ ...o, isCorrect: (o as { isCorrect?: boolean }).isCorrect }))}
             prompt={section.prompt}
             onComplete={(selectedIds) => {
               if (!onInteractiveComplete) return;
               const opts = section.options!;
-              const hasCorrectAnswers = opts.some(o => (o as any).isCorrect);
+              const hasCorrectAnswers = opts.some(o => (o as { isCorrect?: boolean }).isCorrect);
               let score = 1;
               if (hasCorrectAnswers) {
-                const correctIds = opts.filter(o => (o as any).isCorrect).map(o => o.id);
+                const correctIds = opts.filter(o => (o as { isCorrect?: boolean }).isCorrect).map(o => o.id);
                 score = selectedIds.every(id => correctIds.includes(id)) && selectedIds.length === correctIds.length ? 1 : 0;
               }
               onInteractiveComplete(index, {
@@ -335,7 +335,6 @@ export default function ModuleLessonViewer({
   // Build the highlight function once per skillTerms change (memoized)
   const highlight = useMemo(
     () => skillTerms ? buildHighlighter(skillTerms, OFFICIAL_DEFINITIONS) : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [skillTerms?.join(',')]
   );
 

@@ -9,7 +9,7 @@ export interface DistractorPatternLike {
 }
 
 export function normalizeDistractorPatterns(
-  distractorPatterns?: Record<string, any> | any[]
+  distractorPatterns?: Record<string, DistractorPatternLike> | DistractorPatternLike[]
 ): DistractorPatternLike[] {
   if (Array.isArray(distractorPatterns)) {
     return distractorPatterns.filter(Boolean);

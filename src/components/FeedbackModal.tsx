@@ -71,14 +71,15 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         appVersion: 'beta'
       });
       handleClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[FeedbackModal] Error submitting feedback:', error);
-      if (error?.code === 'permission-denied') {
+      const errCode = error instanceof Error ? (error as Error & { code?: string }).code : undefined;
+      if (errCode === 'permission-denied') {
         setSubmitError('Feedback permissions were denied. Refresh the app and sign in again, then retry.');
         return;
       }
 
-      if (error?.code === 'unauthenticated') {
+      if (errCode === 'unauthenticated') {
         setSubmitError('You must be signed in before sending feedback.');
         return;
       }

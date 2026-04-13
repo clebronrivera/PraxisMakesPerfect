@@ -10,7 +10,7 @@ import QuestionCard from './QuestionCard';
 import ExplanationPanel from './ExplanationPanel';
 import { useEngine } from '../hooks/useEngine';
 import { matchDistractorPattern } from '../brain/distractor-matcher';
-import { UserProfile } from '../hooks/useProgressTracking';
+import { UserProfile, type ResponseLog } from '../hooks/useProgressTracking';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
 import {
   AnalyzedQuestion,
@@ -83,12 +83,24 @@ const INACTIVITY_MS = 15 * 60 * 1000; // 15 minutes
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+interface PracticeResponsePayload {
+  skill_id: string;
+  domain_id: number;
+  selected_answer: string;
+  correct_answer: string;
+  is_correct: boolean;
+  confidence: string;
+  time_on_item_seconds: number;
+  shuffled_order: string[];
+  consecutive_correct?: number;
+}
+
 interface PracticeSessionProps {
   userProfile: UserProfile;
   updateSkillProgress?: (skillId: SkillId, isCorrect: boolean, confidence?: 'low' | 'medium' | 'high', questionId?: string, timeSpent?: number) => Promise<void>;
-  logResponse?: (response: any) => Promise<void>;
+  logResponse?: (response: Omit<ResponseLog, 'createdAt'>) => Promise<void>;
   updateLastSession?: (sessionId: string, mode: SessionMode, questionIndex: number, elapsedSeconds?: number) => Promise<void>;
-  savePracticeResponse?: (sessionId: string, questionId: string, response: any) => Promise<void>;
+  savePracticeResponse?: (sessionId: string, questionId: string, response: PracticeResponsePayload) => Promise<void>;
   analyzedQuestions: AnalyzedQuestion[];
   selectNextQuestion: (profile: UserProfile, questions: AnalyzedQuestion[], history: string[], redemptionBlacklistIds?: Set<string>) => AnalyzedQuestion | null;
   practiceDomain?: number | null;
@@ -170,7 +182,6 @@ export default function PracticeSession({
         addDailyStudySeconds(user.id, elapsed);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   // ── Follow-up question system ─────────────────────────────────────────────
@@ -303,7 +314,7 @@ export default function PracticeSession({
       analyzedQuestions.forEach(q => {
         if (next[q.id]) next[q.id] = { ...next[q.id], retired: false };
       });
-      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch {}
+      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch { /* storage unavailable */ }
       return next;
     });
     // Clear question history so all questions are re-eligible immediately
@@ -345,7 +356,6 @@ export default function PracticeSession({
         setShuffledOrder([...letters].sort(() => Math.random() - 0.5));
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePool]);
 
   const loadNextQuestion = () => {
@@ -389,7 +399,7 @@ export default function PracticeSession({
         last_seen_at: Date.now(),
       };
       const next = { ...prev, [questionId]: updated };
-      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch {}
+      try { localStorage.setItem(retireStoreKey, JSON.stringify(next)); } catch { /* storage unavailable */ }
       return next;
     });
   };
@@ -559,13 +569,13 @@ export default function PracticeSession({
           const queued = getQueuedResponses();
           if (queued.length > 0) {
             for (const item of queued) {
-              try { await logResponse(item.payload as any); } catch { /* best effort */ }
+              try { await logResponse(item.payload as Omit<ResponseLog, 'createdAt'>); } catch { /* best effort */ }
             }
             clearQueue();
           }
         } catch (saveErr) {
           console.error('[PracticeSession] Failed to save response:', saveErr);
-          enqueueResponse(responsePayload as any);
+          enqueueResponse(responsePayload as unknown as Record<string, unknown>);
           setResponseSaveWarning(true);
         }
       }

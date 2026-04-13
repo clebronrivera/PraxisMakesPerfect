@@ -11,10 +11,12 @@ import { generateDiagnosticFeedback } from '../src/brain/diagnostic-feedback';
 import { DISTRACTOR_PATTERNS } from '../src/brain/distractor-patterns';
 import { ERROR_LIBRARY } from '../src/brain/error-library';
 import { FRAMEWORK_STEPS } from '../src/brain/framework-definitions';
-import { calculateGlobalScoresFromData } from '../src/utils/globalScoreCalculator';
+import { calculateGlobalScoresFromData, type ResponseScoreInput } from '../src/utils/globalScoreCalculator';
 import { normalizeStudyInputs } from '../src/services/studyPlanService';
 import type { UserProfile } from '../src/hooks/useProgressTracking';
 import type { EngineConfig } from '../src/types/engine';
+import type { Question } from '../src/brain/question-analyzer';
+import type { Domain } from '../src/types/content';
 import { getTeachingContext } from '../src/components/TeachMode';
 
 interface TestResult {
@@ -42,7 +44,7 @@ function runTest(name: string, fn: () => void): TestResult {
   }
 }
 
-const question = analyzeQuestion((QUESTIONS_DATA as any[])[0]);
+const question = analyzeQuestion((QUESTIONS_DATA as Question[])[0]);
 
 const testProfile: UserProfile = {
   preAssessmentComplete: true,
@@ -68,10 +70,10 @@ const testProfile: UserProfile = {
 
 const testEngine: EngineConfig = {
   skills: [],
-  domains: [{ id: String(question.domains?.[0] ?? 1), name: 'Foundations', shortName: 'FND' } as any],
-  errorLibrary: ERROR_LIBRARY as any,
-  frameworkSteps: FRAMEWORK_STEPS as any,
-  distractorPatterns: DISTRACTOR_PATTERNS as any
+  domains: [{ id: String(question.domains?.[0] ?? 1), name: 'Foundations' } as Domain],
+  errorLibrary: ERROR_LIBRARY as EngineConfig['errorLibrary'],
+  frameworkSteps: FRAMEWORK_STEPS as EngineConfig['frameworkSteps'],
+  distractorPatterns: DISTRACTOR_PATTERNS as EngineConfig['distractorPatterns']
 };
 
 function testQuestionNormalization(): TestResult[] {
@@ -140,7 +142,7 @@ function testStudyPlanNormalization(): TestResult[] {
               confidence: 'low',
               selectedAnswers: ['A'],
               correctAnswers: ['D']
-            } as any,
+            } as ResponseScoreInput & { selectedAnswers: string[]; correctAnswers: string[] },
             {
               assessmentType: 'full',
               domainId: '2',
@@ -149,7 +151,7 @@ function testStudyPlanNormalization(): TestResult[] {
               confidence: 'medium',
               selectedAnswers: ['B'],
               correctAnswers: ['B']
-            } as any
+            } as ResponseScoreInput & { selectedAnswers: string[]; correctAnswers: string[] }
           ]
         },
         new Map([

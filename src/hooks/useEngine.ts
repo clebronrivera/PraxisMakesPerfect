@@ -16,8 +16,8 @@ export function useEngine(): EngineConfig {
   return {
     skills: context.skills,
     domains: context.domains,
-    errorLibrary: ERROR_LIBRARY as any,
-    frameworkSteps: FRAMEWORK_STEPS as any,
-    distractorPatterns: DISTRACTOR_PATTERNS as any
+    errorLibrary: ERROR_LIBRARY,
+    frameworkSteps: FRAMEWORK_STEPS,
+    distractorPatterns: DISTRACTOR_PATTERNS
   };
 }

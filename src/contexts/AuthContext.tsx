@@ -109,14 +109,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       
       if (signInError) throw signInError;
-    } catch (err: any) {
+    } catch (err: unknown) {
       captureError(err, { tags: { source: 'auth', action: 'signIn' } });
-      if (err.message === 'Invalid login credentials') {
+      const message = err instanceof Error ? err.message : String(err);
+      if (message === 'Invalid login credentials') {
         setError('Incorrect email or password. Please try again.');
-      } else if (err.message === 'Email not confirmed') {
+      } else if (message === 'Email not confirmed') {
         setError('Please verify your email address before signing in.');
       } else {
-        setError(err.message || 'Failed to sign in. Please try again.');
+        setError(message || 'Failed to sign in. Please try again.');
       }
       throw err;
     } finally {
@@ -141,14 +142,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       
       if (signUpError) throw signUpError;
-    } catch (err: any) {
+    } catch (err: unknown) {
       captureError(err, { tags: { source: 'auth', action: 'signUp' } });
-      if (err.message.includes('User already registered')) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (message.includes('User already registered')) {
         setError('An account with this email already exists. Please sign in instead.');
-      } else if (err.message.includes('Password')) {
+      } else if (message.includes('Password')) {
         setError('Password is too weak. Please use at least 6 characters.');
       } else {
-        setError(err.message || 'Failed to create account. Please try again.');
+        setError(message || 'Failed to create account. Please try again.');
       }
       throw err;
     } finally {
@@ -165,8 +167,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
-    } catch (err: any) {
-      setError(err.message || 'Failed to send password reset email. Please try again.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message || 'Failed to send password reset email. Please try again.');
       throw err;
     } finally {
       setLoading(false);
@@ -182,8 +185,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
       throw err;
     }
   };

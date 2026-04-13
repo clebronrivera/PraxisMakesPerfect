@@ -281,7 +281,7 @@ export default function AdaptiveDiagnostic({
         selectedAnswers.length === correctAnswersList.length;
 
       let distractorPatternId: string | undefined;
-      let selectedDistractor: { letter: string; text: string; patternId?: any } | undefined;
+      let selectedDistractor: { letter: string; text: string; patternId?: string } | undefined;
       if (!isCorrect && selectedAnswers.length > 0) {
         const wrongAnswer = selectedAnswers.find(a => !correctAnswersList.includes(a));
         if (wrongAnswer) {
@@ -404,7 +404,7 @@ export default function AdaptiveDiagnostic({
             variant="diagnostic"
             onDismiss={() => {
               setShowDiagTutorial(false);
-              try { localStorage.setItem(diagTutorialKey, '1'); } catch {}
+              try { localStorage.setItem(diagTutorialKey, '1'); } catch { /* storage unavailable */ }
             }}
           />
         </Suspense>

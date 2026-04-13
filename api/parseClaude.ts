@@ -52,7 +52,7 @@ function normalizeArtifact(
   const parsed = ArtifactSchema.safeParse(raw);
   if (!parsed.success) return undefined;
 
-  let { type, payload } = parsed.data;
+  const { type, payload } = parsed.data;
   const normalizedType = String(type).toLowerCase().replace(/_/g, '-');
 
   // Unwrap "study-activity" wrapper where real type is nested

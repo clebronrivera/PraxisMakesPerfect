@@ -11,7 +11,7 @@ export interface SlotDefinition {
   name: string;
   description: string;
   possibleValues: string[];
-  metadata?: Record<string, any>; // Grade-appropriateness, domain-relevance, etc.
+  metadata?: Record<string, string | number | boolean>; // Grade-appropriateness, domain-relevance, etc.
 }
 
 export interface SlotConstraint {

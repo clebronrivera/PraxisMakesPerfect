@@ -2,9 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Vite injects `import.meta.env.*` at build/runtime in the browser.
 // Our Node-based health/tests import modules directly, so `import.meta.env` may be undefined there.
-const viteEnv = (import.meta as any).env as
-  | Record<string, string | undefined>
-  | undefined;
+const viteEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
 
 const supabaseUrl =
   viteEnv?.VITE_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;

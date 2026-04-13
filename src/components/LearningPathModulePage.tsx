@@ -410,7 +410,6 @@ export default function LearningPathModulePage({
     }
     return arr.slice(0, LP_QUESTION_COUNT);
   // Shuffle once on mount — intentionally omit deps to avoid re-shuffle on re-render
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skillId]);
 
   // ── Section open/closed state ─────────────────────────────────────────────
@@ -450,7 +449,7 @@ export default function LearningPathModulePage({
   }
 
   // ── Section 2: quiz ───────────────────────────────────────────────────────
-  const [quizResults, setQuizResults] = useState<MiniQuizResult[] | null>(null);
+  const [quizResults, setQuizResults] = useState<{ correct: number; total: number } | null>(null);
   const [s2Submitting, setS2Submitting] = useState(false);
 
   async function handleQuizComplete(results: MiniQuizResult[]) {
@@ -484,14 +483,14 @@ export default function LearningPathModulePage({
       }
     }
 
-    setQuizResults({ correct, total } as any);
+    setQuizResults({ correct, total });
     setS2Submitting(false);
   }
 
   // Render the quiz results after completion
   const quizDone = quizResults !== null;
-  const quizCorrect = (quizResults as any)?.correct ?? 0;
-  const quizTotal = (quizResults as any)?.total ?? 0;
+  const quizCorrect = quizResults?.correct ?? 0;
+  const quizTotal = quizResults?.total ?? 0;
 
   const s1Complete = record.lessonViewed;
   const s2Complete = record.questionsSubmitted;
@@ -639,7 +638,7 @@ export default function LearningPathModulePage({
                   totalModules={modules.length}
                   isExpanded={expandedModuleIdx === i}
                   isViewed={lpLocal.isViewed(m.id)}
-                  onToggle={() => setExpandedModuleIdx(expandedModuleIdx === i ? -1 as any : i)}
+                  onToggle={() => setExpandedModuleIdx(expandedModuleIdx === i ? -1 : i)}
                 >
                   {/* Only render ModuleLessonViewer for the expanded module
                       (tracking hooks bind to expandedModuleIdx / activeModule) */}

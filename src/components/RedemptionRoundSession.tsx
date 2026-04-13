@@ -85,7 +85,6 @@ export default function RedemptionRoundSession({
     if (done && results.length === questions.length) {
       onComplete(results);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done, results.length]);
 
   // ── Countdown timer ───────────────────────────────────────────────────────
@@ -106,7 +105,6 @@ export default function RedemptionRoundSession({
 
     return () => clearInterval(id);
   // advance is stable via useCallback; re-run when question changes (index)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, done]);
 
   // ── Submit ────────────────────────────────────────────────────────────────

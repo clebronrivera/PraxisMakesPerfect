@@ -7,6 +7,7 @@ import type { Skill } from '../types/content';
 import type { UserProfile } from '../hooks/useProgressTracking';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
+import type { SkillPerformance } from '../brain/learning-state';
 import { PROFICIENCY_META, TOTAL_SKILLS, READINESS_TARGET } from '../utils/skillProficiency';
 import { buildConceptAnalytics, type ConceptAnalyticsReport } from '../utils/conceptAnalytics';
 import { computeTimeStats, computeConfidenceStats } from '../utils/diagnosticSelectors';
@@ -139,7 +140,7 @@ export default function ResultsDashboard({
   const hasBaseline = Boolean(userProfile.baselineSnapshot);
   const baselineProgress = useMemo(
     () => userProfile.baselineSnapshot
-      ? buildProgressSummary(userProfile.baselineSnapshot as any, skills)
+      ? buildProgressSummary(userProfile.baselineSnapshot as Record<string, SkillPerformance>, skills)
       : null,
     [userProfile.baselineSnapshot, skills]
   );

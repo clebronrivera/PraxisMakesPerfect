@@ -375,7 +375,7 @@ export function buildScreener(
     const currentQuestions = domainQuestions[d];
     const getRecallCount = () => currentQuestions.filter(q => q.cognitiveComplexity === 'Recall').length;
     
-    let recallCount = getRecallCount();
+    const recallCount = getRecallCount();
 
     if (recallCount < recallTarget) {
       // Need more Recall: swap Application questions for Recall from remaining pools

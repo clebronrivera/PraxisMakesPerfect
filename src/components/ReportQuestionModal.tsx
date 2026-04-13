@@ -93,7 +93,7 @@ export default function ReportQuestionModal({
         severity,
         notes,
         questionSnapshot: {
-          stem: question.question || (question as any).questionStem || '',
+          stem: question.question || question.questionStem || '',
           choices: question.choices,
           options: question.options,
           correct: question.correct_answer || question.correctAnswers || [],

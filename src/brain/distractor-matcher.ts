@@ -14,7 +14,7 @@
 export function matchDistractorPattern(
   selectedText: string,
   correctAnswer?: string,
-  _distractorPatterns?: Record<string, any> // kept for API compatibility, but pattern matching rules are heuristic
+  _distractorPatterns?: Record<string, unknown> // kept for API compatibility, but pattern matching rules are heuristic
 ): string | null {
   const text = selectedText.toLowerCase().trim();
   

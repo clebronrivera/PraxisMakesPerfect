@@ -35,13 +35,23 @@ export interface Question {
   cognitiveComplexity?: 'Recall' | 'Application' | string;
   cognitive_complexity?: 'Recall' | 'Application' | string;
   distractors?: Distractor[];
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ModuleRef {
   moduleId: string;
   moduleTitle: string;
   snippet: string | null;
+}
+
+/** Extra raw fields that may appear on questions loaded from JSON but aren't in the Question interface */
+interface QuestionRawExtras extends Question {
+  complexityRationale?: string;
+  complexity_rationale?: string;
+  is_foundational?: boolean | string;
+  primaryModuleId?: string;
+  primarySnippet?: string;
+  moduleRefs?: ModuleRef[];
 }
 
 export interface AnalyzedQuestion extends Question {
@@ -66,7 +76,7 @@ export interface AnalyzedQuestion extends Question {
   complexityRationale?: string;
   naspDomainPrimary?: string;    // Phase D — NASP-1 through NASP-10
   distractors?: Distractor[];
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export function getQuestionPrompt(q: Pick<Question, 'question' | 'questionStem'>): string {
@@ -229,8 +239,9 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
   if (text.includes('definition') || text.includes('which of the following is')) dok = 1;
   
   // Look up pre-computed vocabulary tags for this question
-  const vocabTags = (questionVocabTagsData as any).tags?.[questionId];
-  const keyConcepts: string[] = vocabTags?.concepts ?? [];
+  const vocabTags = (questionVocabTagsData as Record<string, unknown>).tags as Record<string, { concepts?: string[] }> | undefined;
+  const vocabTagEntry = vocabTags?.[questionId];
+  const keyConcepts: string[] = vocabTagEntry?.concepts ?? [];
   
   return {
     ...q,
@@ -254,11 +265,11 @@ export function analyzeQuestion(q: Question): AnalyzedQuestion {
     keyConcepts,
     isMultiSelect: q.isMultiSelect ?? String(q.is_multi_select).toLowerCase() === 'true',
     cognitiveComplexity: q.cognitiveComplexity || q.cognitive_complexity,
-    complexityRationale: (q as any).complexityRationale || (q as any).complexity_rationale || undefined,
-    isFoundational: (q as any).is_foundational === true || (q as any).is_foundational === 'true',
-    primaryModuleId: (q as any).primaryModuleId || undefined,
-    primarySnippet: (q as any).primarySnippet || undefined,
-    moduleRefs: (q as any).moduleRefs || undefined,
+    complexityRationale: (q as QuestionRawExtras).complexityRationale || (q as QuestionRawExtras).complexity_rationale || undefined,
+    isFoundational: (q as QuestionRawExtras).is_foundational === true || (q as QuestionRawExtras).is_foundational === 'true',
+    primaryModuleId: (q as QuestionRawExtras).primaryModuleId || undefined,
+    primarySnippet: (q as QuestionRawExtras).primarySnippet || undefined,
+    moduleRefs: (q as QuestionRawExtras).moduleRefs || undefined,
     source: 'bank', // Questions from questions.json are from the bank
     naspDomainPrimary: resolvedSkillId ? getSkillPhaseDEntry(resolvedSkillId)?.nasp_domain_primary : undefined,
   };

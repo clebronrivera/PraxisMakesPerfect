@@ -53,7 +53,7 @@ interface UserAnalyticsDoc {
   screenerComplete?: boolean;
   diagnosticComplete?: boolean;
   fullAssessmentComplete?: boolean;
-  lastUpdated?: any;
+  lastUpdated?: string | Date | null;
   flaggedQuestions?: Record<string, string>;
   lastSession?: LastSession | null;
   avgTimePerQuestionSeconds?: number | null;
@@ -61,9 +61,9 @@ interface UserAnalyticsDoc {
     email?: string | null;
     displayName?: string | null;
     loginCount?: number;
-    createdAt?: any;
-    lastLoginAt?: any;
-    lastActiveAt?: any;
+    createdAt?: string | Date | null;
+    lastLoginAt?: string | Date | null;
+    lastActiveAt?: string | Date | null;
   };
 }
 
@@ -100,7 +100,7 @@ const REPORT_STATUS_OPTIONS: QuestionReport['status'][] = [
   'wont-fix'
 ];
 
-function toMillis(value: any): number | null {
+function toMillis(value: string | number | Date | null | undefined): number | null {
   if (!value) {
     return null;
   }
@@ -113,7 +113,7 @@ function toMillis(value: any): number | null {
   return new Date(value).getTime();
 }
 
-function formatDate(value: any): string {
+function formatDate(value: string | number | Date | null | undefined): string {
   const millis = toMillis(value);
   if (!millis) {
     return 'Unknown';
@@ -206,7 +206,24 @@ export default function AdminDashboard({
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
 
-      let usersData: any[] = [];
+      interface UserRow {
+        user_id: string;
+        total_questions_seen?: number;
+        practice_response_count?: number;
+        screener_complete?: boolean;
+        diagnostic_complete?: boolean;
+        full_assessment_complete?: boolean;
+        updated_at?: string | Date | null;
+        flagged_questions?: Record<string, string>;
+        last_session?: LastSession | null;
+        email?: string | null;
+        display_name?: string | null;
+        login_count?: number;
+        created_at?: string | Date | null;
+        last_login_at?: string | Date | null;
+        last_active_at?: string | Date | null;
+      }
+      let usersData: UserRow[] = [];
       let timingStats: Record<string, number> = {};
       if (token) {
         try {
@@ -234,7 +251,7 @@ export default function AdminDashboard({
         getAllFeedback()
       ]);
 
-      const allUsers: UserAnalyticsDoc[] = (usersData || []).map((row: any) => ({
+      const allUsers: UserAnalyticsDoc[] = (usersData || []).map((row: UserRow) => ({
         id: row.user_id,
         totalQuestionsSeen: row.total_questions_seen,
         practiceResponseCount: row.practice_response_count,

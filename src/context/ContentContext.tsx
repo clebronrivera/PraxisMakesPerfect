@@ -64,7 +64,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
            skillsData = sRes.data as unknown as Skill[];
         }
 
-        const resolveDomainId = (q: any): number | null => {
+        const resolveDomainId = (q: Question): number | null => {
           if (q.domain && typeof q.domain === 'number' && q.domain >= 1 && q.domain <= 4) {
              return q.domain;
           }

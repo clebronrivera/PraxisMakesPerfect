@@ -138,7 +138,6 @@ export function useModuleVisitTracking(
       // Final flush on unmount
       finalizeVisit(userId, moduleId, skillId);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, moduleId, skillId, source]);
 
   // ── Flush dirty sections to Supabase ────────────────────────────────────

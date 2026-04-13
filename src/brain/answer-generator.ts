@@ -26,8 +26,6 @@ function generateDistractor(
   pattern: DistractorPattern,
   context: AnswerGenerationContext
 ): Distractor | null {
-  const { } = context;
-
   // Apply pattern-specific logic transforms
   switch (pattern.patternId) {
     case "premature-action":

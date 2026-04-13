@@ -2,10 +2,11 @@
 // Part of Phase D Step 10: Test and Validate Adaptive Feedback Quality
 // Tests: calculateLearningState, checkPrerequisitesMet, matchDistractorPattern, error library coverage
 
-import { calculateLearningState, checkPrerequisitesMet, SkillPerformance, LearningState } from '../src/brain/learning-state';
+import { calculateLearningState, checkPrerequisitesMet, SkillPerformance } from '../src/brain/learning-state';
 import { matchDistractorPattern } from '../src/brain/distractor-matcher';
-import { ERROR_LIBRARY, getErrorExplanation } from '../src/brain/error-library';
-import { SkillId, getSkillById, SKILL_MAP } from '../src/brain/skill-map';
+import { getErrorExplanation } from '../src/brain/error-library';
+import type { SkillId, Skill, Domain } from '../src/brain/skill-map';
+import { getSkillById, SKILL_MAP } from '../src/brain/skill-map';
 import { PatternId } from '../src/brain/template-schema';
 
 // Simple test runner (since no Jest/Vitest configured)
@@ -154,7 +155,7 @@ function testCheckPrerequisitesMet(): TestResult[] {
   // Test: All prerequisites met
   results.push(runTest('checkPrerequisitesMet: Returns true when all prerequisites mastered', () => {
     // Find a skill with prerequisites, or create mock scenario
-    const skillPerfLookup = (id: SkillId): SkillPerformance | undefined => {
+    const skillPerfLookup = (_id: SkillId): SkillPerformance | undefined => {
       // Mock all prerequisites as mastered
       return {
         score: 0.90,
@@ -165,12 +166,12 @@ function testCheckPrerequisitesMet(): TestResult[] {
         learningState: 'mastery'
       };
     };
-    
+
     // Try to find a skill with prerequisites
     const allSkills = Object.values(SKILL_MAP)
-      .flatMap((domain: any) => domain.clusters.flatMap((c: any) => c.skills))
-      .find((s: any) => s.prerequisites && s.prerequisites.length > 0);
-    
+      .flatMap((domain: Domain) => domain.clusters.flatMap((c) => c.skills))
+      .find((s: Skill) => s.prerequisites && s.prerequisites.length > 0);
+
     if (allSkills) {
       const met = checkPrerequisitesMet(allSkills.skillId, skillPerfLookup);
       assert(met === true, `Expected true when all prerequisites mastered, got ${met}`);
@@ -179,7 +180,7 @@ function testCheckPrerequisitesMet(): TestResult[] {
 
   // Test: Prerequisites not met
   results.push(runTest('checkPrerequisitesMet: Returns false when prerequisites not mastered', () => {
-    const skillPerfLookup = (id: SkillId): SkillPerformance | undefined => {
+    const skillPerfLookup = (_id: SkillId): SkillPerformance | undefined => {
       // Mock prerequisite as not mastered
       return {
         score: 0.50,
@@ -190,10 +191,10 @@ function testCheckPrerequisitesMet(): TestResult[] {
         learningState: 'emerging'
       };
     };
-    
+
     const allSkills = Object.values(SKILL_MAP)
-      .flatMap((domain: any) => domain.clusters.flatMap((c: any) => c.skills))
-      .find((s: any) => s.prerequisites && s.prerequisites.length > 0);
+      .flatMap((domain: Domain) => domain.clusters.flatMap((c) => c.skills))
+      .find((s: Skill) => s.prerequisites && s.prerequisites.length > 0);
     
     if (allSkills) {
       const met = checkPrerequisitesMet(allSkills.skillId, skillPerfLookup);
@@ -277,7 +278,7 @@ function testMatchDistractorPattern(): TestResult[] {
   // Test: No pattern match
   results.push(runTest('matchDistractorPattern: Returns null for no match', () => {
     const selectedText = "This is a completely normal answer with no error patterns";
-    const pattern = matchDistractorPattern(selectedText);
+    const _pattern = matchDistractorPattern(selectedText);
     // It's okay if it returns null or a pattern - heuristic matching may vary
     assert(true, 'Pattern matching is heuristic, may vary');
   }));

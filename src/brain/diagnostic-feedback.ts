@@ -5,11 +5,19 @@
 import { Question, getQuestionChoiceText, getQuestionChoices, getQuestionCorrectAnswers } from './question-analyzer';
 import { PatternId } from './template-schema';
 import { ErrorExplanation, FrameworkStepGuidance } from './error-library';
+import type { FrameworkStep } from './framework-definitions';
 import { matchDistractorPattern } from './distractor-matcher';
 import { SkillId } from './skill-map';
 import { LearningState, SkillPerformance, checkPrerequisitesMet } from './learning-state';
 import { UserProfile } from '../hooks/useProgressTracking';
 import { EngineConfig } from '../types/engine';
+import type { Skill } from '../types/content';
+
+/** Extended skill shape with optional fields used by feedback engine */
+interface SkillWithExtras extends Skill {
+  commonWrongRules?: string[];
+  description?: string;
+}
 
 export interface FrameworkGuidance {
   currentStepId: string | null;
@@ -118,7 +126,7 @@ function inferFrameworkStep(question: Question, engineConfig: EngineConfig): str
 
   // Default based on domain (if skillId available)
   if (question.skillId) {
-    const skill = engineConfig.skills.find((s: any) => s.id === question.skillId);
+    const skill = engineConfig.skills.find((s: Skill) => s.id === question.skillId);
     if (skill) {
       // Domain-based defaults
       const domainPrefix = question.skillId.split('-')[0];
@@ -170,7 +178,7 @@ function getSkillGuidance(
   userProfile: UserProfile,
   engineConfig: EngineConfig
 ): SkillGuidance | undefined {
-  const skill = engineConfig.skills.find((s: any) => s.id === skillId);
+  const skill = engineConfig.skills.find((s: Skill) => s.id === skillId);
   if (!skill) return undefined;
 
   const skillPerformance = userProfile.skillScores[skillId];
@@ -188,7 +196,7 @@ function getSkillGuidance(
     for (const prereqId of skill.prerequisites) {
       const prereqPerf = userProfile.skillScores[prereqId];
       if (!prereqPerf || prereqPerf.learningState !== 'mastery') {
-        const prereqSkill = engineConfig.skills.find((s: any) => s.id === prereqId);
+        const prereqSkill = engineConfig.skills.find((s: Skill) => s.id === prereqId);
         if (prereqSkill) {
           missingPrerequisites.push(prereqSkill.name);
         }
@@ -201,20 +209,20 @@ function getSkillGuidance(
   
   if (currentState === 'emerging' || currentState === 'developing') {
     // Show 1 simple tip for emerging/developing
-    const skillAny = skill as any;
-    if (skillAny.commonWrongRules && skillAny.commonWrongRules.length > 0) {
-      remediationTips.push(`Remember: ${skillAny.commonWrongRules[0]}`);
+    const skillExt = skill as SkillWithExtras;
+    if (skillExt.commonWrongRules && skillExt.commonWrongRules.length > 0) {
+      remediationTips.push(`Remember: ${skillExt.commonWrongRules[0]}`);
     } else {
-      remediationTips.push(`Focus on understanding the core concept: ${skillAny.description || skill.name}`);
+      remediationTips.push(`Focus on understanding the core concept: ${skillExt.description || skill.name}`);
     }
   } else {
     // Show 2 advanced tips for proficient/mastery
-    const skillAny = skill as any;
-    if (skillAny.commonWrongRules && skillAny.commonWrongRules.length >= 2) {
-      remediationTips.push(`Advanced tip 1: ${skillAny.commonWrongRules[0]}`);
-      remediationTips.push(`Advanced tip 2: ${skillAny.commonWrongRules[1]}`);
-    } else if (skillAny.commonWrongRules && skillAny.commonWrongRules.length === 1) {
-      remediationTips.push(`Advanced tip: ${skillAny.commonWrongRules[0]}`);
+    const skillExt = skill as SkillWithExtras;
+    if (skillExt.commonWrongRules && skillExt.commonWrongRules.length >= 2) {
+      remediationTips.push(`Advanced tip 1: ${skillExt.commonWrongRules[0]}`);
+      remediationTips.push(`Advanced tip 2: ${skillExt.commonWrongRules[1]}`);
+    } else if (skillExt.commonWrongRules && skillExt.commonWrongRules.length === 1) {
+      remediationTips.push(`Advanced tip: ${skillExt.commonWrongRules[0]}`);
       remediationTips.push(`Apply this skill in varied contexts to deepen understanding`);
     } else {
       remediationTips.push(`You're doing well! Continue applying this skill consistently`);
@@ -376,8 +384,8 @@ export function generateDiagnosticFeedback(
 
   // Build framework guidance
   let frameworkGuidance: FrameworkGuidance | null = null;
-  let relationship = '';
-  let nextSteps: string[] = [];
+  let relationship: string;
+  let nextSteps: string[];
 
   if (frameworkStep && libEntry) {
     // Find matching framework step guidance
@@ -406,7 +414,7 @@ export function generateDiagnosticFeedback(
       const prereqSteps = frameworkStep.prerequisiteSteps
         .map((id: string) => engineConfig.frameworkSteps ? engineConfig.frameworkSteps[id] : null)
         .filter(Boolean)
-        .map((step: any) => step!.name);
+        .map((step: FrameworkStep | null) => step!.name);
       
       if (prereqSteps.length > 0) {
         nextSteps.push(`Ensure you've completed: ${prereqSteps.join(' → ')}`);

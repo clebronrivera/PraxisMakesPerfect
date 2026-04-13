@@ -221,7 +221,7 @@ export function buildAssessmentReportModel(
         .filter((skill) => skill.correct > 0 && skill.score >= DOMAIN_READY_THRESHOLD)
         .sort((a, b) => b.score - a.score || b.correct - a.correct)
         .slice(0, 3)
-        .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+        .map(({ domainIds: _domainIds, missedConceptCounts: _missedConceptCounts, ...summary }) => ({
           ...summary,
           missedConcepts: [] as MissedConceptSummary[],
         }));
@@ -229,7 +229,7 @@ export function buildAssessmentReportModel(
         .filter((skill) => skill.incorrect > 0)
         .sort((a, b) => b.incorrect - a.incorrect || a.score - b.score)
         .slice(0, 4)
-        .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+        .map(({ domainIds: _domainIds, missedConceptCounts, ...summary }) => ({
           ...summary,
           missedConcepts: Array.from(missedConceptCounts.entries())
             .map(([concept, count]) => ({
@@ -284,7 +284,7 @@ export function buildAssessmentReportModel(
     .filter((skill) => skill.correct > 0)
     .sort((a, b) => b.score - a.score || b.correct - a.correct)
     .slice(0, 4)
-    .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+    .map(({ domainIds: _domainIds, missedConceptCounts: _missedConceptCounts, ...summary }) => ({
       ...summary,
       missedConcepts: [] as MissedConceptSummary[],
     }));
@@ -294,7 +294,7 @@ export function buildAssessmentReportModel(
     .filter((skill) => skill.incorrect > 0)
     .sort((a, b) => b.incorrect - a.incorrect || a.score - b.score)
     .slice(0, 5)
-    .map(({ domainIds, missedConceptCounts, ...summary }) => ({
+    .map(({ domainIds: _domainIds, missedConceptCounts, ...summary }) => ({
       ...summary,
       missedConcepts: Array.from(missedConceptCounts.entries())
         .map(([concept, count]) => ({
