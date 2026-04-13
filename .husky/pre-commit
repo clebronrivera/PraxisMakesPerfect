@@ -1,1 +1,1 @@
-npm run scan:types
+npm run scan:types && npm run lint
