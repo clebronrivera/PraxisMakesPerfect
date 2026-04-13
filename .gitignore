@@ -4,7 +4,6 @@ REFACTOR_PLAN_LEARNING_SCIENCE.md
 
 # Dependencies
 node_modules/
-package-lock.json
 
 # Build outputs
 dist/
