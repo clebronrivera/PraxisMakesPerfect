@@ -22,6 +22,7 @@
     "audit:bank": "npx tsx scripts/audit-question-bank.ts",
     "audit:answers": "npx tsx scripts/audit-answer-distribution.ts",
     "lint": "eslint . --max-warnings 0",
+    "lint:security": "eslint . --config eslint.security.config.js",
     "check": "npm run scan:types && npm run lint && npm run test",
     "prepare": "husky"
   },
