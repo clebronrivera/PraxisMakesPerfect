@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
+import security from "eslint-plugin-security";
 
 export default tseslint.config(
   js.configs.recommended,
@@ -23,6 +24,29 @@ export default tseslint.config(
           destructuredArrayIgnorePattern: "^_",
         },
       ],
+    },
+  },
+  {
+    // Security plugin: initial audit in warn mode to measure findings before enforcement
+    files: ["**/*.{js,cjs,mjs,ts,tsx}"],
+    plugins: {
+      security,
+    },
+    rules: {
+      "security/detect-bidi-characters": "warn",
+      "security/detect-buffer-noassert": "warn",
+      "security/detect-child-process": "warn",
+      "security/detect-disable-mustache-escape": "warn",
+      "security/detect-eval-with-expression": "warn",
+      "security/detect-new-buffer": "warn",
+      "security/detect-no-csrf-before-method-override": "warn",
+      "security/detect-non-literal-fs-filename": "warn",
+      "security/detect-non-literal-regexp": "warn",
+      "security/detect-non-literal-require": "warn",
+      "security/detect-object-injection": "warn",
+      "security/detect-possible-timing-attacks": "warn",
+      "security/detect-pseudoRandomBytes": "warn",
+      "security/detect-unsafe-regex": "warn",
     },
   },
   {
