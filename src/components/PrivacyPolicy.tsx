@@ -156,6 +156,16 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
                 <li><strong>Supabase (Supabase Inc.)</strong> — database and authentication</li>
                 <li><strong>Netlify</strong> — application hosting and serverless functions</li>
                 <li><strong>Anthropic, PBC</strong> — AI Tutor language model processing</li>
+                <li>
+                  <strong>Sentry (Functional Software, Inc.)</strong> — error monitoring and crash
+                  reporting. When the application encounters an error, we send diagnostic data
+                  (error stack traces, user ID, page URL, and browser environment) to Sentry to help
+                  us diagnose and fix problems. Sentry's handling of this data is governed by its
+                  own privacy commitments, available at{' '}
+                  <a href="https://sentry.io/privacy/" target="_blank" rel="noreferrer">
+                    https://sentry.io/privacy/
+                  </a>.
+                </li>
               </ul>
             </li>
             <li>

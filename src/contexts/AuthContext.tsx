@@ -130,8 +130,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       setLoading(true);
-      const { error: signUpError } = await supabase.auth.signUp({ 
-        email, 
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
         password,
         options: {
           data: {
@@ -140,8 +140,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       });
-      
+
       if (signUpError) throw signUpError;
+
+      // Persist consent timestamp. The consent checkbox on the login screen
+      // gates the submit button, so reaching this point implies consent was
+      // given. Non-blocking: if the write fails (RLS, network, pre-confirm),
+      // log and continue — signup itself has succeeded.
+      const newUserId = data.user?.id;
+      if (newUserId) {
+        try {
+          const { error: consentError } = await supabase
+            .from('user_progress')
+            .upsert(
+              {
+                user_id: newUserId,
+                email: data.user?.email ?? email,
+                consent_accepted_at: new Date().toISOString()
+              },
+              { onConflict: 'user_id' }
+            );
+          if (consentError) {
+            console.warn('[Auth] Failed to persist consent_accepted_at:', consentError);
+          }
+        } catch (consentWriteError) {
+          console.warn('[Auth] Failed to persist consent_accepted_at:', consentWriteError);
+        }
+      }
     } catch (err: unknown) {
       captureError(err, { tags: { source: 'auth', action: 'signUp' } });
       const message = err instanceof Error ? err.message : String(err);

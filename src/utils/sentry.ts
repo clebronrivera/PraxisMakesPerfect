@@ -12,6 +12,7 @@ export function initSentry() {
   Sentry.init({
     dsn,
     environment: import.meta.env.DEV ? 'development' : 'production',
+    release: typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'unknown',
     // Only send errors in production by default. Override in dev by setting
     // VITE_SENTRY_DSN — useful for testing the integration.
     enabled: true,
