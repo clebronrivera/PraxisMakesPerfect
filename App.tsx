@@ -30,6 +30,7 @@ import { clearSession } from './src/utils/sessionStorage';
 import { getCurrentSession, loadUserSession } from './src/utils/userSessionStorage';
 import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import ToastHost from './src/components/ToastHost';
 import { useContent } from './src/context/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
 import { useStudyPlanManager } from './src/hooks/useStudyPlanManager';
@@ -1594,6 +1595,7 @@ export default function PraxisStudyApp() {
   return (
     <AuthProvider>
       <PraxisStudyAppContent />
+      <ToastHost />
     </AuthProvider>
   );
 }
