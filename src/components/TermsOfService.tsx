@@ -20,7 +20,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
           <h1>Terms of Service</h1>
           <p className="text-sm text-slate-500">Last updated: April 2026</p>
           <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            These Terms of Service are a working draft and will be updated before public launch.
+            These terms apply to beta access. They may be updated before general release.
           </p>
 
           <h2>1. Acceptance</h2>

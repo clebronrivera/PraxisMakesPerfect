@@ -3,8 +3,10 @@
 // All internals use Supabase exclusively — Firebase/Firestore is not used.
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import * as Sentry from '@sentry/react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { notifyError } from '../utils/toast';
 import { SkillId } from '../brain/skill-map';
 import {
   LearningState,
@@ -319,6 +321,9 @@ export function useProgressTracking() {
 
           // Baseline snapshot
           baselineSnapshot: data.baseline_snapshot ?? undefined,
+
+          // Consent tracking
+          consentAcceptedAt: data.consent_accepted_at ?? undefined,
         });
       } else {
         setProfileState(defaultProfile);
@@ -379,6 +384,9 @@ export function useProgressTracking() {
 
         // Baseline snapshot
         baseline_snapshot: newProfile.baselineSnapshot ?? null,
+
+        // Consent tracking
+        consent_accepted_at: newProfile.consentAcceptedAt ?? null,
 
         updated_at: new Date().toISOString()
       };
@@ -546,6 +554,8 @@ export function useProgressTracking() {
       }]);
     } catch (error) {
       console.error('[logResponse] Error logging Supabase response:', error);
+      Sentry.captureException(error, { extra: { context: 'logResponse' } });
+      notifyError('Answer not saved. Check your connection.');
     }
   }, [user]);
 
@@ -577,6 +587,8 @@ export function useProgressTracking() {
       });
     } catch (error) {
       console.error('[updateLastSession] Error updating last session:', error);
+      Sentry.captureException(error, { extra: { context: 'updateLastSession' } });
+      notifyError('Session progress not saved. Check your connection.');
     }
   }, [user, setProfileState]);
 
@@ -916,6 +928,8 @@ export function useProgressTracking() {
         }
       } catch (error) {
         console.error('[savePracticeResponse] Error saving response:', error);
+        Sentry.captureException(error, { extra: { context: 'savePracticeResponse' } });
+        notifyError('Answer not saved. Check your connection.');
       }
     }, [user]),
     recalculateGlobalScores: useCallback(async () => {
