@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   cacheDir: '/tmp/vite-cache',
   build: {
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
