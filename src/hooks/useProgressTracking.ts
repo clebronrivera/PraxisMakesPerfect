@@ -319,6 +319,9 @@ export function useProgressTracking() {
 
           // Baseline snapshot
           baselineSnapshot: data.baseline_snapshot ?? undefined,
+
+          // Consent tracking
+          consentAcceptedAt: data.consent_accepted_at ?? undefined,
         });
       } else {
         setProfileState(defaultProfile);
@@ -379,6 +382,9 @@ export function useProgressTracking() {
 
         // Baseline snapshot
         baseline_snapshot: newProfile.baselineSnapshot ?? null,
+
+        // Consent tracking
+        consent_accepted_at: newProfile.consentAcceptedAt ?? null,
 
         updated_at: new Date().toISOString()
       };
