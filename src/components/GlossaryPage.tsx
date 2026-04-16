@@ -267,7 +267,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center py-24">
-        <Loader2 className="animate-spin text-indigo-400" size={28} />
+        <Loader2 className="animate-spin text-indigo-600" size={28} />
       </div>
     );
   }
@@ -312,7 +312,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
         <Suspense
           fallback={
             <div className="flex-1 flex items-center justify-center py-24">
-              <Loader2 className="animate-spin text-violet-400" size={28} />
+              <Loader2 className="animate-spin text-violet-600" size={28} />
             </div>
           }
         >
@@ -467,7 +467,7 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-24 px-6 text-center gap-4">
       <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center">
-        <Sparkles size={28} className="text-indigo-400" />
+        <Sparkles size={28} className="text-indigo-600" />
       </div>
       <div>
         <h2 className="text-base font-semibold text-slate-700 mb-1">
