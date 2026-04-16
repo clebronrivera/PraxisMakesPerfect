@@ -1262,6 +1262,7 @@ function PraxisStudyAppContent() {
                       redemptionCredits={redemption.credits}
                       questionsToNextCredit={redemption.questionsToNextCredit}
                       redemptionHighScore={redemption.highScore}
+                      missedSkillIds={redemption.missedSkillIds}
                       progressSummary={progressSummary}
                       onStartPractice={startPractice}
                       onStartSkillPractice={startSkillPractice}
