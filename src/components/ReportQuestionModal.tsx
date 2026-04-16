@@ -127,16 +127,16 @@ export default function ReportQuestionModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={handleCancel}>
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-slate-100 border border-slate-200 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-6 h-6 text-amber-500" />
-            <h3 className="text-xl font-semibold text-slate-200">Report Question</h3>
+            <h3 className="text-xl font-semibold text-slate-700">Report Question</h3>
           </div>
           <button
             onClick={handleCancel}
-            className="text-slate-500 hover:text-slate-300 transition-colors"
+            className="text-slate-500 hover:text-slate-600 transition-colors"
             title="Close"
           >
             <X className="w-5 h-5" />
@@ -146,7 +146,7 @@ export default function ReportQuestionModal({
         {/* Step 1: What are you reporting? */}
         {step === 1 && (
           <div className="space-y-4">
-            <p className="text-slate-300 mb-4">What are you reporting?</p>
+            <p className="text-slate-600 mb-4">What are you reporting?</p>
             <div className="space-y-2">
               {TARGET_OPTIONS.map(target => (
                 <label key={target} className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors">
@@ -156,7 +156,7 @@ export default function ReportQuestionModal({
                     onChange={() => handleTargetToggle(target)}
                     className="w-4 h-4 text-amber-500 rounded focus:ring-amber-500"
                   />
-                  <span className="text-slate-200">{target}</span>
+                  <span className="text-slate-700">{target}</span>
                 </label>
               ))}
             </div>
@@ -173,7 +173,7 @@ export default function ReportQuestionModal({
         {/* Step 2: Issue type */}
         {step === 2 && (
           <div className="space-y-4">
-            <p className="text-slate-300 mb-4">What type of issue?</p>
+            <p className="text-slate-600 mb-4">What type of issue?</p>
             <div className="space-y-2">
               {ISSUE_TYPE_OPTIONS.map(issueType => (
                 <label key={issueType} className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors">
@@ -183,14 +183,14 @@ export default function ReportQuestionModal({
                     onChange={() => handleIssueTypeToggle(issueType)}
                     className="w-4 h-4 text-amber-500 rounded focus:ring-amber-500"
                   />
-                  <span className="text-slate-200">{issueType}</span>
+                  <span className="text-slate-700">{issueType}</span>
                 </label>
               ))}
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors"
               >
                 Back
               </button>
@@ -208,7 +208,7 @@ export default function ReportQuestionModal({
         {/* Step 3: Severity */}
         {step === 3 && (
           <div className="space-y-4">
-            <p className="text-slate-300 mb-4">Severity</p>
+            <p className="text-slate-600 mb-4">Severity</p>
             <div className="space-y-2">
               {SEVERITY_OPTIONS.map(option => (
                 <label key={option.value} className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors">
@@ -221,7 +221,7 @@ export default function ReportQuestionModal({
                     className="w-4 h-4 text-amber-500 mt-1"
                   />
                   <div>
-                    <div className="text-slate-200 font-medium">{option.label}</div>
+                    <div className="text-slate-700 font-medium">{option.label}</div>
                     <div className="text-slate-400 text-sm">{option.description}</div>
                   </div>
                 </label>
@@ -230,7 +230,7 @@ export default function ReportQuestionModal({
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(2)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors"
               >
                 Back
               </button>
@@ -247,25 +247,25 @@ export default function ReportQuestionModal({
         {/* Step 4: Notes */}
         {step === 4 && (
           <div className="space-y-4">
-            <p className="text-slate-300 mb-2">Additional notes (optional)</p>
+            <p className="text-slate-600 mb-2">Additional notes (optional)</p>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Provide more details about the issue..."
-              className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50 resize-none"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-500 focus:outline-none focus:border-amber-400 resize-none"
               rows={6}
             />
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 disabled:bg-slate-700 disabled:cursor-not-allowed text-red-400 rounded-lg transition-colors font-medium"
+                className="flex-1 px-4 py-2 bg-rose-50 hover:bg-rose-100 disabled:bg-slate-100 disabled:cursor-not-allowed text-rose-700 border border-rose-200 rounded-lg transition-colors font-medium"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Report'}
               </button>
