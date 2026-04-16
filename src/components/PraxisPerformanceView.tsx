@@ -222,9 +222,9 @@ const PRAXIS_SECTIONS: PraxisSection[] = [
 ];
 
 const getPerformanceLabel = (score: number): { label: string; color: string; bgColor: string } => {
-  if (score >= DEMONSTRATING_THRESHOLD) return { label: 'Strong', color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' };
-  if (score >= APPROACHING_THRESHOLD) return { label: 'Developing', color: 'text-amber-400', bgColor: 'bg-amber-500/20' };
-  return { label: 'Needs Improvement', color: 'text-red-400', bgColor: 'bg-red-500/20' };
+  if (score >= DEMONSTRATING_THRESHOLD) return { label: 'Strong', color: 'text-emerald-700', bgColor: 'bg-emerald-50' };
+  if (score >= APPROACHING_THRESHOLD) return { label: 'Developing', color: 'text-amber-700', bgColor: 'bg-amber-50' };
+  return { label: 'Needs Improvement', color: 'text-rose-700', bgColor: 'bg-rose-50' };
 };
 
 export default function PraxisPerformanceView({
@@ -303,14 +303,14 @@ export default function PraxisPerformanceView({
       {/* ── Existing Section View ─────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-100 mb-2">Praxis Performance Overview</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Praxis Performance Overview</h2>
           <p className="text-slate-400 text-sm">View your performance across Praxis sections and drill down to NASP domains</p>
         </div>
-        <div className="flex gap-2 bg-slate-800/50 rounded-lg p-1 border border-slate-700">
+        <div className="flex gap-2 bg-slate-100 rounded-lg p-1 border border-slate-200">
           <button
             onClick={() => setSortMode('performance')}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              sortMode === 'performance' ? 'bg-slate-700 text-slate-100' : 'text-slate-400 hover:text-slate-200'
+              sortMode === 'performance' ? 'bg-slate-700 text-slate-900' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             By Performance
@@ -318,7 +318,7 @@ export default function PraxisPerformanceView({
           <button
             onClick={() => setSortMode('deficiencies')}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              sortMode === 'deficiencies' ? 'bg-slate-700 text-slate-100' : 'text-slate-400 hover:text-slate-200'
+              sortMode === 'deficiencies' ? 'bg-slate-700 text-slate-900' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             By Deficiencies
@@ -334,7 +334,7 @@ export default function PraxisPerformanceView({
           const scorePercentage = hasData ? Math.round(section.overallScore * 100) : 0;
 
           return (
-            <div key={section.id} className="bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden transition-all hover:border-slate-600">
+            <div key={section.id} className="bg-slate-100 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-slate-300">
               <button onClick={() => toggleSection(section.id)} className="w-full p-6 text-left flex items-center justify-between group">
                 <div className="flex-1 flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0" style={{ backgroundColor: section.color }}>
@@ -342,7 +342,7 @@ export default function PraxisPerformanceView({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-lg font-bold text-slate-100 group-hover:text-white transition-colors">{section.name}</h3>
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-white transition-colors">{section.name}</h3>
                       {hasData && (
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${perf.color} ${perf.bgColor}`}>{perf.label}</span>
                       )}
@@ -350,9 +350,9 @@ export default function PraxisPerformanceView({
                     <p className="text-sm text-slate-400">{section.subtitle}</p>
                     {hasData && (
                       <div className="flex items-center gap-4 mt-2">
-                        <span className="text-sm text-slate-300">{section.totalDomainsWithData} domain{section.totalDomainsWithData !== 1 ? 's' : ''} assessed</span>
+                        <span className="text-sm text-slate-600">{section.totalDomainsWithData} domain{section.totalDomainsWithData !== 1 ? 's' : ''} assessed</span>
                         {section.deficiencyCount > 0 && (
-                          <span className="text-sm text-red-400 flex items-center gap-1">
+                          <span className="text-sm text-rose-600 flex items-center gap-1">
                             <AlertTriangle className="w-4 h-4" />
                             {section.deficiencyCount} need{section.deficiencyCount !== 1 ? 's' : ''} improvement
                           </span>
@@ -378,8 +378,8 @@ export default function PraxisPerformanceView({
               </button>
 
               {isExpanded && (
-                <div className="border-t border-slate-700/50 p-6 bg-slate-900/50">
-                  <h4 className="text-sm font-semibold text-slate-300 mb-4 uppercase tracking-wide">Domain Details</h4>
+                <div className="border-t border-slate-200 p-6 bg-white">
+                  <h4 className="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Domain Details</h4>
                   {section.domainScores.length === 0 ? (
                     <div className="text-center py-8 text-slate-500">
                       <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
@@ -396,7 +396,7 @@ export default function PraxisPerformanceView({
                         const isWeak = userProfile.weakestDomains.includes(domain);
 
                         return (
-                          <div key={domain} className={`p-4 rounded-xl border transition-all ${isWeak ? 'bg-red-500/10 border-red-500/30' : 'bg-slate-800/50 border-slate-700/50'}`}>
+                          <div key={domain} className={`p-4 rounded-xl border transition-all ${isWeak ? 'bg-rose-50 border-rose-200' : 'bg-slate-100 border-slate-200'}`}>
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3 flex-1 min-w-0">
                                 <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ backgroundColor: domainColor }}>
@@ -404,8 +404,8 @@ export default function PraxisPerformanceView({
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <p className="font-semibold text-slate-200">{getDomainLabel(domainInfo)}</p>
-                                    {isWeak && <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />}
+                                    <p className="font-semibold text-slate-700">{getDomainLabel(domainInfo)}</p>
+                                    {isWeak && <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />}
                                   </div>
                                   <p className="text-xs text-slate-400 line-clamp-1">{domainInfo?.description}</p>
                                 </div>
@@ -426,11 +426,11 @@ export default function PraxisPerformanceView({
                               </div>
                             </div>
                             {domainInfo?.keyConcepts && domainInfo.keyConcepts.length > 0 && (
-                              <div className="mt-3 pt-3 border-t border-slate-700/50">
+                              <div className="mt-3 pt-3 border-t border-slate-200">
                                 <p className="text-xs text-slate-500 mb-2">Key Concepts:</p>
                                 <div className="flex flex-wrap gap-1.5">
                                   {domainInfo.keyConcepts.slice(0, 5).map((concept: string, idx: number) => (
-                                    <span key={idx} className="px-2 py-0.5 rounded text-xs bg-slate-800/50 text-slate-400 border border-slate-700/50">{concept}</span>
+                                    <span key={idx} className="px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-400 border border-slate-200">{concept}</span>
                                   ))}
                                   {domainInfo.keyConcepts.length > 5 && (
                                     <span className="px-2 py-0.5 rounded text-xs text-slate-500">+{domainInfo.keyConcepts.length - 5} more</span>
@@ -451,17 +451,17 @@ export default function PraxisPerformanceView({
       </div>
 
       {(userProfile.screenerComplete || userProfile.diagnosticComplete || userProfile.fullAssessmentComplete) && (
-        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-800">
-          <div className="p-4 bg-slate-800/50 rounded-xl text-center">
-            <p className="text-2xl font-bold text-amber-400">{userProfile.totalQuestionsSeen}</p>
+        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-200">
+          <div className="p-4 bg-slate-100 rounded-xl text-center">
+            <p className="text-2xl font-bold text-amber-600">{userProfile.totalQuestionsSeen}</p>
             <p className="text-xs text-slate-500 mt-1">Total Questions</p>
           </div>
-          <div className="p-4 bg-slate-800/50 rounded-xl text-center">
-            <p className="text-2xl font-bold text-emerald-400">{sortedSections.filter(s => s.overallScore >= DEMONSTRATING_THRESHOLD).length}</p>
+          <div className="p-4 bg-slate-100 rounded-xl text-center">
+            <p className="text-2xl font-bold text-emerald-600">{sortedSections.filter(s => s.overallScore >= DEMONSTRATING_THRESHOLD).length}</p>
             <p className="text-xs text-slate-500 mt-1">Strong Sections</p>
           </div>
-          <div className="p-4 bg-slate-800/50 rounded-xl text-center">
-            <p className="text-2xl font-bold text-red-400">{sortedSections.reduce((sum, s) => sum + s.deficiencyCount, 0)}</p>
+          <div className="p-4 bg-slate-100 rounded-xl text-center">
+            <p className="text-2xl font-bold text-rose-600">{sortedSections.reduce((sum, s) => sum + s.deficiencyCount, 0)}</p>
             <p className="text-xs text-slate-500 mt-1">Areas Needing Work</p>
           </div>
         </div>
