@@ -34,6 +34,7 @@ import ToastHost from './src/components/ToastHost';
 import { useContent } from './src/context/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
 import { useStudyPlanManager } from './src/hooks/useStudyPlanManager';
+import type { StudyPlanHistoryEntry } from './src/services/studyPlanService';
 import { useAssessmentFlow } from './src/hooks/useAssessmentFlow';
 import { usePracticeFlow } from './src/hooks/usePracticeFlow';
 const AdaptiveDiagnostic = lazy(() => import('./src/components/AdaptiveDiagnostic'));
@@ -69,6 +70,109 @@ const CANONICAL_QUESTION_BANK_URL = new URL('./src/data/questions.json', import.
 // ============================================
 // TYPE DEFINITIONS
 // ============================================
+
+// ─── Study Guide 3-Tab Wrapper ──────────────────────────────────────────────
+
+type StudyGuideTab = 'platform' | 'plan' | 'vocabulary';
+
+function StudyGuideTabWrapper({
+  studyPlanHistory, studyPlanGenerating, studyPlanLoading, studyPlanError,
+  canGenerateStudyPlan, handleGenerateStudyPlan, onNavigateToGlossary,
+}: {
+  studyPlanHistory: StudyPlanHistoryEntry[];
+  studyPlanGenerating: boolean;
+  studyPlanLoading: boolean;
+  studyPlanError: string | null;
+  canGenerateStudyPlan: boolean;
+  handleGenerateStudyPlan: () => void;
+  onNavigateToGlossary: () => void;
+}) {
+  const [activeTab, setActiveTab] = useState<StudyGuideTab>(
+    studyPlanHistory.length > 0 ? 'plan' : 'platform'
+  );
+
+  const tabs: Array<{ id: StudyGuideTab; label: string }> = [
+    { id: 'platform', label: 'Platform Guide' },
+    { id: 'plan', label: 'Your Study Plan' },
+    { id: 'vocabulary', label: 'Vocabulary' },
+  ];
+
+  return (
+    <div className="space-y-4 pb-16">
+      <div className="pt-4">
+        <p className="editorial-overline mb-2">Study Guide</p>
+        <h2 className="text-4xl font-bold tracking-tight text-slate-900">Study Guide.</h2>
+      </div>
+
+      {/* 3-tab bar */}
+      <div className="flex border-b border-slate-200">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 px-4 py-3 text-xs font-semibold transition-all border-b-2 ${
+              activeTab === tab.id
+                ? 'text-amber-700 border-amber-500 bg-amber-50/50'
+                : 'text-slate-500 border-transparent hover:bg-slate-50'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'platform' && (
+        <div className="editorial-surface p-5 space-y-4">
+          <p className="text-sm font-bold text-slate-800 mb-3">How to use the platform</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {[
+              { title: 'Adaptive Diagnostic', desc: '45–90 questions that adapt to your performance. Maps all 45 skills in one session.' },
+              { title: 'Learning Path', desc: 'Structured micro-lessons ordered by your gaps. Lesson → quiz → extend for each skill.' },
+              { title: 'Term Sprint', desc: '396 school psychology terms, 10 seconds each, both directions. Build vocabulary fluency.' },
+              { title: 'Spaced Review', desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.' },
+              { title: 'Redemption Rounds', desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.' },
+              { title: 'AI Tutor', desc: 'Conversational study assistant. Ask questions, get quizzed on weak areas, generate vocabulary lists.' },
+            ].map(item => (
+              <div key={item.title} className="rounded-xl bg-slate-50 border border-slate-200 p-3">
+                <p className="text-xs font-bold text-slate-700 mb-1">{item.title}</p>
+                <p className="text-[11px] text-slate-500 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'plan' && (
+        <Suspense fallback={<div className="text-slate-500 text-sm">Loading study guide...</div>}>
+          <StudyPlanCard
+            history={studyPlanHistory}
+            isGenerating={studyPlanGenerating}
+            isLoading={studyPlanLoading}
+            error={studyPlanError}
+            canGenerate={canGenerateStudyPlan}
+            onGenerate={handleGenerateStudyPlan}
+          />
+        </Suspense>
+      )}
+
+      {activeTab === 'vocabulary' && (
+        <div className="editorial-surface p-5 space-y-4">
+          <p className="text-sm font-bold text-slate-800 mb-1">Vocabulary & Term Sprint</p>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Review your flagged terms and test your vocabulary knowledge across 396 school psychology terms.
+          </p>
+          <button
+            onClick={onNavigateToGlossary}
+            className="px-4 py-2.5 rounded-xl bg-amber-600 text-white text-sm font-bold hover:bg-amber-700 transition-colors"
+          >
+            Open Glossary & Start Term Sprint →
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ============================================
 // MAIN APP COMPONENT
@@ -976,6 +1080,33 @@ function PraxisStudyAppContent() {
               <TutorChatPage
                 userId={user.id}
                 diagnosticComplete={Boolean(profile.adaptiveDiagnosticComplete)}
+                emergingSkills={Object.entries(profile.skillScores ?? {})
+                  .filter(([, p]) => p.attempts >= 3 && (p.score ?? 0) < 0.6)
+                  .map(([skillId, p]) => {
+                    const def = getProgressSkillDefinition(skillId);
+                    return {
+                      skillId,
+                      skillName: def?.fullLabel ?? skillId,
+                      domainId: def?.domainId ?? 1,
+                      proficiency: 'emerging' as const,
+                      accuracy: p.score !== undefined ? Math.round(p.score * 100) : null,
+                      attempts: p.attempts,
+                      trend: 'unknown' as const,
+                      isTentative: p.attempts < 6,
+                    };
+                  })}
+                approachingSkills={Object.entries(profile.skillScores ?? {})
+                  .filter(([, p]) => p.attempts >= 3 && (p.score ?? 0) >= 0.6 && (p.score ?? 0) < 0.8)
+                  .map(([skillId, p]) => {
+                    const def = getProgressSkillDefinition(skillId);
+                    return {
+                      skillId,
+                      skillName: def?.fullLabel ?? skillId,
+                      domainId: def?.domainId ?? 1,
+                      accuracy: p.score !== undefined ? Math.round(p.score * 100) : null,
+                      attempts: p.attempts,
+                    };
+                  })}
               />
             </Suspense>
           </div>
@@ -1262,6 +1393,7 @@ function PraxisStudyAppContent() {
                       redemptionCredits={redemption.credits}
                       questionsToNextCredit={redemption.questionsToNextCredit}
                       redemptionHighScore={redemption.highScore}
+                      missedSkillIds={redemption.missedSkillIds}
                       progressSummary={progressSummary}
                       onStartPractice={startPractice}
                       onStartSkillPractice={startSkillPractice}
@@ -1337,22 +1469,15 @@ function PraxisStudyAppContent() {
 
         {/* STUDY GUIDE PAGE */}
         {mode === 'study-guide' && (
-          <div className="space-y-6 pb-16">
-            <div className="pt-4">
-              <p className="editorial-overline mb-2">Study Plan</p>
-              <h2 className="text-4xl font-bold tracking-tight text-slate-900">AI Study Guide.</h2>
-            </div>
-            <Suspense fallback={<div className="text-slate-500 text-sm">Loading study guide...</div>}>
-              <StudyPlanCard
-                history={studyPlanHistory}
-                isGenerating={studyPlanGenerating}
-                isLoading={studyPlanLoading}
-                error={studyPlanError}
-                canGenerate={canGenerateStudyPlan}
-                onGenerate={handleGenerateStudyPlan}
-              />
-            </Suspense>
-          </div>
+          <StudyGuideTabWrapper
+            studyPlanHistory={studyPlanHistory}
+            studyPlanGenerating={studyPlanGenerating}
+            studyPlanLoading={studyPlanLoading}
+            studyPlanError={studyPlanError}
+            canGenerateStudyPlan={canGenerateStudyPlan}
+            handleGenerateStudyPlan={handleGenerateStudyPlan}
+            onNavigateToGlossary={() => setMode('glossary')}
+          />
         )}
 
         {/* STUDY NOTEBOOK PAGE */}

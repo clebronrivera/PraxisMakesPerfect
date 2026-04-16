@@ -13,12 +13,14 @@ interface TutorChatPageProps {
   diagnosticComplete: boolean;
   emergingSkillsCount?: number;
   emergingSkills?: { skillId: string; skillName: string; domainId: number; proficiency: 'emerging'; accuracy: number | null; attempts: number; trend: 'improving' | 'declining' | 'stable' | 'unknown'; isTentative: boolean }[];
+  approachingSkills?: { skillId: string; skillName: string; domainId: number; accuracy: number | null; attempts: number }[];
 }
 
 export function TutorChatPage({
   userId,
   diagnosticComplete,
   emergingSkills = [],
+  approachingSkills: _approachingSkills = [],
 }: TutorChatPageProps) {
   const chat = useTutorChat({ userId, sessionType: 'page-tutor' });
   const [input, setInput] = useState('');

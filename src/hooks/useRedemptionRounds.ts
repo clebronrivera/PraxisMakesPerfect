@@ -50,6 +50,7 @@ export function useRedemptionRounds({
 }: UseRedemptionRoundsOptions) {
   // ── Quarantine blacklist — the single source of truth for practice exclusion
   const [redemptionBlacklistIds, setRedemptionBlacklistIds] = useState<Set<string>>(new Set());
+  const [missedSkillIds, setMissedSkillIds] = useState<string[]>([]);
   const [bankLoading, setBankLoading] = useState(false);
 
   // Derived: bank count is just the blacklist size
@@ -57,13 +58,13 @@ export function useRedemptionRounds({
 
   // ── Load quarantined question IDs on mount / userId change ─────────────────
   useEffect(() => {
-    if (!userId) { setRedemptionBlacklistIds(new Set()); return; }
+    if (!userId) { setRedemptionBlacklistIds(new Set()); setMissedSkillIds([]); return; }
 
     let active = true;
     setBankLoading(true);
     supabase
       .from('practice_missed_questions')
-      .select('question_id')
+      .select('question_id, skill_id')
       .eq('user_id', userId)
       .eq('in_redemption', true)
       .eq('redeemed', false)
@@ -71,6 +72,7 @@ export function useRedemptionRounds({
         if (active) {
           const ids = new Set((data ?? []).map(r => r.question_id));
           setRedemptionBlacklistIds(ids);
+          setMissedSkillIds((data ?? []).map(r => r.skill_id).filter((s): s is string => s !== null));
         }
         if (active) setBankLoading(false);
       }, () => {
@@ -323,6 +325,7 @@ export function useRedemptionRounds({
     bankCount,
     bankLoading,
     redemptionBlacklistIds,
+    missedSkillIds,
     credits: profile.redemptionCredits ?? 0,
     highScore: profile.redemptionHighScore ?? 0,
     questionsToNextCredit: 20 - ((profile.practiceQuestionsSinceCredit ?? 0) % 20),
