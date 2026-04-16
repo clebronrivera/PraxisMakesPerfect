@@ -18,7 +18,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { BookOpen, CheckCircle, Lock } from 'lucide-react';
+import { BookOpen, CheckCircle, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import type { LearningPathSkillRecord, LearningPathStatus } from '../hooks/useLearningPathSupabase';
 import { getPrimaryModuleForSkill } from '../data/learningModules';
 import { getSkillProficiency, PROFICIENCY_META } from '../utils/skillProficiency';
@@ -282,12 +282,45 @@ function NodeCard({
   );
 }
 
+type LPSortMode = 'weakest' | 'quick-wins' | 'by-domain';
+
+function sortNodes(nodes: SkillNode[], mode: LPSortMode): SkillNode[] {
+  if (mode === 'weakest') return nodes; // buildNodes already sorts weakest first
+  const sorted = [...nodes];
+  if (mode === 'quick-wins') {
+    // Approaching skills closest to 80% first
+    return sorted.sort((a, b) => {
+      const aMastered = a.lpStatus === 'mastered' || a.overallTier === 'proficient';
+      const bMastered = b.lpStatus === 'mastered' || b.overallTier === 'proficient';
+      if (aMastered && !bMastered) return 1;
+      if (!aMastered && bMastered) return -1;
+      const aApproaching = a.overallTier === 'approaching' ? 1 : 0;
+      const bApproaching = b.overallTier === 'approaching' ? 1 : 0;
+      if (aApproaching !== bApproaching) return bApproaching - aApproaching;
+      if (a.overallTier === 'approaching' && b.overallTier === 'approaching') {
+        return (b.overallScore ?? 0) - (a.overallScore ?? 0);
+      }
+      return (a.overallScore ?? 0) - (b.overallScore ?? 0);
+    });
+  }
+  // by-domain
+  return sorted.sort((a, b) => {
+    const aDomain = PROGRESS_DOMAINS.findIndex(d => getProgressSkillsForDomain(d.id).some(s => s.skillId === a.skillId));
+    const bDomain = PROGRESS_DOMAINS.findIndex(d => getProgressSkillsForDomain(d.id).some(s => s.skillId === b.skillId));
+    if (aDomain !== bDomain) return aDomain - bDomain;
+    return (a.overallScore ?? 0) - (b.overallScore ?? 0);
+  });
+}
+
 export default function LearningPathNodeMap({
   profile,
   lpProgress,
   onNodeClick,
 }: LearningPathNodeMapProps) {
-  const nodes = useMemo(() => buildNodes(profile, lpProgress), [profile, lpProgress]);
+  const [sortMode, setSortMode] = useState<LPSortMode>('weakest');
+  const [masteredExpanded, setMasteredExpanded] = useState(false);
+  const rawNodes = useMemo(() => buildNodes(profile, lpProgress), [profile, lpProgress]);
+  const nodes = useMemo(() => sortNodes(rawNodes, sortMode), [rawNodes, sortMode]);
   const gridRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [columnCount, setColumnCount] = useState(4);
@@ -374,8 +407,33 @@ export default function LearningPathNodeMap({
   ).length;
   const masteredCount = nodes.length - activeCount;
 
+  const masteredNodes = nodes.filter(n => n.lpStatus === 'mastered' || n.overallTier === 'proficient');
+
   return (
     <div className="space-y-4">
+      {/* Sort toggle */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs font-semibold text-slate-500">Sort:</span>
+        <div className="flex gap-0.5 bg-slate-100 rounded-lg p-0.5">
+          {([
+            { id: 'weakest' as const, label: 'Weakest First' },
+            { id: 'quick-wins' as const, label: 'Quick Wins' },
+            { id: 'by-domain' as const, label: 'By Domain' },
+          ]).map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setSortMode(opt.id)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                sortMode === opt.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        <span className="ml-auto text-xs text-slate-400">{activeCount} active · {masteredCount} mastered</span>
+      </div>
+
       <div className="editorial-surface-soft flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm leading-relaxed text-slate-600">
           {activeCount} skills to strengthen · {masteredCount} {PROFICIENCY_META.proficient.label}
@@ -450,6 +508,43 @@ export default function LearningPathNodeMap({
           </div>
         </div>
       </div>
+
+      {/* ── Mastered skills collapsed section ──────────────────────────── */}
+      {masteredNodes.length > 0 && (
+        <div className="border-t border-slate-200 pt-3">
+          <button
+            onClick={() => setMasteredExpanded(prev => !prev)}
+            className="flex items-center gap-2 w-full text-left group"
+          >
+            {masteredExpanded
+              ? <ChevronUp className="w-4 h-4 text-emerald-600" />
+              : <ChevronDown className="w-4 h-4 text-emerald-600" />}
+            <span className="text-sm font-semibold text-emerald-700">
+              {masteredNodes.length} mastered skill{masteredNodes.length !== 1 ? 's' : ''}
+            </span>
+            <span className="text-xs text-slate-400 group-hover:text-slate-600">
+              {masteredExpanded ? 'Click to collapse' : 'Click to expand'}
+            </span>
+          </button>
+          {masteredExpanded && (
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 opacity-70">
+              {masteredNodes.map(node => (
+                <button
+                  key={node.skillId}
+                  onClick={() => onNodeClick(node.skillId)}
+                  className="rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-center hover:shadow-sm transition-all"
+                >
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-1" />
+                  <div className="text-[10px] font-bold text-emerald-700">{node.shortLabel}</div>
+                  {node.overallScore !== null && (
+                    <div className="text-[9px] text-emerald-500">{Math.round(node.overallScore * 100)}%</div>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
