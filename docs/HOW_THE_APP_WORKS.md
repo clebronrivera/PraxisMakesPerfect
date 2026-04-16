@@ -417,7 +417,14 @@ The structured data from Phases 1 and 2 is handed to Claude (Anthropic's AI). Cl
 
 Generation runs as a background process and typically completes within about a minute. When done, the app automatically navigates you to the guide.
 
-### Study Guide Layout — 6 Tabs + Side Rail
+### Study Guide Layout — 3 Outer Tabs + 6 Inner Tabs + Side Rail
+
+The study guide is wrapped in a 3-tab layout:
+- **Tab 1: "Platform Guide"** — static how-to cards explaining all 6 features (Adaptive Diagnostic, Learning Path, Term Sprint, Spaced Review, Redemption Rounds, AI Tutor). Shown by default if no plan exists.
+- **Tab 2: "Your Study Plan"** — the AI-generated study plan (default tab when a plan exists). Contains the 6 inner tabs described below.
+- **Tab 3: "Vocabulary"** — link to the glossary page and Term Sprint CTA.
+
+#### Inner Tabs (inside "Your Study Plan")
 
 **Overview tab**
 Your readiness level with a plain-language summary of where you stand, key insights pulled from your data, and patterns the system observed in your answer history.
@@ -643,7 +650,8 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 | Learning Path status labels | 5 (not_started / emerging / approaching / demonstrating / mastered) |
 | Learning Path practice questions per session | Up to 5 (random sample per skill) |
 | Readiness target (skills at ≥ 80%) | 32 of 45 (70%) |
-| Study guide tabs | 6 + side rail |
+| Study guide outer tabs | 3 (Platform Guide / Study Plan / Vocabulary) |
+| Study guide inner tabs | 6 + side rail (inside Study Plan tab) |
 | Readiness levels | 4 (Early / Developing / Approaching / Ready) |
 | Time between guide regenerations | 7 days (once live) |
 | Supabase migrations applied | 8 (0000–0005, 0009, 0013) |
