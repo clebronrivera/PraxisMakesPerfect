@@ -1080,6 +1080,33 @@ function PraxisStudyAppContent() {
               <TutorChatPage
                 userId={user.id}
                 diagnosticComplete={Boolean(profile.adaptiveDiagnosticComplete)}
+                emergingSkills={Object.entries(profile.skillScores ?? {})
+                  .filter(([, p]) => p.attempts >= 3 && (p.score ?? 0) < 0.6)
+                  .map(([skillId, p]) => {
+                    const def = getProgressSkillDefinition(skillId);
+                    return {
+                      skillId,
+                      skillName: def?.fullLabel ?? skillId,
+                      domainId: def?.domainId ?? 1,
+                      proficiency: 'emerging' as const,
+                      accuracy: p.score !== undefined ? Math.round(p.score * 100) : null,
+                      attempts: p.attempts,
+                      trend: 'unknown' as const,
+                      isTentative: p.attempts < 6,
+                    };
+                  })}
+                approachingSkills={Object.entries(profile.skillScores ?? {})
+                  .filter(([, p]) => p.attempts >= 3 && (p.score ?? 0) >= 0.6 && (p.score ?? 0) < 0.8)
+                  .map(([skillId, p]) => {
+                    const def = getProgressSkillDefinition(skillId);
+                    return {
+                      skillId,
+                      skillName: def?.fullLabel ?? skillId,
+                      domainId: def?.domainId ?? 1,
+                      accuracy: p.score !== undefined ? Math.round(p.score * 100) : null,
+                      attempts: p.attempts,
+                    };
+                  })}
               />
             </Suspense>
           </div>
