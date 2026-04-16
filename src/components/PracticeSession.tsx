@@ -659,7 +659,7 @@ export default function PracticeSession({
           </div>
           <button
             onClick={() => setRedemptionToast(null)}
-            className="ml-auto shrink-0 text-amber-400 hover:text-amber-600"
+            className="ml-auto shrink-0 text-amber-600 hover:text-amber-600"
           >
             <X className="h-4 w-4" />
           </button>
@@ -860,7 +860,7 @@ export default function PracticeSession({
             </div>
             <button
               onClick={() => setDismissedSkillAlerts(prev => new Set(prev).add(alertSkillId))}
-              className="flex-shrink-0 rounded-lg p-1 text-rose-400 hover:bg-rose-100 hover:text-rose-700 transition-colors"
+              className="flex-shrink-0 rounded-lg p-1 text-rose-600 hover:bg-rose-100 hover:text-rose-700 transition-colors"
               title="Dismiss alert"
             >
               <X className="h-3.5 w-3.5" />
@@ -1030,7 +1030,7 @@ export default function PracticeSession({
 
       {/* ── Pause Overlay ────────────────────────────────────────────────────── */}
       {isPaused && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-50/45 backdrop-blur-md">
           <div className="mx-4 max-w-sm space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl">
             <Pause className="mx-auto h-12 w-12 text-amber-700" />
             <div>
