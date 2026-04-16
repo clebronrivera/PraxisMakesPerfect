@@ -43,16 +43,16 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
-          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 max-w-md w-full text-center space-y-6">
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+          <div className="bg-rose-50 border border-rose-200 rounded-2xl p-8 max-w-md w-full text-center space-y-6">
             <div className="flex justify-center">
-              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-red-400" />
+              <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-rose-600" />
               </div>
             </div>
             
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-100">Something Went Wrong</h2>
+              <h2 className="text-2xl font-bold text-slate-900">Something Went Wrong</h2>
               <p className="text-slate-400">
                 An error occurred while displaying your results. This may happen if your session data is corrupted or incomplete.
               </p>
@@ -76,7 +76,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   clearSession();
                   window.location.href = '/';
                 }}
-                className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-700 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />
                 Go Home

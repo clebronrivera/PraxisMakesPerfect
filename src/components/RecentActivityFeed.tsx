@@ -23,7 +23,7 @@ function MomentumBadge({ momentum }: { momentum: WeeklyMomentum }) {
 
   if (trend === 'new' || lastWeek === 0) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-cyan-500/15 text-cyan-300">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-cyan-50 text-cyan-700">
         <Activity className="w-2.5 h-2.5" />
         {thisWeek} this week
       </span>
@@ -32,7 +32,7 @@ function MomentumBadge({ momentum }: { momentum: WeeklyMomentum }) {
 
   if (trend === 'up') {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700">
         <TrendingUp className="w-2.5 h-2.5" />
         +{delta} vs last week
       </span>
@@ -41,7 +41,7 @@ function MomentumBadge({ momentum }: { momentum: WeeklyMomentum }) {
 
   if (trend === 'down') {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-500/15 text-rose-300">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-100 text-rose-700">
         <TrendingDown className="w-2.5 h-2.5" />
         {delta} vs last week
       </span>
@@ -62,10 +62,10 @@ function dayLabel(dateStr: string): string {
 }
 
 function heatColor(questions: number): string {
-  if (questions === 0) return 'bg-navy-700/60';
+  if (questions === 0) return 'bg-slate-50/60';
   if (questions < 5) return 'bg-cyan-900/70';
   if (questions < 10) return 'bg-cyan-700/70';
-  if (questions < 20) return 'bg-cyan-500/70';
+  if (questions < 20) return 'bg-cyan-500';
   return 'bg-cyan-400';
 }
 
@@ -78,7 +78,7 @@ export default function RecentActivityFeed({ days, momentum }: Props) {
   if (totalThisWeek === 0 && momentum.thisWeek === 0) return null;
 
   return (
-    <div className="p-4 bg-navy-800/60 border border-navy-600/40 rounded-2xl">
+    <div className="p-4 bg-white border border-slate-200 rounded-2xl">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-1.5">
           <Activity className="w-3.5 h-3.5 text-slate-500" />

@@ -112,7 +112,7 @@ export default function TutorialWalkthrough({ onDismiss, variant = 'full' }: Tut
                 disabled={isFirst}
                 className={`flex items-center gap-1 rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
                   isFirst
-                    ? 'cursor-not-allowed text-slate-300'
+                    ? 'cursor-not-allowed text-slate-600'
                     : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >

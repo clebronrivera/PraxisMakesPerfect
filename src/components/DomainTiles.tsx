@@ -10,7 +10,7 @@ export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
   return (
     <section className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-100 mb-2">Domain Review</h2>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">Domain Review</h2>
         <p className="text-slate-400 text-sm">
           Pick one Praxis domain to start a focused mixed-review session from the active question pool.
         </p>
@@ -25,7 +25,7 @@ export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
             <button
               key={domain.id}
               onClick={() => onDomainSelect?.(domain.id)}
-              className="rounded-2xl border border-slate-700 bg-slate-800/40 p-5 text-left transition-all hover:border-slate-600 hover:bg-slate-800/70"
+              className="rounded-2xl border border-slate-200 bg-slate-100 p-5 text-left transition-all hover:border-slate-300 hover:bg-slate-100"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-3">
@@ -37,7 +37,7 @@ export default function DomainTiles({ onDomainSelect }: DomainTilesProps) {
                       {domain.id}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-100">{domain.name}</p>
+                      <p className="font-semibold text-slate-900">{domain.name}</p>
                       <p className="text-xs text-slate-500">{skillCount} active skills</p>
                     </div>
                   </div>

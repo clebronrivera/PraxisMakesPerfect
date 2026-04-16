@@ -85,7 +85,7 @@ export default function QuestionCard({
       container: 'border-slate-200 bg-[#fbfaf7] hover:border-amber-300 hover:bg-amber-50/70',
       chip: 'border border-slate-200 bg-white text-slate-500',
       text: 'text-slate-700',
-      icon: 'text-slate-300',
+      icon: 'text-slate-600',
     };
   };
 
@@ -186,7 +186,7 @@ export default function QuestionCard({
               onClick={() => onConfidenceChange(level)}
                 className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
                 confidence === level 
-                    ? 'border-slate-900 bg-slate-900 text-white'
+                    ? 'border-slate-900 bg-slate-50 text-white'
                     : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900'
               }`}
             >
