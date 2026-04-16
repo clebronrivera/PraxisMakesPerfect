@@ -606,7 +606,7 @@ export default function StudyModesSection({
     {
       id: 'domain',
       label: 'By Domain',
-      sublabel: '4 sections · Praxis structure',
+      sublabel: 'Practice by Praxis section — 4 domains, weakest first',
       locked: !fullAssessmentComplete,
       lockReason: 'Requires adaptive diagnostic',
       icon: <Layers className="w-3.5 h-3.5" />,
@@ -614,7 +614,7 @@ export default function StudyModesSection({
     {
       id: 'skill',
       label: 'By Skill',
-      sublabel: '45 skills · targeted',
+      sublabel: 'Target any of 45 skills — sorted weakest to strongest',
       locked: !fullAssessmentComplete,
       lockReason: 'Requires adaptive diagnostic',
       icon: <Target className="w-3.5 h-3.5" />,
@@ -622,7 +622,7 @@ export default function StudyModesSection({
     {
       id: 'path',
       label: 'Learning Path',
-      sublabel: 'Deficit-first · micro-lessons',
+      sublabel: 'Structured micro-lessons ordered by your gaps',
       locked: !fullAssessmentComplete,
       lockReason: 'Requires adaptive diagnostic',
       icon: <BookOpen className="w-3.5 h-3.5" />,
@@ -694,11 +694,23 @@ export default function StudyModesSection({
           className="w-full flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-left transition-colors hover:bg-violet-100"
         >
           <RefreshCw className="w-3.5 h-3.5 shrink-0 text-violet-600" />
-          <p className="text-sm text-violet-800">
-            <span className="font-semibold">{srsOverdueCount} skill{srsOverdueCount !== 1 ? 's' : ''} due for spaced review</span>
-            {' '}— tap to view them now.
-          </p>
+          <div>
+            <p className="text-sm text-violet-800">
+              <span className="font-semibold">Spaced Review — {srsOverdueCount} skill{srsOverdueCount !== 1 ? 's' : ''} due today</span>
+            </p>
+            <p className="text-xs text-violet-600 mt-0.5 leading-relaxed">
+              Previously-answered questions reappear at research-optimized intervals — 1 day, 3 days, 7 days. Spaced practice is 2–3× more effective for long-term retention than blocked practice.
+            </p>
+          </div>
         </button>
+      )}
+
+      {/* ── Term Sprint info ─────────────────────────────────────────────── */}
+      {fullAssessmentComplete && (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-2.5">
+          <p className="text-xs font-bold text-blue-800">Term Sprint</p>
+          <p className="text-xs text-blue-700 mt-0.5">396 school psychology terms · 10 seconds each · both directions</p>
+        </div>
       )}
 
       {/* ── Tab selector ────────────────────────────────────────────────── */}
