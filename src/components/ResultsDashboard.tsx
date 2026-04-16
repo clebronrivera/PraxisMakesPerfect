@@ -128,7 +128,8 @@ export default function ResultsDashboard({
   const [expandedDomains, setExpandedDomains] = useState<Set<number>>(new Set()); // all collapsed by default
   const [advancedExpanded, setAdvancedExpanded] = useState(false);
   const [conceptsExpanded, setConceptsExpanded] = useState(false);
-  const [showBaseline, setShowBaseline] = useState(false);
+  const [showBaseline] = useState(true);
+  const [domainFilter, setDomainFilter] = useState<number | null>(null);
 
   // ── Progress data ───────────────────────────────────────────────────────────
   const progress = useMemo(
@@ -330,15 +331,6 @@ export default function ResultsDashboard({
         <div className="editorial-surface p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="editorial-overline">Growth since diagnostic</p>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <span className="text-[11px] text-slate-500">Show baseline</span>
-              <input
-                type="checkbox"
-                checked={showBaseline}
-                onChange={e => setShowBaseline(e.target.checked)}
-                className="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-            </label>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-3 text-center">
@@ -365,14 +357,20 @@ export default function ResultsDashboard({
       <div className="space-y-2">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <p className="editorial-overline">Domain breakdown</p>
-          <p className="text-[11px] text-slate-500">
-            Goal: {READINESS_TARGET} of {TOTAL_SKILLS} skills {PROFICIENCY_META.proficient.label} ·{' '}
-            <span className="text-amber-700/80">marker = target</span>
-            {showBaseline && hasBaseline && <> · <span className="text-indigo-500/80">ghost = baseline</span></>}
-          </p>
+          <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-400 inline-block" /> Current</span>
+            {hasBaseline && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-indigo-200/60 border border-dashed border-indigo-300 inline-block" /> Baseline</span>}
+            <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-amber-500 inline-block" /> 80% Target</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" /> {PROFICIENCY_META.proficient.label}</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500 inline-block" /> {PROFICIENCY_META.approaching.label}</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500 inline-block" /> {PROFICIENCY_META.emerging.label}</span>
+            {domainFilter !== null && (
+              <button onClick={() => setDomainFilter(null)} className="text-amber-600 font-medium hover:text-amber-700">Show all</button>
+            )}
+          </div>
         </div>
 
-        {progress.domains.map(domain => {
+        {progress.domains.filter(d => domainFilter === null || d.domainId === domainFilter).map(domain => {
           const isExpanded = expandedDomains.has(domain.domainId);
           const demonstrating = domain.strongerSkillCount;
           const barPct = Math.round((demonstrating / Math.max(domain.activeSkillCount, 1)) * 100);
@@ -392,9 +390,12 @@ export default function ResultsDashboard({
               key={domain.domainId}
               className="editorial-surface overflow-hidden"
             >
-              {/* Domain header — clickable to expand */}
+              {/* Domain header — clickable to expand or filter */}
               <button
-                onClick={() => toggleDomain(domain.domainId)}
+                onClick={() => {
+                  toggleDomain(domain.domainId);
+                  setDomainFilter(domainFilter === domain.domainId ? null : domain.domainId);
+                }}
                 className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[#fbfaf7]"
               >
                 <div className="flex-1 min-w-0">
@@ -428,8 +429,8 @@ export default function ResultsDashboard({
                     {/* 70% dashed goal marker */}
                     <div
                       className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-amber-500/70"
-                      style={{ left: '70%' }}
-                      title="70% readiness goal"
+                      style={{ left: '80%' }}
+                      title="80% mastery target"
                     />
                   </div>
                 </div>
