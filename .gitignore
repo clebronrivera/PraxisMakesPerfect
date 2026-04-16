@@ -140,3 +140,4 @@ content-authoring/pipeline/.env
 playwright-report/
 test-results/
 e2e/**/*.json
+reports/
