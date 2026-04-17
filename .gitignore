@@ -90,6 +90,7 @@ scripts/delete-carlos-plans.ts
 # Root-level local reference files
 /*.pdf
 /*.docx
+/*.xlsx
 /Module[0-9]*_*.md
 /Item_Bank_Review_Workbook_*.xlsx
 /module_coverage_report.html
