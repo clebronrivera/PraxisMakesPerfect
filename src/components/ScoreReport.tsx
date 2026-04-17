@@ -223,35 +223,35 @@ export default function ScoreReport({
       <div className="editorial-panel-dark p-8 text-center">
         <div className="space-y-4">
           <div>
-            <p className="mb-2 text-sm text-slate-300">Overall Score</p>
+            <p className="mb-2 text-sm text-slate-600">Overall Score</p>
             <p className={`text-6xl font-bold ${scoreStyle.text}`}>
               {scorePercentage}%
             </p>
           </div>
           <div className="flex items-center justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span className="text-slate-200">{correctAnswers} Correct</span>
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              <span className="text-slate-700">{correctAnswers} Correct</span>
             </div>
             <div className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-rose-400" />
-              <span className="text-slate-200">{totalQuestions - correctAnswers} Incorrect</span>
+              <XCircle className="w-5 h-5 text-rose-600" />
+              <span className="text-slate-700">{totalQuestions - correctAnswers} Incorrect</span>
             </div>
           </div>
 
           {/* Readiness context — only when diagnosticSummary is present */}
           {diagnosticSummary && (
-            <div className="border-t border-slate-600 pt-4 space-y-2">
+            <div className="border-t border-slate-300 pt-4 space-y-2">
               <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
                 diagnosticSummary.readiness.tone === 'ready'
-                  ? 'bg-emerald-500/20 text-emerald-300'
+                  ? 'bg-emerald-50 text-emerald-700'
                   : diagnosticSummary.readiness.tone === 'building'
-                  ? 'bg-amber-500/20 text-amber-300'
-                  : 'bg-rose-500/20 text-rose-300'
+                  ? 'bg-amber-100 text-amber-700'
+                  : 'bg-rose-50 text-rose-700'
               }`}>
                 {diagnosticSummary.readiness.label}
               </span>
-              <p className="text-sm text-slate-300">{diagnosticSummary.readiness.description}</p>
+              <p className="text-sm text-slate-600">{diagnosticSummary.readiness.description}</p>
               <p className="text-xs text-slate-400 italic">{diagnosticSummary.readiness.nextAction}</p>
             </div>
           )}

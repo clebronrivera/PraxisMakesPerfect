@@ -32,11 +32,11 @@ export default function GlossaryTooltip({ term, definition }: GlossaryTooltipPro
 
       {/* Tooltip panel — positioned above the term */}
       {open && (
-        <span className="absolute bottom-full left-0 z-50 mb-2 block w-56 rounded-xl bg-slate-900 px-3 py-2.5 shadow-2xl text-left pointer-events-none">
-          <span className="block text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">
+        <span className="absolute bottom-full left-0 z-50 mb-2 block w-56 rounded-xl bg-slate-50 px-3 py-2.5 shadow-2xl text-left pointer-events-none">
+          <span className="block text-[10px] font-bold text-indigo-700 uppercase tracking-wider mb-1">
             {term}
           </span>
-          <span className="block text-xs text-slate-200 leading-relaxed">
+          <span className="block text-xs text-slate-700 leading-relaxed">
             {definition}
           </span>
         </span>

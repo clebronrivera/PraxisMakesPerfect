@@ -95,20 +95,20 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4"
       onClick={handleClose}
     >
       <div
-        className="w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl shadow-black/50"
+        className="w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-2xl shadow-black/50"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-6 flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-700">
               <MessageSquare className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-slate-100">Beta Feedback</h3>
+              <h3 className="text-xl font-semibold text-slate-900">Beta Feedback</h3>
               <p className="text-sm text-slate-400">
                 Share bugs, feature requests, content issues, or anything confusing.
               </p>
@@ -116,7 +116,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           </div>
           <button
             onClick={handleClose}
-            className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-800 hover:text-slate-200"
+            className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
             title="Close feedback form"
           >
             <X className="h-5 w-5" />
@@ -125,13 +125,13 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 
         <div className="space-y-6">
           {submitError && (
-            <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
               {submitError}
             </div>
           )}
 
           <div className="space-y-3">
-            <p className="text-sm font-medium text-slate-300">What kind of feedback is this?</p>
+            <p className="text-sm font-medium text-slate-600">What kind of feedback is this?</p>
             <div className="grid gap-3 md:grid-cols-2">
               {CATEGORY_OPTIONS.map((option) => (
                 <button
@@ -140,8 +140,8 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                   onClick={() => setCategory(option.value)}
                   className={`rounded-2xl border p-4 text-left transition-colors ${
                     category === option.value
-                      ? 'border-cyan-400/60 bg-cyan-500/10 text-slate-100'
-                      : 'border-slate-700 bg-slate-950/60 text-slate-300 hover:border-slate-600 hover:bg-slate-800/70'
+                      ? 'border-cyan-400/60 bg-cyan-50 text-slate-900'
+                      : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-slate-100'
                   }`}
                 >
                   <p className="font-medium">{option.label}</p>
@@ -153,11 +153,11 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 
           <div className="grid gap-4 md:grid-cols-[1.1fr,1.4fr]">
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-300">Where did it happen?</span>
+              <span className="text-sm font-medium text-slate-600">Where did it happen?</span>
               <select
                 value={contextType}
                 onChange={(event) => setContextType(event.target.value as typeof contextType)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-slate-100 outline-none transition-colors focus:border-cyan-400/60"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-slate-900 outline-none transition-colors focus:border-amber-400"
               >
                 {CONTEXT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -168,32 +168,32 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             </label>
 
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-300">Feature or tool name</span>
+              <span className="text-sm font-medium text-slate-600">Feature or tool name</span>
               <input
                 value={featureArea}
                 onChange={(event) => setFeatureArea(event.target.value)}
                 placeholder="Example: Practice mode, screener, study plan"
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-slate-100 placeholder:text-slate-500 outline-none transition-colors focus:border-cyan-400/60"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition-colors focus:border-amber-400"
               />
             </label>
           </div>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-300">What should we know?</span>
+            <span className="text-sm font-medium text-slate-600">What should we know?</span>
             <textarea
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Describe what happened, what felt off, or what you expected instead."
               rows={7}
-              className="w-full resize-none rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 placeholder:text-slate-500 outline-none transition-colors focus:border-cyan-400/60"
+              className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition-colors focus:border-amber-400"
             />
           </label>
 
-          <div className="flex flex-col gap-3 border-t border-slate-800 pt-5 sm:flex-row sm:justify-end">
+          <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={handleClose}
-              className="rounded-xl border border-slate-700 px-4 py-2.5 text-slate-300 transition-colors hover:bg-slate-800"
+              className="rounded-xl border border-slate-200 px-4 py-2.5 text-slate-600 transition-colors hover:bg-slate-100"
             >
               Cancel
             </button>

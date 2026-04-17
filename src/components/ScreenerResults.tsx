@@ -121,18 +121,18 @@ export default function ScreenerResults({
               <span className={`inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-semibold ${toneStyles[report.readiness.tone]}`}>
                 {report.readiness.label}
               </span>
-              <span className="text-sm text-slate-300">
+              <span className="text-sm text-slate-600">
                 {report.correctAnswers} correct out of {report.totalQuestions}
               </span>
             </div>
             <div className="space-y-2">
               <p className="text-5xl font-bold text-white">{formatPercent(report.overallScore)}</p>
-              <p className="text-slate-200">{report.readiness.description}</p>
+              <p className="text-slate-700">{report.readiness.description}</p>
               <p className="text-sm text-slate-400">{TONE_OVERALL_MEANING[report.readiness.tone]}</p>
             </div>
-            <div className="rounded-[1.5rem] border border-amber-500/20 bg-white/5 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300">Best Next Step</p>
-              <p className="mt-2 text-sm text-slate-100">{report.readiness.nextAction}</p>
+            <div className="rounded-[1.5rem] border border-amber-200 bg-white/5 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-700">Best Next Step</p>
+              <p className="mt-2 text-sm text-slate-900">{report.readiness.nextAction}</p>
             </div>
           </div>
 
@@ -143,7 +143,7 @@ export default function ScreenerResults({
                 {report.highestNeedDomains.map((domain) => (
                   <div key={domain.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-semibold text-slate-100">{domain.name}</p>
+                      <p className="text-sm font-semibold text-slate-900">{domain.name}</p>
                       <span className="text-sm font-bold" style={{ color: getDomainColor(domain.id) }}>
                         {formatPercent(domain.score)}
                       </span>
@@ -159,7 +159,7 @@ export default function ScreenerResults({
               <div className="mt-4 space-y-3">
                 {report.foundationalGaps.length > 0 ? (
                   report.foundationalGaps.map((gap) => (
-                    <div key={gap.skillId} className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-3">
+                    <div key={gap.skillId} className="rounded-xl border border-amber-200 bg-amber-50 p-3">
                       <p className="text-sm font-semibold text-amber-100">{gap.skillName}</p>
                       <p className="mt-1 text-xs text-amber-50/80">
                         Linked to misses in {gap.triggeredBy.slice(0, 2).join(' and ')}.
@@ -167,7 +167,7 @@ export default function ScreenerResults({
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-slate-300">
+                  <p className="text-sm text-slate-600">
                     No prerequisite links were surfaced from this attempt, so start with your weakest domains below.
                   </p>
                 )}

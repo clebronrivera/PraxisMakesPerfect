@@ -472,7 +472,7 @@ export default function AdaptiveDiagnostic({
 
       {/* Pause Overlay */}
       {isPaused && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-50/45 backdrop-blur-sm">
           <div className="mx-4 max-w-md space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl">
             <div className="flex justify-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fbfaf7]">

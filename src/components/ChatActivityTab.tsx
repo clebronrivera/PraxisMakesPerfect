@@ -299,7 +299,7 @@ export default function ChatActivityTab() {
       {/* Sessions table */}
       {filtered.length === 0 ? (
         <div className="editorial-surface p-8 text-center">
-          <MessageSquare className="mx-auto h-8 w-8 text-slate-300" />
+          <MessageSquare className="mx-auto h-8 w-8 text-slate-600" />
           <p className="mt-2 text-sm text-slate-500">No chat sessions found.</p>
         </div>
       ) : (
@@ -347,7 +347,7 @@ export default function ChatActivityTab() {
                         {s.artifactCount}
                       </span>
                     ) : (
-                      <span className="text-slate-300">—</span>
+                      <span className="text-slate-600">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right text-slate-500 text-xs">

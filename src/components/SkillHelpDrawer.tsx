@@ -141,7 +141,7 @@ export default function SkillHelpDrawer({
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-slate-900/35 backdrop-blur-sm"
         onClick={onClose}
       />
 

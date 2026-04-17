@@ -34,18 +34,18 @@ export default function ProfileEditorPanel({
     <div className="fixed inset-0 z-[100] flex items-stretch justify-end">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-white backdrop-blur-sm"
         onClick={onClose}
         aria-label="Close"
       />
       <div
-        className="relative flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-white/10 bg-slate-950 shadow-2xl"
+        className="relative flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-slate-200 bg-white shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="profile-editor-title"
       >
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
           <div>
             <p id="profile-editor-title" className="text-[11px] font-black uppercase tracking-[0.1em] text-amber-500">
               Account
@@ -55,7 +55,7 @@ export default function ProfileEditorPanel({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
+            className="rounded-xl border border-slate-200 bg-white/5 p-2 text-slate-600 transition hover:bg-white/10 hover:text-white"
             aria-label="Close profile editor"
           >
             <X className="h-5 w-5" />
@@ -63,12 +63,12 @@ export default function ProfileEditorPanel({
         </div>
 
         {/* Account info strip */}
-        <div className="shrink-0 border-b border-white/10 px-4 py-4 space-y-3">
+        <div className="shrink-0 border-b border-slate-200 px-4 py-4 space-y-3">
           <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Signed-in account</p>
 
           <div className="flex items-center gap-2.5">
             <Mail className="h-4 w-4 shrink-0 text-slate-500" />
-            <span className="text-sm text-slate-300">{user?.email ?? '—'}</span>
+            <span className="text-sm text-slate-600">{user?.email ?? '—'}</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -76,19 +76,19 @@ export default function ProfileEditorPanel({
               type="button"
               onClick={handlePasswordReset}
               disabled={resetStatus === 'sending' || resetStatus === 'sent'}
-              className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <KeyRound className="h-3.5 w-3.5" />
               {resetStatus === 'sending' ? 'Sending…' : 'Send password reset email'}
             </button>
             {resetStatus === 'sent' && (
-              <span className="flex items-center gap-1.5 text-xs text-emerald-400">
+              <span className="flex items-center gap-1.5 text-xs text-emerald-600">
                 <CheckCircle className="h-3.5 w-3.5" />
                 Reset link sent
               </span>
             )}
             {resetStatus === 'error' && (
-              <span className="text-xs text-rose-400">Something went wrong — try again.</span>
+              <span className="text-xs text-rose-600">Something went wrong — try again.</span>
             )}
           </div>
         </div>

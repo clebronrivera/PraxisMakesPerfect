@@ -152,7 +152,7 @@ function DashboardView({
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <section className="relative group">
-        <div className="absolute inset-0 rounded-[3rem] bg-amber-500/5 blur-3xl opacity-60 transition-opacity group-hover:opacity-80" />
+        <div className="absolute inset-0 rounded-[3rem] bg-amber-100/50 blur-3xl opacity-60 transition-opacity group-hover:opacity-80" />
         <div className="relative overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-12 shadow-xl shadow-slate-200/50">
           <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-3xl space-y-6">
@@ -221,7 +221,7 @@ function DashboardView({
               <div className={`rounded-2xl border border-white p-3 shadow-sm ${card.accent}`}>
                 <card.icon className="h-6 w-6" />
               </div>
-              <ChevronRight className="h-4 w-4 text-slate-300 transition-colors group-hover:text-amber-500" />
+              <ChevronRight className="h-4 w-4 text-slate-600 transition-colors group-hover:text-amber-500" />
             </div>
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
@@ -282,7 +282,7 @@ function DashboardView({
 
         <div className="h-full space-y-8">
           <div className="relative flex h-full flex-col overflow-hidden rounded-[3.5rem] bg-[#0f172a] p-10 shadow-2xl">
-            <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-amber-500/10 blur-3xl" />
+            <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-amber-50 blur-3xl" />
 
             <div className="relative z-10 space-y-6">
               <div className="flex items-center justify-between">
@@ -421,7 +421,7 @@ function PracticeView({
                 <h4 className="text-xl font-bold uppercase italic leading-none text-[#1a1a1a]">{label}</h4>
                 <p className="mt-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Mock learning path step</p>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-300 transition-all hover:border-amber-400 hover:bg-amber-500 hover:text-white">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-600 transition-all hover:border-amber-400 hover:bg-amber-500 hover:text-white">
                 <ChevronRight className="h-8 w-8" />
               </div>
             </div>
@@ -526,8 +526,8 @@ export default function HomeDashboardMock() {
 
         <div className="mt-auto border-t border-white/5 bg-black/20 p-6">
           <div className="group mb-4 flex cursor-pointer items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 transition-all hover:bg-white/10">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/20">
-              <User className="h-4 w-4 text-amber-400" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-amber-300 bg-amber-100">
+              <User className="h-4 w-4 text-amber-600" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-bold uppercase tracking-tight text-white">Carlos R.</p>

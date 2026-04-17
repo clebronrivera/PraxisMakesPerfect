@@ -977,7 +977,7 @@ export default function AdminDashboard({
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-cyan-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
                           {item.category}
                         </span>
                         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">
@@ -1038,7 +1038,7 @@ export default function AdminDashboard({
                           item.severity === 'critical'
                             ? 'bg-rose-50 text-rose-700'
                             : item.severity === 'major'
-                              ? 'bg-amber-500/15 text-amber-700'
+                              ? 'bg-amber-100 text-amber-700'
                               : 'bg-slate-100 text-slate-700'
                         }`}>
                           {item.severity}
@@ -1077,7 +1077,7 @@ export default function AdminDashboard({
                         <select
                           value={item.status}
                           onChange={(event) => handleReportStatusChange(item.id!, event.target.value as QuestionReport['status'])}
-                          className="mt-2 w-full rounded-xl border border-slate-700 bg-white px-3 py-2 text-slate-900 outline-none focus:border-amber-300"
+                          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-amber-300"
                         >
                           {REPORT_STATUS_OPTIONS.map((status) => (
                             <option key={status} value={status}>
@@ -1145,7 +1145,7 @@ export default function AdminDashboard({
                               </p>
                               <p className="mt-1 font-mono text-xs text-slate-600">{entry.id}</p>
                             </div>
-                            <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-slate-300" />
+                            <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-slate-600" />
                           </div>
                         </td>
                         <td className="px-6 py-4 text-slate-400">{formatDate(entry.authMetrics?.createdAt || entry.lastUpdated)}</td>

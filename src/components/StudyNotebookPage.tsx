@@ -64,7 +64,7 @@ function NotesSection({ userId }: { userId: string | null }) {
   if (notes.length === 0) {
     return (
       <div className="text-center py-12 space-y-3">
-        <StickyNote className="w-8 h-8 mx-auto text-slate-300" />
+        <StickyNote className="w-8 h-8 mx-auto text-slate-600" />
         <p className="text-sm text-slate-500">No notes yet.</p>
         <p className="text-xs text-slate-400">Open a module in the Learning Path and use the Study Center sidebar to add notes.</p>
       </div>
@@ -203,7 +203,7 @@ function FocusSection({
   if (!latestStudyPlan) {
     return (
       <div className="text-center py-12 space-y-3">
-        <Target className="w-8 h-8 mx-auto text-slate-300" />
+        <Target className="w-8 h-8 mx-auto text-slate-600" />
         <p className="text-sm text-slate-500">No study plan generated yet.</p>
         <p className="text-xs text-slate-400">Generate a study plan to see personalized focus items here.</p>
       </div>
@@ -315,7 +315,7 @@ function SkillFocusGroup({
                 }`}
               >
                 <span className="mt-0.5 shrink-0">
-                  {checked ? <CheckCircle className="w-4 h-4 text-emerald-500" /> : <Circle className="w-4 h-4 text-slate-300" />}
+                  {checked ? <CheckCircle className="w-4 h-4 text-emerald-500" /> : <Circle className="w-4 h-4 text-slate-600" />}
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

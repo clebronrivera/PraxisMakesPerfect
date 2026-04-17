@@ -41,7 +41,7 @@ export default function StudyCenterSidebar({
     <>
       {/* ── Mobile overlay backdrop ── */}
       <div
-        className="fixed inset-0 z-40 bg-slate-950/30 backdrop-blur-sm lg:hidden"
+        className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-sm lg:hidden"
         onClick={onClose}
       />
 
@@ -143,7 +143,7 @@ export default function StudyCenterSidebar({
             <div className="p-4">
               {focusItemsSlot ?? (
                 <div className="text-center py-8 space-y-2">
-                  <Target className="w-6 h-6 mx-auto text-slate-300" />
+                  <Target className="w-6 h-6 mx-auto text-slate-600" />
                   <p className="text-xs text-slate-500">
                     Generate a study plan to see personalized focus items.
                   </p>

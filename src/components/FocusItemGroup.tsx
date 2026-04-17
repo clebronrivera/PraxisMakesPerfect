@@ -73,7 +73,7 @@ export default function FocusItemGroup({
                   {checked ? (
                     <CheckCircle className="w-4 h-4 text-emerald-500" />
                   ) : (
-                    <Circle className="w-4 h-4 text-slate-300" />
+                    <Circle className="w-4 h-4 text-slate-600" />
                   )}
                 </span>
 
