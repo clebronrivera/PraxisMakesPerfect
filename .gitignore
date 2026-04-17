@@ -108,6 +108,10 @@ exports/
 # LibreOffice lock files
 .~lock.*#
 
+# Recovery backup snapshots (archived externally, not repo assets)
+docs/*-backup.json
+docs/*-backup.py
+
 # Content authoring agent output — lives locally, applied to questions.json manually
 # The folder structure and docs (README, STATUS, AGENT_PROMPT) stay in git.
 # Only the CSV/JSON output files from agent sessions are ignored.

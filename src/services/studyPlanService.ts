@@ -833,7 +833,7 @@ export async function generateStudyPlan({
     ...studyInputs.screenerResponses,
     ...studyInputs.assessmentResponses,
   ]);
-  const skillStates = computeStudentSkillStates(allResponses);
+  const skillStates = await computeStudentSkillStates(allResponses);
 
   // Domain summaries
   const domainSummaries = buildDomainSummaries(
@@ -851,7 +851,7 @@ export async function generateStudyPlan({
   const timeBudget = computeStudyTimeBudget(constraints, clusterSeed);
 
   // Build clusters (needs time budget for allocation)
-  const rawClusters = buildPrecomputedClusters(skillStates, timeBudget);
+  const rawClusters = await buildPrecomputedClusters(skillStates, timeBudget);
   const clusters = enrichClusterSkillNames(rawClusters, skillLookup);
 
   // Rebuild time budget with actual cluster urgencies (two-pass is fine)
@@ -939,7 +939,7 @@ import { toMetadataId } from '../data/skillIdMap';
 import type { ContentCluster } from '../types/studyPlanTypes';
 
 function skillMetadataV1Clusters(
-  skillStates: ReturnType<typeof computeStudentSkillStates>
+  skillStates: Awaited<ReturnType<typeof computeStudentSkillStates>>
 ): Record<string, { clusterId: ContentCluster; urgency: 'urgent_now' | 'important_next' | 'maintain' }> {
   const result: Record<string, { clusterId: ContentCluster; urgency: 'urgent_now' | 'important_next' | 'maintain' }> = {};
   for (const state of skillStates) {
