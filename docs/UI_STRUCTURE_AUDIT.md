@@ -1,6 +1,8 @@
 # UI Structure Audit — PraxisMakesPerfect
 *Generated 2026-04-08. Based on codebase at `App.tsx`, `src/components/`, `src/hooks/`.*
 
+> **⚠ Staleness note (2026-04-16):** This audit was written before the Cognitive Clarity light-mode UI sweep merged (PRs #7 / #8 / #9 on 2026-04-16–17). The AppMode taxonomy and sidebar/navigation conditional rules are still accurate, but individual screen descriptions under "B. SCREEN INVENTORY" may reflect the pre-redesign components. Use the taxonomy as a structural reference; verify screen-level details against the current code before relying on them.
+
 ---
 
 ## A. GLOBAL APP STRUCTURE
