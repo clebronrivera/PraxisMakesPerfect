@@ -168,12 +168,20 @@ SERVICE_ROLE_KEY="eyJ..." node scripts/admin-delete-study-plan.mjs puppyheavenll
 
 ## Study Plan — Rate Limit
 
-The 1-generation-per-7-days rate limit lives in:
-```
-src/services/studyPlanService.ts  ~line 728
-```
+The 1-generation-per-7-days rate limit is enforced in **two** places:
 
-The rate limit is **active** as of 2026-03-23. It was previously commented out for testing but has been re-enabled.
+| Layer | File | Purpose |
+|---|---|---|
+| Client | `src/services/studyPlanService.ts` (~line 768) | User-friendly error before the API call |
+| Server | `api/study-plan-background.ts` (~line 133) | Abuse backstop — cannot be bypassed with a direct JWT call |
+
+The server-side check filters to **successful plans only** (`plan_document.error !== true && plan_document.schemaVersion === '2'`). Failed generations write a failure row to `study_plans` ([api/study-plan-background.ts:193](api/study-plan-background.ts:193)) — those rows must not lock the user out for a week. If you change the failure-row shape, update the server-side filter to match.
+
+On block, the server returns HTTP `429` with a `Retry-After` header in seconds.
+
+History:
+- Active as of 2026-03-23 (client only)
+- Server-side enforcement added 2026-04-15 (`hotfix/launch-gate-p0`)
 
 ---
 

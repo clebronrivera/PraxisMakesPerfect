@@ -27,7 +27,6 @@ import {
 } from '../types/studyPlanTypes';
 import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
 import { toMetadataId } from '../data/skillIdMap';
-import questionsRaw from '../data/questions.json';
 import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
 import { findMisconceptionByText, getMisconceptionsByProgressSkill } from './misconceptionRegistry';
 import {
@@ -111,9 +110,9 @@ function computeTrend(outcomes: boolean[]): TrendDirection {
  * Groups raw response history by skill and computes a StudentSkillState for each.
  * Responses must be ordered chronologically (oldest first) for trend to be accurate.
  */
-export function computeStudentSkillStates(
+export async function computeStudentSkillStates(
   responses: RawSkillResponse[]
-): StudentSkillState[] {
+): Promise<StudentSkillState[]> {
   // Group responses by skillId (preserve order = chronological)
   const bySkill = new Map<string, RawSkillResponse[]>();
   for (const r of responses) {
@@ -121,6 +120,10 @@ export function computeStudentSkillStates(
     list.push(r);
     bySkill.set(r.skillId, list);
   }
+
+  // Resolve the question index once up front so the synchronous .map() below
+  // can read from it without becoming async per-iteration.
+  const qIdx = await getQuestionIndex();
 
   return Array.from(bySkill.entries()).map(([skillId, skillResponses]) => {
     const attempts = skillResponses.length;
@@ -186,7 +189,6 @@ export function computeStudentSkillStates(
     let errorClusterTagCount: number | undefined;
     if (missedQuestionIds.length > 0) {
       const tagCounts = new Map<string, number>();
-      const qIdx = getQuestionIndex();
       for (const qid of missedQuestionIds) {
         const q = qIdx.get(qid);
         const tag = q?.error_cluster_tag;
@@ -347,15 +349,21 @@ function retrieveSkillContent(skillIds: string[]): {
 // ─── Main: group skill states into precomputed clusters ───────────────────────
 
 // Lazy index for questions.json — keyed by UNIQUEID.
-// Built once on first use to avoid repeated array scans.
+// Loaded via dynamic import() so the 5.9 MB JSON is emitted as its own
+// chunk rather than being pulled into the main bundle. The in-flight
+// promise is cached so concurrent callers share a single load.
 let _questionIndex: Map<string, Record<string, string>> | null = null;
-function getQuestionIndex(): Map<string, Record<string, string>> {
-  if (!_questionIndex) {
-    _questionIndex = new Map(
-      (questionsRaw as Record<string, string>[]).map(q => [q.UNIQUEID, q])
-    );
+let _questionIndexPromise: Promise<Map<string, Record<string, string>>> | null = null;
+async function getQuestionIndex(): Promise<Map<string, Record<string, string>>> {
+  if (_questionIndex) return _questionIndex;
+  if (!_questionIndexPromise) {
+    _questionIndexPromise = import('../data/questions.json').then(mod => {
+      const raw = mod.default as Record<string, string>[];
+      _questionIndex = new Map(raw.map(q => [q.UNIQUEID, q]));
+      return _questionIndex;
+    });
   }
-  return _questionIndex;
+  return _questionIndexPromise;
 }
 
 
@@ -363,10 +371,14 @@ function getQuestionIndex(): Map<string, Record<string, string>> {
  * Groups skill states by contentCluster, ranks by aggregate urgency,
  * retrieves skill content, and assigns allocated study minutes.
  */
-export function buildPrecomputedClusters(
+export async function buildPrecomputedClusters(
   skillStates: StudentSkillState[],
   timeBudget: StudyTimeBudget
-): PrecomputedCluster[] {
+): Promise<PrecomputedCluster[]> {
+  // Resolve the question index once up front so the synchronous loops below
+  // can read from it without becoming async per-iteration.
+  const qIdx = await getQuestionIndex();
+
   // Only include non-mastered skills in clusters
   const active = skillStates.filter(s => s.status !== "mastered");
 
@@ -410,7 +422,7 @@ export function buildPrecomputedClusters(
         let dominantSkillDeficit: string | undefined;
         if (s.dominantMisconceptionKey) {
           const { questionId, letter } = s.dominantMisconceptionKey;
-          const q = getQuestionIndex().get(questionId);
+          const q = qIdx.get(questionId);
           if (q) {
             dominantMisconception = q[`distractor_misconception_${letter}`] || undefined;
             dominantSkillDeficit  = q[`distractor_skill_deficit_${letter}`] || undefined;
@@ -440,7 +452,6 @@ export function buildPrecomputedClusters(
       // Phase C: aggregate error cluster tags across all missed questions in this cluster
       dominantErrorClusters: (() => {
         const tagCounts = new Map<string, number>();
-        const qIdx = getQuestionIndex();
         for (const s of sorted) {
           for (const qid of s.missedQuestionIds) {
             const q = qIdx.get(qid);

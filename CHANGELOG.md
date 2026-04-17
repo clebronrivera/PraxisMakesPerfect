@@ -7,6 +7,24 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-04-15
+
+### Launch Gate P0 Hotfix — `hotfix/launch-gate-p0` (PR #6)
+
+Landed the four approved launch-gate P0 items from the 2026-04-15 launch-readiness audit. All changes small, bisectable, reversible. No redesign-chain revival; no unrelated scope expansion. See `docs/LAUNCH_READINESS.md` for the full audit and remaining work.
+
+- **[Fix — CSP allows Sentry ingest]** Added `https://*.sentry.io` and `https://*.ingest.sentry.io` to the `connect-src` directive so `@sentry/react` can actually deliver events from the browser. Before this fix, production CSP silently blocked every XHR to the Sentry ingest endpoint; the SDK initialized but no events arrived. — `netlify.toml`
+
+- **[Chore — Narrow dependency remediation]** Bumped `vite` from `^6.4.1` → `^6.4.2` to resolve `GHSA-p9ff-h696-f583` (dev-server WebSocket arbitrary file read). Rejected `npm audit fix` because it proposed ~350 package updates; used targeted `npm install vite@^6.4.2` instead. Lockfile diff: 4 lines. Runtime-path high/critical vulnerabilities now at 0. Remaining transitive tooling-only CVEs (picomatch via knip/tinyglobby, smol-toml and yaml via netlify-cli) deferred to Dependabot. — `package.json`, `package-lock.json`
+
+- **[Perf — questions.json removed from main bundle path]** `studyPlanPreprocessor.ts` was pulling the 5.9 MB `questions.json` into the main chunk via a top-level static import, through the chain `App.tsx → useStudyPlanManager → studyPlanService → studyPlanPreprocessor`. Switched to dynamic `import()` with in-flight promise caching. Cascade: `computeStudentSkillStates` and `buildPrecomputedClusters` became `async`; both callers in `studyPlanService.ts` now `await` them; `skillMetadataV1Clusters` signature changed to `Awaited<ReturnType<…>>`. Measured impact: `dist/assets/index-*.js` dropped from **6,122,205 B raw / 1,057 kB gzipped** → **530,066 B raw / 131.86 kB gzipped** (−91.3% raw / −87.5% gzipped). Questions chunk ships separately at ~5.3 MB raw / ~925 kB gzipped, loaded on-demand only when study-plan generation runs. — `src/utils/studyPlanPreprocessor.ts`, `src/services/studyPlanService.ts`
+
+- **[Fix — Server-side study-plan rate limit]** The 7-day generation cooldown was previously enforced only on the client (`studyPlanService.ts:768`) — any authenticated user could bypass it by calling `api/study-plan-background.ts` directly with their JWT and run up Anthropic spend at ~12k output tokens per call. Added a server-side check that mirrors the client rule but filters to *successful* plans only (`plan_document.error !== true && plan_document.schemaVersion === '2'`). Failure rows written when insert errors occur do not trigger a week-long lockout. On block, returns HTTP `429` with `Retry-After` header. Construction of `userClient` hoisted to be shared between rate-limit read and final persist write. — `api/study-plan-background.ts`
+
+Verified locally: `npm run check` ✅ (137/137 tests), `npm run build` ✅, runtime-path high/critical audit = 0. Manual verification required on preview before merge: SentryTestButton round-trip, 429 on second study-plan call with same JWT, failed `study_plans` row does not block, end-to-end diagnostic → study-plan smoke.
+
+---
+
 ## 2026-04-01
 
 ### Distractor Data — Phase B Applied + Product Features Built
