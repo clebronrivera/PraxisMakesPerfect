@@ -90,6 +90,7 @@ scripts/delete-carlos-plans.ts
 # Root-level local reference files
 /*.pdf
 /*.docx
+/*.xlsx
 /Module[0-9]*_*.md
 /Item_Bank_Review_Workbook_*.xlsx
 /module_coverage_report.html
@@ -106,6 +107,10 @@ exports/
 
 # LibreOffice lock files
 .~lock.*#
+
+# Recovery backup snapshots (archived externally, not repo assets)
+docs/*-backup.json
+docs/*-backup.py
 
 # Content authoring agent output — lives locally, applied to questions.json manually
 # The folder structure and docs (README, STATUS, AGENT_PROMPT) stay in git.

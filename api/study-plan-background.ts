@@ -130,6 +130,45 @@ export const handler = async (event: { httpMethod?: string; headers?: Record<str
     const requestBody = StudyPlanApiRequestSchema.parse(JSON.parse(rawBody));
     if (user.id !== requestBody.userId) return json(403, { error: 'User mismatch.' });
 
+    // ── Server-side rate limit: 1 successful generation per 7 days ──────────
+    // Mirrors the client-side check in studyPlanService.ts but enforced on the
+    // server so a direct JWT-authed call cannot bypass it and run up Claude
+    // spend. Critically, filter to *successful* plans only — the function also
+    // writes failure rows (plan_document.error === true), and those must not
+    // block a user for a week.
+    const userClient = getUserClient(idToken);
+    const oneWeekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: recentRows } = await userClient
+      .from('study_plans')
+      .select('created_at, plan_document')
+      .eq('user_id', user.id)
+      .gt('created_at', oneWeekAgoIso)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    const recentSuccess = (recentRows ?? []).find(row => {
+      const doc = row.plan_document as Record<string, unknown> | null;
+      return doc != null && doc.error !== true && doc.schemaVersion === '2';
+    });
+
+    if (recentSuccess) {
+      const nextAvailableMs = new Date(recentSuccess.created_at as string).getTime()
+        + 7 * 24 * 60 * 60 * 1000;
+      const retryAfterSec = Math.max(1, Math.ceil((nextAvailableMs - Date.now()) / 1000));
+      return {
+        statusCode: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(retryAfterSec),
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({
+          error: 'Study guide already generated this week.',
+          retryAfterSec,
+        }),
+      };
+    }
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) throw new Error('ANTHROPIC_API_KEY not configured.');
 
@@ -180,8 +219,7 @@ export const handler = async (event: { httpMethod?: string; headers?: Record<str
     };
 
     // ── Persist ──────────────────────────────────────────────────────────────
-    // Use user-scoped client so RLS policy (auth.uid() = user_id) is satisfied.
-    const userClient = getUserClient(idToken);
+    // Uses the user-scoped client created above (RLS: auth.uid() = user_id).
     const { error: insertErr } = await userClient
       .from('study_plans')
       .insert([{ user_id: user.id, plan_document: studyPlanDocument }]);
