@@ -2,7 +2,7 @@
 
 > Status: Active. Canonical source for where Praxis Makes Perfect stands against launch criteria and what is left to do before inviting real users, before advertising, and after launch.
 >
-> Last updated: 2026-04-15 (post-`hotfix/launch-gate-p0`, PR #6)
+> Last updated: 2026-04-17 (post-PR #6 merge + verification pass)
 
 This document consolidates the 2026-04-15 launch-readiness audit and tracks remaining work. Update it whenever a launch-gate item is resolved or a new one is discovered.
 
@@ -43,9 +43,9 @@ This document consolidates the 2026-04-15 launch-readiness audit and tracks rema
 
 1. **Confirm Sentry round-trip works in production CSP.** Click `SentryTestButton` on the preview deploy, confirm an event lands in sentry.io within ~30 seconds. If blocked, check browser console for `Refused to connect` CSP errors.
 
-2. **Confirm 429 fires on direct JWT retry.** With a valid user JWT, `curl -X POST` the `study-plan-background` endpoint twice consecutively. Second call should return HTTP 429 with `Retry-After` header.
+2. **Confirm server-side 7-day rate limit prevents Claude spend.** `study-plan-background.ts` is a Netlify background function (the `-background` filename suffix), so Netlify returns HTTP 202 to the client immediately regardless of the handler's return value — the 429 + `Retry-After` produced by the rate-limit guard is **not observable via curl**. Verify instead via **Netlify → Functions → study-plan-background → Logs** after a duplicate invocation: a log line showing `{ statusCode: 429, ... }` confirms the guard fired and the Claude call was skipped. The server-side spend protection (not client-visible UX) is the actual launch-gate goal; client-visible 429 would require splitting this endpoint into a synchronous gate function that invokes an async worker — deferred refactor, not launch-blocking.
 
-3. **Confirm failed rows do not block.** Seed a row into `study_plans` with `plan_document: { error: true, errorMessage: 'test', failedAt: <now> }`. Trigger a generation. It should succeed, not be blocked.
+3. **Confirm failed rows do not block.** Seed a row into `study_plans` with `plan_document: { error: true, errorMessage: 'test', failedAt: <now> }`, then trigger a generation. Verify via the same Netlify function logs that the handler proceeds past the rate-limit check into Claude generation — the filter `doc.error !== true && doc.schemaVersion === '2'` correctly excludes failure rows.
 
 4. **End-to-end smoke.** Sign in → complete or resume diagnostic → reach study-plan tab → generate plan → confirm plan renders. This exercises the async preprocessor path after the dynamic-import split.
 
