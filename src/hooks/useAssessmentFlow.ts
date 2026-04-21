@@ -307,6 +307,15 @@ export function useAssessmentFlow({
         return;
       }
 
+      // Retake guard — the adaptive diagnostic is one-shot. Once a user has
+      // completed it, they cannot start a fresh one. Resume (handled above) is
+      // still allowed. Users who only took the legacy screener/full assessment
+      // can still take the adaptive diagnostic for the first time.
+      if (profile.adaptiveDiagnosticComplete) {
+        alert('You have already completed the adaptive diagnostic. Use Practice to continue working on weak skills.');
+        return;
+      }
+
       const excludeIds = [
         ...(profile.preAssessmentQuestionIds || []),
         ...(profile.screenerItemIds || []),

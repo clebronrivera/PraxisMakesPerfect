@@ -93,7 +93,7 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | Beta Feedback | All user feedback with status management |
 | Question Reports | Per-question issue reports with severity triage |
 | Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
-| Item Analysis | Psychometric quality metrics for the 466-question bank (p-value, discrimination, distractor analysis) |
+| Item Analysis | Psychometric quality metrics for the 1,150-question bank (p-value, discrimination, distractor analysis) |
 | AI Tutor | AI Tutor chat sessions — session list with user/type/message count/artifacts, drill into full conversation with intent badges and inline artifact cards, CSV export |
 
 ### Student Detail Drawer
@@ -366,6 +366,11 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0014_user_subscriptions.sql` | `user_subscriptions` — Stripe subscription tracking for paywall |
 | `0015_adaptive_audit_columns.sql` | `is_followup`, `cognitive_complexity`, `skill_question_index` on `responses` — diagnostic audit trail |
 | `0016_baseline_snapshot.sql` | `baseline_snapshot` JSONB column on `user_progress` — pre/post comparison |
+| `0017` – `0018` | Placeholder migrations — syncs with remote history, no local changes |
+| `0019_consent_tracking.sql` | `consent_accepted_at` TIMESTAMPTZ on `user_progress` — privacy policy / terms acceptance |
+| `0020_simplified_onboarding.sql` | Onboarding fields: `first_name`, `last_name`, `zip_code`, `school_attending`, `purpose`, `how_did_you_hear` |
+| `0021_post_assessment_snapshot.sql` | Post-assessment proficiency snapshots for comparison |
+| `0022_diagnostic_wrong_count.sql` | `wrong_count` tracking on diagnostic responses |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 

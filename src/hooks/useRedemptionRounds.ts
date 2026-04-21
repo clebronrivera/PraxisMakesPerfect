@@ -189,6 +189,36 @@ export function useRedemptionRounds({
     } catch { /* non-critical */ }
   }, [userId]);
 
+  // ── Record a diagnostic miss (no quarantine) ───────────────────────────────
+  // Uses the record_diagnostic_miss RPC (migration 0022). Increments wrong_count
+  // on the question row, but never flips in_redemption. If a later practice
+  // miss crosses the 3-miss threshold via the regular increment_wrong_count RPC,
+  // THEN the question enters quarantine. Diagnostic wrongs alone never quarantine.
+  const recordDiagnosticMiss = useCallback(async (
+    questionId: string,
+    skillId: string | null
+  ): Promise<{ wrongCount: number; inRedemption: boolean }> => {
+    if (!userId) return { wrongCount: 0, inRedemption: false };
+    try {
+      const { data, error } = await supabase.rpc('record_diagnostic_miss', {
+        p_user_id: userId,
+        p_question_id: questionId,
+        p_skill_id: skillId ?? null,
+      });
+
+      if (error || !data || data.length === 0) {
+        return { wrongCount: 0, inRedemption: false };
+      }
+      const row = data[0];
+      return {
+        wrongCount: row.new_wrong_count ?? 0,
+        inRedemption: row.now_in_redemption === true,
+      };
+    } catch {
+      return { wrongCount: 0, inRedemption: false };
+    }
+  }, [userId]);
+
   // ── Handle a submitted practice answer for credit tracking ─────────────────
   // Called from PracticeSession after every non-hint answer submission.
   // Increments the counter; awards +1 credit every 20 answers.
@@ -331,6 +361,7 @@ export function useRedemptionRounds({
     questionsToNextCredit: 20 - ((profile.practiceQuestionsSinceCredit ?? 0) % 20),
     addToMissedBankForMiss,
     addToMissedBankForHint,
+    recordDiagnosticMiss,
     handleAnswerSubmitted,
     startRound,
     recordRoundResult,

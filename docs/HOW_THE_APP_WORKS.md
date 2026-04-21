@@ -36,12 +36,15 @@ Sign in with an email and password. All data lives in the cloud, so you can pick
 
 **Consent requirement:** During signup, users must check a consent checkbox agreeing to the [Privacy Policy](#privacy) and [Terms of Service](#terms) before their account can be created. Existing users who signed up before this requirement are shown a non-dismissable consent gate on their next login. Both documents are accessible without authentication via `#privacy` and `#terms` hash routes.
 
-Before sign-in, the public entry page leads with an outcome-first hero for Praxis 5403 candidates. It frames the product around three promises:
-- take an adaptive diagnostic that adjusts to your performance across all 45 skills
-- start practicing immediately — no gates or waiting required
-- track your readiness with a structured learning path
+Before sign-in, the public entry page is an atelier-styled hero: a central "Adaptive Engine" orb with four feeder paths from the four domain nodes (Professional Practices · Student-Level Services · Systems-Level Services · Foundations), and the tagline **"A study plan that listens."**
 
-That page also previews the signed-in practice and skill-tracking surfaces. A beta disclaimer is shown near the sign-up form: "Currently in beta. Not responsible for loss of data during the beta period."
+The stat row under the headline reads: **4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated.** Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
+
+Returning candidates scroll to (or click) the sign-in panel — a glass card with email + password, plus toggles for Sign up and Forgot password. A beta disclaimer is shown: "Currently in beta. Not responsible for loss of data during the beta period."
+
+**No intake phase.** Users go directly from the hero to sign-up/sign-in; exam selection and onboarding happen after authentication (see Step 1b).
+
+**Easter-egg boot sequence.** Visiting `/?boot=1` plays a ~14-second diagnostic-engine boot terminal before the hero loads. Normal visitors never see it.
 
 ### Step 1b: Complete Your Profile (Onboarding Wizard)
 Immediately after creating an account, new users are guided through a **3- or 4-step onboarding wizard** before reaching the main app. The step count depends on the role selected — users who choose "Other" get 3 steps (Role → Exam → Goals), while Graduate Students and Certification-Only candidates get 4 steps (Role → Pathway Details → Exam → Goals). This is how the platform personalizes the experience from day one.

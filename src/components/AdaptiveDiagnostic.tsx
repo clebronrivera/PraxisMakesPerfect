@@ -14,6 +14,9 @@ import {
 import { matchDistractorPattern } from '../brain/distractor-matcher';
 import { useEngine } from '../hooks/useEngine';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
+import { useAuth } from '../contexts/AuthContext';
+import { addTermsFromWrongAnswer } from '../services/glossaryService';
+import skillVocabMap from '../data/skill-vocabulary-map.json';
 import type { SessionMode } from '../types/assessment';
 import type { SkillId } from '../brain/skill-map';
 
@@ -50,6 +53,7 @@ interface AdaptiveDiagnosticProps {
     timeSpent?: number
   ) => Promise<void>;
   updateLastSession?: (sessionId: string, mode: SessionMode, questionIndex: number, elapsedSeconds?: number) => Promise<void>;
+  recordDiagnosticMiss?: (questionId: string, skillId: string | null) => Promise<{ wrongCount: number; inRedemption: boolean }>;
 }
 
 export default function AdaptiveDiagnostic({
@@ -61,9 +65,11 @@ export default function AdaptiveDiagnostic({
   currentUserName,
   logResponse,
   updateSkillProgress,
-  updateLastSession
+  updateLastSession,
+  recordDiagnosticMiss
 }: AdaptiveDiagnosticProps) {
   const engine = useEngine();
+  const { user } = useAuth();
 
   // Attempt to resume a saved adaptive-diagnostic session.
   // Guard: a valid session must have at least as many question IDs as the fresh
@@ -358,6 +364,33 @@ export default function AdaptiveDiagnostic({
             setQueue(prev => [...prev, followUp]);
             setSkillQuestionCount(prev => ({ ...prev, [skillId]: count + 1 }));
           }
+        }
+
+        // Glossary trigger — queue the skill's vocabulary into the student's
+        // personal glossary. Fire-and-forget; errors must not affect the
+        // diagnostic flow.
+        if (user?.id) {
+          try {
+            const skillEntry = (skillVocabMap as { skills: Record<string, { vocabularyTerms: string[] }> }).skills[skillId];
+            const terms = skillEntry?.vocabularyTerms ?? [];
+            if (terms.length > 0) {
+              addTermsFromWrongAnswer(user.id, terms, skillId).catch((e) =>
+                console.error('[AdaptiveDiagnostic] glossary trigger error:', e)
+              );
+            }
+          } catch (glossaryErr) {
+            console.error('[AdaptiveDiagnostic] glossary trigger uncaught:', glossaryErr);
+          }
+        }
+
+        // D3 lighter — pre-increment Redemption wrong_count without quarantining.
+        // Diagnostic misses contribute one strike toward the 3-miss quarantine
+        // threshold. A later practice miss on the same question can cross the
+        // threshold and flip in_redemption=true via the regular RPC.
+        if (recordDiagnosticMiss) {
+          recordDiagnosticMiss(currentQuestion.id, skillId).catch((e) =>
+            console.error('[AdaptiveDiagnostic] recordDiagnosticMiss error:', e)
+          );
         }
       }
 
