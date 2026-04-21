@@ -1,6 +1,14 @@
 // src/components/DashboardHome.tsx
-// Post-diagnostic dashboard home tab — matches mockup-dashboard.html layout.
-// Replaces the isFullyUnlocked inline JSX in App.tsx.
+// Post-diagnostic dashboard home — atelier design-first rewrite.
+//
+// Structure (top to bottom):
+//   1. Welcome + readiness arc hero          — one clear number, one phase label
+//   2. Today's Focus — single priority + "Then" rows
+//   3. This Week stats strip + Redemption moon (only when bank > 0)
+//   4. The Four Domains (constellation rows)
+//   5. The Toolshed (5 feature tiles)
+//
+// Props interface is preserved 1:1 with the old component so App.tsx needs no changes.
 
 import { useMemo } from 'react';
 import { Zap, BookOpen, Map as MapIcon, ClipboardList, MessageCircle } from 'lucide-react';
@@ -52,115 +60,307 @@ export interface DashboardHomeProps {
   onNavigate: (mode: string) => void;
 }
 
-// ─── Redemption Card ────────────────────────────────────────────────────────
+// ─── Atelier domain colors (match engine-node palette) ──────────────────────
+// Preserved for direct use in inline styles. Keyed by Praxis domainId (1..4).
 
-function RedemptionCard({
-  bankCount, credits, questionsToNextCredit, highScore, missedSkillIds, onStart,
-}: {
-  bankCount: number; credits: number; questionsToNextCredit: number; highScore: number;
-  missedSkillIds: string[]; onStart: () => void;
-}) {
-  // Compute domain distribution from missed skill IDs
-  const domainBreakdown = useMemo(() => {
-    const counts: Record<number, number> = {};
-    for (const skillId of missedSkillIds) {
-      const skill = PROGRESS_SKILLS.find(s => s.skillId === skillId);
-      if (skill) counts[skill.domainId] = (counts[skill.domainId] ?? 0) + 1;
-    }
-    return PROGRESS_DOMAINS
-      .map(d => ({ ...d, count: counts[d.id] ?? 0 }))
-      .filter(d => d.count > 0);
-  }, [missedSkillIds]);
+const DOMAIN_COLOR: Record<number, string> = {
+  1: 'var(--d1-peach)',
+  2: 'var(--d2-mint)',
+  3: 'var(--d3-ice)',
+  4: 'var(--d4-lavender)',
+};
 
-  const domainColors: Record<number, string> = { 1: 'bg-blue-400', 2: 'bg-emerald-400', 3: 'bg-purple-400', 4: 'bg-amber-400' };
-  const domainDotColors: Record<number, string> = { 1: 'bg-blue-400', 2: 'bg-emerald-400', 3: 'bg-purple-400', 4: 'bg-amber-400' };
+// ─── Readiness arc ──────────────────────────────────────────────────────────
 
-  // Best score as fraction — estimate from highScore percentage and bankCount
-  const bestCorrect = highScore > 0 ? Math.round((highScore / 100) * bankCount) : 0;
-  const bestTotal = bankCount;
+function ReadinessArc({ pct, phase }: { pct: number; phase: string }) {
+  // Circumference of r=84 ≈ 527.79; dasharray = full, dashoffset = (1 - pct) * circ
+  const circumference = 527.79;
+  const offset = circumference * (1 - pct / 100);
 
   return (
-    <div className="rounded-2xl border border-purple-100 bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">🧠</span>
-        <span className="text-xs font-black uppercase tracking-wider text-purple-700">Redemption Rounds</span>
+    <div className="relative w-[188px] h-[188px] flex-shrink-0">
+      {/* soft halo */}
+      <div
+        className="absolute inset-0 rounded-full animate-halo-breathe"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 40%, rgba(252,213,180,0.12) 0%, rgba(216,213,252,0.06) 45%, transparent 70%)',
+          filter: 'blur(10px)',
+        }}
+        aria-hidden="true"
+      />
+      <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full -rotate-90" aria-hidden="true">
+        <defs>
+          <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#fde4c1" />
+            <stop offset="50%" stopColor="#fbcfe8" />
+            <stop offset="100%" stopColor="#d8d5fc" />
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(226,232,240,0.08)" strokeWidth="8" />
+        <circle
+          cx="100"
+          cy="100"
+          r="84"
+          fill="none"
+          stroke="url(#arcGrad)"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          style={{ filter: 'drop-shadow(0 0 8px rgba(252,213,180,0.5))' }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <p className="gradient-text text-[44px] font-semibold tracking-tight leading-none">{pct}%</p>
+        <p className="eyebrow mt-1">{phase}</p>
       </div>
-
-      {/* Bank count — large */}
-      <div className="flex items-end gap-2 mb-3">
-        <span className="text-4xl font-black text-slate-900">{bankCount}</span>
-        <span className="text-sm text-slate-500 pb-1">question{bankCount !== 1 ? 's' : ''} in quarantine</span>
-      </div>
-
-      {/* Credits + progress */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-xs font-bold text-purple-600">{credits} credit{credits !== 1 ? 's' : ''}</span>
-        <div className="flex-1 h-1.5 rounded-full bg-slate-100">
-          <div
-            className="h-1.5 rounded-full bg-purple-400 transition-all"
-            style={{ width: `${((20 - questionsToNextCredit) / 20) * 100}%` }}
-          />
-        </div>
-        <span className="text-[10px] text-slate-400">{questionsToNextCredit}/20 to next</span>
-      </div>
-
-      {/* Best score — fraction AND percent */}
-      {highScore > 0 && (
-        <div className="flex items-center gap-3 mb-4 bg-slate-50 rounded-lg px-3 py-2">
-          <span className="text-xs text-slate-500">Best score:</span>
-          <span className="text-sm font-black text-slate-900">{bestCorrect}/{bestTotal}</span>
-          <span className="text-sm font-bold text-purple-600">— {Math.round(highScore)}%</span>
-        </div>
-      )}
-
-      {/* Skill source breakdown */}
-      {domainBreakdown.length > 0 && (
-        <div className="mb-4">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Questions by domain</p>
-          <div className="flex gap-1">
-            {domainBreakdown.map(d => (
-              <span
-                key={d.id}
-                className={`h-2.5 rounded-full ${domainColors[d.id] ?? 'bg-slate-400'}`}
-                style={{ flex: d.count }}
-                title={`${d.name}: ${d.count}`}
-              />
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-3 mt-1.5">
-            {domainBreakdown.map(d => (
-              <span key={d.id} className="flex items-center gap-1 text-[10px] text-slate-500">
-                <span className={`w-2 h-2 rounded-full ${domainDotColors[d.id] ?? 'bg-slate-400'}`} />
-                {d.shortName} ({d.count})
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <button
-        onClick={onStart}
-        disabled={credits <= 0}
-        className={`w-full rounded-lg py-2.5 text-xs font-bold text-white transition ${
-          credits > 0 ? 'bg-purple-600 hover:bg-purple-700' : 'bg-purple-300 cursor-not-allowed'
-        }`}
-      >
-        Enter Redemption →
-      </button>
     </div>
   );
 }
 
-// ─── Component ──────────────────────────────────────────────────────────────
+// ─── Domain row (constellation) ─────────────────────────────────────────────
+
+function DomainRow({
+  color,
+  name,
+  pct,
+  strongerCount,
+  activeCount,
+  profLabel,
+  onClick,
+}: {
+  color: string;
+  name: string;
+  pct: number;
+  strongerCount: number;
+  activeCount: number;
+  profLabel: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full grid gap-4 items-center py-3.5 px-4 rounded-xl hover:bg-white/3 transition-colors text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+      style={{ gridTemplateColumns: '14px 1fr 72px minmax(90px, 110px) 120px' }}
+    >
+      {/* pulsing dot */}
+      <span className="relative flex items-center justify-center" style={{ width: 14, height: 14 }}>
+        <span
+          className="block w-2.5 h-2.5 rounded-full"
+          style={{ background: color, boxShadow: `0 0 10px ${color}, 0 0 20px ${color}` }}
+        />
+      </span>
+      {/* name + meta */}
+      <div className="min-w-0">
+        <p className="text-[13px] font-medium text-white truncate">{name}</p>
+        <p className="text-[10px] text-slate-500 mt-0.5">
+          {activeCount} skill{activeCount !== 1 ? 's' : ''} active
+        </p>
+      </div>
+      {/* pct */}
+      <p className="text-[15px] font-semibold" style={{ color }}>{pct}%</p>
+      {/* gradient bar */}
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(226,232,240,0.08)' }}>
+        <div
+          className="h-full rounded-full"
+          style={{
+            width: `${pct}%`,
+            background: `linear-gradient(90deg, color-mix(in srgb, ${color} 65%, transparent), ${color})`,
+            boxShadow: `0 0 10px color-mix(in srgb, ${color} 55%, transparent)`,
+          }}
+        />
+      </div>
+      {/* proficiency tier */}
+      <p className="text-[10px] text-slate-400 text-right tabular-num">
+        {strongerCount}/{activeCount} <span className="text-slate-500">{profLabel}</span>
+      </p>
+    </button>
+  );
+}
+
+// ─── Redemption "eclipsed moon" — only when bank > 0 ────────────────────────
+
+function RedemptionMoon({
+  bankCount,
+  credits,
+  questionsToNextCredit,
+  highScore,
+  missedSkillIds,
+  onStart,
+}: {
+  bankCount: number;
+  credits: number;
+  questionsToNextCredit: number;
+  highScore: number;
+  missedSkillIds: string[];
+  onStart: () => void;
+}) {
+  const bestCorrect = highScore > 0 ? Math.round((highScore / 100) * bankCount) : 0;
+  const progressPct = ((20 - questionsToNextCredit) / 20) * 100;
+
+  // Domain breakdown (cached)
+  const domainCounts = useMemo(() => {
+    const counts: Record<number, number> = {};
+    for (const skillId of missedSkillIds) {
+      const skill = PROGRESS_SKILLS.find((s) => s.skillId === skillId);
+      if (skill) counts[skill.domainId] = (counts[skill.domainId] ?? 0) + 1;
+    }
+    return PROGRESS_DOMAINS.map((d) => ({ ...d, count: counts[d.id] ?? 0 })).filter((d) => d.count > 0);
+  }, [missedSkillIds]);
+
+  return (
+    <div
+      className="relative overflow-hidden rounded-2xl p-5"
+      style={{ background: 'rgba(6,13,26,0.75)', border: '1px solid rgba(216,180,254,0.22)' }}
+    >
+      {/* crescent glow */}
+      <span
+        aria-hidden="true"
+        className="absolute -top-14 -right-14 w-40 h-40 rounded-full"
+        style={{
+          background:
+            'radial-gradient(circle at 40% 40%, rgba(251,207,232,0.3) 0%, rgba(216,180,254,0.2) 35%, rgba(6,13,26,0) 72%)',
+          filter: 'blur(2px)',
+        }}
+      />
+      <span
+        aria-hidden="true"
+        className="absolute -top-8 -right-20 w-36 h-36 rounded-full"
+        style={{ background: 'rgba(6,13,26,0.92)' }}
+      />
+
+      <div className="relative z-10">
+        <p className="eyebrow mb-2" style={{ color: 'var(--accent-rose)' }}>
+          Quarantine · Redemption
+        </p>
+        <p className="text-[32px] font-semibold text-white leading-none">
+          {bankCount} <span className="text-base text-slate-500 font-normal">in orbit</span>
+        </p>
+        <p className="text-[12px] text-slate-400 mt-2 leading-relaxed">
+          Questions flagged through hints or repeated misses. Clear them through focused redemption rounds.
+        </p>
+
+        <div className="flex items-center gap-2 mt-4 mb-2">
+          <span className="text-[11px] font-semibold" style={{ color: 'var(--d4-lavender)' }}>
+            {credits} credit{credits !== 1 ? 's' : ''}
+          </span>
+          <div className="flex-1 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <div
+              className="h-1 rounded-full"
+              style={{
+                width: `${progressPct}%`,
+                background: 'linear-gradient(90deg, var(--d4-lavender), var(--accent-rose))',
+              }}
+            />
+          </div>
+          <span className="text-[10px] text-slate-500">{20 - questionsToNextCredit}/20</span>
+        </div>
+
+        {highScore > 0 && (
+          <div className="flex items-center justify-between mt-3 mb-4 text-[11px]">
+            <span className="text-slate-500">Best run</span>
+            <span className="text-white font-medium">
+              {bestCorrect} / {bankCount} · {Math.round(highScore)}%
+            </span>
+          </div>
+        )}
+
+        {domainCounts.length > 0 && (
+          <div className="flex items-center gap-1 mt-3 mb-4">
+            {domainCounts.map((d) => (
+              <span
+                key={d.id}
+                className="h-1.5 rounded-full"
+                style={{ flex: d.count, background: DOMAIN_COLOR[d.id] }}
+                title={`${d.name}: ${d.count}`}
+              />
+            ))}
+          </div>
+        )}
+
+        <button
+          onClick={onStart}
+          disabled={credits <= 0}
+          className="w-full rounded-lg py-2.5 text-[12px] font-semibold transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+          style={{
+            color: '#1e1b3a',
+            background: 'linear-gradient(135deg, var(--d4-lavender), var(--accent-rose))',
+          }}
+        >
+          Enter Redemption →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Feature tile ───────────────────────────────────────────────────────────
+
+function FeatureTile({
+  icon,
+  label,
+  hint,
+  accent,
+  onClick,
+  chip,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  hint: string;
+  accent: string;
+  onClick: () => void;
+  chip?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="relative overflow-hidden rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+      style={{ background: 'rgba(10,22,40,0.45)', border: `1px solid rgba(226,232,240,0.08)` }}
+    >
+      <span
+        aria-hidden="true"
+        className="absolute -top-10 -right-10 w-28 h-28 rounded-full"
+        style={{ background: `radial-gradient(circle, ${accent}40 0%, transparent 70%)`, opacity: 0.5 }}
+      />
+      <div className="relative">
+        <div className="flex items-center justify-between mb-3">
+          <div
+            className="flex items-center justify-center w-9 h-9 rounded-xl"
+            style={{
+              background: `color-mix(in srgb, ${accent} 16%, transparent)`,
+              border: `1px solid color-mix(in srgb, ${accent} 30%, transparent)`,
+              color: accent,
+            }}
+          >
+            {icon}
+          </div>
+          {chip && (
+            <span
+              className="chip-atelier"
+              style={{ color: accent }}
+            >
+              {chip}
+            </span>
+          )}
+        </div>
+        <p className="text-[13px] font-semibold text-white mb-1 leading-tight">{label}</p>
+        <p className="text-[11px] text-slate-400 leading-relaxed">{hint}</p>
+      </div>
+    </button>
+  );
+}
+
+// ─── Main component ─────────────────────────────────────────────────────────
 
 export default function DashboardHome({
+  firstName,
   demonstratingCount,
   readinessTarget,
   readinessPhase,
   skillsToReadiness,
   srsOverdueSkills,
   weakestSkill,
-  weakestDomain: _weakestDomain,
   dailyQuestionCount,
   dailyGoal,
   weeklyUsageSeconds,
@@ -178,161 +378,266 @@ export default function DashboardHome({
   onStartRedemption,
   onNavigate,
 }: DashboardHomeProps) {
+  const readinessPct =
+    readinessTarget > 0 ? Math.min(Math.round((demonstratingCount / readinessTarget) * 100), 100) : 0;
 
-  const readinessPct = readinessTarget > 0
-    ? Math.min(Math.round((demonstratingCount / readinessTarget) * 100), 100)
-    : 0;
-
-  // Next learning path module (first weakest skill)
   const nextModuleSkill = weakestSkill;
+  const greetingName = firstName?.trim() || 'there';
+
+  const dailyPct = dailyGoal > 0 ? Math.min(Math.round((dailyQuestionCount / dailyGoal) * 100), 100) : 0;
 
   return (
-    <div className="space-y-5 pb-12">
-
-      {/* ── Readiness Banner ─────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-sm font-semibold text-slate-700">Exam Readiness</span>
-              <span className="text-sm font-bold text-indigo-600">
-                {demonstratingCount} of {TOTAL_SKILLS} skills at {PROFICIENCY_META.proficient.label}
-              </span>
-            </div>
-            <div className="w-full rounded-full bg-slate-100 h-2.5">
-              <div
-                className="h-2.5 rounded-full bg-indigo-500 transition-all duration-700"
-                style={{ width: `${readinessPct}%` }}
-              />
-            </div>
+    <div className="space-y-6 pb-14">
+      {/* ── Welcome + readiness hero ──────────────────────────────────── */}
+      <section>
+        <div className="flex items-baseline justify-between mb-5 flex-wrap gap-4">
+          <div>
+            <p className="eyebrow mb-1">Welcome back</p>
+            <h1 className="text-3xl font-semibold tracking-tight text-white">
+              Hi, <span className="gradient-text-warm">{greetingName}</span>.
+            </h1>
           </div>
-          <div className="flex items-center gap-4 shrink-0">
-            <div className="text-right">
-              <div className="text-2xl font-extrabold text-indigo-600">{readinessPct}%</div>
-              <div className="text-xs text-slate-400">{readinessPhase}</div>
-            </div>
-            <div className="hidden sm:block w-px h-10 bg-slate-200" />
-            <div className="hidden sm:block text-right">
-              <div className="text-xs text-slate-400 mb-0.5">Readiness target: {readinessTarget}</div>
-              <div className="text-xs font-medium text-emerald-600">
-                {skillsToReadiness === 0
-                  ? 'Target reached!'
-                  : `${skillsToReadiness} more to close the gap`}
-              </div>
-            </div>
+          <div className="text-right">
+            <p className="eyebrow">This week</p>
+            <p className="text-lg font-semibold text-white mt-1">
+              {weeklyQuestionCount} <span className="text-slate-500 text-sm font-normal">questions</span>
+              {weeklyAccuracy != null && (
+                <>
+                  <span className="text-slate-600 mx-2">·</span>
+                  <span className="gradient-text-warm">{weeklyAccuracy}%</span>
+                </>
+              )}
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* ── Two-column: Today's Focus + Quick Stats / Redemption ───── */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="glass p-7 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+          <ReadinessArc pct={readinessPct} phase={readinessPhase} />
 
-        {/* Today's Focus (2/3 width) */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-base">🎯</span>
-            <span className="text-sm font-bold text-slate-800">Today's Focus</span>
-            <span className="ml-auto text-xs text-slate-400">Based on your weakest areas</span>
+          <div className="flex-1 min-w-0">
+            <p className="eyebrow mb-2">Exam Readiness</p>
+            <h2 className="text-2xl font-semibold text-white leading-tight">
+              <span className="gradient-text-warm">{demonstratingCount}</span> of {TOTAL_SKILLS} skills<br className="hidden sm:block" />
+              at {PROFICIENCY_META.proficient.label}.
+            </h2>
+            <p className="text-sm text-slate-400 mt-3 leading-relaxed max-w-md">
+              {skillsToReadiness === 0
+                ? 'You\u2019ve cleared the readiness threshold — keep your skills warm with spaced review.'
+                : `${skillsToReadiness} more skill${skillsToReadiness !== 1 ? 's' : ''} to hit your readiness target of ${readinessTarget}.`}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-[12px]">
+              <div>
+                <span className="text-slate-500 text-[11px]">Phase</span>
+                <span className="block text-white font-medium capitalize">{readinessPhase}</span>
+              </div>
+              <div className="w-px h-8 bg-white/8" />
+              <div>
+                <span className="text-slate-500 text-[11px]">Target</span>
+                <span className="block text-white font-medium">{readinessTarget} skills</span>
+              </div>
+              <div className="w-px h-8 bg-white/8" />
+              <div>
+                <span className="text-slate-500 text-[11px]">Daily</span>
+                <span className="block text-white font-medium">
+                  {dailyQuestionCount}/{dailyGoal} <span className="text-slate-500">({dailyPct}%)</span>
+                </span>
+              </div>
+            </div>
           </div>
 
-          {/* SRS Spaced Review (if overdue) */}
-          {srsOverdueSkills.length > 0 && (
-            <div className="mb-3 flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50 px-4 py-3">
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold uppercase tracking-wider text-violet-600 mb-0.5">
-                  Spaced Review · {srsOverdueSkills.length} skill{srsOverdueSkills.length !== 1 ? 's' : ''} overdue
-                </div>
-                <div className="text-sm font-bold text-slate-800">Skills due for review</div>
-                <div className="mt-0.5 text-xs text-slate-500 truncate">
-                  {srsOverdueSkills.slice(0, 3).map(s => s.name).join(', ')}
-                  {srsOverdueSkills.length > 3 && ` + ${srsOverdueSkills.length - 3} more`}
-                  {' — spacing strengthens long-term retention'}
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  if (srsOverdueSkills[0]) onStartSkillPractice(srsOverdueSkills[0].skillId);
+          <div className="flex flex-col gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => onNavigate('practice-hub')}
+              className="btn-soft-glow"
+            >
+              Start Practice →
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('results')}
+              className="btn-ghost-atelier text-center"
+            >
+              View full report
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Today's Focus + This Week / Redemption ───────────────────── */}
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        {/* Today's Focus (2/3) */}
+        <div className="lg:col-span-2 glass p-6">
+          <div className="flex items-baseline justify-between mb-4">
+            <h3 className="text-[13px] font-bold text-white tracking-[0.02em]">Today's Focus</h3>
+            <span className="eyebrow">Chained by priority</span>
+          </div>
+
+          {/* Priority hero (peach glow) */}
+          {weakestSkill ? (
+            <div
+              className="relative overflow-hidden rounded-2xl p-[18px_20px]"
+              style={{
+                background: 'rgba(10,22,40,0.6)',
+                border: '1px solid color-mix(in srgb, var(--d1-peach) 28%, transparent)',
+              }}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(135deg, color-mix(in srgb, var(--d1-peach) 12%, transparent) 0%, transparent 60%)',
                 }}
-                className="shrink-0 rounded-lg bg-violet-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-violet-700"
-              >
-                Review Now →
-              </button>
+              />
+              <span
+                aria-hidden="true"
+                className="absolute -top-8 -right-8 w-36 h-36 rounded-full"
+                style={{
+                  background:
+                    'radial-gradient(circle, color-mix(in srgb, var(--d1-peach) 18%, transparent) 0%, transparent 70%)',
+                }}
+              />
+              <div className="relative flex items-center gap-4">
+                <div
+                  className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
+                  style={{ background: 'rgba(252,213,180,0.12)', border: '1px solid rgba(252,213,180,0.35)' }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="#fcd5b4" strokeWidth="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9" />
+                    <circle cx="12" cy="12" r="5" />
+                    <circle cx="12" cy="12" r="1.5" fill="#fcd5b4" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="eyebrow" style={{ color: 'var(--d1-peach)' }}>
+                      Priority · {PROFICIENCY_META.emerging.label}
+                    </span>
+                    <span className="text-[10px] text-slate-500">{weakestSkill.domain}</span>
+                  </div>
+                  <p className="text-[15px] font-semibold text-white leading-tight">{weakestSkill.name}</p>
+                  <p className="text-[12px] text-slate-400 mt-1">
+                    {weakestSkill.emergingCount} skill{weakestSkill.emergingCount !== 1 ? 's' : ''} below 60% in this
+                    domain.
+                  </p>
+                </div>
+                <button
+                  onClick={() => onStartSkillPractice(weakestSkill.skillId)}
+                  className="shrink-0 rounded-full px-4 py-2 text-[11px] font-semibold transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+                  style={{
+                    color: '#1e1b3a',
+                    background: 'linear-gradient(135deg, #fde4c1, var(--d1-peach))',
+                  }}
+                >
+                  Practice →
+                </button>
+              </div>
             </div>
+          ) : (
+            <p className="text-[13px] text-slate-400 italic">
+              You've caught up on priority skills — head to Practice to keep your rhythm.
+            </p>
           )}
 
-          {/* Priority skill card */}
-          {weakestSkill && (
-            <div className="mb-3 flex items-center gap-3 rounded-xl border border-orange-100 bg-orange-50 px-4 py-3">
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold uppercase tracking-wider text-orange-600 mb-0.5">
-                  Priority · {PROFICIENCY_META.emerging.label}
-                </div>
-                <div className="text-sm font-bold text-slate-800">{weakestSkill.name}</div>
-                <div className="mt-0.5 text-xs text-slate-500">
-                  Domain: {weakestSkill.domain} · {weakestSkill.emergingCount} skill{weakestSkill.emergingCount !== 1 ? 's' : ''} below 60%
-                </div>
-              </div>
+          {/* Chained "Then" rows */}
+          <div className="mt-3 space-y-2">
+            {srsOverdueSkills.length > 0 && (
               <button
-                onClick={() => onStartSkillPractice(weakestSkill.skillId)}
-                className="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+                onClick={() => onStartSkillPractice(srsOverdueSkills[0].skillId)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-white/6 hover:border-white/12 transition group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
               >
-                Practice →
+                <span className="eyebrow w-14 shrink-0 text-left" style={{ color: 'var(--d3-ice)' }}>
+                  Then
+                </span>
+                <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(205,233,245,0.1)', border: '1px solid rgba(205,233,245,0.22)' }}>
+                  <svg className="w-4 h-4" fill="none" stroke="#cde9f5" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M4 6h16M4 12h16M4 18h10" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="text-[13px] font-medium text-white">
+                    Spaced review · {srsOverdueSkills.length} skill{srsOverdueSkills.length !== 1 ? 's' : ''} due
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    {srsOverdueSkills.slice(0, 3).map((s) => s.name).join(', ')}
+                    {srsOverdueSkills.length > 3 && ` + ${srsOverdueSkills.length - 3} more`}
+                  </p>
+                </div>
+                <span className="text-slate-500 group-hover:text-white text-sm">→</span>
               </button>
-            </div>
-          )}
+            )}
 
-          {/* Vocab quiz suggestion */}
-          <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-semibold uppercase tracking-wider text-blue-600 mb-0.5">
-                Then · Vocab Review
-              </div>
-              <div className="text-sm font-bold text-slate-800">Vocabulary Quiz</div>
-              <div className="mt-0.5 text-xs text-slate-500">
-                Review terms from your recent sessions
-              </div>
-            </div>
             <button
               onClick={() => onNavigate('glossary')}
-              className="shrink-0 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-white/6 hover:border-white/12 transition group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
             >
-              Quiz Now →
+              <span className="eyebrow w-14 shrink-0 text-left" style={{ color: 'var(--d2-mint)' }}>
+                Then
+              </span>
+              <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(184,242,216,0.1)', border: '1px solid rgba(184,242,216,0.22)' }}>
+                <svg className="w-4 h-4" fill="none" stroke="#b8f2d8" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-[13px] font-medium text-white">Vocabulary review</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">Revisit terms from recent practice</p>
+              </div>
+              <span className="text-slate-500 group-hover:text-white text-sm">→</span>
             </button>
           </div>
         </div>
 
-        {/* Right column: Quick Stats + Redemption (1/3 width) */}
-        <div className="flex flex-col gap-3">
-          {/* This Week stats */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">This Week</div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Questions</span>
-                <span className="font-bold text-slate-800">{weeklyQuestionCount}</span>
+        {/* This Week + Redemption (1/3) */}
+        <div className="flex flex-col gap-5">
+          <div className="glass p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-white tracking-wide">This Week</h3>
+              <span className="eyebrow">7d</span>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-baseline justify-between">
+                <span className="text-[12px] text-slate-400">Questions</span>
+                <span className="text-[17px] font-semibold text-white tabular-num">{weeklyQuestionCount}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Accuracy</span>
-                <span className="font-bold text-emerald-600">
+              <div className="flex items-baseline justify-between">
+                <span className="text-[12px] text-slate-400">Accuracy</span>
+                <span className="text-[17px] font-semibold gradient-text-warm tabular-num">
                   {weeklyAccuracy != null ? `${weeklyAccuracy}%` : '—'}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Study time</span>
-                <span className="font-bold text-slate-800">
+              <div className="flex items-baseline justify-between">
+                <span className="text-[12px] text-slate-400">Study time</span>
+                <span className="text-[17px] font-semibold text-white tabular-num">
                   {weeklyUsageSeconds > 0 ? formatStudyTime(weeklyUsageSeconds) : '0m'}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Daily goal</span>
-                <span className="font-bold text-amber-700">{dailyQuestionCount} / {dailyGoal}</span>
+              <div className="h-px my-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(226,232,240,0.1), transparent)' }} />
+              <div>
+                <div className="flex items-baseline justify-between mb-1.5">
+                  <span className="text-[12px] text-slate-400">Daily goal</span>
+                  <span className="text-[13px] font-semibold text-white tabular-num">
+                    {dailyQuestionCount} / {dailyGoal}
+                  </span>
+                </div>
+                <div className="h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                  <div
+                    className="h-1.5 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${dailyPct}%`,
+                      background: 'linear-gradient(90deg, var(--d1-peach), var(--accent-rose))',
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Redemption card — redesigned */}
           {redemptionBankCount > 0 && (
-            <RedemptionCard
+            <RedemptionMoon
               bankCount={redemptionBankCount}
               credits={redemptionCredits}
               questionsToNextCredit={questionsToNextCredit}
@@ -342,126 +647,106 @@ export default function DashboardHome({
             />
           )}
         </div>
-      </div>
+      </section>
 
-      {/* ── Feature Tiles (5-card grid) ──────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-        {/* Fluency Drill */}
-        <button
-          onClick={() => onNavigate('glossary')}
-          className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-orange-200 hover:bg-orange-50"
-        >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 transition group-hover:bg-orange-200">
-            <Zap className="h-5 w-5 text-orange-600" />
+      {/* ── Four domains ──────────────────────────────────────────────── */}
+      <section className="glass p-6">
+        <div className="flex items-baseline justify-between mb-4">
+          <div>
+            <h3 className="text-[13px] font-bold text-white tracking-[0.02em]">The Four Domains</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">Click any domain to drill in</p>
           </div>
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-600 mb-0.5">NEW</div>
-          <div className="text-sm font-bold leading-tight text-slate-800 mb-1">Fluency Drill</div>
-          <div className="text-xs text-slate-500">Rapid-fire cases, terms & concepts</div>
-        </button>
-
-        {/* Vocab Quiz */}
-        <button
-          onClick={() => onNavigate('glossary')}
-          className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-blue-200 hover:bg-blue-50"
-        >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 transition group-hover:bg-blue-200">
-            <BookOpen className="h-5 w-5 text-blue-600" />
-          </div>
-          <div className="text-sm font-bold leading-tight text-slate-800 mb-1">Vocab Quiz</div>
-          <div className="text-xs text-slate-500">Review terms from practice</div>
-        </button>
-
-        {/* Learning Path */}
-        <button
-          onClick={() => {
-            if (nextModuleSkill) onOpenLearningPathModule(nextModuleSkill.skillId);
-            else onNavigate('practice-hub');
-          }}
-          className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50"
-        >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 transition group-hover:bg-emerald-200">
-            <MapIcon className="h-5 w-5 text-emerald-600" />
-          </div>
-          {nextModuleSkill && (
-            <div className="text-xs text-emerald-500 mb-0.5">Next: {nextModuleSkill.skillId}</div>
-          )}
-          <div className="text-sm font-bold leading-tight text-slate-800 mb-1">Learning Path</div>
-          <div className="text-xs text-slate-500">
-            {nextModuleSkill ? nextModuleSkill.name : 'Structured modules by gap'}
-          </div>
-        </button>
-
-        {/* Study Guide */}
-        <button
-          onClick={() => onNavigate('study-guide')}
-          className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-purple-200 hover:bg-purple-50"
-        >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 transition group-hover:bg-purple-200">
-            <ClipboardList className="h-5 w-5 text-purple-600" />
-          </div>
-          <div className="text-sm font-bold leading-tight text-slate-800 mb-1">Study Guide</div>
-          <div className="text-xs text-slate-500">AI-generated plan from your data</div>
-        </button>
-
-        {/* AI Tutor */}
-        <button
-          onClick={() => onNavigate('tutor')}
-          className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-amber-200 hover:bg-amber-50"
-        >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 transition group-hover:bg-amber-200">
-            <MessageCircle className="h-5 w-5 text-amber-600" />
-          </div>
-          <div className="text-xs text-amber-500 mb-0.5">AI-powered</div>
-          <div className="text-sm font-bold leading-tight text-slate-800 mb-1">AI Tutor</div>
-          <div className="text-xs text-slate-500">Ask anything, get quizzed</div>
-        </button>
-      </div>
-
-      {/* ── Domain Performance ────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-bold text-slate-800">Domain Performance</span>
           <button
             onClick={() => onNavigate('results')}
-            className="text-xs text-indigo-600 hover:underline"
+            className="text-[11px] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)] rounded"
+            style={{ color: 'var(--d1-peach)' }}
           >
             Full report →
           </button>
         </div>
-        <div className="space-y-3">
-          {progressSummary.domains.map(domain => {
-            const pct = domain.activeSkillCount > 0
-              ? Math.round((domain.strongerSkillCount / domain.activeSkillCount) * 100)
-              : 0;
-            const barColor = pct >= 70 ? 'bg-emerald-400' : pct >= 50 ? 'bg-amber-400' : 'bg-rose-400';
-            const labelColor = pct >= 70 ? 'text-emerald-600' : pct >= 50 ? 'text-amber-600' : 'text-rose-500';
-            const profLabel = pct >= 80 ? PROFICIENCY_META.proficient.label
-              : pct >= 60 ? PROFICIENCY_META.approaching.label
-              : PROFICIENCY_META.emerging.label;
+
+        <div className="space-y-0.5">
+          {progressSummary.domains.map((domain) => {
+            const pct =
+              domain.activeSkillCount > 0
+                ? Math.round((domain.strongerSkillCount / domain.activeSkillCount) * 100)
+                : 0;
+            const profLabel =
+              pct >= 80
+                ? PROFICIENCY_META.proficient.label
+                : pct >= 60
+                  ? PROFICIENCY_META.approaching.label
+                  : PROFICIENCY_META.emerging.label;
 
             return (
-              <div
+              <DomainRow
                 key={domain.domainId}
-                className="cursor-pointer rounded-lg px-2 py-1 -mx-2 transition hover:bg-slate-50"
+                color={DOMAIN_COLOR[domain.domainId] ?? 'var(--d1-peach)'}
+                name={domain.domainName}
+                pct={pct}
+                strongerCount={domain.strongerSkillCount}
+                activeCount={domain.activeSkillCount}
+                profLabel={profLabel}
                 onClick={() => onStartPractice(domain.domainId)}
-              >
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="font-medium text-slate-700">{domain.domainName}</span>
-                  <span className={`font-semibold ${labelColor}`}>
-                    {pct}% · {profLabel}
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-slate-100">
-                  <div
-                    className={`h-2 rounded-full transition-all duration-700 ${barColor}`}
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
+              />
             );
           })}
         </div>
-      </div>
+      </section>
+
+      {/* ── The Toolshed ──────────────────────────────────────────────── */}
+      <section>
+        <div className="flex items-baseline justify-between mb-4">
+          <div>
+            <h3 className="text-[13px] font-bold text-white tracking-[0.02em]">The Toolshed</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">Every tool at hand</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <FeatureTile
+            icon={<Zap className="w-5 h-5" />}
+            label="Fluency Drill"
+            hint="Rapid-fire cases, terms, concepts"
+            accent="var(--d1-peach)"
+            chip="New"
+            onClick={() => onNavigate('glossary')}
+          />
+          <FeatureTile
+            icon={<BookOpen className="w-5 h-5" />}
+            label="Vocab Quiz"
+            hint="Review terms from practice"
+            accent="var(--d3-ice)"
+            onClick={() => onNavigate('glossary')}
+          />
+          <FeatureTile
+            icon={<MapIcon className="w-5 h-5" />}
+            label="Learning Path"
+            hint={nextModuleSkill ? `Next: ${nextModuleSkill.skillId}` : 'Structured by gap'}
+            accent="var(--d2-mint)"
+            chip={nextModuleSkill ? 'Next' : undefined}
+            onClick={() => {
+              if (nextModuleSkill) onOpenLearningPathModule(nextModuleSkill.skillId);
+              else onNavigate('practice-hub');
+            }}
+          />
+          <FeatureTile
+            icon={<ClipboardList className="w-5 h-5" />}
+            label="Study Guide"
+            hint="AI-generated plan from your data"
+            accent="var(--d4-lavender)"
+            onClick={() => onNavigate('study-guide')}
+          />
+          <FeatureTile
+            icon={<MessageCircle className="w-5 h-5" />}
+            label="AI Tutor"
+            hint="Ask anything, get quizzed"
+            accent="var(--accent-rose)"
+            chip="AI"
+            onClick={() => onNavigate('tutor')}
+          />
+        </div>
+      </section>
     </div>
   );
 }

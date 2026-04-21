@@ -5,6 +5,7 @@ interface DragToOrderProps {
   items: string[];
   prompt?: string;
   onComplete?: (orderedItems: string[]) => void;
+  variant?: 'atelier' | 'editorial';
 }
 
 /**
@@ -15,7 +16,9 @@ export default function DragToOrder({
   items: initialItems,
   prompt,
   onComplete,
+  variant = 'editorial',
 }: DragToOrderProps) {
+  const isA = variant === 'atelier';
   const [items, setItems] = useState(() => {
     // Shuffle on mount so the user actually has to reorder
     const shuffled = [...initialItems];
@@ -68,10 +71,37 @@ export default function DragToOrder({
     setItems(shuffled);
   };
 
+  const promptCls = isA ? 'text-sm text-slate-400 italic' : 'text-sm text-slate-600 italic';
+  const rowDragging = isA
+    ? 'bg-[color:var(--d1-peach)]/15 border-[color:var(--d1-peach)]/50 opacity-75'
+    : 'bg-cyan-50 border-cyan-300 opacity-75';
+  const rowIdle = isA
+    ? 'bg-white/5 border-white/10 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/10'
+    : 'bg-white border-slate-200 hover:border-cyan-300 shadow-sm';
+  const badgeCls = isA
+    ? 'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[color:var(--d1-peach)]/20 border border-[color:var(--d1-peach)]/40 font-bold text-sm text-[color:var(--d1-peach)]'
+    : 'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100 border border-cyan-200 text-cyan-700 font-bold text-sm';
+  const itemTextCls = isA ? 'text-sm text-slate-200 leading-normal' : 'text-sm text-slate-700 leading-normal';
+  const handleCls = isA ? 'w-4 h-4 text-slate-500 mt-1 flex-shrink-0' : 'w-4 h-4 text-slate-400 mt-1 flex-shrink-0';
+  const correctBannerCls = isA
+    ? 'rounded-xl bg-[color:var(--d2-mint)]/10 border border-[color:var(--d2-mint)]/40 px-4 py-3'
+    : 'rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3';
+  const correctBannerText = isA ? 'text-sm font-semibold text-[color:var(--d2-mint)]' : 'text-sm text-emerald-700 font-semibold';
+  const wrongBannerCls = isA
+    ? 'rounded-xl bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/40 px-4 py-3 flex items-center justify-between gap-3'
+    : 'rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 flex items-center justify-between gap-3';
+  const wrongBannerText = isA ? 'text-sm font-semibold text-[color:var(--accent-rose)]' : 'text-sm text-rose-700 font-semibold';
+  const retryBtnCls = isA
+    ? 'text-xs font-semibold underline whitespace-nowrap text-[color:var(--accent-rose)] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] rounded'
+    : 'text-xs font-semibold text-rose-600 underline hover:text-rose-800 whitespace-nowrap';
+  const submitBtnCls = isA
+    ? 'btn-soft-glow w-full text-sm font-semibold'
+    : 'w-full py-2 rounded-lg font-semibold text-sm transition-colors bg-cyan-600 hover:bg-cyan-700 text-white border border-transparent';
+
   return (
     <div className="space-y-4">
       {prompt && (
-        <p className="text-sm text-slate-600 italic">
+        <p className={promptCls}>
           {prompt}
         </p>
       )}
@@ -84,24 +114,22 @@ export default function DragToOrder({
               onDragStart={() => handleDragStart(index)}
               onDragOver={handleDragOver}
               onDrop={() => handleDrop(index)}
-              className={`flex items-start gap-3 p-4 rounded-lg border-2 transition-all cursor-move ${
-                draggedIndex === index
-                  ? 'bg-cyan-50 border-cyan-300 opacity-75'
-                  : 'bg-white border-slate-200 hover:border-cyan-300 shadow-sm'
+              className={`flex items-start gap-3 p-4 rounded-xl border-2 transition-all cursor-move ${
+                draggedIndex === index ? rowDragging : rowIdle
               }`}
             >
               {/* Step number badge */}
-              <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100 border border-cyan-200 text-cyan-700 font-bold text-sm">
+              <div className={badgeCls}>
                 {index + 1}
               </div>
 
               {/* Item text */}
               <div className="flex-grow">
-                <p className="text-sm text-slate-700 leading-normal">{item}</p>
+                <p className={itemTextCls}>{item}</p>
               </div>
 
               {/* Drag handle */}
-              <GripVertical className="w-4 h-4 text-slate-400 mt-1 flex-shrink-0" />
+              <GripVertical className={handleCls} />
             </div>
           </div>
         ))}
@@ -110,15 +138,15 @@ export default function DragToOrder({
       {/* Feedback — shown after submit */}
       {submitted && (
         isCorrectOrder ? (
-          <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3">
-            <p className="text-sm text-emerald-700 font-semibold">✓ Correct sequence!</p>
+          <div className={correctBannerCls}>
+            <p className={correctBannerText}>✓ Correct sequence!</p>
           </div>
         ) : (
-          <div className="rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 flex items-center justify-between gap-3">
-            <p className="text-sm text-rose-700 font-semibold">✗ Not quite — try reordering the steps.</p>
+          <div className={wrongBannerCls}>
+            <p className={wrongBannerText}>✗ Not quite — try reordering the steps.</p>
             <button
               onClick={handleRetry}
-              className="text-xs font-semibold text-rose-600 underline hover:text-rose-800 whitespace-nowrap"
+              className={retryBtnCls}
             >
               Try again
             </button>
@@ -129,7 +157,7 @@ export default function DragToOrder({
       {onComplete && !submitted && (
         <button
           onClick={handleSubmit}
-          className="w-full py-2 rounded-lg font-semibold text-sm transition-colors bg-cyan-600 hover:bg-cyan-700 text-white border border-transparent"
+          className={submitBtnCls}
         >
           Submit order
         </button>

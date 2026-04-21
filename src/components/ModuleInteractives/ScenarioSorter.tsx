@@ -7,6 +7,7 @@ interface ScenarioSorterProps {
   categories: string[];
   prompt?: string;
   onComplete?: (categorization: Record<string, string[]>) => void;
+  variant?: 'atelier' | 'editorial';
 }
 
 /**
@@ -29,7 +30,9 @@ export default function ScenarioSorter({
   categories,
   prompt,
   onComplete,
+  variant = 'editorial',
 }: ScenarioSorterProps) {
+  const isA = variant === 'atelier';
   const [categorization, setCategorization] = useState<Record<string, string[]>>(
     Object.fromEntries(categories.map(c => [c, []]))
   );
@@ -71,51 +74,79 @@ export default function ScenarioSorter({
 
   const getCategoryColor = (category: string) => {
     if (category.includes('GREEN') || category.includes('YES') || category.includes('ENDORSED')) {
-      return 'bg-emerald-50 border-emerald-200';
+      return isA ? 'bg-[color:var(--d2-mint)]/10 border-[color:var(--d2-mint)]/30' : 'bg-emerald-50 border-emerald-200';
     }
     if (category.includes('RED') || category.includes('NO') || category.includes('NOT')) {
-      return 'bg-rose-50 border-rose-200';
+      return isA ? 'bg-[color:var(--accent-rose)]/10 border-[color:var(--accent-rose)]/30' : 'bg-rose-50 border-rose-200';
     }
-    return 'bg-blue-50 border-blue-200';
+    return isA ? 'bg-[color:var(--d3-ice)]/10 border-[color:var(--d3-ice)]/30' : 'bg-blue-50 border-blue-200';
   };
 
   const getCategoryBadgeColor = (category: string) => {
     if (category.includes('GREEN') || category.includes('YES') || category.includes('ENDORSED')) {
-      return 'bg-emerald-100 text-emerald-700';
+      return isA ? 'bg-[color:var(--d2-mint)]/20 text-[color:var(--d2-mint)]' : 'bg-emerald-100 text-emerald-700';
     }
     if (category.includes('RED') || category.includes('NO') || category.includes('NOT')) {
-      return 'bg-rose-100 text-rose-700';
+      return isA ? 'bg-[color:var(--accent-rose)]/20 text-[color:var(--accent-rose)]' : 'bg-rose-100 text-rose-700';
     }
-    return 'bg-blue-100 text-blue-700';
+    return isA ? 'bg-[color:var(--d3-ice)]/20 text-[color:var(--d3-ice)]' : 'bg-blue-100 text-blue-700';
   };
+
+  const promptCls = isA ? 'text-sm text-slate-400 italic' : 'text-sm text-slate-600 italic';
+  const unassignedShell = isA
+    ? 'rounded-xl border border-white/10 bg-white/5 p-4'
+    : 'rounded-xl border border-slate-200 bg-slate-50 p-4';
+  const unassignedLabel = isA
+    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 mb-3'
+    : 'text-[10px] font-bold uppercase text-slate-600 mb-3';
+  const allPlacedText = isA ? 'text-xs text-slate-500 italic' : 'text-xs text-slate-500 italic';
+  const scenarioItemCls = isA
+    ? 'flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/10 cursor-move transition-colors'
+    : 'flex items-start gap-3 p-3 rounded-lg bg-white border border-slate-200 hover:border-cyan-300 cursor-move transition-colors shadow-sm';
+  const scenarioHandle = isA ? 'w-4 h-4 mt-0.5 text-slate-500 shrink-0' : 'w-4 h-4 mt-0.5 text-slate-400 shrink-0';
+  const scenarioText = isA ? 'text-sm text-slate-200' : 'text-sm text-slate-700';
+  const emptyPlaceholder = isA ? 'text-xs text-slate-500 italic' : 'text-xs text-slate-400 italic';
+  const placedNeutralCls = isA ? 'bg-white/5 border-white/10 text-slate-200' : 'bg-white border-slate-200 text-slate-700';
+  const placedCorrectCls = isA
+    ? 'bg-[color:var(--d2-mint)]/10 border-[color:var(--d2-mint)]/40 text-white'
+    : 'bg-emerald-50 border-emerald-300 text-emerald-800';
+  const placedWrongCls = isA
+    ? 'bg-[color:var(--accent-rose)]/10 border-[color:var(--accent-rose)]/40 text-white'
+    : 'bg-rose-50 border-rose-300 text-rose-800';
+  const checkIcon = isA ? 'w-4 h-4 text-[color:var(--d2-mint)] shrink-0 mt-0.5' : 'w-4 h-4 text-emerald-600 shrink-0 mt-0.5';
+  const xIcon = isA ? 'w-4 h-4 text-[color:var(--accent-rose)] shrink-0 mt-0.5' : 'w-4 h-4 text-rose-500 shrink-0 mt-0.5';
+  const correctHintText = isA ? 'text-xs mt-1.5 ml-6 text-[color:var(--accent-rose)]' : 'text-xs text-rose-600 mt-1.5 ml-6';
+  const submitBtnCls = isA
+    ? 'btn-soft-glow w-full text-sm font-semibold'
+    : 'w-full py-2 rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition-colors border border-transparent';
 
   return (
     <div className="space-y-4">
       {prompt && (
-        <p className="text-sm text-slate-600 italic">
+        <p className={promptCls}>
           {prompt}
         </p>
       )}
 
       {/* Unassigned scenarios — hidden after submit */}
       {!submitted && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <p className="text-[10px] font-bold uppercase text-slate-600 mb-3">
+        <div className={unassignedShell}>
+          <p className={unassignedLabel}>
             Scenarios to sort
           </p>
           <div className="space-y-2 min-h-[80px]">
             {allPlaced ? (
-              <p className="text-xs text-slate-500 italic">All scenarios categorized ✓</p>
+              <p className={allPlacedText}>All scenarios categorized ✓</p>
             ) : (
               unassignedScenarios.map(scenario => (
                 <div
                   key={scenario.id}
                   draggable
                   onDragStart={e => handleDragStart(e, scenario.id)}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-white border border-slate-200 hover:border-cyan-300 cursor-move transition-colors shadow-sm"
+                  className={scenarioItemCls}
                 >
-                  <GripVertical className="w-4 h-4 mt-0.5 text-slate-400 shrink-0" />
-                  <span className="text-sm text-slate-700">{scenario.text}</span>
+                  <GripVertical className={scenarioHandle} />
+                  <span className={scenarioText}>{scenario.text}</span>
                 </div>
               ))
             )}
@@ -138,7 +169,7 @@ export default function ScenarioSorter({
 
             <div className="space-y-2 min-h-[120px]">
               {categorization[category].length === 0 ? (
-                <p className="text-xs text-slate-400 italic">
+                <p className={emptyPlaceholder}>
                   {submitted ? 'Nothing placed here' : 'Drag scenarios here'}
                 </p>
               ) : (
@@ -153,25 +184,21 @@ export default function ScenarioSorter({
                   return (
                     <div
                       key={scenarioId}
-                      className={`p-3 rounded-lg border text-sm shadow-sm transition-colors ${
-                        correct === null
-                          ? 'bg-white border-slate-200 text-slate-700'
-                          : correct
-                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
-                            : 'bg-rose-50 border-rose-300 text-rose-800'
+                      className={`p-3 rounded-xl border text-sm transition-colors ${
+                        correct === null ? placedNeutralCls : correct ? placedCorrectCls : placedWrongCls
                       }`}
                     >
                       <div className="flex items-start gap-2">
                         {submitted && (
                           correct
-                            ? <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                            : <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                            ? <CheckCircle className={checkIcon} />
+                            : <XCircle className={xIcon} />
                         )}
-                        {!submitted && <GripVertical className="w-4 h-4 mt-0.5 text-slate-400 shrink-0" />}
+                        {!submitted && <GripVertical className={scenarioHandle} />}
                         <span>{scenario.text}</span>
                       </div>
                       {correctCategoryName && (
-                        <p className="text-xs text-rose-600 mt-1.5 ml-6">
+                        <p className={correctHintText}>
                           Correct: <span className="font-semibold">{correctCategoryName}</span>
                         </p>
                       )}
@@ -187,7 +214,7 @@ export default function ScenarioSorter({
       {onComplete && allPlaced && !submitted && (
         <button
           onClick={handleSubmit}
-          className="w-full py-2 rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition-colors border border-transparent"
+          className={submitBtnCls}
         >
           Submit
         </button>

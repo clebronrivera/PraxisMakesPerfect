@@ -43,26 +43,27 @@ export default function ModuleSnippetCard({
     r => r.moduleId !== moduleId && r.snippet
   );
 
+  const accentVar = isHint ? 'var(--d1-peach)' : 'var(--d3-ice)';
+
   return (
     <div
-      className={`rounded-[1.25rem] border ${
-        isHint
-          ? 'border-amber-200 bg-amber-50'
-          : 'border-sky-200 bg-sky-50'
-      } p-4 space-y-3`}
+      className="rounded-2xl border backdrop-blur-[14px] p-4 space-y-3"
+      style={{
+        background: `color-mix(in srgb, ${accentVar} 8%, rgba(10,22,40,0.55))`,
+        borderColor: `color-mix(in srgb, ${accentVar} 30%, transparent)`,
+      }}
     >
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           {isHint ? (
-            <Lightbulb className="h-4 w-4 flex-shrink-0 text-amber-600" />
+            <Lightbulb className="h-4 w-4 flex-shrink-0" style={{ color: accentVar }} />
           ) : (
-            <BookOpen className="h-4 w-4 flex-shrink-0 text-sky-600" />
+            <BookOpen className="h-4 w-4 flex-shrink-0" style={{ color: accentVar }} />
           )}
           <span
-            className={`text-xs font-black uppercase tracking-[0.1em] ${
-              isHint ? 'text-amber-700' : 'text-sky-700'
-            }`}
+            className="text-[10px] font-semibold uppercase tracking-[0.22em]"
+            style={{ color: accentVar }}
           >
             {isHint ? 'Hint — Module Reference' : 'What the module says'}
           </span>
@@ -70,7 +71,7 @@ export default function ModuleSnippetCard({
         {isHint && onDismiss && (
           <button
             onClick={onDismiss}
-            className="rounded-lg p-1 text-amber-500 hover:bg-amber-100 hover:text-amber-800 transition-colors"
+            className="rounded-lg p-1 text-slate-400 hover:bg-white/5 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:var(--d1-peach)]"
             title="Dismiss hint"
           >
             <X className="h-3.5 w-3.5" />
@@ -81,9 +82,8 @@ export default function ModuleSnippetCard({
       {/* ── Module name ── */}
       {moduleTitle && (
         <p
-          className={`text-[11px] font-semibold uppercase tracking-wide ${
-            isHint ? 'text-amber-600' : 'text-sky-600'
-          }`}
+          className="text-[11px] font-semibold uppercase tracking-wide"
+          style={{ color: `color-mix(in srgb, ${accentVar} 80%, white)` }}
         >
           {moduleId} — {moduleTitle}
         </p>
@@ -92,29 +92,29 @@ export default function ModuleSnippetCard({
       {/* ── Primary snippet ── */}
       {snippet && (
         <blockquote
-          className={`border-l-4 pl-3 text-sm leading-relaxed ${
-            isHint
-              ? 'border-amber-400 text-amber-900'
-              : 'border-sky-400 text-sky-900'
-          }`}
+          className="border-l-2 pl-3 text-sm leading-relaxed text-slate-200"
+          style={{ borderColor: `color-mix(in srgb, ${accentVar} 50%, transparent)` }}
         >
-          <span className="underline decoration-2 underline-offset-2">{snippet}</span>
+          <span className="underline decoration-2 underline-offset-2 decoration-white/20">{snippet}</span>
         </blockquote>
       )}
 
       {/* ── Secondary module snippets (multi-module questions) ── */}
       {secondaryRefs.length > 0 && (
-        <div className="space-y-2 pt-1 border-t border-sky-200">
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-500">
+        <div className="space-y-2 pt-2 border-t border-white/6">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
             Also covered in
           </p>
           {secondaryRefs.slice(0, 2).map(ref => (
             <div key={ref.moduleId} className="space-y-1">
-              <p className="text-[11px] font-semibold text-sky-600">
+              <p className="text-[11px] font-semibold text-slate-300">
                 {ref.moduleId} — {ref.moduleTitle}
               </p>
-              <blockquote className="border-l-4 border-sky-300 pl-3 text-xs leading-relaxed text-sky-800">
-                <span className="underline decoration-2 underline-offset-2">{ref.snippet}</span>
+              <blockquote
+                className="border-l-2 pl-3 text-xs leading-relaxed text-slate-400"
+                style={{ borderColor: `color-mix(in srgb, ${accentVar} 30%, transparent)` }}
+              >
+                <span className="underline decoration-2 underline-offset-2 decoration-white/15">{ref.snippet}</span>
               </blockquote>
             </div>
           ))}
@@ -125,11 +125,8 @@ export default function ModuleSnippetCard({
       {moduleId && onOpenModule && (
         <button
           onClick={() => onOpenModule(moduleId)}
-          className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
-            isHint
-              ? 'text-amber-700 hover:text-amber-900'
-              : 'text-sky-700 hover:text-sky-900'
-          }`}
+          className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)] rounded"
+          style={{ color: accentVar }}
         >
           <ExternalLink className="h-3.5 w-3.5" />
           Study the full module
@@ -138,7 +135,10 @@ export default function ModuleSnippetCard({
 
       {/* ── Hint mode scoring notice ── */}
       {isHint && (
-        <p className="text-[11px] text-amber-600 italic">
+        <p
+          className="text-[11px] italic"
+          style={{ color: `color-mix(in srgb, ${accentVar} 70%, white)` }}
+        >
           Hint opened — this answer will not count toward your score.
         </p>
       )}

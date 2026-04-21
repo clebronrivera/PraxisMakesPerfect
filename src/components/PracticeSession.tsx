@@ -607,17 +607,17 @@ export default function PracticeSession({
   if (!currentQuestion) {
     if (analyzedQuestions.length === 0) {
       return (
-        <div className="editorial-surface mx-auto max-w-md p-12 text-center space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-amber-50">
-            <Zap className="h-8 w-8 text-amber-700" />
+        <div className="glass mx-auto max-w-md p-12 text-center space-y-6">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-[color:var(--d1-peach)]/10">
+            <Zap className="h-8 w-8 text-[color:var(--d1-peach)]" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-900">No Questions Found</h3>
+            <h3 className="text-xl font-bold text-white">No Questions Found</h3>
             <p className="mt-2 text-slate-500">We couldn&apos;t find any questions matching your filters. Try choosing a different domain or skill.</p>
           </div>
           <button
             onClick={onExitPractice}
-            className="editorial-button-secondary w-full"
+            className="btn-ghost-atelier w-full"
           >
             <Home className="w-4 h-4" />
             Back to Home
@@ -636,9 +636,9 @@ export default function PracticeSession({
 
   const pctColor =
     allTimePct === null ? '' :
-    allTimePct >= 80 ? 'text-emerald-700' :
-    allTimePct >= 60 ? 'text-amber-700' :
-    'text-rose-600';
+    allTimePct >= 80 ? 'text-[color:var(--d2-mint)]' :
+    allTimePct >= 60 ? 'text-[color:var(--d1-peach)]' :
+    'text-[color:var(--accent-rose)]';
 
   // Retirement progress for this pool (shown as a subtle pill when first pass is done)
   const retiredCount = firstPassComplete
@@ -651,15 +651,15 @@ export default function PracticeSession({
 
       {/* ── Redemption quarantine toast ───────────────────────────────────────── */}
       {redemptionToast && (
-        <div className="animate-in fade-in slide-in-from-top-2 duration-300 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800 flex items-start gap-3">
-          <RotateCcw className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
+        <div className="animate-in fade-in slide-in-from-top-2 duration-300 rounded-2xl border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 px-5 py-4 text-sm text-slate-200 flex items-start gap-3">
+          <RotateCcw className="h-4 w-4 mt-0.5 shrink-0 text-[color:var(--d1-peach)]" />
           <div>
-            <p className="font-bold">Moved to Redemption</p>
-            <p className="mt-1 text-xs leading-relaxed text-amber-700">{redemptionToast}</p>
+            <p className="font-bold text-white">Moved to Redemption</p>
+            <p className="mt-1 text-xs leading-relaxed text-[color:var(--d1-peach)]">{redemptionToast}</p>
           </div>
           <button
             onClick={() => setRedemptionToast(null)}
-            className="ml-auto shrink-0 text-amber-600 hover:text-amber-600"
+            className="ml-auto shrink-0 text-[color:var(--d1-peach)] hover:text-[color:var(--d1-peach)]"
           >
             <X className="h-4 w-4" />
           </button>
@@ -667,22 +667,22 @@ export default function PracticeSession({
       )}
 
       {/* ── Session Header ────────────────────────────────────────────────────── */}
-      <div className="editorial-surface flex items-center justify-between gap-4 p-5">
+      <div className="glass flex items-center justify-between gap-4 p-5">
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-amber-700" />
-            <span className="text-sm font-semibold text-slate-700">
+            <Zap className="h-5 w-5 text-[color:var(--d1-peach)]" />
+            <span className="text-sm font-semibold text-slate-200">
               {practiceSkillId ? `Skill Practice` : practiceDomain ? 'Domain Review' : 'Practice'}
             </span>
           </div>
 
           {/* Correct / Wrong / Overconfident */}
           <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
-            <span className="text-emerald-700">Correct: {sessionStats.correct}</span>
-            <span className="text-rose-600">Wrong: {sessionStats.wrong}</span>
+            <span className="text-[color:var(--d2-mint)]">Correct: {sessionStats.correct}</span>
+            <span className="text-[color:var(--accent-rose)]">Wrong: {sessionStats.wrong}</span>
             {sessionStats.highConfidenceWrong > 0 && (
               <span
-                className="text-amber-700"
+                className="text-[color:var(--d1-peach)]"
                 title={`Answered wrong despite selecting ${getConfidenceDisplayLabel('high')} - worth extra review`}
               >
                 Overconfident: {sessionStats.highConfidenceWrong}
@@ -692,7 +692,7 @@ export default function PracticeSession({
 
           {/* All-time cumulative % */}
           {allTimePct !== null && (
-            <div className="hidden items-center gap-1.5 border-l border-slate-200 pl-4 sm:flex">
+            <div className="hidden items-center gap-1.5 border-l border-white/10 pl-4 sm:flex">
               <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">All-time</span>
               <span className={`text-sm font-bold ${pctColor}`}>{allTimePct}%</span>
             </div>
@@ -700,7 +700,7 @@ export default function PracticeSession({
 
           {/* Retirement progress pill — only after first pass */}
           {firstPassComplete && retiredCount > 0 && (
-            <div className="hidden items-center gap-1.5 border-l border-slate-200 pl-4 sm:flex">
+            <div className="hidden items-center gap-1.5 border-l border-white/10 pl-4 sm:flex">
               <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Retired</span>
               <span className="text-xs font-semibold text-slate-500">{retiredCount}/{totalPool}</span>
             </div>
@@ -721,15 +721,15 @@ export default function PracticeSession({
               }}
               className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
                 hintOpenForQuestion === currentQuestion?.id
-                  ? 'border-amber-300 bg-amber-100 text-amber-800'
-                  : 'border-transparent text-slate-500 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700'
+                  ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/15 text-[color:var(--d1-peach)]'
+                  : 'border-transparent text-slate-500 hover:border-[color:var(--d1-peach)]/30 hover:bg-[color:var(--d1-peach)]/10 hover:text-[color:var(--d1-peach)]'
               }`}
               title="Open module hint — answer won't count toward score"
             >
               <Lightbulb className="w-4 h-4" />
               <span className="hidden sm:inline">Hint</span>
               {hintUsedIds.has(currentQuestion?.id ?? '') && (
-                <span className="ml-0.5 text-[10px] text-amber-600">(used)</span>
+                <span className="ml-0.5 text-[10px] text-[color:var(--d1-peach)]">(used)</span>
               )}
             </button>
           )}
@@ -738,7 +738,7 @@ export default function PracticeSession({
           {practiceSkillId && (
             <button
               onClick={() => setHelpDrawerOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
+              className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-[color:var(--d1-peach)]/30 hover:bg-[color:var(--d1-peach)]/10 hover:text-[color:var(--d1-peach)]"
               title="Open skill lesson for help"
             >
               <BookOpen className="w-4 h-4" />
@@ -749,7 +749,7 @@ export default function PracticeSession({
           {/* Exit button — "← Skills" for skill practice, Home icon otherwise */}
           <button
             onClick={onExitPractice}
-            className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-slate-200 hover:bg-[#fbfaf7] hover:text-slate-900"
+            className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-white/10 hover:bg-white/5 hover:text-white"
             title={practiceSkillId ? 'Back to Skills' : 'Exit Practice'}
           >
             {practiceSkillId ? (
@@ -794,11 +794,11 @@ export default function PracticeSession({
       {domainWarnings.size > 0 && (() => {
         const warnedDomainIds = Array.from(domainWarnings);
         return (
-          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-rose-200 bg-rose-50 px-4 py-3 duration-300">
-            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-rose-600 mt-0.5" />
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-[color:var(--accent-rose)]/30 bg-[color:var(--accent-rose)]/10 px-4 py-3 duration-300">
+            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-[color:var(--accent-rose)] mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-rose-800">This domain needs extra attention.</p>
-              <p className="mt-0.5 text-xs text-rose-700">
+              <p className="text-sm font-semibold text-white">This domain needs extra attention.</p>
+              <p className="mt-0.5 text-xs text-[color:var(--accent-rose)]">
                 You've missed the same skill three times in a row.{' '}
                 {warnedDomainIds.length === 1 && (() => {
                   const d = getProgressDomainDefinition(warnedDomainIds[0]);
@@ -818,14 +818,14 @@ export default function PracticeSession({
           ? prevDistractorNoteRef.current
           : null;
         return (
-          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 duration-300">
-            <Lightbulb className="h-4 w-4 flex-shrink-0 text-amber-600 mt-0.5" />
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 px-4 py-3 duration-300">
+            <Lightbulb className="h-4 w-4 flex-shrink-0 text-[color:var(--d1-peach)] mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">
+              <p className="text-sm font-semibold text-white">
                 {streak >= 2 ? 'One more look — here\'s what tripped you up:' : 'Second chance — read carefully.'}
               </p>
               {tip && (
-                <p className="mt-1 text-xs leading-relaxed text-amber-700">{tip}</p>
+                <p className="mt-1 text-xs leading-relaxed text-[color:var(--d1-peach)]">{tip}</p>
               )}
             </div>
           </div>
@@ -845,11 +845,11 @@ export default function PracticeSession({
           alertModuleId;
         const alertSkillDef = getProgressSkillDefinition(alertSkillId);
         return (
-          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-rose-200 bg-rose-50 px-4 py-3 duration-300">
-            <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-rose-600" />
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-[color:var(--accent-rose)]/30 bg-[color:var(--accent-rose)]/10 px-4 py-3 duration-300">
+            <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--accent-rose)]" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-rose-900">This skill needs more attention</p>
-              <p className="mt-0.5 text-xs leading-relaxed text-rose-700">
+              <p className="text-sm font-semibold text-white">This skill needs more attention</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-[color:var(--accent-rose)]">
                 You've answered{' '}
                 <span className="font-semibold">{alertSkillDef?.fullLabel ?? alertSkillId}</span>{' '}
                 questions incorrectly multiple times.
@@ -860,7 +860,7 @@ export default function PracticeSession({
             </div>
             <button
               onClick={() => setDismissedSkillAlerts(prev => new Set(prev).add(alertSkillId))}
-              className="flex-shrink-0 rounded-lg p-1 text-rose-600 hover:bg-rose-100 hover:text-rose-700 transition-colors"
+              className="flex-shrink-0 rounded-lg p-1 text-[color:var(--accent-rose)] hover:bg-[color:var(--accent-rose)]/20 hover:text-[color:var(--accent-rose)] transition-colors"
               title="Dismiss alert"
             >
               <X className="h-3.5 w-3.5" />
@@ -873,44 +873,44 @@ export default function PracticeSession({
       {streakMessage && consecutiveCorrect >= 2 && (
         <div
           key={streakMessage}
-          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 duration-300"
+          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 px-4 py-3 duration-300"
         >
-          <Flame className="h-4 w-4 flex-shrink-0 text-amber-600" />
-          <span className="text-sm font-semibold text-amber-900">{streakMessage}</span>
-          <span className="ml-auto text-xs font-medium text-amber-700">{consecutiveCorrect} in a row</span>
+          <Flame className="h-4 w-4 flex-shrink-0 text-[color:var(--d1-peach)]" />
+          <span className="text-sm font-semibold text-white">{streakMessage}</span>
+          <span className="ml-auto text-xs font-medium text-[color:var(--d1-peach)]">{consecutiveCorrect} in a row</span>
         </div>
       )}
 
       {/* ── Practice Context Box — always shows Domain + Skill ───────────────── */}
       {(domainInfo || skillInfo) && (
-        <div className="editorial-surface-soft space-y-4 p-5">
+        <div className="glass space-y-4 p-5">
           {domainInfo && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Domain</p>
-                <span className="flex-shrink-0 rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-semibold text-slate-500">
+                <span className="flex-shrink-0 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-slate-400">
                   {contextDomainId}
                 </span>
               </div>
-              <h3 className="text-base font-bold leading-snug text-slate-900">{domainInfo.name}</h3>
+              <h3 className="text-base font-bold leading-snug text-white">{domainInfo.name}</h3>
               <p className="text-sm leading-relaxed text-slate-500">{domainInfo.subtitle}</p>
             </div>
           )}
-          {domainInfo && skillInfo && <div className="border-t border-slate-200" />}
+          {domainInfo && skillInfo && <div className="border-t border-white/10" />}
           {skillInfo && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Skill</p>
-                <span className="flex-shrink-0 rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-semibold text-slate-500">
+                <span className="flex-shrink-0 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-slate-400">
                   {contextSkillId}
                 </span>
               </div>
-              <h3 className="text-base font-bold leading-snug text-slate-900">{skillInfo.name}</h3>
+              <h3 className="text-base font-bold leading-snug text-white">{skillInfo.name}</h3>
               <p className="text-sm leading-relaxed text-slate-500">{skillInfo.description}</p>
               {skillInfo.decisionRule && (
                 <p className="text-xs leading-relaxed text-slate-500">
                   What it looks like in answers:{' '}
-                  <span className="text-slate-700">{skillInfo.decisionRule}</span>
+                  <span className="text-slate-200">{skillInfo.decisionRule}</span>
                 </p>
               )}
             </div>
@@ -920,8 +920,8 @@ export default function PracticeSession({
 
       {/* ── Response save warning ──────────────────────────────────────────── */}
       {responseSaveWarning && (
-        <div className="mb-3 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
-          <AlertTriangle className="h-4 w-4 shrink-0" />
+        <div className="mb-3 flex items-center gap-2 rounded-xl border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 px-4 py-2.5 text-sm text-slate-200">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-[color:var(--d1-peach)]" />
           <span>Your last answer couldn't be saved. It's been queued and will retry automatically.</span>
         </div>
       )}
@@ -959,6 +959,7 @@ export default function PracticeSession({
         disabled={isPaused}
         showFeedback={showFeedback}
         assessmentType="practice"
+        variant="atelier"
       />
 
       {/* ── Hint Panel (before submitting) ──────────────────────────────────── */}
@@ -989,9 +990,9 @@ export default function PracticeSession({
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Hint-used notice */}
             {wasHintUsed && (
-              <div className="flex items-center gap-2.5 rounded-[1.25rem] border border-amber-200 bg-amber-50 px-4 py-3">
-                <Lightbulb className="h-4 w-4 flex-shrink-0 text-amber-600" />
-                <span className="text-sm text-amber-800">
+              <div className="flex items-center gap-2.5 rounded-[1.25rem] border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 px-4 py-3">
+                <Lightbulb className="h-4 w-4 flex-shrink-0 text-[color:var(--d1-peach)]" />
+                <span className="text-sm text-slate-200">
                   Hint was used — this answer was not counted toward your score.
                 </span>
               </div>
@@ -1021,7 +1022,7 @@ export default function PracticeSession({
               />
             )}
 
-            <div className="editorial-surface-soft rounded-[1.5rem] border px-4 py-4 text-center">
+            <div className="glass rounded-[1.5rem] border px-4 py-4 text-center">
               <p className="text-sm italic text-slate-500">You will see this feedback again in your report</p>
             </div>
           </div>
@@ -1030,16 +1031,16 @@ export default function PracticeSession({
 
       {/* ── Pause Overlay ────────────────────────────────────────────────────── */}
       {isPaused && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-50/45 backdrop-blur-md">
-          <div className="mx-4 max-w-sm space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl">
-            <Pause className="mx-auto h-12 w-12 text-amber-700" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/70 backdrop-blur-md">
+          <div className="mx-4 max-w-sm space-y-6 rounded-[2rem] border border-white/10 p-8 text-center" style={{ background: 'rgba(10,22,40,0.95)', boxShadow: '0 24px 70px rgba(0,0,0,0.5)' }}>
+            <Pause className="mx-auto h-12 w-12 text-[color:var(--d1-peach)]" />
             <div>
-              <h3 className="text-xl font-bold text-slate-900">Session Paused</h3>
+              <h3 className="text-xl font-bold text-white">Session Paused</h3>
               <p className="mt-2 text-sm text-slate-500">Your progress is safely stored. Resume when you&apos;re ready.</p>
             </div>
             <button
               onClick={resume}
-              className="editorial-button-primary w-full"
+              className="btn-soft-glow w-full"
             >
               Resume Session
             </button>
