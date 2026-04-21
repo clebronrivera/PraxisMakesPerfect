@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Dashboard — The Atelier</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-950: #03070e;
+    --navy-900: #060d1a;
+    --navy-850: #081222;
+    --navy-800: #0a1628;
+    --navy-700: #0f1e38;
+    --navy-600: #152a4a;
+    --d1-peach:    #fcd5b4;   /* Professional Practices */
+    --d2-mint:     #b8f2d8;   /* Student-Level Services */
+    --d3-ice:      #cde9f5;   /* Systems-Level Services */
+    --d4-lavender: #d8d5fc;   /* Foundations */
+    --accent-rose: #fbcfe8;
+    --accent-cream:#fff3de;
+  }
+  html, body {
+    background: var(--navy-900);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #e2e8f0;
+    min-height: 100vh;
+  }
+
+  /* ───────── Subtle starfield (lower density for dashboard) ───────── */
+  .starfield-subtle {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 14%, rgba(252, 213, 180, 0.35), transparent 40%),
+      radial-gradient(1px 1px at 88% 18%, rgba(216, 213, 252, 0.30), transparent 40%),
+      radial-gradient(1px 1px at 58% 72%, rgba(187, 247, 208, 0.25), transparent 40%),
+      radial-gradient(1px 1px at 24% 86%, rgba(205, 233, 245, 0.25), transparent 40%),
+      radial-gradient(1px 1px at 94% 62%, rgba(251, 207, 232, 0.30), transparent 40%),
+      radial-gradient(1px 1px at 6% 52%, rgba(216, 213, 252, 0.25), transparent 40%);
+    opacity: 0.7;
+  }
+
+  /* ───────── Mini orb (header) ───────── */
+  .mini-orb {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255, 243, 222, 1) 0%,
+      rgba(252, 213, 180, 0.85) 25%,
+      rgba(251, 207, 232, 0.55) 55%,
+      rgba(216, 213, 252, 0.25) 100%);
+    box-shadow: 0 0 18px rgba(252, 213, 180, 0.4), 0 0 36px rgba(216, 213, 252, 0.22);
+    animation: orb-pulse 3.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes orb-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.96; }
+    50%      { transform: scale(1.03); opacity: 1; }
+  }
+
+  /* ───────── Gradient type ───────── */
+  .gradient-text {
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .gradient-text-warm {
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* ───────── Glass cards ───────── */
+  .glass {
+    background: rgba(10, 22, 40, 0.55);
+    border: 1px solid rgba(226, 232, 240, 0.08);
+    backdrop-filter: blur(14px);
+    border-radius: 20px;
+  }
+  .glass-deep {
+    background: rgba(6, 13, 26, 0.7);
+    border: 1px solid rgba(226, 232, 240, 0.08);
+    backdrop-filter: blur(14px);
+    border-radius: 20px;
+  }
+  .glass:hover { border-color: rgba(226, 232, 240, 0.14); }
+
+  /* ───────── Eyebrow label ───────── */
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+  .eyebrow-bright { color: #cbd5e1; }
+
+  /* ───────── Buttons ───────── */
+  .btn-soft-glow {
+    padding: 11px 20px; border-radius: 999px;
+    font-weight: 600; font-size: 13px; letter-spacing: 0.01em;
+    color: #1e1b3a;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow:
+      0 0 22px rgba(252, 213, 180, 0.32),
+      0 6px 18px -6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn-soft-glow:hover { transform: translateY(-1px); box-shadow: 0 0 32px rgba(252, 213, 180, 0.48), 0 10px 24px -6px rgba(0,0,0,0.5); }
+  .btn-ghost {
+    padding: 9px 16px; border-radius: 999px;
+    font-weight: 500; font-size: 12px;
+    color: #cbd5e1;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: transparent;
+    transition: all 0.2s ease;
+  }
+  .btn-ghost:hover { color: white; border-color: rgba(252,213,180,0.4); }
+  .btn-pill-color {
+    padding: 8px 14px; border-radius: 999px;
+    font-weight: 600; font-size: 11px; letter-spacing: 0.02em;
+    color: #0a1628;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  .btn-pill-color:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+  /* ───────── Domain row (constellation) ───────── */
+  .dom-row {
+    display: grid;
+    grid-template-columns: 14px 1fr 72px 110px 90px;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .dom-row:hover { background: rgba(226, 232, 240, 0.04); }
+  .dom-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 10px var(--c), 0 0 20px var(--c);
+    position: relative;
+  }
+  .dom-dot::before {
+    content: '';
+    position: absolute; inset: -5px;
+    border-radius: 50%;
+    border: 1px solid var(--c);
+    opacity: 0.25;
+    animation: node-ring 2.8s ease-in-out infinite;
+  }
+  @keyframes node-ring {
+    0%   { transform: scale(1); opacity: 0.35; }
+    100% { transform: scale(2.0); opacity: 0; }
+  }
+  .dom-bar {
+    height: 6px; border-radius: 999px;
+    background: rgba(226, 232, 240, 0.08);
+    overflow: hidden;
+  }
+  .dom-bar-fill {
+    height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--c) 70%, transparent), var(--c));
+    box-shadow: 0 0 10px color-mix(in srgb, var(--c) 60%, transparent);
+  }
+
+  /* ───────── Readiness arc ───────── */
+  .arc-wrap {
+    position: relative;
+    width: 188px; height: 188px;
+    flex-shrink: 0;
+  }
+  .arc-bg-ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(252, 213, 180, 0.12) 0%,
+      rgba(216, 213, 252, 0.06) 45%,
+      transparent 70%);
+    filter: blur(10px);
+    animation: halo-breathe 6s ease-in-out infinite;
+  }
+  @keyframes halo-breathe {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.05); }
+  }
+
+  /* ───────── Feature tile ───────── */
+  .feat-tile {
+    background: rgba(10, 22, 40, 0.45);
+    border: 1px solid rgba(226, 232, 240, 0.08);
+    border-radius: 18px;
+    padding: 18px;
+    text-align: left;
+    transition: all 0.22s ease;
+    position: relative; overflow: hidden;
+    display: block;
+  }
+  .feat-tile::after {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow, rgba(252, 213, 180, 0.18)) 0%, transparent 70%);
+    opacity: 0.5;
+    transition: opacity 0.22s ease;
+    pointer-events: none;
+  }
+  .feat-tile:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent, var(--d1-peach)) 45%, transparent);
+  }
+  .feat-tile:hover::after { opacity: 1; }
+  .feat-icon-box {
+    width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--accent, var(--d1-peach)) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent, var(--d1-peach)) 30%, transparent);
+    color: var(--accent, var(--d1-peach));
+  }
+
+  /* ───────── Priority hero card ───────── */
+  .priority-card {
+    position: relative;
+    padding: 18px 20px;
+    border-radius: 18px;
+    background: rgba(10, 22, 40, 0.6);
+    border: 1px solid color-mix(in srgb, var(--accent, var(--d1-peach)) 28%, transparent);
+    overflow: hidden;
+  }
+  .priority-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg,
+      color-mix(in srgb, var(--accent) 12%, transparent) 0%,
+      transparent 60%);
+    pointer-events: none;
+  }
+  .priority-card::after {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ───────── Redemption (eclipsed moon) ───────── */
+  .moon-card {
+    position: relative;
+    padding: 20px;
+    border-radius: 18px;
+    background: rgba(6, 13, 26, 0.75);
+    border: 1px solid rgba(216, 180, 254, 0.18);
+    overflow: hidden;
+  }
+  .moon-card::before {
+    content: '';
+    position: absolute;
+    top: -55px; right: -55px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%,
+      rgba(251, 207, 232, 0.3) 0%,
+      rgba(216, 180, 254, 0.2) 35%,
+      rgba(6, 13, 26, 0) 72%);
+    filter: blur(2px);
+    pointer-events: none;
+  }
+  .moon-card::after {
+    content: '';
+    position: absolute;
+    top: -30px; right: -75px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(6, 13, 26, 0.92);
+    pointer-events: none;
+  }
+
+  /* ───────── Stat strip ───────── */
+  .stat-cell {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 12px 14px;
+    border-right: 1px solid rgba(226, 232, 240, 0.08);
+  }
+  .stat-cell:last-child { border-right: none; }
+
+  /* ───────── Divider ─────────  */
+  .hair-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(226, 232, 240, 0.1), transparent);
+  }
+
+  /* ───────── Tile chip ─────────  */
+  .chip {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 1px solid currentColor;
+  }
+
+  /* ───────── Section heading ─────────  */
+  .section-h {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-h h3 {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+    color: #f1f5f9;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  /* Annotation bubbles (design-decision callouts) */
+  .annot {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; border-radius: 10px;
+    background: rgba(252, 213, 180, 0.06);
+    border: 1px dashed rgba(252, 213, 180, 0.25);
+    font-size: 11px; line-height: 1.55;
+    color: #cbd5e1;
+  }
+  .annot .num {
+    flex-shrink: 0;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #fde4c1, #fbcfe8);
+    color: #1e1b3a; font-weight: 700; font-size: 10px;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="starfield-subtle"></div>
+
+<!-- ══════ Top bar ══════ -->
+<div class="relative z-40 flex items-center justify-between px-8 py-5 border-b border-white/5">
+  <div class="flex items-center gap-3">
+    <div class="mini-orb"></div>
+    <div>
+      <p class="text-sm font-bold text-white tracking-wide">PASS</p>
+      <p class="text-[9px] tracking-[0.24em] uppercase text-slate-500">Platform for Adaptive Study Sessions</p>
+    </div>
+  </div>
+  <nav class="flex items-center gap-7 text-[13px]">
+    <a class="text-white font-medium" href="#">Home</a>
+    <a class="text-slate-400 hover:text-white" href="#">Practice</a>
+    <a class="text-slate-400 hover:text-white" href="#">Study Guide</a>
+    <a class="text-slate-400 hover:text-white" href="#">AI Tutor</a>
+    <a class="text-slate-400 hover:text-white" href="#">Results</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <span class="eyebrow">Praxis 5403 · Beta</span>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] flex items-center justify-center text-[11px] font-bold text-navy-900 text-[#1e1b3a]">C</div>
+  </div>
+</div>
+
+<main class="relative z-10 max-w-[1240px] mx-auto px-8 py-10 space-y-8">
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: Welcome + Readiness Constellation                    -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="flex items-baseline justify-between mb-5">
+      <div>
+        <p class="eyebrow mb-1">Wednesday · April 18</p>
+        <h1 class="text-3xl font-semibold text-white tracking-tight">Welcome back, <span class="gradient-text-warm">Carlos</span>.</h1>
+      </div>
+      <div class="text-right">
+        <p class="eyebrow">Session streak</p>
+        <p class="text-lg font-semibold text-white mt-1">4 days <span class="text-[color:var(--d1-peach)]">·</span> <span class="text-slate-400 text-sm font-normal">32 min today</span></p>
+      </div>
+    </div>
+
+    <!-- ─── Readiness hero ─── -->
+    <div class="glass p-7 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+
+      <!-- Arc + % -->
+      <div class="arc-wrap">
+        <div class="arc-bg-ring"></div>
+
+        <!-- Arc SVG -->
+        <svg viewBox="0 0 200 200" class="absolute inset-0 w-full h-full -rotate-90">
+          <defs>
+            <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fde4c1"/>
+              <stop offset="50%" stop-color="#fbcfe8"/>
+              <stop offset="100%" stop-color="#d8d5fc"/>
+            </linearGradient>
+          </defs>
+          <!-- Track -->
+          <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(226, 232, 240, 0.08)" stroke-width="8" />
+          <!-- Fill (42% ≈ 222/527 circumference) -->
+          <circle cx="100" cy="100" r="84" fill="none"
+            stroke="url(#arcGrad)" stroke-width="8" stroke-linecap="round"
+            stroke-dasharray="527.79" stroke-dashoffset="306.12"
+            style="filter: drop-shadow(0 0 8px rgba(252, 213, 180, 0.5));" />
+        </svg>
+
+        <!-- Center content -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <p class="text-[44px] font-semibold tracking-tight leading-none gradient-text">42%</p>
+          <p class="eyebrow mt-1">Developing</p>
+        </div>
+      </div>
+
+      <!-- Text block -->
+      <div class="flex-1 min-w-0">
+        <p class="eyebrow mb-2">Exam Readiness</p>
+        <h2 class="text-2xl font-semibold text-white mb-1 leading-tight">
+          <span class="gradient-text-warm">14</span> of 32 skills<br class="hidden sm:block"/>
+          at Demonstrating.
+        </h2>
+        <p class="text-sm text-slate-400 max-w-md leading-relaxed">
+          18 more skills to reach your readiness threshold. You've moved 2 skills into Demonstrating this week — keep that rhythm.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-1 mt-5">
+          <div>
+            <span class="text-[11px] text-slate-500">Readiness phase</span>
+            <span class="block text-[color:var(--d2-mint)] text-sm font-medium">Developing</span>
+          </div>
+          <div class="w-px h-8 bg-white/8"></div>
+          <div>
+            <span class="text-[11px] text-slate-500">This week</span>
+            <span class="block text-white text-sm font-medium">+2 <span class="text-slate-500">skills</span></span>
+          </div>
+          <div class="w-px h-8 bg-white/8"></div>
+          <div>
+            <span class="text-[11px] text-slate-500">Accuracy</span>
+            <span class="block text-[color:var(--d2-mint)] text-sm font-medium">74%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="flex flex-col gap-2 shrink-0">
+        <button class="btn-soft-glow">Resume Practice →</button>
+        <a class="btn-ghost text-center" href="#">View full report</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: Today's Focus (hero) + This Week + Redemption        -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+    <!-- Today's Focus (2/3) -->
+    <div class="lg:col-span-2 glass p-6">
+      <div class="section-h">
+        <h3>Today's Focus</h3>
+        <span class="eyebrow">Chained by priority</span>
+      </div>
+
+      <!-- Priority hero (glow matching domain color) -->
+      <div class="priority-card" style="--accent: var(--d1-peach);">
+        <div class="flex items-center gap-4">
+          <div class="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
+               style="background: rgba(252, 213, 180, 0.12); border: 1px solid rgba(252, 213, 180, 0.35);">
+            <!-- target icon -->
+            <svg class="w-5 h-5" fill="none" stroke="#fcd5b4" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#fcd5b4"/>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0 relative z-10">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="eyebrow" style="color: var(--d1-peach);">Priority · Emerging</span>
+              <span class="text-[10px] text-slate-500">Professional Practices</span>
+            </div>
+            <p class="text-[15px] font-semibold text-white leading-tight">IEP Eligibility Determination</p>
+            <p class="text-[12px] text-slate-400 mt-1">1 of 3 skills below 60% in this domain. Lowest accuracy: 38%.</p>
+          </div>
+          <button class="btn-pill-color relative z-10" style="background: linear-gradient(135deg, #fde4c1, #fcd5b4);">
+            Practice →
+          </button>
+        </div>
+      </div>
+
+      <!-- Chained "Then" cards -->
+      <div class="mt-3 space-y-2">
+
+        <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/6 hover:border-white/12 transition cursor-pointer group">
+          <span class="eyebrow w-14 shrink-0" style="color: var(--d3-ice);">Then</span>
+          <div class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(205, 233, 245, 0.1); border: 1px solid rgba(205, 233, 245, 0.22);">
+            <svg class="w-4 h-4" fill="none" stroke="#cde9f5" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[13px] font-medium text-white">Spaced review · 3 skills due</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Progress Monitoring, RTI Tiers, Case Conceptualization</p>
+          </div>
+          <span class="text-slate-500 group-hover:text-white text-sm">→</span>
+        </div>
+
+        <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/6 hover:border-white/12 transition cursor-pointer group">
+          <span class="eyebrow w-14 shrink-0" style="color: var(--d2-mint);">Then</span>
+          <div class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(184, 242, 216, 0.1); border: 1px solid rgba(184, 242, 216, 0.22);">
+            <svg class="w-4 h-4" fill="none" stroke="#b8f2d8" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4M18 12h2M12 18v2M6 12H4M15.5 8.5l1.4-1.4M15.5 15.5l1.4 1.4M8.5 15.5l-1.4 1.4M8.5 8.5 7.1 7.1"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[13px] font-medium text-white">Vocabulary quiz · 12 new terms</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Pulled from your last 3 sessions</p>
+          </div>
+          <span class="text-slate-500 group-hover:text-white text-sm">→</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column — This Week + Redemption (1/3) -->
+    <div class="flex flex-col gap-5">
+
+      <!-- This Week -->
+      <div class="glass p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-white tracking-wide">This Week</h3>
+          <span class="eyebrow">7d</span>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-baseline justify-between">
+            <span class="text-[12px] text-slate-400">Questions</span>
+            <span class="text-[17px] font-semibold text-white">148</span>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span class="text-[12px] text-slate-400">Accuracy</span>
+            <span class="text-[17px] font-semibold gradient-text-warm">74%</span>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span class="text-[12px] text-slate-400">Study time</span>
+            <span class="text-[17px] font-semibold text-white">3h 42m</span>
+          </div>
+          <div class="hair-divider my-1"></div>
+          <div>
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="text-[12px] text-slate-400">Daily goal</span>
+              <span class="text-[13px] font-semibold text-white">22 / 25</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-white/5">
+              <div class="h-1.5 rounded-full" style="width: 88%; background: linear-gradient(90deg, #fcd5b4, #fbcfe8);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Redemption Moon -->
+      <div class="moon-card">
+        <div class="relative z-10">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="eyebrow" style="color: var(--accent-rose);">Quarantine · Redemption</span>
+          </div>
+          <p class="text-[32px] font-semibold text-white leading-none">8 <span class="text-base text-slate-500 font-normal">in orbit</span></p>
+          <p class="text-[12px] text-slate-500 mt-2">Questions you've flagged through hints or repeated misses. Clear them through focused redemption rounds.</p>
+
+          <div class="flex items-center gap-2 mt-4 mb-3">
+            <span class="text-[11px] font-semibold" style="color: var(--d4-lavender);">2 credits</span>
+            <div class="flex-1 h-1 rounded-full bg-white/5">
+              <div class="h-1 rounded-full" style="width: 65%; background: linear-gradient(90deg, #d8d5fc, #fbcfe8);"></div>
+            </div>
+            <span class="text-[10px] text-slate-500">13/20</span>
+          </div>
+
+          <div class="flex items-center justify-between mb-4 text-[11px]">
+            <span class="text-slate-500">Best run</span>
+            <span class="text-white font-medium">6 / 8 · 75%</span>
+          </div>
+
+          <button class="w-full rounded-lg py-2.5 text-[12px] font-semibold transition hover:brightness-110"
+            style="color: #1e1b3a; background: linear-gradient(135deg, #d8d5fc, #fbcfe8);">
+            Enter Redemption →
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: Domain Performance (constellation)                   -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section class="glass p-6">
+    <div class="section-h">
+      <div>
+        <h3>The Four Domains</h3>
+        <p class="text-[11px] text-slate-500 mt-1">Click any domain to drill into its skills</p>
+      </div>
+      <a class="text-[11px] text-[color:var(--d1-peach)] hover:underline" href="#">Full report →</a>
+    </div>
+
+    <div class="space-y-1">
+
+      <div class="dom-row" style="--c: var(--d1-peach);">
+        <div class="dom-dot"></div>
+        <div class="min-w-0">
+          <p class="text-[13px] font-medium text-white">Professional Practices</p>
+          <p class="text-[10px] text-slate-500 mt-0.5">13 skills · Last: IEP Eligibility</p>
+        </div>
+        <div>
+          <p class="text-[15px] font-semibold" style="color: var(--d1-peach);">58%</p>
+        </div>
+        <div class="dom-bar">
+          <div class="dom-bar-fill" style="width: 58%;"></div>
+        </div>
+        <p class="text-[10px] text-slate-400 text-right">4/13 <span class="text-slate-600">demonstrating</span></p>
+      </div>
+
+      <div class="dom-row" style="--c: var(--d2-mint);">
+        <div class="dom-dot"></div>
+        <div class="min-w-0">
+          <p class="text-[13px] font-medium text-white">Student-Level Services</p>
+          <p class="text-[10px] text-slate-500 mt-0.5">12 skills · Last: Behavior Supports</p>
+        </div>
+        <div>
+          <p class="text-[15px] font-semibold" style="color: var(--d2-mint);">72%</p>
+        </div>
+        <div class="dom-bar">
+          <div class="dom-bar-fill" style="width: 72%;"></div>
+        </div>
+        <p class="text-[10px] text-slate-400 text-right">6/12 <span class="text-slate-600">demonstrating</span></p>
+      </div>
+
+      <div class="dom-row" style="--c: var(--d3-ice);">
+        <div class="dom-dot"></div>
+        <div class="min-w-0">
+          <p class="text-[13px] font-medium text-white">Systems-Level Services</p>
+          <p class="text-[10px] text-slate-500 mt-0.5">8 skills · Last: MTSS Implementation</p>
+        </div>
+        <div>
+          <p class="text-[15px] font-semibold" style="color: var(--d3-ice);">41%</p>
+        </div>
+        <div class="dom-bar">
+          <div class="dom-bar-fill" style="width: 41%;"></div>
+        </div>
+        <p class="text-[10px] text-slate-400 text-right">1/8 <span class="text-slate-600">demonstrating</span></p>
+      </div>
+
+      <div class="dom-row" style="--c: var(--d4-lavender);">
+        <div class="dom-dot"></div>
+        <div class="min-w-0">
+          <p class="text-[13px] font-medium text-white">Foundations</p>
+          <p class="text-[10px] text-slate-500 mt-0.5">12 skills · Last: Ethical Practice</p>
+        </div>
+        <div>
+          <p class="text-[15px] font-semibold" style="color: var(--d4-lavender);">65%</p>
+        </div>
+        <div class="dom-bar">
+          <div class="dom-bar-fill" style="width: 65%;"></div>
+        </div>
+        <p class="text-[10px] text-slate-400 text-right">3/12 <span class="text-slate-600">demonstrating</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: The Toolshed (feature tiles)                         -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="section-h">
+      <div>
+        <h3>The Toolshed</h3>
+        <p class="text-[11px] text-slate-500 mt-1">Everything at hand, labeled by the kind of gap it closes</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+
+      <!-- Fluency -->
+      <a href="#" class="feat-tile" style="--accent: var(--d1-peach); --glow: rgba(252, 213, 180, 0.25);">
+        <div class="flex items-center justify-between mb-4">
+          <div class="feat-icon-box">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m13 2-3 9h5l-3 11 8-14h-5l3-6z"/></svg>
+          </div>
+          <span class="chip" style="color: var(--d1-peach);">New</span>
+        </div>
+        <p class="text-[13px] font-semibold text-white mb-1">Fluency Drill</p>
+        <p class="text-[11px] text-slate-400 leading-relaxed">Rapid-fire cases, terms & concepts</p>
+      </a>
+
+      <!-- Vocab -->
+      <a href="#" class="feat-tile" style="--accent: var(--d3-ice); --glow: rgba(205, 233, 245, 0.25);">
+        <div class="flex items-center justify-between mb-4">
+          <div class="feat-icon-box">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"/></svg>
+          </div>
+          <span class="text-[10px] text-slate-500">38 terms</span>
+        </div>
+        <p class="text-[13px] font-semibold text-white mb-1">Vocab Quiz</p>
+        <p class="text-[11px] text-slate-400 leading-relaxed">Review terms from recent practice</p>
+      </a>
+
+      <!-- Learning Path -->
+      <a href="#" class="feat-tile" style="--accent: var(--d2-mint); --glow: rgba(184, 242, 216, 0.25);">
+        <div class="flex items-center justify-between mb-4">
+          <div class="feat-icon-box">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 20l-5.4-5.4M9 20l5-5M4 14V4h10M20 20v-6M20 20h-6M20 14l-5-5"/></svg>
+          </div>
+          <span class="chip" style="color: var(--d2-mint);">Next</span>
+        </div>
+        <p class="text-[13px] font-semibold text-white mb-1">Learning Path</p>
+        <p class="text-[11px] text-slate-400 leading-relaxed">IEP Eligibility Module</p>
+      </a>
+
+      <!-- Study Guide -->
+      <a href="#" class="feat-tile" style="--accent: var(--d4-lavender); --glow: rgba(216, 213, 252, 0.25);">
+        <div class="flex items-center justify-between mb-4">
+          <div class="feat-icon-box">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M9 13h6M9 17h6"/></svg>
+          </div>
+          <span class="text-[10px] text-slate-500">v2 · 9 sec.</span>
+        </div>
+        <p class="text-[13px] font-semibold text-white mb-1">Study Guide</p>
+        <p class="text-[11px] text-slate-400 leading-relaxed">AI-generated plan from your data</p>
+      </a>
+
+      <!-- AI Tutor -->
+      <a href="#" class="feat-tile" style="--accent: var(--accent-rose); --glow: rgba(251, 207, 232, 0.25);">
+        <div class="flex items-center justify-between mb-4">
+          <div class="feat-icon-box">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <span class="chip" style="color: var(--accent-rose);">AI</span>
+        </div>
+        <p class="text-[13px] font-semibold text-white mb-1">AI Tutor</p>
+        <p class="text-[11px] text-slate-400 leading-relaxed">Ask anything, get quizzed</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- DESIGN DECISIONS — annotated callouts for user review           -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section class="mt-10 glass-deep p-7 border-dashed">
+    <div class="flex items-baseline justify-between mb-5">
+      <div>
+        <p class="eyebrow mb-1" style="color: var(--d1-peach);">For your review</p>
+        <h3 class="text-lg font-semibold text-white">Design decisions worth calling out</h3>
+        <p class="text-[12px] text-slate-400 mt-1 max-w-xl">Each is a deliberate change from the current dashboard. We should land on these before I touch React.</p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-3">
+
+      <div class="annot"><span class="num">1</span><div>
+        <p class="text-white font-medium mb-1">Readiness becomes a constellation, not a bar.</p>
+        A circular arc gives the primary number (<span class="gradient-text-warm font-semibold">42%</span>) real presence and aligns to the engine/orb motif. The flat blue bar is retired.
+      </div></div>
+
+      <div class="annot"><span class="num">2</span><div>
+        <p class="text-white font-medium mb-1">Today's Focus gets one hero — not three peers.</p>
+        The priority skill glows in its domain color; the next two actions drop to quieter "Then" rows. Visual weight reflects what you should actually do first.
+      </div></div>
+
+      <div class="annot"><span class="num">3</span><div>
+        <p class="text-white font-medium mb-1">Domain bars inherit the atelier palette.</p>
+        Peach / Mint / Ice / Lavender — the same colors that feed the hero orb now color each domain row. The dashboard and the landing page finally speak the same language.
+      </div></div>
+
+      <div class="annot"><span class="num">4</span><div>
+        <p class="text-white font-medium mb-1">Redemption reads as an eclipsed moon.</p>
+        Dark card, rose/lavender glow off to the side — quarantined questions in orbit. Reinforces that these items are <em>held</em>, not lost.
+      </div></div>
+
+      <div class="annot"><span class="num">5</span><div>
+        <p class="text-white font-medium mb-1">Feature tiles become "The Toolshed."</p>
+        Glass cards with color-coded accents and soft hover glows. Each tile borrows from a different domain hue so the toolbar feels like a spectrum, not a box of crayons.
+      </div></div>
+
+      <div class="annot"><span class="num">6</span><div>
+        <p class="text-white font-medium mb-1">Shared language across the app.</p>
+        Uppercase tracking-wide eyebrows, Inter, the same gradient warm-text for hero numbers, mini-orb in the header. The dashboard now feels like the same product as the landing page.
+      </div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="relative z-10 max-w-[1240px] mx-auto px-8 py-10 text-center">
+  <p class="text-[10px] text-slate-700 tracking-[0.25em] uppercase">PASS · Beta · 2026</p>
+</footer>
+
+</body>
+</html>

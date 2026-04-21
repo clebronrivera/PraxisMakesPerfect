@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Full Report — The Atelier</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900: #060d1a; --navy-800: #0a1628; --navy-700: #0f1e38;
+    --d1-peach: #fcd5b4; --d2-mint: #b8f2d8; --d3-ice: #cde9f5; --d4-lavender: #d8d5fc;
+    --accent-rose: #fbcfe8; --accent-cream: #fff3de;
+  }
+  html, body { background: var(--navy-900); font-family: 'Inter', system-ui, sans-serif; color: #e2e8f0; min-height: 100vh; }
+  .starfield-subtle { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 14%, rgba(252,213,180,0.35), transparent 40%),
+      radial-gradient(1px 1px at 88% 18%, rgba(216,213,252,0.30), transparent 40%),
+      radial-gradient(1px 1px at 58% 72%, rgba(187,247,208,0.25), transparent 40%),
+      radial-gradient(1px 1px at 24% 86%, rgba(205,233,245,0.25), transparent 40%),
+      radial-gradient(1px 1px at 94% 62%, rgba(251,207,232,0.30), transparent 40%),
+      radial-gradient(1px 1px at 6% 52%, rgba(216,213,252,0.25), transparent 40%);
+    opacity: 0.55; }
+  .mini-orb { width: 40px; height: 40px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,243,222,1) 0%, rgba(252,213,180,0.85) 25%, rgba(251,207,232,0.55) 55%, rgba(216,213,252,0.25) 100%);
+    box-shadow: 0 0 18px rgba(252,213,180,0.4), 0 0 36px rgba(216,213,252,0.22);
+    animation: orb-pulse 3.5s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes orb-pulse { 0%,100% { transform: scale(1); opacity: .96; } 50% { transform: scale(1.03); opacity: 1; } }
+  .gradient-text { background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .gradient-text-warm { background: linear-gradient(135deg, #fde4c1, #fbcfe8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .glass { background: rgba(10,22,40,0.55); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .glass-deep { background: rgba(6,13,26,0.7); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .eyebrow { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: #94a3b8; }
+  .btn-soft-glow { padding: 11px 22px; border-radius: 999px; font-weight: 600; font-size: 13px; color: #1e1b3a;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 22px rgba(252,213,180,0.32); }
+  .btn-ghost { padding: 9px 16px; border-radius: 999px; font-weight: 500; font-size: 12px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); background: transparent; transition: all .2s; }
+  .btn-ghost:hover { color: white; border-color: rgba(252,213,180,0.4); }
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; border: 1px solid currentColor; }
+  .hair-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(226,232,240,0.1), transparent); }
+
+  /* Assumption badge */
+  .assumed {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 6px;
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    background: rgba(251,207,232,0.08);
+    border: 1px dashed rgba(251,207,232,0.3);
+    color: #fbcfe8; font-weight: 600;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  /* Stat card */
+  .stat-card {
+    padding: 20px 22px; border-radius: 16px;
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(226,232,240,0.08);
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--c); opacity: 0.8;
+    box-shadow: 0 0 12px var(--c);
+  }
+  .stat-card .stat-num { font-size: 32px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+  .stat-card .stat-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  /* Timeline step */
+  .tl-step {
+    display: flex; flex-direction: column; align-items: center;
+    flex: 1; position: relative; padding: 0 6px;
+  }
+  .tl-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: rgba(226,232,240,0.1);
+    border: 2px solid rgba(226,232,240,0.15);
+    z-index: 2; position: relative;
+  }
+  .tl-step.done .tl-dot {
+    background: var(--d2-mint);
+    border-color: var(--d2-mint);
+    box-shadow: 0 0 10px var(--d2-mint);
+  }
+  .tl-step.current .tl-dot {
+    background: linear-gradient(135deg, #fde4c1, #fbcfe8);
+    border-color: #fde4c1;
+    box-shadow: 0 0 14px rgba(252,213,180,0.6);
+    animation: orb-pulse 3s ease-in-out infinite;
+  }
+  .tl-line {
+    position: absolute; top: 6px; left: 50%; right: -50%; height: 1px;
+    background: rgba(226,232,240,0.1); z-index: 1;
+  }
+  .tl-step.done .tl-line { background: var(--d2-mint); }
+  .tl-step:last-child .tl-line { display: none; }
+  .tl-label { font-size: 11px; text-align: center; margin-top: 10px; color: #94a3b8; }
+  .tl-step.current .tl-label { color: white; font-weight: 600; }
+  .tl-sub { font-size: 9px; color: #64748b; margin-top: 2px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* Domain block */
+  .domain-block {
+    padding: 22px; border-radius: 16px;
+    background: rgba(10,22,40,0.55);
+    border: 1px solid rgba(226,232,240,0.08);
+    position: relative; overflow: hidden;
+  }
+  .domain-block::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+    background: var(--c); box-shadow: 0 0 10px var(--c);
+  }
+
+  /* Skill dot (grid cell) */
+  .sk-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700; color: #1e1b3a;
+    cursor: pointer; transition: transform .15s;
+    position: relative;
+  }
+  .sk-dot:hover { transform: scale(1.15); z-index: 3; }
+  .sk-dot.emerging { background: rgba(251,207,232,0.25); color: #fbcfe8; border: 1px solid rgba(251,207,232,0.5); }
+  .sk-dot.approaching { background: rgba(252,213,180,0.25); color: var(--d1-peach); border: 1px solid rgba(252,213,180,0.5); }
+  .sk-dot.demonstrating { background: var(--d2-mint); color: #064e3b; }
+  .sk-dot.not-started { background: rgba(226,232,240,0.06); color: #475569; border: 1px dashed rgba(226,232,240,0.12); }
+
+  /* Bar with baseline ghost */
+  .bar-wrap { position: relative; height: 8px; border-radius: 999px; background: rgba(226,232,240,0.06); overflow: hidden; margin-top: 6px; }
+  .bar-fill-current { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: linear-gradient(90deg, color-mix(in srgb, var(--c) 70%, transparent), var(--c)); box-shadow: 0 0 8px color-mix(in srgb, var(--c) 60%, transparent); }
+  .bar-baseline-ghost { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(226,232,240,0.35); box-shadow: 0 0 4px rgba(226,232,240,0.4); z-index: 2; }
+  .bar-target { position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--d2-mint); box-shadow: 0 0 6px var(--d2-mint); z-index: 2; }
+
+  /* Top error row */
+  .error-row {
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid rgba(226,232,240,0.06);
+  }
+  .error-row:last-child { border-bottom: none; }
+
+  /* Collapsible section */
+  .sec-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .sec-head h2 { font-size: 15px; font-weight: 700; color: #f1f5f9; letter-spacing: 0.01em; }
+
+</style>
+</head>
+<body>
+
+<div class="starfield-subtle"></div>
+
+<!-- Top bar -->
+<div class="relative z-40 flex items-center justify-between px-8 py-5 border-b border-white/5">
+  <div class="flex items-center gap-3">
+    <div class="mini-orb"></div>
+    <div>
+      <p class="text-sm font-bold text-white tracking-wide">PASS</p>
+      <p class="text-[9px] tracking-[0.24em] uppercase text-slate-500">Full Report</p>
+    </div>
+  </div>
+  <nav class="flex items-center gap-7 text-[13px]">
+    <a class="text-slate-400 hover:text-white" href="#">Home</a>
+    <a class="text-slate-400 hover:text-white" href="#">Practice</a>
+    <a class="text-slate-400 hover:text-white" href="#">Study Guide</a>
+    <a class="text-slate-400 hover:text-white" href="#">AI Tutor</a>
+    <a class="text-white font-medium" href="#">Results</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <span class="eyebrow">Praxis 5403 · Beta</span>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] flex items-center justify-center text-[11px] font-bold text-[#1e1b3a]">C</div>
+  </div>
+</div>
+
+<!-- Assumption banner -->
+<div class="relative z-10 max-w-[1320px] mx-auto px-8 pt-6">
+  <div class="flex items-start gap-3 p-3 rounded-xl" style="background: rgba(252,213,180,0.05); border: 1px dashed rgba(252,213,180,0.25);">
+    <span class="eyebrow mt-0.5" style="color: var(--d1-peach);">Heads-up</span>
+    <p class="text-[11px] text-slate-400 leading-relaxed">
+      This mockup blends real diagnostic data from Carlos (41 Qs, 45 skills attempted) with <span class="assumed">ASSUMED</span>-flagged post-diagnostic practice numbers (streak, growth, time). Every assumed field maps to a real column — so the "home" for that data is already decided; we just haven't generated it yet.
+    </p>
+  </div>
+</div>
+
+<main class="relative z-10 max-w-[1320px] mx-auto px-8 py-8 space-y-10">
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- HERO                                    -->
+  <!-- ══════════════════════════════════════ -->
+  <header>
+    <p class="eyebrow mb-2">Your progress</p>
+    <h1 class="text-4xl font-semibold text-white tracking-tight leading-tight">
+      A picture of <span class="gradient-text-warm">where you stand.</span>
+    </h1>
+    <p class="text-sm text-slate-400 mt-3 max-w-2xl">
+      Everything the engine has observed — diagnostic, practice, and time — consolidated into a single report. Use this to decide what to emphasize next.
+    </p>
+  </header>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- JOURNEY TIMELINE                         -->
+  <!-- ══════════════════════════════════════ -->
+  <section class="glass p-7">
+    <div class="sec-head">
+      <div>
+        <h2>Your journey</h2>
+        <p class="text-[11px] text-slate-500 mt-1">From first diagnostic question to exam-ready</p>
+      </div>
+      <span class="text-[11px] text-slate-500">Step 3 of 5</span>
+    </div>
+    <div class="flex items-start">
+      <div class="tl-step done">
+        <div class="tl-dot"></div><div class="tl-line"></div>
+        <p class="tl-label">Baseline</p>
+        <p class="tl-sub">Apr 17</p>
+      </div>
+      <div class="tl-step done">
+        <div class="tl-dot"></div><div class="tl-line"></div>
+        <p class="tl-label">Adaptive Diagnostic</p>
+        <p class="tl-sub">Apr 17 · 41 Qs</p>
+      </div>
+      <div class="tl-step current">
+        <div class="tl-dot"></div><div class="tl-line"></div>
+        <p class="tl-label">Domain Practice</p>
+        <p class="tl-sub">0 sessions <span class="assumed">ASSUMED</span></p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot"></div><div class="tl-line"></div>
+        <p class="tl-label">Skill Practice</p>
+        <p class="tl-sub">18 skills to go</p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot"></div>
+        <p class="tl-label">Exam Ready</p>
+        <p class="tl-sub">≥ 32 demonstrating</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- STAT CARDS                               -->
+  <!-- ══════════════════════════════════════ -->
+  <section>
+    <div class="sec-head">
+      <h2>Top of the funnel</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="stat-card" style="--c: var(--d1-peach);">
+        <p class="eyebrow mb-2">Questions answered</p>
+        <p class="stat-num text-white">41</p>
+        <p class="stat-sub">Diagnostic complete · Apr 17</p>
+      </div>
+      <div class="stat-card" style="--c: var(--d2-mint);">
+        <p class="eyebrow mb-2">Demonstrating</p>
+        <p class="stat-num gradient-text-warm">10</p>
+        <p class="stat-sub">of 45 skills · 22%</p>
+      </div>
+      <div class="stat-card" style="--c: var(--d1-peach);">
+        <p class="eyebrow mb-2">Approaching</p>
+        <p class="stat-num text-white">0</p>
+        <p class="stat-sub">60–79% range</p>
+      </div>
+      <div class="stat-card" style="--c: var(--accent-rose);">
+        <p class="eyebrow mb-2">Overall accuracy</p>
+        <p class="stat-num text-white">31<span class="text-xl text-slate-500">%</span></p>
+        <p class="stat-sub">31 correct of 99 attempts</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- GROWTH METRICS — assumed post-practice   -->
+  <!-- ══════════════════════════════════════ -->
+  <section>
+    <div class="sec-head">
+      <h2>Growth since baseline <span class="assumed">ASSUMED · 2 weeks practice</span></h2>
+      <button class="btn-ghost">Show baseline only</button>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="stat-card" style="--c: var(--d2-mint);">
+        <p class="eyebrow mb-2">Skills → Demonstrating</p>
+        <p class="stat-num gradient-text-warm">+4</p>
+        <p class="stat-sub">From 10 to 14</p>
+      </div>
+      <div class="stat-card" style="--c: var(--d1-peach);">
+        <p class="eyebrow mb-2">Skills that improved a tier</p>
+        <p class="stat-num text-white">+7</p>
+        <p class="stat-sub">Emerging → Approaching or higher</p>
+      </div>
+      <div class="stat-card" style="--c: var(--d3-ice);">
+        <p class="eyebrow mb-2">Avg accuracy gain</p>
+        <p class="stat-num text-white">+18<span class="text-xl text-slate-500">pp</span></p>
+        <p class="stat-sub">vs. baseline accuracy</p>
+      </div>
+      <div class="stat-card" style="--c: var(--d4-lavender);">
+        <p class="eyebrow mb-2">Study time</p>
+        <p class="stat-num text-white">12h 40m</p>
+        <p class="stat-sub">across 18 sessions</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- DOMAIN BREAKDOWN                         -->
+  <!-- ══════════════════════════════════════ -->
+  <section>
+    <div class="sec-head">
+      <div>
+        <h2>The four domains</h2>
+        <p class="text-[11px] text-slate-500 mt-1">Current bar · baseline marker · 80% goal marker</p>
+      </div>
+      <button class="btn-ghost">Expand all</button>
+    </div>
+
+    <div class="space-y-4">
+
+      <!-- Domain 1 -->
+      <div class="domain-block" style="--c: var(--d1-peach);">
+        <div class="grid md:grid-cols-[1fr_auto] gap-6 items-start">
+          <div class="min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+              <p class="text-[15px] font-semibold text-white">Professional Practices</p>
+              <span class="chip" style="color: var(--d1-peach);">31% · Emerging</span>
+              <span class="text-[10px] text-slate-500">13 skills · exam weight 30%</span>
+            </div>
+
+            <div class="bar-wrap">
+              <div class="bar-fill-current" style="width: 31%;"></div>
+              <div class="bar-baseline-ghost" style="left: 22%;"></div>
+              <div class="bar-target" style="left: 80%;"></div>
+            </div>
+            <div class="flex justify-between text-[9px] text-slate-500 mt-1.5">
+              <span>Baseline 22%</span><span style="color: var(--d2-mint);">Goal 80%</span>
+            </div>
+
+            <!-- Skill dot grid -->
+            <div class="mt-4">
+              <p class="eyebrow mb-2">13 skills</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="sk-dot emerging" title="CON-01 · 0%">C1</span>
+                <span class="sk-dot emerging" title="PSY-01 · 0%">P1</span>
+                <span class="sk-dot emerging" title="PSY-04 · 0%">P4</span>
+                <span class="sk-dot emerging" title="DBD-05 · 33%">D5</span>
+                <span class="sk-dot emerging" title="DBD-08 · 33%">D8</span>
+                <span class="sk-dot emerging" title="PSY-03 · 33%">P3</span>
+                <span class="sk-dot emerging" title="DBD-01 · 50%">D1</span>
+                <span class="sk-dot emerging" title="DBD-03 · 50%">D3</span>
+                <span class="sk-dot emerging" title="DBD-06 · 50%">D6</span>
+                <span class="sk-dot emerging" title="DBD-07 · 50%">D7</span>
+                <span class="sk-dot demonstrating" title="DBD-09 · 100%">D9</span>
+                <span class="sk-dot demonstrating" title="DBD-10 · 100%">D10</span>
+                <span class="sk-dot demonstrating" title="PSY-02 · 100%">P2</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:w-44 flex md:flex-col gap-2 md:gap-1">
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Emerging</span>
+              <span class="text-[15px] font-semibold md:block" style="color: #fbcfe8;">10</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Approaching</span>
+              <span class="text-[15px] font-semibold md:block text-white">0</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Demonstrating</span>
+              <span class="text-[15px] font-semibold md:block" style="color: var(--d2-mint);">3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain 2 -->
+      <div class="domain-block" style="--c: var(--d2-mint);">
+        <div class="grid md:grid-cols-[1fr_auto] gap-6 items-start">
+          <div class="min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+              <p class="text-[15px] font-semibold text-white">Student-Level Services</p>
+              <span class="chip" style="color: var(--d1-peach);">36% · Emerging</span>
+              <span class="text-[10px] text-slate-500">12 skills · exam weight 27%</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-fill-current" style="width: 36%;"></div>
+              <div class="bar-baseline-ghost" style="left: 28%;"></div>
+              <div class="bar-target" style="left: 80%;"></div>
+            </div>
+            <div class="flex justify-between text-[9px] text-slate-500 mt-1.5">
+              <span>Baseline 28%</span><span style="color: var(--d2-mint);">Goal 80%</span>
+            </div>
+            <div class="mt-4">
+              <p class="eyebrow mb-2">12 skills</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="sk-dot emerging" title="MBH-02 · 0%">M2</span>
+                <span class="sk-dot emerging" title="MBH-04 · 0%">M4</span>
+                <span class="sk-dot emerging" title="ACA-06 · 33%">A6</span>
+                <span class="sk-dot emerging" title="ACA-07 · 33%">A7</span>
+                <span class="sk-dot emerging" title="ACA-02 · 50%">A2</span>
+                <span class="sk-dot emerging" title="ACA-03 · 50%">A3</span>
+                <span class="sk-dot emerging" title="ACA-04 · 50%">A4</span>
+                <span class="sk-dot emerging" title="ACA-08 · 50%">A8</span>
+                <span class="sk-dot demonstrating" title="ACA-09 · 100%">A9</span>
+                <span class="sk-dot demonstrating" title="DEV-01 · 100%">DV</span>
+                <span class="sk-dot demonstrating" title="MBH-03 · 100%">M3</span>
+                <span class="sk-dot demonstrating" title="MBH-05 · 100%">M5</span>
+              </div>
+            </div>
+          </div>
+          <div class="md:w-44 flex md:flex-col gap-2 md:gap-1">
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Emerging</span>
+              <span class="text-[15px] font-semibold md:block" style="color: #fbcfe8;">8</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Approaching</span>
+              <span class="text-[15px] font-semibold md:block text-white">0</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Demonstrating</span>
+              <span class="text-[15px] font-semibold md:block" style="color: var(--d2-mint);">4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain 3 -->
+      <div class="domain-block" style="--c: var(--d3-ice);">
+        <div class="grid md:grid-cols-[1fr_auto] gap-6 items-start">
+          <div class="min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+              <p class="text-[15px] font-semibold text-white">Systems-Level Services</p>
+              <span class="chip" style="color: var(--d1-peach);">35% · Emerging</span>
+              <span class="text-[10px] text-slate-500">8 skills · exam weight 18%</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-fill-current" style="width: 35%;"></div>
+              <div class="bar-baseline-ghost" style="left: 30%;"></div>
+              <div class="bar-target" style="left: 80%;"></div>
+            </div>
+            <div class="flex justify-between text-[9px] text-slate-500 mt-1.5">
+              <span>Baseline 30%</span><span style="color: var(--d2-mint);">Goal 80%</span>
+            </div>
+            <div class="mt-4">
+              <p class="eyebrow mb-2">8 skills</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="sk-dot emerging" title="FAM-03 · 0%">F3</span>
+                <span class="sk-dot emerging" title="SWP-03 · 0%">S3</span>
+                <span class="sk-dot emerging" title="SAF-01 · 33%">SA1</span>
+                <span class="sk-dot emerging" title="SAF-04 · 50%">SA4</span>
+                <span class="sk-dot emerging" title="SWP-02 · 50%">S2</span>
+                <span class="sk-dot emerging" title="SWP-04 · 50%">S4</span>
+                <span class="sk-dot demonstrating" title="FAM-02 · 100%">F2</span>
+                <span class="sk-dot demonstrating" title="SAF-03 · 100%">SA3</span>
+              </div>
+            </div>
+          </div>
+          <div class="md:w-44 flex md:flex-col gap-2 md:gap-1">
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Emerging</span>
+              <span class="text-[15px] font-semibold md:block" style="color: #fbcfe8;">6</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Approaching</span>
+              <span class="text-[15px] font-semibold md:block text-white">0</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Demonstrating</span>
+              <span class="text-[15px] font-semibold md:block" style="color: var(--d2-mint);">2</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain 4 (weakest) -->
+      <div class="domain-block" style="--c: var(--d4-lavender);">
+        <div class="grid md:grid-cols-[1fr_auto] gap-6 items-start">
+          <div class="min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+              <p class="text-[15px] font-semibold text-white">Foundations of School Psychology</p>
+              <span class="chip" style="color: #fbcfe8;">25% · Emerging</span>
+              <span class="text-[10px] text-slate-500">12 skills · exam weight 25% · <span style="color: var(--accent-rose);">weakest</span></span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-fill-current" style="width: 25%;"></div>
+              <div class="bar-baseline-ghost" style="left: 18%;"></div>
+              <div class="bar-target" style="left: 80%;"></div>
+            </div>
+            <div class="flex justify-between text-[9px] text-slate-500 mt-1.5">
+              <span>Baseline 18%</span><span style="color: var(--d2-mint);">Goal 80%</span>
+            </div>
+            <div class="mt-4">
+              <p class="eyebrow mb-2">12 skills</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="sk-dot emerging" title="LEG-01 · 0%">L1</span>
+                <span class="sk-dot emerging" title="LEG-02 · 0%">L2</span>
+                <span class="sk-dot emerging" title="LEG-03 · 0%">L3</span>
+                <span class="sk-dot emerging" title="DIV-01 · 0%">DI1</span>
+                <span class="sk-dot emerging" title="RES-03 · 0%">R3</span>
+                <span class="sk-dot emerging" title="LEG-04 · 50%">L4</span>
+                <span class="sk-dot emerging" title="DIV-03 · 50%">DI3</span>
+                <span class="sk-dot emerging" title="DIV-05 · 50%">DI5</span>
+                <span class="sk-dot emerging" title="ETH-02 · 50%">E2</span>
+                <span class="sk-dot emerging" title="ETH-03 · 50%">E3</span>
+                <span class="sk-dot emerging" title="RES-02 · 50%">R2</span>
+                <span class="sk-dot demonstrating" title="ETH-01 · 100%">E1</span>
+              </div>
+            </div>
+          </div>
+          <div class="md:w-44 flex md:flex-col gap-2 md:gap-1">
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Emerging</span>
+              <span class="text-[15px] font-semibold md:block" style="color: #fbcfe8;">11</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Approaching</span>
+              <span class="text-[15px] font-semibold md:block text-white">0</span>
+            </div>
+            <div class="flex items-baseline justify-between md:block">
+              <span class="text-[10px] text-slate-500 md:block">Demonstrating</span>
+              <span class="text-[15px] font-semibold md:block" style="color: var(--d2-mint);">1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- MOST-MISSED SKILLS (real Carlos data)    -->
+  <!-- ══════════════════════════════════════ -->
+  <section class="glass p-7">
+    <div class="sec-head">
+      <div>
+        <h2>Top recurring errors</h2>
+        <p class="text-[11px] text-slate-500 mt-1">From diagnostic · 12 skills at 0%</p>
+      </div>
+      <button class="btn-ghost">Open in Practice</button>
+    </div>
+    <div>
+      <div class="error-row">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(251,207,232,0.15); color: #fbcfe8; border: 1px solid rgba(251,207,232,0.35);">1</span>
+        <div class="min-w-0">
+          <p class="text-[13.5px] font-semibold text-white">IDEA &amp; FAPE</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">LEG-02 · Foundations · 3 attempts · <span style="color: #fbcfe8;">0% accuracy</span> · avg 13 sec</p>
+          <p class="text-[11.5px] text-slate-400 mt-1 italic">Recurring miss: treating FAPE as optional when the child has a 504 — it isn't.</p>
+        </div>
+        <button class="btn-ghost">Practice →</button>
+      </div>
+      <div class="error-row">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(251,207,232,0.15); color: #fbcfe8; border: 1px solid rgba(251,207,232,0.35);">2</span>
+        <div class="min-w-0">
+          <p class="text-[13.5px] font-semibold text-white">Special Education Law</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">LEG-01 · Foundations · 3 attempts · <span style="color: #fbcfe8;">0% accuracy</span> · avg 6 sec</p>
+          <p class="text-[11.5px] text-slate-400 mt-1 italic">Fast failures suggest guessing rather than reasoning — vocabulary gap.</p>
+        </div>
+        <button class="btn-ghost">Practice →</button>
+      </div>
+      <div class="error-row">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(251,207,232,0.15); color: #fbcfe8; border: 1px solid rgba(251,207,232,0.35);">3</span>
+        <div class="min-w-0">
+          <p class="text-[13.5px] font-semibold text-white">CLD Assessment</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">PSY-04 · Professional · 3 attempts · <span style="color: #fbcfe8;">0% accuracy</span> · avg 3 sec</p>
+          <p class="text-[11.5px] text-slate-400 mt-1 italic">Keeps selecting distractor B — confusing non-discriminatory assessment with accommodations.</p>
+        </div>
+        <button class="btn-ghost">Practice →</button>
+      </div>
+      <div class="error-row">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(251,207,232,0.15); color: #fbcfe8; border: 1px solid rgba(251,207,232,0.35);">4</span>
+        <div class="min-w-0">
+          <p class="text-[13.5px] font-semibold text-white">Score Interpretation</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">PSY-01 · Professional · 3 attempts · <span style="color: #fbcfe8;">0% accuracy</span> · avg 7 sec</p>
+          <p class="text-[11.5px] text-slate-400 mt-1 italic">SEM/confidence-interval logic not yet automatic — concept-relationship gap.</p>
+        </div>
+        <button class="btn-ghost">Practice →</button>
+      </div>
+      <div class="error-row">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(251,207,232,0.15); color: #fbcfe8; border: 1px solid rgba(251,207,232,0.35);">5</span>
+        <div class="min-w-0">
+          <p class="text-[13.5px] font-semibold text-white">Consultation Models</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">CON-01 · Professional · 3 attempts · <span style="color: #fbcfe8;">0% accuracy</span> · avg 4 sec</p>
+          <p class="text-[11.5px] text-slate-400 mt-1 italic">Caplan / Behavioral / Conjoint — not distinguishing the models.</p>
+        </div>
+        <button class="btn-ghost">Practice →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- ADVANCED ANALYTICS (assumed)            -->
+  <!-- ══════════════════════════════════════ -->
+  <section class="grid md:grid-cols-2 gap-4">
+
+    <div class="glass p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="eyebrow" style="color: var(--d3-ice);">Confidence calibration</p>
+          <p class="text-[11px] text-slate-500 mt-1">How often your confidence matches your accuracy <span class="assumed">ASSUMED</span></p>
+        </div>
+      </div>
+      <div class="space-y-3 text-[12.5px]">
+        <div>
+          <div class="flex justify-between mb-1"><span class="text-slate-400">Low confidence / correct</span><span class="text-white font-semibold">22%</span></div>
+          <div class="h-1.5 rounded-full bg-white/5"><div class="h-1.5 rounded-full" style="width: 22%; background: var(--d3-ice);"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="text-slate-400">High confidence / wrong <span class="text-[10px] text-slate-500">(overconfidence)</span></span><span class="text-white font-semibold">18%</span></div>
+          <div class="h-1.5 rounded-full bg-white/5"><div class="h-1.5 rounded-full" style="width: 18%; background: #fbcfe8;"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="text-slate-400">Well-calibrated</span><span class="text-white font-semibold">60%</span></div>
+          <div class="h-1.5 rounded-full bg-white/5"><div class="h-1.5 rounded-full" style="width: 60%; background: var(--d2-mint);"></div></div>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-500 mt-4 italic">Your overconfidence is concentrated in LEG — you're sure of wrong answers. Slow down there.</p>
+    </div>
+
+    <div class="glass p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="eyebrow" style="color: var(--d1-peach);">Response time</p>
+          <p class="text-[11px] text-slate-500 mt-1">From diagnostic · real data</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4 text-[12.5px]">
+        <div>
+          <p class="text-[10px] text-slate-500">Median</p>
+          <p class="text-[20px] font-semibold text-white">6<span class="text-sm text-slate-500">s</span></p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-500">Slowest skill</p>
+          <p class="text-[15px] font-semibold text-white">DBD-01</p>
+          <p class="text-[10px] text-slate-500">36 sec avg</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-500">Fastest skill</p>
+          <p class="text-[15px] font-semibold text-white">ACA-07</p>
+          <p class="text-[10px] text-slate-500">0 sec avg</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-500">Rapid errors</p>
+          <p class="text-[15px] font-semibold" style="color: #fbcfe8;">7 skills</p>
+          <p class="text-[10px] text-slate-500">&lt; 5s and wrong</p>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-500 mt-4 italic">Fast wrong answers are often vocabulary gaps, not reasoning gaps. Front-load vocab before cases.</p>
+    </div>
+
+    <div class="glass p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="eyebrow" style="color: var(--d2-mint);">Knowledge type mix</p>
+          <p class="text-[11px] text-slate-500 mt-1">Where accuracy breaks down by Bloom-style</p>
+        </div>
+      </div>
+      <div class="space-y-3 text-[12.5px]">
+        <div>
+          <div class="flex justify-between mb-1"><span class="text-slate-400">Definition</span><span class="text-white font-semibold">40%</span></div>
+          <div class="h-1.5 rounded-full bg-white/5"><div class="h-1.5 rounded-full" style="width: 40%; background: var(--d3-ice);"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="text-slate-400">Procedure</span><span class="text-white font-semibold">22%</span></div>
+          <div class="h-1.5 rounded-full bg-white/5"><div class="h-1.5 rounded-full" style="width: 22%; background: #fbcfe8;"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="text-slate-400">Concept-relationship</span><span class="text-white font-semibold">38%</span></div>
+          <div class="h-1.5 rounded-full bg-white/5"><div class="h-1.5 rounded-full" style="width: 38%; background: var(--d4-lavender);"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="text-slate-400">Application</span><span class="text-white font-semibold">33%</span></div>
+          <div class="h-1.5 rounded-full bg-white/5"><div class="h-1.5 rounded-full" style="width: 33%; background: var(--d1-peach);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="eyebrow" style="color: var(--d4-lavender);">Distractor patterns</p>
+          <p class="text-[11px] text-slate-500 mt-1">Which wrong answers pull you most</p>
+        </div>
+      </div>
+      <div class="space-y-2 text-[12.5px]">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Procedural-only distractors</span>
+          <span class="chip" style="color: #fbcfe8;">38%</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">"All of the above"-style</span>
+          <span class="chip" style="color: var(--d1-peach);">22%</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Plausible-but-wrong law cites</span>
+          <span class="chip" style="color: #fbcfe8;">18%</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Unrelated-topic wrong answers</span>
+          <span class="chip" style="color: var(--d2-mint);">4%</span>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-500 mt-4 italic">You almost never pick unrelated answers — good signal. Your error is over-selecting "procedural" options where a substantive one is correct.</p>
+    </div>
+
+  </section>
+
+  <!-- Design callouts -->
+  <section class="glass-deep p-7">
+    <div class="mb-5">
+      <p class="eyebrow mb-1" style="color: var(--d1-peach);">For your review · Full Report</p>
+      <h3 class="text-lg font-semibold text-white">What I changed here</h3>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3 text-[12px] text-slate-300 leading-relaxed">
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Each stat card has a color-stripe top.</p>
+        Peach/mint/ice/lavender at the top edge, with a soft glow. You can scan the row and know which domain or category each number belongs to.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Baseline ghost + goal marker on every bar.</p>
+        One filled bar (current), one faint vertical line (baseline), one mint vertical line (80% goal). Replaces the three overlapping elements in the current design.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Skill dots use short codes, not just color.</p>
+        Each dot shows its skill code ("L2", "P4") in miniature. Same color semantics as before (rose=emerging, peach=approaching, mint=demonstrating), but now you can point and say "what's L2".
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Top errors are narrative, not just numbers.</p>
+        Each of the 5 includes a one-liner diagnosis: "treating FAPE as optional when the child has a 504," "confusing non-discriminatory assessment with accommodations." The report teaches, not just reports.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Assumption badges are inline, not hidden.</p>
+        Every post-diagnostic number (streak, growth, study time) carries an <span class="assumed">ASSUMED</span> chip. Once practice data populates, the chips disappear on their own.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Advanced analytics is a 2×2 grid of its own.</p>
+        Confidence, time, knowledge type, distractor patterns — each in a small glass card with a short interpretive line at the bottom. No collapsible drawer anymore.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="relative z-10 text-center py-8">
+  <p class="text-[10px] text-slate-700 tracking-[0.25em] uppercase">PASS · Beta · 2026</p>
+</footer>
+
+</body>
+</html>

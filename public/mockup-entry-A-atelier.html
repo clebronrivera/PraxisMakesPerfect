@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS — Praxis 5403 · The Atelier</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-950: #03070e;
+    --navy-900: #060d1a;
+    --navy-800: #0a1628;
+    --navy-700: #0f1e38;
+    --d1: #fcd5b4;
+    --d2: #b8f2d8;
+    --d3: #cde9f5;
+    --d4: #d8d5fc;
+  }
+  html, body {
+    background: var(--navy-900);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #e2e8f0;
+  }
+
+  /* ───────── Starfield ───────── */
+  .starfield {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(252, 213, 180, 0.55), transparent 40%),
+      radial-gradient(1px 1px at 82% 15%, rgba(216, 213, 252, 0.50), transparent 40%),
+      radial-gradient(1px 1px at 55% 65%, rgba(187, 247, 208, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 30% 80%, rgba(254, 243, 199, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 92% 55%, rgba(251, 207, 232, 0.55), transparent 40%),
+      radial-gradient(1px 1px at 8% 55%, rgba(216, 213, 252, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 48% 12%, rgba(255, 243, 222, 0.5), transparent 40%),
+      radial-gradient(1px 1px at 70% 90%, rgba(252, 213, 180, 0.45), transparent 40%);
+    animation: starfield-drift 26s linear infinite;
+  }
+  @keyframes starfield-drift { 0% { transform: translateY(0); } 100% { transform: translateY(-30px); } }
+
+  /* ───────── Mini orb ───────── */
+  .mini-orb {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255, 243, 222, 1) 0%,
+      rgba(252, 213, 180, 0.85) 25%,
+      rgba(251, 207, 232, 0.55) 55%,
+      rgba(216, 213, 252, 0.25) 100%);
+    box-shadow: 0 0 20px rgba(252, 213, 180, 0.4), 0 0 40px rgba(216, 213, 252, 0.25);
+    animation: mini-pulse 3.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes mini-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.96; }
+    50%      { transform: scale(1.04); opacity: 1; }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     Adaptive engine — sized by JS to match left-column text height
+     (capped at 460 at desktop / 360 on mobile)
+     ───────────────────────────────────────────────────────────────── */
+  .engine-box {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+  }
+
+  /* Ambient halo */
+  .engine-orb-halo {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 58%; height: 58%;
+    margin-top: -29%; margin-left: -29%;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(252, 213, 180, 0.12) 0%,
+      rgba(216, 213, 252, 0.08) 40%,
+      transparent 70%);
+    filter: blur(18px);
+    animation: halo-breathe 6s ease-in-out infinite;
+  }
+  @keyframes halo-breathe {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.05); }
+  }
+
+  /* Morphing orb */
+  .engine-orb {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 39%; height: 39%;
+    margin-top: -19.5%; margin-left: -19.5%;
+    background: radial-gradient(circle at 50% 42%,
+      rgba(255, 243, 222, 0.95) 0%,
+      rgba(252, 213, 180, 0.75) 22%,
+      rgba(251, 207, 232, 0.50) 50%,
+      rgba(216, 213, 252, 0.28) 75%,
+      rgba(6, 13, 26, 0) 100%);
+    filter: blur(0.5px);
+    box-shadow:
+      0 0 50px rgba(252, 213, 180, 0.28),
+      0 0 100px rgba(216, 213, 252, 0.18),
+      inset 0 0 50px rgba(255, 243, 222, 0.28);
+    border-radius: 58% 42% 40% 60% / 50% 55% 45% 50%;
+    animation:
+      orb-morph 16s ease-in-out infinite,
+      orb-breathe 4s ease-in-out infinite;
+  }
+  @keyframes orb-morph {
+    0%   { border-radius: 58% 42% 40% 60% / 50% 55% 45% 50%; }
+    20%  { border-radius: 42% 58% 55% 45% / 58% 45% 52% 48%; }
+    40%  { border-radius: 48% 52% 60% 40% / 45% 58% 42% 55%; }
+    60%  { border-radius: 55% 45% 45% 55% / 52% 48% 55% 45%; }
+    80%  { border-radius: 45% 55% 48% 52% / 48% 55% 50% 50%; }
+    100% { border-radius: 58% 42% 40% 60% / 50% 55% 45% 50%; }
+  }
+  @keyframes orb-breathe {
+    0%, 100% { transform: scale(1);    opacity: 0.95; }
+    50%      { transform: scale(1.035); opacity: 1; }
+  }
+  .engine-orb-inner {
+    position: absolute; inset: 28%;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 243, 222, 0.6)  35%,
+      rgba(252, 213, 180, 0.28) 75%,
+      transparent 100%);
+    filter: blur(2px);
+    animation: orb-breathe 5.2s ease-in-out infinite reverse;
+  }
+  .orb-flash {
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at center, var(--flash-color, #fff) 0%, transparent 62%);
+    mix-blend-mode: screen;
+  }
+  .orb-flash.flashing { animation: orb-flash 480ms ease-out; }
+  @keyframes orb-flash {
+    0%   { opacity: 0;    transform: scale(0.9); }
+    18%  { opacity: 0.55; transform: scale(1.05); }
+    100% { opacity: 0;    transform: scale(1); }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     Domain pills — color IS the pill; each drifts gently
+     ───────────────────────────────────────────────────────────────── */
+  .domain-pill {
+    position: absolute;
+    width: 37%;           /* responsive within engine-box */
+    max-width: 180px;
+    min-width: 140px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(var(--pc-rgb), 0.08);
+    border: 1px solid rgba(var(--pc-rgb), 0.35);
+    backdrop-filter: blur(12px);
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* Per-pill composed animations: glow + unique drift phase. */
+  .pill-d1 { top: 3%;    left: 0;    animation: pill-glow 3.4s ease-in-out infinite, drift-a 11s ease-in-out infinite; }
+  .pill-d2 { top: 3%;    right: 0;   animation: pill-glow 3.4s ease-in-out infinite, drift-b 9.5s  ease-in-out infinite; }
+  .pill-d3 { bottom: 3%; right: 0;   animation: pill-glow 3.4s ease-in-out infinite, drift-c 12s ease-in-out infinite; }
+  .pill-d4 { bottom: 3%; left: 0;    animation: pill-glow 3.4s ease-in-out infinite, drift-d 10s ease-in-out infinite; }
+
+  @keyframes pill-glow {
+    0%, 100% {
+      box-shadow:
+        0 0 18px rgba(var(--pc-rgb), 0.14),
+        0 0 34px rgba(var(--pc-rgb), 0.08),
+        inset 0 0 14px rgba(var(--pc-rgb), 0.06);
+      border-color: rgba(var(--pc-rgb), 0.30);
+    }
+    50% {
+      box-shadow:
+        0 0 26px rgba(var(--pc-rgb), 0.30),
+        0 0 52px rgba(var(--pc-rgb), 0.16),
+        inset 0 0 18px rgba(var(--pc-rgb), 0.10);
+      border-color: rgba(var(--pc-rgb), 0.58);
+    }
+  }
+  /* Each drift pattern is small (±5px) and slow so connection lines still read as attached. */
+  @keyframes drift-a { 0%,100% { translate: 0 0; } 33% { translate:  4px -3px; } 66% { translate: -3px  2px; } }
+  @keyframes drift-b { 0%,100% { translate: 0 0; } 33% { translate: -4px -2px; } 66% { translate:  2px  3px; } }
+  @keyframes drift-c { 0%,100% { translate: 0 0; } 33% { translate: -3px  3px; } 66% { translate:  4px -2px; } }
+  @keyframes drift-d { 0%,100% { translate: 0 0; } 33% { translate:  3px  2px; } 66% { translate: -2px -3px; } }
+
+  .pill-name {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #f8fafc;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    /* Reserve 2 lines so short labels (e.g. "Foundations") don't shrink
+       the pill relative to longer ones — keeps all four visually identical. */
+    min-height: 2.4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pill-count {
+    display: block;
+    font-size: 9px;
+    color: rgba(var(--pc-rgb), 0.9);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* ───────── Particles ───────── */
+  .particle {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: particle-flow 1800ms cubic-bezier(0.4, 0, 0.15, 1) forwards;
+  }
+  @keyframes particle-flow {
+    0%   { opacity: 0; transform: translate(var(--from-x), var(--from-y)) scale(0.6); }
+    18%  { opacity: 1; }
+    88%  { opacity: 0.9; }
+    100% { opacity: 0; transform: translate(var(--to-x), var(--to-y)) scale(0.2); }
+  }
+
+  .engine-caption {
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    top: calc(50% + 26%);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* ───────── Connection lines (dynamic, breathing) ───────── */
+  .line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-width: 1;
+    opacity: 0.5;
+    vector-effect: non-scaling-stroke;
+    animation: line-breathe 3.6s ease-in-out infinite;
+  }
+  .line.l1 { animation-delay: 0s;    }
+  .line.l2 { animation-delay: -0.9s; }
+  .line.l3 { animation-delay: -1.8s; }
+  .line.l4 { animation-delay: -2.7s; }
+
+  /* When a domain is "hot" (user answering in that area), its line pulses
+     stronger — comes out bright, retreats, comes up again. */
+  .line.active {
+    animation: line-active 1.8s ease-in-out infinite;
+  }
+
+  @keyframes line-breathe {
+    0%, 100% { stroke-width: 0.6; opacity: 0.30; }
+    50%      { stroke-width: 1.8; opacity: 0.75; }
+  }
+  @keyframes line-active {
+    0%, 100% { stroke-width: 1.2; opacity: 0.55; }
+    35%      { stroke-width: 3.2; opacity: 1;    }
+    65%      { stroke-width: 2.2; opacity: 0.85; }
+  }
+
+  /* ───────── Typography + buttons ───────── */
+  .gradient-text {
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .btn-soft-glow {
+    padding: 14px 32px; border-radius: 999px;
+    font-weight: 600; font-size: 15px; letter-spacing: 0.01em;
+    color: #1e1b3a;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow:
+      0 0 30px rgba(252, 213, 180, 0.35),
+      0 8px 24px -6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+  .btn-soft-glow:hover { transform: translateY(-1px); box-shadow: 0 0 40px rgba(252, 213, 180, 0.5), 0 12px 30px -6px rgba(0,0,0,0.5); }
+  .btn-ghost {
+    padding: 14px 22px; border-radius: 999px;
+    font-weight: 500; font-size: 14px;
+    color: #cbd5e1;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .btn-ghost:hover { color: white; border-color: rgba(252,213,180,0.4); }
+
+  /* ───────── Sign-in card ───────── */
+  .glass-card {
+    background: rgba(10, 22, 40, 0.55);
+    border: 1px solid rgba(226, 232, 240, 0.08);
+    backdrop-filter: blur(14px);
+    border-radius: 20px;
+  }
+  .field-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(6, 13, 26, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.12);
+    color: #f1f5f9;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: rgba(252, 213, 180, 0.5);
+    box-shadow: 0 0 0 3px rgba(252, 213, 180, 0.12);
+  }
+  .field-input::placeholder { color: rgba(148, 163, 184, 0.5); }
+
+  /* ───────── View switcher ───────── */
+  .view {
+    position: absolute; inset: 0;
+    min-height: 100vh;
+    opacity: 1;
+    transition: opacity 0.45s ease;
+  }
+  .view.hidden-view {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ───────── Mobile tuning ───────── */
+  @media (max-width: 767px) {
+    .engine-box { max-width: 340px; }
+    .domain-pill { min-width: 115px; padding: 8px 10px; }
+    .pill-name { font-size: 10px; }
+    .pill-count { font-size: 8px; letter-spacing: 0.14em; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ══════ Top bar (persistent) ══════ -->
+  <div class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-5">
+    <a href="#" data-goto="hero" class="flex items-center gap-3 cursor-pointer">
+      <div class="mini-orb"></div>
+      <div>
+        <p class="text-sm font-bold text-white tracking-wide">PASS</p>
+        <p class="text-[10px] tracking-[0.22em] uppercase text-slate-500 hidden sm:block">Platform for Adaptive Study Sessions</p>
+      </div>
+    </a>
+    <div class="flex items-center gap-4 md:gap-5">
+      <span class="text-[10px] tracking-[0.25em] uppercase text-slate-500 hidden sm:inline">Praxis 5403 · Beta</span>
+      <a href="#" data-goto="signin" class="text-sm text-slate-300 hover:text-white transition cursor-pointer">Sign in</a>
+    </div>
+  </div>
+
+  <!-- ══════ VIEW: HERO ══════ -->
+  <div id="view-hero" class="view">
+    <div class="starfield"></div>
+
+    <div class="min-h-screen flex items-center px-6 md:px-10 py-24 md:py-28 relative z-30">
+      <div class="max-w-6xl w-full mx-auto grid md:grid-cols-[1fr_1fr] gap-8 md:gap-10 items-stretch">
+
+        <!-- Left — copy -->
+        <div id="hero-text" class="flex flex-col justify-center text-left">
+          <p class="text-[11px] font-semibold tracking-[0.32em] uppercase text-[color:var(--d1)]/85 mb-5">
+            Adaptive · Personal · Built around your gaps
+          </p>
+          <h1 class="text-4xl sm:text-5xl md:text-6xl font-semibold text-white leading-[1.05] tracking-tight">
+            A study plan<br />
+            <span class="gradient-text">that listens.</span>
+          </h1>
+          <p class="text-base text-slate-400 mt-5 leading-relaxed max-w-md">
+            Four domains. 45 skills. 1,150 calibrated items — feeding one adaptive
+            engine that reshapes itself around your gaps, one answer at a time.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 md:gap-4 mt-8">
+            <button class="btn-soft-glow">Begin your diagnostic  →</button>
+            <button class="btn-ghost" data-goto="signin">I have an account</button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-8 text-[11px] text-slate-500">
+            <span><span class="text-[color:var(--d1)] font-semibold">4</span> domains</span>
+            <span class="text-slate-700">·</span>
+            <span><span class="text-[color:var(--d2)] font-semibold">45</span> skills</span>
+            <span class="text-slate-700">·</span>
+            <span><span class="text-[color:var(--d3)] font-semibold">1,150</span> calibrated items</span>
+            <span class="text-slate-700">·</span>
+            <span><span class="text-[color:var(--d4)] font-semibold">2PL</span> IRT model</span>
+          </div>
+        </div>
+
+        <!-- Right — engine -->
+        <div class="flex items-center justify-center md:justify-end">
+          <div id="engine" class="engine-box">
+
+            <!-- Connection paths (viewBox units; start at pill edge, end at orb center) -->
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" style="pointer-events: none;">
+              <defs>
+                <linearGradient id="pathD1" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%"   stop-color="#fcd5b4" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#fcd5b4" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="pathD2" x1="1" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stop-color="#b8f2d8" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#b8f2d8" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="pathD3" x1="1" y1="1" x2="0" y2="0">
+                  <stop offset="0%"   stop-color="#cde9f5" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#cde9f5" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="pathD4" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0%"   stop-color="#d8d5fc" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#d8d5fc" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Paths are drawn from the CENTER of each pill to the orb center,
+                   and refreshed every frame by JS so they track the pills as they drift. -->
+              <path id="line-d1" class="line l1" stroke="url(#pathD1)" d="M 18 9 Q 34 30, 50 50"/>
+              <path id="line-d2" class="line l2" stroke="url(#pathD2)" d="M 82 9 Q 66 30, 50 50"/>
+              <path id="line-d3" class="line l3" stroke="url(#pathD3)" d="M 82 91 Q 66 70, 50 50"/>
+              <path id="line-d4" class="line l4" stroke="url(#pathD4)" d="M 18 91 Q 34 70, 50 50"/>
+            </svg>
+
+            <!-- Orb -->
+            <div class="engine-orb-halo"></div>
+            <div class="engine-orb">
+              <div class="engine-orb-inner"></div>
+              <div class="orb-flash" id="orbFlash"></div>
+            </div>
+
+            <!-- Particle layer -->
+            <div id="particles" class="absolute inset-0 pointer-events-none"></div>
+
+            <!-- Domain pills -->
+            <div class="domain-pill pill-d1" style="--pc-rgb: 252, 213, 180">
+              <span class="pill-name">Professional Practices</span>
+              <span class="pill-count">13 skills</span>
+            </div>
+            <div class="domain-pill pill-d2" style="--pc-rgb: 184, 242, 216">
+              <span class="pill-name">Student-Level Services</span>
+              <span class="pill-count">12 skills</span>
+            </div>
+            <div class="domain-pill pill-d3" style="--pc-rgb: 205, 233, 245">
+              <span class="pill-name">Systems-Level Services</span>
+              <span class="pill-count">8 skills</span>
+            </div>
+            <div class="domain-pill pill-d4" style="--pc-rgb: 216, 213, 252">
+              <span class="pill-name">Foundations</span>
+              <span class="pill-count">12 skills</span>
+            </div>
+
+            <!-- Caption -->
+            <div class="engine-caption">
+              <p class="text-[10px] tracking-[0.32em] uppercase text-slate-500">The Adaptive Engine</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ VIEW: SIGN IN ══════ -->
+  <div id="view-signin" class="view hidden-view">
+    <div class="starfield" style="opacity: 0.55"></div>
+
+    <div class="min-h-screen flex items-center justify-center px-6 md:px-10 py-24 md:py-28 relative z-30">
+      <div class="max-w-md w-full">
+
+        <div class="mb-5">
+          <button data-goto="hero" class="text-[11px] tracking-[0.2em] uppercase text-slate-500 hover:text-white transition cursor-pointer">
+            ← Back to home
+          </button>
+        </div>
+
+        <div class="glass-card p-8 md:p-10">
+          <div class="flex justify-center mb-6">
+            <div class="mini-orb" style="width: 56px; height: 56px;"></div>
+          </div>
+          <div class="text-center mb-8">
+            <p class="text-[11px] font-semibold tracking-[0.28em] uppercase text-[color:var(--d1)]/85 mb-2">
+              Welcome back
+            </p>
+            <h3 class="text-2xl font-semibold text-white">Pick up where you left off.</h3>
+            <p class="text-sm text-slate-400 mt-2">Your diagnostic, study plan, and redemption queue are saved.</p>
+          </div>
+
+          <form class="space-y-4" onsubmit="event.preventDefault()">
+            <div>
+              <label class="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
+              <input type="email" class="field-input" placeholder="you@example.com" />
+            </div>
+            <div>
+              <div class="flex items-baseline justify-between mb-2">
+                <label class="text-[11px] font-medium tracking-wider uppercase text-slate-400">Password</label>
+                <a class="text-[11px] text-[color:var(--d1)] hover:underline" href="#">Forgot?</a>
+              </div>
+              <input type="password" class="field-input" placeholder="At least 6 characters" />
+            </div>
+            <button class="btn-soft-glow w-full mt-2">Sign in  →</button>
+          </form>
+
+          <div class="flex items-center gap-3 my-6">
+            <div class="flex-1 h-px bg-slate-700/40"></div>
+            <span class="text-[10px] tracking-widest uppercase text-slate-600">or</span>
+            <div class="flex-1 h-px bg-slate-700/40"></div>
+          </div>
+
+          <button class="w-full py-3 rounded-xl text-sm font-medium text-slate-300 border border-slate-700/50 hover:border-[color:var(--d1)]/50 hover:text-white transition">
+            Create an account
+          </button>
+
+          <p class="text-center text-[11px] text-slate-600 mt-6 leading-relaxed">
+            By continuing you agree to our <a class="text-slate-400 hover:text-[color:var(--d1)] underline underline-offset-2" href="#">Terms</a> and
+            <a class="text-slate-400 hover:text-[color:var(--d1)] underline underline-offset-2" href="#">Privacy Policy</a>.
+          </p>
+        </div>
+
+        <p class="text-center text-[10px] text-slate-700 mt-6 tracking-wider uppercase">
+          PASS · Beta · 2026
+        </p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ─── View switcher (hero ↔ signin) ───────────────────────────────────────
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.add('hidden-view'));
+    document.getElementById(id).classList.remove('hidden-view');
+  }
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      showView('view-' + el.dataset.goto);
+    });
+  });
+
+  // ─── Size the engine-box to match left-column text height ───────────────
+  // Keeps the whole orb+pills visual within the vertical bounds of the copy.
+  function resizeEngine() {
+    const text = document.getElementById('hero-text');
+    const engine = document.getElementById('engine');
+    if (!text || !engine) return;
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    const cap = isMobile ? 340 : 460;
+    const h = text.offsetHeight;
+    const size = Math.max(260, Math.min(h, cap));
+    engine.style.maxWidth = size + 'px';
+  }
+  window.addEventListener('load', resizeEngine);
+  window.addEventListener('resize', resizeEngine);
+  // Run once after fonts / layout settle
+  setTimeout(resizeEngine, 80);
+
+  // ─── Engine particle stream + reactive orb flash ─────────────────────────
+  const DOMAINS = [
+    { key: 'd1', color: '#fcd5b4', pillSelector: '.pill-d1', lineId: 'line-d1' },
+    { key: 'd2', color: '#b8f2d8', pillSelector: '.pill-d2', lineId: 'line-d2' },
+    { key: 'd3', color: '#cde9f5', pillSelector: '.pill-d3', lineId: 'line-d3' },
+    { key: 'd4', color: '#d8d5fc', pillSelector: '.pill-d4', lineId: 'line-d4' },
+  ];
+  const CENTER_PCT = [50, 50];
+
+  // Read the live center of a pill (accounting for CSS drift) in % of engine-box.
+  function pillCenterPct(selector) {
+    const box = document.getElementById('engine');
+    const pill = document.querySelector(selector);
+    if (!box || !pill) return [50, 50];
+    const b = box.getBoundingClientRect();
+    const p = pill.getBoundingClientRect();
+    const cx = (p.left + p.width / 2 - b.left) / b.width * 100;
+    const cy = (p.top  + p.height / 2 - b.top)  / b.height * 100;
+    return [cx, cy];
+  }
+
+  // ─── Dynamic lines: pill-center → orb-center, updated every frame ────────
+  // Lines visibly drift with their pills so the coupling reads as intentional.
+  function updateLines() {
+    DOMAINS.forEach(d => {
+      const [px, py] = pillCenterPct(d.pillSelector);
+      const [cx, cy] = CENTER_PCT;
+      // Quadratic control point biased toward the center axis for a gentle curve.
+      const mx = (px + cx) / 2;
+      const my = (py + cy) / 2;
+      const ctrlX = mx + (cx - mx) * 0.22;
+      const ctrlY = my + (cy - my) * 0.22;
+      const path = document.getElementById(d.lineId);
+      if (path) path.setAttribute('d', `M ${px.toFixed(2)} ${py.toFixed(2)} Q ${ctrlX.toFixed(2)} ${ctrlY.toFixed(2)}, ${cx} ${cy}`);
+    });
+    requestAnimationFrame(updateLines);
+  }
+  requestAnimationFrame(updateLines);
+
+  // ─── "Hot" domain cycle — simulates the user answering in a given area.
+  // Every ~5s we promote one domain's line to the strong `active` pulse and
+  // fire a small burst of particles. In the real app this would be driven by
+  // per-answer events instead of a timer. ──────────────────────────────────
+  let hotIdx = -1;
+  function cycleHot() {
+    document.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+    hotIdx = (hotIdx + 1) % DOMAINS.length;
+    const d = DOMAINS[hotIdx];
+    const line = document.getElementById(d.lineId);
+    if (line) line.classList.add('active');
+    // Short burst of extra particles to reinforce the "hot" signal.
+    for (let i = 0; i < 3; i++) setTimeout(() => spawnParticle(d), i * 350);
+  }
+  setTimeout(cycleHot, 800);
+  setInterval(cycleHot, 5200);
+
+  function pctToPx(px, py) {
+    const box = document.getElementById('engine');
+    const r = box.getBoundingClientRect();
+    return [(px / 100) * r.width, (py / 100) * r.height];
+  }
+
+  function flashOrb(color) {
+    const f = document.getElementById('orbFlash');
+    if (!f) return;
+    f.style.setProperty('--flash-color', color);
+    f.classList.remove('flashing');
+    void f.offsetWidth;
+    f.classList.add('flashing');
+  }
+
+  const PARTICLE_MS = 1800;
+  function spawnParticle(domain) {
+    const layer = document.getElementById('particles');
+    if (!layer) return;
+    // Start from the pill's live center (picks up drift offset automatically).
+    const [fpx, fpy] = pillCenterPct(domain.pillSelector);
+    const [fx, fy] = pctToPx(fpx, fpy);
+    const [tx, ty] = pctToPx(...CENTER_PCT);
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.background = domain.color;
+    p.style.boxShadow = `0 0 6px ${domain.color}, 0 0 12px ${domain.color}`;
+    p.style.setProperty('--from-x', fx + 'px');
+    p.style.setProperty('--from-y', fy + 'px');
+    p.style.setProperty('--to-x',   tx + 'px');
+    p.style.setProperty('--to-y',   ty + 'px');
+    layer.appendChild(p);
+    setTimeout(() => flashOrb(domain.color), PARTICLE_MS - 250);
+    setTimeout(() => p.remove(), PARTICLE_MS + 200);
+  }
+
+  DOMAINS.forEach((d, i) => {
+    const start = i * 450;
+    setTimeout(() => {
+      spawnParticle(d);
+      setInterval(() => spawnParticle(d), 1800);
+    }, start);
+  });
+  setInterval(() => DOMAINS.forEach(d => spawnParticle(d)), 7200);
+</script>
+
+</body>
+</html>

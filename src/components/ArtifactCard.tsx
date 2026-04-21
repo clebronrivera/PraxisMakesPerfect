@@ -5,9 +5,12 @@
 import { useState } from 'react';
 import { Download, FileText, Printer, CheckCircle, Circle } from 'lucide-react';
 
+type ArtifactVariant = 'atelier' | 'editorial';
+
 interface ArtifactCardProps {
   type: string;
   payload: Record<string, unknown>;
+  variant?: ArtifactVariant;
 }
 
 /** Safely extract an array field from payload. Returns [] if missing or wrong type. */
@@ -203,7 +206,15 @@ function isArtifactEmpty(type: string, payload: Record<string, unknown>): boolea
   return false;
 }
 
-function EmptyArtifactNotice({ type }: { type: string }) {
+function EmptyArtifactNotice({ type, variant = 'editorial' }: { type: string; variant?: ArtifactVariant }) {
+  if (variant === 'atelier') {
+    return (
+      <div className="mt-1 p-4 text-center text-sm rounded-xl border border-dashed border-[color:var(--d1-peach)]/40 bg-[color:var(--d1-peach)]/8 text-[color:var(--d1-peach)]">
+        <p className="font-medium">No content could be generated for this {formatType(type).toLowerCase()}.</p>
+        <p className="text-xs text-slate-400 mt-1">Try asking about a different skill or topic.</p>
+      </div>
+    );
+  }
   return (
     <div className="mt-1 p-4 text-center text-sm text-amber-700 bg-amber-50 rounded-lg border border-dashed border-amber-300">
       <p className="font-medium">No content could be generated for this {formatType(type).toLowerCase()}.</p>
@@ -214,11 +225,11 @@ function EmptyArtifactNotice({ type }: { type: string }) {
 
 // ─── Sub-renderers ────────────────────────────────────────────────────────────
 
-function PracticeSetRenderer({ payload }: { payload: Record<string, unknown> }) {
+function PracticeSetRenderer({ payload, variant = 'editorial' }: { payload: Record<string, unknown>; variant?: ArtifactVariant }) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const qs = safeArray<PracticeSetQuestion>(payload.questions);
 
-  if (qs.length === 0) return <EmptyArtifactNotice type="practice-set" />;
+  if (qs.length === 0) return <EmptyArtifactNotice type="practice-set" variant={variant} />;
 
   const toggle = (i: number) => {
     setRevealed(prev => {
@@ -228,22 +239,36 @@ function PracticeSetRenderer({ payload }: { payload: Record<string, unknown> }) 
     });
   };
 
+  const isA = variant === 'atelier';
+  const cardCls = isA
+    ? 'border border-white/8 rounded-xl p-3 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px]'
+    : 'border border-amber-200 rounded-lg p-3 bg-white';
+  const skillCls = isA
+    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] mb-1 text-[color:var(--d1-peach)]'
+    : 'text-xs font-semibold text-amber-700 mb-1';
+  const stemCls = isA ? 'text-sm text-white mb-2 leading-snug' : 'text-sm text-stone-800 mb-2 leading-snug';
+  const choiceCls = isA ? 'text-sm text-slate-300' : 'text-sm text-stone-700';
+  const revealCls = isA
+    ? 'flex items-center gap-1.5 text-xs transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] rounded text-[color:var(--d1-peach)]'
+    : 'flex items-center gap-1.5 text-xs text-amber-700 hover:text-amber-900 transition-colors';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+
   return (
     <div className="space-y-3 mt-1">
       {qs.slice(0, 4).map((q, i) => (
-        <div key={q.id} className="border border-amber-200 rounded-lg p-3 bg-white">
-          <p className="text-xs font-semibold text-amber-700 mb-1">{q.skillName}</p>
-          <p className="text-sm text-stone-800 mb-2 leading-snug">{q.stem}</p>
+        <div key={q.id} className={cardCls}>
+          <p className={skillCls}>{q.skillName}</p>
+          <p className={stemCls}>{q.stem}</p>
           <ul className="space-y-1 mb-2">
             {q.choices.map(c => (
-              <li key={c.label} className="text-sm text-stone-700">
+              <li key={c.label} className={choiceCls}>
                 <span className="font-semibold">{c.label}.</span> {c.text}
               </li>
             ))}
           </ul>
           <button
             onClick={() => toggle(i)}
-            className="flex items-center gap-1.5 text-xs text-amber-700 hover:text-amber-900 transition-colors"
+            className={revealCls}
           >
             {revealed.has(i) ? <CheckCircle className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
             {revealed.has(i) ? `Answer: ${q.correctAnswer}` : 'Reveal answer'}
@@ -251,18 +276,18 @@ function PracticeSetRenderer({ payload }: { payload: Record<string, unknown> }) 
         </div>
       ))}
       {qs.length > 4 && (
-        <p className="text-xs text-amber-700">+{qs.length - 4} more questions in print / download</p>
+        <p className={moreCls}>+{qs.length - 4} more questions in print / download</p>
       )}
     </div>
   );
 }
 
-function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) {
+function FillInBlankRenderer({ payload, variant = 'editorial' }: { payload: Record<string, unknown>; variant?: ArtifactVariant }) {
   const sentences = safeArray<FillInBlankSentence>(payload.sentences);
   const wordBank = safeArray<string>(payload.wordBank);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
-  if (sentences.length === 0) return <EmptyArtifactNotice type="fill-in-blank" />;
+  if (sentences.length === 0) return <EmptyArtifactNotice type="fill-in-blank" variant={variant} />;
 
   const toggle = (i: number) => {
     setRevealed(prev => {
@@ -272,15 +297,28 @@ function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) 
     });
   };
 
+  const isA = variant === 'atelier';
+  const bankCls = isA
+    ? 'rounded-xl p-2.5 text-xs border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 text-slate-200'
+    : 'bg-amber-100 rounded-lg p-2 text-xs text-amber-800';
+  const sentenceCls = isA ? 'text-sm text-slate-200 leading-relaxed' : 'text-sm text-stone-800 leading-relaxed';
+  const blankRevealedCls = isA
+    ? 'border-[color:var(--d2-mint)] text-[color:var(--d2-mint)]'
+    : 'border-green-500 text-green-700';
+  const blankIdleCls = isA
+    ? 'border-[color:var(--d1-peach)] text-[color:var(--d1-peach)] hover:text-white hover:border-white'
+    : 'border-amber-500 text-amber-500 hover:border-amber-700';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+
   return (
     <div className="mt-1 space-y-3">
-      <div className="bg-amber-100 rounded-lg p-2 text-xs text-amber-800">
+      <div className={bankCls}>
         <span className="font-semibold">Word Bank: </span>
         {wordBank.join(' · ')}
       </div>
       <ol className="space-y-2 list-decimal list-inside">
         {sentences.slice(0, 5).map((s, i) => (
-          <li key={i} className="text-sm text-stone-800 leading-relaxed">
+          <li key={i} className={sentenceCls}>
             {s.text.split('___').map((part, j, arr) =>
               j < arr.length - 1 ? (
                 <span key={j}>
@@ -288,9 +326,7 @@ function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) 
                   <button
                     onClick={() => toggle(i)}
                     className={`inline-block min-w-[80px] border-b-2 text-center mx-1 text-xs font-semibold transition-colors ${
-                      revealed.has(i)
-                        ? 'border-green-500 text-green-700'
-                        : 'border-amber-500 text-amber-500 hover:border-amber-700'
+                      revealed.has(i) ? blankRevealedCls : blankIdleCls
                     }`}
                   >
                     {revealed.has(i) ? s.answer : '________'}
@@ -302,16 +338,16 @@ function FillInBlankRenderer({ payload }: { payload: Record<string, unknown> }) 
         ))}
       </ol>
       {sentences.length > 5 && (
-        <p className="text-xs text-amber-700">+{sentences.length - 5} more in print / download</p>
+        <p className={moreCls}>+{sentences.length - 5} more in print / download</p>
       )}
     </div>
   );
 }
 
-function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
+function MatchingRenderer({ payload, variant = 'editorial' }: { payload: Record<string, unknown>; variant?: ArtifactVariant }) {
   const pairs = safeArray<MatchingPair>(payload.pairs);
 
-  if (pairs.length === 0) return <EmptyArtifactNotice type="matching-activity" />;
+  if (pairs.length === 0) return <EmptyArtifactNotice type="matching-activity" variant={variant} />;
 
   const [selected, setSelected] = useState<{ termIdx: number | null; defIdx: number | null }>({ termIdx: null, defIdx: null });
   const [matches, setMatches] = useState<Map<number, number>>(new Map());
@@ -340,26 +376,48 @@ function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
   const preview = pairs.slice(0, 4);
   const allMatched = matches.size === pairs.length;
 
+  const isA = variant === 'atelier';
+  const successTextCls = isA
+    ? 'text-xs font-semibold flex items-center gap-1 text-[color:var(--d2-mint)]'
+    : 'text-xs text-green-700 font-semibold flex items-center gap-1';
+  const columnLabelCls = isA
+    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400'
+    : 'text-xs font-semibold text-stone-500 uppercase tracking-wide';
+  const termMatchedCls = isA
+    ? 'border-[color:var(--d2-mint)]/50 bg-[color:var(--d2-mint)]/15 text-white cursor-default'
+    : 'border-green-400 bg-green-50 text-green-800 cursor-default';
+  const termSelectedCls = isA
+    ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/15 text-white'
+    : 'border-amber-500 bg-amber-50 text-amber-900';
+  const termIdleCls = isA
+    ? 'border-white/10 bg-white/5 text-slate-200 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/10'
+    : 'border-stone-200 bg-white text-stone-800 hover:border-amber-400';
+  const defMatchedCls = termMatchedCls;
+  const defFailCls = isA
+    ? 'border-[color:var(--accent-rose)]/50 bg-[color:var(--accent-rose)]/15 text-white'
+    : 'border-red-400 bg-red-50 text-red-800';
+  const defActiveIdleCls = termIdleCls;
+  const defPassiveIdleCls = isA
+    ? 'border-white/8 bg-white/5 text-slate-400 cursor-default'
+    : 'border-stone-200 bg-white text-stone-600 cursor-default';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+
   return (
     <div className="mt-1 space-y-2">
       {allMatched && (
-        <p className="text-xs text-green-700 font-semibold flex items-center gap-1">
+        <p className={successTextCls}>
           <CheckCircle className="w-3 h-3" /> All matched!
         </p>
       )}
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1.5">
-          <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide">Terms</p>
+          <p className={columnLabelCls}>Terms</p>
           {preview.map((p, i) => (
             <button
               key={i}
               onClick={() => selectTerm(i)}
-              className={`w-full text-left text-xs p-2 rounded border transition-colors ${
-                matches.has(i)
-                  ? 'border-green-400 bg-green-50 text-green-800 cursor-default'
-                  : selected.termIdx === i
-                  ? 'border-amber-500 bg-amber-50 text-amber-900'
-                  : 'border-stone-200 bg-white text-stone-800 hover:border-amber-400'
+              className={`w-full text-left text-xs p-2 rounded-lg border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
+                matches.has(i) ? termMatchedCls : selected.termIdx === i ? termSelectedCls : termIdleCls
               }`}
             >
               {p.term}
@@ -367,21 +425,21 @@ function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
           ))}
         </div>
         <div className="space-y-1.5">
-          <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide">Definitions</p>
+          <p className={columnLabelCls}>Definitions</p>
           {shuffledDefs.slice(0, 4).map((p, shuffledIdx) => {
             const isMatched = [...matches.values()].includes(shuffledIdx);
             return (
               <button
                 key={shuffledIdx}
                 onClick={() => selectDef(shuffledIdx)}
-                className={`w-full text-left text-xs p-2 rounded border transition-colors ${
+                className={`w-full text-left text-xs p-2 rounded-lg border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
                   isMatched
-                    ? 'border-green-400 bg-green-50 text-green-800 cursor-default'
+                    ? defMatchedCls
                     : selected.defIdx === shuffledIdx
-                    ? 'border-red-400 bg-red-50 text-red-800'
+                    ? defFailCls
                     : selected.termIdx !== null
-                    ? 'border-stone-200 bg-white text-stone-800 hover:border-amber-400 cursor-pointer'
-                    : 'border-stone-200 bg-white text-stone-600 cursor-default'
+                    ? `${defActiveIdleCls} cursor-pointer`
+                    : defPassiveIdleCls
                 }`}
               >
                 {p.definition.length > 70 ? p.definition.slice(0, 70) + '…' : p.definition}
@@ -391,7 +449,7 @@ function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
         </div>
       </div>
       {pairs.length > 4 && (
-        <p className="text-xs text-amber-700">+{pairs.length - 4} more pairs in print / download</p>
+        <p className={moreCls}>+{pairs.length - 4} more pairs in print / download</p>
       )}
     </div>
   );
@@ -399,8 +457,9 @@ function MatchingRenderer({ payload }: { payload: Record<string, unknown> }) {
 
 // ─── Main ArtifactCard ────────────────────────────────────────────────────────
 
-export function ArtifactCard({ type, payload }: ArtifactCardProps) {
+export function ArtifactCard({ type, payload, variant = 'editorial' }: ArtifactCardProps) {
   const empty = isArtifactEmpty(type, payload);
+  const isA = variant === 'atelier';
 
   const handleDownload = () => {
     const markdown = artifactToMarkdown(type, payload);
@@ -421,19 +480,38 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
   const label = (typeof payload.title === 'string' ? payload.title : '') || formatType(type);
   const isPrintable = ['practice-set', 'fill-in-blank', 'matching-activity'].includes(type);
 
+  const shellCls = isA
+    ? 'mt-2 p-4 rounded-2xl border border-white/8 bg-[rgba(10,22,40,0.55)] backdrop-blur-[14px]'
+    : 'editorial-surface mt-2 p-4 rounded-lg border border-amber-200 bg-amber-50';
+  const iconCls = isA ? 'w-4 h-4 text-[color:var(--d1-peach)]' : 'w-4 h-4 text-amber-700';
+  const labelCls = isA ? 'text-sm font-semibold text-white' : 'text-sm font-semibold text-amber-900';
+  const printBtnCls = isA
+    ? 'btn-ghost-atelier flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full'
+    : 'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white border border-amber-400 text-amber-700 hover:bg-amber-100 transition-colors';
+  const downloadBtnCls = isA
+    ? 'btn-soft-glow flex items-center gap-1.5 text-xs px-3 py-1.5'
+    : 'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-amber-600 text-white hover:bg-amber-700 transition-colors';
+  const vocabTermCls = isA ? 'font-semibold text-white' : 'font-semibold text-amber-900';
+  const vocabDefCls = isA ? 'text-slate-300' : 'text-amber-800';
+  const weakLabelCls = isA ? 'text-slate-200' : 'text-amber-900';
+  const weakPctCls = isA
+    ? 'text-xs bg-[color:var(--d1-peach)]/20 text-[color:var(--d1-peach)] px-2 py-0.5 rounded-full font-medium'
+    : 'text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-medium';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+
   return (
-    <div className="editorial-surface mt-2 p-4 rounded-lg border border-amber-200 bg-amber-50">
+    <div className={shellCls}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-amber-700" />
-          <span className="text-sm font-semibold text-amber-900">{label}</span>
+          <FileText className={iconCls} />
+          <span className={labelCls}>{label}</span>
         </div>
         {!empty && (
         <div className="flex items-center gap-1.5">
           {isPrintable && (
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white border border-amber-400 text-amber-700 hover:bg-amber-100 transition-colors"
+              className={printBtnCls}
             >
               <Printer className="w-3 h-3" />
               Print
@@ -441,7 +519,7 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
           )}
           <button
             onClick={handleDownload}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-amber-600 text-white hover:bg-amber-700 transition-colors"
+            className={downloadBtnCls}
           >
             <Download className="w-3 h-3" />
             Download
@@ -456,12 +534,12 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
           <div className="space-y-2">
             {terms.slice(0, 5).map((t, i) => (
               <div key={i} className="text-sm">
-                <span className="font-semibold text-amber-900">{t.term}: </span>
-                <span className="text-amber-800">{t.definition}</span>
+                <span className={vocabTermCls}>{t.term}: </span>
+                <span className={vocabDefCls}>{t.definition}</span>
               </div>
             ))}
             {terms.length > 5 && (
-              <p className="text-xs text-amber-700">+ {terms.length - 5} more in download</p>
+              <p className={moreCls}>+ {terms.length - 5} more in download</p>
             )}
           </div>
         );
@@ -473,8 +551,8 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
           <div className="space-y-1.5">
             {skills.slice(0, 4).map((s, i) => (
               <div key={i} className="flex items-center justify-between text-sm">
-                <span className="text-amber-900">{s.skillName}</span>
-                <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-medium">
+                <span className={weakLabelCls}>{s.skillName}</span>
+                <span className={weakPctCls}>
                   {Math.round(s.accuracy * 100)}%
                 </span>
               </div>
@@ -483,12 +561,12 @@ export function ArtifactCard({ type, payload }: ArtifactCardProps) {
         );
       })()}
 
-      {type === 'practice-set' && <PracticeSetRenderer payload={payload} />}
-      {type === 'fill-in-blank' && <FillInBlankRenderer payload={payload} />}
-      {type === 'matching-activity' && <MatchingRenderer payload={payload} />}
+      {type === 'practice-set' && <PracticeSetRenderer payload={payload} variant={variant} />}
+      {type === 'fill-in-blank' && <FillInBlankRenderer payload={payload} variant={variant} />}
+      {type === 'matching-activity' && <MatchingRenderer payload={payload} variant={variant} />}
 
       {!['vocabulary-list', 'weak-areas-summary', 'practice-set', 'fill-in-blank', 'matching-activity'].includes(type) && (
-        <p className="text-xs text-amber-700">Download the file to view full content.</p>
+        <p className={moreCls}>Download the file to view full content.</p>
       )}
     </div>
   );

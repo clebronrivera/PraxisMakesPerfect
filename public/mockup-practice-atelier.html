@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Practice — The Atelier</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900: #060d1a;
+    --navy-800: #0a1628;
+    --navy-700: #0f1e38;
+    --d1-peach:    #fcd5b4;
+    --d2-mint:     #b8f2d8;
+    --d3-ice:      #cde9f5;
+    --d4-lavender: #d8d5fc;
+    --accent-rose: #fbcfe8;
+    --accent-cream:#fff3de;
+  }
+  html, body { background: var(--navy-900); font-family: 'Inter', system-ui, sans-serif; color: #e2e8f0; min-height: 100vh; }
+  .starfield-subtle {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 14%, rgba(252,213,180,0.35), transparent 40%),
+      radial-gradient(1px 1px at 88% 18%, rgba(216,213,252,0.30), transparent 40%),
+      radial-gradient(1px 1px at 58% 72%, rgba(187,247,208,0.25), transparent 40%),
+      radial-gradient(1px 1px at 24% 86%, rgba(205,233,245,0.25), transparent 40%),
+      radial-gradient(1px 1px at 94% 62%, rgba(251,207,232,0.30), transparent 40%),
+      radial-gradient(1px 1px at 6% 52%, rgba(216,213,252,0.25), transparent 40%);
+    opacity: 0.6;
+  }
+  .mini-orb { width: 40px; height: 40px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,243,222,1) 0%, rgba(252,213,180,0.85) 25%, rgba(251,207,232,0.55) 55%, rgba(216,213,252,0.25) 100%);
+    box-shadow: 0 0 18px rgba(252,213,180,0.4), 0 0 36px rgba(216,213,252,0.22);
+    animation: orb-pulse 3.5s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes orb-pulse { 0%,100% { transform: scale(1); opacity: .96; } 50% { transform: scale(1.03); opacity: 1; } }
+  .gradient-text { background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .gradient-text-warm { background: linear-gradient(135deg, #fde4c1, #fbcfe8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .glass { background: rgba(10,22,40,0.55); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .glass-deep { background: rgba(6,13,26,0.7); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .eyebrow { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: #94a3b8; }
+  .btn-soft-glow { padding: 11px 22px; border-radius: 999px; font-weight: 600; font-size: 13px; color: #1e1b3a;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 22px rgba(252,213,180,0.32), 0 6px 18px -6px rgba(0,0,0,0.4);
+    transition: transform .2s ease, box-shadow .2s ease; }
+  .btn-soft-glow:hover { transform: translateY(-1px); }
+  .btn-ghost { padding: 9px 16px; border-radius: 999px; font-weight: 500; font-size: 12px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); background: transparent; transition: all .2s ease; }
+  .btn-ghost:hover { color: white; border-color: rgba(252,213,180,0.4); }
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; border: 1px solid currentColor; }
+  .chip-filled { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: #1e1b3a; }
+  .hair-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(226,232,240,0.1), transparent); }
+
+  /* Skill tile in hub grid */
+  .skill-tile {
+    padding: 10px 12px; border-radius: 12px;
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(226,232,240,0.08);
+    cursor: pointer; transition: all .2s ease;
+    display: flex; flex-direction: column; gap: 6px;
+    position: relative; overflow: hidden;
+  }
+  .skill-tile::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--c); opacity: 0.6;
+  }
+  .skill-tile:hover {
+    border-color: color-mix(in srgb, var(--c) 45%, transparent);
+    transform: translateY(-1px);
+    background: rgba(10,22,40,0.75);
+  }
+  .skill-tile .sid { font-size: 9px; letter-spacing: 0.14em; color: var(--c); font-weight: 700; }
+  .skill-tile .slabel { font-size: 11px; color: #e2e8f0; line-height: 1.25; }
+  .skill-tile .smeta { display: flex; justify-content: space-between; align-items: baseline; margin-top: auto; }
+  .skill-tile .spct { font-size: 13px; font-weight: 700; color: var(--c); }
+  .skill-tile .satt { font-size: 9px; color: #64748b; }
+
+  /* Mode pill (mode selector) */
+  .mode-pill {
+    padding: 10px 18px; border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+    border: 1px solid rgba(226,232,240,0.12);
+    color: #cbd5e1; background: rgba(10,22,40,0.4);
+    cursor: pointer; transition: all .2s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mode-pill:hover { border-color: rgba(252,213,180,0.35); color: white; }
+  .mode-pill.active {
+    border-color: rgba(252,213,180,0.55);
+    background: linear-gradient(135deg, rgba(252,213,180,0.18), rgba(216,213,252,0.12));
+    color: white;
+    box-shadow: 0 0 20px rgba(252,213,180,0.18);
+  }
+
+  /* Choice row (session) */
+  .choice {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 18px; border-radius: 14px;
+    border: 1px solid rgba(226,232,240,0.08);
+    background: rgba(10,22,40,0.4);
+    cursor: pointer; transition: all .2s ease;
+    position: relative;
+  }
+  .choice:hover { border-color: rgba(252,213,180,0.35); background: rgba(10,22,40,0.6); }
+  .choice.selected {
+    border-color: rgba(252,213,180,0.7);
+    background: linear-gradient(135deg, rgba(252,213,180,0.1), rgba(216,213,252,0.05));
+    box-shadow: 0 0 18px rgba(252,213,180,0.15);
+  }
+  .choice.correct {
+    border-color: rgba(184,242,216,0.7);
+    background: linear-gradient(135deg, rgba(184,242,216,0.12), rgba(184,242,216,0.02));
+    box-shadow: 0 0 18px rgba(184,242,216,0.15);
+  }
+  .choice.incorrect {
+    border-color: rgba(251,207,232,0.6);
+    background: linear-gradient(135deg, rgba(251,207,232,0.1), rgba(251,207,232,0.02));
+  }
+  .choice-letter {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(226,232,240,0.08); color: #cbd5e1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+  }
+  .choice.selected .choice-letter { background: linear-gradient(135deg, #fde4c1, #fbcfe8); color: #1e1b3a; }
+  .choice.correct .choice-letter { background: var(--d2-mint); color: #064e3b; }
+  .choice.incorrect .choice-letter { background: var(--accent-rose); color: #831843; }
+
+  /* Confidence segment */
+  .conf-seg {
+    display: flex; gap: 3px;
+    padding: 3px; border-radius: 999px;
+    background: rgba(10,22,40,0.6);
+    border: 1px solid rgba(226,232,240,0.08);
+  }
+  .conf-btn {
+    padding: 7px 14px; border-radius: 999px;
+    font-size: 11px; font-weight: 500;
+    color: #94a3b8; cursor: pointer; transition: all .15s;
+  }
+  .conf-btn.active { background: linear-gradient(135deg, #fde4c1, #fbcfe8); color: #1e1b3a; font-weight: 700; }
+
+  /* Session top bar counter */
+  .stat-pill {
+    padding: 5px 11px; border-radius: 999px;
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(226,232,240,0.08);
+    font-size: 11px; color: #cbd5e1;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .stat-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* Feedback panel */
+  .feedback-panel {
+    padding: 20px 22px; border-radius: 16px;
+    background: rgba(10,22,40,0.7);
+    border: 1px solid rgba(184,242,216,0.25);
+    position: relative; overflow: hidden;
+  }
+  .feedback-panel::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(184,242,216,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Section tag */
+  .sec-tag {
+    display: inline-block; font-size: 10px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: #64748b;
+    padding-bottom: 4px; border-bottom: 1px solid rgba(252,213,180,0.25);
+  }
+</style>
+</head>
+<body>
+
+<div class="starfield-subtle"></div>
+
+<!-- Top bar -->
+<div class="relative z-40 flex items-center justify-between px-8 py-5 border-b border-white/5">
+  <div class="flex items-center gap-3">
+    <div class="mini-orb"></div>
+    <div>
+      <p class="text-sm font-bold text-white tracking-wide">PASS</p>
+      <p class="text-[9px] tracking-[0.24em] uppercase text-slate-500">Practice</p>
+    </div>
+  </div>
+  <nav class="flex items-center gap-7 text-[13px]">
+    <a class="text-slate-400 hover:text-white" href="#">Home</a>
+    <a class="text-white font-medium" href="#">Practice</a>
+    <a class="text-slate-400 hover:text-white" href="#">Study Guide</a>
+    <a class="text-slate-400 hover:text-white" href="#">AI Tutor</a>
+    <a class="text-slate-400 hover:text-white" href="#">Results</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <span class="eyebrow">Praxis 5403 · Beta</span>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] flex items-center justify-center text-[11px] font-bold text-[#1e1b3a]">C</div>
+  </div>
+</div>
+
+<main class="relative z-10 max-w-[1240px] mx-auto px-8 py-10 space-y-14">
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- STATE 1 — PRACTICE HUB                                          -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section>
+  <span class="sec-tag">State 1 · The Hub</span>
+
+  <div class="flex items-end justify-between mt-6 mb-6">
+    <div>
+      <p class="eyebrow mb-2">Practice</p>
+      <h1 class="text-3xl font-semibold text-white tracking-tight">Choose your angle.</h1>
+      <p class="text-sm text-slate-400 mt-2 max-w-md">45 skills across 4 domains. Pick a mode, pick an angle, or let the engine pick for you.</p>
+    </div>
+    <div class="flex items-center gap-4 text-right">
+      <div>
+        <p class="eyebrow">Today</p>
+        <p class="text-lg font-semibold text-white mt-1">22 / 25</p>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+      <div>
+        <p class="eyebrow">Accuracy</p>
+        <p class="text-lg font-semibold gradient-text-warm mt-1">74%</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode selector -->
+  <div class="flex flex-wrap items-center gap-2 mb-8">
+    <span class="eyebrow mr-2">Mode</span>
+    <button class="mode-pill active">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+      By Skill
+    </button>
+    <button class="mode-pill">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg>
+      By Domain
+    </button>
+    <button class="mode-pill">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      Mixed
+    </button>
+    <button class="mode-pill" style="border-color: rgba(251,207,232,0.35);">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#fbcfe8" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2c4 4 7 7 7 12a7 7 0 11-14 0c0-5 3-8 7-12z"/></svg>
+      <span style="color: #fbcfe8;">Feeling Spicy</span>
+    </button>
+    <button class="mode-pill">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4l16 16M4 20L20 4"/></svg>
+      Missed Only
+    </button>
+  </div>
+
+  <!-- 2-col: left = skill grid, right = queue / CTA -->
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_330px] gap-6">
+
+    <!-- Skill grid (by domain) -->
+    <div class="space-y-5">
+
+      <!-- Domain 1 -->
+      <div class="glass p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full" style="background: var(--d1-peach); box-shadow: 0 0 8px var(--d1-peach);"></span>
+            <div>
+              <p class="text-[13px] font-semibold text-white">Professional Practices</p>
+              <p class="text-[10px] text-slate-500">13 skills · avg 38% accuracy</p>
+            </div>
+          </div>
+          <button class="btn-ghost" style="border-color: rgba(252,213,180,0.35); color: var(--d1-peach);">Practice domain →</button>
+        </div>
+        <div class="grid grid-cols-3 md:grid-cols-5 gap-2">
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">CON-01</p>
+            <p class="slabel">Consultation Models</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">PSY-01</p>
+            <p class="slabel">Score Interpretation</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">PSY-04</p>
+            <p class="slabel">CLD Assessment</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-05</p>
+            <p class="slabel">Processing Measures</p>
+            <div class="smeta"><span class="spct">33%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-08</p>
+            <p class="slabel">Progress Monitoring</p>
+            <div class="smeta"><span class="spct">33%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">PSY-03</p>
+            <p class="slabel">MTSS in Assessment</p>
+            <div class="smeta"><span class="spct">33%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-01</p>
+            <p class="slabel">RIOT Framework</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-06</p>
+            <p class="slabel">Behavioral Assessment</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-07</p>
+            <p class="slabel">FBA</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-03</p>
+            <p class="slabel">Cognitive Assessment</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-09</p>
+            <p class="slabel">Ecological Assessment</p>
+            <div class="smeta"><span class="spct" style="color: var(--d2-mint);">100%</span><span class="satt">1 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">DBD-10</p>
+            <p class="slabel">Records Review</p>
+            <div class="smeta"><span class="spct" style="color: var(--d2-mint);">100%</span><span class="satt">1 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d1-peach);">
+            <p class="sid">PSY-02</p>
+            <p class="slabel">Reliability &amp; Validity</p>
+            <div class="smeta"><span class="spct" style="color: var(--d2-mint);">100%</span><span class="satt">1 att</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain 4 (Foundations) — showing weakness pattern -->
+      <div class="glass p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full" style="background: var(--d4-lavender); box-shadow: 0 0 8px var(--d4-lavender);"></span>
+            <div>
+              <p class="text-[13px] font-semibold text-white">Foundations of School Psychology</p>
+              <p class="text-[10px] text-slate-500">12 skills · avg 30% accuracy · <span style="color: var(--accent-rose);">weakest domain</span></p>
+            </div>
+          </div>
+          <button class="btn-ghost" style="border-color: rgba(216,213,252,0.35); color: var(--d4-lavender);">Practice domain →</button>
+        </div>
+        <div class="grid grid-cols-3 md:grid-cols-5 gap-2">
+          <div class="skill-tile" style="--c: var(--d4-lavender); border-color: rgba(251,207,232,0.35);">
+            <p class="sid" style="color: #fbcfe8;">LEG-01</p>
+            <p class="slabel">Special Ed Law</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender); border-color: rgba(251,207,232,0.35);">
+            <p class="sid" style="color: #fbcfe8;">LEG-02</p>
+            <p class="slabel">IDEA &amp; FAPE</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender); border-color: rgba(251,207,232,0.35);">
+            <p class="sid" style="color: #fbcfe8;">LEG-03</p>
+            <p class="slabel">Evaluation Procedures</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">DIV-01</p>
+            <p class="slabel">Diversity</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">RES-03</p>
+            <p class="slabel">Research Methods</p>
+            <div class="smeta"><span class="spct" style="color: #fbcfe8;">0%</span><span class="satt">3 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">LEG-04</p>
+            <p class="slabel">Compliance</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">DIV-03</p>
+            <p class="slabel">Cultural Competence</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">DIV-05</p>
+            <p class="slabel">Equity</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">ETH-02</p>
+            <p class="slabel">Practice Standards</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">ETH-03</p>
+            <p class="slabel">Confidentiality</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">RES-02</p>
+            <p class="slabel">Data Literacy</p>
+            <div class="smeta"><span class="spct">50%</span><span class="satt">2 att</span></div>
+          </div>
+          <div class="skill-tile" style="--c: var(--d4-lavender);">
+            <p class="sid">ETH-01</p>
+            <p class="slabel">Professional Ethics</p>
+            <div class="smeta"><span class="spct" style="color: var(--d2-mint);">100%</span><span class="satt">1 att</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- collapsed hint row for Domains 2 &amp; 3 -->
+      <div class="text-center py-2">
+        <button class="eyebrow hover:text-white transition">Domains 2 &amp; 3 ▾  &nbsp; 20 more skills</button>
+      </div>
+
+    </div>
+
+    <!-- Right: Queue + CTA -->
+    <aside class="space-y-4">
+      <div class="glass p-5">
+        <p class="eyebrow mb-4">Next in your queue</p>
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold" style="background: rgba(216,213,252,0.15); color: var(--d4-lavender); border: 1px solid rgba(216,213,252,0.35);">1</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[12px] text-slate-500 mb-0.5">Priority · 0% accuracy</p>
+              <p class="text-[13px] font-medium text-white leading-tight">IDEA &amp; FAPE</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">Foundations · LEG-02</p>
+            </div>
+          </div>
+          <div class="hair-divider"></div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold" style="background: rgba(216,213,252,0.1); color: var(--d4-lavender); border: 1px solid rgba(216,213,252,0.25);">2</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[12px] text-slate-500 mb-0.5">Then · 0% accuracy</p>
+              <p class="text-[13px] font-medium text-white leading-tight">Special Ed Law</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">Foundations · LEG-01</p>
+            </div>
+          </div>
+          <div class="hair-divider"></div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold" style="background: rgba(252,213,180,0.1); color: var(--d1-peach); border: 1px solid rgba(252,213,180,0.25);">3</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[12px] text-slate-500 mb-0.5">Then · 0% accuracy</p>
+              <p class="text-[13px] font-medium text-white leading-tight">Consultation Models</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">Professional · CON-01</p>
+            </div>
+          </div>
+        </div>
+        <button class="btn-soft-glow w-full mt-5">Start with IDEA &amp; FAPE  →</button>
+      </div>
+
+      <div class="glass p-5">
+        <p class="eyebrow mb-2" style="color: var(--accent-rose);">Signal</p>
+        <p class="text-[13px] text-white leading-relaxed">You haven't touched <span style="color: var(--d4-lavender); font-weight: 600;">Foundations</span> in 4 days. 5 skills still at 0%.</p>
+        <button class="mt-3 text-[12px] font-semibold" style="color: var(--d4-lavender);">Start a foundations round →</button>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- STATE 2 — PRACTICE SESSION (active question)                    -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section>
+  <span class="sec-tag">State 2 · In-Session</span>
+
+  <!-- Session top bar -->
+  <div class="glass p-5 mt-6 mb-4">
+    <div class="flex items-center gap-3 flex-wrap">
+      <span class="chip-filled" style="background: linear-gradient(135deg, #d8d5fc, #fbcfe8);">LEG-02</span>
+      <div class="flex-1 min-w-0">
+        <p class="text-[13px] font-semibold text-white">IDEA &amp; FAPE</p>
+        <p class="text-[10px] text-slate-500">Foundations · Practice by Skill</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="stat-pill"><span class="dot" style="background: var(--d2-mint);"></span>Correct · 2</span>
+        <span class="stat-pill"><span class="dot" style="background: var(--accent-rose);"></span>Wrong · 1</span>
+        <span class="stat-pill"><span class="dot" style="background: var(--d3-ice);"></span>Q 4 / 10</span>
+      </div>
+    </div>
+    <!-- progress ring -->
+    <div class="mt-4 h-1 rounded-full bg-white/5 overflow-hidden">
+      <div class="h-1 rounded-full" style="width: 40%; background: linear-gradient(90deg, #fde4c1, #fbcfe8, #d8d5fc);"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
+
+    <!-- Main question column -->
+    <div class="space-y-4">
+
+      <!-- Question card -->
+      <div class="glass p-7">
+        <div class="flex items-center justify-between mb-5">
+          <span class="eyebrow">Question 4 · 90 sec timer</span>
+          <div class="flex items-center gap-2">
+            <span class="eyebrow text-[9px]">Confidence</span>
+            <div class="conf-seg">
+              <button class="conf-btn">Low</button>
+              <button class="conf-btn active">Medium</button>
+              <button class="conf-btn">High</button>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="text-[17px] text-white leading-relaxed font-medium mb-6">
+          A parent requests an initial evaluation for their 7-year-old child, who they suspect has a learning disability. The school conducts the evaluation within 60 days, finds the student does not qualify for special education services, and sends the family a copy of the report. According to IDEA, which of the following <span class="gradient-text-warm font-semibold">must also</span> be provided to the parents?
+        </h2>
+
+        <!-- Choices -->
+        <div class="space-y-3">
+          <div class="choice">
+            <div class="choice-letter">A</div>
+            <div class="flex-1 pt-0.5 text-[13px] text-slate-200 leading-relaxed">A written plan describing how the school will review the student's progress in general education.</div>
+          </div>
+          <div class="choice selected">
+            <div class="choice-letter">B</div>
+            <div class="flex-1 pt-0.5 text-[13px] text-slate-200 leading-relaxed">Prior written notice explaining the refusal to provide services, along with a copy of the procedural safeguards.</div>
+          </div>
+          <div class="choice">
+            <div class="choice-letter">C</div>
+            <div class="flex-1 pt-0.5 text-[13px] text-slate-200 leading-relaxed">A list of outside agencies that may provide private evaluation services at the family's expense.</div>
+          </div>
+          <div class="choice">
+            <div class="choice-letter">D</div>
+            <div class="flex-1 pt-0.5 text-[13px] text-slate-200 leading-relaxed">A 504 plan draft outlining accommodations the student may receive in the general classroom.</div>
+          </div>
+        </div>
+
+        <!-- Submit row -->
+        <div class="flex items-center justify-between mt-6 pt-5 border-t border-white/6">
+          <div class="flex items-center gap-3">
+            <button class="btn-ghost flex items-center gap-2">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 17v-5M12 8v.01"/></svg>
+              Need a hint
+            </button>
+            <button class="btn-ghost">Skip</button>
+          </div>
+          <button class="btn-soft-glow">Submit answer →</button>
+        </div>
+      </div>
+
+      <!-- (below) Feedback panel — sample of "what it looks like after submit" -->
+      <div class="feedback-panel">
+        <div class="relative z-10">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background: var(--d2-mint);">
+              <svg class="w-4 h-4" fill="none" stroke="#064e3b" stroke-width="3" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+            </div>
+            <span class="eyebrow" style="color: var(--d2-mint);">Correct · After submit</span>
+          </div>
+          <p class="text-[14px] text-white leading-relaxed mb-3">
+            IDEA requires <span style="color: var(--d2-mint); font-weight: 600;">prior written notice</span> any time a school proposes <em>or refuses</em> to initiate or change identification, evaluation, educational placement, or FAPE. A copy of the <span style="color: var(--d2-mint); font-weight: 600;">procedural safeguards notice</span> must be given at least once a year and always in connection with this kind of decision.
+          </p>
+          <div class="flex items-center gap-3 pt-3 border-t border-white/6">
+            <span class="chip" style="color: var(--d2-mint);">Why B</span>
+            <span class="text-[11px] text-slate-400">A &amp; D are non-sequiturs post-refusal · C mischaracterizes IDEA</span>
+          </div>
+          <div class="mt-4 flex items-center gap-3">
+            <button class="btn-soft-glow">Next question →</button>
+            <button class="btn-ghost">Open module</button>
+            <button class="btn-ghost">Ask AI tutor</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Context rail -->
+    <aside class="space-y-4">
+
+      <div class="glass p-5">
+        <p class="eyebrow mb-3">Skill context</p>
+        <p class="text-[13px] text-white leading-relaxed mb-3">
+          <span style="color: var(--d4-lavender); font-weight: 600;">IDEA &amp; FAPE</span> — the federal framework guaranteeing a free, appropriate public education to students with disabilities. Tested constructs: evaluation procedures, LRE, IEP components, procedural safeguards.
+        </p>
+        <p class="text-[11px] text-slate-500 italic">
+          Decision rule: when a school refuses eligibility, parents must receive PWN + procedural safeguards.
+        </p>
+      </div>
+
+      <div class="glass p-5">
+        <p class="eyebrow mb-3">Your history here</p>
+        <div class="space-y-2 text-[12px]">
+          <div class="flex justify-between items-baseline">
+            <span class="text-slate-400">All-time accuracy</span>
+            <span class="font-semibold" style="color: #fbcfe8;">0%</span>
+          </div>
+          <div class="flex justify-between items-baseline">
+            <span class="text-slate-400">This session</span>
+            <span class="font-semibold gradient-text-warm">2/3 · 67%</span>
+          </div>
+          <div class="flex justify-between items-baseline">
+            <span class="text-slate-400">Avg time</span>
+            <span class="font-semibold text-white">13 sec</span>
+          </div>
+          <div class="hair-divider my-2"></div>
+          <div>
+            <p class="text-[11px] text-slate-500 mb-1.5">Status</p>
+            <span class="chip" style="color: #fbcfe8;">Emerging</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass p-5">
+        <p class="eyebrow mb-3">Vocabulary surfaced</p>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="chip" style="color: var(--d3-ice);">IDEA</span>
+          <span class="chip" style="color: var(--d3-ice);">FAPE</span>
+          <span class="chip" style="color: var(--d3-ice);">PWN</span>
+          <span class="chip" style="color: var(--d3-ice);">Procedural safeguards</span>
+          <span class="chip" style="color: var(--d3-ice);">LRE</span>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- Design-decision callouts                                        -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="glass-deep p-7">
+  <div class="mb-5">
+    <p class="eyebrow mb-1" style="color: var(--d1-peach);">For your review · Practice</p>
+    <h3 class="text-lg font-semibold text-white">What I changed here</h3>
+  </div>
+  <div class="grid md:grid-cols-2 gap-3 text-[12px] text-slate-300 leading-relaxed">
+    <div class="p-3 rounded-lg border border-dashed border-white/10">
+      <p class="text-white font-medium mb-1">Skill tiles instead of a long list.</p>
+      Each skill is a small card with ID, short label, accuracy, and a top stripe in its domain color. You see the whole playing field at once.
+    </div>
+    <div class="p-3 rounded-lg border border-dashed border-white/10">
+      <p class="text-white font-medium mb-1">Mode pills are the first decision.</p>
+      By Skill / By Domain / Mixed / Spicy / Missed live above the grid, not tucked away. "Spicy" keeps its rose accent as a signature.
+    </div>
+    <div class="p-3 rounded-lg border border-dashed border-white/10">
+      <p class="text-white font-medium mb-1">Alert stack becomes one "Signal" card.</p>
+      The session's 6 possible notifications consolidate into a single context-aware nudge. Less visual noise during practice.
+    </div>
+    <div class="p-3 rounded-lg border border-dashed border-white/10">
+      <p class="text-white font-medium mb-1">Confidence lives in the question header.</p>
+      It's a 3-segment pill next to a 90-second timer — no more confidence slider. Faster commit, easier to scan.
+    </div>
+    <div class="p-3 rounded-lg border border-dashed border-white/10">
+      <p class="text-white font-medium mb-1">Correct/wrong/question counters are stat-pills.</p>
+      Up in the session top bar, each with its own glowing dot. Mirrors the domain-dot motif across the app.
+    </div>
+    <div class="p-3 rounded-lg border border-dashed border-white/10">
+      <p class="text-white font-medium mb-1">Feedback panel has a mint halo.</p>
+      The soft radial glow makes "correct" feel celebratory without a confetti moment. "Why B" explains the distractors without dumping them all.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="relative z-10 text-center py-8">
+  <p class="text-[10px] text-slate-700 tracking-[0.25em] uppercase">PASS · Beta · 2026</p>
+</footer>
+
+</body>
+</html>

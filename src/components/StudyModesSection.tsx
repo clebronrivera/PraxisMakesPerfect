@@ -53,12 +53,12 @@ import type { UserProfile } from '../hooks/useProgressTracking';
 
 // Light-surface equivalents for PROFICIENCY_META badge/text tokens.
 // PROFICIENCY_META uses dark-mode colours; these overrides apply when
-// badges are rendered on white/editorial-surface backgrounds.
+// badges are rendered on white/glass backgrounds.
 const LIGHT_BADGE: Record<string, { badge: string; text: string }> = {
-  proficient:  { badge: 'bg-emerald-50 border border-emerald-200 text-emerald-700', text: 'text-emerald-700' },
-  approaching: { badge: 'bg-amber-50 border border-amber-200 text-amber-700',       text: 'text-amber-700'   },
-  emerging:    { badge: 'bg-rose-50 border border-rose-200 text-rose-600',           text: 'text-rose-600'    },
-  unstarted:   { badge: 'bg-slate-100 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
+  proficient:  { badge: 'bg-[color:var(--d2-mint)]/10 border border-[color:var(--d2-mint)]/30 text-[color:var(--d2-mint)]', text: 'text-[color:var(--d2-mint)]' },
+  approaching: { badge: 'bg-[color:var(--d1-peach)]/10 border border-[color:var(--d1-peach)]/30 text-[color:var(--d1-peach)]',       text: 'text-[color:var(--d1-peach)]'   },
+  emerging:    { badge: 'bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/30 text-[color:var(--accent-rose)]',           text: 'text-[color:var(--accent-rose)]'    },
+  unstarted:   { badge: 'bg-white/8 border border-white/10 text-slate-500',       text: 'text-slate-500'   },
 };
 
 // ─── Date helpers ────────────────────────────────────────────────────────────
@@ -201,11 +201,11 @@ function DomainPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
-          <Lock className="w-4 h-4 text-amber-700" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--d1-peach)]/10">
+          <Lock className="w-4 h-4 text-[color:var(--d1-peach)]" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock domain-based practice across all four Praxis sections.
           </p>
@@ -213,7 +213,7 @@ function DomainPanel({
         {onStartDiagnostic && (
           <button
             onClick={onStartDiagnostic}
-            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
+            className="btn-soft-glow flex items-center gap-2 px-4 py-2 text-sm"
           >
             Take the adaptive diagnostic
           </button>
@@ -226,44 +226,44 @@ function DomainPanel({
 
   return (
     <div className="space-y-3">
-      <p className="editorial-overline flex items-center gap-1.5">
-        <TrendingUp className="w-3 h-3 text-amber-700" />
+      <p className="eyebrow flex items-center gap-1.5">
+        <TrendingUp className="w-3 h-3 text-[color:var(--d1-peach)]" />
         Domain overview — most concern first
       </p>
       <div className="space-y-2.5">
         {stats.map((stat) => {
           const color = getDomainColor(stat.domain.id);
           const barPct = stat.demonstratingPct;
-          const barColor = barPct >= 70 ? 'bg-emerald-400' : barPct >= 50 ? 'bg-amber-400' : 'bg-rose-400';
-          const labelColor = barPct >= 70 ? 'text-emerald-700' : barPct >= 50 ? 'text-amber-700' : 'text-rose-600';
+          const barColor = barPct >= 70 ? 'bg-[color:var(--d2-mint)]' : barPct >= 50 ? 'bg-[color:var(--d1-peach)]' : 'bg-[color:var(--accent-rose)]';
+          const labelColor = barPct >= 70 ? 'text-[color:var(--d2-mint)]' : barPct >= 50 ? 'text-[color:var(--d1-peach)]' : 'text-[color:var(--accent-rose)]';
 
           return (
             <div
               key={stat.domain.id}
-              className="editorial-surface relative overflow-hidden p-4"
+              className="glass relative overflow-hidden p-4"
             >
               <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl" style={{ backgroundColor: color }} />
               <div className="flex items-start justify-between gap-3 mb-3 pl-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-base font-semibold leading-tight text-slate-900">{stat.domain.name}</p>
+                  <p className="text-base font-semibold leading-tight text-white">{stat.domain.name}</p>
                   <p className="mt-0.5 text-[11px] text-slate-500">{stat.totalSkills} skills</p>
                 </div>
                 <button
                   onClick={() => onDomainSelect(stat.domain.id)}
-                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
+                  className="btn-ghost-atelier shrink-0 px-3 py-1.5 text-sm"
                 >
                   Practice
                 </button>
               </div>
               <div className="relative h-1.5 mb-2" style={{ overflow: 'visible' }}>
-                <div className="absolute inset-0 overflow-hidden rounded-full bg-slate-100">
+                <div className="absolute inset-0 overflow-hidden rounded-full bg-white/8">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ${barColor}`}
                     style={{ width: `${barPct}%` }}
                   />
                 </div>
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-amber-500/70"
+                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-[color:var(--d1-peach)]/100/70"
                   style={{ left: '70%' }}
                   title="70% mastery goal"
                 />
@@ -274,17 +274,17 @@ function DomainPanel({
                 </p>
                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
                   {stat.emergingCount > 0 && (
-                    <span className="rounded-full bg-rose-50 border border-rose-200 px-1.5 py-0.5 text-[11px] font-medium text-rose-600">
+                    <span className="rounded-full bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/30 px-1.5 py-0.5 text-[11px] font-medium text-[color:var(--accent-rose)]">
                       {stat.emergingCount} {PROFICIENCY_META.emerging.label}
                     </span>
                   )}
                   {stat.approachingCount > 0 && (
-                    <span className="rounded-full bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[11px] font-medium text-amber-700">
+                    <span className="rounded-full bg-[color:var(--d1-peach)]/10 border border-[color:var(--d1-peach)]/30 px-1.5 py-0.5 text-[11px] font-medium text-[color:var(--d1-peach)]">
                       {stat.approachingCount} {PROFICIENCY_META.approaching.label}
                     </span>
                   )}
                   {stat.demonstratingCount > 0 && (
-                    <span className="rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[11px] font-medium text-emerald-700">
+                    <span className="rounded-full bg-[color:var(--d2-mint)]/10 border border-[color:var(--d2-mint)]/30 px-1.5 py-0.5 text-[11px] font-medium text-[color:var(--d2-mint)]">
                       {stat.demonstratingCount} {PROFICIENCY_META.proficient.label}
                     </span>
                   )}
@@ -325,11 +325,11 @@ function SkillPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
-          <Lock className="w-4 h-4 text-amber-700" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--d1-peach)]/10">
+          <Lock className="w-4 h-4 text-[color:var(--d1-peach)]" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
           </p>
@@ -337,7 +337,7 @@ function SkillPanel({
         {onStartDiagnostic && (
           <button
             onClick={onStartDiagnostic}
-            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
+            className="btn-soft-glow flex items-center gap-2 px-4 py-2 text-sm"
           >
             Take the adaptive diagnostic
           </button>
@@ -359,10 +359,10 @@ function SkillPanel({
                            allRows.filter(r => r.tier === filter);
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
-    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-amber-50 border-amber-300 text-slate-900'    },
-    { id: 'emerging',  label: PROFICIENCY_META.emerging.label,  count: emergingCount,     css: 'text-rose-600 border-rose-200',     activeCss: 'bg-rose-50 border-rose-300 text-rose-700'       },
-    { id: 'approaching',label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-700 border-amber-200', activeCss: 'bg-amber-50 border-amber-300 text-amber-700'    },
-    { id: 'proficient',label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-700 border-emerald-200', activeCss: 'bg-emerald-50 border-emerald-300 text-emerald-700' },
+    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-white/10',   activeCss: 'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/50 text-white'    },
+    { id: 'emerging',  label: PROFICIENCY_META.emerging.label,  count: emergingCount,     css: 'text-[color:var(--accent-rose)] border-[color:var(--accent-rose)]/30',     activeCss: 'bg-[color:var(--accent-rose)]/10 border-[color:var(--accent-rose)]/50 text-[color:var(--accent-rose)]'       },
+    { id: 'approaching',label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-[color:var(--d1-peach)] border-[color:var(--d1-peach)]/30', activeCss: 'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/50 text-[color:var(--d1-peach)]'    },
+    { id: 'proficient',label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-[color:var(--d2-mint)] border-[color:var(--d2-mint)]/30', activeCss: 'bg-[color:var(--d2-mint)]/10 border-[color:var(--d2-mint)]/50 text-[color:var(--d2-mint)]' },
     ...(srsOverdueCount > 0 ? [{
       id: 'overdue' as SkillFilter,
       label: `Due (${srsOverdueCount})`,
@@ -377,14 +377,14 @@ function SkillPanel({
       {/* Stats row */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
-          { label: 'Assessed', value: assessedRows.length, css: 'text-slate-900' },
-          { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-rose-600' },
-          { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-amber-700' },
-          { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-emerald-600' },
+          { label: 'Assessed', value: assessedRows.length, css: 'text-white' },
+          { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-[color:var(--accent-rose)]' },
+          { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-[color:var(--d1-peach)]' },
+          { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-[color:var(--d2-mint)]' },
         ].map(stat => (
           <div
             key={stat.label}
-            className="editorial-surface px-3 py-3 text-center"
+            className="glass px-3 py-3 text-center"
           >
             <p className={`text-lg font-bold tabular-nums ${stat.css}`}>{stat.value}</p>
             <p className="mt-0.5 text-[11px] leading-tight text-slate-500">{stat.label}</p>
@@ -394,7 +394,7 @@ function SkillPanel({
 
       {/* Usage hint */}
       <p className="flex items-center gap-1.5 text-sm text-slate-500">
-        <HelpCircle className="w-3 h-3 shrink-0 text-amber-700" />
+        <HelpCircle className="w-3 h-3 shrink-0 text-[color:var(--d1-peach)]" />
         Tap Practice for questions · tap the help icon to open the skill lesson
       </p>
 
@@ -429,11 +429,11 @@ function SkillPanel({
             return (
               <div
                 key={row.skillId}
-                className="editorial-surface flex items-center gap-3 px-3 py-3"
+                className="glass flex items-center gap-3 px-3 py-3"
               >
                 {/* Skill label + module code */}
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm leading-snug text-slate-700">
+                  <p className="truncate text-sm leading-snug text-slate-200">
                     {row.fullLabel}
                   </p>
                   {primaryModule && (
@@ -459,12 +459,12 @@ function SkillPanel({
                     / 86_400_000
                   );
                   if (daysOut < 0) return (
-                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-200 text-amber-700 shrink-0">
+                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-[color:var(--d1-peach)]/10 border border-[color:var(--d1-peach)]/30 text-[color:var(--d1-peach)] shrink-0">
                       Overdue
                     </span>
                   );
                   if (daysOut === 0) return (
-                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-200 text-amber-700 shrink-0">
+                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-[color:var(--d1-peach)]/10 border border-[color:var(--d1-peach)]/30 text-[color:var(--d1-peach)] shrink-0">
                       Due today
                     </span>
                   );
@@ -479,7 +479,7 @@ function SkillPanel({
                 {/* Help button — opens SkillHelpDrawer */}
                 <button
                   onClick={() => onOpenHelp(row.skillId, row.fullLabel)}
-                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-amber-50 hover:text-amber-700"
+                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-[color:var(--d1-peach)]/10 hover:text-[color:var(--d1-peach)]"
                   title="View skill lesson"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
@@ -488,7 +488,7 @@ function SkillPanel({
                 {/* Practice button — launches question practice */}
                 <button
                   onClick={() => onStartSkillPractice(row.skillId)}
-                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
+                  className="btn-ghost-atelier shrink-0 px-3 py-1.5 text-sm"
                 >
                   Practice
                 </button>
@@ -525,11 +525,11 @@ function LearningPathPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
-          <Lock className="w-4 h-4 text-amber-700" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--d1-peach)]/10">
+          <Lock className="w-4 h-4 text-[color:var(--d1-peach)]" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
           </p>
@@ -537,7 +537,7 @@ function LearningPathPanel({
         {onStartDiagnostic && (
           <button
             onClick={onStartDiagnostic}
-            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
+            className="btn-soft-glow flex items-center gap-2 px-4 py-2 text-sm"
           >
             Take the adaptive diagnostic
           </button>
@@ -649,13 +649,13 @@ export default function StudyModesSection({
             label: 'Overall accuracy',
             value: overallAccuracy !== null ? `${overallAccuracy}%` : '—',
             css: overallAccuracy !== null && overallAccuracy >= DEMONSTRATING_THRESHOLD * 100
-              ? 'text-emerald-700'
+              ? 'text-[color:var(--d2-mint)]'
               : overallAccuracy !== null && overallAccuracy >= APPROACHING_THRESHOLD * 100
-                ? 'text-amber-700'
-                : 'text-rose-600',
+                ? 'text-[color:var(--d1-peach)]'
+                : 'text-[color:var(--accent-rose)]',
           },
         ].map(stat => (
-          <div key={stat.label} className="editorial-surface p-3 text-center">
+          <div key={stat.label} className="glass p-3 text-center">
             <p className={`text-lg font-bold tabular-nums ${stat.css}`}>{stat.value}</p>
             <p className="mt-0.5 text-[11px] leading-tight text-slate-500">{stat.label}</p>
           </div>
@@ -664,23 +664,23 @@ export default function StudyModesSection({
 
       {/* ── Zero-data welcome nudge ─────────────────────────────────────── */}
       {totalAttempts === 0 && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-normal">
+        <div className="rounded-xl border border-white/10 bg-slate-50 px-4 py-3 text-xs text-slate-500 leading-normal">
           No data yet — your stats will appear here as soon as you answer your first question.
           Start with the baseline assessment on the Dashboard, or jump straight into practice to get going.
         </div>
       )}
 
       {/* ── Readiness bar ───────────────────────────────────────────────── */}
-      <div className="editorial-surface p-3.5">
+      <div className="glass p-3.5">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-semibold text-slate-700">Praxis Readiness</p>
-          <p className={`text-sm font-bold tabular-nums ${demonstratingCount >= READINESS_TARGET ? 'text-emerald-600' : 'text-slate-500'}`}>
+          <p className="text-sm font-semibold text-slate-200">Praxis Readiness</p>
+          <p className={`text-sm font-bold tabular-nums ${demonstratingCount >= READINESS_TARGET ? 'text-[color:var(--d2-mint)]' : 'text-slate-500'}`}>
             {demonstratingCount} / {READINESS_TARGET} {PROFICIENCY_META.proficient.label}
           </p>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+        <div className="h-2 overflow-hidden rounded-full bg-white/8">
           <div
-            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-500' : 'bg-amber-500'}`}
+            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-[color:var(--d2-mint)]/100' : 'bg-[color:var(--d1-peach)]/100'}`}
             style={{ width: `${readinessBarPct}%` }}
           />
         </div>
@@ -724,16 +724,16 @@ export default function StudyModesSection({
               className={`
                 p-3 rounded-xl border text-left transition-all
                 ${isActive
-                  ? 'bg-amber-50 border-amber-300 shadow-sm'
-                  : 'bg-white border-slate-200 hover:border-amber-200'}
+                  ? 'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/50'
+                  : 'bg-white/5 border-white/10 hover:border-[color:var(--d1-peach)]/30'}
               `}
             >
               <div className={`flex items-center gap-1.5 mb-1 ${
-                isActive ? 'text-amber-700' : tab.locked ? 'text-slate-400' : 'text-slate-500'
+                isActive ? 'text-[color:var(--d1-peach)]' : tab.locked ? 'text-slate-400' : 'text-slate-500'
               }`}>
                 {tab.locked ? <Lock className="w-3 h-3" /> : tab.icon}
                 <p className={`text-sm font-semibold truncate ${
-                  isActive ? 'text-slate-900' : tab.locked ? 'text-slate-500' : 'text-slate-700'
+                  isActive ? 'text-white' : tab.locked ? 'text-slate-500' : 'text-slate-200'
                 }`}>
                   {tab.label}
                 </p>

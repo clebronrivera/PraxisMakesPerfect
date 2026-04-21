@@ -82,7 +82,7 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | `GET /api/admin-chat-activity` | GET | ✅ | Latest 200 AI Tutor sessions with user names and artifact counts |
 | `GET /api/admin-chat-activity?sessionId=<uuid>` | GET | ✅ | Full conversation for one AI Tutor session (messages, artifacts, metadata) |
 
-**All endpoints require `SUPABASE_SERVICE_ROLE_KEY`** (JWT `eyJ...` from Supabase → Settings → API → `service_role`). They gracefully degrade on raw Vite (port 5173) — the admin dashboard shows a clear error message. Run `netlify dev` (port 8888) for full functionality.
+**All endpoints require `SUPABASE_SERVICE_ROLE_KEY`** (new-format `sb_secret_*` from Supabase → Settings → API Keys → Secret API keys). They gracefully degrade on raw Vite (port 5173) — the admin dashboard shows a clear error message. Run `netlify dev` (port 8888) for full functionality.
 
 ### Admin Dashboard — Tabs
 
@@ -93,7 +93,7 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | Beta Feedback | All user feedback with status management |
 | Question Reports | Per-question issue reports with severity triage |
 | Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
-| Item Analysis | Psychometric quality metrics for the 466-question bank (p-value, discrimination, distractor analysis) |
+| Item Analysis | Psychometric quality metrics for the 1,150-question bank (p-value, discrimination, distractor analysis) |
 | AI Tutor | AI Tutor chat sessions — session list with user/type/message count/artifacts, drill into full conversation with intent badges and inline artifact cards, CSV export |
 
 ### Student Detail Drawer
@@ -120,7 +120,7 @@ Flags only applied when item has ≥ 5 attempts.
 
 The **Users** tab in the admin dashboard calls `POST /api/admin-reset-assessment` to archive deleted rows into `assessment_reset_archive`, remove matching `responses`, and rebuild aggregates.
 
-- **Requires** Netlify env `SUPABASE_SERVICE_ROLE_KEY` (JWT `eyJ...` from Supabase → Settings → API → `service_role`).
+- **Requires** Netlify env `SUPABASE_SERVICE_ROLE_KEY` (new-format `sb_secret_*` from Supabase → Settings → API Keys → Secret API keys).
 - **Requires** migration `0004_assessment_reset_archive.sql` applied in Supabase.
 - **Requires** migration `0005_module_interactions.sql` applied in Supabase (module visit tracking, section interactions, learning_path_progress table).
 - Admin allowlist is **`src/config/admin.ts`** (`isAdminEmail`), not only the SQL `is_admin_email` helper used for RLS elsewhere.
@@ -129,40 +129,51 @@ The **Users** tab in the admin dashboard calls `POST /api/admin-reset-assessment
 
 ## Supabase Credentials
 
-### Key Format — Critical Gotcha
+### Key Format — Current State (post 2026-04-17 rotation)
 
-The project uses Supabase's **new "publishable key" format** (`sb_publishable_*` / `sb_secret_*`).
-These are **NOT** the classic JWT tokens (which start with `eyJ...` and have 3 dot-separated parts).
+As of 2026-04-17, the project runs **only** on Supabase's new API key format (`sb_publishable_*` / `sb_secret_*`). The old JWT-based legacy keys (`eyJ...` anon + service_role) have been **disabled**, and the underlying HS256 signing key has been **revoked**. Any lingering `eyJ...` value will return `401 "No suitable key"`.
 
-| Key in `.env.local` | Variable | Works for |
+| Variable | Current Value Format | Works For |
 |---|---|---|
-| `sb_publishable_...` | `VITE_SUPABASE_ANON_KEY` | Client-side browser calls via `createClient`. RLS applies. ✅ |
-| `sb_secret_...` | `SUPABASE_SERVICE_ROLE_KEY` | **Broken — fails for auth/admin API calls.** ❌ |
+| `VITE_SUPABASE_ANON_KEY` | `sb_publishable_*` | Client-side browser calls via `createClient`. RLS applies. ✅ |
+| `SUPABASE_SERVICE_ROLE_KEY` | `sb_secret_*` | Server-side REST queries that bypass RLS (admin dashboard APIs, leaderboard, study plans). ✅ |
 
-**What we confirmed via probing:**
-- `apikey: ANON + Authorization: Bearer ANON` → 200 ✅ (subject to RLS)
-- `apikey: ANON + Authorization: Bearer sb_secret_*` → 401 "Expected 3 parts in JWT; got 1"
-- `apikey: sb_secret_* + Authorization: Bearer sb_secret_*` → 401 "Unregistered API key"
-- Supabase admin API with `sb_secret_*` → 401 "Unregistered API key"
+**Correct usage for server-side service-role calls:**
 
-### Fix Applied — No Service Role Key Required
+```
+apikey:       sb_secret_...
+Authorization: Bearer sb_secret_...
+```
 
-`api/study-plan-background.ts` was updated to **eliminate the service role dependency**:
+Both headers are required, and both must be the `sb_secret_*` value (not the anon key). This bypasses RLS identically to the old JWT `service_role`.
+
+### Known Gotcha — `auth.admin.*` is broken with `sb_secret_*`
+
+The Supabase Auth admin API (`supabase.auth.admin.listUsers()`, `deleteUser()`, etc.) still expects a JWT-signed service role key. With the new `sb_secret_*` format, these specific calls return `401 "Unregistered API key"` or `401 "Expected 3 parts in JWT; got 1"`.
+
+**This project never uses `auth.admin.*` in production.** Admin endpoints read from tables directly (`.from('user_progress').select()` etc.) using the service-role key to bypass RLS — that path works fine with `sb_secret_*`. Do not introduce `supabase.auth.admin.*` calls; use table queries or the REST API instead.
+
+### Where the keys live
+
+- Local dev: `.env.local` (gitignored) — already has `sb_publishable_*` + `sb_secret_*`
+- Netlify production/preview/branch-deploy: set via `netlify env:set` with the same `sb_*` values
+- Supabase dashboard: **Settings → API Keys → Publishable / Secret API keys** (the "Legacy anon, service_role API keys" tab is now disabled)
+
+### Admin Script
+
+`scripts/admin-delete-study-plan.mjs` (and any other one-off admin script) should be run with the `sb_secret_*` key, not an `eyJ...` value:
+
+```bash
+SERVICE_ROLE_KEY="sb_secret_..." node scripts/admin-delete-study-plan.mjs user@example.com
+```
+
+### Fix Applied — No Service Role Key Required (study plan only)
+
+`api/study-plan-background.ts` was previously updated to eliminate its service-role dependency:
 - `auth.getUser(idToken)` — uses the anon key (passes user's JWT to `/auth/v1/user`, no admin privileges needed)
 - DB insert — uses a user-scoped client (anon key + user's JWT as Bearer), so RLS `auth.uid() = user_id` is satisfied
 
-The `SUPABASE_SERVICE_ROLE_KEY` env var is **no longer needed** by the background function.
-
-### Admin Script Still Needs JWT Service Role Key
-
-The `scripts/admin-delete-study-plan.mjs` script (for one-off admin tasks) still needs the real
-JWT service role key. Get it from:
-1. [Supabase Dashboard](https://supabase.com/dashboard) → your project
-2. **Settings → API → Project API keys → `service_role`** (starts with `eyJ...`)
-
-```bash
-SERVICE_ROLE_KEY="eyJ..." node scripts/admin-delete-study-plan.mjs puppyheavenllc@gmail.com
-```
+The other admin endpoints (`admin-list-users`, `leaderboard`, etc.) still need `SUPABASE_SERVICE_ROLE_KEY` and work with the new `sb_secret_*` format.
 
 ---
 
@@ -191,10 +202,10 @@ History:
 
 Script: `scripts/admin-delete-study-plan.mjs`
 
-**Requires the real JWT service_role key** (see above).
+**Requires `SUPABASE_SERVICE_ROLE_KEY`** (new-format `sb_secret_*`, see above).
 
 ```bash
-SERVICE_ROLE_KEY="eyJ..." node scripts/admin-delete-study-plan.mjs puppyheavenllc@gmail.com
+SERVICE_ROLE_KEY="sb_secret_..." node scripts/admin-delete-study-plan.mjs puppyheavenllc@gmail.com
 ```
 
 Alternatively, delete manually from the **Supabase Table Editor**:
@@ -355,6 +366,11 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0014_user_subscriptions.sql` | `user_subscriptions` — Stripe subscription tracking for paywall |
 | `0015_adaptive_audit_columns.sql` | `is_followup`, `cognitive_complexity`, `skill_question_index` on `responses` — diagnostic audit trail |
 | `0016_baseline_snapshot.sql` | `baseline_snapshot` JSONB column on `user_progress` — pre/post comparison |
+| `0017` – `0018` | Placeholder migrations — syncs with remote history, no local changes |
+| `0019_consent_tracking.sql` | `consent_accepted_at` TIMESTAMPTZ on `user_progress` — privacy policy / terms acceptance |
+| `0020_simplified_onboarding.sql` | Onboarding fields: `first_name`, `last_name`, `zip_code`, `school_attending`, `purpose`, `how_did_you_hear` |
+| `0021_post_assessment_snapshot.sql` | Post-assessment proficiency snapshots for comparison |
+| `0022_diagnostic_wrong_count.sql` | `wrong_count` tracking on diagnostic responses |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 

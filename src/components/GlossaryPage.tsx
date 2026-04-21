@@ -101,92 +101,115 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
   const isRevealed = entry.revealed;
   const hasDef = localText.trim().length > 0;
 
+  // Atelier card-style row: vertical layout, glass surface, clear status.
+  const statusColor = isRevealed ? 'var(--d2-mint)' : hasDef ? 'var(--d3-ice)' : 'rgba(226,232,240,0.2)';
+
   return (
-    <div className="grid grid-cols-[minmax(140px,1fr)_2fr_2fr] gap-0 border-b border-slate-100 last:border-b-0 hover:bg-slate-50/50 transition-colors">
+    <div
+      className="relative rounded-2xl overflow-hidden transition-colors hover:bg-white/4"
+      style={{ background: 'rgba(10,22,40,0.45)', border: '1px solid rgba(226,232,240,0.08)' }}
+    >
+      {/* Left accent stripe */}
+      <span
+        aria-hidden="true"
+        className="absolute left-0 top-0 bottom-0 w-0.5"
+        style={{ background: statusColor, boxShadow: `0 0 8px ${statusColor}` }}
+      />
 
-      {/* ── Column 1: Term ─────────────────────────────────────────────── */}
-      <div className="px-4 py-4 flex flex-col gap-1 border-r border-slate-100">
-        <span className="font-semibold text-slate-800 text-sm leading-snug">
-          {entry.term}
-        </span>
-        {entry.added_from_skill_id && (
-          <span className="text-[10px] text-slate-400 font-mono">
-            {entry.added_from_skill_id}
-          </span>
-        )}
-        {/* Status dot */}
-        <div className="flex items-center gap-1 mt-1">
-          {isRevealed ? (
-            <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
-              <CheckCircle2 size={10} /> Revealed
-            </span>
-          ) : hasDef ? (
-            <span className="flex items-center gap-1 text-[10px] text-indigo-500 font-medium">
-              <Circle size={10} /> Defined
-            </span>
-          ) : (
-            <span className="flex items-center gap-1 text-[10px] text-slate-400">
-              <Circle size={10} /> To define
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* ── Column 2: User's definition ────────────────────────────────── */}
-      <div className="px-4 py-4 border-r border-slate-100 flex flex-col gap-1">
-        <textarea
-          value={localText}
-          onChange={(e) => setLocalText(e.target.value)}
-          onBlur={handleBlur}
-          rows={3}
-          placeholder="Write what this term means to you…"
-          className="w-full text-sm text-slate-700 bg-white border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 placeholder:text-slate-400 transition"
-        />
-        <div className="h-4 flex items-center">
-          {saving && (
-            <span className="flex items-center gap-1 text-[10px] text-slate-400">
-              <Loader2 size={10} className="animate-spin" /> Saving…
-            </span>
-          )}
-          {saved && !saving && (
-            <span className="flex items-center gap-1 text-[10px] text-emerald-500">
-              <CheckCircle2 size={10} /> Saved
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* ── Column 3: Official definition ──────────────────────────────── */}
-      <div className="px-4 py-4 flex flex-col gap-2 justify-start">
-        {isRevealed ? (
-          <div className="text-sm text-slate-700 leading-relaxed bg-indigo-50/60 border border-indigo-100 rounded-lg px-3 py-2">
-            {officialDef}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-[11px] text-slate-400 italic">
-              <EyeOff size={12} />
-              Hidden until you reveal it
-            </div>
-            <button
-              onClick={handleReveal}
-              disabled={revealing}
-              className="self-start flex items-center gap-1.5 text-xs font-medium text-indigo-600 border border-indigo-200 rounded-lg px-3 py-1.5 hover:bg-indigo-50 active:scale-95 transition disabled:opacity-50"
-            >
-              {revealing ? (
-                <Loader2 size={12} className="animate-spin" />
-              ) : (
-                <Eye size={12} />
-              )}
-              Reveal Definition
-            </button>
-            {hasDef && (
-              <p className="text-[10px] text-slate-400">
-                Compare it to yours once you're ready.
+      <div className="p-5 space-y-4">
+        {/* Header: term + status */}
+        <div className="flex items-baseline justify-between gap-3 flex-wrap">
+          <div className="flex-1 min-w-0">
+            <p className="serif text-[18px] font-semibold text-white leading-snug tracking-tight">{entry.term}</p>
+            {entry.added_from_skill_id && (
+              <p className="text-[10px] text-slate-500 font-mono mt-0.5 tracking-wider">
+                {entry.added_from_skill_id}
               </p>
             )}
           </div>
-        )}
+          <div className="shrink-0">
+            {isRevealed ? (
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: 'var(--d2-mint)' }}>
+                <CheckCircle2 size={10} /> Revealed
+              </span>
+            ) : hasDef ? (
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: 'var(--d3-ice)' }}>
+                <Circle size={10} /> Defined
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500">
+                <Circle size={10} /> To define
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Two-column content on wide screens, stacked below */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* User's definition */}
+          <div>
+            <p className="eyebrow mb-2">Your definition</p>
+            <textarea
+              value={localText}
+              onChange={(e) => setLocalText(e.target.value)}
+              onBlur={handleBlur}
+              rows={3}
+              placeholder="Write what this term means to you…"
+              className="w-full text-[13px] text-slate-100 bg-[rgba(6,13,26,0.7)] border border-white/10 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[color:var(--d1-peach)]/30 focus:border-[color:var(--d1-peach)]/50 placeholder:text-slate-500 transition"
+            />
+            <div className="h-4 mt-1 flex items-center">
+              {saving && (
+                <span className="inline-flex items-center gap-1 text-[10px] text-slate-500">
+                  <Loader2 size={10} className="animate-spin" /> Saving…
+                </span>
+              )}
+              {saved && !saving && (
+                <span className="inline-flex items-center gap-1 text-[10px]" style={{ color: 'var(--d2-mint)' }}>
+                  <CheckCircle2 size={10} /> Saved
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Official definition */}
+          <div>
+            <p className="eyebrow mb-2">Official definition</p>
+            {isRevealed ? (
+              <div
+                className="text-[13px] text-slate-200 leading-relaxed rounded-lg px-3 py-2 min-h-[86px]"
+                style={{
+                  background: 'color-mix(in srgb, var(--d3-ice) 8%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--d3-ice) 25%, transparent)',
+                }}
+              >
+                {officialDef}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2 min-h-[86px] justify-center">
+                <div className="flex items-center gap-2 text-[11px] text-slate-500 italic">
+                  <EyeOff size={12} />
+                  Hidden until you reveal it
+                </div>
+                <button
+                  onClick={handleReveal}
+                  disabled={revealing}
+                  className="self-start inline-flex items-center gap-1.5 text-xs font-medium rounded-lg px-3 py-1.5 transition disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+                  style={{
+                    color: 'var(--d3-ice)',
+                    background: 'color-mix(in srgb, var(--d3-ice) 10%, transparent)',
+                    border: '1px solid color-mix(in srgb, var(--d3-ice) 30%, transparent)',
+                  }}
+                >
+                  {revealing ? <Loader2 size={12} className="animate-spin" /> : <Eye size={12} />}
+                  Reveal Definition
+                </button>
+                {hasDef && (
+                  <p className="text-[10px] text-slate-500">Compare it to yours once you're ready.</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -267,28 +290,28 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center py-24">
-        <Loader2 className="animate-spin text-indigo-600" size={28} />
+        <Loader2 className="animate-spin text-[color:var(--d3-ice)]" size={28} />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto text-slate-200">
       {/* ── Tab bar ────────────────────────────────────────────────────────── */}
-      <div className="sticky top-0 z-20 bg-white border-b border-slate-200">
+      <div className="sticky top-0 z-20 bg-navy-900/85 border-b border-white/8 backdrop-blur-md">
         <div className="px-6 pt-5 pb-0 flex items-end gap-1">
           <button
             onClick={() => setActiveTab('terms')}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
               activeTab === 'terms'
-                ? 'bg-white text-indigo-700 border-slate-200 relative z-10 -mb-px'
-                : 'bg-slate-50 text-slate-500 border-transparent hover:text-slate-700'
+                ? 'bg-[rgba(10,22,40,0.85)] text-white border-white/10 relative z-10 -mb-px'
+                : 'bg-transparent text-slate-500 border-transparent hover:text-slate-300'
             }`}
           >
             <BookMarked size={14} />
             My Terms
             {total > 0 && (
-              <span className="ml-1 text-[10px] bg-indigo-100 text-indigo-600 rounded-full px-1.5 py-0.5 font-bold">
+              <span className="ml-1 text-[10px] bg-[color:var(--d3-ice)]/15 text-[color:var(--d3-ice)] rounded-full px-1.5 py-0.5 font-bold">
                 {total}
               </span>
             )}
@@ -297,8 +320,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
             onClick={() => setActiveTab('quiz')}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
               activeTab === 'quiz'
-                ? 'bg-white text-violet-700 border-slate-200 relative z-10 -mb-px'
-                : 'bg-slate-50 text-slate-500 border-transparent hover:text-slate-700'
+                ? 'bg-[rgba(10,22,40,0.85)] text-white border-white/10 relative z-10 -mb-px'
+                : 'bg-transparent text-slate-500 border-transparent hover:text-slate-300'
             }`}
           >
             <Zap size={14} />
@@ -312,7 +335,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
         <Suspense
           fallback={
             <div className="flex-1 flex items-center justify-center py-24">
-              <Loader2 className="animate-spin text-violet-600" size={28} />
+              <Loader2 className="animate-spin text-[color:var(--d4-lavender)]" size={28} />
             </div>
           }
         >
@@ -325,14 +348,14 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
         <>
           {/* ── Header + column headers (single sticky block) ───────────── */}
           <div className="sticky top-[53px] z-10">
-            <div className="px-6 pt-4 pb-4 bg-white border-b border-slate-200">
+            <div className="px-6 pt-4 pb-4 bg-navy-900/85 border-b border-white/8 backdrop-blur-md">
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
-                  <BookMarked size={18} className="text-indigo-600" />
+                <div className="w-9 h-9 rounded-xl bg-[color:var(--d3-ice)]/15 flex items-center justify-center">
+                  <BookMarked size={18} className="text-[color:var(--d3-ice)]" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold text-slate-800">My Glossary</h1>
-                  <p className="text-xs text-slate-500">
+                  <h1 className="text-lg font-bold text-white">My Glossary</h1>
+                  <p className="text-xs text-slate-400">
                     Words added when you miss a question. Define them, then reveal the
                     official meaning to compare.
                   </p>
@@ -356,14 +379,14 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                   <div className="relative flex-1 min-w-[160px] max-w-xs">
                     <Search
                       size={13}
-                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500"
                     />
                     <input
                       type="text"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search terms…"
-                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-white/10 rounded-lg bg-[rgba(6,13,26,0.7)] text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[color:var(--d1-peach)]/20 focus:border-[color:var(--d1-peach)]/50"
                     />
                   </div>
 
@@ -382,8 +405,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                         onClick={() => setFilter(id)}
                         className={`text-xs px-3 py-1 rounded-full border transition font-medium ${
                           filter === id
-                            ? 'bg-indigo-600 text-white border-indigo-600'
-                            : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+                            ? 'bg-gradient-to-r from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] text-[#1e1b3a] border-transparent'
+                            : 'bg-white/5 text-slate-400 border-white/10 hover:border-[color:var(--d1-peach)]/40 hover:text-white'
                         }`}
                       >
                         {label}
@@ -394,31 +417,17 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
               )}
             </div>
 
-            {/* ── Table column headers ──────────────────────────────────── */}
-            {total > 0 && (
-              <div className="grid grid-cols-[minmax(140px,1fr)_2fr_2fr] gap-0 bg-slate-50 border-b border-slate-200">
-                <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-r border-slate-200">
-                  Term
-                </div>
-                <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-r border-slate-200">
-                  What does this mean to you?
-                </div>
-                <div className="px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                  Official Definition
-                </div>
-              </div>
-            )}
           </div>
 
           {/* ── Rows ───────────────────────────────────────────────────────── */}
           {total === 0 ? (
             <EmptyState />
           ) : filtered.length === 0 ? (
-            <div className="py-16 text-center text-slate-400 text-sm">
+            <div className="py-16 text-center text-slate-500 text-sm">
               No terms match your filter.
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
+            <div className="space-y-3 px-6 pt-4">
               {filtered.map((entry) =>
                 userId ? (
                   <GlossaryRow
@@ -451,10 +460,10 @@ function StatChip({
   color: 'slate' | 'amber' | 'indigo' | 'emerald';
 }) {
   const colors = {
-    slate: 'bg-slate-100 text-slate-700',
-    amber: 'bg-amber-50 text-amber-700',
-    indigo: 'bg-indigo-50 text-indigo-700',
-    emerald: 'bg-emerald-50 text-emerald-700',
+    slate:   'bg-navy-800 text-slate-300 border border-white/10',
+    amber:   'bg-[color:var(--d1-peach)]/10 text-[color:var(--d1-peach)] border border-[color:var(--d1-peach)]/30',
+    indigo:  'bg-[color:var(--d4-lavender)]/10 text-[color:var(--d4-lavender)] border border-[color:var(--d4-lavender)]/30',
+    emerald: 'bg-[color:var(--d2-mint)]/10 text-[color:var(--d2-mint)] border border-[color:var(--d2-mint)]/30',
   };
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${colors[color]}`}>
@@ -466,20 +475,20 @@ function StatChip({
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-24 px-6 text-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center">
-        <Sparkles size={28} className="text-indigo-600" />
+      <div className="w-16 h-16 rounded-2xl bg-[color:var(--d3-ice)]/10 flex items-center justify-center">
+        <Sparkles size={28} className="text-[color:var(--d3-ice)]" />
       </div>
       <div>
-        <h2 className="text-base font-semibold text-slate-700 mb-1">
+        <h2 className="text-base font-semibold text-white mb-1">
           Your glossary is empty
         </h2>
-        <p className="text-sm text-slate-500 max-w-xs leading-relaxed">
+        <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
           When you get a practice question wrong, the key vocabulary words from
           that skill will automatically appear here for you to define and study.
         </p>
       </div>
-      <div className="mt-2 flex flex-col gap-2 text-left bg-slate-50 rounded-xl p-4 max-w-sm w-full">
-        <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+      <div className="mt-2 flex flex-col gap-2 text-left bg-white/5 border border-white/8 rounded-xl p-4 max-w-sm w-full">
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
           How it works
         </p>
         <Step n={1} text="Answer a practice question incorrectly" />
@@ -493,8 +502,8 @@ function EmptyState() {
 
 function Step({ n, text }: { n: number; text: string }) {
   return (
-    <div className="flex items-start gap-2 text-xs text-slate-600">
-      <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+    <div className="flex items-start gap-2 text-xs text-slate-300">
+      <span className="w-5 h-5 rounded-full bg-[color:var(--d3-ice)]/15 text-[color:var(--d3-ice)] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-[color:var(--d3-ice)]/30">
         {n}
       </span>
       {text}

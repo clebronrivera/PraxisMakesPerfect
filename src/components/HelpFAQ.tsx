@@ -33,18 +33,18 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 py-6 px-4">
+    <div className="mx-auto max-w-2xl space-y-6 py-6 px-4 text-slate-200">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-200 bg-amber-50">
-          <HelpCircle className="h-5 w-5 text-amber-700" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10">
+          <HelpCircle className="h-5 w-5 text-[color:var(--d1-peach)]" />
         </div>
         <div>
-          <p className="editorial-overline">Support</p>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Help &amp; FAQ</h1>
+          <p className="eyebrow">Support</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Help &amp; FAQ</h1>
         </div>
       </div>
 
-      <div className="editorial-surface divide-y divide-slate-100 overflow-hidden">
+      <div className="glass divide-y divide-white/5 overflow-hidden">
         {FAQ_ENTRIES.map((entry, idx) => {
           const isOpen = openIndex === idx;
           return (
@@ -52,16 +52,16 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-[#fbfaf7]"
+                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-white/5"
               >
-                <span className="text-sm font-semibold text-slate-900">{entry.question}</span>
+                <span className="text-sm font-semibold text-white">{entry.question}</span>
                 {isOpen
-                  ? <ChevronUp className="h-4 w-4 shrink-0 text-amber-600" />
-                  : <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" />}
+                  ? <ChevronUp className="h-4 w-4 shrink-0 text-[color:var(--d1-peach)]" />
+                  : <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />}
               </button>
               {isOpen && (
-                <div className="border-t border-amber-100 bg-amber-50/40 px-6 py-4">
-                  <p className="text-sm leading-relaxed text-slate-600">{entry.answer}</p>
+                <div className="border-t border-[color:var(--d1-peach)]/20 bg-navy-800/40 px-6 py-4">
+                  <p className="text-sm leading-relaxed text-slate-300">{entry.answer}</p>
                 </div>
               )}
             </div>
@@ -74,13 +74,13 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
           <button
             type="button"
             onClick={onReplayTutorial}
-            className="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 transition-colors hover:bg-indigo-100"
+            className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--d3-ice)]/30 bg-[color:var(--d3-ice)]/10 px-4 py-2 text-sm font-medium text-[color:var(--d3-ice)] transition-colors hover:bg-[color:var(--d3-ice)]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
           >
             <PlayCircle className="h-4 w-4" />
             Replay Tutorial
           </button>
         )}
-        <button type="button" onClick={onGoHome} className="editorial-button-secondary">
+        <button type="button" onClick={onGoHome} className="btn-ghost-atelier">
           Back to dashboard
         </button>
       </div>

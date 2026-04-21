@@ -1,22 +1,14 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import {
-  ArrowLeft,
-  Brain,
-  CheckCircle2,
-  ChevronRight,
-  Loader2,
-  Lock,
-  Mail,
-  Shield,
-} from 'lucide-react';
+import { ArrowLeft, Loader2, Mail, Shield } from 'lucide-react';
 import { PRIMARY_ADMIN_EMAIL } from '../config/admin';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
 
 // ─── Entry flow phase ────────────────────────────────────────────────────────
-type EntryPhase = 'select' | 'boot' | 'hero';
+// Intake deleted (Atelier step 3). Boot is now an easter-egg, gated by ?boot=1.
+type EntryPhase = 'boot' | 'hero';
 
-// ─── Skill data for grids ────────────────────────────────────────────────────
+// ─── Skill data for boot-sequence grid ───────────────────────────────────────
 const DOMAIN_COLORS: Record<number, { cell: string; border: string; text: string; boot: string }> = {
   1: { cell: 'bg-amber-100', border: 'border-amber-200', text: 'text-amber-700', boot: 'bg-amber-500' },
   2: { cell: 'bg-emerald-100', border: 'border-emerald-200', text: 'text-emerald-700', boot: 'bg-emerald-500' },
@@ -33,44 +25,81 @@ const DOMAIN_SKILL_COUNTS = PROGRESS_DOMAINS.map(d => ({
   count: getProgressSkillsForDomain(d.id).length,
 }));
 
+// ─── Atelier domain palette for hero engine nodes ────────────────────────────
+const DOMAIN_NODE_COLORS: Record<number, string> = {
+  1: '#fcd5b4', // peach — Professional Practices
+  2: '#b8f2d8', // mint — Student-Level Services
+  3: '#cde9f5', // ice — Systems-Level Services
+  4: '#d8d5fc', // lavender — Foundations
+};
+
+// Engine-box nodes mapped to the 4 domains. Domain 1 → NW, 2 → NE, 3 → SE, 4 → SW
+// (matches mockup-entry-A-atelier.html).
+const ENGINE_NODES = PROGRESS_DOMAINS.map((d, i) => {
+  const positionIdx = i + 1;                // 1..4
+  const skillCount = getProgressSkillsForDomain(d.id).length;
+  return {
+    domainId: d.id,
+    name: d.name,
+    count: skillCount,
+    positionClass: `node-d${positionIdx}`,
+    color: DOMAIN_NODE_COLORS[d.id] ?? '#fcd5b4',
+  };
+});
+
 // ─── Boot sequence terminal lines ────────────────────────────────────────────
-const BOOT_LINES: Array<{ text: string; cls: string }> = [
-  { text: '> Initializing Praxis 5403 configuration...', cls: 'text-emerald-400' },
-  { text: '✓ ETS blueprint loaded — school_psych_5403.json', cls: 'text-emerald-300' },
-  { text: '> Parsing domain architecture...', cls: 'text-slate-400' },
+// Each line has an optional `delay` (ms) — the time to wait *before* showing
+// this line. Defaults to 450ms. Section-end checkmarks get 900ms so the eye
+// has a beat to register completion before the next phase starts.
+const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
+  // Phase 1 — Blueprint load
+  { text: '> Loading ETS Praxis 5403 blueprint...', cls: 'text-emerald-400' },
+  { text: '✓ Blueprint integrity verified — sha256 OK', cls: 'text-emerald-300', delay: 900 },
+  { text: '> Parsing test specification...', cls: 'text-slate-400' },
+  { text: `  Found: 4 domains · ${ALL_SKILLS.length} skills · 1,150 items`, cls: 'text-cyan-400' },
+
+  // Phase 2 — Domain + skill registration
+  { text: '> Registering domain architecture...', cls: 'text-slate-400' },
   ...DOMAIN_SKILL_COUNTS.map((d, i) => ({
     text: `  DOMAIN_0${d.id} ${d.name.padEnd(30)} [${String(d.count).padStart(2)} skills]`,
     cls: ['text-amber-400', 'text-emerald-400', 'text-blue-400', 'text-purple-400'][i],
   })),
-  { text: `✓ ${ALL_SKILLS.length} skills registered`, cls: 'text-emerald-300' },
-  { text: '> Loading item bank...', cls: 'text-slate-400' },
-  { text: '✓ 1,150 items validated', cls: 'text-emerald-300' },
-  { text: '> Calibrating adaptive engine...', cls: 'text-slate-400' },
+  { text: `✓ ${ALL_SKILLS.length} skills registered across 4 domains`, cls: 'text-emerald-300', delay: 900 },
+
+  // Phase 3 — Module linkage
+  { text: '> Linking skills to adaptive modules...', cls: 'text-slate-400' },
+  { text: '  ↳ Adaptive Diagnostic Engine', cls: 'text-cyan-400' },
+  { text: '  ↳ Practice by Skill', cls: 'text-cyan-400' },
+  { text: '  ↳ Practice by Domain', cls: 'text-cyan-400' },
+  { text: '  ↳ Redemption Rounds (quarantine loop)', cls: 'text-cyan-400' },
+  { text: '  ↳ Study Guide Generator', cls: 'text-cyan-400' },
+  { text: `✓ Module linkage complete — ${ALL_SKILLS.length}/${ALL_SKILLS.length} skills covered`, cls: 'text-emerald-300', delay: 900 },
+
+  // Phase 4 — Adaptivity + psychometrics
+  { text: '> Loading psychometric parameters...', cls: 'text-slate-400' },
+  { text: '  2PL IRT model · difficulty + discrimination per item', cls: 'text-cyan-400' },
   { text: '  Confidence signal weighting: ENABLED', cls: 'text-cyan-400' },
-  { text: '✓ Adaptive engine calibrated', cls: 'text-emerald-300' },
+  { text: '✓ 1,150 items calibrated — engine adapts per response', cls: 'text-emerald-300', delay: 900 },
+
+  // Phase 5 — Scheduling + handoff
   { text: '> Configuring spaced review scheduler...', cls: 'text-slate-400' },
   { text: '✓ SRS intervals: [1d, 3d, 7d, 14d, 30d]', cls: 'text-emerald-300' },
-  { text: '✓✓ All systems operational — platform ready', cls: 'text-emerald-400 font-bold' },
-];
-
-// ─── Exam cards ──────────────────────────────────────────────────────────────
-const EXAM_OPTIONS = [
-  { id: 'praxis_5403', name: 'Praxis 5403', sub: 'School Psychology', detail: '45 skills · 1,150 items · 4 domains', live: true },
-  { id: 'ftce_school_psych', name: 'FTCE School Psych', sub: 'PK-12', detail: 'Coming Soon', live: false },
-  { id: 'ftce_gkt', name: 'FTCE General Knowledge', sub: 'GKT', detail: 'Coming Soon', live: false },
-  { id: 'ftce_prof_ed', name: 'FTCE Professional Ed', sub: 'Test', detail: 'Coming Soon', live: false },
-  { id: 'school_counselor', name: 'School Counselor', sub: 'SEC', detail: 'Coming Soon', live: false },
-  { id: 'edu_leadership', name: 'Educational Leadership', sub: 'FELE', detail: 'Coming Soon', live: false },
-];
-
-const ROLE_OPTIONS = [
-  'Graduate Student',
-  'Cert-Only / Alt Route',
-  'Internship Year',
-  'Retake Candidate',
+  { text: '✓✓ Platform ready — serving personalized content', cls: 'text-emerald-400 font-bold', delay: 1200 },
 ];
 
 // ─── Boot Sequence Component ─────────────────────────────────────────────────
+// Unchanged in Step 3 — reached only when `?boot=1` is present in the URL.
+
+const LINE_SHOW_AT: number[] = (() => {
+  const out: number[] = [];
+  let cumulative = 0;
+  for (const line of BOOT_LINES) {
+    cumulative += line.delay ?? 450;
+    out.push(cumulative);
+  }
+  return out;
+})();
+const TOTAL_BOOT_MS = LINE_SHOW_AT[LINE_SHOW_AT.length - 1] ?? 0;
 
 function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: () => void }) {
   const [visibleLines, setVisibleLines] = useState(0);
@@ -79,30 +108,28 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
 
   useEffect(() => {
     const lineTimers: ReturnType<typeof setTimeout>[] = [];
-    BOOT_LINES.forEach((_, i) => {
+    LINE_SHOW_AT.forEach((showAt) => {
       lineTimers.push(setTimeout(() => {
         setVisibleLines(prev => prev + 1);
         terminalRef.current?.scrollTo({ top: terminalRef.current.scrollHeight, behavior: 'smooth' });
-      }, 250 * (i + 1)));
+      }, showAt));
     });
 
-    // Light up skill cells in domain groups
     let cellIndex = 0;
-    let domainDelay = 600; // start after first few lines
+    let domainDelay = 600;
     for (const domain of PROGRESS_DOMAINS) {
       const skills = getProgressSkillsForDomain(domain.id);
       for (let j = 0; j < skills.length; j++) {
         const idx = cellIndex;
         lineTimers.push(setTimeout(() => {
           setLitCells(prev => new Set([...prev, idx]));
-        }, domainDelay + j * 50));
+        }, domainDelay + j * 100));
         cellIndex++;
       }
-      domainDelay += skills.length * 50 + 300;
+      domainDelay += skills.length * 100 + 400;
     }
 
-    // Auto-advance after all lines + 1s
-    const advanceTimer = setTimeout(onComplete, BOOT_LINES.length * 250 + 1200);
+    const advanceTimer = setTimeout(onComplete, TOTAL_BOOT_MS + 1500);
     lineTimers.push(advanceTimer);
 
     return () => lineTimers.forEach(clearTimeout);
@@ -111,11 +138,11 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
   const progressPct = Math.min((visibleLines / BOOT_LINES.length) * 100, 100);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-300 p-6 flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-navy-900 text-slate-300 p-6 flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div className="flex justify-end mb-4">
         <button
           onClick={onSkip}
-          className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-white border border-slate-700 hover:border-slate-500 transition-colors"
+          className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-white border border-navy-700 hover:border-slate-500 transition-colors"
         >
           Skip →
         </button>
@@ -123,7 +150,7 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
 
       <div className="flex-1 flex gap-6 max-w-6xl mx-auto w-full">
         {/* Terminal */}
-        <div className="flex-1 rounded-xl border border-slate-700 bg-slate-950 p-5 overflow-hidden flex flex-col">
+        <div className="flex-1 rounded-xl border border-navy-700 bg-navy-950 p-5 overflow-hidden flex flex-col">
           <div className="flex items-center gap-2 mb-4 shrink-0">
             <div className="w-3 h-3 rounded-full bg-red-500/60" />
             <div className="w-3 h-3 rounded-full bg-amber-500/60" />
@@ -131,12 +158,17 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
             <span className="text-[10px] text-slate-600 ml-2 font-mono">pass_engine v1.0</span>
           </div>
           <div ref={terminalRef} className="flex-1 overflow-y-auto space-y-1.5 font-mono text-xs leading-relaxed">
-            {BOOT_LINES.slice(0, visibleLines).map((line, i) => (
-              <p key={i} className={line.cls}>
-                <span className="text-slate-600">[{String(Math.floor(i * 0.5)).padStart(2, '0')}:{String((i * 30) % 60).padStart(2, '0')}]</span>{' '}
-                {line.text}
-              </p>
-            ))}
+            {BOOT_LINES.slice(0, visibleLines).map((line, i) => {
+              const elapsedSec = Math.floor((LINE_SHOW_AT[i] ?? 0) / 1000);
+              const mm = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+              const ss = String(elapsedSec % 60).padStart(2, '0');
+              return (
+                <p key={i} className={line.cls}>
+                  <span className="text-slate-600">[{mm}:{ss}]</span>{' '}
+                  {line.text}
+                </p>
+              );
+            })}
             {visibleLines >= BOOT_LINES.length && (
               <span className="inline-block w-2 h-4 bg-emerald-500 animate-pulse" />
             )}
@@ -155,7 +187,7 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
                 <div
                   key={skill.skillId}
                   className={`h-6 rounded transition-all duration-300 ${
-                    litCells.has(i) ? `${color.boot}/80` : 'bg-slate-800'
+                    litCells.has(i) ? `${color.boot}/80` : 'bg-navy-800'
                   }`}
                 />
               );
@@ -177,7 +209,7 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
       </div>
 
       <div className="max-w-6xl mx-auto w-full mt-6">
-        <div className="h-1 rounded-full bg-slate-800 overflow-hidden">
+        <div className="h-1 rounded-full bg-navy-800 overflow-hidden">
           <div
             className="h-full rounded-full bg-emerald-500 transition-all duration-500"
             style={{ width: `${progressPct}%` }}
@@ -191,10 +223,16 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
 
 // ─── Main LoginScreen ────────────────────────────────────────────────────────
 
+/** Read ?boot=1 query param (SSR-safe). */
+function shouldStartInBoot(): boolean {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('boot') === '1';
+}
+
 export default function LoginScreen() {
   const { signInWithEmail, signUpWithEmail, resetPassword, error, loading, clearError } = useAuth();
 
-  // ── Preserved auth state ───────────────────────────────────────────────────
+  // ── Auth state ─────────────────────────────────────────────────────────────
   const [mode, setMode] = useState<'login' | 'signup' | 'reset'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -204,11 +242,11 @@ export default function LoginScreen() {
   const [consentChecked, setConsentChecked] = useState(false);
 
   // ── Entry flow state ───────────────────────────────────────────────────────
-  const [entryPhase, setEntryPhase] = useState<EntryPhase>('select');
-  const [chosenExam, setChosenExam] = useState<string | null>(null);
-  const [chosenRole, setChosenRole] = useState<string | null>(null);
+  const [entryPhase, setEntryPhase] = useState<EntryPhase>(() =>
+    shouldStartInBoot() ? 'boot' : 'hero'
+  );
 
-  // ── Preserved keyboard shortcut ────────────────────────────────────────────
+  // ── Admin keyboard shortcut (preserved) ────────────────────────────────────
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.shiftKey && event.key === 'A') {
@@ -219,7 +257,7 @@ export default function LoginScreen() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // ── Preserved auth handlers ────────────────────────────────────────────────
+  // ── Auth handlers (preserved) ──────────────────────────────────────────────
   const handleEmailSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     clearError();
@@ -249,305 +287,216 @@ export default function LoginScreen() {
   const switchToReset = () => { clearError(); setResetEmailSent(false); setMode('reset'); };
   const switchToLogin = () => { clearError(); setResetEmailSent(false); setMode('login'); };
 
-  const focusAccountPanel = (nextMode: 'login' | 'signup') => {
+  const focusSignInPanel = useCallback((nextMode: 'login' | 'signup') => {
     clearError();
     setResetEmailSent(false);
     setMode(nextMode);
     window.requestAnimationFrame(() => {
-      document.getElementById('account-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('signin-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-  };
+  }, [clearError]);
 
   const handleBootComplete = useCallback(() => setEntryPhase('hero'), []);
   const handleBootSkip = useCallback(() => setEntryPhase('hero'), []);
 
-  const inputClassName =
-    'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-200/70';
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // PHASE 1: SELECT
-  // ══════════════════════════════════════════════════════════════════════════
-  if (entryPhase === 'select') {
-    const canProceed = chosenExam !== null && chosenRole !== null;
-
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-        <div className="w-full max-w-3xl space-y-8">
-          {/* Brand */}
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
-                <Brain className="w-5 h-5 text-white" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900">PASS</h1>
-            <p className="text-sm text-slate-500 mt-1">Platform for Adaptive Study Sessions</p>
-          </div>
-
-          {/* Section heading */}
-          <div className="text-center">
-            <p className="text-xs font-black uppercase tracking-[0.15em] text-amber-600 mb-2">Configure your adaptive platform</p>
-            <p className="text-sm text-slate-500 max-w-lg mx-auto">
-              Select your exam and training path. The engine will map your complete skill architecture before you begin.
-            </p>
-          </div>
-
-          {/* Exam cards */}
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Select exam</p>
-            <div className="grid grid-cols-3 gap-3">
-              {EXAM_OPTIONS.map(exam => (
-                <button
-                  key={exam.id}
-                  type="button"
-                  disabled={!exam.live}
-                  onClick={() => setChosenExam(exam.id)}
-                  className={`relative rounded-xl p-4 text-left transition-all ${
-                    exam.live
-                      ? chosenExam === exam.id
-                        ? 'border-2 border-amber-500 bg-white shadow-sm'
-                        : 'border-2 border-transparent bg-white shadow-sm hover:border-amber-300 cursor-pointer'
-                      : 'border border-slate-200 bg-white opacity-50 cursor-not-allowed'
-                  }`}
-                >
-                  {exam.live && (
-                    <span className="absolute -top-2 right-3 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase tracking-wider">
-                      Live
-                    </span>
-                  )}
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 ${
-                    exam.live ? 'bg-amber-100' : 'bg-slate-100'
-                  }`}>
-                    {exam.live ? (
-                      <CheckCircle2 className="w-4 h-4 text-amber-700" />
-                    ) : (
-                      <Lock className="w-4 h-4 text-slate-400" />
-                    )}
-                  </div>
-                  <p className={`text-sm font-bold ${exam.live ? 'text-slate-900' : 'text-slate-500'}`}>{exam.name}</p>
-                  <p className={`text-[11px] mt-0.5 ${exam.live ? 'text-slate-500' : 'text-slate-400'}`}>{exam.sub}</p>
-                  <p className={`text-[10px] mt-1 ${exam.live ? 'text-slate-400' : 'text-slate-300'}`}>{exam.detail}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Role pills */}
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Select your path</p>
-            <div className="flex flex-wrap gap-2">
-              {ROLE_OPTIONS.map(role => (
-                <button
-                  key={role}
-                  type="button"
-                  onClick={() => setChosenRole(role)}
-                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    chosenRole === role
-                      ? 'border-2 border-amber-500 bg-amber-50 text-amber-800 font-semibold'
-                      : 'border border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:bg-amber-50'
-                  }`}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="text-center">
-            <button
-              type="button"
-              disabled={!canProceed}
-              onClick={() => setEntryPhase('boot')}
-              className={`px-8 py-3.5 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-amber-500/20 ${
-                canProceed
-                  ? 'bg-amber-600 text-white hover:bg-amber-700'
-                  : 'bg-amber-600/40 text-white/60 cursor-not-allowed'
-              }`}
-            >
-              Initialize Platform →
-            </button>
-          </div>
-
-          {/* Already have an account? */}
-          <p className="text-center text-sm text-slate-500">
-            Already have an account?{' '}
-            <button
-              type="button"
-              onClick={() => { setEntryPhase('hero'); setMode('login'); }}
-              className="font-semibold text-amber-700 hover:text-amber-800"
-            >
-              Sign in
-            </button>
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // PHASE 2: BOOT SEQUENCE
-  // ══════════════════════════════════════════════════════════════════════════
+  // ═════════════════════════════════════════════════════════════════════════
+  // PHASE: BOOT (easter-egg, reached via ?boot=1)
+  // ═════════════════════════════════════════════════════════════════════════
   if (entryPhase === 'boot') {
     return <BootSequence onComplete={handleBootComplete} onSkip={handleBootSkip} />;
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // PHASE 3: HERO + AUTH
-  // ══════════════════════════════════════════════════════════════════════════
+  // ═════════════════════════════════════════════════════════════════════════
+  // PHASE: HERO — atelier landing (replaces the old select + hero + signin views)
+  // ═════════════════════════════════════════════════════════════════════════
   return (
-    <div className="min-h-screen bg-slate-50" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-      {/* Top bar */}
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-              <Brain className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-900">PASS</p>
-              <p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">Praxis 5403</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:flex items-center gap-1.5 text-[11px] text-emerald-600">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Platform Configured
-            </span>
-            <button
-              type="button"
-              onClick={() => focusAccountPanel('login')}
-              className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors"
-            >
-              Sign In
-            </button>
+    <div
+      className="min-h-screen text-slate-200"
+      style={{ background: 'var(--navy-900)', fontFamily: "'Inter', system-ui, sans-serif" }}
+    >
+      <div className="starfield" aria-hidden="true" />
+
+      {/* ══════ Top bar ══════ */}
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 md:px-10 py-5 md:py-6">
+        <div className="flex items-center gap-3">
+          <div className="mini-orb" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-bold text-white tracking-wide">PASS</p>
+            <p className="text-[10px] tracking-[0.22em] uppercase text-slate-500">Platform for Adaptive Study Sessions</p>
           </div>
         </div>
-      </header>
+        <div className="flex items-center gap-4 md:gap-5">
+          <span className="hidden md:inline text-[10px] tracking-[0.25em] uppercase text-slate-500">Praxis 5403 · Beta</span>
+          <button
+            type="button"
+            onClick={() => focusSignInPanel('login')}
+            className="text-sm text-slate-300 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[color:var(--d1-peach)] rounded"
+          >
+            Sign in
+          </button>
+        </div>
+      </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        <div className="grid gap-8 xl:grid-cols-[1fr_26rem]">
-          {/* ── Left: Hero content ────────────────────────────────────────── */}
-          <div className="space-y-8">
-            {/* Badge */}
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-xs font-semibold text-emerald-700">Platform Configured — Adaptive engine ready</span>
-            </div>
+      {/* ══════ HERO ══════ */}
+      <section className="relative min-h-screen flex flex-col">
+        <div className="flex-1 flex items-center justify-center px-6 md:px-10 relative z-30 pt-28 pb-16">
+          <div className="max-w-6xl w-full grid md:grid-cols-[1.05fr_1fr] gap-10 md:gap-12 items-center">
 
-            {/* Headline */}
+            {/* Left — copy + CTAs */}
             <div>
-              <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-tight">
-                Master the Praxis 5403 with{' '}
-                <span className="font-black text-amber-600">precision.</span>
+              <p className="text-[11px] font-semibold tracking-[0.32em] uppercase text-[color:var(--d1-peach)]/85 mb-6">
+                Adaptive · Personal · Built around your gaps
+              </p>
+              <h1 className="font-serif text-5xl md:text-6xl font-semibold text-white leading-[1.05] tracking-tight">
+                A study plan<br />
+                <span className="gradient-text">that listens.</span>
               </h1>
-              <p className="mt-4 text-base text-slate-600 leading-relaxed max-w-2xl">
-                An adaptive diagnostic that maps your exact knowledge gaps across all 45 skills — then builds a personalized study path through question differentiation, spaced repetition, targeted vocabulary practice, and second-chance redemption rounds. Every time you practice, your dashboard evolves.
+              <p className="text-base text-slate-400 mt-6 leading-relaxed max-w-md">
+                Four domains. 45 skills. 1,150 calibrated items — feeding one adaptive
+                engine that rebuilds itself around your gaps, one answer at a time.
               </p>
-            </div>
 
-            {/* Proof pills */}
-            <div className="flex flex-wrap gap-2">
-              {['1,150+ calibrated questions', '45 skills tracked', '4 domains covered', 'Adaptive diagnostic engine'].map(pill => (
-                <span key={pill} className="px-3 py-1.5 rounded-full border border-slate-200 bg-white text-[11px] font-semibold text-slate-600">
-                  {pill}
-                </span>
-              ))}
-            </div>
+              <div className="flex flex-wrap items-center gap-4 mt-9">
+                <button
+                  type="button"
+                  onClick={() => focusSignInPanel('signup')}
+                  className="btn-soft-glow"
+                >
+                  Begin your diagnostic&nbsp;&nbsp;→
+                </button>
+                <button
+                  type="button"
+                  onClick={() => focusSignInPanel('login')}
+                  className="btn-ghost-atelier"
+                >
+                  I have an account
+                </button>
+              </div>
 
-            {/* CTAs */}
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => focusAccountPanel('signup')}
-                className="px-6 py-3 rounded-xl bg-amber-600 text-white text-sm font-bold hover:bg-amber-700 transition-colors shadow-lg shadow-amber-500/20 flex items-center gap-2"
-              >
-                Start Free — Begin Diagnostic
-                <ChevronRight className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => focusAccountPanel('login')}
-                className="px-6 py-3 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-600 hover:border-amber-300 transition-colors"
-              >
-                Sign In
-              </button>
-            </div>
-
-            {/* Domain weight pills */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: 'Professional Practices 28%', cls: 'bg-amber-100 text-amber-800' },
-                { label: 'Student-Level Services 34%', cls: 'bg-emerald-100 text-emerald-800' },
-                { label: 'Systems-Level Services 24%', cls: 'bg-blue-100 text-blue-800' },
-                { label: 'Foundations 14%', cls: 'bg-purple-100 text-purple-800' },
-              ].map(d => (
-                <span key={d.label} className={`px-3 py-1.5 rounded-full text-[11px] font-bold ${d.cls}`}>{d.label}</span>
-              ))}
-            </div>
-
-            {/* Skill grid */}
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">
-                Extracted skills — loaded from Praxis 5403 blueprint · {ALL_SKILLS.length} skills
-              </p>
-              <div className="grid grid-cols-9 gap-1.5">
-                {ALL_SKILLS.map((skill, i) => {
-                  const color = DOMAIN_COLORS[skill.domainId];
-                  const domainName = PROGRESS_DOMAINS.find(d => d.id === skill.domainId)?.name ?? '';
-                  return (
-                    <div
-                      key={skill.skillId}
-                      title={`${skill.fullLabel}\nDomain: ${domainName}\nSkill: ${skill.skillId}`}
-                      className={`rounded-lg ${color.cell} border ${color.border} p-1 text-center cursor-default`}
-                      style={{ animationDelay: `${i * 16}ms` }}
-                    >
-                      <span className={`text-[8px] font-bold ${color.text}`}>{skill.skillId}</span>
-                    </div>
-                  );
-                })}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-10 text-[11px] text-slate-500">
+                <span><span className="text-[color:var(--d1-peach)] font-semibold">4</span> domains</span>
+                <span className="text-slate-700">·</span>
+                <span><span className="text-[color:var(--d2-mint)] font-semibold">45</span> skills</span>
+                <span className="text-slate-700">·</span>
+                <span><span className="text-[color:var(--d3-ice)] font-semibold">1,150</span> calibrated items</span>
+                <span className="text-slate-700">·</span>
+                <span><span className="text-[color:var(--d4-lavender)] font-semibold">IRT</span>-calibrated</span>
               </div>
             </div>
 
-            {/* Journey cards */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { step: '01', title: 'Diagnose', desc: 'Adaptive diagnostic maps all 45 skills in one session.', cls: 'bg-amber-100 text-amber-800' },
-                { step: '02', title: 'Practice', desc: 'Practice where it counts — by domain, skill, or learning path.', cls: 'bg-emerald-100 text-emerald-800' },
-                { step: '03', title: 'Track', desc: 'Watch your readiness evolve with each session.', cls: 'bg-blue-100 text-blue-800' },
-              ].map(card => (
-                <div key={card.step} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-                  <span className={`px-2 py-1 rounded-full text-[10px] font-black ${card.cls}`}>{card.step}</span>
-                  <p className="mt-3 text-sm font-bold text-slate-900">{card.title}</p>
-                  <p className="mt-1 text-xs text-slate-500">{card.desc}</p>
+            {/* Right — engine visualization */}
+            <div className="flex items-center justify-center" aria-hidden="true">
+              <div className="engine-box">
+
+                {/* SVG gradient feeder paths */}
+                <svg
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 560 560"
+                  preserveAspectRatio="xMidYMid meet"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  <defs>
+                    <linearGradient id="pathD1" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#fcd5b4" stopOpacity="0.55" />
+                      <stop offset="100%" stopColor="#fcd5b4" stopOpacity="0" />
+                    </linearGradient>
+                    <linearGradient id="pathD2" x1="1" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#b8f2d8" stopOpacity="0.55" />
+                      <stop offset="100%" stopColor="#b8f2d8" stopOpacity="0" />
+                    </linearGradient>
+                    <linearGradient id="pathD3" x1="1" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor="#cde9f5" stopOpacity="0.55" />
+                      <stop offset="100%" stopColor="#cde9f5" stopOpacity="0" />
+                    </linearGradient>
+                    <linearGradient id="pathD4" x1="0" y1="1" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#d8d5fc" stopOpacity="0.55" />
+                      <stop offset="100%" stopColor="#d8d5fc" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M 100 100 Q 170 180, 280 280" stroke="url(#pathD1)" strokeWidth="1.5" fill="none" />
+                  <path d="M 460 100 Q 390 180, 280 280" stroke="url(#pathD2)" strokeWidth="1.5" fill="none" />
+                  <path d="M 460 460 Q 390 380, 280 280" stroke="url(#pathD3)" strokeWidth="1.5" fill="none" />
+                  <path d="M 100 460 Q 170 380, 280 280" stroke="url(#pathD4)" strokeWidth="1.5" fill="none" />
+                </svg>
+
+                {/* Central orb */}
+                <div className="engine-orb-halo" />
+                <div className="engine-orb">
+                  <div className="engine-orb-inner" />
                 </div>
-              ))}
+
+                {/* Domain nodes at 4 corners */}
+                {ENGINE_NODES.map(node => (
+                  <div
+                    key={node.domainId}
+                    className={`domain-node ${node.positionClass}`}
+                    style={{ ['--node-color' as unknown as string]: node.color } as React.CSSProperties}
+                  >
+                    {node.positionClass === 'node-d1' || node.positionClass === 'node-d4' ? (
+                      <>
+                        <div className="node-label">
+                          <p className="name">{node.name}</p>
+                          <p className="count">{node.count} SKILLS</p>
+                        </div>
+                        <div className="node-dot" />
+                      </>
+                    ) : (
+                      <>
+                        <div className="node-dot" />
+                        <div className="node-label">
+                          <p className="name">{node.name}</p>
+                          <p className="count">{node.count} SKILLS</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+
+                <div className="engine-caption">
+                  <p className="text-[10px] tracking-[0.32em] uppercase text-slate-500">The Adaptive Engine</p>
+                </div>
+              </div>
             </div>
+
           </div>
+        </div>
 
-          {/* ── Right: Auth form ──────────────────────────────────────────── */}
-          <aside id="account-panel" className="xl:sticky xl:top-20 xl:self-start">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">Account</p>
-              <h2 className="mt-2 text-xl font-bold text-slate-900">
-                {mode === 'login' && 'Welcome back'}
-                {mode === 'signup' && 'Create your account'}
-                {mode === 'reset' && 'Reset your password'}
-              </h2>
-              <p className="mt-2 text-sm text-slate-500 leading-relaxed">
-                {mode === 'login' && 'Sign in to return to your dashboard, practice history, and saved study guidance.'}
-                {mode === 'signup' && 'Create an account to save your baseline, unlock the guided practice flow, and keep your study plan across devices.'}
-                {mode === 'reset' && 'Enter your email and we will send a secure password reset link.'}
-              </p>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] uppercase text-slate-600">
+          Already a candidate? <button type="button" onClick={() => focusSignInPanel('login')} className="text-slate-400 hover:text-[color:var(--d1-peach)] ml-2 underline-offset-4 hover:underline">Sign in ↓</button>
+        </div>
+      </section>
 
-              {/* Success / error banners */}
+      {/* ══════ SIGN IN ══════ */}
+      <section id="signin-panel" className="relative min-h-screen flex flex-col">
+        <div className="flex-1 flex items-center justify-center px-6 md:px-10 py-24 md:py-28 relative z-30">
+          <div className="max-w-md w-full">
+            <div className="glass p-8 md:p-10">
+              <div className="flex justify-center mb-6">
+                <div className="mini-orb" style={{ width: 56, height: 56 }} aria-hidden="true" />
+              </div>
+              <div className="text-center mb-8">
+                <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-[color:var(--d1-peach)]/85 mb-2">
+                  {mode === 'signup' ? 'Welcome' : mode === 'reset' ? 'Reset password' : 'Welcome back'}
+                </p>
+                <h3 className="font-serif text-2xl font-semibold text-white">
+                  {mode === 'signup' && 'Create your account.'}
+                  {mode === 'login' && 'Pick up where you left off.'}
+                  {mode === 'reset' && 'We\u2019ll send a secure link.'}
+                </h3>
+                <p className="text-sm text-slate-400 mt-2 leading-relaxed">
+                  {mode === 'signup' && 'Save your diagnostic baseline, study plan, and redemption queue.'}
+                  {mode === 'login' && 'Your diagnostic, study plan, and redemption queue are saved.'}
+                  {mode === 'reset' && 'Enter your email and we\u2019ll send a secure password reset link.'}
+                </p>
+              </div>
+
               {resetEmailSent && !error && (
-                <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                <div className="mb-6 rounded-xl border border-[color:var(--d2-mint)]/30 bg-[color:var(--d2-mint)]/10 p-4">
                   <div className="flex items-start gap-3">
-                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
+                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--d2-mint)]" />
                     <div>
-                      <p className="text-sm font-bold text-emerald-800">Reset email sent</p>
-                      <p className="mt-1 text-sm leading-relaxed text-emerald-700">
+                      <p className="text-sm font-semibold text-[color:var(--d2-mint)]">Reset email sent</p>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-300">
                         Check {email} for instructions to reset your password.
                       </p>
                     </div>
@@ -556,13 +505,13 @@ export default function LoginScreen() {
               )}
 
               {error && (
-                <div className="mt-5 rounded-xl border border-rose-200 bg-rose-50 p-4">
+                <div className="mb-6 rounded-xl border border-[color:var(--accent-rose)]/30 bg-[color:var(--accent-rose)]/10 p-4">
                   <div className="flex items-start gap-3">
-                    <div className="flex-1 text-sm font-medium leading-relaxed text-rose-700">{error}</div>
+                    <div className="flex-1 text-sm leading-relaxed text-[color:var(--accent-rose)]">{error}</div>
                     <button
                       type="button"
                       onClick={clearError}
-                      className="text-lg leading-none text-rose-500 transition-colors hover:text-rose-700"
+                      className="text-lg leading-none text-[color:var(--accent-rose)] transition-colors hover:text-white"
                       aria-label="Dismiss error"
                     >
                       ×
@@ -571,36 +520,35 @@ export default function LoginScreen() {
                 </div>
               )}
 
-              {/* Reset form */}
               {mode === 'reset' ? (
-                <form onSubmit={handlePasswordReset} className="mt-5 space-y-4">
+                <form onSubmit={handlePasswordReset} className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
+                    <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
                     <input
                       type="email"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       required
-                      className={inputClassName}
+                      className="field-input"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={loading || !email}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-600 py-3 text-sm font-bold text-white hover:bg-amber-700 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                    className="btn-soft-glow w-full mt-2 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {loading ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" /> Sending</>
+                      <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Sending</span>
                     ) : (
-                      <><Mail className="h-4 w-4" /> Send reset email</>
+                      <span className="inline-flex items-center gap-2"><Mail className="h-4 w-4" /> Send reset email</span>
                     )}
                   </button>
                   <div className="pt-1 text-center">
                     <button
                       type="button"
                       onClick={switchToLogin}
-                      className="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--d1-peach)] transition-colors hover:text-white"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" /> Back to sign in
                     </button>
@@ -608,43 +556,42 @@ export default function LoginScreen() {
                 </form>
               ) : (
                 <>
-                  {/* Login / Signup form */}
-                  <form onSubmit={handleEmailSubmit} className="mt-5 space-y-4">
+                  <form onSubmit={handleEmailSubmit} className="space-y-4">
                     {mode === 'signup' && (
                       <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full name</label>
+                        <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Full name</label>
                         <input
                           type="text"
                           value={displayName}
                           onChange={e => setDisplayName(e.target.value)}
                           placeholder="Your name"
-                          className={inputClassName}
+                          className="field-input"
                         />
                       </div>
                     )}
 
                     <div>
-                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
+                      <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
                       <input
                         type="email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         placeholder="you@example.com"
                         required
-                        className={inputClassName}
+                        className="field-input"
                       />
                     </div>
 
                     <div>
-                      <div className="mb-1.5 flex items-center justify-between gap-3">
-                        <label className="block text-sm font-semibold text-slate-700">Password</label>
+                      <div className="flex items-baseline justify-between mb-2">
+                        <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400">Password</label>
                         {mode === 'login' && (
                           <button
                             type="button"
                             onClick={switchToReset}
-                            className="shrink-0 text-xs font-semibold text-amber-700 transition-colors hover:text-amber-800"
+                            className="text-[11px] text-[color:var(--d1-peach)] hover:underline"
                           >
-                            Forgot password
+                            Forgot?
                           </button>
                         )}
                       </div>
@@ -655,11 +602,8 @@ export default function LoginScreen() {
                         placeholder="At least 6 characters"
                         required
                         minLength={6}
-                        className={inputClassName}
+                        className="field-input"
                       />
-                      {mode === 'signup' && (
-                        <p className="mt-2 text-sm text-slate-500">Use at least 6 characters.</p>
-                      )}
                     </div>
 
                     {mode === 'signup' && (
@@ -668,22 +612,22 @@ export default function LoginScreen() {
                           type="checkbox"
                           checked={consentChecked}
                           onChange={e => setConsentChecked(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                          className="mt-0.5 h-4 w-4 rounded border-slate-600 bg-transparent text-[color:var(--d1-peach)] focus:ring-[color:var(--d1-peach)]/50"
                         />
-                        <span className="text-xs leading-relaxed text-slate-600">
+                        <span className="text-xs leading-relaxed text-slate-400">
                           I agree to the{' '}
                           <button
                             type="button"
                             onClick={e => { e.stopPropagation(); window.location.hash = 'terms'; }}
-                            className="font-medium text-amber-700 underline hover:text-amber-800"
+                            className="text-slate-300 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
                           >
-                            Terms of Service
+                            Terms
                           </button>{' '}
                           and{' '}
                           <button
                             type="button"
                             onClick={e => { e.stopPropagation(); window.location.hash = 'privacy'; }}
-                            className="font-medium text-amber-700 underline hover:text-amber-800"
+                            className="text-slate-300 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
                           >
                             Privacy Policy
                           </button>
@@ -694,69 +638,62 @@ export default function LoginScreen() {
                     <button
                       type="submit"
                       disabled={loading || !email || !password || (mode === 'signup' && !consentChecked)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-600 py-3 text-sm font-bold text-white hover:bg-amber-700 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                      className="btn-soft-glow w-full mt-2 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {loading ? (
-                        <>
+                        <span className="inline-flex items-center gap-2">
                           <Loader2 className="h-4 w-4 animate-spin" />
                           {mode === 'login' ? 'Signing in' : 'Creating account'}
-                        </>
+                        </span>
                       ) : (
-                        <>
-                          {mode === 'login' ? 'Sign in' : 'Create account'}
-                          <ChevronRight className="h-4 w-4" />
-                        </>
+                        <span>
+                          {mode === 'login' ? 'Sign in' : 'Create account'}&nbsp;&nbsp;→
+                        </span>
                       )}
                     </button>
                   </form>
 
-                  {/* Toggle login/signup */}
-                  <div className="mt-5 text-center">
-                    <button
-                      type="button"
-                      onClick={() => { clearError(); setMode(mode === 'login' ? 'signup' : 'login'); }}
-                      className="text-sm font-medium text-slate-500 transition-colors hover:text-amber-700"
-                    >
-                      {mode === 'login' ? (
-                        <>Need an account? <span className="font-semibold text-amber-700">Sign up</span></>
-                      ) : (
-                        <>Already have an account? <span className="font-semibold text-amber-700">Sign in</span></>
-                      )}
-                    </button>
+                  <div className="flex items-center gap-3 my-6">
+                    <div className="flex-1 h-px bg-slate-700/40" />
+                    <span className="text-[10px] tracking-widest uppercase text-slate-600">or</span>
+                    <div className="flex-1 h-px bg-slate-700/40" />
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => { clearError(); setMode(mode === 'login' ? 'signup' : 'login'); }}
+                    className="w-full py-3 rounded-xl text-sm font-medium text-slate-300 border border-slate-700/50 hover:border-[color:var(--d1-peach)]/50 hover:text-white transition"
+                  >
+                    {mode === 'login' ? 'Create an account' : 'Already have an account? Sign in'}
+                  </button>
                 </>
               )}
 
-              {/* Benefits */}
-              <div className="mt-6 space-y-4 border-t border-slate-200 pt-5">
-                <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">Included with your account</p>
-                <div className="space-y-2">
-                  {[
-                    'Saved progress across diagnostic and practice',
-                    'One shared readiness view across all surfaces',
-                    'Learning path ordered by your biggest gaps',
-                  ].map(item => (
-                    <div key={item} className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
-                      <p className="text-xs leading-relaxed text-slate-600">{item}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-center text-xs leading-relaxed text-slate-500">
-                  An account is required to save progress across devices.
-                </p>
-                <p className="text-center text-[11px] leading-relaxed text-amber-700 font-semibold">
-                  Currently in beta. Not responsible for loss of data during the beta period.
-                </p>
-              </div>
+              <p className="text-center text-[11px] text-slate-600 mt-6 leading-relaxed">
+                By continuing you agree to our{' '}
+                <button
+                  type="button"
+                  onClick={() => (window.location.hash = 'terms')}
+                  className="text-slate-400 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
+                >
+                  Terms
+                </button>{' '}
+                and{' '}
+                <button
+                  type="button"
+                  onClick={() => (window.location.hash = 'privacy')}
+                  className="text-slate-400 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
+                >
+                  Privacy Policy
+                </button>.
+              </p>
 
-              {/* Admin entry */}
               {mode === 'login' && showAdminEntry && (
                 <div className="mt-4 text-center">
                   <button
                     type="button"
                     onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-amber-200 hover:text-amber-700"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-700/50 bg-transparent px-3 py-2 text-xs font-semibold text-slate-400 transition-colors hover:border-[color:var(--d1-peach)]/50 hover:text-white"
                     title="Admin sign in"
                   >
                     <Shield className="h-3.5 w-3.5" />
@@ -765,9 +702,13 @@ export default function LoginScreen() {
                 </div>
               )}
             </div>
-          </aside>
+
+            <p className="text-center text-[10px] text-slate-700 mt-6 tracking-wider uppercase">
+              PASS · Beta · 2026
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

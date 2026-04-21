@@ -1,7 +1,7 @@
 // src/components/TutorEmptyState.tsx
-// First-use experience for each session type.
+// First-use experience for each session type — atelier styling.
 
-import { Bot, Lock, Sparkles, ClipboardList, BookOpen, Shuffle } from 'lucide-react';
+import { Lock, Sparkles, ClipboardList, BookOpen, Shuffle } from 'lucide-react';
 import { TutorSuggestedChips } from './TutorSuggestedChips';
 import type { TutorSkillSnapshot } from '../types/tutorChat';
 
@@ -25,18 +25,21 @@ const STUDY_ACTIVITIES = [
     label: 'Practice Questions',
     sublabel: 'Printable set based on weak areas',
     message: 'Generate a practice set of questions based on my weak areas',
+    accent: 'var(--d1-peach)',
   },
   {
     icon: BookOpen,
     label: 'Fill-in-the-Blank',
     sublabel: 'Word bank for key vocabulary',
     message: 'Create a fill-in-the-blank word bank activity for the terms I need to learn',
+    accent: 'var(--d3-ice)',
   },
   {
     icon: Shuffle,
     label: 'Matching Activity',
     sublabel: 'Drag-and-drop term matching',
     message: 'Make a matching activity so I can practice matching terms to their definitions',
+    accent: 'var(--d4-lavender)',
   },
 ];
 
@@ -61,12 +64,10 @@ export function TutorEmptyState({
   if (sessionType === 'floating') {
     return (
       <div className="flex flex-col items-center text-center px-4 py-6 gap-3">
-        <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-          <Bot className="w-5 h-5 text-amber-700" />
-        </div>
+        <div className="mini-orb" style={{ width: 40, height: 40 }} aria-hidden="true" />
         <div>
-          <p className="text-sm font-semibold text-stone-800">Hi! I'm PraxisBot</p>
-          <p className="text-xs text-stone-500 mt-1">
+          <p className="text-sm font-semibold text-white">Hi, I'm your tutor</p>
+          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
             I can help you navigate the app and answer Praxis 5403 questions.
             {!diagnosticComplete && ' Complete the diagnostic for deeper personalization.'}
           </p>
@@ -80,13 +81,16 @@ export function TutorEmptyState({
   if (!diagnosticComplete) {
     return (
       <div className="flex flex-col items-center text-center px-6 py-10 gap-4">
-        <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center">
-          <Lock className="w-6 h-6 text-stone-400" />
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center"
+          style={{ background: 'rgba(226,232,240,0.06)', border: '1px solid rgba(226,232,240,0.1)' }}
+        >
+          <Lock className="w-6 h-6 text-slate-500" />
         </div>
         <div>
-          <p className="text-base font-semibold text-stone-700">Complete the adaptive diagnostic to unlock personalized tutoring</p>
-          <p className="text-sm text-stone-500 mt-2">
-            Once you finish the diagnostic, PraxisBot will know your full skill profile and can quiz you on weak areas, explain concepts, and generate focused study materials.
+          <p className="text-base font-semibold text-white">Complete the adaptive diagnostic to unlock personalized tutoring</p>
+          <p className="text-sm text-slate-400 mt-2 leading-relaxed max-w-md mx-auto">
+            Once you finish the diagnostic, the tutor will know your full skill profile and can quiz you on weak areas, explain concepts, and generate focused study materials.
           </p>
         </div>
         <TutorSuggestedChips suggestions={PAGE_TUTOR_CHIPS_NO_DIAGNOSTIC} onSelect={onSelect} disabled={disabled} />
@@ -98,32 +102,53 @@ export function TutorEmptyState({
   const top3 = emergingSkills.slice(0, 3);
 
   return (
-    <div className="flex flex-col px-6 py-8 gap-4">
+    <div className="flex flex-col px-5 py-6 gap-4">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-          <Sparkles className="w-5 h-5 text-amber-700" />
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+          style={{
+            background: 'color-mix(in srgb, var(--d1-peach) 14%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--d1-peach) 30%, transparent)',
+          }}
+        >
+          <Sparkles className="w-5 h-5" style={{ color: 'var(--d1-peach)' }} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-stone-800">I know your skill profile.</p>
-          <p className="text-xs text-stone-500">Here's what I see so far:</p>
+          <p className="text-sm font-semibold text-white">I know your skill profile.</p>
+          <p className="text-xs text-slate-400">Here's what I see so far:</p>
         </div>
       </div>
 
       {top3.length > 0 && (
-        <div className="editorial-surface bg-stone-50 border border-stone-200 rounded-lg p-3 space-y-2">
-          <p className="text-xs font-semibold text-stone-600 uppercase tracking-wider">Skills needing the most work</p>
-          {top3.map(s => (
-            <div key={s.skillId} className="flex items-center justify-between">
-              <span className="text-sm text-stone-700">{s.skillName}</span>
-              <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
-                {s.accuracy !== null ? `${Math.round(s.accuracy * 100)}%` : 'Not started'}
-              </span>
-            </div>
-          ))}
+        <div className="glass p-4 space-y-2">
+          <p className="eyebrow">Skills needing the most work</p>
+          {top3.map(s => {
+            const pct = s.accuracy !== null ? Math.round(s.accuracy * 100) : null;
+            const pctColor = pct === null
+              ? 'var(--d3-ice)'
+              : pct < 40 ? 'var(--accent-rose)'
+              : pct < 60 ? 'var(--d1-peach)'
+              : 'var(--d2-mint)';
+            return (
+              <div key={s.skillId} className="flex items-center justify-between gap-3">
+                <span className="text-[13px] text-slate-200 truncate">{s.skillName}</span>
+                <span
+                  className="shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full tabular-nums"
+                  style={{
+                    color: pctColor,
+                    background: `color-mix(in srgb, ${pctColor} 12%, transparent)`,
+                    border: `1px solid color-mix(in srgb, ${pctColor} 30%, transparent)`,
+                  }}
+                >
+                  {pct !== null ? `${pct}%` : 'Not started'}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
 
-      <p className="text-sm text-stone-600">What would you like to work on?</p>
+      <p className="text-sm text-slate-300">What would you like to work on?</p>
 
       <TutorSuggestedChips
         suggestions={PAGE_TUTOR_CHIPS_COMPLETE}
@@ -132,21 +157,32 @@ export function TutorEmptyState({
       />
 
       <div className="pt-1">
-        <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Study Activities</p>
+        <p className="eyebrow mb-2">Study activities</p>
         <div className="flex flex-col gap-2">
-          {STUDY_ACTIVITIES.map(({ icon: Icon, label, sublabel, message }) => (
+          {STUDY_ACTIVITIES.map(({ icon: Icon, label, sublabel, message, accent }) => (
             <button
               key={label}
               onClick={() => !disabled && onSelect(message)}
               disabled={disabled}
-              className="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-lg border border-stone-200 bg-white hover:border-amber-400 hover:bg-amber-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+              style={{
+                background: 'rgba(10,22,40,0.5)',
+                border: '1px solid rgba(226,232,240,0.08)',
+              }}
             >
-              <div className="w-7 h-7 rounded-md bg-amber-100 flex items-center justify-center shrink-0">
-                <Icon className="w-3.5 h-3.5 text-amber-700" />
+              <div
+                className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
+                style={{
+                  background: `color-mix(in srgb, ${accent} 16%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${accent} 30%, transparent)`,
+                  color: accent,
+                }}
+              >
+                <Icon className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <p className="text-sm font-medium text-stone-800 leading-tight">{label}</p>
-                <p className="text-xs text-stone-500">{sublabel}</p>
+              <div className="min-w-0">
+                <p className="text-[13px] font-medium text-white leading-tight truncate">{label}</p>
+                <p className="text-[11px] text-slate-400">{sublabel}</p>
               </div>
             </button>
           ))}

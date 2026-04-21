@@ -124,6 +124,25 @@ export interface LearningModule {
   title: string;
   /** Full rich sections rendered inside the lesson viewer. */
   sections: ModuleSection[];
+
+  // ──── Stage 1 Schema Extensions (optional, non-breaking) ────────────────────
+  // These fields enable multi-module scaffolding, sequencing, and prerequisite tracking.
+  // All optional; existing modules continue to typecheck without them.
+
+  /** Module role in learning design: primary (foundational), extension (parallel/independent), or sequence (part of an ordered chain). */
+  role?: 'primary' | 'extension' | 'sequence';
+
+  /** Shared label for all modules in the same ordered progression (e.g., "consultation-models-chain"). Only meaningful when role === 'sequence'. */
+  sequenceGroup?: string;
+
+  /** 1-based position within the sequenceGroup. Only meaningful when role === 'sequence'. */
+  sequenceIndex?: number;
+
+  /** Module IDs that should be read first. Enforced by UI lock/unlock logic during learning path render. */
+  prerequisiteModuleIds?: string[];
+
+  /** Concept tags for flexible knowledge mapping (e.g., ["FERPA", "confidentiality-exceptions", "parental-consent"]). */
+  concepts?: string[];
 }
 
 // ─── 58 Modules ───────────────────────────────────────────────────────────────

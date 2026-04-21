@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · AI Tutor — The Atelier</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900: #060d1a;
+    --navy-800: #0a1628;
+    --d1-peach: #fcd5b4;
+    --d2-mint: #b8f2d8;
+    --d3-ice: #cde9f5;
+    --d4-lavender: #d8d5fc;
+    --accent-rose: #fbcfe8;
+    --accent-cream: #fff3de;
+  }
+  html, body { background: var(--navy-900); font-family: 'Inter', system-ui, sans-serif; color: #e2e8f0; min-height: 100vh; }
+  .starfield-subtle { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 14%, rgba(252,213,180,0.35), transparent 40%),
+      radial-gradient(1px 1px at 88% 18%, rgba(216,213,252,0.30), transparent 40%),
+      radial-gradient(1px 1px at 58% 72%, rgba(187,247,208,0.25), transparent 40%),
+      radial-gradient(1px 1px at 24% 86%, rgba(205,233,245,0.25), transparent 40%),
+      radial-gradient(1px 1px at 94% 62%, rgba(251,207,232,0.30), transparent 40%),
+      radial-gradient(1px 1px at 6% 52%, rgba(216,213,252,0.25), transparent 40%);
+    opacity: 0.5; }
+  .mini-orb { width: 40px; height: 40px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,243,222,1) 0%, rgba(252,213,180,0.85) 25%, rgba(251,207,232,0.55) 55%, rgba(216,213,252,0.25) 100%);
+    box-shadow: 0 0 18px rgba(252,213,180,0.4), 0 0 36px rgba(216,213,252,0.22);
+    animation: orb-pulse 3.5s ease-in-out infinite; flex-shrink: 0; }
+  .tiny-orb { width: 26px; height: 26px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,243,222,1) 0%, rgba(252,213,180,0.85) 25%, rgba(251,207,232,0.55) 55%, rgba(216,213,252,0.25) 100%);
+    box-shadow: 0 0 10px rgba(252,213,180,0.45);
+    flex-shrink: 0; }
+  @keyframes orb-pulse { 0%,100% { transform: scale(1); opacity: .96; } 50% { transform: scale(1.03); opacity: 1; } }
+  .gradient-text { background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .gradient-text-warm { background: linear-gradient(135deg, #fde4c1, #fbcfe8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .glass { background: rgba(10,22,40,0.55); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .glass-deep { background: rgba(6,13,26,0.7); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .eyebrow { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: #94a3b8; }
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; border: 1px solid currentColor; }
+  .hair-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(226,232,240,0.1), transparent); }
+  .btn-soft-glow { padding: 9px 18px; border-radius: 999px; font-weight: 600; font-size: 12px; color: #1e1b3a;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 18px rgba(252,213,180,0.3); transition: transform .2s; }
+  .btn-soft-glow:hover { transform: translateY(-1px); }
+  .btn-ghost { padding: 8px 14px; border-radius: 999px; font-weight: 500; font-size: 11px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); background: transparent; transition: all .2s; }
+  .btn-ghost:hover { color: white; border-color: rgba(252,213,180,0.4); }
+
+  /* Sidebar session row */
+  .sess-row {
+    padding: 11px 14px; border-radius: 10px;
+    background: transparent; cursor: pointer; transition: all .2s;
+    border: 1px solid transparent;
+  }
+  .sess-row:hover { background: rgba(10,22,40,0.5); border-color: rgba(226,232,240,0.06); }
+  .sess-row.active {
+    background: rgba(252,213,180,0.08);
+    border-color: rgba(252,213,180,0.2);
+    box-shadow: 0 0 14px rgba(252,213,180,0.08);
+  }
+  .sess-row .sid { font-size: 9px; letter-spacing: 0.14em; font-weight: 600; text-transform: uppercase; }
+
+  /* Chat bubble */
+  .bubble-user {
+    display: inline-block;
+    max-width: 78%;
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
+    background: linear-gradient(135deg, rgba(252,213,180,0.15), rgba(216,213,252,0.1));
+    border: 1px solid rgba(252,213,180,0.25);
+    color: #f1f5f9;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .bubble-tutor {
+    display: inline-block;
+    max-width: 100%;
+    padding: 14px 18px;
+    border-radius: 4px 18px 18px 18px;
+    background: rgba(10,22,40,0.65);
+    border: 1px solid rgba(226,232,240,0.08);
+    color: #e2e8f0;
+    font-size: 13.5px; line-height: 1.7;
+  }
+
+  /* Artifact card in chat */
+  .artifact {
+    margin-top: 10px;
+    padding: 16px 18px; border-radius: 14px;
+    background: rgba(6,13,26,0.7);
+    border: 1px solid var(--c, rgba(226,232,240,0.1));
+    position: relative; overflow: hidden;
+  }
+  .artifact::before {
+    content: attr(data-kind); position: absolute; top: 12px; right: 14px;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--c, #94a3b8); font-weight: 700;
+  }
+  .artifact-quiz-choice {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    border: 1px solid rgba(226,232,240,0.08);
+    background: rgba(10,22,40,0.5);
+    margin-bottom: 6px;
+    font-size: 12.5px; cursor: pointer; transition: all .2s;
+  }
+  .artifact-quiz-choice:hover { border-color: rgba(252,213,180,0.35); }
+  .artifact-quiz-choice .letter {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(226,232,240,0.08); color: #cbd5e1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600;
+  }
+
+  /* Suggested chip */
+  .sugg {
+    padding: 8px 14px; border-radius: 999px;
+    font-size: 11px; color: #cbd5e1;
+    border: 1px solid rgba(226,232,240,0.1);
+    background: rgba(10,22,40,0.5);
+    cursor: pointer; transition: all .2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .sugg:hover { border-color: rgba(252,213,180,0.4); color: white; background: rgba(10,22,40,0.8); }
+
+  /* Mode toggle */
+  .mode-toggle {
+    display: flex; padding: 3px;
+    border-radius: 999px; background: rgba(10,22,40,0.6);
+    border: 1px solid rgba(226,232,240,0.08);
+  }
+  .mode-btn {
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 11px; font-weight: 500;
+    color: #94a3b8; cursor: pointer; transition: all .2s;
+  }
+  .mode-btn.active { background: linear-gradient(135deg, #fde4c1, #fbcfe8); color: #1e1b3a; font-weight: 700; }
+
+  /* Composer */
+  .composer {
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(6,13,26,0.85);
+    border: 1px solid rgba(226,232,240,0.12);
+    display: flex; align-items: flex-end; gap: 10px;
+    transition: border-color .2s;
+  }
+  .composer:focus-within { border-color: rgba(252,213,180,0.5); box-shadow: 0 0 0 3px rgba(252,213,180,0.08); }
+  .composer textarea {
+    flex: 1; background: transparent; border: 0; outline: 0; resize: none;
+    color: #f1f5f9; font-size: 13.5px; font-family: inherit;
+    padding: 4px 0; min-height: 22px; max-height: 180px; line-height: 1.5;
+  }
+  .composer textarea::placeholder { color: rgba(148,163,184,0.5); }
+
+  /* Rail block */
+  .rail-item { padding: 14px 16px; border-radius: 12px; background: rgba(10,22,40,0.4); border: 1px solid rgba(226,232,240,0.06); }
+</style>
+</head>
+<body>
+
+<div class="starfield-subtle"></div>
+
+<!-- Top bar -->
+<div class="relative z-40 flex items-center justify-between px-8 py-5 border-b border-white/5">
+  <div class="flex items-center gap-3">
+    <div class="mini-orb"></div>
+    <div>
+      <p class="text-sm font-bold text-white tracking-wide">PASS</p>
+      <p class="text-[9px] tracking-[0.24em] uppercase text-slate-500">AI Tutor</p>
+    </div>
+  </div>
+  <nav class="flex items-center gap-7 text-[13px]">
+    <a class="text-slate-400 hover:text-white" href="#">Home</a>
+    <a class="text-slate-400 hover:text-white" href="#">Practice</a>
+    <a class="text-slate-400 hover:text-white" href="#">Study Guide</a>
+    <a class="text-white font-medium" href="#">AI Tutor</a>
+    <a class="text-slate-400 hover:text-white" href="#">Results</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <span class="eyebrow">Praxis 5403 · Beta</span>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] flex items-center justify-center text-[11px] font-bold text-[#1e1b3a]">C</div>
+  </div>
+</div>
+
+<!-- 3-column tutor workspace -->
+<div class="relative z-10 max-w-[1480px] mx-auto px-6 py-6">
+
+  <div class="grid grid-cols-[260px_1fr_300px] gap-5 h-[calc(100vh-140px)] min-h-[680px]">
+
+    <!-- ══════ LEFT: session history ══════ -->
+    <aside class="glass p-4 flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between mb-4">
+        <p class="eyebrow">Sessions</p>
+        <button class="w-7 h-7 rounded-full border border-white/15 text-white flex items-center justify-center hover:border-[color:var(--d1-peach)] transition" title="New chat">+</button>
+      </div>
+
+      <!-- Mode toggle -->
+      <div class="mode-toggle mb-4">
+        <button class="mode-btn active flex-1">Chat</button>
+        <button class="mode-btn flex-1">Quiz</button>
+      </div>
+
+      <div class="overflow-y-auto space-y-1 pr-1 -mr-1">
+        <div class="sess-row active">
+          <p class="text-[12px] font-medium text-white truncate">IDEA procedural safeguards</p>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="sid" style="color: var(--d4-lavender);">LEG-02</span>
+            <span class="text-[10px] text-slate-500">· 8 msgs · 3m ago</span>
+          </div>
+        </div>
+        <div class="sess-row">
+          <p class="text-[12px] font-medium text-white truncate">CBT vs. Solution-Focused</p>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="sid" style="color: var(--d2-mint);">MBH-03</span>
+            <span class="text-[10px] text-slate-500">· 12 msgs · yesterday</span>
+          </div>
+        </div>
+        <div class="sess-row">
+          <p class="text-[12px] font-medium text-white truncate">What does SEM tell me?</p>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="sid" style="color: var(--d1-peach);">PSY-02</span>
+            <span class="text-[10px] text-slate-500">· 6 msgs · Apr 15</span>
+          </div>
+        </div>
+        <div class="sess-row">
+          <p class="text-[12px] font-medium text-white truncate">Quiz me on FBA steps</p>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="chip" style="color: var(--accent-rose); font-size: 8px; padding: 1px 6px;">Quiz</span>
+            <span class="sid" style="color: var(--d1-peach);">DBD-07</span>
+            <span class="text-[10px] text-slate-500">· Apr 13</span>
+          </div>
+        </div>
+        <div class="sess-row">
+          <p class="text-[12px] font-medium text-white truncate">Erikson stages recap</p>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="sid" style="color: var(--d2-mint);">DEV-01</span>
+            <span class="text-[10px] text-slate-500">· Apr 11</span>
+          </div>
+        </div>
+        <div class="sess-row">
+          <p class="text-[12px] font-medium text-white truncate">504 vs IEP differences</p>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="sid" style="color: var(--d4-lavender);">LEG-01</span>
+            <span class="text-[10px] text-slate-500">· Apr 10</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══════ CENTER: conversation ══════ -->
+    <section class="flex flex-col overflow-hidden">
+
+      <!-- Chat header -->
+      <header class="glass px-6 py-4 flex items-center gap-4 mb-4 flex-shrink-0">
+        <div class="tiny-orb"></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-[14px] font-semibold text-white">IDEA procedural safeguards</p>
+          <p class="text-[11px] text-slate-500">Grounded in LEG-02 · 0% accuracy · <span style="color: #fbcfe8;">priority skill</span></p>
+        </div>
+        <button class="btn-ghost">
+          <svg class="w-3.5 h-3.5 inline mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Add context
+        </button>
+      </header>
+
+      <!-- Chat stream -->
+      <div class="flex-1 overflow-y-auto space-y-5 pr-2 -mr-2">
+
+        <!-- User 1 -->
+        <div class="flex justify-end">
+          <div class="bubble-user">
+            I keep getting IDEA questions wrong. Can you break down what procedural safeguards are and when a school has to give them?
+          </div>
+        </div>
+
+        <!-- Tutor 1 -->
+        <div class="flex gap-3">
+          <div class="tiny-orb mt-1"></div>
+          <div class="flex-1 min-w-0">
+            <div class="bubble-tutor">
+              <p class="mb-2"><span class="chip" style="color: var(--d3-ice); margin-bottom: 6px;">Explain</span></p>
+              <p class="mb-3"><strong class="text-white">Procedural safeguards</strong> are the set of rights IDEA gives parents and eligible students — the legal rails around every evaluation, identification, placement, and FAPE decision.</p>
+              <p class="mb-3 text-slate-300">They include things like:</p>
+              <ul class="text-slate-300 space-y-1 mb-3 pl-2">
+                <li>— Prior written notice (PWN) before any change</li>
+                <li>— Parental consent for initial evaluation &amp; services</li>
+                <li>— The right to an independent educational evaluation</li>
+                <li>— Mediation, due process hearings, and complaint procedures</li>
+                <li>— Access to records &amp; confidentiality protections</li>
+              </ul>
+              <p class="mb-0 text-slate-300">A copy of the procedural safeguards notice must be given to parents <strong class="text-white">at least once per year</strong> — and always alongside PWN when the school proposes or refuses to initiate/change identification, evaluation, placement, or FAPE.</p>
+            </div>
+
+            <!-- Artifact: Quick Reference Card -->
+            <div class="artifact" data-kind="Quick card · Concept" style="--c: var(--d3-ice);">
+              <p class="text-[12px] font-semibold text-white mb-2 max-w-[85%]">When does a school have to give procedural safeguards?</p>
+              <div class="space-y-1.5 text-[12px] text-slate-300">
+                <div class="flex gap-3"><span class="text-slate-500 w-20 flex-shrink-0">Always:</span><span>Once per year, automatically</span></div>
+                <div class="flex gap-3"><span class="text-slate-500 w-20 flex-shrink-0">Triggered:</span><span>With every prior written notice (PWN)</span></div>
+                <div class="flex gap-3"><span class="text-slate-500 w-20 flex-shrink-0">On request:</span><span>Any time a parent asks</span></div>
+                <div class="flex gap-3"><span class="text-slate-500 w-20 flex-shrink-0">Disciplinary:</span><span>When a child is removed for &gt; 10 school days</span></div>
+                <div class="flex gap-3"><span class="text-slate-500 w-20 flex-shrink-0">Complaint:</span><span>On filing a state complaint or due process</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User 2 -->
+        <div class="flex justify-end">
+          <div class="bubble-user">
+            Okay that makes sense. Quiz me on this — give me one of the hard ones.
+          </div>
+        </div>
+
+        <!-- Tutor 2 -->
+        <div class="flex gap-3">
+          <div class="tiny-orb mt-1"></div>
+          <div class="flex-1 min-w-0">
+            <div class="bubble-tutor">
+              <p class="mb-0"><span class="chip" style="color: var(--accent-rose); margin-bottom: 6px;">Quiz me</span></p>
+              <p class="mt-3 mb-0 text-slate-300">Here's one at diagnostic difficulty. Take your time.</p>
+            </div>
+
+            <!-- Artifact: Quiz card -->
+            <div class="artifact" data-kind="Quiz · LEG-02" style="--c: var(--accent-rose);">
+              <p class="text-[13px] text-white leading-relaxed mb-3 max-w-[85%]">
+                A 9-year-old has been suspended 7 days this year for a behavior incident. The principal now recommends a 5-day suspension. Which of the following is <em>required</em>?
+              </p>
+              <div>
+                <div class="artifact-quiz-choice"><div class="letter">A</div><div>Manifestation determination review</div></div>
+                <div class="artifact-quiz-choice"><div class="letter">B</div><div>Expulsion hearing with the school board</div></div>
+                <div class="artifact-quiz-choice"><div class="letter">C</div><div>Nothing — 12 days total is still under the 10-day threshold for a single incident</div></div>
+                <div class="artifact-quiz-choice"><div class="letter">D</div><div>Referral to an alternative educational placement</div></div>
+              </div>
+              <div class="flex items-center gap-2 mt-3 text-[11px] text-slate-500">
+                <span>Confidence:</span>
+                <div class="flex gap-1">
+                  <button class="sugg" style="padding: 4px 10px;">Low</button>
+                  <button class="sugg" style="padding: 4px 10px;">Med</button>
+                  <button class="sugg" style="padding: 4px 10px;">High</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggested chips -->
+        <div class="flex gap-2 flex-wrap pt-2">
+          <button class="sugg">💡 Explain more</button>
+          <button class="sugg">📚 Related vocab</button>
+          <button class="sugg">🎯 Harder one</button>
+          <button class="sugg">🔁 Spaced review of this skill</button>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div class="mt-4 flex-shrink-0">
+        <div class="composer">
+          <textarea placeholder="Ask anything about this skill, or tell me how to quiz you…" rows="1"></textarea>
+          <div class="flex items-center gap-2">
+            <button class="btn-ghost" title="Attach context">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9"/><path d="M15 8a3 3 0 10-6 0v8a5 5 0 0010 0"/></svg>
+            </button>
+            <button class="btn-soft-glow">Send →</button>
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2 text-center">Shift + Enter for newline · Cmd/Ctrl + K for quick nav</p>
+      </div>
+
+    </section>
+
+    <!-- ══════ RIGHT: context + artifacts ══════ -->
+    <aside class="space-y-3 overflow-y-auto pr-1 -mr-1">
+      <div class="rail-item">
+        <p class="eyebrow mb-2">Grounded in</p>
+        <p class="text-[13px] text-white font-medium">IDEA &amp; FAPE</p>
+        <p class="text-[11px] text-slate-500 mt-1">LEG-02 · Foundations</p>
+        <div class="mt-3 flex items-center justify-between">
+          <span class="text-[11px] text-slate-500">All-time accuracy</span>
+          <span class="text-[12px] font-semibold" style="color: #fbcfe8;">0%</span>
+        </div>
+        <div class="mt-1 h-1 rounded-full bg-white/5"><div class="h-1 rounded-full" style="width: 0%; background: #fbcfe8;"></div></div>
+      </div>
+
+      <div class="rail-item">
+        <p class="eyebrow mb-2">This session</p>
+        <div class="space-y-1.5 text-[11px]">
+          <div class="flex justify-between"><span class="text-slate-500">Messages</span><span class="text-white">8</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Artifacts</span><span class="text-white">3</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Quiz items</span><span class="text-white">1</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Duration</span><span class="text-white">7m</span></div>
+        </div>
+      </div>
+
+      <div class="rail-item">
+        <p class="eyebrow mb-2">Vocabulary surfaced</p>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="chip" style="color: var(--d3-ice);">PWN</span>
+          <span class="chip" style="color: var(--d3-ice);">IDEA</span>
+          <span class="chip" style="color: var(--d3-ice);">FAPE</span>
+          <span class="chip" style="color: var(--d3-ice);">Manifestation</span>
+          <span class="chip" style="color: var(--d3-ice);">Stay-put</span>
+          <span class="chip" style="color: var(--d3-ice);">IEE</span>
+        </div>
+        <button class="text-[11px] mt-3 hover:underline" style="color: var(--d3-ice);">Save all to glossary →</button>
+      </div>
+
+      <div class="rail-item">
+        <p class="eyebrow mb-2">Artifacts · this chat</p>
+        <div class="space-y-2">
+          <div class="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 cursor-pointer">
+            <div class="w-1 self-stretch rounded-full" style="background: var(--d3-ice);"></div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[11px] font-medium text-white">When safeguards are required</p>
+              <p class="text-[10px] text-slate-500">Quick card · Concept</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-2 p-2 rounded-lg hover:bg-white/5 cursor-pointer">
+            <div class="w-1 self-stretch rounded-full" style="background: var(--accent-rose);"></div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[11px] font-medium text-white">Manifestation determination</p>
+              <p class="text-[10px] text-slate-500">Quiz · LEG-02</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rail-item" style="border-color: rgba(252,213,180,0.25); background: rgba(252,213,180,0.04);">
+        <p class="eyebrow mb-2" style="color: var(--d1-peach);">Suggestion</p>
+        <p class="text-[12px] text-slate-300 leading-relaxed">When this chat ends, add a <span class="text-white font-semibold">10-min spaced review</span> in 2 days to lock in the procedural-safeguards rule.</p>
+        <button class="btn-ghost w-full mt-3 justify-center" style="padding: 7px 12px;">Add to plan</button>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Design callouts -->
+  <section class="glass-deep p-7 mt-8">
+    <div class="mb-5">
+      <p class="eyebrow mb-1" style="color: var(--d1-peach);">For your review · AI Tutor</p>
+      <h3 class="text-lg font-semibold text-white">What I changed here</h3>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3 text-[12px] text-slate-300 leading-relaxed">
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">3-column workspace, not chat-only.</p>
+        Left = sessions with a Chat/Quiz mode toggle. Center = conversation. Right = grounding, vocab, artifacts. The chat stops being the whole product.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Tutor avatar is the orb.</p>
+        Every assistant message is prefaced with a 26px mini-orb. The brand moment shows up where the brand speaks — small, not precious.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Artifacts are typed, not generic.</p>
+        Each artifact card has a domain/kind label in the top-right ("Quick card · Concept," "Quiz · LEG-02") and a colored border in that kind's hue. You can scan the chat for the artifact you want.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">User bubbles are warm, tutor bubbles are cool.</p>
+        User gets a peach/lavender tinted glass bubble with a sharp bottom-right corner; tutor gets navy glass with a sharp top-left. No avatar clutter, no "You" label.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Right rail = what the model is using.</p>
+        Grounded-in skill, session stats, vocabulary surfaced, artifacts created. The rail makes it obvious that this isn't a generic chatbot — it's tied to your data.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">"Add to plan" suggestion at session end.</p>
+        Peach-tinted rail card nudges spaced review into the study guide. The Tutor becomes a producer of plan changes, not just a Q&amp;A bot.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="relative z-10 text-center py-8">
+  <p class="text-[10px] text-slate-700 tracking-[0.25em] uppercase">PASS · Beta · 2026</p>
+</footer>
+
+</body>
+</html>
