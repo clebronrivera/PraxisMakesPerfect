@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mockup B — The Blueprint</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream-bg:      #faf6ee;
+    --cream-bg-2:    #f4ede0;
+    --ink:           #1a1815;
+    --ink-2:         #3f3a32;
+    --ink-3:         #74695b;
+    --line:          #d9cfbe;
+    --accent-ember:  #c2410c;      /* deep amber, not orange-600 */
+    --accent-cobalt: #2a4a8b;
+    --accent-forest: #1f6042;
+    --accent-wine:   #7c2d5b;
+  }
+  html, body {
+    background: var(--cream-bg);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    font-feature-settings: "ss01", "ss02";
+  }
+  .serif { font-family: 'Fraunces', 'Georgia', serif; font-feature-settings: "ss01"; }
+
+  .rule { height: 1px; background: var(--line); }
+
+  .topbar {
+    background: var(--cream-bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .domain-cell {
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+  }
+  .d1 { background: #f5d08f; }         /* amber */
+  .d2 { background: #a6d6bb; }         /* sage */
+  .d3 { background: #a7c2e3; }         /* slate-blue */
+  .d4 { background: #cbbad9; }         /* dusty lilac */
+
+  .tag-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.01em;
+    padding: 3px 10px; border-radius: 999px;
+    background: rgba(26, 24, 21, 0.05);
+    border: 1px solid rgba(26, 24, 21, 0.1);
+    color: var(--ink-2);
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px; border-radius: 8px;
+    font-weight: 600; font-size: 14px;
+    background: var(--ink); color: var(--cream-bg);
+    border: 1px solid var(--ink);
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover { background: var(--accent-ember); border-color: var(--accent-ember); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px; border-radius: 8px;
+    font-weight: 500; font-size: 14px;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    background: transparent;
+    transition: all 0.2s ease;
+  }
+  .btn-ghost:hover { border-color: var(--ink); background: var(--cream-bg-2); }
+
+  .eyebrow {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .section-marker {
+    position: absolute; top: 24px; left: 40px;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--ink-3); opacity: 0.6;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s ease;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(26, 24, 21, 0.08);
+  }
+  .field-input::placeholder { color: var(--ink-3); opacity: 0.6; }
+
+  .exam-card {
+    padding: 22px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-align: left;
+  }
+  .exam-card:hover:not(.locked) { border-color: var(--ink); transform: translateY(-1px); }
+  .exam-card.locked { opacity: 0.55; cursor: default; background: transparent; }
+  .exam-card.active {
+    border: 2px solid var(--ink);
+    padding: 21px; /* keep size stable */
+  }
+
+  .role-card {
+    padding: 18px 20px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-align: left;
+  }
+  .role-card:hover { border-color: var(--ink); }
+  .role-card.selected {
+    background: var(--ink); color: var(--cream-bg);
+    border-color: var(--ink);
+  }
+  .role-card.selected p.sub { color: rgba(250, 246, 238, 0.7); }
+
+  .live-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent-forest);
+    box-shadow: 0 0 0 3px rgba(31, 96, 66, 0.18);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 3px rgba(31, 96, 66, 0.18); }
+    50%     { box-shadow: 0 0 0 6px rgba(31, 96, 66, 0.06); }
+  }
+
+  .blueprint-frame {
+    background: var(--cream-bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 32px;
+    position: relative;
+  }
+  .blueprint-corner {
+    position: absolute;
+    width: 12px; height: 12px;
+    border: 1px solid var(--ink-3);
+  }
+
+  .num-strong {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header class="topbar sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-10 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-sm bg-[color:var(--ink)] text-[color:var(--cream-bg)] flex items-center justify-center text-xs font-bold tracking-wider">P</div>
+        <div>
+          <p class="text-sm font-bold tracking-tight">PASS</p>
+          <p class="text-[10px] tracking-widest uppercase text-[color:var(--ink-3)]">Praxis 5403 · Beta · Vol. 2026</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#intake" class="text-sm text-[color:var(--ink-2)] hover:text-[color:var(--ink)]">The Platform</a>
+        <a href="#intake" class="text-sm text-[color:var(--ink-2)] hover:text-[color:var(--ink)]">Who it's for</a>
+        <a href="#signin" class="text-sm font-medium text-[color:var(--ink)] hover:text-[color:var(--accent-ember)]">Sign in</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════ SECTION 1 — HERO ═══════ -->
+  <section class="relative border-b border-[color:var(--line)]">
+    <p class="section-marker">§ A · Hero</p>
+
+    <div class="max-w-7xl mx-auto px-10 py-24 grid md:grid-cols-[1.05fr_1fr] gap-20 items-center">
+
+      <!-- Left — editorial copy -->
+      <div>
+        <div class="flex items-center gap-3 mb-8">
+          <span class="live-dot"></span>
+          <p class="eyebrow">Est. 2024 · School Psychology candidates</p>
+        </div>
+
+        <h1 class="serif text-6xl md:text-7xl leading-[1.02] tracking-[-0.02em] text-[color:var(--ink)] font-medium">
+          The Praxis&nbsp;5403,<br />
+          mapped <em>precisely.</em>
+        </h1>
+
+        <p class="text-base text-[color:var(--ink-2)] mt-8 leading-relaxed max-w-md">
+          PASS is a calibrated diagnostic engine for the 1,150-item Praxis 5403. One
+          adaptive pass maps your exact gaps across all 45 skills and four domains —
+          then assembles the study plan that gets you to ready.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-3 mt-10">
+          <button class="btn-primary">
+            Begin your diagnostic
+            <span>→</span>
+          </button>
+          <a href="#signin" class="btn-ghost">
+            <span>↳</span>
+            I have an account
+          </a>
+        </div>
+
+        <!-- Stat ledger -->
+        <div class="rule mt-12"></div>
+        <div class="grid grid-cols-4 gap-8 py-5 text-left">
+          <div><p class="num-strong">45</p><p class="text-[10px] uppercase tracking-widest text-[color:var(--ink-3)] mt-1">Skills</p></div>
+          <div><p class="num-strong">1,150</p><p class="text-[10px] uppercase tracking-widest text-[color:var(--ink-3)] mt-1">Calibrated items</p></div>
+          <div><p class="num-strong">4</p><p class="text-[10px] uppercase tracking-widest text-[color:var(--ink-3)] mt-1">Domains</p></div>
+          <div><p class="num-strong">2PL</p><p class="text-[10px] uppercase tracking-widest text-[color:var(--ink-3)] mt-1">IRT model</p></div>
+        </div>
+        <div class="rule"></div>
+      </div>
+
+      <!-- Right — the blueprint artifact -->
+      <div class="blueprint-frame">
+        <div class="blueprint-corner" style="top:-1px;left:-1px;border-bottom:none;border-right:none"></div>
+        <div class="blueprint-corner" style="top:-1px;right:-1px;border-bottom:none;border-left:none"></div>
+        <div class="blueprint-corner" style="bottom:-1px;left:-1px;border-top:none;border-right:none"></div>
+        <div class="blueprint-corner" style="bottom:-1px;right:-1px;border-top:none;border-left:none"></div>
+
+        <div class="flex items-baseline justify-between mb-4">
+          <p class="eyebrow">The 45-skill architecture</p>
+          <p class="text-[10px] text-[color:var(--ink-3)] tracking-widest uppercase">ETS blueprint</p>
+        </div>
+
+        <!-- 45-cell grid (9 × 5) -->
+        <div class="grid grid-cols-9 gap-1.5 mb-6">
+          <!-- 13 amber -->
+          <div class="domain-cell d1"></div><div class="domain-cell d1"></div><div class="domain-cell d1"></div>
+          <div class="domain-cell d1"></div><div class="domain-cell d1"></div><div class="domain-cell d1"></div>
+          <div class="domain-cell d1"></div><div class="domain-cell d1"></div><div class="domain-cell d1"></div>
+          <div class="domain-cell d1"></div><div class="domain-cell d1"></div><div class="domain-cell d1"></div>
+          <div class="domain-cell d1"></div>
+          <!-- 12 sage -->
+          <div class="domain-cell d2"></div><div class="domain-cell d2"></div><div class="domain-cell d2"></div>
+          <div class="domain-cell d2"></div><div class="domain-cell d2"></div><div class="domain-cell d2"></div>
+          <div class="domain-cell d2"></div><div class="domain-cell d2"></div><div class="domain-cell d2"></div>
+          <div class="domain-cell d2"></div><div class="domain-cell d2"></div><div class="domain-cell d2"></div>
+          <!-- 8 blue -->
+          <div class="domain-cell d3"></div><div class="domain-cell d3"></div><div class="domain-cell d3"></div>
+          <div class="domain-cell d3"></div><div class="domain-cell d3"></div><div class="domain-cell d3"></div>
+          <div class="domain-cell d3"></div><div class="domain-cell d3"></div>
+          <!-- 12 lilac -->
+          <div class="domain-cell d4"></div><div class="domain-cell d4"></div><div class="domain-cell d4"></div>
+          <div class="domain-cell d4"></div><div class="domain-cell d4"></div><div class="domain-cell d4"></div>
+          <div class="domain-cell d4"></div><div class="domain-cell d4"></div><div class="domain-cell d4"></div>
+          <div class="domain-cell d4"></div><div class="domain-cell d4"></div><div class="domain-cell d4"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="space-y-2 text-[12px]">
+          <div class="flex items-center gap-3">
+            <span class="domain-cell d1" style="width: 12px; height: 12px"></span>
+            <span class="flex-1 text-[color:var(--ink-2)]">Professional Practices</span>
+            <span class="text-[color:var(--ink-3)] tabular-nums">13 skills · 28%</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="domain-cell d2" style="width: 12px; height: 12px"></span>
+            <span class="flex-1 text-[color:var(--ink-2)]">Student-Level Services</span>
+            <span class="text-[color:var(--ink-3)] tabular-nums">12 skills · 34%</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="domain-cell d3" style="width: 12px; height: 12px"></span>
+            <span class="flex-1 text-[color:var(--ink-2)]">Systems-Level Services</span>
+            <span class="text-[color:var(--ink-3)] tabular-nums">8 skills · 24%</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="domain-cell d4" style="width: 12px; height: 12px"></span>
+            <span class="flex-1 text-[color:var(--ink-2)]">Foundations of School Psych</span>
+            <span class="text-[color:var(--ink-3)] tabular-nums">12 skills · 14%</span>
+          </div>
+        </div>
+
+        <p class="text-[10px] text-[color:var(--ink-3)] mt-5 italic leading-relaxed">
+          Figure 1 — The complete skill architecture underlying the Praxis 5403.
+          Each cell is a skill the diagnostic will probe and the study plan will target.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════ SECTION 2 — INTAKE ═══════ -->
+  <section id="intake" class="relative border-b border-[color:var(--line)]" style="background: var(--cream-bg-2);">
+    <p class="section-marker">§ B · Intake</p>
+
+    <div class="max-w-5xl mx-auto px-10 py-24">
+
+      <div class="max-w-2xl mb-16">
+        <p class="eyebrow mb-3">Form A · Candidate intake</p>
+        <h2 class="serif text-4xl md:text-5xl leading-tight tracking-tight">
+          Two questions.<br />
+          <em class="text-[color:var(--ink-2)]">Then the platform assembles itself.</em>
+        </h2>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="mb-16">
+        <div class="flex items-baseline gap-4 mb-6 pb-3 border-b border-[color:var(--line)]">
+          <p class="serif text-xl font-semibold">01</p>
+          <p class="eyebrow">Which exam</p>
+          <span class="flex-1"></span>
+          <p class="text-[10px] text-[color:var(--ink-3)]">1 available · 5 on the roadmap</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-3">
+          <button class="exam-card active">
+            <div class="flex items-center justify-between mb-3">
+              <span class="tag-pill" style="background: rgba(31, 96, 66, 0.08); border-color: rgba(31, 96, 66, 0.25); color: var(--accent-forest)">
+                <span class="live-dot" style="animation: none; width: 5px; height: 5px; box-shadow: none"></span>
+                LIVE
+              </span>
+              <span class="text-[10px] tracking-widest uppercase text-[color:var(--ink-3)]">Ready</span>
+            </div>
+            <p class="serif text-xl font-semibold leading-tight">Praxis 5403</p>
+            <p class="text-sm text-[color:var(--ink-2)] mt-0.5">School Psychology</p>
+            <div class="rule mt-4 mb-3"></div>
+            <p class="text-[11px] text-[color:var(--ink-3)] tabular-nums">45 skills · 1,150 items · 4 domains</p>
+          </button>
+          <button class="exam-card locked">
+            <p class="serif text-xl font-semibold leading-tight">FTCE School Psych</p>
+            <p class="text-sm text-[color:var(--ink-2)] mt-0.5">PK–12</p>
+            <div class="rule mt-4 mb-3"></div>
+            <p class="text-[11px] text-[color:var(--ink-3)] italic">Coming Q3 2026</p>
+          </button>
+          <button class="exam-card locked">
+            <p class="serif text-xl font-semibold leading-tight">FTCE GKT</p>
+            <p class="text-sm text-[color:var(--ink-2)] mt-0.5">General Knowledge</p>
+            <div class="rule mt-4 mb-3"></div>
+            <p class="text-[11px] text-[color:var(--ink-3)] italic">On the roadmap</p>
+          </button>
+          <button class="exam-card locked">
+            <p class="serif text-xl font-semibold leading-tight">FTCE Professional Ed</p>
+            <p class="text-sm text-[color:var(--ink-2)] mt-0.5">PEd test</p>
+            <div class="rule mt-4 mb-3"></div>
+            <p class="text-[11px] text-[color:var(--ink-3)] italic">On the roadmap</p>
+          </button>
+          <button class="exam-card locked">
+            <p class="serif text-xl font-semibold leading-tight">School Counselor</p>
+            <p class="text-sm text-[color:var(--ink-2)] mt-0.5">SEC</p>
+            <div class="rule mt-4 mb-3"></div>
+            <p class="text-[11px] text-[color:var(--ink-3)] italic">On the roadmap</p>
+          </button>
+          <button class="exam-card locked">
+            <p class="serif text-xl font-semibold leading-tight">Educational Leadership</p>
+            <p class="text-sm text-[color:var(--ink-2)] mt-0.5">FELE</p>
+            <div class="rule mt-4 mb-3"></div>
+            <p class="text-[11px] text-[color:var(--ink-3)] italic">On the roadmap</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div>
+        <div class="flex items-baseline gap-4 mb-6 pb-3 border-b border-[color:var(--line)]">
+          <p class="serif text-xl font-semibold">02</p>
+          <p class="eyebrow">Your path</p>
+          <span class="flex-1"></span>
+          <p class="text-[10px] text-[color:var(--ink-3)]">We tune pacing &amp; tone accordingly</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <button class="role-card">
+            <p class="serif text-lg font-semibold">Graduate Student</p>
+            <p class="sub text-sm text-[color:var(--ink-2)] mt-1">Program-aligned. Longer runway to build mastery.</p>
+          </button>
+          <button class="role-card selected">
+            <p class="serif text-lg font-semibold">Cert-Only / Alt Route</p>
+            <p class="sub text-sm mt-1">Balancing job and study. Practical, efficient pace.</p>
+          </button>
+          <button class="role-card">
+            <p class="serif text-lg font-semibold">Internship Year</p>
+            <p class="sub text-sm text-[color:var(--ink-2)] mt-1">High-stakes placement. Tight study window.</p>
+          </button>
+          <button class="role-card">
+            <p class="serif text-lg font-semibold">Retake Candidate</p>
+            <p class="sub text-sm text-[color:var(--ink-2)] mt-1">Surgical approach. Close the specific gaps.</p>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mt-14 pt-6 border-t border-[color:var(--line)]">
+        <p class="text-xs text-[color:var(--ink-3)] italic max-w-md">
+          Next: a ~13-second gathering animation assembles your blueprint.
+          Then your adaptive diagnostic begins.
+        </p>
+        <button class="btn-primary">
+          Continue
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SECTION 3 — SIGN IN ═══════ -->
+  <section id="signin" class="relative">
+    <p class="section-marker">§ C · Sign in</p>
+
+    <div class="max-w-6xl mx-auto px-10 py-24 grid md:grid-cols-[1fr_1fr] gap-16 items-center">
+
+      <!-- Left — marketing strip -->
+      <div class="max-w-md">
+        <p class="eyebrow mb-3">Returning reader</p>
+        <h2 class="serif text-4xl md:text-5xl leading-tight tracking-tight">
+          Your plan,<br /><em>right where you left it.</em>
+        </h2>
+        <p class="text-[color:var(--ink-2)] mt-6 leading-relaxed">
+          Your diagnostic, study plan, redemption queue, and readiness trajectory
+          save automatically across devices. Sign in to keep the line moving.
+        </p>
+
+        <div class="rule my-8"></div>
+
+        <ul class="space-y-3 text-sm text-[color:var(--ink-2)]">
+          <li class="flex gap-3"><span class="text-[color:var(--accent-forest)]">✓</span> Progress saved across diagnostic &amp; practice</li>
+          <li class="flex gap-3"><span class="text-[color:var(--accent-forest)]">✓</span> One readiness view across surfaces</li>
+          <li class="flex gap-3"><span class="text-[color:var(--accent-forest)]">✓</span> Study path ordered by your biggest gaps</li>
+        </ul>
+
+        <p class="text-[11px] text-[color:var(--ink-3)] mt-8 italic leading-relaxed">
+          An account is required to save progress. Currently in beta; not responsible
+          for data loss during the beta period.
+        </p>
+      </div>
+
+      <!-- Right — form -->
+      <div class="bg-white border border-[color:var(--line)] rounded-lg p-10">
+        <div class="mb-6">
+          <p class="eyebrow mb-2">Form B · Sign in</p>
+          <h3 class="serif text-2xl font-semibold">Welcome back</h3>
+          <p class="text-sm text-[color:var(--ink-2)] mt-1">Enter your credentials to continue.</p>
+        </div>
+
+        <form class="space-y-4" onsubmit="event.preventDefault()">
+          <div>
+            <label class="text-[11px] font-semibold tracking-widest uppercase text-[color:var(--ink-3)] block mb-2">Email address</label>
+            <input type="email" class="field-input" placeholder="you@example.com" />
+          </div>
+          <div>
+            <div class="flex items-baseline justify-between mb-2">
+              <label class="text-[11px] font-semibold tracking-widest uppercase text-[color:var(--ink-3)]">Password</label>
+              <a class="text-[11px] font-medium text-[color:var(--ink)] hover:text-[color:var(--accent-ember)]" href="#">Forgot it?</a>
+            </div>
+            <input type="password" class="field-input" placeholder="At least 6 characters" />
+          </div>
+
+          <button class="btn-primary w-full justify-center mt-3">
+            Sign in
+            <span>→</span>
+          </button>
+        </form>
+
+        <div class="flex items-center gap-3 my-6">
+          <div class="flex-1 h-px bg-[color:var(--line)]"></div>
+          <span class="text-[10px] tracking-widest uppercase text-[color:var(--ink-3)]">or</span>
+          <div class="flex-1 h-px bg-[color:var(--line)]"></div>
+        </div>
+
+        <button class="btn-ghost w-full justify-center">
+          <span>+</span>
+          Create an account
+        </button>
+
+        <p class="text-[11px] text-[color:var(--ink-3)] mt-6 leading-relaxed">
+          By continuing you agree to our <a class="underline underline-offset-2 text-[color:var(--ink)]" href="#">Terms of Service</a> and
+          <a class="underline underline-offset-2 text-[color:var(--ink)]" href="#">Privacy Policy</a>.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Footer strip -->
+    <div class="border-t border-[color:var(--line)]">
+      <div class="max-w-7xl mx-auto px-10 py-6 flex items-center justify-between text-[11px] tracking-widest uppercase text-[color:var(--ink-3)]">
+        <span>PASS · Platform for Adaptive Study Sessions</span>
+        <span>Vol. 2026 · Beta Edition</span>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

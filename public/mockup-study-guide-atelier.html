@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Study Guide — The Atelier</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900: #060d1a;
+    --navy-800: #0a1628;
+    --d1-peach: #fcd5b4;
+    --d2-mint: #b8f2d8;
+    --d3-ice: #cde9f5;
+    --d4-lavender: #d8d5fc;
+    --accent-rose: #fbcfe8;
+    --accent-cream: #fff3de;
+  }
+  html, body { background: var(--navy-900); font-family: 'Inter', system-ui, sans-serif; color: #e2e8f0; min-height: 100vh; }
+  .serif { font-family: 'Fraunces', Georgia, serif; }
+  .starfield-subtle { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 14%, rgba(252,213,180,0.35), transparent 40%),
+      radial-gradient(1px 1px at 88% 18%, rgba(216,213,252,0.30), transparent 40%),
+      radial-gradient(1px 1px at 58% 72%, rgba(187,247,208,0.25), transparent 40%),
+      radial-gradient(1px 1px at 24% 86%, rgba(205,233,245,0.25), transparent 40%),
+      radial-gradient(1px 1px at 94% 62%, rgba(251,207,232,0.30), transparent 40%),
+      radial-gradient(1px 1px at 6% 52%, rgba(216,213,252,0.25), transparent 40%);
+    opacity: 0.55; }
+  .mini-orb { width: 40px; height: 40px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,243,222,1) 0%, rgba(252,213,180,0.85) 25%, rgba(251,207,232,0.55) 55%, rgba(216,213,252,0.25) 100%);
+    box-shadow: 0 0 18px rgba(252,213,180,0.4), 0 0 36px rgba(216,213,252,0.22);
+    animation: orb-pulse 3.5s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes orb-pulse { 0%,100% { transform: scale(1); opacity: .96; } 50% { transform: scale(1.03); opacity: 1; } }
+  .gradient-text-warm { background: linear-gradient(135deg, #fde4c1, #fbcfe8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .glass { background: rgba(10,22,40,0.55); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .glass-deep { background: rgba(6,13,26,0.7); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .eyebrow { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: #94a3b8; }
+  .btn-soft-glow { padding: 11px 22px; border-radius: 999px; font-weight: 600; font-size: 13px; color: #1e1b3a;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 22px rgba(252,213,180,0.32), 0 6px 18px -6px rgba(0,0,0,0.4); }
+  .btn-ghost { padding: 9px 16px; border-radius: 999px; font-weight: 500; font-size: 12px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); background: transparent; transition: all .2s; cursor: pointer; }
+  .btn-ghost:hover { color: white; border-color: rgba(252,213,180,0.4); }
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; border: 1px solid currentColor; }
+  .hair-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(226,232,240,0.1), transparent); margin: 40px 0; }
+
+  /* Tabs */
+  .tab { padding: 14px 0; font-size: 13px; font-weight: 500; color: #94a3b8; border-bottom: 2px solid transparent; cursor: pointer; transition: all .2s; position: relative; background: none; }
+  .tab:hover { color: #e2e8f0; }
+  .tab.active { color: white; }
+  .tab.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #fde4c1, #fbcfe8, #d8d5fc); box-shadow: 0 0 8px rgba(252,213,180,0.4); }
+  .tab .count { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 6px; font-size: 10px; background: rgba(226,232,240,0.08); color: #94a3b8; }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Section intro */
+  .panel-intro { margin-bottom: 28px; }
+  .panel-intro h2 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 500; color: #f1f5f9; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 8px; }
+  .panel-intro p { font-size: 13.5px; color: #94a3b8; line-height: 1.65; max-width: 60ch; }
+
+  /* Quick-card (Overview 3-col) */
+  .quick {
+    padding: 18px 20px; border-radius: 14px;
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(226,232,240,0.08);
+    border-left: 3px solid var(--c);
+  }
+  .quick .qlabel { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c); font-weight: 600; margin-bottom: 8px; }
+  .quick .qtitle { font-size: 14px; font-weight: 600; color: white; line-height: 1.35; }
+  .quick .qsub { font-size: 11.5px; color: #94a3b8; margin-top: 4px; line-height: 1.55; }
+  .quick ul { margin-top: 6px; padding-left: 0; list-style: none; }
+  .quick ul li { font-size: 12.5px; color: #cbd5e1; line-height: 1.6; padding-left: 14px; position: relative; margin-bottom: 3px; }
+  .quick ul li::before { content: '—'; position: absolute; left: 0; color: #64748b; }
+
+  /* Pull quote (headline) */
+  .pull-quote {
+    padding: 28px 32px;
+    border-radius: 18px;
+    background: rgba(10,22,40,0.4);
+    border-left: 3px solid var(--d1-peach);
+    position: relative;
+  }
+  .pull-quote::before {
+    content: '“';
+    position: absolute; top: 8px; left: 18px;
+    font-family: 'Fraunces', serif;
+    font-size: 48px; color: rgba(252,213,180,0.35);
+    line-height: 1;
+  }
+  .pull-quote p {
+    font-family: 'Fraunces', serif;
+    font-size: 20px; font-style: italic; line-height: 1.4;
+    color: white; padding-left: 36px;
+  }
+
+  /* Two-col data section under quote */
+  .obs-col h4 { font-size: 13px; font-weight: 600; color: white; margin-bottom: 10px; }
+  .obs-col ul { margin: 0; padding-left: 0; list-style: none; }
+  .obs-col ul li { font-size: 12.5px; color: #cbd5e1; line-height: 1.65; padding-left: 16px; position: relative; margin-bottom: 8px; }
+  .obs-col ul li::before { content: '→'; position: absolute; left: 0; color: var(--c); }
+
+  /* Priority cluster */
+  .cluster {
+    padding: 22px 24px;
+    border-radius: 18px;
+    background: rgba(10,22,40,0.55);
+    border: 1px solid rgba(226,232,240,0.08);
+    position: relative; overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .cluster::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+    background: var(--c); box-shadow: 0 0 12px var(--c);
+  }
+  .urg { padding: 4px 12px; border-radius: 999px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
+  .urg-now { background: rgba(251,207,232,0.15); color: #fbcfe8; border: 1px solid rgba(251,207,232,0.35); }
+  .urg-next { background: rgba(252,213,180,0.12); color: var(--d1-peach); border: 1px solid rgba(252,213,180,0.3); }
+  .urg-maintain { background: rgba(205,233,245,0.1); color: var(--d3-ice); border: 1px solid rgba(205,233,245,0.25); }
+  .blocking-note {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 14px; border-radius: 10px;
+    background: rgba(251,207,232,0.06);
+    border: 1px solid rgba(251,207,232,0.25);
+    font-size: 12px; color: #fbcfe8; line-height: 1.55;
+    margin-top: 12px;
+  }
+  .ct-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 500; border: 1px solid rgba(226,232,240,0.1); color: #cbd5e1; background: rgba(6,13,26,0.5); }
+  .ct-chip .ct-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--c, var(--d1-peach)); box-shadow: 0 0 4px var(--c, var(--d1-peach)); }
+
+  /* Domain block */
+  .domain {
+    padding: 22px 24px; border-radius: 18px;
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(226,232,240,0.08);
+    position: relative; overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .domain::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--c); box-shadow: 0 0 10px var(--c); }
+
+  .domain-details {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin-top: 14px;
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s ease, margin-top .4s ease, opacity .3s ease;
+    opacity: 0;
+  }
+  .domain[open] .domain-details { max-height: 1000px; margin-top: 18px; opacity: 1; }
+  .domain-details .list {
+    padding: 14px 16px; border-radius: 12px;
+    background: rgba(6,13,26,0.5);
+    border: 1px solid rgba(226,232,240,0.06);
+  }
+  .domain-details .list .eyebrow { margin-bottom: 8px; }
+  .domain-details ul { margin: 0; padding-left: 0; list-style: none; }
+  .domain-details ul li { font-size: 12px; color: #cbd5e1; line-height: 1.65; padding-left: 14px; position: relative; margin-bottom: 4px; }
+  .domain-details ul li::before { content: '—'; position: absolute; left: 0; color: #64748b; }
+  .mastery-bar {
+    margin-top: 14px; padding: 12px 16px; border-radius: 10px;
+    background: rgba(184,242,216,0.05);
+    border-left: 2px solid var(--d2-mint);
+  }
+  .mastery-bar .ml { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--d2-mint); font-weight: 600; margin-bottom: 4px; }
+  .mastery-bar .mt { font-size: 12.5px; color: #cbd5e1; line-height: 1.6; }
+  .mastery-bar .mt em { color: #fde4c1; font-style: italic; }
+
+  .expand-btn {
+    font-size: 11px; color: #94a3b8;
+    background: rgba(226,232,240,0.04);
+    border: 1px solid rgba(226,232,240,0.1);
+    padding: 5px 12px; border-radius: 999px;
+    cursor: pointer; transition: all .2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .expand-btn:hover { color: white; border-color: rgba(252,213,180,0.35); }
+  .expand-btn svg { transition: transform .2s; }
+  [open] .expand-btn svg { transform: rotate(180deg); }
+
+  /* Vocabulary accordion item */
+  .vocab {
+    border-radius: 14px; margin-bottom: 8px;
+    background: rgba(10,22,40,0.4);
+    border: 1px solid rgba(226,232,240,0.07);
+    border-left: 3px solid var(--c);
+    transition: all .2s ease;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .vocab:hover { border-color: color-mix(in srgb, var(--c) 35%, rgba(226,232,240,0.07)); }
+  .vocab-head {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 16px; align-items: start;
+    padding: 14px 18px;
+  }
+  .vocab-term { font-size: 14.5px; font-weight: 600; color: white; }
+  .vocab-def { font-size: 12.5px; color: #94a3b8; line-height: 1.55; margin-top: 3px; max-width: 56ch; }
+  .vocab-skill { font-size: 10px; letter-spacing: 0.08em; color: var(--c); font-weight: 600; padding-top: 4px; }
+  .vocab-meta {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+  }
+  .vocab[open] .vocab-meta { max-height: 280px; }
+  .vocab-meta-inner {
+    padding: 0 18px 16px 18px;
+    display: grid; gap: 8px;
+    font-size: 12px; line-height: 1.6;
+  }
+  .vocab-meta-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; }
+  .vocab-meta-row .k { color: #64748b; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding-top: 2px; }
+  .vocab-meta-row .v { color: #cbd5e1; }
+  .vocab-meta-row .v strong { color: white; font-weight: 600; }
+  .vocab-risk-row .v { color: #fbcfe8; }
+  .vocab-caret { color: #64748b; font-size: 14px; transition: transform .2s; padding-top: 2px; }
+  .vocab[open] .vocab-caret { transform: rotate(180deg); color: var(--c); }
+
+  /* Case accordion */
+  .case {
+    border-radius: 14px; margin-bottom: 8px;
+    background: rgba(6,13,26,0.5);
+    border: 1px solid rgba(226,232,240,0.07);
+    border-left: 3px solid var(--c);
+    cursor: pointer; transition: border-color .2s;
+    overflow: hidden;
+  }
+  .case:hover { border-right-color: color-mix(in srgb, var(--c) 35%, rgba(226,232,240,0.07)); }
+  .case-head {
+    padding: 14px 18px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 14px; align-items: center;
+  }
+  .case-name { font-size: 14px; font-weight: 600; color: white; line-height: 1.35; }
+  .case-test { font-size: 11.5px; color: #94a3b8; margin-top: 4px; line-height: 1.55; }
+  .case-body {
+    max-height: 0; overflow: hidden; transition: max-height .3s ease;
+  }
+  .case[open] .case-body { max-height: 400px; }
+  .case-body-inner { padding: 0 18px 16px; display: grid; gap: 10px; font-size: 12.5px; line-height: 1.6; }
+  .case-sec { }
+  .case-sec .k { display: block; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #94a3b8; font-weight: 600; margin-bottom: 4px; }
+  .case-sec ul { margin: 0; padding-left: 0; list-style: none; }
+  .case-sec ul li { font-size: 12px; color: #cbd5e1; padding-left: 14px; position: relative; margin-bottom: 3px; line-height: 1.55; }
+  .case-sec ul li::before { content: '•'; position: absolute; left: 0; color: var(--c); }
+  .case-sec .mist { color: #fbcfe8; font-style: italic; }
+  .case-caret { color: #64748b; font-size: 14px; transition: transform .2s; }
+  .case[open] .case-caret { transform: rotate(180deg); color: var(--c); }
+
+  /* Week card */
+  .week {
+    padding: 16px 18px; border-radius: 14px;
+    background: rgba(10,22,40,0.4);
+    border: 1px solid rgba(226,232,240,0.08);
+    margin-bottom: 10px;
+    transition: all .2s;
+  }
+  .week.current {
+    border-color: rgba(252,213,180,0.4);
+    box-shadow: 0 0 22px rgba(252,213,180,0.1);
+    padding: 22px 24px;
+  }
+  .session-block {
+    padding: 11px 14px; border-radius: 10px;
+    background: rgba(6,13,26,0.5);
+    border: 1px solid rgba(226,232,240,0.06);
+    margin-bottom: 6px;
+  }
+  .session-block .sh { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #e2e8f0; margin-bottom: 5px; }
+  .session-block .sh .sdot { width: 6px; height: 6px; border-radius: 50%; background: var(--c); box-shadow: 0 0 5px var(--c); }
+  .session-block .sh .sdur { font-size: 10px; color: #64748b; margin-left: auto; }
+  .session-block .tasks { margin: 0; padding-left: 0; list-style: none; }
+  .session-block .tasks li { font-size: 11px; line-height: 1.55; color: #94a3b8; padding-left: 13px; position: relative; margin-bottom: 2px; }
+  .session-block .tasks li::before { content: '→'; position: absolute; left: 0; color: var(--c); }
+
+  /* Checkpoint card */
+  .ckpt {
+    padding: 18px 22px; border-radius: 14px;
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(226,232,240,0.08);
+    display: grid; grid-template-columns: 56px 1fr;
+    gap: 18px; align-items: start;
+    margin-bottom: 10px;
+  }
+  .ckpt-num {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(184,242,216,0.1);
+    border: 1px solid rgba(184,242,216,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--d2-mint); font-weight: 700; font-size: 12px;
+    font-family: 'Fraunces', serif; font-style: italic;
+  }
+
+  /* Tactical bucket */
+  .tac {
+    padding: 18px 20px; border-radius: 14px;
+    background: rgba(10,22,40,0.45);
+    border: 1px solid rgba(226,232,240,0.08);
+    border-left: 3px solid var(--c);
+  }
+  .tac h4 { font-size: 12px; font-weight: 600; color: var(--c); margin-bottom: 10px; letter-spacing: 0.08em; }
+  .tac ul { margin: 0; padding-left: 0; list-style: none; }
+  .tac ul li { font-size: 12.5px; line-height: 1.65; color: #cbd5e1; padding-left: 18px; position: relative; margin-bottom: 8px; }
+  .tac ul li::before { content: '→'; position: absolute; left: 0; color: var(--c); }
+
+  .rail-item { padding: 14px 16px; border-radius: 12px; background: rgba(10,22,40,0.4); border: 1px solid rgba(226,232,240,0.06); }
+</style>
+</head>
+<body>
+
+<div class="starfield-subtle"></div>
+
+<!-- Top bar -->
+<div class="relative z-40 flex items-center justify-between px-8 py-5 border-b border-white/5">
+  <div class="flex items-center gap-3">
+    <div class="mini-orb"></div>
+    <div>
+      <p class="text-sm font-bold text-white tracking-wide">PASS</p>
+      <p class="text-[9px] tracking-[0.24em] uppercase text-slate-500">Study Guide</p>
+    </div>
+  </div>
+  <nav class="flex items-center gap-7 text-[13px]">
+    <a class="text-slate-400 hover:text-white" href="#">Home</a>
+    <a class="text-slate-400 hover:text-white" href="#">Practice</a>
+    <a class="text-white font-medium" href="#">Study Guide</a>
+    <a class="text-slate-400 hover:text-white" href="#">AI Tutor</a>
+    <a class="text-slate-400 hover:text-white" href="#">Results</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <span class="eyebrow">Praxis 5403 · Beta</span>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] flex items-center justify-center text-[11px] font-bold text-[#1e1b3a]">C</div>
+  </div>
+</div>
+
+<main class="relative z-10 max-w-[1280px] mx-auto px-8 py-10">
+
+  <!-- Header -->
+  <header class="mb-8 flex items-end justify-between gap-6 flex-wrap">
+    <div>
+      <p class="eyebrow mb-2">Your plan · v2 · Generated 2 days ago</p>
+      <h1 class="serif text-4xl font-medium text-white tracking-tight leading-[1.08]">
+        A guide built around your <span class="gradient-text-warm">gaps.</span>
+      </h1>
+      <p class="text-[14px] text-slate-400 mt-2 max-w-xl leading-relaxed">Six weeks. Three priority clusters. Paced against the shape of your diagnostic, not a generic syllabus.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="btn-ghost">Download PDF</button>
+      <button class="btn-ghost">Regenerate in 5 days</button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="flex items-center gap-8 border-b border-white/8 mb-8 overflow-x-auto" id="tabs">
+    <button class="tab active" data-panel="overview">Overview</button>
+    <button class="tab" data-panel="priorities">Priorities <span class="count">3</span></button>
+    <button class="tab" data-panel="domains">Domains <span class="count">4</span></button>
+    <button class="tab" data-panel="concepts">Concepts</button>
+    <button class="tab" data-panel="weekly">Weekly plan</button>
+    <button class="tab" data-panel="milestones">Milestones</button>
+  </div>
+
+  <!-- 2-col: main + side rail -->
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10">
+
+    <div class="min-w-0">
+
+      <!-- ═════════════════ TAB 1 · OVERVIEW ═════════════════ -->
+      <section class="panel active" data-panel="overview">
+
+        <!-- Readiness hero -->
+        <div class="glass p-7 mb-6">
+          <div class="flex items-start gap-6 flex-wrap">
+            <div class="flex-shrink-0 w-16 h-16 rounded-full"
+                 style="background: radial-gradient(circle at 50% 40%, rgba(255,243,222,0.9) 0%, rgba(252,213,180,0.7) 30%, rgba(216,213,252,0.3) 70%, transparent 100%); box-shadow: 0 0 24px rgba(252,213,180,0.4);"></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-3 flex-wrap">
+                <span class="chip" style="color: var(--d1-peach);">Developing phase</span>
+                <span class="chip" style="color: var(--d3-ice);">Exam in 6 weeks</span>
+              </div>
+              <h2 class="serif text-[22px] text-white leading-snug">You're developing core concepts — but missing prerequisite foundations in Legal.</h2>
+              <p class="text-[13px] text-slate-400 mt-2 max-w-2xl leading-relaxed">All three Legal skills remain at 0%. Closing them alone moves five skills into Approaching and lifts readiness from 22% to ~44%.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 quick cards -->
+        <div class="grid md:grid-cols-3 gap-3 mb-10">
+          <div class="quick" style="--c: var(--accent-rose);">
+            <p class="qlabel">Major blockers</p>
+            <ul>
+              <li>Legal keystone (LEG-01/02/03) at 0%</li>
+              <li>CLD assessment vocabulary not internalized</li>
+              <li>Non-discriminatory assessment concept absent</li>
+            </ul>
+          </div>
+          <div class="quick" style="--c: var(--d2-mint);">
+            <p class="qlabel">Your anchor</p>
+            <p class="qtitle">Student-Level Services</p>
+            <p class="qsub">Development (DEV-01) and Intervention Models (MBH-03) at 100%. Your strongest cluster — protect it with spaced review.</p>
+          </div>
+          <div class="quick" style="--c: var(--d1-peach);">
+            <p class="qlabel">Start here</p>
+            <p class="qtitle">LEG-02 · IDEA &amp; FAPE module</p>
+            <p class="qsub">30 minutes. Vocab-first, then two case vignettes. Scheduled for today.</p>
+          </div>
+        </div>
+
+        <!-- Headline pull-quote -->
+        <div class="pull-quote mb-6">
+          <p>Fast-wrong answers on 11 skills suggest <span class="gradient-text-warm">vocabulary gaps</span>, not reasoning deficits.</p>
+        </div>
+
+        <!-- Observations grid -->
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="obs-col" style="--c: var(--d1-peach);">
+            <h4>What the data shows</h4>
+            <ul>
+              <li>0% skills averaged 5.4s response time — below reasoning threshold.</li>
+              <li>100% skills averaged 19.6s — slow and thoughtful.</li>
+              <li>Legal misses share one misconception: conflating FAPE with Section 504.</li>
+              <li>Your strengths are narrow — no cluster of mastery in any sub-area.</li>
+            </ul>
+          </div>
+          <div class="obs-col" style="--c: var(--accent-rose);">
+            <h4>What to act on now</h4>
+            <ul>
+              <li>Legal skills block 14 downstream items. Close before anything else.</li>
+              <li>Score-interpretation vignettes misfire until SEM/CI vocab lands.</li>
+              <li>Ethics (100%) decays without spaced review every 4 days.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═════════════════ TAB 2 · PRIORITIES ═════════════════ -->
+      <section class="panel" data-panel="priorities">
+        <div class="panel-intro">
+          <h2>Three clusters, in order.</h2>
+          <p>The eleven skills at 0% group into three families. Don't start on the second cluster until the first has moved.</p>
+        </div>
+
+        <!-- Cluster 1 -->
+        <div class="cluster" style="--c: var(--accent-rose);">
+          <div class="flex items-start justify-between gap-3 mb-3 flex-wrap">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="urg urg-now">Urgent now</span>
+              <h3 class="serif text-[20px] text-white font-medium">Legal Foundations</h3>
+            </div>
+            <span class="text-[11.5px] text-slate-500">180 min · Weeks 1–2</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="chip" style="color: var(--d4-lavender);">LEG-01 · 0%</span>
+            <span class="chip" style="color: var(--d4-lavender);">LEG-02 · 0%</span>
+            <span class="chip" style="color: var(--d4-lavender);">LEG-03 · 0%</span>
+            <span class="chip" style="color: var(--d4-lavender);">DIV-01 · 0%</span>
+          </div>
+          <p class="text-[13.5px] text-slate-300 leading-relaxed mb-1">Legal rules are the keystone. IDEA &amp; FAPE alone underlie 14 downstream items — procedural safeguards, evaluation procedures, IEP components, LRE. Until this cluster moves, nothing else will.</p>
+          <div class="blocking-note">
+            <span class="eyebrow mt-0.5" style="color: #fbcfe8;">Blocks readiness</span>
+            <p>Until LEG-02 ≥ 60%, Foundation and Professional-Practices accuracy will not move.</p>
+          </div>
+          <div class="flex items-center gap-1.5 mt-4 flex-wrap">
+            <span class="eyebrow mr-2">Approach with</span>
+            <span class="ct-chip" style="--c: var(--d4-lavender);"><span class="ct-dot"></span>Law memorization</span>
+            <span class="ct-chip" style="--c: var(--d1-peach);"><span class="ct-dot"></span>Vocabulary</span>
+            <span class="ct-chip" style="--c: var(--d2-mint);"><span class="ct-dot"></span>Case application</span>
+            <span class="ct-chip" style="--c: var(--d3-ice);"><span class="ct-dot"></span>Compare &amp; contrast</span>
+          </div>
+        </div>
+
+        <!-- Cluster 2 -->
+        <div class="cluster" style="--c: var(--d1-peach);">
+          <div class="flex items-start justify-between gap-3 mb-3 flex-wrap">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="urg urg-next">Important next</span>
+              <h3 class="serif text-[20px] text-white font-medium">Assessment Reasoning</h3>
+            </div>
+            <span class="text-[11.5px] text-slate-500">150 min · Weeks 3–4</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="chip" style="color: var(--d1-peach);">CON-01 · 0%</span>
+            <span class="chip" style="color: var(--d1-peach);">PSY-01 · 0%</span>
+            <span class="chip" style="color: var(--d1-peach);">PSY-04 · 0%</span>
+            <span class="chip" style="color: var(--d2-mint);">MBH-02 · 0%</span>
+            <span class="chip" style="color: var(--d2-mint);">MBH-04 · 0%</span>
+          </div>
+          <p class="text-[13.5px] text-slate-300 leading-relaxed">Vignette-heavy cluster. Questions require reasoning through scenarios — vocabulary is the cost of entry. Expect heavy front-loaded terms before the cases click.</p>
+          <div class="flex items-center gap-1.5 mt-4 flex-wrap">
+            <span class="eyebrow mr-2">Approach with</span>
+            <span class="ct-chip" style="--c: var(--d1-peach);"><span class="ct-dot"></span>Vocabulary</span>
+            <span class="ct-chip" style="--c: var(--d2-mint);"><span class="ct-dot"></span>Case application</span>
+            <span class="ct-chip" style="--c: var(--d4-lavender);"><span class="ct-dot"></span>Concept explanation</span>
+          </div>
+        </div>
+
+        <!-- Cluster 3 -->
+        <div class="cluster" style="--c: var(--d3-ice);">
+          <div class="flex items-start justify-between gap-3 mb-3 flex-wrap">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="urg urg-maintain">Maintain</span>
+              <h3 class="serif text-[20px] text-white font-medium">Systems &amp; Research</h3>
+            </div>
+            <span class="text-[11.5px] text-slate-500">90 min · Weeks 5–6</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="chip" style="color: var(--d3-ice);">SWP-03 · 0%</span>
+            <span class="chip" style="color: var(--d3-ice);">FAM-03 · 0%</span>
+            <span class="chip" style="color: var(--d3-ice);">RES-03 · 0%</span>
+          </div>
+          <p class="text-[13.5px] text-slate-300 leading-relaxed">Three skills at 0% but each stands alone — no cross-dependencies. Low-risk cluster; spaced review is sufficient.</p>
+          <div class="flex items-center gap-1.5 mt-4 flex-wrap">
+            <span class="eyebrow mr-2">Approach with</span>
+            <span class="ct-chip" style="--c: var(--d3-ice);"><span class="ct-dot"></span>Concept explanation</span>
+            <span class="ct-chip" style="--c: var(--d2-mint);"><span class="ct-dot"></span>Mixed retrieval</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═════════════════ TAB 3 · DOMAINS ═════════════════ -->
+      <section class="panel" data-panel="domains">
+        <div class="panel-intro">
+          <h2>Four domains, up close.</h2>
+          <p>Priorities are cross-domain. This view is the same plan organized by exam domain — click any domain to expand its full map.</p>
+        </div>
+
+        <!-- Domain 4 - expanded by default -->
+        <div class="domain expandable" style="--c: var(--d4-lavender);" data-expanded="true">
+          <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
+            <div>
+              <h3 class="serif text-[19px] text-white font-medium">Foundations of School Psychology</h3>
+              <p class="text-[11px] text-slate-500 mt-1">25% current · <span style="color: var(--accent-rose);">weakest domain</span></p>
+            </div>
+            <button class="expand-btn" onclick="toggleDomain(this)">
+              <span class="expand-label">Collapse</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>
+            </button>
+          </div>
+          <p class="text-[13.5px] text-slate-300 leading-relaxed max-w-3xl">Legal skills block the rest of the domain. Until IDEA &amp; FAPE terminology is automatic, every vignette involving procedural safeguards, evaluation consent, or placement will read as guessing. Ethics is an anchor (100%) — treat it as a lighthouse, not a launchpad.</p>
+
+          <div class="domain-details">
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d4-lavender);">Content to know</p>
+              <ul>
+                <li>IDEA's 13 disability categories</li>
+                <li>FAPE components: appropriate, public, free, education</li>
+                <li>Evaluation → eligibility → IEP sequence</li>
+                <li>Section 504 vs. IDEA: eligibility standard differences</li>
+                <li>Due-process timelines (15/30/45-day rules)</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d4-lavender);">Key vocabulary</p>
+              <ul>
+                <li>FAPE · LRE · PWN · IEE</li>
+                <li>Procedural safeguards notice</li>
+                <li>Manifestation determination</li>
+                <li>Stay-put provision</li>
+                <li>Non-discriminatory assessment</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d4-lavender);">Case types to recognize</p>
+              <ul>
+                <li>Parent refuses evaluation</li>
+                <li>Suspension ≥ 10 days for student with IEP</li>
+                <li>Eligibility denied → parent disagrees</li>
+                <li>CLD student referred without language screening</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d4-lavender);">Common traps</p>
+              <ul>
+                <li>Treating 504 and IDEA as interchangeable</li>
+                <li>Forgetting PWN is required with every refusal</li>
+                <li>Applying IDEA timelines to 504 evaluations</li>
+                <li>Picking procedural answers over substantive ones</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mastery-bar" data-visible-when-expanded>
+            <p class="ml">What mastery looks like</p>
+            <p class="mt">Consistently identifies which law governs a vignette (IDEA vs. 504 vs. ADA) <em>without looking up timelines</em>, and selects substantive rights over procedural ones when both appear as distractors.</p>
+          </div>
+        </div>
+
+        <!-- Domain 1 — collapsed -->
+        <div class="domain expandable" style="--c: var(--d1-peach);">
+          <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
+            <div>
+              <h3 class="serif text-[19px] text-white font-medium">Professional Practices</h3>
+              <p class="text-[11px] text-slate-500 mt-1">31% current · Emerging</p>
+            </div>
+            <button class="expand-btn" onclick="toggleDomain(this)">
+              <span class="expand-label">Expand</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+          <p class="text-[13.5px] text-slate-300 leading-relaxed max-w-3xl">You own the concrete procedures — FBA, records review, ecological assessment. The interpretive layer (score interpretation, CLD assessment, consultation models) hasn't landed. The domain splits clean along that seam.</p>
+
+          <div class="domain-details">
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d1-peach);">Content to know</p>
+              <ul>
+                <li>Standard Error of Measurement (SEM) interpretation</li>
+                <li>Confidence intervals around composite scores</li>
+                <li>Caplan / Behavioral / Conjoint consultation models</li>
+                <li>Non-discriminatory assessment procedures</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d1-peach);">Key vocabulary</p>
+              <ul>
+                <li>SEM · Confidence interval</li>
+                <li>BASC-3 · Conners-3 rating scales</li>
+                <li>Acculturation · Language dominance</li>
+                <li>Behavioral consultation stages</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d1-peach);">Case types to recognize</p>
+              <ul>
+                <li>Score below cutoff, parent disagrees</li>
+                <li>CLD student, language dominance unclear</li>
+                <li>Teacher requests consultation on disruptive student</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d1-peach);">Common traps</p>
+              <ul>
+                <li>Reporting a point estimate without SEM</li>
+                <li>English-normed tests with non-English-dominant students</li>
+                <li>Mental-health consultation when behavioral is called for</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mastery-bar">
+            <p class="ml">What mastery looks like</p>
+            <p class="mt">Reports scores as ranges, not points; selects the consultation model that fits the consultee's role; <em>rules out language factors first</em> for any CLD referral.</p>
+          </div>
+        </div>
+
+        <!-- Domain 2 -->
+        <div class="domain expandable" style="--c: var(--d2-mint);">
+          <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
+            <div>
+              <h3 class="serif text-[19px] text-white font-medium">Student-Level Services</h3>
+              <p class="text-[11px] text-slate-500 mt-1">36% current · strongest</p>
+            </div>
+            <button class="expand-btn" onclick="toggleDomain(this)">
+              <span class="expand-label">Expand</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+          <p class="text-[13.5px] text-slate-300 leading-relaxed max-w-3xl">Your strongest domain. Developmental theory and intervention frameworks are in-hand. MBH-02 (counseling) and MBH-04 (psychopathology) are the active gaps — both reward vignette exposure.</p>
+
+          <div class="domain-details">
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d2-mint);">Content to know</p>
+              <ul>
+                <li>DSM-5 criteria for common childhood disorders</li>
+                <li>Tier 2/3 behavioral interventions and fidelity</li>
+                <li>Counseling ethics and informed assent (minors)</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d2-mint);">Key vocabulary</p>
+              <ul>
+                <li>CBT · ABA · Solution-Focused</li>
+                <li>Mandatory reporter duties</li>
+                <li>C-SSRS risk screening</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d2-mint);">Case types to recognize</p>
+              <ul>
+                <li>Suicide ideation disclosed in session</li>
+                <li>Disruptive behavior with flat CBM trend</li>
+                <li>Student with trauma history + new symptoms</li>
+              </ul>
+            </div>
+            <div class="list">
+              <p class="eyebrow" style="color: var(--d2-mint);">Common traps</p>
+              <ul>
+                <li>Confusing mandatory reporting with confidentiality</li>
+                <li>Selecting CBT when ABA is indicated</li>
+                <li>Missing triage cues in suicide risk items</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mastery-bar">
+            <p class="ml">What mastery looks like</p>
+            <p class="mt">Matches intervention to presenting concern; invokes <em>safety-first</em> on any risk disclosure; distinguishes Tier 2 from Tier 3 by data pattern.</p>
+          </div>
+        </div>
+
+        <!-- Domain 3 -->
+        <div class="domain expandable" style="--c: var(--d3-ice);">
+          <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
+            <div>
+              <h3 class="serif text-[19px] text-white font-medium">Systems-Level Services</h3>
+              <p class="text-[11px] text-slate-500 mt-1">35% current · Emerging</p>
+            </div>
+            <button class="expand-btn" onclick="toggleDomain(this)">
+              <span class="expand-label">Expand</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+          <p class="text-[13.5px] text-slate-300 leading-relaxed max-w-3xl">Small domain. Two skills at 0% but low-risk — no cross-dependencies. Minimum viable time allocation and move on.</p>
+        </div>
+      </section>
+
+      <!-- ═════════════════ TAB 4 · CONCEPTS ═════════════════ -->
+      <section class="panel" data-panel="concepts">
+        <div class="panel-intro">
+          <h2>Vocabulary &amp; case patterns.</h2>
+          <p>Click any term or pattern to expand its full context. 20 vocab items and 8 case archetypes in the full plan; 4 of each shown here.</p>
+        </div>
+
+        <!-- Sub-section: Vocabulary -->
+        <div class="mb-10">
+          <div class="flex items-baseline justify-between mb-4">
+            <h3 class="serif text-[18px] text-white font-medium">Vocabulary</h3>
+            <span class="text-[11px] text-slate-500">4 of 20 shown</span>
+          </div>
+
+          <div class="vocab" style="--c: var(--d4-lavender);" onclick="toggleVocab(this)">
+            <div class="vocab-head">
+              <div>
+                <p class="vocab-term">Prior Written Notice (PWN)</p>
+                <p class="vocab-def">Written notice a school must give parents before it proposes — or refuses — to initiate or change identification, evaluation, placement, or FAPE.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="vocab-skill">LEG-02</span>
+                <span class="vocab-caret">▾</span>
+              </div>
+            </div>
+            <div class="vocab-meta">
+              <div class="vocab-meta-inner">
+                <div class="vocab-meta-row"><span class="k">Why it matters</span><span class="v">Almost every IDEA vignette hinges on whether PWN was properly issued. A missing PWN is a due-process defect.</span></div>
+                <div class="vocab-meta-row"><span class="k">Shows up in</span><span class="v">LEG-02 (IDEA &amp; FAPE), LEG-03 (Evaluation Procedures), disciplinary removal items.</span></div>
+                <div class="vocab-meta-row vocab-risk-row"><span class="k">Confusion risk</span><span class="v">Often confused with <strong>Procedural Safeguards Notice</strong> — PWN is triggered by a specific action; Procedural Safeguards is given <em>annually</em>.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vocab" style="--c: var(--d4-lavender);" onclick="toggleVocab(this)">
+            <div class="vocab-head">
+              <div>
+                <p class="vocab-term">FAPE</p>
+                <p class="vocab-def">Free Appropriate Public Education — the core right IDEA guarantees every eligible student.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="vocab-skill">LEG-02</span>
+                <span class="vocab-caret">▾</span>
+              </div>
+            </div>
+            <div class="vocab-meta">
+              <div class="vocab-meta-inner">
+                <div class="vocab-meta-row"><span class="k">Why it matters</span><span class="v">Tests treat FAPE as the substantive question; procedural moves are evaluated by whether they protect it.</span></div>
+                <div class="vocab-meta-row"><span class="k">Shows up in</span><span class="v">LEG-02, LEG-04 (Compliance), DIV-01 (Non-Discriminatory Assessment).</span></div>
+                <div class="vocab-meta-row vocab-risk-row"><span class="k">Confusion risk</span><span class="v">Section 504 also guarantees FAPE but under a different standard — <strong>equal access</strong>, not <strong>appropriate education</strong>.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vocab" style="--c: var(--d1-peach);" onclick="toggleVocab(this)">
+            <div class="vocab-head">
+              <div>
+                <p class="vocab-term">Standard Error of Measurement (SEM)</p>
+                <p class="vocab-def">The uncertainty band around a test score — reflects how much the score would fluctuate across repeated testing.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="vocab-skill">PSY-01</span>
+                <span class="vocab-caret">▾</span>
+              </div>
+            </div>
+            <div class="vocab-meta">
+              <div class="vocab-meta-inner">
+                <div class="vocab-meta-row"><span class="k">Why it matters</span><span class="v">A point estimate near a cutoff is indeterminate once SEM is applied. Reporting a range prevents false classification.</span></div>
+                <div class="vocab-meta-row"><span class="k">Shows up in</span><span class="v">PSY-01 (Score Interpretation), PSY-02 (Reliability), any eligibility vignette with a borderline score.</span></div>
+                <div class="vocab-meta-row vocab-risk-row"><span class="k">Confusion risk</span><span class="v">Often confused with <strong>Standard Error of the Estimate</strong> (used in regression). SEM is score-level; SEE is prediction-level.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vocab" style="--c: var(--d1-peach);" onclick="toggleVocab(this)">
+            <div class="vocab-head">
+              <div>
+                <p class="vocab-term">Non-Discriminatory Assessment</p>
+                <p class="vocab-def">Using evaluation instruments and procedures that don't disadvantage a student based on race, culture, language, or disability.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="vocab-skill">PSY-04 · DIV-01</span>
+                <span class="vocab-caret">▾</span>
+              </div>
+            </div>
+            <div class="vocab-meta">
+              <div class="vocab-meta-inner">
+                <div class="vocab-meta-row"><span class="k">Why it matters</span><span class="v">IDEA mandates it. Violations can invalidate an entire eligibility determination.</span></div>
+                <div class="vocab-meta-row"><span class="k">Shows up in</span><span class="v">PSY-04 (CLD Assessment), DIV-01 (Diversity), any eligibility vignette mentioning race or language.</span></div>
+                <div class="vocab-meta-row vocab-risk-row"><span class="k">Confusion risk</span><span class="v">Distinct from <strong>test accommodations</strong> — accommodations adjust test delivery; non-discriminatory means selecting or adapting the <em>instrument itself</em>.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <button class="btn-ghost">See all 20 vocab items →</button>
+          </div>
+        </div>
+
+        <!-- Sub-section: Case Patterns -->
+        <div>
+          <div class="flex items-baseline justify-between mb-4">
+            <h3 class="serif text-[18px] text-white font-medium">Case patterns</h3>
+            <span class="text-[11px] text-slate-500">4 of 8 shown</span>
+          </div>
+
+          <div class="case" style="--c: var(--d4-lavender);" onclick="toggleCase(this)">
+            <div class="case-head">
+              <div>
+                <p class="case-name">Parent refuses evaluation</p>
+                <p class="case-test">Tests your grasp of due-process override vs. documenting + revisiting.</p>
+              </div>
+              <span class="case-caret">▾</span>
+            </div>
+            <div class="case-body">
+              <div class="case-body-inner">
+                <div class="case-sec">
+                  <span class="k">What to notice</span>
+                  <ul>
+                    <li>Parent withholds consent in writing</li>
+                    <li>Student shows suspected disability but no immediate safety concern</li>
+                    <li>School has completed pre-referral interventions</li>
+                  </ul>
+                </div>
+                <div class="case-sec mist"><span class="k">Common mistake</span>Assuming the school can unilaterally proceed. IDEA protects parent consent; override requires due process and is rare.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="case" style="--c: var(--d4-lavender);" onclick="toggleCase(this)">
+            <div class="case-head">
+              <div>
+                <p class="case-name">Disciplinary removal ≥ 10 days</p>
+                <p class="case-test">Whether a manifestation determination is required and what the outcome triggers.</p>
+              </div>
+              <span class="case-caret">▾</span>
+            </div>
+            <div class="case-body">
+              <div class="case-body-inner">
+                <div class="case-sec">
+                  <span class="k">What to notice</span>
+                  <ul>
+                    <li>Student with IEP accumulates suspension days</li>
+                    <li>Cumulative removal crosses the 10-day threshold</li>
+                    <li>Principal proposes further removal or expulsion</li>
+                  </ul>
+                </div>
+                <div class="case-sec mist"><span class="k">Common mistake</span>Counting a single suspension, not the cumulative total. Or skipping the manifestation review entirely.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="case" style="--c: var(--d1-peach);" onclick="toggleCase(this)">
+            <div class="case-head">
+              <div>
+                <p class="case-name">Score near cutoff, parent disagrees</p>
+                <p class="case-test">Whether the score is indeterminate given measurement error, and what options the parent has.</p>
+              </div>
+              <span class="case-caret">▾</span>
+            </div>
+            <div class="case-body">
+              <div class="case-body-inner">
+                <div class="case-sec">
+                  <span class="k">What to notice</span>
+                  <ul>
+                    <li>Composite score within 1–2 points of eligibility cutoff</li>
+                    <li>Parent requests the student qualify</li>
+                    <li>Report does not mention SEM or CI</li>
+                  </ul>
+                </div>
+                <div class="case-sec mist"><span class="k">Common mistake</span>Treating the point estimate as definitive. Also: forgetting parents have the right to an Independent Educational Evaluation.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="case" style="--c: var(--d1-peach);" onclick="toggleCase(this)">
+            <div class="case-head">
+              <div>
+                <p class="case-name">Bilingual CLD student referral</p>
+                <p class="case-test">What must happen <em>first</em> — language dominance assessment — before cognitive or academic testing is defensible.</p>
+              </div>
+              <span class="case-caret">▾</span>
+            </div>
+            <div class="case-body">
+              <div class="case-body-inner">
+                <div class="case-sec">
+                  <span class="k">What to notice</span>
+                  <ul>
+                    <li>Spanish-dominant or bilingual student referred for suspected LD</li>
+                    <li>Language dominance not yet established</li>
+                    <li>Teacher reports academic concerns without language context</li>
+                  </ul>
+                </div>
+                <div class="case-sec mist"><span class="k">Common mistake</span>Proceeding to English-normed cognitive testing, or selecting "translate the test" rather than "assess in the dominant language with a proctored interpreter."</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <button class="btn-ghost">See all 8 case patterns →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═════════════════ TAB 5 · WEEKLY PLAN ═════════════════ -->
+      <section class="panel" data-panel="weekly">
+        <div class="panel-intro">
+          <h2>Six weeks, paced.</h2>
+          <p>Each week has a theme, a cap, and a Saturday checkpoint. Daily slots are flexible within the week.</p>
+        </div>
+
+        <!-- Current week -->
+        <div class="week current">
+          <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
+            <div>
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <span class="chip" style="color: var(--d1-peach);">Week 1 · Current</span>
+                <span class="text-[11px] text-slate-500">Apr 14 → Apr 20</span>
+              </div>
+              <h3 class="serif text-[18px] text-white font-medium">Legal keystone</h3>
+            </div>
+            <span class="text-[11px] text-slate-500">180 min</span>
+          </div>
+
+          <p class="text-[13px] text-slate-300 mt-3 mb-4 leading-relaxed">Move all four Legal-cluster skills from 0% to ≥ 60% by Saturday's checkpoint. Cap legal study at 90 min/day.</p>
+
+          <div class="session-block" style="--c: var(--d4-lavender);">
+            <div class="sh"><span class="sdot"></span>Mon · Vocab IDEA foundations<span class="sdur">15m</span></div>
+            <ul class="tasks">
+              <li>Review PWN, FAPE, LRE, Procedural Safeguards definitions</li>
+              <li>Complete matching quiz (10 terms)</li>
+            </ul>
+          </div>
+          <div class="session-block" style="--c: var(--d4-lavender);">
+            <div class="sh"><span class="sdot"></span>Mon · LEG-02 module<span class="sdur">30m</span></div>
+            <ul class="tasks">
+              <li>Read IDEA &amp; FAPE module sections 1–4</li>
+              <li>Watch 8-min video on procedural safeguards</li>
+              <li>Take module mini-quiz</li>
+            </ul>
+          </div>
+          <div class="session-block" style="--c: var(--d4-lavender);">
+            <div class="sh"><span class="sdot"></span>Tue · LEG-02 cases<span class="sdur">25m</span></div>
+            <ul class="tasks">
+              <li>Work 5 vignette-style items from LEG-02 bank</li>
+              <li>Review any wrong answers with full explanation</li>
+              <li>Ask AI tutor about anything flagged</li>
+            </ul>
+          </div>
+          <div class="session-block" style="--c: var(--d3-ice);">
+            <div class="sh"><span class="sdot"></span>Tue · Spaced review<span class="sdur">15m</span></div>
+            <ul class="tasks">
+              <li>Quick-quiz on 3 Ethics skills (protect 100%)</li>
+              <li>2 items each from DEV-01 and MBH-03</li>
+            </ul>
+          </div>
+          <p class="text-[11px] text-slate-500 italic mt-3 mb-4">+ 6 more sessions Wed–Sat · <a class="underline hover:text-white" href="#">Expand week →</a></p>
+
+          <div class="p-3 rounded-lg" style="background: rgba(184,242,216,0.05); border: 1px solid rgba(184,242,216,0.22);">
+            <p class="eyebrow mb-1" style="color: var(--d2-mint);">By Saturday</p>
+            <p class="text-[13px] text-white">Can you correctly identify which law (IDEA vs. 504) governs a new vignette without checking the module?</p>
+          </div>
+        </div>
+
+        <!-- Weeks 2-6 compact -->
+        <div class="space-y-2 mt-5 mb-10">
+          <div class="week"><div class="flex items-center justify-between flex-wrap gap-2"><div><p class="text-[13px] font-semibold text-white">Week 2 · Apr 21 → Apr 27</p><p class="text-[11px] text-slate-500 mt-0.5">Legal reinforcement · 180 min · 9 sessions</p></div><button class="btn-ghost">Expand →</button></div></div>
+          <div class="week"><div class="flex items-center justify-between flex-wrap gap-2"><div><p class="text-[13px] font-semibold text-white">Week 3 · Apr 28 → May 4</p><p class="text-[11px] text-slate-500 mt-0.5">Pivot to Assessment Reasoning · 180 min · 10 sessions</p></div><button class="btn-ghost">Expand →</button></div></div>
+          <div class="week"><div class="flex items-center justify-between flex-wrap gap-2"><div><p class="text-[13px] font-semibold text-white">Week 4 · May 5 → May 11</p><p class="text-[11px] text-slate-500 mt-0.5">Assessment cases + Legal spaced review · 180 min · 11 sessions</p></div><button class="btn-ghost">Expand →</button></div></div>
+          <div class="week"><div class="flex items-center justify-between flex-wrap gap-2"><div><p class="text-[13px] font-semibold text-white">Week 5 · May 12 → May 18</p><p class="text-[11px] text-slate-500 mt-0.5">Systems + mixed practice · 180 min · 10 sessions</p></div><button class="btn-ghost">Expand →</button></div></div>
+          <div class="week"><div class="flex items-center justify-between flex-wrap gap-2"><div><p class="text-[13px] font-semibold text-white">Week 6 · May 19 → May 25</p><p class="text-[11px] text-slate-500 mt-0.5">Exam simulation + review · 180 min · 8 sessions</p></div><button class="btn-ghost">Expand →</button></div></div>
+        </div>
+
+        <!-- Tactical instructions -->
+        <div class="hair-divider"></div>
+        <div class="mb-5">
+          <h3 class="serif text-[18px] text-white font-medium">How to approach this week</h3>
+          <p class="text-[12px] text-slate-500 mt-1">The coach's note — three buckets of guidance that shape how you study, not what you study.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-3">
+          <div class="tac" style="--c: var(--accent-rose);">
+            <h4>Do now</h4>
+            <ul>
+              <li>Open LEG-02 Learning Path module today, before anything else.</li>
+              <li>Build a 10-term flashcard stack for PWN, FAPE, LRE before Tuesday.</li>
+            </ul>
+          </div>
+          <div class="tac" style="--c: var(--d1-peach);">
+            <h4>This week's goals</h4>
+            <ul>
+              <li>All four Legal skills ≥ 60% accuracy by Saturday.</li>
+              <li>Ethics (ETH-01) re-tested twice to stay warm.</li>
+              <li>One redemption round per day, 10 min each.</li>
+            </ul>
+          </div>
+          <div class="tac" style="--c: var(--d3-ice);">
+            <h4>Don't waste time on</h4>
+            <ul>
+              <li>Case sessions without vocab first — your fast-wrong pattern.</li>
+              <li>A full-length mock exam this week. Earlier mocks pattern-match your gaps.</li>
+              <li>Exceeding 90 min/day on Legal — fatigue errors mask progress.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═════════════════ TAB 6 · MILESTONES ═════════════════ -->
+      <section class="panel" data-panel="milestones">
+        <div class="panel-intro">
+          <h2>Checkpoints along the way.</h2>
+          <p>Four diagnostic questions, one at each key turning point. If you can answer them honestly, you're on track — if not, the plan adapts.</p>
+        </div>
+
+        <div class="ckpt">
+          <div class="ckpt-num">W2</div>
+          <div>
+            <p class="text-[14px] font-semibold text-white mb-1.5">Can you identify the governing law in a Legal vignette without re-reading the module?</p>
+            <p class="text-[12.5px] text-slate-400 leading-relaxed">Assess at end of Week 2 via a 10-item mixed Legal quiz. Target: 7 of 10 correct with ≤ 20s per item. If miss: add a third week of Legal reinforcement before pivoting.</p>
+          </div>
+        </div>
+
+        <div class="ckpt">
+          <div class="ckpt-num">W3</div>
+          <div>
+            <p class="text-[14px] font-semibold text-white mb-1.5">Are you reasoning through cases rather than pattern-matching?</p>
+            <p class="text-[12.5px] text-slate-400 leading-relaxed">At the halfway mark, your average response time on previously-0% skills should move from 5.4s toward 15–20s. Fast-correct signals guessing or retrieval-only mastery. Slow-correct signals real reasoning.</p>
+          </div>
+        </div>
+
+        <div class="ckpt">
+          <div class="ckpt-num">W4</div>
+          <div>
+            <p class="text-[14px] font-semibold text-white mb-1.5">When do you stop remediation and switch to mixed practice?</p>
+            <p class="text-[12.5px] text-slate-400 leading-relaxed">Shift when: Legal cluster is stable at ≥ 70% across 10+ items, no cluster below 50%, demonstrating count ≥ 22 of 32. Mixing too early dilutes gains.</p>
+          </div>
+        </div>
+
+        <div class="ckpt">
+          <div class="ckpt-num">W6</div>
+          <div>
+            <p class="text-[14px] font-semibold text-white mb-1.5">Are you exam-ready?</p>
+            <p class="text-[12.5px] text-slate-400 leading-relaxed">Final gate: 32+ skills demonstrating, mock exam ≥ 70% overall, ≥ 60% in each domain, no single cluster dragging. If miss, the engine proposes a revised 2-week extension plan.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ═══════════ Side rail ═══════════ -->
+    <aside class="space-y-3 lg:sticky lg:top-4 self-start">
+      <div class="rail-item">
+        <p class="eyebrow mb-2">Plan at a glance</p>
+        <div class="grid grid-cols-2 gap-y-2 gap-x-3 text-[12px]">
+          <span class="text-slate-500">Weeks</span><span class="text-white font-semibold text-right">6</span>
+          <span class="text-slate-500">Total min</span><span class="text-white font-semibold text-right">1,080</span>
+          <span class="text-slate-500">Clusters</span><span class="text-white font-semibold text-right">3</span>
+          <span class="text-slate-500">Vocab items</span><span class="text-white font-semibold text-right">20</span>
+          <span class="text-slate-500">Case patterns</span><span class="text-white font-semibold text-right">8</span>
+        </div>
+      </div>
+
+      <div class="rail-item">
+        <p class="eyebrow mb-2">Strongest</p>
+        <p class="text-[13px] text-white font-medium leading-tight">Professional Ethics</p>
+        <p class="text-[11px] text-slate-500 mt-1">100% · ETH-01</p>
+      </div>
+
+      <div class="rail-item" style="border-color: rgba(251,207,232,0.25); background: rgba(251,207,232,0.04);">
+        <p class="eyebrow mb-2" style="color: var(--accent-rose);">Major blocker</p>
+        <p class="text-[13px] text-white font-medium leading-tight">IDEA &amp; FAPE</p>
+        <p class="text-[11px] text-slate-500 mt-1">0% · LEG-02 · Keystone skill</p>
+      </div>
+
+      <div class="rail-item" style="border-color: rgba(252,213,180,0.3); background: rgba(252,213,180,0.04);">
+        <p class="eyebrow mb-2" style="color: var(--d1-peach);">Next best move</p>
+        <p class="text-[13px] text-white font-medium leading-tight">LEG-02 module · 30 min</p>
+        <p class="text-[11px] text-slate-500 mt-1">Scheduled today</p>
+        <button class="btn-soft-glow w-full mt-3" style="padding: 8px 16px; font-size: 12px;">Start now →</button>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- What changed -->
+  <section class="glass-deep p-7 mt-14">
+    <div class="mb-5">
+      <p class="eyebrow mb-1" style="color: var(--d1-peach);">For your review · Cleanup moves</p>
+      <h3 class="text-lg font-semibold text-white">What I changed to reduce the mess</h3>
+      <p class="text-[12px] text-slate-400 mt-1">Same layout, same schema-faithful content. Six smaller changes that together make it feel like a study guide instead of a data inspector.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-3 text-[12px] text-slate-300 leading-relaxed">
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Tabs actually tab now.</p>
+        Click a tab, one panel shows. The "all 6 at once" review scroll was 16,880px — that's gone. Each panel fades in on switch.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Schema field names disappeared from the UI.</p>
+        No more "I · readinessSnapshot" or "whyItMatters" eyebrows. Fields are still 1:1 with the schema, but the UI uses natural headings like "Your anchor" and "What the data shows."
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Progressive disclosure on dense content.</p>
+        Vocab cards show term + definition by default; click to reveal Why-it-matters / Shows-up-in / Confusion risk. Cases and Domain maps collapse the same way.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Headline gets a pull-quote treatment.</p>
+        The data-interpretation headline now lives in a Fraunces-italic pull-quote with an opening curly quote. Feels like a study guide aside, not a form field.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Tactical instructions renamed for humans.</p>
+        "immediateActions / thisWeekGoals / avoidList" → "Do now / This week's goals / Don't waste time on." Same data, legible labels.
+      </div>
+      <div class="p-3 rounded-lg border border-dashed border-white/10">
+        <p class="text-white font-medium mb-1">Milestones as questions, not criteria.</p>
+        "checkpointLogic.week2Check" becomes <em>"Can you identify the governing law in a Legal vignette without re-reading the module?"</em> — diagnostic criterion reframed as self-reflection prompt.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="relative z-10 text-center py-8">
+  <p class="text-[10px] text-slate-700 tracking-[0.25em] uppercase">PASS · Beta · 2026</p>
+</footer>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('#tabs .tab');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.panel;
+      tabs.forEach(t => t.classList.toggle('active', t === tab));
+      panels.forEach(p => p.classList.toggle('active', p.dataset.panel === target));
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  });
+
+  // Domain expand/collapse
+  function toggleDomain(btn) {
+    const domain = btn.closest('.domain');
+    const isOpen = domain.hasAttribute('open');
+    if (isOpen) domain.removeAttribute('open');
+    else domain.setAttribute('open', '');
+    const label = domain.querySelector('.expand-label');
+    if (label) label.textContent = isOpen ? 'Expand' : 'Collapse';
+  }
+  // initial state: first domain expanded
+  document.querySelectorAll('.domain.expandable').forEach((d, i) => {
+    if (d.dataset.expanded === 'true') d.setAttribute('open', '');
+  });
+
+  // Vocab expand/collapse
+  function toggleVocab(el) {
+    if (el.hasAttribute('open')) el.removeAttribute('open');
+    else el.setAttribute('open', '');
+  }
+
+  // Case expand/collapse
+  function toggleCase(el) {
+    if (el.hasAttribute('open')) el.removeAttribute('open');
+    else el.setAttribute('open', '');
+  }
+</script>
+
+</body>
+</html>

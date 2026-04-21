@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Atelier Redesign — What we're shipping</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900: #060d1a;
+    --navy-800: #0a1628;
+    --d1-peach: #fcd5b4;
+    --d2-mint: #b8f2d8;
+    --d3-ice: #cde9f5;
+    --d4-lavender: #d8d5fc;
+    --accent-rose: #fbcfe8;
+    --accent-cream: #fff3de;
+  }
+  html, body { background: var(--navy-900); font-family: 'Inter', system-ui, sans-serif; color: #e2e8f0; min-height: 100vh; }
+  .serif { font-family: 'Fraunces', Georgia, serif; }
+  .starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 14%, rgba(252,213,180,0.35), transparent 40%),
+      radial-gradient(1px 1px at 88% 18%, rgba(216,213,252,0.3), transparent 40%),
+      radial-gradient(1px 1px at 58% 72%, rgba(187,247,208,0.25), transparent 40%),
+      radial-gradient(1px 1px at 24% 86%, rgba(205,233,245,0.25), transparent 40%),
+      radial-gradient(1px 1px at 94% 62%, rgba(251,207,232,0.3), transparent 40%),
+      radial-gradient(1px 1px at 6% 52%, rgba(216,213,252,0.25), transparent 40%);
+    opacity: 0.5; }
+  .mini-orb { width: 40px; height: 40px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,243,222,1) 0%, rgba(252,213,180,0.85) 25%, rgba(251,207,232,0.55) 55%, rgba(216,213,252,0.25) 100%);
+    box-shadow: 0 0 18px rgba(252,213,180,0.4), 0 0 36px rgba(216,213,252,0.22);
+    animation: orb-pulse 3.5s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes orb-pulse { 0%,100% { transform: scale(1); opacity: .96; } 50% { transform: scale(1.03); opacity: 1; } }
+  .gradient-text-warm { background: linear-gradient(135deg, #fde4c1, #fbcfe8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .gradient-text { background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .eyebrow { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: #94a3b8; }
+  .glass { background: rgba(10,22,40,0.55); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .glass-deep { background: rgba(6,13,26,0.7); border: 1px solid rgba(226,232,240,0.08); backdrop-filter: blur(14px); border-radius: 20px; }
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; border: 1px solid currentColor; }
+  .btn-soft-glow { padding: 10px 20px; border-radius: 999px; font-weight: 600; font-size: 12.5px; color: #1e1b3a;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 22px rgba(252,213,180,0.32); display: inline-block; transition: transform .2s; }
+  .btn-soft-glow:hover { transform: translateY(-1px); }
+  .btn-ghost { padding: 8px 14px; border-radius: 999px; font-weight: 500; font-size: 11.5px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); background: transparent; transition: all .2s; display: inline-block; }
+  .btn-ghost:hover { color: white; border-color: rgba(252,213,180,0.4); }
+
+  /* Screen card with preview thumbnail */
+  .screen-card {
+    padding: 20px;
+    background: rgba(10,22,40,0.45);
+    border: 1px solid rgba(226,232,240,0.08);
+    border-radius: 20px;
+    position: relative; overflow: hidden;
+    transition: border-color .2s;
+  }
+  .screen-card:hover { border-color: color-mix(in srgb, var(--c) 40%, rgba(226,232,240,0.08)); }
+  .screen-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--c); box-shadow: 0 0 12px var(--c);
+  }
+
+  .preview-frame {
+    position: relative; width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(226,232,240,0.1);
+    aspect-ratio: 16 / 11;
+    background: var(--navy-900);
+  }
+  .preview-frame img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+  .preview-frame::after {
+    /* click-shield + hover hint */
+    content: 'Open full mockup →';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(6,13,26,0) 40%, rgba(6,13,26,0.85) 100%);
+    opacity: 0;
+    transition: opacity .25s;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 18px;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: white; font-weight: 600;
+    pointer-events: none;
+  }
+  .screen-card:hover .preview-frame::after { opacity: 1; }
+
+  .domain-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--c); box-shadow: 0 0 8px var(--c);
+    display: inline-block;
+  }
+
+  .num-big {
+    font-family: 'Fraunces', serif;
+    font-size: 44px; font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #f1f5f9; line-height: 1;
+  }
+
+  .change-list { list-style: none; margin: 0; padding: 0; }
+  .change-list li { font-size: 12px; line-height: 1.65; color: #cbd5e1; padding-left: 16px; position: relative; margin-bottom: 6px; }
+  .change-list li::before { content: '—'; position: absolute; left: 0; color: var(--c); }
+
+  .scope-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 9.5px; letter-spacing: 0.08em;
+    color: #cbd5e1; background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(226,232,240,0.1);
+  }
+
+  .step {
+    display: grid; grid-template-columns: 48px 1fr auto;
+    gap: 18px; align-items: start;
+    padding: 14px 18px; border-radius: 14px;
+    background: rgba(10,22,40,0.4);
+    border: 1px solid rgba(226,232,240,0.08);
+    margin-bottom: 8px;
+  }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(252,213,180,0.1);
+    border: 1px solid rgba(252,213,180,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--d1-peach);
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 700; font-size: 14px;
+  }
+  .step-title { font-size: 13.5px; font-weight: 600; color: white; }
+  .step-sub { font-size: 11.5px; color: #94a3b8; margin-top: 3px; line-height: 1.5; }
+
+  .hair { height: 1px; background: linear-gradient(90deg, transparent, rgba(226,232,240,0.1), transparent); margin: 36px 0; }
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+
+<!-- Top bar -->
+<div class="relative z-40 flex items-center justify-between px-8 py-5 border-b border-white/5">
+  <div class="flex items-center gap-3">
+    <div class="mini-orb"></div>
+    <div>
+      <p class="text-sm font-bold text-white tracking-wide">PASS</p>
+      <p class="text-[9px] tracking-[0.24em] uppercase text-slate-500">Atelier Redesign · Scope</p>
+    </div>
+  </div>
+  <span class="eyebrow">5 screens · shared system · 1 aesthetic</span>
+</div>
+
+<main class="relative z-10 max-w-[1320px] mx-auto px-8 py-12">
+
+  <!-- Hero -->
+  <header class="mb-12">
+    <p class="eyebrow mb-3">What we're shipping</p>
+    <h1 class="serif text-5xl font-medium text-white tracking-tight leading-[1.05] mb-4">
+      Six screens, <span class="gradient-text-warm">one aesthetic.</span>
+    </h1>
+    <p class="text-[15px] text-slate-400 max-w-2xl leading-relaxed">
+      Every surface a candidate touches gets the atelier treatment — starfield backdrops, mini-orb, domain pastels, Fraunces display type, glass cards. Below: the six screens, with a live thumbnail of each.
+    </p>
+
+    <div class="flex flex-wrap items-center gap-6 mt-8">
+      <div>
+        <p class="num-big gradient-text-warm">6</p>
+        <p class="eyebrow mt-2">Screens</p>
+      </div>
+      <div class="w-px h-12 bg-white/10"></div>
+      <div>
+        <p class="num-big">1</p>
+        <p class="eyebrow mt-2">Shared shell</p>
+      </div>
+      <div class="w-px h-12 bg-white/10"></div>
+      <div>
+        <p class="num-big">4</p>
+        <p class="eyebrow mt-2">Domain colors</p>
+      </div>
+      <div class="w-px h-12 bg-white/10"></div>
+      <div>
+        <p class="num-big">0</p>
+        <p class="eyebrow mt-2">New routes</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═════════════════════════════════════════════ -->
+  <!-- 1 · HERO / ENTRY                              -->
+  <!-- ═════════════════════════════════════════════ -->
+  <section class="screen-card mb-6" style="--c: var(--accent-cream);">
+    <div class="grid md:grid-cols-[1.4fr_1fr] gap-6">
+      <a href="mockup-entry-A-atelier.html" class="block">
+        <div class="preview-frame">
+          <img src="mockup-previews/hero.png" alt="Hero / landing mockup preview" loading="lazy" />
+        </div>
+      </a>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="domain-dot"></span>
+          <p class="eyebrow" style="color: var(--accent-cream);">Screen 1 of 6 · Entry point</p>
+        </div>
+        <h2 class="serif text-[28px] text-white leading-tight mb-2">Hero / landing.</h2>
+        <p class="text-[13px] text-slate-400 mb-4 leading-relaxed">What a new candidate sees before they're signed in. Morphing orb, 4-domain engine visualization, sign-in view-switcher.</p>
+
+        <p class="eyebrow mb-2">Key moves</p>
+        <ul class="change-list mb-5" style="--c: var(--accent-cream);">
+          <li>"A study plan that listens." headline in Fraunces with gradient final line.</li>
+          <li>Central orb with halo, pulse, and 4 domain pills feeding in (Professional · Student · Systems · Foundations).</li>
+          <li>Hero CTAs: "Begin your diagnostic →" (new) and "I have an account" (returning).</li>
+          <li>Stat row under hero (4 domains · 45 skills · 1,150 items · 2PL IRT) — needs plain-English pass on "2PL IRT".</li>
+          <li>Responsive: engine reshuffles below copy on mobile.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="scope-chip">Replaces: LoginScreen.tsx (hero phase)</span>
+          <span class="scope-chip">~823 lines</span>
+          <span class="scope-chip">Boot sequence already ported</span>
+        </div>
+
+        <div class="mt-auto flex items-center gap-2">
+          <a href="mockup-entry-A-atelier.html" class="btn-soft-glow">Open mockup →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════ -->
+  <!-- 2 · DASHBOARD                                 -->
+  <!-- ═════════════════════════════════════════════ -->
+  <section class="screen-card mb-6" style="--c: var(--d1-peach);">
+    <div class="grid md:grid-cols-[1.4fr_1fr] gap-6">
+      <a href="mockup-dashboard-atelier.html" class="block">
+        <div class="preview-frame">
+          <img src="mockup-previews/dashboard.png" alt="Dashboard mockup preview" loading="lazy" />
+        </div>
+      </a>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="domain-dot"></span>
+          <p class="eyebrow" style="color: var(--d1-peach);">Screen 2 of 6</p>
+        </div>
+        <h2 class="serif text-[28px] text-white leading-tight mb-2">Dashboard.</h2>
+        <p class="text-[13px] text-slate-400 mb-4 leading-relaxed">Post-diagnostic home. What the user sees every time they land.</p>
+
+        <p class="eyebrow mb-2">Key moves</p>
+        <ul class="change-list mb-5" style="--c: var(--d1-peach);">
+          <li>Readiness arc (42% gradient ring) replaces the flat blue bar.</li>
+          <li>Today's Focus hero with peach glow + two quieter "Then" rows.</li>
+          <li>Domain Performance rows use the atelier palette with pulsing dots.</li>
+          <li>Redemption card becomes an "eclipsed moon" with rose/lavender halo.</li>
+          <li>Feature tiles become "The Toolshed" — glass cards, each in a domain hue.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="scope-chip">Replaces: DashboardHome.tsx</span>
+          <span class="scope-chip">~467 lines</span>
+          <span class="scope-chip">Data: already wired</span>
+        </div>
+
+        <div class="mt-auto flex items-center gap-2">
+          <a href="mockup-dashboard-atelier.html" class="btn-soft-glow">Open mockup →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════ -->
+  <!-- 2 · PRACTICE                                  -->
+  <!-- ═════════════════════════════════════════════ -->
+  <section class="screen-card mb-6" style="--c: var(--d2-mint);">
+    <div class="grid md:grid-cols-[1.4fr_1fr] gap-6">
+      <a href="mockup-practice-atelier.html" class="block">
+        <div class="preview-frame">
+          <img src="mockup-previews/practice.png" alt="Practice mockup preview" loading="lazy" />
+        </div>
+      </a>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="domain-dot"></span>
+          <p class="eyebrow" style="color: var(--d2-mint);">Screen 3 of 6</p>
+        </div>
+        <h2 class="serif text-[28px] text-white leading-tight mb-2">Practice.</h2>
+        <p class="text-[13px] text-slate-400 mb-4 leading-relaxed">Hub (pick your angle) + in-session (one question at a time).</p>
+
+        <p class="eyebrow mb-2">Key moves</p>
+        <ul class="change-list mb-5" style="--c: var(--d2-mint);">
+          <li>Skill-tile grid replaces the long list — each tile tops with domain color.</li>
+          <li>Mode pills at top: By Skill / By Domain / Mixed / Spicy / Missed.</li>
+          <li>Six alert types consolidate into one context-aware "Signal" card.</li>
+          <li>Confidence lives in the question header as a 3-segment pill.</li>
+          <li>Feedback panel gets a mint halo instead of a color-wash bar.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="scope-chip">Replaces: PracticeSession.tsx + hub</span>
+          <span class="scope-chip">~1,051 lines</span>
+          <span class="scope-chip">⚠️ Highest complexity</span>
+        </div>
+
+        <div class="mt-auto flex items-center gap-2">
+          <a href="mockup-practice-atelier.html" class="btn-soft-glow">Open mockup →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════ -->
+  <!-- 3 · STUDY GUIDE                               -->
+  <!-- ═════════════════════════════════════════════ -->
+  <section class="screen-card mb-6" style="--c: var(--d3-ice);">
+    <div class="grid md:grid-cols-[1.4fr_1fr] gap-6">
+      <a href="mockup-study-guide-atelier.html" class="block">
+        <div class="preview-frame">
+          <img src="mockup-previews/study-guide.png" alt="Study Guide mockup preview" loading="lazy" />
+        </div>
+      </a>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="domain-dot"></span>
+          <p class="eyebrow" style="color: var(--d3-ice);">Screen 4 of 6</p>
+        </div>
+        <h2 class="serif text-[28px] text-white leading-tight mb-2">Study Guide.</h2>
+        <p class="text-[13px] text-slate-400 mb-4 leading-relaxed">Tabbed plan, schema-faithful. Every rendered field maps 1:1 to <code class="text-[11px]" style="background: rgba(226,232,240,0.06); padding: 1px 5px; border-radius: 4px;">plan_document</code>.</p>
+
+        <p class="eyebrow mb-2">Key moves</p>
+        <ul class="change-list mb-5" style="--c: var(--d3-ice);">
+          <li>Gradient-underline tab strip; tabs actually tab (one visible at a time).</li>
+          <li>Priority clusters as side-rail color cards (rose / peach / ice).</li>
+          <li>Domain maps expand to reveal 4 field-lists + mastery indicator.</li>
+          <li>Vocab cards click to reveal Why / Where / Confusion risk.</li>
+          <li>Tactical instructions as 3 labeled buckets, not one numbered list.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="scope-chip">Replaces: StudyPlanViewer.tsx</span>
+          <span class="scope-chip">~819 lines</span>
+          <span class="scope-chip">⚠️ Needs netlify dev</span>
+        </div>
+
+        <div class="mt-auto flex items-center gap-2">
+          <a href="mockup-study-guide-atelier.html" class="btn-soft-glow">Open mockup →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════ -->
+  <!-- 4 · AI TUTOR                                  -->
+  <!-- ═════════════════════════════════════════════ -->
+  <section class="screen-card mb-6" style="--c: var(--d4-lavender);">
+    <div class="grid md:grid-cols-[1.4fr_1fr] gap-6">
+      <a href="mockup-tutor-atelier.html" class="block">
+        <div class="preview-frame">
+          <img src="mockup-previews/tutor.png" alt="AI Tutor mockup preview" loading="lazy" />
+        </div>
+      </a>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="domain-dot"></span>
+          <p class="eyebrow" style="color: var(--d4-lavender);">Screen 5 of 6</p>
+        </div>
+        <h2 class="serif text-[28px] text-white leading-tight mb-2">AI Tutor.</h2>
+        <p class="text-[13px] text-slate-400 mb-4 leading-relaxed">3-column workspace: sessions · conversation · grounding rail.</p>
+
+        <p class="eyebrow mb-2">Key moves</p>
+        <ul class="change-list mb-5" style="--c: var(--d4-lavender);">
+          <li>Not chat-only — left sessions, center chat, right grounding rail.</li>
+          <li>Mini-orb is the tutor avatar (orb = the product's voice).</li>
+          <li>Artifact cards typed by kind ("Quick card · Concept", "Quiz · LEG-02").</li>
+          <li>User bubbles warm (peach/lavender), tutor bubbles navy.</li>
+          <li>Right rail shows what the model is grounded in — not a generic chatbot.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="scope-chip">Replaces: TutorChatPage.tsx</span>
+          <span class="scope-chip">~221 lines</span>
+          <span class="scope-chip">✓ Lowest complexity</span>
+        </div>
+
+        <div class="mt-auto flex items-center gap-2">
+          <a href="mockup-tutor-atelier.html" class="btn-soft-glow">Open mockup →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════ -->
+  <!-- 5 · RESULTS / FULL REPORT                     -->
+  <!-- ═════════════════════════════════════════════ -->
+  <section class="screen-card mb-6" style="--c: var(--accent-rose);">
+    <div class="grid md:grid-cols-[1.4fr_1fr] gap-6">
+      <a href="mockup-results-atelier.html" class="block">
+        <div class="preview-frame">
+          <img src="mockup-previews/results.png" alt="Results mockup preview" loading="lazy" />
+        </div>
+      </a>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="domain-dot"></span>
+          <p class="eyebrow" style="color: var(--accent-rose);">Screen 6 of 6</p>
+        </div>
+        <h2 class="serif text-[28px] text-white leading-tight mb-2">Results / Full Report.</h2>
+        <p class="text-[13px] text-slate-400 mb-4 leading-relaxed">Where Dashboard sends you for the deep dive. Carlos's real diagnostic data, with assumption badges on post-practice fields.</p>
+
+        <p class="eyebrow mb-2">Key moves</p>
+        <ul class="change-list mb-5" style="--c: var(--accent-rose);">
+          <li>Journey timeline: Baseline → Diagnostic → Practice → Mastery → Ready.</li>
+          <li>Stat cards with domain-color stripe tops; growth vs. baseline.</li>
+          <li>Every bar: current fill + baseline ghost + 80% goal marker.</li>
+          <li>Skill-dot grid (45 dots), each with its short code and color by tier.</li>
+          <li>Top errors are narrative — one-line diagnosis per missed skill.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="scope-chip">Replaces: ResultsDashboard.tsx</span>
+          <span class="scope-chip">~816 lines</span>
+          <span class="scope-chip">Pure analytics</span>
+        </div>
+
+        <div class="mt-auto flex items-center gap-2">
+          <a href="mockup-results-atelier.html" class="btn-soft-glow">Open mockup →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hair"></div>
+
+  <!-- Suggested wiring order -->
+  <section class="glass-deep p-7">
+    <div class="mb-5">
+      <p class="eyebrow mb-1" style="color: var(--d1-peach);">Before we wire</p>
+      <h3 class="serif text-[26px] text-white font-medium">The order of operations.</h3>
+      <p class="text-[12.5px] text-slate-400 mt-1">Six screens, rolled out smallest-blast-radius first. Each step is its own PR.</p>
+    </div>
+
+    <div>
+      <div class="step">
+        <div class="step-num">0</div>
+        <div>
+          <p class="step-title">Shell + tokens (foundation PR)</p>
+          <p class="step-sub">One CSS file, one font tag, one top-bar/sidebar refresh. <em>No screen logic touched.</em> Adds atelier palette vars, Fraunces, .glass utilities, starfield backdrop, mini-orb component.</p>
+        </div>
+        <span class="scope-chip" style="color: var(--d2-mint);">~½ day</span>
+      </div>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <p class="step-title">Tutor</p>
+          <p class="step-sub">Smallest existing surface (~221 lines). 3-column workspace rewrite. No API changes, no schema changes. Great first test of the shared shell.</p>
+        </div>
+        <span class="scope-chip" style="color: var(--d4-lavender);">~1 day</span>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <p class="step-title">Dashboard</p>
+          <p class="step-sub">Most-seen surface. Props already wired — rewrite is mostly visual. Readiness arc + peach-glow priority + domain-colored rows.</p>
+        </div>
+        <span class="scope-chip" style="color: var(--d1-peach);">~1½ days</span>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <p class="step-title">Results / Full Report</p>
+          <p class="step-sub">Pure analytics. Journey timeline, baseline-ghost bars, skill-dot grid, narrative errors. No state side-effects.</p>
+        </div>
+        <span class="scope-chip" style="color: var(--accent-rose);">~1½ days</span>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <p class="step-title">Practice</p>
+          <p class="step-sub">Highest complexity (~1,051 lines). Consolidate alert stack, mode pills, skill-tile hub, session question card. Test carefully — state machine is dense.</p>
+        </div>
+        <span class="scope-chip" style="color: var(--d2-mint);">~2 days</span>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div>
+          <p class="step-title">Study Guide</p>
+          <p class="step-sub">Tabbed panel with JS tab switching. 9 schema sections → 6 tabs. Must test on <code class="text-[10px] px-1 rounded" style="background: rgba(226,232,240,0.06);">netlify dev</code> because the plan API is a background function.</p>
+        </div>
+        <span class="scope-chip" style="color: var(--d3-ice);">~2 days</span>
+      </div>
+    </div>
+
+    <div class="mt-6 p-4 rounded-xl" style="background: rgba(252,213,180,0.05); border: 1px dashed rgba(252,213,180,0.3);">
+      <p class="eyebrow mb-2" style="color: var(--d1-peach);">Before step 0, resolve 2 things</p>
+      <ul class="change-list" style="--c: var(--d1-peach);">
+        <li>Inspect the staged <code>ContentContext.tsx</code> diff (+97/-97) — confirm it doesn't change prop shapes we depend on.</li>
+        <li>Decide what to do with the staged <code>LoginScreen.tsx</code> refactor (+123/-123) — ship it, park it, or fold it in.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="relative z-10 text-center py-10">
+  <p class="text-[10px] text-slate-700 tracking-[0.25em] uppercase">PASS · Beta · 2026 · Atelier scope</p>
+</footer>
+
+</body>
+</html>
