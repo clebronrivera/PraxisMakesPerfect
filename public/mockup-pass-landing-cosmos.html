@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Pass the Praxis. Become the psychologist.</title>
+<meta name="description" content="PASS · Platform for Adaptive Study Sessions. Praxis 5403 · School Psychology." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    /* Cosmos tokens — see PASS Handoff §01 */
+    --cosmos-navy:   #060d1a;
+    --cosmos-navy-2: #0a1628;
+    --cosmos-navy-3: #0f1e38;
+    --cosmos-ink:    #f1f5f9;
+    --cosmos-dim:    rgba(203, 213, 225, 0.72);
+    --cosmos-very-dim: rgba(148, 163, 184, 0.55);
+    --cosmos-hair:   rgba(241, 245, 249, 0.10);
+    --cosmos-hair-2: rgba(241, 245, 249, 0.18);
+
+    /* Domain accents */
+    --d1: #fcd5b4;  /* peach    · Professional Practices */
+    --d2: #b8f2d8;  /* mint     · Student-Level Services */
+    --d3: #cde9f5;  /* ice      · Systems-Level Services */
+    --d4: #d8d5fc;  /* lavender · Foundations */
+
+    --d1-rgb: 252, 213, 180;
+    --d2-rgb: 184, 242, 216;
+    --d3-rgb: 205, 233, 245;
+    --d4-rgb: 216, 213, 252;
+
+    /* CTA gradient — only ever used on the primary pill */
+    --cta-gradient: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    --cta-ink:      #1e1b3a;
+
+    /* Type */
+    --serif: 'Fraunces', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    /* Spacing & radii */
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-6:  24px;
+    --space-12: 48px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cosmos-navy);
+    color: var(--cosmos-ink);
+    font-family: var(--sans);
+    font-size: 15px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Typography utilities ───────────────────────────── */
+  .h1-display {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(56px, 7.4vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .h1-display em {
+    font-style: italic;
+    background: var(--cta-gradient);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--d1);
+  }
+  .mono-tag {
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--cosmos-very-dim);
+  }
+
+  /* ─── Starfield background ───────────────────────────── */
+  .starfield {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(252, 213, 180, 0.55), transparent 40%),
+      radial-gradient(1px 1px at 82% 15%, rgba(216, 213, 252, 0.50), transparent 40%),
+      radial-gradient(1px 1px at 55% 65%, rgba(187, 247, 208, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 30% 80%, rgba(254, 243, 199, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 92% 55%, rgba(251, 207, 232, 0.55), transparent 40%),
+      radial-gradient(1px 1px at 8%  55%, rgba(216, 213, 252, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 48% 12%, rgba(255, 243, 222, 0.50), transparent 40%),
+      radial-gradient(1px 1px at 70% 90%, rgba(252, 213, 180, 0.45), transparent 40%);
+    animation: starfield-drift 30s linear infinite;
+  }
+  @keyframes starfield-drift {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-30px); }
+  }
+
+  /* ─── Wax-stamp brand mark ───────────────────────────── */
+  .pass-stamp {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255, 243, 222, 1)   0%,
+      rgba(252, 213, 180, 0.85) 25%,
+      rgba(251, 207, 232, 0.55) 55%,
+      rgba(216, 213, 252, 0.25) 100%);
+    box-shadow: 0 0 24px rgba(252, 213, 180, 0.45),
+                0 0 48px rgba(216, 213, 252, 0.28);
+    animation: stamp-pulse 4s ease-in-out infinite;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .pass-stamp::after {
+    content: ''; position: absolute; inset: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255,255,255,0.55) 0%, transparent 55%);
+    filter: blur(2px);
+  }
+  @keyframes stamp-pulse {
+    0%, 100% { transform: scale(1);    opacity: 0.96; }
+    50%      { transform: scale(1.04); opacity: 1; }
+  }
+  .pass-stamp.sm { width: 40px; height: 40px; }
+
+  /* ─── BrainActivation hero figure ──────────────────────
+       560×560 SVG · 4 lobes pulse in domain order every 8s
+       ───────────────────────────────────────────────────── */
+  .brain-stage {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+  }
+  .brain-halo {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%,
+      rgba(252, 213, 180, 0.14) 0%,
+      rgba(216, 213, 252, 0.08) 40%,
+      transparent 72%);
+    filter: blur(24px);
+    animation: halo-breathe 7s ease-in-out infinite;
+    z-index: 0;
+  }
+  @keyframes halo-breathe {
+    0%, 100% { opacity: 0.7; transform: scale(1);    }
+    50%      { opacity: 1;   transform: scale(1.06); }
+  }
+  .brain-svg {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    overflow: visible;
+  }
+  .lobe {
+    transform-origin: center;
+    animation: lobe-pulse 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px var(--lobe-glow));
+  }
+  .lobe[data-domain="d1"] { --lobe-glow: rgba(252, 213, 180, 0.5); animation-delay: 0s;   fill: rgba(252, 213, 180, 0.78); }
+  .lobe[data-domain="d2"] { --lobe-glow: rgba(184, 242, 216, 0.5); animation-delay: -2s;  fill: rgba(184, 242, 216, 0.78); }
+  .lobe[data-domain="d3"] { --lobe-glow: rgba(205, 233, 245, 0.5); animation-delay: -4s;  fill: rgba(205, 233, 245, 0.78); }
+  .lobe[data-domain="d4"] { --lobe-glow: rgba(216, 213, 252, 0.5); animation-delay: -6s;  fill: rgba(216, 213, 252, 0.78); }
+  @keyframes lobe-pulse {
+    0%, 25%, 100% { transform: scale(1);    opacity: 0.78; }
+    10%           { transform: scale(1.04); opacity: 1;    }
+  }
+  .synapse {
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.35;
+    animation: synapse-breathe 5s ease-in-out infinite;
+  }
+  @keyframes synapse-breathe {
+    0%, 100% { stroke-width: 0.7; opacity: 0.25; }
+    50%      { stroke-width: 1.6; opacity: 0.65; }
+  }
+  .spark {
+    fill: rgba(255, 243, 222, 0.95);
+    animation: spark-travel 6s linear infinite;
+  }
+  @keyframes spark-travel {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+
+  /* ─── Buttons ─────────────────────────────────────────── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 999px;
+    font-family: var(--sans); font-weight: 600; font-size: 14px;
+    color: var(--cta-ink);
+    background: var(--cta-gradient);
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    box-shadow: 0 0 30px rgba(252, 213, 180, 0.30),
+                0 8px 24px -6px rgba(0, 0, 0, 0.4);
+    transition: transform 120ms ease-out, box-shadow 120ms ease-out, filter 120ms ease-out;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 0 40px rgba(252, 213, 180, 0.45),
+                0 12px 30px -6px rgba(0, 0, 0, 0.5);
+  }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px; border-radius: 999px;
+    font-family: var(--sans); font-weight: 500; font-size: 14px;
+    color: var(--cosmos-dim);
+    background: transparent;
+    border: 1px solid var(--cosmos-hair-2);
+    transition: color 120ms ease, border-color 120ms ease;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-ghost:hover { color: var(--cosmos-ink); border-color: rgba(252, 213, 180, 0.45); }
+
+  /* ─── Boot sequence (terminal cassette) ───────────────── */
+  .boot-cassette {
+    position: fixed; inset: 0;
+    z-index: 100;
+    background: var(--cosmos-navy);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 600ms ease;
+  }
+  .boot-cassette.dismissed { opacity: 0; pointer-events: none; }
+  .boot-stack {
+    width: min(640px, 88vw);
+    font-family: var(--mono); font-size: 12px;
+    color: var(--cosmos-dim); letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+  .boot-line { opacity: 0; transform: translateY(4px); }
+  .boot-line.visible { animation: boot-in 320ms ease-out forwards; }
+  @keyframes boot-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .boot-line .dot { color: var(--d1); }
+  .boot-line .ok  { color: var(--d2); }
+  .boot-skip {
+    position: fixed; bottom: 24px; right: 28px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+    color: var(--cosmos-very-dim); text-transform: uppercase;
+    cursor: pointer; background: transparent; border: 0;
+    padding: 8px 12px; border-radius: 6px;
+  }
+  .boot-skip:hover { color: var(--cosmos-ink); }
+
+  /* ─── The Five Movements (below fold) ─────────────────── */
+  .movements {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    border-top: 1px solid var(--cosmos-hair);
+    padding-top: 32px;
+    margin-top: 64px;
+  }
+  .move {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .move .num {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--d1); letter-spacing: 0.18em;
+  }
+  .move .label {
+    font-family: var(--serif); font-weight: 500; font-size: 16px;
+    line-height: 1.25; letter-spacing: -0.01em;
+    color: var(--cosmos-ink);
+  }
+  .move .sub {
+    font-size: 12px; color: var(--cosmos-dim); line-height: 1.5;
+  }
+
+  /* ─── Domains tree (compact preview) ──────────────────── */
+  .domains-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-top: 32px;
+  }
+  .dom-card {
+    background: rgba(15, 30, 56, 0.55);
+    border: 1px solid var(--cosmos-hair);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    backdrop-filter: blur(8px);
+    transition: border-color 200ms ease, transform 200ms ease;
+  }
+  .dom-card:hover { transform: translateY(-2px); }
+  .dom-card[data-d="d1"]:hover { border-color: rgba(var(--d1-rgb), 0.45); }
+  .dom-card[data-d="d2"]:hover { border-color: rgba(var(--d2-rgb), 0.45); }
+  .dom-card[data-d="d3"]:hover { border-color: rgba(var(--d3-rgb), 0.45); }
+  .dom-card[data-d="d4"]:hover { border-color: rgba(var(--d4-rgb), 0.45); }
+  .dom-card .swatch { width: 28px; height: 28px; border-radius: 6px; margin-bottom: 12px; }
+  .dom-card[data-d="d1"] .swatch { background: var(--d1); box-shadow: 0 0 18px rgba(var(--d1-rgb), 0.35); }
+  .dom-card[data-d="d2"] .swatch { background: var(--d2); box-shadow: 0 0 18px rgba(var(--d2-rgb), 0.35); }
+  .dom-card[data-d="d3"] .swatch { background: var(--d3); box-shadow: 0 0 18px rgba(var(--d3-rgb), 0.35); }
+  .dom-card[data-d="d4"] .swatch { background: var(--d4); box-shadow: 0 0 18px rgba(var(--d4-rgb), 0.35); }
+  .dom-card .name {
+    font-family: var(--serif); font-weight: 500; font-size: 17px;
+    line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 6px;
+  }
+  .dom-card .meta {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--cosmos-very-dim);
+    margin-bottom: 12px;
+  }
+  .dom-card .skills { font-size: 13px; color: var(--cosmos-dim); }
+  .dom-card .skills strong { color: var(--cosmos-ink); font-weight: 600; }
+
+  /* ─── Pricing teaser ──────────────────────────────────── */
+  .pricing {
+    margin-top: 72px;
+    border-top: 1px solid var(--cosmos-hair);
+    padding-top: 56px;
+    display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end;
+  }
+  .pricing h2 {
+    font-family: var(--serif); font-weight: 500; font-size: 36px;
+    letter-spacing: -0.02em; line-height: 1.1; margin: 0;
+  }
+  .pricing p { color: var(--cosmos-dim); margin-top: 12px; max-width: 520px; }
+
+  /* ─── Footer ──────────────────────────────────────────── */
+  footer {
+    margin-top: 96px; padding: 32px 0;
+    border-top: 1px solid var(--cosmos-hair);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+  }
+
+  /* ─── Layout shell ────────────────────────────────────── */
+  .shell {
+    position: relative; z-index: 1;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 56px;
+  }
+  .nav {
+    padding: 28px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-right { display: flex; align-items: center; gap: 28px; }
+  .nav a.signin {
+    font-size: 13px; font-weight: 500; color: var(--cosmos-dim);
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+  .nav a.signin:hover { color: var(--cosmos-ink); }
+
+  .hero {
+    padding-top: 56px;
+    padding-bottom: 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+    align-items: center;
+  }
+  .hero .copy { display: flex; flex-direction: column; gap: 24px; }
+  .hero .copy .sub {
+    font-size: 16px; color: var(--cosmos-dim); max-width: 480px; line-height: 1.6;
+  }
+  .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+
+  /* ─── Responsive ──────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .shell { padding: 0 40px; }
+    .hero { gap: 48px; }
+    .movements { grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  }
+  @media (max-width: 768px) {
+    .shell { padding: 0 24px; }
+    .hero {
+      grid-template-columns: 1fr;
+      padding-top: 32px;
+      padding-bottom: 48px;
+    }
+    .h1-display { font-size: 56px; }
+    .brain-stage { max-width: 360px; }
+    .movements { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .domains-strip { grid-template-columns: repeat(2, 1fr); }
+    .pricing { grid-template-columns: 1fr; }
+    .pricing .actions { display: flex; gap: 12px; }
+  }
+  @media (max-width: 375px) {
+    .shell { padding: 0 16px; }
+    .nav { padding: 20px 0; }
+    .pass-stamp { width: 44px; height: 44px; }
+    .h1-display { font-size: 44px; }
+    .movements { grid-template-columns: 1fr; }
+    .domains-strip { grid-template-columns: 1fr; }
+  }
+
+  /* ─── Reduced motion ──────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .starfield, .pass-stamp, .brain-halo, .lobe, .synapse, .spark { animation: none !important; }
+    .h1-display em { background: var(--d1); -webkit-background-clip: text; background-clip: text; }
+    .btn-primary { background: var(--d1); color: var(--cta-ink); }
+    .boot-line.visible { animation-duration: 0ms; opacity: 1; transform: none; }
+    .boot-cassette { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     Starfield (drifting; tab-blur pause via JS)
+     ══════════════════════════════════════════════════════ -->
+<div class="starfield" id="starfield"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     Boot sequence — plays once per session
+     Gated on sessionStorage.pass-boot-seen
+     ══════════════════════════════════════════════════════ -->
+<div class="boot-cassette" id="boot" aria-hidden="true">
+  <div class="boot-stack">
+    <div class="boot-line"><span class="dot">▸</span> root :: pass.engine.boot</div>
+    <div class="boot-line">  <span class="ok">✓</span> domains <span class="mono-tag">[d1·d2·d3·d4]</span> — loaded</div>
+    <div class="boot-line">  <span class="ok">✓</span> skills 045 / 045 — calibrated</div>
+    <div class="boot-line">  <span class="ok">✓</span> queue · resume cursor — ready</div>
+    <div class="boot-line">  <span class="dot">▸</span> the engine listens.</div>
+  </div>
+  <button class="boot-skip" id="boot-skip">skip ⏎</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     Page shell
+     ══════════════════════════════════════════════════════ -->
+<div class="shell">
+
+  <!-- 1 · Top nav -->
+  <nav class="nav">
+    <a href="#" class="flex items-center gap-3" style="text-decoration:none; color:inherit;">
+      <div class="pass-stamp"></div>
+      <div>
+        <div style="font-family: var(--serif); font-weight:600; font-size:18px; letter-spacing:-0.01em;">PASS Platform</div>
+        <div class="mono-tag" style="margin-top:2px;">Praxis 5403 · School Psychology</div>
+      </div>
+    </a>
+    <div class="nav-right">
+      <span class="mono-tag hidden md:inline">spring · 2026 · private beta</span>
+      <a href="mockup-pass-login-cosmos.html" class="signin">Sign in →</a>
+    </div>
+  </nav>
+
+  <!-- 2 · Hero -->
+  <section class="hero">
+    <div class="copy">
+      <div class="eyebrow">Pass it. Past it.</div>
+
+      <h1 class="h1-display">
+        Pass the Praxis.<br/>
+        Become the <em>psychologist.</em>
+      </h1>
+
+      <p class="sub">
+        An adaptive diagnostic that begins where you are — and a study engine
+        that rewrites itself with every answer. Built for Praxis 5403 (5404 next).
+      </p>
+
+      <div class="actions">
+        <a href="mockup-pass-login-cosmos.html" class="btn-primary">
+          Begin diagnostic
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="mockup-pass-login-cosmos.html" class="btn-ghost">I have an account</a>
+      </div>
+
+      <div class="mono-tag" style="margin-top:8px;">
+        ◐ no credit card · 45 skills tracked · live cohort: <span style="color:var(--d2);">7 online</span>
+      </div>
+    </div>
+
+    <!-- Hero figure: BrainActivation -->
+    <div class="brain-stage" aria-hidden="true">
+      <div class="brain-halo"></div>
+      <svg class="brain-svg" viewBox="0 0 560 560" role="presentation">
+        <!-- Synapse edges (drawn first so lobes overlay) -->
+        <g stroke-linecap="round">
+          <path class="synapse" d="M 180 180 Q 280 120 380 180" stroke="rgba(252,213,180,0.55)" />
+          <path class="synapse" d="M 380 180 Q 440 280 380 380" stroke="rgba(184,242,216,0.55)" />
+          <path class="synapse" d="M 380 380 Q 280 440 180 380" stroke="rgba(205,233,245,0.55)" />
+          <path class="synapse" d="M 180 380 Q 120 280 180 180" stroke="rgba(216,213,252,0.55)" />
+          <path class="synapse" d="M 180 180 Q 280 280 380 380" stroke="rgba(252,213,180,0.30)" />
+          <path class="synapse" d="M 380 180 Q 280 280 180 380" stroke="rgba(216,213,252,0.30)" />
+        </g>
+
+        <!-- Four lobes (peach → mint → ice → lavender) -->
+        <g>
+          <ellipse class="lobe" data-domain="d1" cx="180" cy="180" rx="78" ry="60" />
+          <ellipse class="lobe" data-domain="d2" cx="380" cy="180" rx="78" ry="60" />
+          <ellipse class="lobe" data-domain="d3" cx="380" cy="380" rx="78" ry="60" />
+          <ellipse class="lobe" data-domain="d4" cx="180" cy="380" rx="78" ry="60" />
+        </g>
+
+        <!-- Center node -->
+        <circle cx="280" cy="280" r="18" fill="rgba(255,243,222,0.85)" filter="url(#glow)" />
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Lobe labels (mono) -->
+        <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="rgba(241,245,249,0.55)" text-anchor="middle">
+          <text x="180" y="106">D1 · PEACH</text>
+          <text x="380" y="106">D2 · MINT</text>
+          <text x="380" y="468">D3 · ICE</text>
+          <text x="180" y="468">D4 · LAVENDER</text>
+        </g>
+
+        <!-- Sparks travel along synapse paths -->
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 180 180 Q 280 120 380 180'); animation-delay: 0s;" />
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 380 180 Q 440 280 380 380'); animation-delay: -1.5s;" />
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 380 380 Q 280 440 180 380'); animation-delay: -3s;" />
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 180 380 Q 120 280 180 180'); animation-delay: -4.5s;" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- 3 · The Five Movements -->
+  <section class="movements" aria-label="The five movements">
+    <div class="move">
+      <div class="num">I</div>
+      <div class="label">Adaptive diagnostic</div>
+      <div class="sub">45 questions calibrate you to within ±1 skill.</div>
+    </div>
+    <div class="move">
+      <div class="num">II</div>
+      <div class="label">Platform calibration</div>
+      <div class="sub">The engine fits to your prior knowledge, not a curriculum.</div>
+    </div>
+    <div class="move">
+      <div class="num">III</div>
+      <div class="label">Targeted practice</div>
+      <div class="sub">Domains and skills you actually need — not the ones you're already past.</div>
+    </div>
+    <div class="move">
+      <div class="num">IV</div>
+      <div class="label">Readiness threshold</div>
+      <div class="sub">70 % of skills demonstrating, before the engine says you're ready.</div>
+    </div>
+    <div class="move">
+      <div class="num">V</div>
+      <div class="label">Reassess · take praxis</div>
+      <div class="sub">A second diagnostic, then the test itself.</div>
+    </div>
+  </section>
+
+  <!-- 4 · Domains tree -->
+  <section style="margin-top: 80px;">
+    <div class="eyebrow" style="color: var(--cosmos-very-dim);">Four domains · 45 skills</div>
+    <h2 style="font-family: var(--serif); font-weight: 500; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 0;">
+      What the engine learns about you.
+    </h2>
+    <p style="color: var(--cosmos-dim); margin-top: 12px; max-width: 640px;">
+      Every Praxis 5403 skill maps to one of four domains. Each is a separate
+      colour the engine can speak in.
+    </p>
+
+    <div class="domains-strip">
+      <div class="dom-card" data-d="d1">
+        <div class="swatch"></div>
+        <div class="meta">D1 · Peach</div>
+        <div class="name">Professional<br/>Practices</div>
+        <div class="skills"><strong>9</strong> skills · ethics, identity, role boundaries</div>
+      </div>
+      <div class="dom-card" data-d="d2">
+        <div class="swatch"></div>
+        <div class="meta">D2 · Mint</div>
+        <div class="name">Student-Level<br/>Services</div>
+        <div class="skills"><strong>15</strong> skills · assessment, intervention, eligibility</div>
+      </div>
+      <div class="dom-card" data-d="d3">
+        <div class="swatch"></div>
+        <div class="meta">D3 · Ice</div>
+        <div class="name">Systems-Level<br/>Services</div>
+        <div class="skills"><strong>11</strong> skills · MTSS, consultation, school-wide data</div>
+      </div>
+      <div class="dom-card" data-d="d4">
+        <div class="swatch"></div>
+        <div class="meta">D4 · Lavender</div>
+        <div class="name">Foundations</div>
+        <div class="skills"><strong>10</strong> skills · law, equity, research methods</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Pricing teaser -->
+  <section class="pricing">
+    <div>
+      <div class="eyebrow" style="color: var(--cosmos-very-dim);">Private beta</div>
+      <h2>Free for the spring cohort.</h2>
+      <p>
+        We're calibrating with the people who'll use it most. Sign up now,
+        keep your access through the May 2026 sitting at no cost.
+      </p>
+    </div>
+    <div class="actions" style="display:flex; gap:12px;">
+      <a href="mockup-pass-login-cosmos.html" class="btn-primary">Begin diagnostic →</a>
+    </div>
+  </section>
+
+  <!-- 6 · Footer -->
+  <footer>
+    <div>PASS · Praxis 5403 · Cosmos · v0.1</div>
+    <div style="font-family: var(--serif); font-style: italic; font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--cosmos-ink);">
+      The engine remembers.
+    </div>
+    <div>Apr · 2026</div>
+  </footer>
+
+</div>
+
+<script>
+  // ─── Boot sequence ─────────────────────────────────────
+  // Plays once per session, gated by sessionStorage.
+  // Skip button always visible bottom-right; reduced-motion bypasses entirely.
+  (function bootCassette() {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const seen = sessionStorage.getItem('pass-boot-seen') === '1';
+    const cassette = document.getElementById('boot');
+    const skip = document.getElementById('boot-skip');
+    const lines = cassette.querySelectorAll('.boot-line');
+
+    function dismiss() {
+      cassette.classList.add('dismissed');
+      sessionStorage.setItem('pass-boot-seen', '1');
+      setTimeout(() => cassette.style.display = 'none', 700);
+    }
+
+    if (reducedMotion || seen) {
+      cassette.style.display = 'none';
+      return;
+    }
+
+    skip.addEventListener('click', dismiss);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === 'Escape') dismiss();
+    }, { once: true });
+
+    lines.forEach((line, i) => {
+      setTimeout(() => line.classList.add('visible'), 320 + i * 380);
+    });
+
+    setTimeout(dismiss, 320 + lines.length * 380 + 800);
+  })();
+
+  // ─── Starfield: pause on tab blur ──────────────────────
+  (function starfieldPause() {
+    const sf = document.getElementById('starfield');
+    document.addEventListener('visibilitychange', () => {
+      sf.style.animationPlayState = document.hidden ? 'paused' : 'running';
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Resume your study.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cosmos-navy:   #060d1a;
+    --cosmos-navy-2: #0a1628;
+    --cosmos-navy-3: #0f1e38;
+    --cosmos-ink:    #f1f5f9;
+    --cosmos-dim:    rgba(203, 213, 225, 0.72);
+    --cosmos-very-dim: rgba(148, 163, 184, 0.55);
+    --cosmos-hair:   rgba(241, 245, 249, 0.10);
+    --cosmos-hair-2: rgba(241, 245, 249, 0.18);
+
+    --d1: #fcd5b4; --d2: #b8f2d8; --d3: #cde9f5; --d4: #d8d5fc;
+    --d1-rgb: 252, 213, 180; --d2-rgb: 184, 242, 216; --d3-rgb: 205, 233, 245; --d4-rgb: 216, 213, 252;
+
+    --cta-gradient: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    --cta-ink: #1e1b3a;
+    --miss: #fca5a5;
+
+    --serif: 'Fraunces', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cosmos-navy);
+    color: var(--cosmos-ink);
+    font-family: var(--sans);
+    font-size: 14px; line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Starfield (subtle on /auth) ─────────────────────── */
+  .starfield {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 22%, rgba(252, 213, 180, 0.40), transparent 40%),
+      radial-gradient(1px 1px at 78% 18%, rgba(216, 213, 252, 0.35), transparent 40%),
+      radial-gradient(1px 1px at 56% 70%, rgba(187, 247, 208, 0.30), transparent 40%),
+      radial-gradient(1px 1px at 28% 84%, rgba(254, 243, 199, 0.30), transparent 40%),
+      radial-gradient(1px 1px at 92% 60%, rgba(251, 207, 232, 0.40), transparent 40%);
+    animation: starfield-drift 36s linear infinite;
+  }
+  @keyframes starfield-drift {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-30px); }
+  }
+
+  .pass-stamp {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255, 243, 222, 1)   0%,
+      rgba(252, 213, 180, 0.85) 25%,
+      rgba(251, 207, 232, 0.55) 55%,
+      rgba(216, 213, 252, 0.25) 100%);
+    box-shadow: 0 0 22px rgba(252, 213, 180, 0.40),
+                0 0 44px rgba(216, 213, 252, 0.22);
+    animation: stamp-pulse 4s ease-in-out infinite;
+    flex-shrink: 0; position: relative;
+  }
+  .pass-stamp::after {
+    content: ''; position: absolute; inset: 5px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255,255,255,0.55) 0%, transparent 55%);
+    filter: blur(2px);
+  }
+  @keyframes stamp-pulse {
+    0%, 100% { transform: scale(1);    opacity: 0.96; }
+    50%      { transform: scale(1.04); opacity: 1; }
+  }
+
+  /* ─── Two-column layout ───────────────────────────────── */
+  .auth {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+  }
+  .auth-left, .auth-right {
+    padding: 56px 64px;
+    display: flex; flex-direction: column;
+    min-width: 0;
+  }
+  .auth-left {
+    border-right: 1px solid var(--cosmos-hair);
+    background: linear-gradient(180deg, rgba(15,30,56,0) 0%, rgba(15,30,56,0.35) 100%);
+  }
+
+  /* ─── Brand cluster (top-left) ────────────────────────── */
+  .brand {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .brand .word {
+    font-family: var(--serif); font-weight: 600; font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .brand .sub {
+    font-family: var(--sans); font-weight: 700; font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+    margin-top: 2px;
+  }
+
+  /* ─── Engine voice (left center) ──────────────────────── */
+  .voice {
+    margin-top: 72px;
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+  .voice .eyebrow {
+    font-family: var(--sans); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--d1);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .voice .eyebrow .icon {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--d1) 0%, var(--d4) 100%);
+    box-shadow: 0 0 8px rgba(var(--d1-rgb), 0.6);
+  }
+  .voice h1 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(40px, 4.4vw, 64px);
+    line-height: 1.0; letter-spacing: -0.02em;
+    margin: 22px 0 0; max-width: 520px;
+  }
+  .voice h1 .accent {
+    background: var(--cta-gradient);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+  }
+  .voice .voice-sub {
+    margin-top: 20px; max-width: 480px;
+    font-size: 15px; color: var(--cosmos-dim); line-height: 1.55;
+  }
+
+  /* ─── Continuity stat strip ───────────────────────────── */
+  .stats {
+    margin-top: auto;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    padding-top: 48px;
+    border-top: 1px solid var(--cosmos-hair);
+  }
+  .stat .lbl {
+    font-family: var(--sans); font-weight: 700; font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+  }
+  .stat .num {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 36px; line-height: 1.1; letter-spacing: -0.02em;
+    margin: 8px 0 4px;
+  }
+  .stat .num em {
+    font-style: normal;
+    background: var(--cta-gradient);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+  }
+  .stat .meta {
+    font-family: var(--sans); font-size: 11px;
+    color: var(--cosmos-dim); line-height: 1.4;
+  }
+  .stat .meta strong { color: var(--cosmos-ink); font-weight: 600; }
+
+  /* ─── Right column · the form ─────────────────────────── */
+  .auth-right {
+    justify-content: center;
+    align-items: stretch;
+    max-width: 540px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .form-eyebrow {
+    font-family: var(--sans); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+  }
+  .form-title {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 36px; line-height: 1.15; letter-spacing: -0.02em;
+    margin: 8px 0 12px;
+  }
+  .form-sub {
+    font-size: 14px; color: var(--cosmos-dim);
+    line-height: 1.55; margin-bottom: 32px;
+    max-width: 380px;
+  }
+
+  /* ─── SSO buttons ─────────────────────────────────────── */
+  .sso-stack { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .sso-btn {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: rgba(241, 245, 249, 0.05);
+    border: 1px solid var(--cosmos-hair);
+    color: var(--cosmos-ink);
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  .sso-btn:hover {
+    background: rgba(241, 245, 249, 0.08);
+    border-color: var(--cosmos-hair-2);
+  }
+  .sso-btn .glyph {
+    width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--cosmos-ink); color: var(--cosmos-navy);
+    font-family: var(--serif); font-weight: 600; font-size: 12px;
+  }
+  .sso-btn.google .glyph { background: #fff; color: #1f2937; }
+  .sso-btn.uni    .glyph { background: var(--d3); color: var(--cosmos-navy); }
+
+  /* ─── Divider ─────────────────────────────────────────── */
+  .or {
+    display: flex; align-items: center; gap: 14px;
+    margin: 8px 0 22px;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+  }
+  .or::before, .or::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--cosmos-hair);
+  }
+
+  /* ─── Form fields ─────────────────────────────────────── */
+  .field-group { display: flex; flex-direction: column; gap: 16px; }
+  .field {
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .field-label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--sans); font-weight: 700; font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+  }
+  .field-label .forgot {
+    font-weight: 500; letter-spacing: 0.04em; text-transform: none;
+    color: var(--d1); font-size: 11px;
+    text-decoration: none;
+  }
+  .field-label .forgot:hover { text-decoration: underline; }
+  .field-shell {
+    position: relative;
+  }
+  .field-input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: rgba(15, 30, 56, 0.6);
+    border: 1px solid var(--cosmos-hair-2);
+    color: var(--cosmos-ink);
+    font-family: var(--sans); font-size: 14px;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: rgba(252, 213, 180, 0.55);
+    box-shadow: 0 0 0 3px rgba(252, 213, 180, 0.12);
+  }
+  .field-input::placeholder { color: rgba(148, 163, 184, 0.45); }
+  .field-input.has-error {
+    border-color: rgba(252, 165, 165, 0.55);
+    box-shadow: 0 0 0 3px rgba(252, 165, 165, 0.12);
+  }
+  .field-error {
+    font-size: 12px; color: var(--miss);
+    margin-top: 4px;
+  }
+  .field-show {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-family: var(--sans); font-weight: 500; font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+    background: transparent; border: 0; cursor: pointer;
+    padding: 4px 6px;
+  }
+  .field-show:hover { color: var(--cosmos-ink); }
+
+  /* ─── Keep me signed in ───────────────────────────────── */
+  .keep {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 18px; font-size: 13px; color: var(--cosmos-dim);
+    cursor: pointer;
+  }
+  .keep input { accent-color: var(--d1); width: 14px; height: 14px; }
+
+  /* ─── CTA pill (idle) ─────────────────────────────────── */
+  .cta-row { margin-top: 24px; }
+  .btn-primary {
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 999px;
+    font-family: var(--sans); font-weight: 600; font-size: 14px;
+    color: var(--cta-ink);
+    background: var(--cta-gradient);
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    box-shadow: 0 0 30px rgba(252, 213, 180, 0.30),
+                0 8px 24px -6px rgba(0, 0, 0, 0.4);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform 120ms ease-out, filter 120ms ease-out, box-shadow 120ms ease-out;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 0 40px rgba(252, 213, 180, 0.45),
+                0 12px 30px -6px rgba(0, 0, 0, 0.5);
+  }
+  .btn-primary:disabled {
+    background: rgba(241, 245, 249, 0.08);
+    color: rgba(241, 245, 249, 0.40);
+    border-color: var(--cosmos-hair);
+    box-shadow: none;
+    cursor: not-allowed;
+    filter: none; transform: none;
+  }
+
+  /* ─── New here? Begin diagnostic ──────────────────────── */
+  .new-here {
+    margin-top: 28px; padding-top: 24px;
+    border-top: 1px dashed var(--cosmos-hair);
+    text-align: center;
+    font-size: 13px; color: var(--cosmos-dim);
+  }
+  .new-here a {
+    color: var(--d1); font-weight: 500; text-decoration: none;
+  }
+  .new-here a:hover { text-decoration: underline; }
+
+  /* ─── State preview row (handoff redline §05) ─────────── */
+  .states-preview {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--cosmos-hair);
+    padding: 32px 64px;
+    background: rgba(6, 13, 26, 0.6);
+  }
+  .states-preview h3 {
+    font-family: var(--serif); font-weight: 500; font-size: 16px;
+    letter-spacing: -0.01em; margin: 0 0 16px;
+  }
+  .states-preview h3 .meta {
+    font-family: var(--mono); font-weight: 500; font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--cosmos-very-dim); margin-left: 12px;
+  }
+  .states-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+  }
+  .state-cell {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 14px;
+    background: rgba(15, 30, 56, 0.4);
+    border: 1px solid var(--cosmos-hair);
+    border-radius: 10px;
+  }
+  .state-cell .lbl {
+    font-family: var(--mono); font-weight: 600; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--d1);
+  }
+  .state-cell .demo {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 48px;
+  }
+  .state-cell .desc {
+    font-size: 11px; color: var(--cosmos-dim); line-height: 1.5;
+  }
+  .btn-state {
+    padding: 10px 16px; border-radius: 999px;
+    font-family: var(--sans); font-weight: 600; font-size: 12px;
+    color: var(--cta-ink); border: 1px solid rgba(255,255,255,0.3);
+    background: var(--cta-gradient);
+    cursor: default;
+  }
+  .btn-state.hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+    box-shadow: 0 8px 28px rgba(252, 213, 180, 0.25);
+    border-color: rgba(255,255,255,0.45);
+  }
+  .btn-state.disabled {
+    background: rgba(241, 245, 249, 0.08);
+    color: rgba(241, 245, 249, 0.4);
+    border-color: var(--cosmos-hair);
+  }
+  .btn-state.loading {
+    letter-spacing: 0.4em;
+    width: 130px; text-align: center;
+  }
+  .btn-state.loading .dots { animation: dots-pulse 0.8s ease-in-out infinite; display: inline-block; }
+  @keyframes dots-pulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+  }
+  .btn-state.error {
+    background: rgba(252, 165, 165, 0.15);
+    color: var(--miss);
+    border-color: rgba(252, 165, 165, 0.4);
+  }
+  .btn-state.locked {
+    background: rgba(241, 245, 249, 0.05);
+    color: rgba(241, 245, 249, 0.6);
+    border: 1px dashed var(--cosmos-hair-2);
+    font-family: var(--mono); font-weight: 500; font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── Responsive ──────────────────────────────────────── */
+  @media (max-width: 1280px) {
+    .auth-left, .auth-right { padding: 48px 48px; }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .stats .stat:last-child { grid-column: 1 / -1; }
+  }
+  @media (max-width: 1024px) {
+    .auth { grid-template-columns: 1fr 1fr; }
+    .auth-left, .auth-right { padding: 40px 40px; }
+    .voice h1 { font-size: 44px; }
+    .stat .num { font-size: 28px; }
+    .states-preview { padding: 24px 40px; }
+    .states-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .auth { grid-template-columns: 1fr; }
+    .auth-left { border-right: 0; border-bottom: 1px solid var(--cosmos-hair); }
+    .auth-left, .auth-right { padding: 32px 24px; }
+    .voice { margin-top: 40px; }
+    .voice h1 { font-size: 40px; }
+    .stats { grid-template-columns: repeat(3, 1fr); padding-top: 32px; gap: 16px; }
+    .states-preview { padding: 24px; }
+    .states-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 375px) {
+    .auth-left, .auth-right { padding: 24px 16px; }
+    .voice h1 { font-size: 32px; }
+    .form-title { font-size: 28px; }
+    .stats { grid-template-columns: 1fr; }
+    .states-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── Reduced motion ──────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .starfield, .pass-stamp, .btn-state.loading .dots { animation: none !important; }
+    .voice h1 .accent, .stat .num em {
+      background: var(--d1);
+      -webkit-background-clip: text; background-clip: text;
+    }
+    .btn-primary { background: var(--d1); color: var(--cta-ink); }
+  }
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+
+<main class="auth">
+
+  <!-- ═══ Left column — engine voice ═══════════════════════ -->
+  <section class="auth-left">
+    <a href="mockup-pass-landing-cosmos.html" class="brand" style="text-decoration:none; color:inherit;">
+      <div class="pass-stamp"></div>
+      <div>
+        <div class="word">PASS Platform</div>
+        <div class="sub">Praxis 5403 · School Psychology</div>
+      </div>
+    </a>
+
+    <div class="voice">
+      <div class="eyebrow"><span class="icon"></span> The engine remembers</div>
+      <h1>
+        <span class="accent">23 days</span><br/>
+        until the line.
+      </h1>
+      <p class="voice-sub">
+        Welcome back, Maya. We'll back-plan from your test date and pick the
+        queue up where the engine left off — domain D2, skill 14, item 7.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="lbl">Streak</div>
+          <div class="num">12 <em>days</em></div>
+          <div class="meta"><strong>Today's nudge:</strong> 35 minutes.</div>
+        </div>
+        <div class="stat">
+          <div class="lbl">Mastery</div>
+          <div class="num">31 / 45</div>
+          <div class="meta"><strong>14 skills</strong> from readiness threshold.</div>
+        </div>
+        <div class="stat">
+          <div class="lbl">Today's dose</div>
+          <div class="num">42 <em>min</em></div>
+          <div class="meta">D2 review · 1 redemption round.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Right column — sign-in form ══════════════════════ -->
+  <section class="auth-right">
+    <div class="form-eyebrow">Sign in</div>
+    <h2 class="form-title">Resume your study.</h2>
+    <p class="form-sub">
+      Pick up where the engine left off. New here?
+      <a href="mockup-pass-landing-cosmos.html" style="color:var(--d1);text-decoration:none;">Begin a diagnostic</a>
+      instead.
+    </p>
+
+    <div class="sso-stack">
+      <button class="sso-btn google" type="button">
+        <span class="glyph">G</span>
+        Continue with Google
+      </button>
+      <button class="sso-btn uni" type="button">
+        <span class="glyph">U</span>
+        Continue with University SSO
+      </button>
+    </div>
+
+    <div class="or">or sign in with email</div>
+
+    <form class="field-group" id="login-form" novalidate>
+      <div class="field">
+        <label class="field-label" for="email">
+          <span>Email</span>
+        </label>
+        <div class="field-shell">
+          <input class="field-input" type="email" id="email"
+                 autocomplete="email" placeholder="you@example.edu" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="password">
+          <span>Password</span>
+          <a href="#" class="forgot">Forgot?</a>
+        </label>
+        <div class="field-shell">
+          <input class="field-input" type="password" id="password"
+                 autocomplete="current-password" placeholder="••••••••" />
+          <button type="button" class="field-show" id="pw-show">SHOW</button>
+        </div>
+      </div>
+
+      <label class="keep">
+        <input type="checkbox" id="keep" />
+        Keep me signed in for 14 days
+      </label>
+
+      <div class="cta-row">
+        <button class="btn-primary" type="submit" id="submit" disabled>
+          Resume study <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="new-here">
+      First time here? <a href="mockup-pass-landing-cosmos.html">Begin diagnostic →</a>
+    </div>
+  </section>
+
+  <!-- ═══ Component states preview (handoff §05) ══════════ -->
+  <section class="states-preview">
+    <h3>
+      Primary CTA · states
+      <span class="meta">Handoff §05 · component</span>
+    </h3>
+    <div class="states-grid">
+      <div class="state-cell">
+        <div class="lbl">Idle</div>
+        <div class="demo"><button class="btn-state" type="button">Resume study →</button></div>
+        <div class="desc">Default · gradient at full strength.</div>
+      </div>
+      <div class="state-cell">
+        <div class="lbl">Hover</div>
+        <div class="demo"><button class="btn-state hover" type="button">Resume study →</button></div>
+        <div class="desc">Lift 1 px · brightness 1.04 · halo shadow.</div>
+      </div>
+      <div class="state-cell">
+        <div class="lbl">Disabled</div>
+        <div class="demo"><button class="btn-state disabled" type="button">Resume study →</button></div>
+        <div class="desc">Hair fill · ink at 40 % · cursor not-allowed.</div>
+      </div>
+      <div class="state-cell">
+        <div class="lbl">Loading</div>
+        <div class="demo"><button class="btn-state loading" type="button"><span class="dots">• • •</span></button></div>
+        <div class="desc">Lock width · 3-dot pulse · fields disabled.</div>
+      </div>
+      <div class="state-cell">
+        <div class="lbl">Error retry</div>
+        <div class="demo"><button class="btn-state error" type="button">Try again →</button></div>
+        <div class="desc">Miss-color tint after auth failure.</div>
+      </div>
+      <div class="state-cell">
+        <div class="lbl">Locked</div>
+        <div class="demo"><button class="btn-state locked" type="button">Try again in 4:32</button></div>
+        <div class="desc">After 5 failed attempts · countdown live.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ─── Form validation: enable submit only when both fields valid ───
+  (function bindForm() {
+    const email = document.getElementById('email');
+    const pw = document.getElementById('password');
+    const submit = document.getElementById('submit');
+    const pwShow = document.getElementById('pw-show');
+
+    function validate() {
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+      const pwOk = pw.value.length >= 6;
+      submit.disabled = !(emailOk && pwOk);
+    }
+    [email, pw].forEach(el => el.addEventListener('input', validate));
+    email.addEventListener('blur', () => {
+      if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        email.classList.add('has-error');
+      } else {
+        email.classList.remove('has-error');
+      }
+    });
+
+    pwShow.addEventListener('click', () => {
+      const showing = pw.type === 'text';
+      pw.type = showing ? 'password' : 'text';
+      pwShow.textContent = showing ? 'SHOW' : 'HIDE';
+    });
+
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Demo only — would normally POST /api/auth/session
+    });
+  })();
+</script>
+
+</body>
+</html>
