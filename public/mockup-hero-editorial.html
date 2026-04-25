@@ -54,7 +54,7 @@
     font-size: 10px;
     letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: rgba(226, 232, 240, 0.35);
+    color: rgba(226, 232, 240, 0.55);
     font-weight: 500;
   }
   .small-caps {
@@ -539,8 +539,8 @@
     margin-right: 0.45em;
   }
   .movement-label {
-    font-size: 11px;
-    letter-spacing: 0.18em;
+    font-size: 10px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(226, 232, 240, 0.6);
     font-weight: 500;
@@ -575,6 +575,23 @@
     backdrop-filter: blur(10px);
     font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
   }
+  /* Hide variant switcher (mockup-only chrome) below desktop so it doesn't obscure the masthead or wrap awkwardly */
+  @media (max-width: 1024px) {
+    .switcher { display: none; }
+  }
+  /* Variant B atmospheric orb backdrop — fade and shrink at narrow widths so it stops fighting headline/CTA contrast */
+  .orb-backdrop { transform: translate(-50%, -50%); }
+  @media (max-width: 1023px) {
+    .orb-backdrop {
+      opacity: 0.5;
+      transform: translate(-50%, -50%) scale(0.78);
+    }
+  }
+  /* Variant B uses a grid wrapper for vertical centering — force header/main/footer to full width
+     so their inner max-w + mx-auto centers content correctly (grid items shrink to content otherwise). */
+  #variant-b > div > header,
+  #variant-b > div > main,
+  #variant-b > div > footer { width: 100%; }
   .switcher button {
     padding: 6px 14px; border-radius: 999px;
     color: rgba(226, 232, 240, 0.6);
@@ -773,11 +790,11 @@
 <!-- VARIANT B — Adaptive Intelligence (editorial + centered constellation) -->
 <!-- ══════════════════════════════════════════════════════════════════════ -->
 <div id="variant-b" class="variant">
-  <div class="relative min-h-screen overflow-hidden">
+  <div class="relative min-h-screen overflow-hidden grid grid-rows-[auto_1fr_auto]">
     <div class="starfield"></div>
 
     <!-- Centered luminous orb as atmospheric backdrop -->
-    <div class="absolute top-[54%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" style="width: min(72vw, 980px); aspect-ratio: 1;">
+    <div class="orb-backdrop absolute top-[54%] left-1/2 pointer-events-none z-0" style="width: min(72vw, 980px); aspect-ratio: 1;">
       <div class="orb-ring r3" style="width: 100%; height: 100%; top: 50%; left: 50%;"></div>
       <div class="orb-ring r2" style="width: 84%; height: 84%; top: 50%; left: 50%;"></div>
       <div class="orb-ring r1" style="width: 64%; height: 64%; top: 50%; left: 50%;"></div>
@@ -862,7 +879,7 @@
     </header>
 
     <!-- ────── Centered editorial hero ────── -->
-    <main class="relative z-10 max-w-[980px] mx-auto px-6 md:px-12 pt-20 md:pt-28 pb-16 text-center">
+    <main class="relative z-10 max-w-[980px] w-full mx-auto px-6 md:px-12 pb-16 text-center flex flex-col justify-center">
       <div class="flex items-center justify-center gap-4 mb-10">
         <span class="rule-h w-10"></span>
         <span class="eyebrow-warm">Adaptive Intelligence</span>
@@ -884,7 +901,7 @@
       </div>
 
       <!-- The five movements — horizontal, centered -->
-      <div class="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-8 gap-y-3 pt-8 border-t border-white/[0.06] max-w-[760px] w-full mx-auto">
+      <div class="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-x-4 gap-y-3 pt-8 border-t border-white/[0.06] max-w-none w-full mx-auto">
         <div class="flex items-baseline"><span class="roman">I</span><span class="movement-label">Adaptive Diagnosis</span></div>
         <div class="flex items-baseline"><span class="roman" style="color: rgba(184, 242, 216, 0.85);">II</span><span class="movement-label">Platform Calibration</span></div>
         <div class="flex items-baseline"><span class="roman" style="color: rgba(205, 233, 245, 0.85);">III</span><span class="movement-label">Targeted Practice</span></div>
