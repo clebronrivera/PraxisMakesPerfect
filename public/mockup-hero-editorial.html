@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS — Hero (Editorial Candidate Brief)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght,SOFT@9..144,300,0;9..144,400,0;9..144,500,0;9..144,600,50&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-950: #03070e;
+    --navy-900: #060d1a;
+    --navy-800: #0a1628;
+    --navy-700: #0f1e38;
+    --rule: rgba(226, 232, 240, 0.08);
+    --rule-strong: rgba(226, 232, 240, 0.14);
+    --d1: #fcd5b4;   /* peach  */
+    --d2: #b8f2d8;   /* mint   */
+    --d3: #cde9f5;   /* ice    */
+    --d4: #d8d5fc;   /* lavender */
+    --paper: #e9e4d8; /* warm editorial ink */
+    --ink: #d7d2c5;
+    --orbit-tilt: 62deg;  /* global fallback; .orb-stage can override */
+  }
+  html, body {
+    background: var(--navy-900);
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'ss01', 'ss02';
+  }
+  body { letter-spacing: -0.003em; }
+
+  /* ─────────── Editorial type helpers ─────────── */
+  .serif        { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-optical-sizing: auto; }
+  .serif-italic { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-optical-sizing: auto; }
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(226, 232, 240, 0.55);
+    font-weight: 600;
+  }
+  .eyebrow-warm {
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(252, 213, 180, 0.85);
+    font-weight: 600;
+  }
+  .colophon {
+    font-size: 10px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: rgba(226, 232, 240, 0.35);
+    font-weight: 500;
+  }
+  .small-caps {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.12em;
+  }
+
+  /* Hairline editorial rule */
+  .rule-h   { height: 1px; background: var(--rule); width: 100%; }
+  .rule-h-strong { height: 1px; background: var(--rule-strong); width: 100%; }
+
+  /* ─────────── Starfield (quieter than atelier) ─────────── */
+  .starfield {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.55;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(252, 213, 180, 0.40), transparent 45%),
+      radial-gradient(1px 1px at 78% 22%, rgba(216, 213, 252, 0.38), transparent 45%),
+      radial-gradient(1px 1px at 55% 72%, rgba(187, 247, 208, 0.32), transparent 45%),
+      radial-gradient(1px 1px at 28% 82%, rgba(254, 243, 199, 0.32), transparent 45%),
+      radial-gradient(1px 1px at 92% 62%, rgba(251, 207, 232, 0.38), transparent 45%),
+      radial-gradient(1px 1px at 6% 48%, rgba(216, 213, 252, 0.30), transparent 45%),
+      radial-gradient(1px 1px at 44% 8%, rgba(255, 243, 222, 0.38), transparent 45%),
+      radial-gradient(1px 1px at 70% 92%, rgba(252, 213, 180, 0.30), transparent 45%);
+    animation: starfield-drift 40s linear infinite;
+  }
+  @keyframes starfield-drift { 0% { transform: translateY(0); } 100% { transform: translateY(-36px); } }
+
+  /* ─────────── Mini orb (masthead) ─────────── */
+  .mini-orb {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255, 243, 222, 1) 0%,
+      rgba(252, 213, 180, 0.85) 25%,
+      rgba(251, 207, 232, 0.55) 55%,
+      rgba(216, 213, 252, 0.25) 100%);
+    box-shadow: 0 0 14px rgba(252, 213, 180, 0.4), 0 0 28px rgba(216, 213, 252, 0.22);
+    flex-shrink: 0;
+    animation: mini-pulse 4.5s ease-in-out infinite;
+  }
+  @keyframes mini-pulse {
+    0%, 100% { transform: scale(1);   opacity: 0.96; }
+    50%      { transform: scale(1.03); opacity: 1;   }
+  }
+
+  /* ─────────── Display headline treatment ─────────── */
+  .display {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" 30;
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.022em;
+    color: #f8fafc;
+  }
+  .display .light { font-weight: 300; }
+  .display em {
+    font-style: italic;
+    font-weight: 400;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 48%, #d8d5fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.018em;
+  }
+
+  /* ─────────── Standfirst (drop cap & italic deck) ─────────── */
+  .standfirst {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(226, 232, 240, 0.78);
+    letter-spacing: -0.006em;
+  }
+  .drop-cap::first-letter {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 4.2em;
+    line-height: 0.85;
+    float: left;
+    padding: 0.12em 0.12em 0 0;
+    margin-top: 0.02em;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 55%, #d8d5fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ─────────── Orb motif (3D tilted orbital plane) ───────────
+     .orb-stage gets perspective + preserve-3d so rings and planets
+     render with real depth. --orbit-tilt controls how far back the
+     orbital plane leans (0deg = top-down, 90deg = edge-on). 62deg is
+     a Saturn-ring 3/4 view — reads as 3D without being so narrow the
+     planets are hard to hover.
+  ─────────────────────────────────────────────── */
+  .orb-stage {
+    --orbit-tilt: 62deg;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 420px;
+    margin: 0 auto;
+    perspective: 1400px;
+    perspective-origin: 50% 50%;
+    transform-style: preserve-3d;
+  }
+  .orb-halo {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%,
+      rgba(252, 213, 180, 0.22) 0%,
+      rgba(216, 213, 252, 0.12) 30%,
+      rgba(6, 13, 26, 0) 62%);
+    filter: blur(2px);
+  }
+  /* The orb body stays a flat luminous disk facing the viewer — it is
+     the "star" and a tilted ellipse would no longer look like a sphere. */
+  .orb-body {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 44%; height: 44%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%,
+      rgba(255, 248, 232, 0.98) 0%,
+      rgba(252, 213, 180, 0.88) 22%,
+      rgba(251, 207, 232, 0.55) 55%,
+      rgba(216, 213, 252, 0.22) 88%,
+      rgba(6, 13, 26, 0) 100%);
+    box-shadow:
+      0 0 60px rgba(252, 213, 180, 0.35),
+      0 0 120px rgba(216, 213, 252, 0.22);
+    animation: orb-breathe 7s ease-in-out infinite;
+    z-index: 1;
+  }
+  @keyframes orb-breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.98; }
+    50%      { transform: translate(-50%, -50%) scale(1.028); opacity: 1;    }
+  }
+  /* Tilted orbital rings — elliptical in screen space. */
+  .orb-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotateX(var(--orbit-tilt));
+    transform-style: preserve-3d;
+    border: 1px solid rgba(226, 232, 240, 0.08);
+    border-radius: 50%;
+  }
+  .orb-ring.r1 { width: 72%;  height: 72%;  }
+  .orb-ring.r2 { width: 92%;  height: 92%;  border-color: rgba(226, 232, 240, 0.05); }
+  .orb-ring.r3 { width: 108%; height: 108%; border-color: rgba(226, 232, 240, 0.035); }
+
+  /* ─────────── Orbiting domain planets ───────────
+     The .orbiter is a full-size square that rotates around the stage
+     center; its child .planet sits at the top (12 o'clock in the orbiter's
+     local frame). As the orbiter rotates, the planet traces a circle
+     around the center. The .planet-label-frame sits *above* the dot in
+     the orbiter's local frame — which means it is always positioned
+     radially OUTWARD from the center in the viewport, regardless of where
+     the planet is in its orbit. The visible .planet-label inside that
+     frame counter-rotates so the text always reads upright.
+
+     Hovering or focusing a planet pauses ITS orbit (and counter-rotation)
+     and reveals the label. Other planets keep drifting.
+  ─────────────────────────────────────────────── */
+  .orbiter {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: orbit 72s linear infinite;
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .orbiter-2 { animation-delay: -18s; }
+  .orbiter-3 { animation-delay: -36s; }
+  .orbiter-4 { animation-delay: -54s; }
+
+  /* The planet sits at the top of the orbit path. It counter-rotates the
+     tilt so the dot and label face the viewer head-on while the orbit
+     plane leans back. */
+  .planet {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%) rotateX(calc(var(--orbit-tilt) * -1));
+    transform-style: preserve-3d;
+    pointer-events: auto;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .planet-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--dot-color, #fff);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--dot-color, #fff) 70%, transparent),
+      0 0 22px color-mix(in srgb, var(--dot-color, #fff) 35%, transparent);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .planet:hover .planet-dot,
+  .planet:focus-visible .planet-dot {
+    transform: scale(1.7);
+    box-shadow:
+      0 0 16px color-mix(in srgb, var(--dot-color, #fff) 85%, transparent),
+      0 0 34px color-mix(in srgb, var(--dot-color, #fff) 55%, transparent);
+  }
+
+  /* Invisible generous hit-target around the dot so hovering is forgiving */
+  .planet::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+  }
+
+  /* The frame orbits WITH the orbiter (no counter-rotation), so it always
+     sits radially outward from the stage center. */
+  .planet-label-frame {
+    position: absolute;
+    bottom: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  /* The visible plaque counter-rotates to stay level in viewport space. */
+  .planet-label {
+    display: inline-block;
+    padding: 10px 14px;
+    min-width: 200px;
+    max-width: 248px;
+    background: rgba(6, 13, 26, 0.88);
+    border: 1px solid color-mix(in srgb, var(--dot-color, #fff) 28%, rgba(226, 232, 240, 0.1));
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    white-space: normal;
+    animation: orbit-counter 72s linear infinite;
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+  .orbiter-2 .planet-label { animation-delay: -18s; }
+  .orbiter-3 .planet-label { animation-delay: -36s; }
+  .orbiter-4 .planet-label { animation-delay: -54s; }
+
+  /* Small downward-pointing arrow on the label so it reads as "this label
+     belongs to that dot." Since the whole label counter-rotates, the arrow
+     always appears pointing toward the dot in viewport space. */
+  .planet-label::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -1px);
+    width: 8px; height: 8px;
+    background: inherit;
+    border-right: 1px solid color-mix(in srgb, var(--dot-color, #fff) 28%, rgba(226, 232, 240, 0.1));
+    border-bottom: 1px solid color-mix(in srgb, var(--dot-color, #fff) 28%, rgba(226, 232, 240, 0.1));
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    rotate: 45deg;
+  }
+  .planet-label .roman-mark {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--dot-color, #fff);
+    margin-right: 0.5em;
+  }
+  .planet-label .name {
+    display: inline;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #f1f5f9;
+    letter-spacing: 0.01em;
+  }
+  .planet-label .sub {
+    margin: 4px 0 0;
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: rgba(226, 232, 240, 0.62);
+  }
+  .planet:hover .planet-label,
+  .planet:focus-visible .planet-label {
+    opacity: 1;
+  }
+
+  /* Hovering/focusing a planet pauses BOTH the orbit and the label's
+     counter-rotation, freezing the planet in place while the label fades in. */
+  .orbiter:hover,
+  .orbiter:focus-within {
+    animation-play-state: paused;
+  }
+  .orbiter:hover .planet-label,
+  .orbiter:focus-within .planet-label {
+    animation-play-state: paused;
+  }
+
+  /* ─────────── Cerebral instrument (Variant C) ───────────
+     The center of the composition is a painterly brain instead of a star.
+     Four cortex regions (color-keyed to the four domains) sit on the
+     surface; they pulse from a quiet ambient glow to full brightness when
+     the matching orbiting trigger is hovered. Rings + orbits stay exactly
+     the same as the cosmic variant — the planets become "ideas circling
+     a mind" rather than planets circling a star.
+  ─────────────────────────────────────────────── */
+  .brain-svg {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 72%; height: 72%;
+    overflow: visible;
+    z-index: 1;
+    filter: drop-shadow(0 0 30px rgba(252, 213, 180, 0.22))
+            drop-shadow(0 0 60px rgba(216, 213, 252, 0.14));
+    animation: brain-float 11s ease-in-out infinite;
+    transform-origin: 50% 50%;
+  }
+  /* Gentle float: tiny rotation + vertical drift + breathing scale, so the
+     brain reads as a living specimen rather than a static illustration. */
+  @keyframes brain-float {
+    0%   { transform: translate(-50%, -50%) rotate(-1.8deg) translateY(0)    scale(1);     }
+    25%  { transform: translate(-50%, -50%) rotate(0.4deg)  translateY(-6px) scale(1.012); }
+    50%  { transform: translate(-50%, -50%) rotate(1.8deg)  translateY(0)    scale(1.02);  }
+    75%  { transform: translate(-50%, -50%) rotate(0.4deg)  translateY(6px)  scale(1.012); }
+    100% { transform: translate(-50%, -50%) rotate(-1.8deg) translateY(0)    scale(1);     }
+  }
+
+  /* Cortex regions have a faint ambient pulse — "neural background activity."
+     Each region offsets its phase so the brain reads as firing
+     asynchronously, not in unison. A hovered planet overrides with .active
+     which drives a brighter, larger pulse. */
+  .brain-svg .region {
+    opacity: 0.2;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: neural-ambient 8s ease-in-out infinite;
+    transition: opacity 0.5s ease, transform 0.6s ease;
+  }
+  .brain-svg .region-d1 { animation-delay: 0s;   }
+  .brain-svg .region-d2 { animation-delay: -2s;  }
+  .brain-svg .region-d3 { animation-delay: -4s;  }
+  .brain-svg .region-d4 { animation-delay: -6s;  }
+  @keyframes neural-ambient {
+    0%, 100% { opacity: 0.16; transform: scale(1);    }
+    35%      { opacity: 0.42; transform: scale(1.04); }
+    70%      { opacity: 0.22; transform: scale(1);    }
+  }
+
+  /* Hover-activated region overrides ambient with a brighter pulse */
+  .brain-svg .region.active {
+    animation: neural-active 2.4s ease-in-out infinite !important;
+  }
+  @keyframes neural-active {
+    0%, 100% { opacity: 0.78; transform: scale(1.05); }
+    50%      { opacity: 0.98; transform: scale(1.12); }
+  }
+
+  .brain-svg .gyri    { opacity: 0.75; }
+  .brain-svg .fissure { opacity: 0.65; }
+
+  /* ─────────── Mobile info-panel (< 640px) ───────────
+     Outward-projecting labels can't fit horizontally on narrow viewports
+     (a 200px label at the 3-o'clock position would always overflow a 375px
+     screen regardless of orbit radius). On mobile we hide the per-planet
+     labels and use a single shared caption directly under the orb-stage;
+     JS populates it from the hovered planet's data-* attributes.
+  ─────────────────────────────────────────────── */
+  .orbit-info-panel {
+    display: none;
+    position: absolute;
+    left: 0; right: 0;
+    bottom: -90px;
+    padding: 0 8px;
+    text-align: center;
+    min-height: 72px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  .orbit-info-panel .info-roman {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--panel-color, #fff);
+    margin-right: 0.5em;
+  }
+  .orbit-info-panel .info-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+  .orbit-info-panel .info-sub {
+    margin-top: 4px;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: rgba(226, 232, 240, 0.6);
+  }
+  @media (max-width: 640px) {
+    .planet-label-frame { display: none; }
+    .orbit-info-panel { display: block; }
+    .orbit-info-panel.active { opacity: 1; }
+    /* The desktop "Adaptive Engine" caption under the orb is redundant on
+       mobile, where the shared info panel occupies the same visual slot.
+       !important needed because Tailwind CDN injects .flex later. */
+    .engine-caption-desktop { display: none !important; }
+  }
+
+  /* The orbit keyframe combines the static tilt with the animated spin.
+     Spinning around Z after tilting on X gives an elliptical orbit path
+     in screen space (exactly how planetary rings look in 3/4 view). */
+  @keyframes orbit {
+    from { transform: rotateX(var(--orbit-tilt)) rotateZ(0deg);   }
+    to   { transform: rotateX(var(--orbit-tilt)) rotateZ(360deg); }
+  }
+  @keyframes orbit-counter {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+  }
+
+  /* Respect reduced motion — freeze orbits at starting positions */
+  @media (prefers-reduced-motion: reduce) {
+    .orbiter, .planet-label { animation: none; }
+    .orbiter    { transform: rotateX(var(--orbit-tilt)) rotateZ(0deg);   }
+    .orbiter-2  { transform: rotateX(var(--orbit-tilt)) rotateZ(90deg);  }
+    .orbiter-3  { transform: rotateX(var(--orbit-tilt)) rotateZ(180deg); }
+    .orbiter-4  { transform: rotateX(var(--orbit-tilt)) rotateZ(270deg); }
+    .orbiter-2 .planet-label { transform: rotate(-90deg); }
+    .orbiter-3 .planet-label { transform: rotate(-180deg); }
+    .orbiter-4 .planet-label { transform: rotate(-270deg); }
+  }
+
+  /* ─────────── Buttons (match existing atelier) ─────────── */
+  .btn-soft-glow {
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #0b1324;
+    background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 55%, #d8d5fc 100%);
+    box-shadow:
+      0 0 24px rgba(252, 213, 180, 0.35),
+      0 6px 18px -6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn-soft-glow:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 32px rgba(252, 213, 180, 0.5),
+      0 10px 24px -6px rgba(0, 0, 0, 0.5);
+  }
+  .btn-ghost {
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 14px;
+    color: rgba(226, 232, 240, 0.78);
+    border: 1px solid rgba(226, 232, 240, 0.14);
+    background: transparent;
+    transition: all 0.2s ease;
+  }
+  .btn-ghost:hover {
+    color: white;
+    border-color: rgba(252, 213, 180, 0.4);
+  }
+
+  /* ─────────── Roman numeral colophon ─────────── */
+  .roman {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: rgba(252, 213, 180, 0.85);
+    margin-right: 0.45em;
+  }
+  .movement-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(226, 232, 240, 0.6);
+    font-weight: 500;
+  }
+
+  /* Issue-stamp (corner bug) */
+  .issue-stamp {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: rgba(226, 232, 240, 0.32);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ─────────── Responsive display sizing ─────────── */
+  .display-size { font-size: clamp(3.4rem, 8.2vw, 7.25rem); }      /* ~55px → 116px */
+  .standfirst-size { font-size: clamp(1.05rem, 1.55vw, 1.3rem); }  /* ~17px → 21px */
+
+  /* ─────────── Utility ─────────── */
+  .glow-border { box-shadow: inset 0 0 0 1px rgba(252, 213, 180, 0.08); }
+
+  /* ── Variant switcher chrome (mockup-only) ── */
+  .switcher {
+    position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+    z-index: 60;
+    display: flex; gap: 6px;
+    background: rgba(6, 13, 26, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.1);
+    padding: 6px; border-radius: 999px;
+    backdrop-filter: blur(10px);
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .switcher button {
+    padding: 6px 14px; border-radius: 999px;
+    color: rgba(226, 232, 240, 0.6);
+    transition: all 0.2s ease;
+  }
+  .switcher button.active {
+    background: linear-gradient(135deg, rgba(252, 213, 180, 0.18), rgba(216, 213, 252, 0.18));
+    color: white;
+  }
+  .variant { display: none; }
+  .variant.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Mockup-only variant switcher -->
+<div class="switcher">
+  <button onclick="showVariant('a')" id="vbtn-a" class="active">A · Candidate Brief</button>
+  <button onclick="showVariant('b')" id="vbtn-b">B · Adaptive Intelligence</button>
+  <button onclick="showVariant('c')" id="vbtn-c">C · Cerebral Instrument</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- VARIANT A — The Candidate Brief (literary magazine)                    -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div id="variant-a" class="variant active">
+  <div class="relative min-h-screen overflow-hidden">
+    <div class="starfield"></div>
+
+    <!-- Left gutter issue stamp -->
+    <div class="hidden lg:block absolute left-6 top-36 bottom-16">
+      <div class="issue-stamp">№ 001 · Praxis 5403 · Spring 2026</div>
+    </div>
+
+    <!-- ────── Masthead ────── -->
+    <header class="relative z-20 max-w-[1220px] mx-auto px-6 md:px-12 pt-7 md:pt-9">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="mini-orb"></div>
+          <div class="leading-tight">
+            <p class="serif text-[17px] font-medium text-white tracking-tight">PASS</p>
+            <p class="text-[10px] tracking-[0.22em] uppercase text-slate-500 mt-0.5">Platform for Adaptive Study Sessions</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-6">
+          <span class="hidden md:inline colophon">Issue 01 · The Candidate Brief</span>
+          <button class="text-sm text-slate-300 hover:text-white transition">Sign in</button>
+        </div>
+      </div>
+      <div class="rule-h mt-7"></div>
+    </header>
+
+    <!-- ────── Hero editorial frame ────── -->
+    <main class="relative z-10 max-w-[1220px] mx-auto px-6 md:px-12 pt-14 md:pt-20 pb-24">
+      <div class="grid lg:grid-cols-[1.25fr_0.85fr] gap-10 lg:gap-20 items-start">
+
+        <!-- Editorial column -->
+        <article>
+          <div class="flex items-center gap-4 mb-10">
+            <span class="eyebrow-warm">№ 001</span>
+            <span class="rule-h w-10"></span>
+            <span class="eyebrow">The Candidate Brief</span>
+          </div>
+
+          <h1 class="display display-size mb-8">
+            A study plan<br />
+            <span class="light">that</span> <em>listens.</em>
+          </h1>
+
+          <p class="standfirst standfirst-size max-w-[40ch] leading-[1.45] mb-12">
+            An adaptive diagnostic that begins where you are, and rewrites itself with every answer.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button class="btn-soft-glow">Begin your diagnostic&nbsp;&nbsp;→</button>
+            <button class="btn-ghost">I have an account</button>
+          </div>
+
+          <!-- The five movements — student's journey through the system -->
+          <div class="mt-20 pt-8 border-t border-white/[0.06]">
+            <p class="colophon mb-5">The five movements</p>
+            <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-5 gap-y-4">
+              <li class="flex items-baseline">
+                <span class="roman">I</span>
+                <span class="movement-label">Adaptive Diagnosis</span>
+              </li>
+              <li class="flex items-baseline">
+                <span class="roman" style="color: rgba(184, 242, 216, 0.85);">II</span>
+                <span class="movement-label">Platform Calibration</span>
+              </li>
+              <li class="flex items-baseline">
+                <span class="roman" style="color: rgba(205, 233, 245, 0.85);">III</span>
+                <span class="movement-label">Targeted Practice</span>
+              </li>
+              <li class="flex items-baseline">
+                <span class="roman" style="color: rgba(216, 213, 252, 0.85);">IV</span>
+                <span class="movement-label">Readiness Threshold</span>
+              </li>
+              <li class="flex items-baseline">
+                <span class="roman" style="color: rgba(251, 207, 232, 0.85);">V</span>
+                <span class="movement-label">Reassess · Take Praxis</span>
+              </li>
+            </ol>
+          </div>
+        </article>
+
+        <!-- Orb column — quiet, no labels, no schematic -->
+        <aside class="relative flex flex-col items-center lg:items-end justify-center pt-4 lg:pt-14">
+          <div class="orb-stage">
+            <div class="orb-ring r3"></div>
+            <div class="orb-ring r2"></div>
+            <div class="orb-ring r1"></div>
+            <div class="orb-halo"></div>
+            <div class="orb-body"></div>
+
+            <!-- Four orbiting domain planets. Hover (or focus) a planet to
+                 pause its orbit and reveal the domain name. -->
+            <div class="orbiter orbiter-1">
+              <div class="planet" tabindex="0" role="button" aria-label="Domain 1 · Professional Practices" data-roman="I" data-name="Professional Practices" data-sub="Assessment, consultation, and data-based decision making" style="--dot-color: var(--d1);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">I</span><span class="name">Professional Practices</span></div>
+                    <p class="sub">Assessment, consultation, and data-based decision making</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="orbiter orbiter-2">
+              <div class="planet" tabindex="0" role="button" aria-label="Domain 2 · Student-Level Services" data-roman="II" data-name="Student-Level Services" data-sub="Academic, developmental, and mental-health supports" style="--dot-color: var(--d2);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">II</span><span class="name">Student-Level Services</span></div>
+                    <p class="sub">Academic, developmental, and mental-health supports</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="orbiter orbiter-3">
+              <div class="planet" tabindex="0" role="button" aria-label="Domain 3 · Systems-Level Services" data-roman="III" data-name="Systems-Level Services" data-sub="Family, schoolwide, and systems practice" style="--dot-color: var(--d3);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">III</span><span class="name">Systems-Level Services</span></div>
+                    <p class="sub">Family, schoolwide, and systems practice</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="orbiter orbiter-4">
+              <div class="planet" tabindex="0" role="button" aria-label="Domain 4 · Foundations of School Psychology" data-roman="IV" data-name="Foundations of School Psychology" data-sub="Ethics, law, diversity, and research" style="--dot-color: var(--d4);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">IV</span><span class="name">Foundations of School Psychology</span></div>
+                    <p class="sub">Ethics, law, diversity, and research</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile-only shared caption (populated by JS on planet hover) -->
+            <div class="orbit-info-panel" aria-live="polite">
+              <p><span class="info-roman"></span><span class="info-name"></span></p>
+              <p class="info-sub"></p>
+            </div>
+          </div>
+          <div class="engine-caption-desktop mt-8 flex items-center gap-3 max-w-[320px] text-right lg:text-right">
+            <div class="rule-h flex-1 min-w-[30px]"></div>
+            <p class="colophon whitespace-nowrap">The Adaptive Engine</p>
+          </div>
+          <p class="engine-caption-desktop serif-italic text-[13px] text-slate-500 mt-3 max-w-[280px] text-center lg:text-right leading-relaxed">
+            A single instrument, tuned weekly to the grain of a single candidate.
+          </p>
+        </aside>
+
+      </div>
+    </main>
+
+    <!-- Footer rule -->
+    <footer class="relative z-10 max-w-[1220px] mx-auto px-6 md:px-12 pb-10">
+      <div class="rule-h mb-5"></div>
+      <div class="flex flex-wrap items-center justify-between gap-3 colophon">
+        <span>Praxis 5403 · School Psychology</span>
+        <span>Private beta · By invitation</span>
+        <span class="hidden md:inline">Made with care in New York</span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- VARIANT B — Adaptive Intelligence (editorial + centered constellation) -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div id="variant-b" class="variant">
+  <div class="relative min-h-screen overflow-hidden">
+    <div class="starfield"></div>
+
+    <!-- Centered luminous orb as atmospheric backdrop -->
+    <div class="absolute top-[54%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" style="width: min(72vw, 980px); aspect-ratio: 1;">
+      <div class="orb-ring r3" style="width: 100%; height: 100%; top: 50%; left: 50%;"></div>
+      <div class="orb-ring r2" style="width: 84%; height: 84%; top: 50%; left: 50%;"></div>
+      <div class="orb-ring r1" style="width: 64%; height: 64%; top: 50%; left: 50%;"></div>
+      <div class="orb-halo" style="width: 60%; height: 60%; top: 50%; left: 50%; margin: -30% 0 0 -30%;"></div>
+      <div class="orb-body" style="width: 18%; height: 18%;"></div>
+      <!-- Four orbiting domain planets on the outermost ring -->
+      <div class="orbiter orbiter-1" style="pointer-events: none;">
+        <div class="planet" style="--dot-color: var(--d1); pointer-events: auto;" tabindex="0" role="button" aria-label="Domain 1 · Professional Practices" data-roman="I" data-name="Professional Practices" data-sub="Assessment, consultation, and data-based decision making">
+          <div class="planet-dot"></div>
+          <div class="planet-label-frame">
+            <div class="planet-label">
+              <div><span class="roman-mark">I</span><span class="name">Professional Practices</span></div>
+              <p class="sub">Assessment, consultation, and data-based decision making</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="orbiter orbiter-2" style="pointer-events: none;">
+        <div class="planet" style="--dot-color: var(--d2); pointer-events: auto;" tabindex="0" role="button" aria-label="Domain 2 · Student-Level Services" data-roman="II" data-name="Student-Level Services" data-sub="Academic, developmental, and mental-health supports">
+          <div class="planet-dot"></div>
+          <div class="planet-label-frame">
+            <div class="planet-label">
+              <div><span class="roman-mark">II</span><span class="name">Student-Level Services</span></div>
+              <p class="sub">Academic, developmental, and mental-health supports</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="orbiter orbiter-3" style="pointer-events: none;">
+        <div class="planet" style="--dot-color: var(--d3); pointer-events: auto;" tabindex="0" role="button" aria-label="Domain 3 · Systems-Level Services" data-roman="III" data-name="Systems-Level Services" data-sub="Family, schoolwide, and systems practice">
+          <div class="planet-dot"></div>
+          <div class="planet-label-frame">
+            <div class="planet-label">
+              <div><span class="roman-mark">III</span><span class="name">Systems-Level Services</span></div>
+              <p class="sub">Family, schoolwide, and systems practice</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="orbiter orbiter-4" style="pointer-events: none;">
+        <div class="planet" style="--dot-color: var(--d4); pointer-events: auto;" tabindex="0" role="button" aria-label="Domain 4 · Foundations of School Psychology" data-roman="IV" data-name="Foundations of School Psychology" data-sub="Ethics, law, diversity, and research">
+          <div class="planet-dot"></div>
+          <div class="planet-label-frame">
+            <div class="planet-label">
+              <div><span class="roman-mark">IV</span><span class="name">Foundations of School Psychology</span></div>
+              <p class="sub">Ethics, law, diversity, and research</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile-only shared caption (populated by JS on planet hover) -->
+      <div class="orbit-info-panel" aria-live="polite">
+        <p><span class="info-roman"></span><span class="info-name"></span></p>
+        <p class="info-sub"></p>
+      </div>
+    </div>
+
+    <!-- Vignette overlay for legibility -->
+    <div class="absolute inset-0 pointer-events-none z-[1]" style="background:
+      radial-gradient(circle at 50% 54%, transparent 0%, rgba(6, 13, 26, 0.35) 55%, rgba(6, 13, 26, 0.85) 88%);">
+    </div>
+
+    <!-- ────── Masthead ────── -->
+    <header class="relative z-20 max-w-[1220px] mx-auto px-6 md:px-12 pt-7 md:pt-9">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="mini-orb"></div>
+          <div class="leading-tight">
+            <p class="serif text-[17px] font-medium text-white tracking-tight">PASS</p>
+            <p class="text-[10px] tracking-[0.22em] uppercase text-slate-500 mt-0.5">Platform for Adaptive Study Sessions</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-6">
+          <span class="hidden md:inline colophon">№ 001 · Spring 2026</span>
+          <button class="text-sm text-slate-300 hover:text-white transition">Sign in</button>
+        </div>
+      </div>
+      <div class="rule-h mt-7"></div>
+    </header>
+
+    <!-- ────── Centered editorial hero ────── -->
+    <main class="relative z-10 max-w-[980px] mx-auto px-6 md:px-12 pt-20 md:pt-28 pb-16 text-center">
+      <div class="flex items-center justify-center gap-4 mb-10">
+        <span class="rule-h w-10"></span>
+        <span class="eyebrow-warm">Adaptive Intelligence</span>
+        <span class="rule-h w-10"></span>
+      </div>
+
+      <h1 class="display display-size mb-8">
+        A study plan<br />
+        <em>that listens.</em>
+      </h1>
+
+      <p class="standfirst standfirst-size max-w-[42ch] mx-auto leading-[1.45] mb-12">
+        An adaptive diagnostic that begins where you are, and rewrites itself with every answer.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
+        <button class="btn-soft-glow">Begin your diagnostic&nbsp;&nbsp;→</button>
+        <button class="btn-ghost">I have an account</button>
+      </div>
+
+      <!-- The five movements — horizontal, centered -->
+      <div class="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-8 gap-y-3 pt-8 border-t border-white/[0.06] max-w-[760px] w-full mx-auto">
+        <div class="flex items-baseline"><span class="roman">I</span><span class="movement-label">Adaptive Diagnosis</span></div>
+        <div class="flex items-baseline"><span class="roman" style="color: rgba(184, 242, 216, 0.85);">II</span><span class="movement-label">Platform Calibration</span></div>
+        <div class="flex items-baseline"><span class="roman" style="color: rgba(205, 233, 245, 0.85);">III</span><span class="movement-label">Targeted Practice</span></div>
+        <div class="flex items-baseline"><span class="roman" style="color: rgba(216, 213, 252, 0.85);">IV</span><span class="movement-label">Readiness Threshold</span></div>
+        <div class="flex items-baseline"><span class="roman" style="color: rgba(251, 207, 232, 0.85);">V</span><span class="movement-label">Reassess · Take Praxis</span></div>
+      </div>
+
+      <!-- Editorial dek, below the fold feel -->
+      <p class="serif-italic text-[14px] text-slate-500 mt-14 max-w-[46ch] mx-auto leading-relaxed">
+        A single instrument, tuned to the grain of a single candidate.
+      </p>
+    </main>
+
+    <footer class="relative z-10 max-w-[1220px] mx-auto px-6 md:px-12 pb-10">
+      <div class="rule-h mb-5"></div>
+      <div class="flex flex-wrap items-center justify-between gap-3 colophon">
+        <span>Praxis 5403 · School Psychology</span>
+        <span>Private beta · By invitation</span>
+        <span class="hidden md:inline">Made with care in New York</span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- VARIANT C — Cerebral Instrument (brain at center, regions activate)    -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div id="variant-c" class="variant">
+  <div class="relative min-h-screen overflow-hidden">
+    <div class="starfield"></div>
+
+    <!-- Left gutter issue stamp -->
+    <div class="hidden lg:block absolute left-6 top-36 bottom-16">
+      <div class="issue-stamp">№ 001 · Praxis 5403 · Spring 2026</div>
+    </div>
+
+    <!-- ────── Masthead ────── -->
+    <header class="relative z-20 max-w-[1220px] mx-auto px-6 md:px-12 pt-7 md:pt-9">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="mini-orb"></div>
+          <div class="leading-tight">
+            <p class="serif text-[17px] font-medium text-white tracking-tight">PASS</p>
+            <p class="text-[10px] tracking-[0.22em] uppercase text-slate-500 mt-0.5">Platform for Adaptive Study Sessions</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-6">
+          <span class="hidden md:inline colophon">Issue 01 · The Cerebral Instrument</span>
+          <button class="text-sm text-slate-300 hover:text-white transition">Sign in</button>
+        </div>
+      </div>
+      <div class="rule-h mt-7"></div>
+    </header>
+
+    <!-- ────── Hero editorial frame ────── -->
+    <main class="relative z-10 max-w-[1220px] mx-auto px-6 md:px-12 pt-14 md:pt-20 pb-24">
+      <div class="grid lg:grid-cols-[1.25fr_0.85fr] gap-10 lg:gap-20 items-start">
+
+        <!-- Editorial column -->
+        <article>
+          <div class="flex items-center gap-4 mb-10">
+            <span class="eyebrow-warm">№ 001</span>
+            <span class="rule-h w-10"></span>
+            <span class="eyebrow">The Cerebral Instrument</span>
+          </div>
+
+          <h1 class="display display-size mb-8">
+            A study plan<br />
+            <span class="light">that</span> <em>listens.</em>
+          </h1>
+
+          <p class="standfirst standfirst-size max-w-[40ch] leading-[1.45] mb-12">
+            An adaptive diagnostic that begins where you are, and rewrites itself with every answer.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button class="btn-soft-glow">Begin your diagnostic&nbsp;&nbsp;→</button>
+            <button class="btn-ghost">I have an account</button>
+          </div>
+
+          <!-- The five movements -->
+          <div class="mt-20 pt-8 border-t border-white/[0.06]">
+            <p class="colophon mb-5">The five movements</p>
+            <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-5 gap-y-4">
+              <li class="flex items-baseline"><span class="roman">I</span><span class="movement-label">Adaptive Diagnosis</span></li>
+              <li class="flex items-baseline"><span class="roman" style="color: rgba(184, 242, 216, 0.85);">II</span><span class="movement-label">Platform Calibration</span></li>
+              <li class="flex items-baseline"><span class="roman" style="color: rgba(205, 233, 245, 0.85);">III</span><span class="movement-label">Targeted Practice</span></li>
+              <li class="flex items-baseline"><span class="roman" style="color: rgba(216, 213, 252, 0.85);">IV</span><span class="movement-label">Readiness Threshold</span></li>
+              <li class="flex items-baseline"><span class="roman" style="color: rgba(251, 207, 232, 0.85);">V</span><span class="movement-label">Reassess · Take Praxis</span></li>
+            </ol>
+          </div>
+        </article>
+
+        <!-- Brain column — cerebral instrument with 4 cortex regions -->
+        <aside class="relative flex flex-col items-center lg:items-end justify-center pt-4 lg:pt-14">
+          <div class="orb-stage">
+            <div class="orb-ring r3"></div>
+            <div class="orb-ring r2"></div>
+            <div class="orb-ring r1"></div>
+            <div class="orb-halo"></div>
+
+            <!-- Painterly side-view brain — facing left. Made to read clearly
+                 as a brain: distinct frontal bulge, central sulcus, lateral
+                 sulcus, cerebellum with parallel folds, brain stem. -->
+            <svg class="brain-svg" viewBox="0 0 400 360" aria-hidden="true">
+              <defs>
+                <radialGradient id="c-brain-body" cx="30%" cy="30%" r="82%">
+                  <stop offset="0%"   stop-color="#ffd6bc" stop-opacity="0.96" />
+                  <stop offset="40%"  stop-color="#e0a088" stop-opacity="0.86" />
+                  <stop offset="80%"  stop-color="#6a3a48" stop-opacity="0.58" />
+                  <stop offset="100%" stop-color="#120810" stop-opacity="0"    />
+                </radialGradient>
+                <radialGradient id="c-cerebellum" cx="35%" cy="30%" r="80%">
+                  <stop offset="0%"   stop-color="#e59f82" stop-opacity="0.90" />
+                  <stop offset="100%" stop-color="#3d1f2a" stop-opacity="0.45" />
+                </radialGradient>
+                <filter id="c-region-blur" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="16" />
+                </filter>
+              </defs>
+
+              <!-- Cerebrum: side profile, facing left.
+                   Starts at ventral-front, up around the top (dorsal), over
+                   to the parieto-occipital curve, back down to temporal base. -->
+              <path d="
+                M 75 195
+                C 55 130, 115 65, 205 62
+                C 295 60, 345 105, 348 165
+                C 355 195, 342 220, 318 232
+                C 330 255, 305 275, 270 272
+                C 245 278, 215 270, 188 266
+                C 155 268, 120 255, 95 230
+                C 78 215, 74 205, 75 195 Z"
+                fill="url(#c-brain-body)" />
+
+              <!-- Central sulcus (Rolando's fissure) — diagonal groove
+                   separating frontal lobe from parietal lobe -->
+              <path class="fissure" d="M 200 82 Q 218 150, 242 205"
+                    stroke="rgba(30, 12, 20, 0.65)" stroke-width="2.2" fill="none" stroke-linecap="round" />
+
+              <!-- Lateral sulcus (Sylvian fissure) — horizontal groove
+                   separating temporal lobe from the rest -->
+              <path class="fissure" d="M 105 215 Q 180 228, 285 212"
+                    stroke="rgba(30, 12, 20, 0.58)" stroke-width="2" fill="none" stroke-linecap="round" />
+
+              <!-- Parieto-occipital sulcus — shallow back-top groove -->
+              <path class="fissure" d="M 315 115 Q 320 155, 322 195"
+                    stroke="rgba(30, 12, 20, 0.45)" stroke-width="1.5" fill="none" stroke-linecap="round" />
+
+              <!-- Gyri — shadow strokes (darker, suggesting depth) -->
+              <g class="gyri" fill="none" stroke="rgba(50, 22, 32, 0.55)" stroke-width="1.6" stroke-linecap="round">
+                <!-- Frontal lobe gyri -->
+                <path d="M 85 175 Q 135 145, 178 128" />
+                <path d="M 90 200 Q 145 175, 190 165" />
+                <path d="M 115 225 Q 155 210, 195 205" />
+                <!-- Parietal lobe gyri -->
+                <path d="M 248 100 Q 290 100, 322 118" />
+                <path d="M 263 138 Q 298 138, 332 152" />
+                <path d="M 272 172 Q 302 175, 330 185" />
+                <!-- Temporal lobe gyri -->
+                <path d="M 120 240 Q 175 248, 235 244" />
+                <path d="M 132 258 Q 185 262, 245 258" />
+              </g>
+
+              <!-- Gyri — highlight strokes (lighter, suggesting ridges) -->
+              <g fill="none" stroke="rgba(255, 228, 206, 0.32)" stroke-width="1.3" stroke-linecap="round">
+                <path d="M 92 185 Q 140 155, 185 138" />
+                <path d="M 258 110 Q 295 110, 325 128" />
+                <path d="M 275 148 Q 305 148, 330 162" />
+                <path d="M 130 250 Q 185 256, 238 252" />
+              </g>
+
+              <!-- Cerebellum — distinct small mass below occipital lobe,
+                   with characteristic horizontal parallel foliations (folia) -->
+              <g>
+                <ellipse cx="292" cy="278" rx="44" ry="28" fill="url(#c-cerebellum)" />
+                <path d="M 255 265 Q 292 263, 332 266" stroke="rgba(30, 12, 20, 0.5)"  stroke-width="1" fill="none" stroke-linecap="round" />
+                <path d="M 252 276 Q 292 274, 334 276" stroke="rgba(30, 12, 20, 0.48)" stroke-width="1" fill="none" stroke-linecap="round" />
+                <path d="M 252 287 Q 292 285, 333 287" stroke="rgba(30, 12, 20, 0.45)" stroke-width="1" fill="none" stroke-linecap="round" />
+                <path d="M 255 298 Q 292 296, 329 298" stroke="rgba(30, 12, 20, 0.4)"  stroke-width="0.9" fill="none" stroke-linecap="round" />
+              </g>
+
+              <!-- Brain stem — short tapered structure below cerebellum -->
+              <path d="M 282 302 Q 278 320, 284 335 Q 292 338, 296 332 Q 296 318, 293 302 Z"
+                    fill="url(#c-brain-body)" opacity="0.85" />
+              <path d="M 285 310 Q 288 322, 287 330" stroke="rgba(30, 12, 20, 0.35)" stroke-width="0.8" fill="none" />
+
+              <!-- Cortex region activation zones (color-keyed, color follows
+                   the domain that lights them up). Ambient opacity is low;
+                   JS promotes the matching region when its planet is hovered. -->
+              <g filter="url(#c-region-blur)">
+                <!-- D1 (Learning) — frontal lobe, upper-front -->
+                <ellipse class="region region-d1" cx="150" cy="130" rx="58" ry="44" fill="#fcd5b4" />
+                <!-- D3 (Adaptation) — parietal lobe, upper-back -->
+                <ellipse class="region region-d3" cx="285" cy="135" rx="54" ry="40" fill="#cde9f5" />
+                <!-- D2 (Recall) — temporal lobe, lower-front -->
+                <ellipse class="region region-d2" cx="175" cy="240" rx="52" ry="32" fill="#b8f2d8" />
+                <!-- D4 (Accommodation) — occipital lobe, back -->
+                <ellipse class="region region-d4" cx="312" cy="205" rx="38" ry="32" fill="#d8d5fc" />
+              </g>
+            </svg>
+
+            <!-- Four orbiting triggers — same as variant A but each carries
+                 a data-region that activates the matching cortex zone -->
+            <div class="orbiter orbiter-1">
+              <div class="planet" tabindex="0" role="button"
+                   aria-label="Domain 1 · Professional Practices · Learning"
+                   data-roman="I" data-name="Professional Practices"
+                   data-sub="Learning · Assessment, consultation, and data-based decision making"
+                   data-region="d1"
+                   style="--dot-color: var(--d1);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">I</span><span class="name">Professional Practices</span></div>
+                    <p class="sub"><em>Learning</em> · Assessment, consultation, and data-based decisions</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="orbiter orbiter-2">
+              <div class="planet" tabindex="0" role="button"
+                   aria-label="Domain 2 · Student-Level Services · Recall"
+                   data-roman="II" data-name="Student-Level Services"
+                   data-sub="Recall · Academic, developmental, and mental-health supports"
+                   data-region="d2"
+                   style="--dot-color: var(--d2);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">II</span><span class="name">Student-Level Services</span></div>
+                    <p class="sub"><em>Recall</em> · Academic, developmental, and mental-health supports</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="orbiter orbiter-3">
+              <div class="planet" tabindex="0" role="button"
+                   aria-label="Domain 3 · Systems-Level Services · Adaptation"
+                   data-roman="III" data-name="Systems-Level Services"
+                   data-sub="Adaptation · Family, schoolwide, and systems practice"
+                   data-region="d3"
+                   style="--dot-color: var(--d3);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">III</span><span class="name">Systems-Level Services</span></div>
+                    <p class="sub"><em>Adaptation</em> · Family, schoolwide, and systems practice</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="orbiter orbiter-4">
+              <div class="planet" tabindex="0" role="button"
+                   aria-label="Domain 4 · Foundations · Accommodation"
+                   data-roman="IV" data-name="Foundations of School Psychology"
+                   data-sub="Accommodation · Ethics, law, diversity, and research"
+                   data-region="d4"
+                   style="--dot-color: var(--d4);">
+                <div class="planet-dot"></div>
+                <div class="planet-label-frame">
+                  <div class="planet-label">
+                    <div><span class="roman-mark">IV</span><span class="name">Foundations of School Psychology</span></div>
+                    <p class="sub"><em>Accommodation</em> · Ethics, law, diversity, and research</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile-only shared caption -->
+            <div class="orbit-info-panel" aria-live="polite">
+              <p><span class="info-roman"></span><span class="info-name"></span></p>
+              <p class="info-sub"></p>
+            </div>
+          </div>
+
+          <div class="engine-caption-desktop mt-8 flex items-center gap-3 max-w-[320px] text-right lg:text-right">
+            <div class="rule-h flex-1 min-w-[30px]"></div>
+            <p class="colophon whitespace-nowrap">The Cerebral Instrument</p>
+          </div>
+          <p class="engine-caption-desktop serif-italic text-[13px] text-slate-500 mt-3 max-w-[300px] text-center lg:text-right leading-relaxed">
+            Four cortices, one mind — tuned to learn, recall, adapt, and accommodate.
+          </p>
+        </aside>
+
+      </div>
+    </main>
+
+    <footer class="relative z-10 max-w-[1220px] mx-auto px-6 md:px-12 pb-10">
+      <div class="rule-h mb-5"></div>
+      <div class="flex flex-wrap items-center justify-between gap-3 colophon">
+        <span>Praxis 5403 · School Psychology</span>
+        <span>Private beta · By invitation</span>
+        <span class="hidden md:inline">Made with care in New York</span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+  function showVariant(id) {
+    document.querySelectorAll('.variant').forEach(v => v.classList.remove('active'));
+    document.getElementById('variant-' + id).classList.add('active');
+    document.querySelectorAll('.switcher button').forEach(b => b.classList.remove('active'));
+    document.getElementById('vbtn-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  // Wire up mobile info-panel: each planet populates the nearest panel's
+  // roman / name / sub fields from its data attributes on hover/focus.
+  function wireOrbitInfoPanels() {
+    document.querySelectorAll('.planet').forEach(planet => {
+      const container = planet.closest('.orb-stage, .orb-backdrop, .variant > div > div');
+      // Find the info panel in the same visual container
+      let panel = null;
+      let el = planet;
+      while (el && !panel) {
+        panel = el.querySelector?.(':scope > .orbit-info-panel') || null;
+        if (!panel && el.parentElement) {
+          panel = el.parentElement.querySelector?.(':scope > .orbit-info-panel') || null;
+        }
+        el = el.parentElement;
+      }
+      // Fallback: find any orbit-info-panel in the same variant
+      if (!panel) {
+        const variant = planet.closest('.variant');
+        panel = variant?.querySelector('.orbit-info-panel');
+      }
+      if (!panel) return;
+
+      const romanEl = panel.querySelector('.info-roman');
+      const nameEl  = panel.querySelector('.info-name');
+      const subEl   = panel.querySelector('.info-sub');
+      const color   = planet.style.getPropertyValue('--dot-color');
+
+      // Variant C — activate the matching brain cortex region when this
+      // planet is hovered. Planets in other variants have no data-region,
+      // so this is a no-op for them.
+      const variant = planet.closest('.variant');
+      const regionKey = planet.dataset.region;
+
+      const show = () => {
+        if (romanEl) romanEl.textContent = planet.dataset.roman || '';
+        if (nameEl)  nameEl.textContent  = planet.dataset.name  || '';
+        if (subEl)   subEl.textContent   = planet.dataset.sub   || '';
+        if (color)   panel.style.setProperty('--panel-color', color);
+        panel.classList.add('active');
+        if (regionKey && variant) {
+          variant.querySelectorAll('.region').forEach(r => r.classList.remove('active'));
+          variant.querySelector('.region-' + regionKey)?.classList.add('active');
+        }
+      };
+      const hide = () => {
+        panel.classList.remove('active');
+        if (regionKey && variant) {
+          variant.querySelector('.region-' + regionKey)?.classList.remove('active');
+        }
+      };
+
+      planet.addEventListener('mouseenter', show);
+      planet.addEventListener('mouseleave', hide);
+      planet.addEventListener('focus',      show);
+      planet.addEventListener('blur',       hide);
+      planet.addEventListener('touchstart', show, { passive: true });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', wireOrbitInfoPanels);
+</script>
+
+</body>
+</html>

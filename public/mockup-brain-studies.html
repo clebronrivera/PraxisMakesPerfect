@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS — Brain Studies</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400,0;9..144,500,0;9..144,600,0&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900: #060d1a;
+    --navy-800: #0a1628;
+    --navy-700: #0f1e38;
+    --d1: #fcd5b4;
+    --d2: #b8f2d8;
+    --d3: #cde9f5;
+    --d4: #d8d5fc;
+  }
+  html, body {
+    background: var(--navy-900);
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .serif { font-family: 'Fraunces', Georgia, serif; }
+  .eyebrow { font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(226, 232, 240, 0.5); font-weight: 600; }
+  .rule { height: 1px; background: rgba(226, 232, 240, 0.1); }
+
+  /* Study card frame */
+  .study {
+    position: relative;
+    border: 1px solid rgba(226, 232, 240, 0.08);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(10, 22, 40, 0.55), rgba(6, 13, 26, 0.8));
+    overflow: hidden;
+  }
+  .svg-frame {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+  }
+  .svg-frame svg { width: 100%; height: 100%; overflow: visible; }
+  .study-meta { padding: 18px 22px 22px; border-top: 1px solid rgba(226, 232, 240, 0.06); }
+  .study-num { font-family: 'Fraunces', serif; font-style: italic; font-size: 11px; letter-spacing: 0.1em; color: rgba(252, 213, 180, 0.85); }
+  .study-title { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; color: #f1f5f9; margin-top: 3px; }
+  .study-desc { font-size: 12.5px; line-height: 1.55; color: rgba(226, 232, 240, 0.6); margin-top: 8px; }
+
+  /* Cortex region highlight default opacity (for the brain variants) */
+  .region { opacity: 0.32; }
+  .region.d1 { fill: var(--d1); }
+  .region.d2 { fill: var(--d2); }
+  .region.d3 { fill: var(--d3); }
+  .region.d4 { fill: var(--d4); }
+
+  /* Study 01 — painterly baseline (current) */
+  .painterly-body   { fill: url(#p01-body); }
+  .painterly-fissure { stroke: rgba(30, 12, 20, 0.65); stroke-width: 2; fill: none; stroke-linecap: round; }
+  .painterly-sulcus  { stroke: rgba(30, 12, 20, 0.5);  stroke-width: 1.8; fill: none; stroke-linecap: round; }
+  .painterly-gyri-dark { stroke: rgba(50, 22, 32, 0.55); stroke-width: 1.4; fill: none; stroke-linecap: round; }
+  .painterly-gyri-lite { stroke: rgba(255, 228, 206, 0.3); stroke-width: 1.2; fill: none; stroke-linecap: round; }
+
+  /* Study 02 — editorial line-drawing (ink only, no fill) */
+  .ink-outline { stroke: #f5d6b7; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ink-minor   { stroke: rgba(245, 214, 183, 0.55); stroke-width: 1.2; fill: none; stroke-linecap: round; }
+  .ink-tiny    { stroke: rgba(245, 214, 183, 0.35); stroke-width: 0.9; fill: none; stroke-linecap: round; }
+
+  /* Study 03 — top-down symmetric */
+  .topdown-body { fill: url(#p03-body); }
+  .topdown-fissure { stroke: rgba(30, 12, 20, 0.7); stroke-width: 2.4; fill: none; stroke-linecap: round; }
+  .topdown-gyri { stroke: rgba(50, 22, 32, 0.5); stroke-width: 1.3; fill: none; stroke-linecap: round; }
+  .topdown-highlight { stroke: rgba(255, 228, 206, 0.28); stroke-width: 1.1; fill: none; }
+
+  /* Study 04 — neural constellation (dots + connections) */
+  .neuron { fill: rgba(252, 213, 180, 0.88); }
+  .synapse { stroke: rgba(252, 213, 180, 0.25); stroke-width: 0.8; fill: none; }
+  .neuron-d1 { fill: var(--d1); }
+  .neuron-d2 { fill: var(--d2); }
+  .neuron-d3 { fill: var(--d3); }
+  .neuron-d4 { fill: var(--d4); }
+
+  /* Study 05 — cochlear spiral (alternative: not a brain, the ear of "listens") */
+  .spiral { stroke: url(#p05-grad); stroke-width: 3; fill: none; stroke-linecap: round; }
+  .spiral-inner { stroke: #fde4c1; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+
+  .float { animation: float 10s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes float {
+    0%, 100% { transform: rotate(-1.5deg) translateY(0); }
+    50%      { transform: rotate(1.5deg) translateY(-4px); }
+  }
+  .pulse { animation: pulse 4s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.25; }
+    50%      { opacity: 0.55; }
+  }
+  .pulse-d1 { animation-delay: 0s; }
+  .pulse-d2 { animation-delay: -1s; }
+  .pulse-d3 { animation-delay: -2s; }
+  .pulse-d4 { animation-delay: -3s; }
+</style>
+</head>
+<body>
+
+<header class="max-w-[1400px] mx-auto px-8 pt-10 pb-6">
+  <div class="flex items-baseline justify-between">
+    <div>
+      <p class="eyebrow mb-2">PASS · Hero Studies</p>
+      <h1 class="serif text-[28px] font-semibold text-white tracking-tight">Brain / listening-organ mockups</h1>
+    </div>
+    <a class="text-sm text-slate-400 hover:text-white" href="/mockup-hero-editorial.html">← Back to hero</a>
+  </div>
+  <p class="text-[13.5px] text-slate-400 mt-3 max-w-[70ch] leading-relaxed">
+    Four takes on the brain motif and one alternative (the cochlea — the ear of "listens"). Each tile is 1:1 and sits on the same navy backdrop the hero uses. Pick the approach you want, or tell me to mash two together.
+  </p>
+  <div class="rule mt-6"></div>
+</header>
+
+<main class="max-w-[1400px] mx-auto px-8 pb-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- STUDY 01 — Painterly side-view (current baseline)                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="study">
+    <div class="svg-frame">
+      <svg viewBox="0 0 400 400" class="float">
+        <defs>
+          <radialGradient id="p01-body" cx="30%" cy="28%" r="80%">
+            <stop offset="0%"   stop-color="#ffd6bc" stop-opacity="0.98"/>
+            <stop offset="40%"  stop-color="#e0a088" stop-opacity="0.9"/>
+            <stop offset="80%"  stop-color="#6a3a48" stop-opacity="0.65"/>
+            <stop offset="100%" stop-color="#120810" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="p01-cb" cx="35%" cy="35%" r="75%">
+            <stop offset="0%"   stop-color="#e09a7e" stop-opacity="0.92"/>
+            <stop offset="100%" stop-color="#3c1e28" stop-opacity="0.55"/>
+          </radialGradient>
+          <filter id="p01-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+        </defs>
+
+        <!-- CEREBRUM — lateral-view silhouette, facing LEFT.
+             Head-profile silhouette: protruding frontal pole (nose), high
+             dorsal curve, distinct occipital bulge at back, with the
+             bottom interrupted by a notch where the cerebellum nests. -->
+        <path fill="url(#p01-body)" d="
+          M 64 205
+          C 54 160, 72 112, 106 88
+          C 138 70, 172 64, 204 68
+          C 232 64, 262 72, 290 88
+          C 320 104, 346 130, 358 165
+          C 368 195, 364 225, 348 245
+          C 335 258, 318 264, 298 256
+          L 292 254
+          C 286 262, 278 266, 266 266
+          C 260 278, 242 286, 220 288
+          C 198 290, 174 288, 152 278
+          C 138 288, 118 290, 100 282
+          C 84 274, 72 260, 66 240
+          C 58 220, 56 205, 64 205 Z"/>
+
+        <!-- TEMPORAL LOBE — the hanging protrusion under the Sylvian fissure
+             (the single most recognizable part of a lateral brain view). -->
+        <path fill="url(#p01-body)" d="
+          M 98 270
+          C 78 276, 62 292, 68 312
+          C 76 328, 100 330, 122 320
+          C 142 310, 152 293, 148 278
+          C 140 270, 118 266, 98 270 Z"/>
+
+        <!-- Cortex region glows (ambient pulse; bright on hover) -->
+        <g filter="url(#p01-blur)">
+          <ellipse class="region d1 pulse pulse-d1" cx="155" cy="140" rx="58" ry="42"/>
+          <ellipse class="region d3 pulse pulse-d3" cx="290" cy="140" rx="54" ry="40"/>
+          <ellipse class="region d2 pulse pulse-d2" cx="108" cy="296" rx="42" ry="26"/>
+          <ellipse class="region d4 pulse pulse-d4" cx="330" cy="212" rx="36" ry="30"/>
+        </g>
+
+        <!-- CENTRAL SULCUS (fissure of Rolando) -->
+        <path stroke="rgba(30, 12, 20, 0.75)" stroke-width="2.4" fill="none" stroke-linecap="round"
+              d="M 208 82 Q 220 140, 236 200"/>
+
+        <!-- LATERAL SULCUS (Sylvian fissure) — the horizontal groove that
+             separates the temporal lobe from the rest of the cerebrum. -->
+        <path stroke="rgba(30, 12, 20, 0.72)" stroke-width="2.2" fill="none" stroke-linecap="round"
+              d="M 96 264 C 128 258, 170 260, 218 258 C 248 258, 274 258, 296 248"/>
+
+        <!-- PARIETO-OCCIPITAL SULCUS (back-top vertical groove) -->
+        <path stroke="rgba(30, 12, 20, 0.5)" stroke-width="1.7" fill="none" stroke-linecap="round"
+              d="M 324 120 Q 330 160, 340 200"/>
+
+        <!-- GYRI — shadow strokes (valleys) -->
+        <g stroke="rgba(42, 18, 28, 0.6)" stroke-width="1.5" fill="none" stroke-linecap="round">
+          <!-- frontal -->
+          <path d="M 74 170 Q 115 142, 160 122"/>
+          <path d="M 68 195 Q 118 172, 170 155"/>
+          <path d="M 68 222 Q 120 210, 172 198"/>
+          <path d="M 84 244 Q 135 236, 184 228"/>
+          <!-- parietal -->
+          <path d="M 246 100 Q 280 90, 312 108"/>
+          <path d="M 252 132 Q 288 122, 320 138"/>
+          <path d="M 260 164 Q 298 154, 328 168"/>
+          <path d="M 262 196 Q 302 190, 332 202"/>
+          <path d="M 258 224 Q 298 222, 322 232"/>
+          <!-- occipital -->
+          <path d="M 340 138 Q 352 158, 358 182"/>
+          <path d="M 338 176 Q 352 196, 360 218"/>
+          <path d="M 332 216 Q 346 236, 348 250"/>
+          <!-- temporal (on the hanging lobe) -->
+          <path d="M 78 285 Q 106 282, 138 282"/>
+          <path d="M 72 303 Q 100 302, 130 298"/>
+          <path d="M 82 318 Q 105 318, 128 310"/>
+        </g>
+
+        <!-- GYRI — highlight strokes (ridges) -->
+        <g stroke="rgba(255, 230, 208, 0.4)" stroke-width="1.3" fill="none" stroke-linecap="round">
+          <path d="M 78 180 Q 120 152, 165 132"/>
+          <path d="M 70 208 Q 122 185, 175 168"/>
+          <path d="M 252 110 Q 285 100, 318 118"/>
+          <path d="M 260 144 Q 292 132, 324 148"/>
+          <path d="M 82 292 Q 110 290, 140 290"/>
+        </g>
+
+        <!-- CEREBELLUM — nested below occipital, distinctly separate,
+             with characteristic parallel horizontal folia. -->
+        <g>
+          <path fill="url(#p01-cb)" d="
+            M 295 262
+            C 272 268, 254 284, 256 308
+            C 260 328, 282 340, 308 342
+            C 334 340, 354 328, 360 308
+            C 360 286, 344 268, 320 262
+            C 308 260, 302 260, 295 262 Z"/>
+          <path stroke="rgba(30, 12, 20, 0.5)"  stroke-width="0.9" fill="none" stroke-linecap="round" d="M 263 280 Q 308 278, 354 280"/>
+          <path stroke="rgba(30, 12, 20, 0.48)" stroke-width="0.9" fill="none" stroke-linecap="round" d="M 260 292 Q 308 290, 356 292"/>
+          <path stroke="rgba(30, 12, 20, 0.46)" stroke-width="0.9" fill="none" stroke-linecap="round" d="M 260 304 Q 308 302, 356 304"/>
+          <path stroke="rgba(30, 12, 20, 0.44)" stroke-width="0.9" fill="none" stroke-linecap="round" d="M 262 316 Q 308 314, 354 316"/>
+          <path stroke="rgba(30, 12, 20, 0.4)"  stroke-width="0.9" fill="none" stroke-linecap="round" d="M 266 328 Q 308 326, 350 328"/>
+        </g>
+
+        <!-- BRAINSTEM — tapered stalk descending below cerebellum. -->
+        <path fill="url(#p01-body)" opacity="0.9" d="
+          M 284 338
+          C 286 354, 288 370, 284 384
+          C 280 390, 272 390, 270 384
+          C 268 368, 272 352, 276 338 Z"/>
+        <path stroke="rgba(30, 12, 20, 0.45)" stroke-width="0.8" fill="none" d="M 278 350 Q 280 370, 278 382"/>
+      </svg>
+    </div>
+    <div class="study-meta">
+      <p class="study-num">No. 01 · revised</p>
+      <h3 class="study-title">Anatomical lateral</h3>
+      <p class="study-desc">Proper lobed silhouette — protruding frontal pole, hanging temporal lobe, distinctly separate cerebellum with visible folia, brainstem stalk. Reads as a lateral-view brain at a glance.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- STUDY 02 — Editorial line drawing (ink, no fill)                    -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="study">
+    <div class="svg-frame">
+      <svg viewBox="0 0 400 360" class="float">
+        <!-- Side-view outline — ink only, like a botanical plate -->
+        <path class="ink-outline" d="M 75 195 C 55 130, 115 65, 205 62 C 295 60, 345 105, 348 165 C 355 195, 342 220, 318 232 C 330 255, 305 275, 270 272 C 245 278, 215 270, 188 266 C 155 268, 120 255, 95 230 C 78 215, 74 205, 75 195 Z"/>
+        <!-- Central sulcus -->
+        <path class="ink-outline" d="M 200 82 Q 218 150, 242 205" style="stroke-width:1.6;"/>
+        <!-- Lateral sulcus -->
+        <path class="ink-outline" d="M 105 215 Q 180 228, 285 212" style="stroke-width:1.4;"/>
+        <!-- Dense gyri pattern (editorial engraving style) -->
+        <g class="ink-minor">
+          <path d="M 85 175 Q 135 145, 178 128"/>
+          <path d="M 90 195 Q 145 170, 190 158"/>
+          <path d="M 100 215 Q 150 200, 195 198"/>
+          <path d="M 248 95  Q 290 95,  322 115"/>
+          <path d="M 258 125 Q 295 125, 328 145"/>
+          <path d="M 268 155 Q 300 160, 330 175"/>
+          <path d="M 275 185 Q 305 190, 325 200"/>
+          <path d="M 115 235 Q 165 240, 220 240"/>
+          <path d="M 125 252 Q 175 258, 230 255"/>
+          <path d="M 140 268 Q 180 272, 220 270"/>
+        </g>
+        <g class="ink-tiny">
+          <path d="M 95 183 Q 135 160, 173 145"/>
+          <path d="M 105 205 Q 148 185, 188 175"/>
+          <path d="M 252 107 Q 287 107, 318 125"/>
+          <path d="M 264 138 Q 297 138, 326 157"/>
+          <path d="M 128 244 Q 172 248, 218 247"/>
+        </g>
+        <!-- Cerebellum (ink outline + folia) -->
+        <ellipse cx="292" cy="278" rx="44" ry="28" class="ink-outline" style="stroke-width:1.8;"/>
+        <path class="ink-minor" d="M 255 265 Q 292 263, 332 266"/>
+        <path class="ink-minor" d="M 252 276 Q 292 274, 334 276"/>
+        <path class="ink-minor" d="M 252 287 Q 292 285, 333 287"/>
+        <path class="ink-minor" d="M 255 298 Q 292 296, 329 298"/>
+        <!-- Brain stem -->
+        <path class="ink-outline" style="stroke-width:1.6;" d="M 282 302 Q 278 320, 284 335 Q 292 338, 296 332 Q 296 318, 293 302 Z"/>
+        <!-- Four tiny domain-colored dots over the lobes (no blur) -->
+        <circle cx="150" cy="130" r="4" fill="var(--d1)" opacity="0.7"/>
+        <circle cx="285" cy="135" r="4" fill="var(--d3)" opacity="0.7"/>
+        <circle cx="175" cy="240" r="4" fill="var(--d2)" opacity="0.7"/>
+        <circle cx="312" cy="205" r="4" fill="var(--d4)" opacity="0.7"/>
+      </svg>
+    </div>
+    <div class="study-meta">
+      <p class="study-num">No. 02</p>
+      <h3 class="study-title">Editorial line drawing</h3>
+      <p class="study-desc">Ink-only, no fills — like a botanical plate or mid-century medical illustration. Reads as a brain instantly. Domain colors reduced to four tiny pins on the lobes.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- STUDY 03 — Top-down symmetric                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="study">
+    <div class="svg-frame">
+      <svg viewBox="0 0 400 360" class="float">
+        <defs>
+          <radialGradient id="p03-body" cx="50%" cy="35%" r="70%">
+            <stop offset="0%"   stop-color="#ffd6bc" stop-opacity="0.96"/>
+            <stop offset="50%"  stop-color="#d89684" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#3d1d28" stop-opacity="0.25"/>
+          </radialGradient>
+          <filter id="p03-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+        </defs>
+        <!-- Butterfly cerebrum outline — left/right hemispheres -->
+        <path class="topdown-body" d="
+          M 200 80
+          C 140 82, 90 120, 85 180
+          C 82 240, 115 290, 165 300
+          C 180 305, 190 305, 200 300
+          C 210 305, 220 305, 235 300
+          C 285 290, 318 240, 315 180
+          C 310 120, 260 82, 200 80 Z"/>
+        <!-- Region glows (frontal front, parietal back, symmetric L/R) -->
+        <g filter="url(#p03-blur)">
+          <ellipse class="region d1 pulse pulse-d1" cx="140" cy="150" rx="40" ry="30"/>
+          <ellipse class="region d2 pulse pulse-d2" cx="260" cy="150" rx="40" ry="30"/>
+          <ellipse class="region d4 pulse pulse-d4" cx="145" cy="245" rx="35" ry="28"/>
+          <ellipse class="region d3 pulse pulse-d3" cx="255" cy="245" rx="35" ry="28"/>
+        </g>
+        <!-- Longitudinal fissure (central) -->
+        <path class="topdown-fissure" d="M 200 82 Q 198 190, 200 300"/>
+        <!-- Gyri — symmetric curves on each hemisphere, like contour lines -->
+        <g class="topdown-gyri">
+          <path d="M 110 140 Q 150 130, 188 135"/>
+          <path d="M 212 135 Q 250 130, 290 140"/>
+          <path d="M 95 175 Q 140 170, 187 175"/>
+          <path d="M 213 175 Q 260 170, 305 175"/>
+          <path d="M 92 210 Q 140 205, 186 210"/>
+          <path d="M 214 210 Q 260 205, 308 210"/>
+          <path d="M 100 245 Q 145 242, 188 248"/>
+          <path d="M 212 248 Q 255 242, 300 245"/>
+          <path d="M 115 275 Q 155 275, 189 280"/>
+          <path d="M 211 280 Q 245 275, 285 275"/>
+        </g>
+        <g class="topdown-highlight">
+          <path d="M 98 155 Q 145 148, 187 153"/>
+          <path d="M 213 153 Q 255 148, 302 155"/>
+          <path d="M 102 220 Q 145 217, 187 222"/>
+          <path d="M 213 222 Q 255 217, 298 220"/>
+        </g>
+        <!-- Cerebellum — peeks out below, rendered as a smaller butterfly -->
+        <path d="M 170 305 Q 200 322, 230 305 Q 225 340, 200 343 Q 175 340, 170 305 Z"
+              fill="url(#p03-body)" opacity="0.85"/>
+        <path d="M 183 318 Q 200 321, 217 318" stroke="rgba(30, 12, 20, 0.35)" fill="none" stroke-width="0.8"/>
+        <path d="M 178 328 Q 200 330, 222 328" stroke="rgba(30, 12, 20, 0.3)"  fill="none" stroke-width="0.8"/>
+      </svg>
+    </div>
+    <div class="study-meta">
+      <p class="study-num">No. 03</p>
+      <h3 class="study-title">Top-down symmetric</h3>
+      <p class="study-desc">Looking down at both hemispheres. Central longitudinal fissure is the strong vertical axis; four colored regions sit in quadrants (frontal L/R, parietal L/R). Reads as a brain from the classic anatomical angle.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- STUDY 04 — Neural constellation (dots + connections in brain shape) -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="study">
+    <div class="svg-frame">
+      <svg viewBox="0 0 400 360" class="float">
+        <!-- Faint brain-shape outline for silhouette context -->
+        <path d="M 75 195 C 55 130, 115 65, 205 62 C 295 60, 345 105, 348 165 C 355 195, 342 220, 318 232 C 330 255, 305 275, 270 272 C 245 278, 215 270, 188 266 C 155 268, 120 255, 95 230 C 78 215, 74 205, 75 195 Z"
+              fill="none" stroke="rgba(252, 213, 180, 0.12)" stroke-width="1" stroke-dasharray="3 4"/>
+        <!-- Synapse connections (lines between neurons) -->
+        <g class="synapse">
+          <line x1="120" y1="130" x2="170" y2="110"/>
+          <line x1="170" y1="110" x2="215" y2="120"/>
+          <line x1="215" y1="120" x2="265" y2="115"/>
+          <line x1="265" y1="115" x2="305" y2="135"/>
+          <line x1="120" y1="130" x2="145" y2="175"/>
+          <line x1="145" y1="175" x2="200" y2="165"/>
+          <line x1="200" y1="165" x2="250" y2="170"/>
+          <line x1="250" y1="170" x2="305" y2="135"/>
+          <line x1="145" y1="175" x2="175" y2="220"/>
+          <line x1="175" y1="220" x2="225" y2="215"/>
+          <line x1="225" y1="215" x2="280" y2="220"/>
+          <line x1="280" y1="220" x2="315" y2="200"/>
+          <line x1="175" y1="220" x2="150" y2="250"/>
+          <line x1="150" y1="250" x2="200" y2="245"/>
+          <line x1="200" y1="245" x2="250" y2="245"/>
+          <line x1="250" y1="245" x2="285" y2="260"/>
+          <line x1="200" y1="165" x2="225" y2="215"/>
+          <line x1="215" y1="120" x2="250" y2="170"/>
+          <line x1="170" y1="110" x2="145" y2="175"/>
+          <line x1="305" y1="135" x2="315" y2="200"/>
+          <line x1="285" y1="260" x2="300" y2="285"/>
+          <line x1="200" y1="245" x2="215" y2="285"/>
+          <line x1="215" y1="285" x2="280" y2="285"/>
+        </g>
+        <!-- Neurons — the four domain-colored ones are larger and brighter -->
+        <circle class="neuron neuron-d1" cx="170" cy="110" r="6"/>
+        <circle class="neuron neuron-d3" cx="265" cy="115" r="6"/>
+        <circle class="neuron neuron-d2" cx="150" cy="250" r="6"/>
+        <circle class="neuron neuron-d4" cx="300" cy="285" r="6"/>
+        <!-- Generic neurons -->
+        <circle class="neuron" cx="120" cy="130" r="3"/>
+        <circle class="neuron" cx="215" cy="120" r="3"/>
+        <circle class="neuron" cx="305" cy="135" r="3"/>
+        <circle class="neuron" cx="145" cy="175" r="3"/>
+        <circle class="neuron" cx="200" cy="165" r="3"/>
+        <circle class="neuron" cx="250" cy="170" r="3"/>
+        <circle class="neuron" cx="175" cy="220" r="3"/>
+        <circle class="neuron" cx="225" cy="215" r="3"/>
+        <circle class="neuron" cx="280" cy="220" r="3"/>
+        <circle class="neuron" cx="315" cy="200" r="3"/>
+        <circle class="neuron" cx="200" cy="245" r="3"/>
+        <circle class="neuron" cx="250" cy="245" r="3"/>
+        <circle class="neuron" cx="285" cy="260" r="3"/>
+        <circle class="neuron" cx="215" cy="285" r="3"/>
+        <circle class="neuron" cx="280" cy="285" r="3"/>
+        <!-- Soft glow halo behind bright neurons -->
+        <circle cx="170" cy="110" r="18" fill="var(--d1)" opacity="0.18" filter="blur(8px)"/>
+        <circle cx="265" cy="115" r="18" fill="var(--d3)" opacity="0.18" filter="blur(8px)"/>
+        <circle cx="150" cy="250" r="18" fill="var(--d2)" opacity="0.18" filter="blur(8px)"/>
+        <circle cx="300" cy="285" r="18" fill="var(--d4)" opacity="0.18" filter="blur(8px)"/>
+      </svg>
+    </div>
+    <div class="study-meta">
+      <p class="study-num">No. 04</p>
+      <h3 class="study-title">Neural constellation</h3>
+      <p class="study-desc">Brain silhouette made of neurons connected by synapses, with four domain-colored "anchor" neurons that light up on hover. More abstract — reads as "networked intelligence" first, "brain" second.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- STUDY 05 — Cochlear spiral (ALTERNATIVE, not a brain)               -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="study">
+    <div class="svg-frame">
+      <svg viewBox="0 0 400 360" class="float">
+        <defs>
+          <linearGradient id="p05-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#fcd5b4"/>
+            <stop offset="33%"  stop-color="#b8f2d8"/>
+            <stop offset="66%"  stop-color="#cde9f5"/>
+            <stop offset="100%" stop-color="#d8d5fc"/>
+          </linearGradient>
+          <filter id="p05-blur"><feGaussianBlur stdDeviation="12"/></filter>
+        </defs>
+        <!-- Ambient bloom behind the spiral -->
+        <circle cx="200" cy="190" r="110" fill="url(#p05-grad)" opacity="0.12" filter="url(#p05-blur)"/>
+        <!-- Logarithmic spiral (cochlea) — approximated with Bezier coils -->
+        <path class="spiral" d="
+          M 200 190
+          m 0 -110
+          C 260 -110, 320 -60, 320 0
+          C 320 60, 260 110, 200 110
+          C 140 110, 80 60, 80 0
+          C 80 -70, 140 -110, 200 -110
+        " transform="translate(0 190)"/>
+        <path class="spiral" style="stroke-width:2.6;" d="
+          M 200 190 m 0 -80
+          C 250 -80, 290 -40, 290 0
+          C 290 50, 250 80, 200 80
+          C 150 80, 110 50, 110 0
+          C 110 -50, 150 -80, 200 -80
+        " transform="translate(0 190)"/>
+        <path class="spiral-inner" d="
+          M 200 190 m 0 -55
+          C 235 -55, 260 -30, 260 0
+          C 260 35, 235 55, 200 55
+          C 165 55, 140 35, 140 0
+          C 140 -35, 165 -55, 200 -55
+        " transform="translate(0 190)"/>
+        <path class="spiral-inner" style="stroke-width:1.6; stroke: rgba(253, 228, 193, 0.75);" d="
+          M 200 190 m 0 -32
+          C 222 -32, 238 -16, 238 0
+          C 238 20, 222 32, 200 32
+          C 178 32, 162 20, 162 0
+          C 162 -16, 178 -32, 200 -32
+        " transform="translate(0 190)"/>
+        <!-- Center dot -->
+        <circle cx="200" cy="190" r="6" fill="#fde4c1"/>
+        <circle cx="200" cy="190" r="14" fill="#fde4c1" opacity="0.25" filter="url(#p05-blur)"/>
+        <!-- Four domain-colored pins at equal arc positions on the outer coil -->
+        <circle cx="310" cy="200" r="5" class="neuron-d3"/>
+        <circle cx="200" cy="85"  r="5" class="neuron-d1"/>
+        <circle cx="88"  cy="200" r="5" class="neuron-d4"/>
+        <circle cx="200" cy="298" r="5" class="neuron-d2"/>
+      </svg>
+    </div>
+    <div class="study-meta">
+      <p class="study-num">No. 05 · Alternative</p>
+      <h3 class="study-title">Cochlear spiral</h3>
+      <p class="study-desc">Not a brain — the <em class="serif">ear</em> of "A study plan that listens." A golden-spiral cochlea with four domain pins on the outermost coil. Tightest conceptual fit to the headline; cleanest form on the page.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- STUDY 06 — Hybrid: line brain + neural-firing accents              -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="study">
+    <div class="svg-frame">
+      <svg viewBox="0 0 400 360" class="float">
+        <defs>
+          <filter id="p06-blur"><feGaussianBlur stdDeviation="10"/></filter>
+        </defs>
+        <!-- Editorial ink outline (same as study 02) but with softer color-lit regions behind -->
+        <g filter="url(#p06-blur)">
+          <ellipse class="region d1 pulse pulse-d1" cx="150" cy="130" rx="46" ry="36"/>
+          <ellipse class="region d3 pulse pulse-d3" cx="285" cy="135" rx="44" ry="34"/>
+          <ellipse class="region d2 pulse pulse-d2" cx="175" cy="240" rx="42" ry="28"/>
+          <ellipse class="region d4 pulse pulse-d4" cx="312" cy="205" rx="32" ry="28"/>
+        </g>
+        <path class="ink-outline" d="M 75 195 C 55 130, 115 65, 205 62 C 295 60, 345 105, 348 165 C 355 195, 342 220, 318 232 C 330 255, 305 275, 270 272 C 245 278, 215 270, 188 266 C 155 268, 120 255, 95 230 C 78 215, 74 205, 75 195 Z"/>
+        <path class="ink-outline" style="stroke-width:1.6;" d="M 200 82 Q 218 150, 242 205"/>
+        <path class="ink-outline" style="stroke-width:1.4;" d="M 105 215 Q 180 228, 285 212"/>
+        <g class="ink-minor">
+          <path d="M 85 175 Q 135 145, 178 128"/>
+          <path d="M 90 195 Q 145 170, 190 158"/>
+          <path d="M 100 215 Q 150 200, 195 198"/>
+          <path d="M 248 95  Q 290 95,  322 115"/>
+          <path d="M 258 125 Q 295 125, 328 145"/>
+          <path d="M 268 155 Q 300 160, 330 175"/>
+          <path d="M 115 235 Q 165 240, 220 240"/>
+          <path d="M 125 252 Q 175 258, 230 255"/>
+          <path d="M 140 268 Q 180 272, 220 270"/>
+        </g>
+        <ellipse cx="292" cy="278" rx="44" ry="28" class="ink-outline" style="stroke-width:1.8;"/>
+        <path class="ink-minor" d="M 255 265 Q 292 263, 332 266"/>
+        <path class="ink-minor" d="M 252 276 Q 292 274, 334 276"/>
+        <path class="ink-minor" d="M 252 287 Q 292 285, 333 287"/>
+        <path class="ink-outline" style="stroke-width:1.6;" d="M 282 302 Q 278 320, 284 335 Q 292 338, 296 332 Q 296 318, 293 302 Z"/>
+      </svg>
+    </div>
+    <div class="study-meta">
+      <p class="study-num">No. 06 · Hybrid</p>
+      <h3 class="study-title">Ink + neural firing</h3>
+      <p class="study-desc">Study 02's editorial line drawing, but with the four cortex regions lit softly behind the ink. Keeps the "this is clearly a brain" legibility while letting the domain colors shine. My pick for best-of-both.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- STUDY 07 — Iconic two-lobe brain (walnut / emoji-style)             -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="study">
+    <div class="svg-frame">
+      <svg viewBox="0 0 400 400" class="float">
+        <defs>
+          <radialGradient id="p07-body" cx="50%" cy="35%" r="70%">
+            <stop offset="0%"   stop-color="#ffd4bc" stop-opacity="0.98"/>
+            <stop offset="55%"  stop-color="#e19a82" stop-opacity="0.92"/>
+            <stop offset="100%" stop-color="#5c2e3a" stop-opacity="0.7"/>
+          </radialGradient>
+          <radialGradient id="p07-body-dark" cx="50%" cy="40%" r="70%">
+            <stop offset="0%"   stop-color="#e8a888" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#4a1f2a" stop-opacity="0.8"/>
+          </radialGradient>
+          <filter id="p07-blur"><feGaussianBlur stdDeviation="12"/></filter>
+        </defs>
+
+        <!-- LEFT hemisphere — a rounded, wavy-topped lobe -->
+        <path fill="url(#p07-body)" d="
+          M 195 200
+          C 185 80, 90 60, 55 145
+          C 30 215, 70 320, 150 330
+          C 175 335, 190 320, 195 300
+          C 200 260, 200 230, 195 200 Z"/>
+
+        <!-- RIGHT hemisphere — mirror of left -->
+        <path fill="url(#p07-body)" d="
+          M 205 200
+          C 215 80, 310 60, 345 145
+          C 370 215, 330 320, 250 330
+          C 225 335, 210 320, 205 300
+          C 200 260, 200 230, 205 200 Z"/>
+
+        <!-- LEFT hemisphere wavy dorsal surface (rounded bumps across top) -->
+        <path fill="url(#p07-body)" d="
+          M 55 145
+          C 50 125, 72 105, 90 110
+          C 95 96, 115 94, 128 108
+          C 140 96, 160 98, 168 118
+          C 180 108, 190 122, 192 142
+          L 55 150 Z"/>
+
+        <!-- RIGHT hemisphere wavy dorsal surface -->
+        <path fill="url(#p07-body)" d="
+          M 345 145
+          C 350 125, 328 105, 310 110
+          C 305 96, 285 94, 272 108
+          C 260 96, 240 98, 232 118
+          C 220 108, 210 122, 208 142
+          L 345 150 Z"/>
+
+        <!-- Cortex region glows — one per lobe quadrant -->
+        <g filter="url(#p07-blur)">
+          <ellipse class="region d1 pulse pulse-d1" cx="115" cy="160" rx="52" ry="38"/>
+          <ellipse class="region d3 pulse pulse-d3" cx="285" cy="160" rx="52" ry="38"/>
+          <ellipse class="region d2 pulse pulse-d2" cx="120" cy="270" rx="48" ry="30"/>
+          <ellipse class="region d4 pulse pulse-d4" cx="280" cy="270" rx="48" ry="30"/>
+        </g>
+
+        <!-- CENTRAL LONGITUDINAL FISSURE — the deep groove between
+             hemispheres. Strong dark vertical stroke. -->
+        <path stroke="rgba(30, 10, 16, 0.85)" stroke-width="4" fill="none" stroke-linecap="round"
+              d="M 200 110 C 198 180, 202 260, 200 325"/>
+
+        <!-- GYRI — wavy convolutions on LEFT hemisphere, going
+             from center OUT like a walnut's folds -->
+        <g stroke="rgba(40, 15, 22, 0.68)" stroke-width="2" fill="none" stroke-linecap="round">
+          <path d="M 195 150 C 175 145, 150 155, 125 148 C 105 145, 85 155, 68 148"/>
+          <path d="M 195 175 C 175 172, 148 178, 120 170 C 95 168, 75 172, 58 165"/>
+          <path d="M 195 200 C 170 198, 140 202, 110 195 C 85 192, 62 195, 48 190"/>
+          <path d="M 195 225 C 170 225, 140 230, 112 222 C 88 220, 66 222, 52 218"/>
+          <path d="M 195 250 C 172 250, 145 254, 120 248 C 98 246, 78 248, 62 246"/>
+          <path d="M 195 275 C 172 276, 148 280, 128 275 C 108 272, 88 275, 74 272"/>
+          <path d="M 195 300 C 172 302, 150 305, 135 300 C 118 296, 100 298, 88 298"/>
+          <path d="M 195 320 C 176 322, 162 322, 148 320"/>
+        </g>
+
+        <!-- GYRI — RIGHT hemisphere (mirrored) -->
+        <g stroke="rgba(40, 15, 22, 0.68)" stroke-width="2" fill="none" stroke-linecap="round">
+          <path d="M 205 150 C 225 145, 250 155, 275 148 C 295 145, 315 155, 332 148"/>
+          <path d="M 205 175 C 225 172, 252 178, 280 170 C 305 168, 325 172, 342 165"/>
+          <path d="M 205 200 C 230 198, 260 202, 290 195 C 315 192, 338 195, 352 190"/>
+          <path d="M 205 225 C 230 225, 260 230, 288 222 C 312 220, 334 222, 348 218"/>
+          <path d="M 205 250 C 228 250, 255 254, 280 248 C 302 246, 322 248, 338 246"/>
+          <path d="M 205 275 C 228 276, 252 280, 272 275 C 292 272, 312 275, 326 272"/>
+          <path d="M 205 300 C 228 302, 250 305, 265 300 C 282 296, 300 298, 312 298"/>
+          <path d="M 205 320 C 224 322, 238 322, 252 320"/>
+        </g>
+
+        <!-- HIGHLIGHT strokes on gyri ridges -->
+        <g stroke="rgba(255, 220, 195, 0.4)" stroke-width="1.3" fill="none" stroke-linecap="round">
+          <path d="M 195 160 C 175 158, 150 165, 125 158 C 105 155, 85 160, 68 158"/>
+          <path d="M 195 210 C 170 208, 140 212, 110 205 C 85 202, 62 205, 48 200"/>
+          <path d="M 195 260 C 172 260, 145 264, 120 258 C 98 256, 78 258, 62 256"/>
+          <path d="M 205 160 C 225 158, 250 165, 275 158 C 295 155, 315 160, 332 158"/>
+          <path d="M 205 210 C 230 208, 260 212, 290 205 C 315 202, 338 205, 352 200"/>
+          <path d="M 205 260 C 228 260, 255 264, 280 258 C 302 256, 322 258, 338 256"/>
+        </g>
+
+        <!-- CEREBELLUM — peeks out at the bottom-back of each hemisphere -->
+        <path fill="url(#p07-body-dark)" d="
+          M 155 315
+          C 150 335, 170 350, 200 352
+          C 230 350, 250 335, 245 315
+          C 230 318, 215 320, 200 320
+          C 185 320, 170 318, 155 315 Z"/>
+        <!-- Cerebellum folia -->
+        <path stroke="rgba(30, 10, 16, 0.5)" stroke-width="0.9" fill="none" stroke-linecap="round"
+              d="M 160 325 Q 200 328, 240 325"/>
+        <path stroke="rgba(30, 10, 16, 0.45)" stroke-width="0.9" fill="none" stroke-linecap="round"
+              d="M 158 335 Q 200 338, 242 335"/>
+        <path stroke="rgba(30, 10, 16, 0.4)" stroke-width="0.9" fill="none" stroke-linecap="round"
+              d="M 162 345 Q 200 348, 238 345"/>
+      </svg>
+    </div>
+    <div class="study-meta">
+      <p class="study-num">No. 07 · Iconic</p>
+      <h3 class="study-title">Two-lobe walnut</h3>
+      <p class="study-desc">The brain everyone recognizes — two rounded hemispheres joined by a deep central fissure, wavy walnut-fold gyri on each side, cerebellum peeking below. Sacrifices anatomical accuracy for instant legibility. This is the "🧠 emoji" rendered editorially.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer class="max-w-[1400px] mx-auto px-8 pb-16">
+  <div class="rule mb-5"></div>
+  <p class="eyebrow">Tell me which direction and I'll roll it into the hero.</p>
+</footer>
+
+</body>
+</html>
