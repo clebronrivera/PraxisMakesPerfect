@@ -164,18 +164,25 @@
     width: 100%; height: 100%;
     overflow: visible;
   }
+  /* Handoff §04.5 — 8 s loop, 4 lobes phase-offset 0 / 0.25 / 0.50 / 0.75.
+     Ramp 0.35 → 0.95 (ease-out, 0.6 s) · hold bright until next lobe at 25 % ·
+     slow cross-fade back to 0.35 by next cycle. Static fill is solid hex; the
+     animation drives total alpha via element opacity. */
   .lobe {
     transform-origin: center;
     animation: lobe-pulse 8s ease-in-out infinite;
     filter: drop-shadow(0 0 12px var(--lobe-glow));
+    opacity: 0.35;
   }
-  .lobe[data-domain="d1"] { --lobe-glow: rgba(252, 213, 180, 0.5); animation-delay: 0s;   fill: rgba(252, 213, 180, 0.78); }
-  .lobe[data-domain="d2"] { --lobe-glow: rgba(184, 242, 216, 0.5); animation-delay: -2s;  fill: rgba(184, 242, 216, 0.78); }
-  .lobe[data-domain="d3"] { --lobe-glow: rgba(205, 233, 245, 0.5); animation-delay: -4s;  fill: rgba(205, 233, 245, 0.78); }
-  .lobe[data-domain="d4"] { --lobe-glow: rgba(216, 213, 252, 0.5); animation-delay: -6s;  fill: rgba(216, 213, 252, 0.78); }
+  .lobe[data-domain="d1"] { --lobe-glow: rgba(252, 213, 180, 0.55); animation-delay:  0s; fill: #fcd5b4; }
+  .lobe[data-domain="d2"] { --lobe-glow: rgba(184, 242, 216, 0.55); animation-delay: -2s; fill: #b8f2d8; }
+  .lobe[data-domain="d3"] { --lobe-glow: rgba(205, 233, 245, 0.55); animation-delay: -4s; fill: #cde9f5; }
+  .lobe[data-domain="d4"] { --lobe-glow: rgba(216, 213, 252, 0.55); animation-delay: -6s; fill: #d8d5fc; }
   @keyframes lobe-pulse {
-    0%, 25%, 100% { transform: scale(1);    opacity: 0.78; }
-    10%           { transform: scale(1.04); opacity: 1;    }
+    0%   { opacity: 0.35; }
+    7.5% { opacity: 0.95; }   /* ramp-up complete (≈ 0.6 s of 8 s) */
+    25%  { opacity: 0.95; }   /* hold bright through the next lobe's ramp */
+    100% { opacity: 0.35; }   /* slow cross-fade back to baseline */
   }
   .synapse {
     stroke-linecap: round;
@@ -408,6 +415,9 @@
   /* ─── Reduced motion ──────────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
     .starfield, .pass-stamp, .brain-halo, .lobe, .synapse, .spark { animation: none !important; }
+    /* Handoff §04.5 — all four lobes hold at 0.7 alpha; sparks suppressed. */
+    .lobe  { opacity: 0.7 !important; }
+    .spark { opacity: 0   !important; }
     .h1-display em { background: var(--d1); -webkit-background-clip: text; background-clip: text; }
     .btn-primary { background: var(--d1); color: var(--cta-ink); }
     .boot-line.visible { animation-duration: 0ms; opacity: 1; transform: none; }
@@ -485,8 +495,8 @@
       </div>
     </div>
 
-    <!-- Hero figure: BrainActivation -->
-    <div class="brain-stage" aria-hidden="true">
+    <!-- Hero figure: BrainActivation (handoff §04.5) -->
+    <div id="brain" class="brain-stage" aria-hidden="true">
       <div class="brain-halo"></div>
       <svg class="brain-svg" viewBox="0 0 560 560" role="presentation">
         <!-- Synapse edges (drawn first so lobes overlay) -->

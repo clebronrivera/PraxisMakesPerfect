@@ -658,6 +658,92 @@
     </div>
   </section>
 
+  <!-- ─── 4.5 · HERO COMPONENT · BrainActivation ──────────── -->
+  <section class="sec">
+    <div class="sec-num">04.5 · HERO COMPONENT</div>
+    <h2 class="sec-title">BrainActivation · live neural map</h2>
+    <p class="sec-sub">
+      The single most-remembered element of the landing page. This is not a static
+      illustration — it's a 4-lobe SVG that pulses in domain order and runs synapse
+      sparks along its edges. It also doubles as the engine's live readout in product surfaces.
+    </p>
+
+    <div class="frame-block">
+      <div class="frame-head">
+        <h3>Component · &lt;BrainActivation/&gt;</h3>
+        <div class="frame-meta">brain-activation.tsx · 560 × 560 default · scales</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: stretch;">
+        <!-- Live demo: deep-link the landing mockup to #brain so it scrolls to the hero figure -->
+        <div class="frame-stage" style="height: 560px; padding: 0; display:flex; align-items:center; justify-content:center;">
+          <iframe src="mockup-pass-landing-cosmos.html#brain"
+                  style="width: 1280px; height: 700px; transform: scale(0.44); transform-origin: top left; pointer-events: none; margin-top:-40px;"></iframe>
+          <div class="pin" style="top:  72px; left: 220px;">A</div>
+          <div class="pin" style="top: 220px; left:  80px;">B</div>
+          <div class="pin" style="top: 360px; left: 180px;">C</div>
+          <div class="pin" style="top: 240px; left: 380px;">D</div>
+          <div class="pin" style="top: 470px; left: 250px;">E</div>
+        </div>
+
+        <!-- Spec column -->
+        <div>
+          <div style="display:grid; grid-template-columns: 24px 1fr; gap: 10px 14px; font-size: 12px; line-height: 1.5;">
+            <div class="anno-num">A</div>
+            <div><strong>Lobe · Domain 1 · peach</strong> · fill <code style="font-family:var(--mono);font-size:11px;">#FCD5B4</code> at 0.35 → 0.95 alpha. Pulse phase 0.</div>
+            <div class="anno-num">B</div>
+            <div><strong>Lobe · Domain 2 · mint</strong> · <code style="font-family:var(--mono);font-size:11px;">#B8F2D8</code>. Pulse phase 0.25 (2 s offset).</div>
+            <div class="anno-num">C</div>
+            <div><strong>Lobe · Domain 3 · ice</strong> · <code style="font-family:var(--mono);font-size:11px;">#CDE9F5</code>. Pulse phase 0.50.</div>
+            <div class="anno-num">D</div>
+            <div><strong>Lobe · Domain 4 · lavender</strong> · <code style="font-family:var(--mono);font-size:11px;">#D8D5FC</code>. Pulse phase 0.75.</div>
+            <div class="anno-num">E</div>
+            <div><strong>Synapse spark</strong> · 2 px peach particle traveling along bezier paths between adjacent lobes. 1 spark per 1.6 s, randomized origin.</div>
+          </div>
+
+          <h4 style="font-family:var(--serif);font-weight:500;font-size:16px;margin:24px 0 8px;">Animation timeline · 8 s loop</h4>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);background:var(--paper);border:1px solid var(--hair);border-radius:8px;padding:14px;line-height:1.8;">
+            <div><span style="color:var(--accent);">0.0 s</span> → D1 ramp-up · 600 ms ease-out</div>
+            <div><span style="color:var(--accent);">2.0 s</span> → D2 ramp-up · spark D1 → D2</div>
+            <div><span style="color:var(--accent);">4.0 s</span> → D3 ramp-up · spark D2 → D3</div>
+            <div><span style="color:var(--accent);">6.0 s</span> → D4 ramp-up · spark D3 → D4</div>
+            <div><span style="color:var(--accent);">8.0 s</span> → loop · cross-fade trailing lobe to 0.35</div>
+          </div>
+
+          <h4 style="font-family:var(--serif);font-weight:500;font-size:16px;margin:24px 0 8px;">Props</h4>
+          <div style="font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--dim);">
+            <div><span style="color:var(--ink);font-weight:600;">size</span> · number · default 560</div>
+            <div><span style="color:var(--ink);font-weight:600;">motion</span> · bool · halts loop at <code>prefers-reduced-motion</code></div>
+            <div><span style="color:var(--ink);font-weight:600;">live</span> · bool · binds lobe alpha to current per-domain mastery</div>
+            <div><span style="color:var(--ink);font-weight:600;">onLobeHover</span> · (domainId) ⇒ void · used for product-surface tooltips</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="behavior" style="margin-top: 28px;">
+        <div>
+          <h4>Implementation notes</h4>
+          <ul>
+            <li><strong>SVG only</strong> · no canvas, no images. Bezier paths defined in <code>brain-activation.tsx</code>.</li>
+            <li><strong>Glow</strong> · radial gradient + 6 px Gaussian blur filter on a duplicate path; not a CSS <code>box-shadow</code>.</li>
+            <li><strong>Sparks · production component</strong> · single <code>&lt;circle&gt;</code> animated along path via SVG <code>animateMotion</code>. One sprite per spark, recycled.</li>
+            <li><strong>Sparks · this static mockup</strong> · uses CSS <code>offset-path</code> as a visual equivalent — declarative and well-supported in modern browsers, but lacks the recycled-sprite efficiency the React version should have.</li>
+            <li><strong>Reduced motion</strong> · all 4 lobes hold at <strong>0.7 alpha</strong>; sparks suppressed.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Where it appears</h4>
+          <ul>
+            <li><strong>Landing</strong> · hero, decorative · 560 px · <code>live=false</code>.</li>
+            <li><strong>Today / Home</strong> · sidebar · 96 px · <code>live=true</code> (lobes glow brighter when that domain's mastery is up).</li>
+            <li><strong>Diagnostic results</strong> · alongside the per-skill grid · 280 px · <code>live=true</code> with <code>onLobeHover</code> filtering the table.</li>
+            <li><strong>Login left panel (optional)</strong> · 200 px static · used as a watermark behind the engine voice <em>only if marketing wants it</em>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── 5 · BUTTON STATES ─────────────────────────────── -->
   <section class="sec">
     <div class="sec-num">05 · COMPONENT</div>
