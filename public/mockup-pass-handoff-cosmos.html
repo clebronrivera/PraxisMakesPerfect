@@ -613,8 +613,8 @@
         </div>
         <div class="anno-row">
           <div class="anno-num">5</div>
-          <div class="anno-what">SSO buttons</div>
-          <div class="anno-spec">Width 100 % · 13 / 16 padding · radius 10 · bg <code>rgba(241,245,249,.05)</code> · border hair · 10 px gap stack. Provider glyph 18 × 18 / radius 4. Order: Google, then University SSO (Shibboleth/SAML).</div>
+          <div class="anno-what">Google sign-in button</div>
+          <div class="anno-spec">Width 100 % · 13 / 16 padding · radius 10 · bg <code>rgba(241,245,249,.05)</code> · border hair. Provider glyph 18 × 18 / radius 4. No university SSO option in this flow.</div>
         </div>
         <div class="anno-row">
           <div class="anno-num">6</div>
@@ -647,7 +647,7 @@
         <div>
           <h4>Edge cases &amp; A11y</h4>
           <ul>
-            <li><strong>SSO redirect</strong> · open in same tab; on return, hydrate from server-set cookie before rendering.</li>
+            <li><strong>Google redirect</strong> · open in same tab; on return, hydrate from server-set cookie before rendering.</li>
             <li><strong>Autofill</strong> · respect; do not animate field state changes during autofill.</li>
             <li><strong>Tab order</strong> · Email → Password → Show → Keep-signed → Submit → Forgot → Diagnostic.</li>
             <li><strong>Contrast</strong> · all text on navy passes WCAG AA at 14 px+. Dim text (<code>rgba(203,213,225,.7)</code>) is for ≥ 14 px only.</li>
