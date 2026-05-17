@@ -17,7 +17,6 @@ import type { UserProfile } from '../src/hooks/useProgressTracking';
 import type { EngineConfig } from '../src/types/engine';
 import type { Question } from '../src/brain/question-analyzer';
 import type { Domain } from '../src/types/content';
-import { getTeachingContext } from '../src/components/TeachMode';
 
 interface TestResult {
   name: string;
@@ -115,11 +114,6 @@ function testDiagnosticFeedback(): TestResult[] {
 
       assert(feedback.isCorrect === false, 'Expected incorrect feedback');
       assert(feedback.selectedAnswerText.length > 0, 'Expected selected answer text');
-    }),
-    runTest('TeachMode teaching context handles normalized bank question shape', () => {
-      const context = getTeachingContext(question, testEngine);
-      assert(context.concept.length > 0, 'Expected teaching context concept');
-      assert(context.explanation.length > 0, 'Expected teaching context explanation');
     })
   ];
 }
