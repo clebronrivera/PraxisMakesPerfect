@@ -352,7 +352,10 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 
 | Migration | Purpose |
 |---|---|
-| `0000` – `0003` | Core tables (users, responses, assessments, study plans) |
+| `0000_initial_schema.sql` | `user_progress` table replacing Firestore `users/{uid}`, `responses` event log, base RLS — full bootstrap of Supabase persistence |
+| `0001_study_plans_and_session_columns.sql` | `study_plans` table for AI-generated plan documents + session columns on existing tables |
+| `0002_user_profile_fields.sql` | Adds account role, university/program/state, training stage, exam date, weekly study hours, study preferences to `user_progress` |
+| `0003_learning_path_progress.sql` | `learning_path_progress` — per-user, per-skill lesson + practice tracking (separate from `skill_scores`) |
 | `0004_assessment_reset_archive.sql` | Archive table for admin assessment resets |
 | `0005_module_interactions.sql` | `module_visit_sessions`, `section_interactions`, `learning_path_progress` — module engagement tracking with RLS |
 | `0006_module_notes_and_focus_items.sql` | `module_notes`, `focus_items` — per-module student notes and AI-generated focus items |

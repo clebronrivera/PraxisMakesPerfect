@@ -1,5 +1,7 @@
 # PraxisMakesPerfect
 
+> **Repo status:** PMP is in maintenance; greenfield work is happening in PASS V1 elsewhere. See [HANDOFF_2026-04-27.md](HANDOFF_2026-04-27.md) for the three-track context.
+
 PraxisMakesPerfect is a React + Vite study platform for the Praxis School Psychologist exam. The current app uses a taxonomy-driven question bank, Supabase-backed authentication and progress storage, adaptive practice flows, assessment builders, and question-generation tooling.
 
 ## Canonical Docs

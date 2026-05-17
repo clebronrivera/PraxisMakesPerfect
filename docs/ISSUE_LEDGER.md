@@ -634,19 +634,20 @@ All four were diagnosed in one session using live Supabase data for Carlos River
 - Status: resolved
 - Area: assessment report retrieval
 - Summary: The app could show "response data not found" when the stored session pointer was stale even though matching response events existed.
-- Source of truth: Firestore `users/{uid}/responses`
+- Source of truth: Supabase `responses` table (was Firestore `users/{uid}/responses` pre-migration)
 - Code anchors:
-  [src/hooks/useFirebaseProgress.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useFirebaseProgress.ts)
+  [src/hooks/useProgressTracking.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useProgressTracking.ts)
   [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
 - Resolution / next step: Report loading now falls back to the latest matching assessment responses and repairs stale pointers when possible.
 
 ## 2026-03-14 - Home-page readiness signals are not yet fully unified with the new report model
 
-- Status: watch
+- Status: resolved (2026-05-17)
 - Area: home page / reporting consistency
-- Summary: The report layer now uses a shared derived readiness model, but the home page still uses lighter summary fields and does not yet fully share the same domain readiness presentation.
-- Source of truth: derived report model from responses
+- Summary: The report layer used a shared derived readiness model, but the home page used lighter summary fields and did not fully share the same domain readiness presentation.
+- Source of truth: derived report model from Supabase `responses` (was Firestore-era at original write)
 - Code anchors:
+  [src/utils/skillProficiency.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/skillProficiency.ts)
   [src/utils/assessmentReport.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/assessmentReport.ts)
   [App.tsx](/Users/lebron/Documents/PraxisMakesPerfect/App.tsx)
-- Resolution / next step: If domain readiness badges or gauges are added to the home page, reuse the same shared thresholds and domain summary model rather than creating a second interpretation layer.
+- Resolution / next step: Resolved by the cognitive-clarity UI sweep (PRs #7–#9) and proficiency-system alignment — all UI now reuses `skillProficiency.ts` thresholds + `assessmentReport.ts` summary model. The Firestore-era context that motivated this entry no longer applies post-Supabase migration.
