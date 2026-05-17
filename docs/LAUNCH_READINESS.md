@@ -70,6 +70,7 @@ Code is ready (SDK init, release tagging via git SHA in [vite.config.ts](../vite
 - Tie every `<label>` to its `<input>` via `htmlFor` across [LoginScreen.tsx](../src/components/LoginScreen.tsx), [OnboardingFlow.tsx](../src/components/OnboardingFlow.tsx) (15-min pass).
 - Change [ToastHost.tsx](../src/components/ToastHost.tsx) to `role="alert"` when `variant === 'error'` (currently `role="status"` for all).
 - Full WCAG AA audit with axe + manual screen reader testing remains.
+- **LoginScreen `text-slate-700` dividers — audited 2026-04-21, intentional.** The four middot separators between hero stats ([LoginScreen.tsx:378-382](../src/components/LoginScreen.tsx:378)) and the `PASS · Beta · 2026` watermark ([LoginScreen.tsx:706](../src/components/LoginScreen.tsx:706)) render at 1.88:1 contrast against the `#060D1A` atelier bg. Below WCAG content minimums but these are decorative separators / a corner watermark, not content — the stat labels (slate-500) and color-accented numbers carry all information. Keeping as-is.
 
 ### Playwright smoke test
 Zero E2E coverage today — [tests/](../tests/) is pure-logic unit only. Highest-value single test: signup → consent → adaptive diagnostic → ScoreReport → study-plan generation. One test catches ~80% of regressions users would see.

@@ -23,7 +23,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     </div>
   `;
 } else {
-  import('./context/ContentContext').then(({ ContentProvider }) => {
+  import('./contexts/ContentContext').then(({ ContentProvider }) => {
     ReactDOM.createRoot(document.getElementById('root')!).render(
       <React.StrictMode>
         <ContentProvider>
