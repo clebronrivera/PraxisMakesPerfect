@@ -31,7 +31,7 @@ import { getCurrentSession, loadUserSession } from './src/utils/userSessionStora
 import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import ToastHost from './src/components/ToastHost';
-import { useContent } from './src/context/ContentContext';
+import { useContent } from './src/contexts/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
 import { useStudyPlanManager } from './src/hooks/useStudyPlanManager';
 import type { StudyPlanHistoryEntry } from './src/services/studyPlanService';

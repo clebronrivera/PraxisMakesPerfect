@@ -1,4 +1,4 @@
-import { useContent } from '../context/ContentContext';
+import { useContent } from '../contexts/ContentContext';
 import { EngineConfig } from '../types/engine';
 
 import { DISTRACTOR_PATTERNS } from '../brain/distractor-patterns';
