@@ -41,6 +41,7 @@ import { clearSession, AssessmentSession } from '../utils/sessionStorage';
 import {
   createUserSession,
   deleteUserSession,
+  saveUserSession,
   UserSession,
 } from '../utils/userSessionStorage';
 import { isStoredScreenerSessionType } from '../utils/sessionTypes';
@@ -52,6 +53,12 @@ import type { AssessmentReportType } from '../types/assessment';
 
 export type AssessmentFlowType = 'screener' | 'full-assessment';
 export type AssessmentFlowLabel = 'screener' | 'archived-short-assessment' | 'full';
+
+/** Options for `startAdaptiveDiagnostic` (second argument). */
+export type AdaptiveDiagnosticStartOptions = {
+  /** Skip Supabase response fetch / reconstruction; start a brand-new queue (explicit user choice after a resume failure). */
+  skipRemoteResume?: boolean;
+};
 
 interface AssessmentResponseBundle {
   sessionId: string | null;
@@ -94,7 +101,10 @@ export interface UseAssessmentFlowReturn {
   // Handlers
   startScreener: (resumeSession?: AssessmentSession | UserSession) => void;
   startFullAssessment: (resumeSession?: AssessmentSession | UserSession) => void;
-  startAdaptiveDiagnostic: (resumeSession?: UserSession) => void;
+  startAdaptiveDiagnostic: (
+    resumeSession?: UserSession,
+    options?: AdaptiveDiagnosticStartOptions,
+  ) => Promise<void>;
   handleScreenerComplete: (responses: UserResponse[]) => Promise<void>;
   handleFullAssessmentComplete: (responses: UserResponse[]) => Promise<void>;
   handleAdaptiveDiagnosticComplete: (responses: UserResponse[]) => Promise<void>;
@@ -104,6 +114,13 @@ export interface UseAssessmentFlowReturn {
 
   // Setters exposed for the score-report rendering path
   setLastAssessmentResponses: React.Dispatch<React.SetStateAction<UserResponse[]>>;
+
+  /** Set when cross-device reconstruction fails while an adaptive session is in flight. */
+  adaptiveResumeError: string | null;
+  clearAdaptiveResumeError: () => void;
+  retryAdaptiveRemoteResume: () => void;
+  /** Clears `lastSession` and starts a new diagnostic without hitting Supabase resume (destructive). */
+  abandonAdaptiveResumeRemoteAndStartFresh: () => Promise<void>;
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -133,6 +150,7 @@ export function useAssessmentFlow({
     useState<AssessmentFlowType>('screener');
   const [lastAssessmentFlow, setLastAssessmentFlow] =
     useState<AssessmentFlowLabel>('screener');
+  const [adaptiveResumeError, setAdaptiveResumeError] = useState<string | null>(null);
 
   // ── Restore session on mount ────────────────────────────────────────────────
   useEffect(() => {
@@ -281,9 +299,58 @@ export function useAssessmentFlow({
     [analyzedQuestions, currentUserName, onNavigate, profile],
   );
 
+  // ── beginFreshAdaptiveDiagnostic (shared tail for new adaptive sessions) ───
+  const beginFreshAdaptiveDiagnostic = useCallback(async () => {
+    const excludeIds = [
+      ...(profile.preAssessmentQuestionIds || []),
+      ...(profile.screenerItemIds || []),
+      ...(profile.fullAssessmentQuestionIds || []),
+    ];
+    const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
+
+    if (result.initialQueue.length === 0) {
+      alert('Not enough questions available to build a diagnostic.');
+      return;
+    }
+
+    const allQuestionIds = [
+      ...result.initialQueue.map(q => q.id),
+      ...Object.values(result.followUpPool).flat().map(q => q.id),
+    ];
+
+    // Capture baseline snapshot BEFORE the diagnostic starts scoring.
+    // This preserves the user's pre-diagnostic skill state for growth comparison.
+    // Guard: only capture once (never overwrite an existing baseline).
+    const baselineUpdate = !profile.baselineSnapshot && profile.skillScores
+      ? { baselineSnapshot: JSON.parse(JSON.stringify(profile.skillScores)) }
+      : {};
+
+    void updateProfile({ diagnosticQuestionIds: allQuestionIds, ...baselineUpdate });
+
+    setAdaptiveDiagnosticData(result);
+    setAssessmentStartTime(Date.now());
+    onNavigate('adaptive-diagnostic');
+
+    if (currentUserName) {
+      try {
+        const newSession = createUserSession(
+          currentUserName,
+          'adaptive-diagnostic',
+          result.initialQueue.map(q => q.id),
+          'adaptive-diagnostic',
+        );
+        setSelectedSessionId(newSession.sessionId);
+      } catch (error) {
+        console.error('Error creating adaptive diagnostic session:', error);
+      }
+    }
+  }, [analyzedQuestions, currentUserName, onNavigate, profile, updateProfile]);
+
   // ── startAdaptiveDiagnostic ─────────────────────────────────────────────────
   const startAdaptiveDiagnostic = useCallback(
-    (resumeSession?: UserSession) => {
+    async (resumeSession?: UserSession, options?: AdaptiveDiagnosticStartOptions) => {
+      setAdaptiveResumeError(null);
+
       if (resumeSession && resumeSession.type === 'adaptive-diagnostic') {
         setSelectedSessionId(resumeSession.sessionId);
         // Restore the exact questions from the saved session using the full bank.
@@ -316,52 +383,139 @@ export function useAssessmentFlow({
         return;
       }
 
-      const excludeIds = [
-        ...(profile.preAssessmentQuestionIds || []),
-        ...(profile.screenerItemIds || []),
-        ...(profile.fullAssessmentQuestionIds || []),
-      ];
-      const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
-
-      if (result.initialQueue.length === 0) {
-        alert('Not enough questions available to build a diagnostic.');
-        return;
-      }
-
-      const allQuestionIds = [
-        ...result.initialQueue.map(q => q.id),
-        ...Object.values(result.followUpPool).flat().map(q => q.id),
-      ];
-
-      // Capture baseline snapshot BEFORE the diagnostic starts scoring.
-      // This preserves the user's pre-diagnostic skill state for growth comparison.
-      // Guard: only capture once (never overwrite an existing baseline).
-      const baselineUpdate = !profile.baselineSnapshot && profile.skillScores
-        ? { baselineSnapshot: JSON.parse(JSON.stringify(profile.skillScores)) }
-        : {};
-
-      void updateProfile({ diagnosticQuestionIds: allQuestionIds, ...baselineUpdate });
-
-      setAdaptiveDiagnosticData(result);
-      setAssessmentStartTime(Date.now());
-      onNavigate('adaptive-diagnostic');
-
-      if (currentUserName) {
+      // ── Cross-device resume via Supabase ────────────────────────────────────
+      // localStorage-only resume breaks when the user switches browsers/devices
+      // or clears storage. Before building a fresh queue, check Supabase for
+      // any prior adaptive responses. If present, reconstruct a synthetic
+      // UserSession that preserves the user's history and pick up from there.
+      if (currentUserName && !options?.skipRemoteResume) {
         try {
-          const newSession = createUserSession(
-            currentUserName,
-            'adaptive-diagnostic',
-            result.initialQueue.map(q => q.id),
-            'adaptive-diagnostic',
-          );
-          setSelectedSessionId(newSession.sessionId);
+          const bundle = await getLatestAssessmentResponses(['adaptive'], analyzedQuestions);
+          if (bundle.responses.length > 0) {
+            const priorResponses = bundle.responses; // already chronological ASC
+            const answeredIds = priorResponses.map(r => r.questionId);
+            const answeredSet = new Set(answeredIds);
+            const questionIndex = new Map(analyzedQuestions.map(q => [q.id, q]));
+            const answeredSkillIds = new Set(
+              answeredIds
+                .map(id => questionIndex.get(id)?.skillId)
+                .filter((s): s is string => !!s),
+            );
+
+            // Build a fresh queue excluding the assessment exclusions AND every
+            // question the user has already answered.
+            const excludeIds = [
+              ...(profile.preAssessmentQuestionIds || []),
+              ...(profile.screenerItemIds || []),
+              ...(profile.fullAssessmentQuestionIds || []),
+              ...answeredIds,
+            ];
+            const fresh = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
+
+            // Keep fresh initials only for skills the user has not yet seen.
+            // For skills they've already touched, treat the existing answer(s)
+            // as that skill's allotment to avoid double-quizzing.
+            const remainingInitials = fresh.initialQueue.filter(
+              q => q.skillId && !answeredSkillIds.has(q.skillId),
+            );
+            const remainingInitialIds = remainingInitials.map(q => q.id);
+
+            // Follow-up pool: freshly built per skill, kept verbatim. The
+            // engine will only draw from skills as needed.
+            const followUpPoolRemaining: Record<string, string[]> = {};
+            for (const [skillId, qs] of Object.entries(fresh.followUpPool)) {
+              const filtered = qs.filter(q => !answeredSet.has(q.id));
+              if (filtered.length > 0) {
+                followUpPoolRemaining[skillId] = filtered.map(q => q.id);
+              }
+            }
+
+            const sessionId =
+              bundle.sessionId ||
+              profile.lastSession?.sessionId ||
+              `adaptive-resumed-${Date.now()}`;
+            const firstTs = priorResponses[0]?.timestamp || Date.now();
+            const lastTs =
+              priorResponses[priorResponses.length - 1]?.timestamp || Date.now();
+
+            const synthetic: UserSession = {
+              userName: currentUserName,
+              sessionId,
+              createdAt: firstTs,
+              type: 'adaptive-diagnostic',
+              assessmentFlow: 'adaptive-diagnostic',
+              questionIds: [...answeredIds, ...remainingInitialIds],
+              currentIndex: answeredIds.length,
+              responses: priorResponses,
+              selectedAnswers: [],
+              showFeedback: false,
+              confidence: 'medium',
+              startTime: firstTs,
+              lastUpdated: lastTs,
+              elapsedSeconds: 0,
+              followUpPoolRemaining,
+            };
+
+            // Persist to localStorage so the AdaptiveDiagnostic component's
+            // existing resume path (which reads from localStorage) picks it up.
+            saveUserSession(synthetic);
+
+            // Keep the profile's lastSession pointer in sync so the home
+            // "Resume" CTA appears for this user going forward.
+            void updateProfile({
+              lastSession: {
+                sessionId,
+                mode: 'adaptive',
+                questionIndex: answeredIds.length,
+                updatedAt: new Date().toISOString(),
+              },
+            });
+
+            // Re-enter via the existing resume branch with the synthetic session.
+            return startAdaptiveDiagnostic(synthetic);
+          }
         } catch (error) {
-          console.error('Error creating adaptive diagnostic session:', error);
+          console.error('[startAdaptiveDiagnostic] Supabase resume failed:', error);
+          const lastMode = profile.lastSession?.mode;
+          const inFlightAdaptive =
+            !profile.adaptiveDiagnosticComplete &&
+            (lastMode === 'adaptive' || lastMode === 'adaptive_diagnostic');
+          if (inFlightAdaptive) {
+            setAdaptiveResumeError(
+              'We could not reload your diagnostic progress. Check your connection and try again.',
+            );
+            return;
+          }
+          // Otherwise allow a brand-new diagnostic when the user is not mid-session.
         }
       }
+
+      await beginFreshAdaptiveDiagnostic();
     },
-    [analyzedQuestions, currentUserName, onNavigate, profile, updateProfile],
+    [
+      analyzedQuestions,
+      beginFreshAdaptiveDiagnostic,
+      currentUserName,
+      getLatestAssessmentResponses,
+      onNavigate,
+      profile,
+      updateProfile,
+    ],
   );
+
+  const clearAdaptiveResumeError = useCallback(() => {
+    setAdaptiveResumeError(null);
+  }, []);
+
+  const retryAdaptiveRemoteResume = useCallback(() => {
+    void startAdaptiveDiagnostic(undefined);
+  }, [startAdaptiveDiagnostic]);
+
+  const abandonAdaptiveResumeRemoteAndStartFresh = useCallback(async () => {
+    setAdaptiveResumeError(null);
+    await updateProfile({ lastSession: null });
+    await startAdaptiveDiagnostic(undefined, { skipRemoteResume: true });
+  }, [startAdaptiveDiagnostic, updateProfile]);
 
   // ── handleResumeAssessment ──────────────────────────────────────────────────
   const handleResumeAssessment = useCallback(() => {
@@ -702,5 +856,9 @@ export function useAssessmentFlow({
     handleDiscardSession,
     handleViewReport,
     setLastAssessmentResponses,
+    adaptiveResumeError,
+    clearAdaptiveResumeError,
+    retryAdaptiveRemoteResume,
+    abandonAdaptiveResumeRemoteAndStartFresh,
   };
 }

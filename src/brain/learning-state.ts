@@ -107,6 +107,8 @@ export interface SkillAttempt {
   confidence: 'low' | 'medium' | 'high';
   timestamp: number;
   timeSpent: number; // Stored per-attempt from time_on_item_seconds. Value 0 = not recorded (sentinel). See computeRapidGuessCount() for usage.
+  /** The answer letter the student chose (e.g. "B"). Populated for wrong answers; may be absent on older records. Not yet used in adaptive routing — data-model prep for distractor-based priority boosting. */
+  selectedLetter?: string;
 }
 
 export interface SkillPerformance {

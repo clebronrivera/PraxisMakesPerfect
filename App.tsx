@@ -402,6 +402,10 @@ function PraxisStudyAppContent() {
     handleResumeAssessment,
     handleDiscardSession,
     handleViewReport,
+    adaptiveResumeError,
+    clearAdaptiveResumeError,
+    retryAdaptiveRemoteResume,
+    abandonAdaptiveResumeRemoteAndStartFresh,
   } = useAssessmentFlow({
     analyzedQuestions,
     profile,
@@ -1206,13 +1210,26 @@ function PraxisStudyAppContent() {
               ? PROGRESS_DOMAINS.find(domain => domain.id === progressSummary.weakestDomainId) ?? null
               : null;
 
+            // "Orphaned adaptive progress": user has saved answers in Supabase
+            // but no `last_session` pointer and no localStorage session. Happens
+            // when a user starts the diagnostic, clears cache / switches device,
+            // and returns later. The startAdaptiveDiagnostic() Supabase-fallback
+            // path will reconstruct their session — we just need to surface a
+            // Resume CTA instead of the default "Begin Adaptive Diagnostic" one.
+            const hasOrphanedAdaptive =
+              !profile.lastSession &&
+              !savedSession &&
+              !profile.adaptiveDiagnosticComplete &&
+              (profile.adaptiveResponseCount ?? 0) > 0;
+
             const hasAssessmentInProgress =
               (profile.lastSession?.mode === 'screener' && !profile.screenerComplete) ||
               (profile.lastSession?.mode === 'full' && !profile.fullAssessmentComplete) ||
               (profile.lastSession?.mode === 'diagnostic' && !profile.diagnosticComplete) ||
               profile.lastSession?.mode === 'adaptive' ||
               (!profile.lastSession && hasSession && savedSession &&
-                !profile.screenerComplete && !profile.fullAssessmentComplete);
+                !profile.screenerComplete && !profile.fullAssessmentComplete) ||
+              hasOrphanedAdaptive;
             const hasPracticeInProgress = profile.lastSession?.mode === 'practice';
 
             const sessionResumeCard = (() => {
@@ -1251,12 +1268,15 @@ function PraxisStudyAppContent() {
                     <p className="mt-2 text-lg font-bold text-white">
                       {profile.lastSession?.mode === 'adaptive' ? 'Diagnostic in progress'
                         : profile.lastSession?.mode === 'full' ? 'Full diagnostic in progress'
+                        : hasOrphanedAdaptive ? 'Diagnostic in progress'
                         : 'Screener in progress'}
                     </p>
                     <p className="mt-1 text-sm text-slate-400">
-                      {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex > 0
+                      {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex >= 0
                         ? `Question ${profile.lastSession.questionIndex + 1}. `
-                        : ''}
+                        : hasOrphanedAdaptive && (profile.adaptiveResponseCount ?? 0) > 0
+                          ? `Question ${(profile.adaptiveResponseCount ?? 0) + 1}. `
+                          : ''}
                       Pick up where you left off.
                     </p>
                   </div>
@@ -1267,7 +1287,15 @@ function PraxisStudyAppContent() {
                           const ls = profile.lastSession;
                           if (ls.mode === 'adaptive') {
                             const saved = loadUserSession(ls.sessionId);
-                            if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
+                            if (!saved) {
+                              // localStorage was cleared or this is a different browser/device.
+                              // Fall back to Supabase-backed reconstruction (startAdaptiveDiagnostic
+                              // with no args queries Supabase for prior responses and rebuilds the
+                              // session synthetically — do NOT clear lastSession here or the
+                              // resume card would disappear before reconstruction completes).
+                              void startAdaptiveDiagnostic();
+                              return;
+                            }
                             startAdaptiveDiagnostic(saved);
                           } else if (ls.mode === 'screener') {
                             const saved = loadUserSession(ls.sessionId);
@@ -1288,21 +1316,34 @@ function PraxisStudyAppContent() {
                           }
                         } else if (savedSession) {
                           handleResumeAssessment();
+                        } else if (hasOrphanedAdaptive) {
+                          // No lastSession, no localStorage — but Supabase has
+                          // saved adaptive responses for this user. Calling
+                          // startAdaptiveDiagnostic() with no args triggers the
+                          // Supabase reconstruction path which rebuilds a
+                          // synthetic session + writes lastSession.
+                          void startAdaptiveDiagnostic();
                         }
                       }}
                       className="btn-soft-glow"
                     >
                       Resume →
                     </button>
-                    <button
-                      onClick={() => {
-                        if (profile.lastSession) updateProfile({ lastSession: null });
-                        if (savedSession) handleDiscardSession();
-                      }}
-                      className="btn-ghost-atelier"
-                    >
-                      Discard
-                    </button>
+                    {/* Hide Discard for the orphaned-adaptive case — there's
+                        no localStorage to clear and we never delete Supabase
+                        responses. The Resume CTA already triggers Supabase
+                        reconstruction; the user picks up where they left off. */}
+                    {(profile.lastSession || savedSession) && (
+                      <button
+                        onClick={() => {
+                          if (profile.lastSession) updateProfile({ lastSession: null });
+                          if (savedSession) handleDiscardSession();
+                        }}
+                        className="btn-ghost-atelier"
+                      >
+                        Discard
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -1313,6 +1354,46 @@ function PraxisStudyAppContent() {
 
             return (
               <div className="space-y-8 pb-12">
+                {adaptiveResumeError && (
+                  <div
+                    role="alert"
+                    className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-slate-900 shadow-sm"
+                  >
+                    <p className="text-base font-bold">Could not reload your diagnostic</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">{adaptiveResumeError}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        className="editorial-button-primary"
+                        onClick={() => {
+                          retryAdaptiveRemoteResume();
+                        }}
+                      >
+                        Retry
+                      </button>
+                      <button
+                        type="button"
+                        className="editorial-button-secondary"
+                        onClick={() => {
+                          if (
+                            !window.confirm(
+                              'Start a new diagnostic? This clears your saved resume pointer and builds a fresh question set. Only continue if you accept that.',
+                            )
+                          ) {
+                            return;
+                          }
+                          void abandonAdaptiveResumeRemoteAndStartFresh();
+                        }}
+                      >
+                        Start over
+                      </button>
+                      <button type="button" className="btn-ghost-atelier" onClick={clearAdaptiveResumeError}>
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {sessionResumeCard}
 
                 {isNewUser && (
@@ -1641,7 +1722,14 @@ function PraxisStudyAppContent() {
                 <ScoreReport
                   responses={lastAssessmentResponses}
                   questions={fullAssessmentQuestions}
-                  totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
+                  totalTime={(() => {
+                    const summed = lastAssessmentResponses.reduce(
+                      (acc, r) => acc + (typeof r.timeSpent === 'number' ? r.timeSpent : 0),
+                      0,
+                    );
+                    if (summed > 0) return Math.round(summed);
+                    return assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0;
+                  })()}
                   diagnosticSummary={diagnosticSummary}
                   onStartPractice={startPractice}
                   onRetakeAssessment={() => {

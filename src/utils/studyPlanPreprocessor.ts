@@ -29,6 +29,7 @@ import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
 import { toMetadataId } from '../data/skillIdMap';
 import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
 import { findMisconceptionByText, getMisconceptionsByProgressSkill } from './misconceptionRegistry';
+import { resolveDistractorInfo } from './distractorResolver';
 import {
   computeFragilityFlag,
   computeUncertainSkillFlag,
@@ -424,8 +425,9 @@ export async function buildPrecomputedClusters(
           const { questionId, letter } = s.dominantMisconceptionKey;
           const q = qIdx.get(questionId);
           if (q) {
-            dominantMisconception = q[`distractor_misconception_${letter}`] || undefined;
-            dominantSkillDeficit  = q[`distractor_skill_deficit_${letter}`] || undefined;
+            const info = resolveDistractorInfo(q, letter);
+            dominantMisconception = info.misconception ?? undefined;
+            dominantSkillDeficit  = info.skillDeficit  ?? undefined;
           }
         }
         const phaseD = getSkillPhaseDEntry(s.skillId);

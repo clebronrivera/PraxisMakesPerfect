@@ -51,8 +51,11 @@ interface UserAnalyticsDoc {
   id: string;
   totalQuestionsSeen?: number;
   practiceResponseCount?: number;
+  /** Count of adaptive-diagnostic responses saved in the `responses` table. */
+  adaptiveResponseCount?: number;
   screenerComplete?: boolean;
   diagnosticComplete?: boolean;
+  adaptiveDiagnosticComplete?: boolean;
   fullAssessmentComplete?: boolean;
   lastUpdated?: string | Date | null;
   flaggedQuestions?: Record<string, string>;
@@ -80,6 +83,8 @@ interface OverviewStats {
   assessmentUsers: number;
   inProgressSessions: number;
   potentialDrops: number;
+  /** Users with saved adaptive responses but no last_session pointer. */
+  orphanedAdaptive: number;
   avgTimePerQuestion: number | null;
   feedbackOpen: number;
   reportsOpen: number;
@@ -122,15 +127,35 @@ function formatDate(value: string | number | Date | null | undefined): string {
   return new Date(millis).toLocaleString();
 }
 
-const ASSESSMENT_MODES = new Set(['screener', 'full_assessment', 'adaptive_diagnostic']);
+/** Modes persisted on `last_session.mode` (canonical + legacy). */
+const ASSESSMENT_MODES = new Set(['screener', 'full_assessment', 'adaptive', 'adaptive_diagnostic']);
 const DROP_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
+
+function isAdaptiveLastSession(mode: string | undefined): boolean {
+  return mode === 'adaptive' || mode === 'adaptive_diagnostic';
+}
 
 function isInProgress(user: UserAnalyticsDoc): boolean {
   const ls = user.lastSession;
   if (!ls || !ASSESSMENT_MODES.has(ls.mode)) return false;
   if (ls.mode === 'screener' && user.screenerComplete) return false;
   if (ls.mode === 'full_assessment' && user.fullAssessmentComplete) return false;
-  if (ls.mode === 'adaptive_diagnostic' && user.diagnosticComplete) return false;
+  if (isAdaptiveLastSession(ls.mode) && user.diagnosticComplete) return false;
+  return true;
+}
+
+/**
+ * Detects "orphaned" adaptive progress: the user has saved adaptive responses
+ * in Supabase, but no `last_session` pointer and the diagnostic isn't marked
+ * complete. These users can still resume — clicking "Begin Adaptive
+ * Diagnostic" triggers the Supabase reconstruction path — but the home screen
+ * shows them as not-started until this admin flag is acted on.
+ */
+function isOrphanedAdaptive(user: UserAnalyticsDoc): boolean {
+  const count = user.adaptiveResponseCount ?? 0;
+  if (count <= 0) return false;
+  if (user.adaptiveDiagnosticComplete) return false;
+  if (user.lastSession) return false;
   return true;
 }
 
@@ -213,6 +238,7 @@ export default function AdminDashboard({
         practice_response_count?: number;
         screener_complete?: boolean;
         diagnostic_complete?: boolean;
+        adaptive_diagnostic_complete?: boolean;
         full_assessment_complete?: boolean;
         updated_at?: string | Date | null;
         flagged_questions?: Record<string, string>;
@@ -226,6 +252,7 @@ export default function AdminDashboard({
       }
       let usersData: UserRow[] = [];
       let timingStats: Record<string, number> = {};
+      let adaptiveCounts: Record<string, number> = {};
       if (token) {
         try {
           const res = await fetch('/api/admin-list-users', {
@@ -235,6 +262,7 @@ export default function AdminDashboard({
             const body = await res.json();
             usersData = body.users || [];
             timingStats = body.timingStats || {};
+            adaptiveCounts = body.adaptiveCounts || {};
           } else {
             console.warn('[AdminDashboard] admin-list-users returned', res.status, '— falling back to client query');
             const { data } = await supabase.from('user_progress').select('*');
@@ -256,8 +284,10 @@ export default function AdminDashboard({
         id: row.user_id,
         totalQuestionsSeen: row.total_questions_seen,
         practiceResponseCount: row.practice_response_count,
+        adaptiveResponseCount: adaptiveCounts[row.user_id] ?? 0,
         screenerComplete: row.screener_complete,
         diagnosticComplete: row.diagnostic_complete,
+        adaptiveDiagnosticComplete: row.adaptive_diagnostic_complete,
         fullAssessmentComplete: row.full_assessment_complete,
         lastUpdated: row.updated_at,
         flaggedQuestions: row.flagged_questions || {},
@@ -437,6 +467,7 @@ export default function AdminDashboard({
       assessmentUsers: users.filter((entry) => Boolean(entry.diagnosticComplete || entry.fullAssessmentComplete)).length,
       inProgressSessions: users.filter(isInProgress).length,
       potentialDrops: users.filter(isDropped).length,
+      orphanedAdaptive: users.filter(isOrphanedAdaptive).length,
       avgTimePerQuestion,
       feedbackOpen: feedback.filter((item) => ['new', 'reviewing', 'planned'].includes(item.status)).length,
       reportsOpen: reports.filter((item) => ['open', 'triaged'].includes(item.status)).length,
@@ -679,6 +710,7 @@ export default function AdminDashboard({
                     <StatLine label="Used practice mode" value={overview.practiceUsers} />
                     <StatLine label="In-progress assessments" value={overview.inProgressSessions} />
                     <StatLine label="Potential drops (4h+)" value={overview.potentialDrops} />
+                    <StatLine label="Orphaned adaptive progress" value={overview.orphanedAdaptive} />
                     <StatLine label="Open beta feedback" value={overview.feedbackOpen} />
                     <StatLine label="Open question reports" value={overview.reportsOpen} />
                     <StatLine label="Critical content reports" value={overview.criticalReports} />
@@ -1172,6 +1204,14 @@ export default function AdminDashboard({
                             {isDropped(entry) && entry.lastSession && (
                               <span className="rounded-full bg-rose-50 px-3 py-1 text-xs text-rose-700">
                                 Dropped Q{entry.lastSession.questionIndex} ({formatRelativeTime(entry.lastSession.updatedAt)})
+                              </span>
+                            )}
+                            {isOrphanedAdaptive(entry) && (
+                              <span
+                                className="rounded-full bg-fuchsia-50 px-3 py-1 text-xs text-fuchsia-700"
+                                title="Has saved adaptive responses but no last_session pointer. Will resume on next sign-in via Supabase reconstruction."
+                              >
+                                Orphaned adaptive · {entry.adaptiveResponseCount} answers
                               </span>
                             )}
                             {isInProgress(entry) && !isDropped(entry) && entry.lastSession && (

@@ -71,6 +71,15 @@ export interface UserProfile {
   diagnosticQuestionIds?: string[];
   lastDiagnosticSessionId?: string;
   lastDiagnosticCompletedAt?: string;
+  /**
+   * Live count of saved adaptive-diagnostic responses for this user
+   * (Supabase `responses` table, filtered by `assessment_type = 'adaptive'`).
+   * Computed at profile-load time so we can detect "orphaned progress" — a user
+   * who has answers in Supabase but no `last_session` / localStorage pointer
+   * (e.g. cleared cache, different device). Used by the home-screen Resume
+   * card to surface a Resume CTA even when the legacy pointers are gone.
+   */
+  adaptiveResponseCount?: number;
   lastUpdated?: string;
 
   // Extended profile / onboarding fields
@@ -233,6 +242,12 @@ export function useProgressTracking() {
       return;
     }
 
+    // Hold the loading gate while we fetch the authenticated user's row —
+    // otherwise App.tsx briefly renders OnboardingFlow with default
+    // (onboardingComplete = false) state in the gap between auth resolving
+    // and the Supabase fetch completing.
+    setIsLoaded(false);
+
     try {
       // Fetch user_progress row and response counts in parallel.
       // The counts are computed from the canonical `responses` table so they are
@@ -241,11 +256,16 @@ export function useProgressTracking() {
       const [
         { data, error },
         { count: totalCount },
-        { count: practiceCount }
+        { count: practiceCount },
+        { count: adaptiveCount }
       ] = await Promise.all([
         supabase.from('user_progress').select('*').eq('user_id', user.id).single(),
         supabase.from('responses').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('responses').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('assessment_type', 'practice')
+        supabase.from('responses').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('assessment_type', 'practice'),
+        // Used to detect orphaned in-progress adaptive diagnostics — a user who
+        // has saved answers in Supabase but no `last_session` pointer (cleared
+        // localStorage / different device). See App.tsx hasAssessmentInProgress.
+        supabase.from('responses').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('assessment_type', 'adaptive')
       ]);
 
       if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
@@ -283,6 +303,7 @@ export function useProgressTracking() {
           // counter only if the count query itself fails.
           totalQuestionsSeen: totalCount ?? data.total_questions_seen ?? 0,
           practiceResponseCount: practiceCount ?? data.practice_response_count ?? 0,
+          adaptiveResponseCount: adaptiveCount ?? 0,
           streak: data.streak ?? 0,
           lastSession: data.last_session,
           migrationVersion: data.migration_version ?? 1,
@@ -546,6 +567,9 @@ export function useProgressTracking() {
         time_spent: response.timeSpent,
         time_on_item_seconds: response.time_on_item_seconds,
         selected_answers: response.selectedAnswers || (response.selectedAnswer ? [response.selectedAnswer] : []),
+        selected_answer: response.selectedAnswers?.length
+          ? response.selectedAnswers.join(',')
+          : (response.selectedAnswer ?? null),
         correct_answers: response.correctAnswers || [],
         distractor_pattern_id: response.distractorPatternId,
         is_followup: response.is_followup ?? false,

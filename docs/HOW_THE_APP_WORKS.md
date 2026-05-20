@@ -107,6 +107,8 @@ The adaptive diagnostic is your **baseline map**. It starts with one question pe
 
 **Pause and resume:** You can pause the diagnostic at any time and return to the home dashboard. Your progress is saved. You can start practicing immediately — even before finishing the diagnostic. When you return, you pick up exactly where you left off.
 
+**Cross-device resume:** Every answer is saved to the cloud as soon as you submit it. If you start the diagnostic on one device and continue on another — or if you sign in on a fresh browser, clear your cache, or simply return weeks later — the app reads your saved answers from the cloud and reconstructs your in-progress session automatically. The home dashboard shows a **Resume** card with the next unanswered question; you never lose your place and never have to start over.
+
 After completing the diagnostic, you get a **Score Report** — a breakdown of which domains and skills are strong and which need work. Practice is available immediately, with no gates.
 
 > **Assessment timing:** The assessment is not timed — there is no per-question or total time limit. Time per question is tracked internally for analytics purposes only. Your score is determined by accuracy, not speed.

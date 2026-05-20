@@ -162,9 +162,12 @@ export function normalizeStudyInputs(
         domain_name: domainLookup.get(domainId) || `Domain ${domainId}`,
         is_correct:  Boolean(response.is_correct),
         confidence:  response.confidence || 'unknown',
-        distractor_selected: getDistractorSelected(response),
+        distractor_selected: getDistractorSelected({
+          is_correct: response.is_correct,
+          selectedAnswers: response.selected_answers,
+        }),
         assessment_type: 'screener' as const,
-        question_id: (response as Record<string, unknown>).question_id as string | undefined ?? undefined,
+        question_id: response.question_id,
       };
     })
     .filter(isDefined);
@@ -190,7 +193,7 @@ export function normalizeStudyInputs(
         confidence:  response.confidence || 'unknown',
         distractor_selected: getDistractorSelected(response),
         assessment_type: assessType,
-        question_id: (response as Record<string, unknown>).questionId as string | undefined ?? undefined,
+        question_id: response.questionId,
       }));
     });
 

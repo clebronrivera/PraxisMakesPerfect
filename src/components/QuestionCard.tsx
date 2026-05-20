@@ -162,7 +162,7 @@ export default function QuestionCard({
     : 'text-sm font-semibold text-slate-700';
   const confidenceActive = isAtelier
     ? 'border-[color:var(--d1-peach)]/60 bg-[color:var(--d1-peach)]/20 text-white'
-    : 'border-slate-900 bg-slate-50 text-white';
+    : 'border-slate-900 bg-slate-900 text-white';
   const confidenceIdle = isAtelier
     ? 'border-white/10 bg-white/5 text-slate-300 hover:border-[color:var(--d1-peach)]/40 hover:text-white'
     : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900';

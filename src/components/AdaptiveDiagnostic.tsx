@@ -184,6 +184,18 @@ export default function AdaptiveDiagnostic({
     onAutoPause: () => { /* auto-paused */ }
   });
 
+  // Write the Supabase lastSession pointer as soon as the diagnostic mounts.
+  // Without this, a tab-close before the first answer leaves no pointer in
+  // user_progress, so the Supabase-backed resume path cannot find the session.
+  useEffect(() => {
+    if (updateLastSession && sessionId) {
+      void updateLastSession(sessionId, 'adaptive', currentIndex, elapsedSeconds);
+    }
+    // Intentionally mount-only. currentIndex / elapsedSeconds are correct initial
+    // values (0 for fresh start; savedSession values for resume). Per-answer writes
+    // handle all subsequent updates.
+  }, []); // mount-only
+
   // Save session whenever state changes
   useEffect(() => {
     if (currentUserName && sessionId) {
@@ -327,10 +339,6 @@ export default function AdaptiveDiagnostic({
         });
       }
 
-      if (updateLastSession && sessionId) {
-        await updateLastSession(sessionId, 'adaptive', currentIndex, elapsedSeconds);
-      }
-
       if (currentQuestion.skillId && updateSkillProgress) {
         await updateSkillProgress(currentQuestion.skillId, isCorrect, confidence, currentQuestion.id, timeSpentOnQuestion);
       }
@@ -349,6 +357,9 @@ export default function AdaptiveDiagnostic({
       const updatedResponses = [...responses, response];
       setResponses(updatedResponses);
 
+      // Logical queue length after this submit (React state may not have flushed yet).
+      let postSubmitQueueLength = queue.length;
+
       // ADAPTIVE LOGIC: if wrong, queue a follow-up for this skill
       if (!isCorrect && currentQuestion.skillId) {
         const skillId = currentQuestion.skillId;
@@ -357,6 +368,7 @@ export default function AdaptiveDiagnostic({
         if (count < 3) {
           const pool = followUpPool[skillId];
           if (pool && pool.length > 0) {
+            postSubmitQueueLength = queue.length + 1;
             const followUp = pool[0];
             followUpIds.add(followUp.id); // Track as follow-up for audit
             const updatedPool = { ...followUpPool, [skillId]: pool.slice(1) };
@@ -394,7 +406,7 @@ export default function AdaptiveDiagnostic({
         }
       }
 
-      nextQuestion(updatedResponses);
+      nextQuestion(updatedResponses, postSubmitQueueLength);
     } catch (error) {
       console.error('[AdaptiveDiagnostic] Failed to submit answer:', error);
     } finally {
@@ -402,11 +414,12 @@ export default function AdaptiveDiagnostic({
     }
   };
 
-  const nextQuestion = (updatedResponses?: UserResponse[]) => {
+  const nextQuestion = (updatedResponses?: UserResponse[], queueLengthHint?: number) => {
     const nextIndex = currentIndex + 1;
     const currentResponses = updatedResponses || responses;
+    const effectiveQueueLength = queueLengthHint ?? queue.length;
 
-    if (nextIndex >= queue.length) {
+    if (nextIndex >= effectiveQueueLength) {
       // Diagnostic complete
       if (currentUserName && sessionId) {
         deleteUserSession(currentUserName, sessionId);
@@ -414,6 +427,10 @@ export default function AdaptiveDiagnostic({
       clearSession();
       onComplete(currentResponses);
     } else {
+      // Persist the *next* unanswered index to Supabase (not the question just answered).
+      if (updateLastSession && sessionId) {
+        void updateLastSession(sessionId, 'adaptive', nextIndex, elapsedSeconds);
+      }
       setCurrentIndex(nextIndex);
       setSelectedAnswers([]);
       setIsSubmitted(false);
@@ -443,7 +460,7 @@ export default function AdaptiveDiagnostic({
         </Suspense>
       )}
       {/* Resume Notice */}
-      {isResuming && currentIndex > 0 && (
+      {isResuming && (
         <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-3">
           <p className="text-sm text-sky-800">
             Resumed from question {currentIndex + 1}. Your progress has been saved.
