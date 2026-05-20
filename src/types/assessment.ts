@@ -6,7 +6,7 @@
 // `diagnostic` remains in these unions only for archived response/session compatibility.
 export type ResponseAssessmentType = 'screener' | 'diagnostic' | 'full' | 'adaptive' | 'practice';
 
-export type AssessmentReportType = 'screener' | 'diagnostic' | 'full';
+export type AssessmentReportType = 'screener' | 'diagnostic' | 'full' | 'adaptive';
 
 export type SessionMode = 'screener' | 'diagnostic' | 'full' | 'adaptive' | 'practice';
 

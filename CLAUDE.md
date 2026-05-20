@@ -374,6 +374,7 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0020_simplified_onboarding.sql` | Onboarding fields: `first_name`, `last_name`, `zip_code`, `school_attending`, `purpose`, `how_did_you_hear` |
 | `0021_post_assessment_snapshot.sql` | Post-assessment proficiency snapshots for comparison |
 | `0022_diagnostic_wrong_count.sql` | `wrong_count` tracking on diagnostic responses |
+| `0023_selected_answer.sql` | `selected_answer TEXT` on `responses` — plain-string selected letter for distractor metadata lookup |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 

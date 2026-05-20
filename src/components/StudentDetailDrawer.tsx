@@ -3,6 +3,7 @@ import { X, RefreshCw, BarChart3, Clock, TrendingUp, AlertTriangle, BookOpen } f
 import { supabase } from '../config/supabase';
 import { PROGRESS_DOMAINS, PROGRESS_SKILL_LOOKUP } from '../utils/progressTaxonomy';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
+import DiagnosticStoryPanel from './DiagnosticStoryPanel';
 
 interface UserInfo {
   id: string;
@@ -530,6 +531,9 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                 </section>
               );
             })()}
+
+            {/* ── Diagnostic Story (narrative trace) ── */}
+            <DiagnosticStoryPanel responses={responses} />
 
             {/* ── Panel 6: Most Missed Skills ── */}
             <section>

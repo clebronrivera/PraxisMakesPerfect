@@ -24,6 +24,8 @@ export interface ScreenerScoreInput {
   skill_id?: string;
   is_correct?: boolean;
   confidence?: string;
+  selected_answers?: string[];
+  question_id?: string;
 }
 
 export interface ResponseScoreInput {
@@ -33,6 +35,8 @@ export interface ResponseScoreInput {
   skillId?: string;
   isCorrect?: boolean;
   confidence?: string;
+  selectedAnswers?: string[];
+  questionId?: string;
 }
 
 export interface GlobalScoreInputs {
@@ -91,11 +95,13 @@ function mapRawLogsToGlobalInputs(rawLogs: Record<string, unknown>[]): GlobalSco
         skill_id?: string;
         is_correct?: boolean;
         confidence?: string;
+        selected_answers?: string[];
+        question_id?: string;
       };
       const domainIds = Array.isArray(row.domain_ids) && row.domain_ids.length > 0
         ? row.domain_ids
         : (row.domain_id !== undefined && row.domain_id !== null ? [row.domain_id] : []);
-        
+
       const normalizedDomains: number[] = domainIds
         .map((id: unknown) => Number(id))
         .filter((id: number) => Number.isFinite(id));
@@ -104,7 +110,9 @@ function mapRawLogsToGlobalInputs(rawLogs: Record<string, unknown>[]): GlobalSco
         domain_id,
         skill_id: row.skill_id,
         is_correct: row.is_correct,
-        confidence: row.confidence
+        confidence: row.confidence,
+        selected_answers: Array.isArray(row.selected_answers) ? row.selected_answers : undefined,
+        question_id: row.question_id,
       }));
     });
 
@@ -118,6 +126,8 @@ function mapRawLogsToGlobalInputs(rawLogs: Record<string, unknown>[]): GlobalSco
         skill_id?: string;
         is_correct?: boolean;
         confidence?: string;
+        selected_answers?: string[];
+        question_id?: string;
       };
       return {
         assessmentType: row.assessment_type,
@@ -125,7 +135,9 @@ function mapRawLogsToGlobalInputs(rawLogs: Record<string, unknown>[]): GlobalSco
         domainId: row.domain_id as ResponseScoreInput['domainId'],
         skillId: row.skill_id,
         isCorrect: row.is_correct,
-        confidence: row.confidence
+        confidence: row.confidence,
+        selectedAnswers: Array.isArray(row.selected_answers) ? row.selected_answers : undefined,
+        questionId: row.question_id,
       };
     });
 
