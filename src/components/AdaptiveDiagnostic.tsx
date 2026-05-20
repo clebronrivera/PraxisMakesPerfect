@@ -184,6 +184,18 @@ export default function AdaptiveDiagnostic({
     onAutoPause: () => { /* auto-paused */ }
   });
 
+  // Write the Supabase lastSession pointer as soon as the diagnostic mounts.
+  // Without this, a tab-close before the first answer leaves no pointer in
+  // user_progress, so the Supabase-backed resume path cannot find the session.
+  useEffect(() => {
+    if (updateLastSession && sessionId) {
+      void updateLastSession(sessionId, 'adaptive', currentIndex, elapsedSeconds);
+    }
+    // Intentionally mount-only. currentIndex / elapsedSeconds are correct initial
+    // values (0 for fresh start; savedSession values for resume). Per-answer writes
+    // handle all subsequent updates.
+  }, []); // mount-only
+
   // Save session whenever state changes
   useEffect(() => {
     if (currentUserName && sessionId) {

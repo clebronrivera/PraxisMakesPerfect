@@ -523,9 +523,13 @@ export default function LoginScreen() {
               {mode === 'reset' ? (
                 <form onSubmit={handlePasswordReset} className="space-y-4">
                   <div>
-                    <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
+                    <label htmlFor="reset-email" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
                     <input
+                      id="reset-email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
+                      inputMode="email"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       placeholder="you@example.com"
@@ -559,9 +563,12 @@ export default function LoginScreen() {
                   <form onSubmit={handleEmailSubmit} className="space-y-4">
                     {mode === 'signup' && (
                       <div>
-                        <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Full name</label>
+                        <label htmlFor="signup-name" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Full name</label>
                         <input
+                          id="signup-name"
+                          name="name"
                           type="text"
+                          autoComplete="name"
                           value={displayName}
                           onChange={e => setDisplayName(e.target.value)}
                           placeholder="Your name"
@@ -571,9 +578,13 @@ export default function LoginScreen() {
                     )}
 
                     <div>
-                      <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
+                      <label htmlFor="auth-email" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
                       <input
+                        id="auth-email"
+                        name="email"
                         type="email"
+                        autoComplete={mode === 'signup' ? 'email' : 'username'}
+                        inputMode="email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         placeholder="you@example.com"
@@ -584,7 +595,7 @@ export default function LoginScreen() {
 
                     <div>
                       <div className="flex items-baseline justify-between mb-2">
-                        <label className="text-[11px] font-medium tracking-wider uppercase text-slate-400">Password</label>
+                        <label htmlFor="auth-password" className="text-[11px] font-medium tracking-wider uppercase text-slate-400">Password</label>
                         {mode === 'login' && (
                           <button
                             type="button"
@@ -596,7 +607,10 @@ export default function LoginScreen() {
                         )}
                       </div>
                       <input
+                        id="auth-password"
+                        name="password"
                         type="password"
+                        autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         placeholder="At least 6 characters"
