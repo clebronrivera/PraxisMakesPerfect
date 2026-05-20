@@ -8,7 +8,14 @@ export type ResponseAssessmentType = 'screener' | 'diagnostic' | 'full' | 'adapt
 
 export type AssessmentReportType = 'screener' | 'diagnostic' | 'full' | 'adaptive';
 
-export type SessionMode = 'screener' | 'diagnostic' | 'full' | 'adaptive' | 'practice';
+export type SessionMode =
+  | 'screener'
+  | 'diagnostic'
+  | 'full'
+  | 'adaptive'
+  | 'practice'
+  /** Legacy DB rows only; new code should persist `'adaptive'`. */
+  | 'adaptive_diagnostic';
 
 // `quick-diagnostic` is kept only so older stored sessions can still be interpreted safely.
 export type SessionAssessmentFlow = 'screener' | 'quick-diagnostic' | 'full' | 'adaptive-diagnostic';

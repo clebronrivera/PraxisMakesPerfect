@@ -127,15 +127,20 @@ function formatDate(value: string | number | Date | null | undefined): string {
   return new Date(millis).toLocaleString();
 }
 
-const ASSESSMENT_MODES = new Set(['screener', 'full_assessment', 'adaptive_diagnostic']);
+/** Modes persisted on `last_session.mode` (canonical + legacy). */
+const ASSESSMENT_MODES = new Set(['screener', 'full_assessment', 'adaptive', 'adaptive_diagnostic']);
 const DROP_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
+
+function isAdaptiveLastSession(mode: string | undefined): boolean {
+  return mode === 'adaptive' || mode === 'adaptive_diagnostic';
+}
 
 function isInProgress(user: UserAnalyticsDoc): boolean {
   const ls = user.lastSession;
   if (!ls || !ASSESSMENT_MODES.has(ls.mode)) return false;
   if (ls.mode === 'screener' && user.screenerComplete) return false;
   if (ls.mode === 'full_assessment' && user.fullAssessmentComplete) return false;
-  if (ls.mode === 'adaptive_diagnostic' && user.diagnosticComplete) return false;
+  if (isAdaptiveLastSession(ls.mode) && user.diagnosticComplete) return false;
   return true;
 }
 

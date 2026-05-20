@@ -402,6 +402,10 @@ function PraxisStudyAppContent() {
     handleResumeAssessment,
     handleDiscardSession,
     handleViewReport,
+    adaptiveResumeError,
+    clearAdaptiveResumeError,
+    retryAdaptiveRemoteResume,
+    abandonAdaptiveResumeRemoteAndStartFresh,
   } = useAssessmentFlow({
     analyzedQuestions,
     profile,
@@ -1268,7 +1272,7 @@ function PraxisStudyAppContent() {
                         : 'Screener in progress'}
                     </p>
                     <p className="mt-1 text-sm text-slate-400">
-                      {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex > 0
+                      {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex >= 0
                         ? `Question ${profile.lastSession.questionIndex + 1}. `
                         : hasOrphanedAdaptive && (profile.adaptiveResponseCount ?? 0) > 0
                           ? `Question ${(profile.adaptiveResponseCount ?? 0) + 1}. `
@@ -1350,6 +1354,46 @@ function PraxisStudyAppContent() {
 
             return (
               <div className="space-y-8 pb-12">
+                {adaptiveResumeError && (
+                  <div
+                    role="alert"
+                    className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-slate-900 shadow-sm"
+                  >
+                    <p className="text-base font-bold">Could not reload your diagnostic</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">{adaptiveResumeError}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        className="editorial-button-primary"
+                        onClick={() => {
+                          retryAdaptiveRemoteResume();
+                        }}
+                      >
+                        Retry
+                      </button>
+                      <button
+                        type="button"
+                        className="editorial-button-secondary"
+                        onClick={() => {
+                          if (
+                            !window.confirm(
+                              'Start a new diagnostic? This clears your saved resume pointer and builds a fresh question set. Only continue if you accept that.',
+                            )
+                          ) {
+                            return;
+                          }
+                          void abandonAdaptiveResumeRemoteAndStartFresh();
+                        }}
+                      >
+                        Start over
+                      </button>
+                      <button type="button" className="btn-ghost-atelier" onClick={clearAdaptiveResumeError}>
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {sessionResumeCard}
 
                 {isNewUser && (
@@ -1678,7 +1722,14 @@ function PraxisStudyAppContent() {
                 <ScoreReport
                   responses={lastAssessmentResponses}
                   questions={fullAssessmentQuestions}
-                  totalTime={assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0}
+                  totalTime={(() => {
+                    const summed = lastAssessmentResponses.reduce(
+                      (acc, r) => acc + (typeof r.timeSpent === 'number' ? r.timeSpent : 0),
+                      0,
+                    );
+                    if (summed > 0) return Math.round(summed);
+                    return assessmentStartTime > 0 ? Math.floor((Date.now() - assessmentStartTime) / 1000) : 0;
+                  })()}
                   diagnosticSummary={diagnosticSummary}
                   onStartPractice={startPractice}
                   onRetakeAssessment={() => {
