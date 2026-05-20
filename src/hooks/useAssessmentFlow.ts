@@ -445,6 +445,9 @@ export function useAssessmentFlow({
               type: 'adaptive-diagnostic',
               assessmentFlow: 'adaptive-diagnostic',
               questionIds: [...answeredIds, ...remainingInitialIds],
+              // State (0-indexed): currentIndex = answeredIds.length means the NEXT
+              // unanswered question. Display (1-indexed): "Question {currentIndex + 1}".
+              // E.g. 35 answered → currentIndex 35 → next question shown as Q36.
               currentIndex: answeredIds.length,
               responses: priorResponses,
               selectedAnswers: [],
@@ -476,10 +479,22 @@ export function useAssessmentFlow({
           }
         } catch (error) {
           console.error('[startAdaptiveDiagnostic] Supabase resume failed:', error);
+          // ─── Do NOT simplify this predicate down to two conditions. ─────────
+          // The third clause (adaptiveResponseCount > 0) handles the orphan
+          // case: Supabase has saved answers but the user has no lastSession
+          // pointer (cleared cache, different device). Without it, a Supabase
+          // fetch failure for an orphan silently falls through to a fresh
+          // queue and orphans their saved progress further. The
+          // !adaptiveDiagnosticComplete guard above keeps the error UI from
+          // showing to users who have already finished.
           const lastMode = profile.lastSession?.mode;
           const inFlightAdaptive =
             !profile.adaptiveDiagnosticComplete &&
-            (lastMode === 'adaptive' || lastMode === 'adaptive_diagnostic');
+            (
+              lastMode === 'adaptive' ||
+              lastMode === 'adaptive_diagnostic' ||
+              (profile.adaptiveResponseCount ?? 0) > 0
+            );
           if (inFlightAdaptive) {
             setAdaptiveResumeError(
               'We could not reload your diagnostic progress. Check your connection and try again.',

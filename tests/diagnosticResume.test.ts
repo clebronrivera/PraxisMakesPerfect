@@ -1,12 +1,16 @@
 /**
  * Diagnostic Resume Tests
  *
- * Covers the four scenarios described in the diagnostic resume bug spec:
+ * Covers six scenarios described in the diagnostic resume bug spec:
  *   1. User with no adaptive responses starts at question 1.
  *   2. User with incomplete adaptive responses + valid localStorage session resumes.
  *   3. User with incomplete adaptive responses but missing localStorage does NOT
  *      silently restart from question 1 (Supabase fallback path is triggered).
  *   4. Completed adaptive user is not asked to retake.
+ *   5. (PR #25) Orphan user + Supabase fetch failure → adaptiveResumeError is set,
+ *      not silent fresh-start.
+ *   6. (PR #25) Completed user (flag drift defense) → predicate does NOT fire even
+ *      if adaptiveResponseCount > 0 (because !adaptiveDiagnosticComplete guards it).
  *
  * Because these scenarios involve hook logic, browser localStorage, and Supabase
  * reads, the tests are structured around the pure utilities and the decision tree
@@ -250,5 +254,118 @@ describe('Scenario 4: Completed adaptive user cannot restart', () => {
 
     // localStorage entry is gone — Supabase resume path would take over if needed.
     expect(loadUserSession(session.sessionId)).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Shared predicate test helper — mirror of the runtime predicate in
+// useAssessmentFlow.ts so we can exercise the same decision logic without
+// rendering the React hook. Keep this in sync with the in-flight check at
+// `useAssessmentFlow.ts` (the `inFlightAdaptive` const in the
+// startAdaptiveDiagnostic catch block).
+// ---------------------------------------------------------------------------
+function inFlightAdaptivePredicate(profile: {
+  adaptiveDiagnosticComplete?: boolean;
+  lastSession?: { mode?: string } | null;
+  adaptiveResponseCount?: number;
+}): boolean {
+  const lastMode = profile.lastSession?.mode;
+  return (
+    !profile.adaptiveDiagnosticComplete &&
+    (
+      lastMode === 'adaptive' ||
+      lastMode === 'adaptive_diagnostic' ||
+      (profile.adaptiveResponseCount ?? 0) > 0
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 5. (PR #25) Orphan + Supabase fetch failure → adaptiveResumeError set
+// ---------------------------------------------------------------------------
+describe('Scenario 5: Orphan user + Supabase fetch failure surfaces an error', () => {
+  beforeEach(() => localStorageMock.clear());
+
+  it('predicate fires for an orphan (responses > 0, no lastSession, not complete)', () => {
+    // The exact production state for clebron@my.nl.edu at the time of the bug:
+    //   adaptive_diagnostic_complete = false
+    //   last_session = null
+    //   adaptive responses = 35
+    // The fix in PR #25 ensures the catch-block predicate evaluates to TRUE
+    // for this user so the amber error UI surfaces — instead of silently
+    // falling through to a fresh queue and orphaning their saved progress.
+    const orphanProfile = {
+      adaptiveDiagnosticComplete: false,
+      lastSession: null,
+      adaptiveResponseCount: 35,
+    };
+    expect(inFlightAdaptivePredicate(orphanProfile)).toBe(true);
+  });
+
+  it('predicate fires for the canonical mid-session case (mode=adaptive)', () => {
+    // Regression check: the original (PR #24) behavior must still hold for
+    // users with a valid lastSession pointer.
+    const inSessionProfile = {
+      adaptiveDiagnosticComplete: false,
+      lastSession: { mode: 'adaptive' },
+      adaptiveResponseCount: 12,
+    };
+    expect(inFlightAdaptivePredicate(inSessionProfile)).toBe(true);
+  });
+
+  it('predicate fires for the legacy session mode `adaptive_diagnostic`', () => {
+    // Backward-compat: rows persisted before the mode was canonicalized to
+    // 'adaptive' (e.g., tbrooks22@my.nl.edu in production) must still match.
+    const legacyProfile = {
+      adaptiveDiagnosticComplete: false,
+      lastSession: { mode: 'adaptive_diagnostic' },
+      adaptiveResponseCount: 37,
+    };
+    expect(inFlightAdaptivePredicate(legacyProfile)).toBe(true);
+  });
+
+  it('predicate does NOT fire for a brand-new user with no responses and no session', () => {
+    // Negative: a fresh user with no prior data and a Supabase fetch failure
+    // should fall through to beginFreshAdaptiveDiagnostic(), NOT show the
+    // error banner.
+    const freshProfile = {
+      adaptiveDiagnosticComplete: false,
+      lastSession: null,
+      adaptiveResponseCount: 0,
+    };
+    expect(inFlightAdaptivePredicate(freshProfile)).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 6. (PR #25) Completed user (flag-drift defense)
+// ---------------------------------------------------------------------------
+describe('Scenario 6: Completed user does not see the orphan error banner', () => {
+  it('predicate does NOT fire for a completed user, even with responses present', () => {
+    // The originally-affected user clebron@my.nl.edu is now in this state:
+    //   adaptive_diagnostic_complete = true
+    //   adaptive responses = 45 (full queue)
+    //   last_session = null
+    // The !adaptiveDiagnosticComplete guard at the top of the predicate
+    // ensures completed users never see the orphan error banner even if
+    // their response count is non-zero.
+    const completedProfile = {
+      adaptiveDiagnosticComplete: true,
+      lastSession: null,
+      adaptiveResponseCount: 45,
+    };
+    expect(inFlightAdaptivePredicate(completedProfile)).toBe(false);
+  });
+
+  it('predicate does NOT fire for a completed user with stale lastSession.mode', () => {
+    // Belt-and-suspenders: if a stale lastSession pointer is still pointing
+    // at 'adaptive' but the user is actually completed, the !complete guard
+    // still wins.
+    const completedWithStale = {
+      adaptiveDiagnosticComplete: true,
+      lastSession: { mode: 'adaptive' },
+      adaptiveResponseCount: 60,
+    };
+    expect(inFlightAdaptivePredicate(completedWithStale)).toBe(false);
   });
 });
