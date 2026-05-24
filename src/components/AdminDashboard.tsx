@@ -140,7 +140,7 @@ function isInProgress(user: UserAnalyticsDoc): boolean {
   if (!ls || !ASSESSMENT_MODES.has(ls.mode)) return false;
   if (ls.mode === 'screener' && user.screenerComplete) return false;
   if (ls.mode === 'full_assessment' && user.fullAssessmentComplete) return false;
-  if (isAdaptiveLastSession(ls.mode) && user.diagnosticComplete) return false;
+  if (isAdaptiveLastSession(ls.mode) && user.adaptiveDiagnosticComplete) return false;
   return true;
 }
 
