@@ -133,7 +133,7 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
       <div className="flex justify-end mb-4">
         <button
           onClick={onSkip}
-          className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-white border border-[#ece4d7] hover:border-slate-500 transition-colors"
+          className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 bg-white hover:border-slate-400 transition-colors"
         >
           Skip →
         </button>
@@ -306,64 +306,74 @@ export default function LoginScreen() {
       style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
     >
       {/* ══════ Top bar ══════ */}
-      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 md:px-10 py-5 md:py-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg" aria-hidden="true"><Brain className="h-5 w-5 text-white" /></div>
-          <div>
-            <p className="text-sm font-bold text-slate-900 tracking-wide">PASS</p>
-            <p className="text-[10px] tracking-[0.22em] uppercase text-slate-500">Platform for Adaptive Study Sessions</p>
+      <header className="absolute top-0 left-0 right-0 z-40 border-b border-slate-200/70 bg-[#f7f6f2]/90 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 md:px-10 py-4 md:py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/20" aria-hidden="true"><Brain className="h-5 w-5 text-white" /></div>
+            <div>
+              <p className="text-sm font-bold text-slate-900 tracking-wide">PASS</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-slate-600">Platform for Adaptive Study Sessions</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 md:gap-5">
+            <span className="hidden md:inline rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-[10px] font-semibold tracking-[0.2em] uppercase text-amber-800">
+              Beta
+            </span>
+            <button
+              type="button"
+              onClick={() => focusSignInPanel('login')}
+              className="text-sm font-medium text-slate-700 hover:text-slate-900 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-amber-500 rounded"
+            >
+              Sign in
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-4 md:gap-5">
-          <span className="hidden md:inline text-[10px] tracking-[0.25em] uppercase text-slate-500">Beta</span>
-          <button
-            type="button"
-            onClick={() => focusSignInPanel('login')}
-            className="text-sm text-slate-600 hover:text-slate-900 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-amber-500 rounded"
-          >
-            Sign in
-          </button>
-        </div>
-      </div>
+      </header>
 
       {/* ══════ HERO ══════ */}
-      <section className="relative min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center px-6 md:px-10 relative z-30 pt-28 pb-20">
-          <div className="max-w-6xl w-full mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <section className="relative min-h-screen flex flex-col overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(251,191,36,0.12),transparent_55%)]"
+          aria-hidden="true"
+        />
+        <div className="flex-1 flex items-center px-6 md:px-10 relative z-30 pt-28 pb-16 md:pb-20">
+          <div className="max-w-6xl w-full mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="text-left">
-              <p className="text-[11px] font-semibold tracking-[0.32em] uppercase text-amber-600/85 mb-6">
+              <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-amber-700 mb-5">
                 Adaptive · Personal · Built around your gaps
               </p>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 leading-[1.05] tracking-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-slate-900 leading-[1.08] tracking-tight">
                 A study platform<br />
                 <span className="text-amber-600">that listens.</span>
               </h1>
-              <p className="text-base text-slate-600 mt-6 leading-relaxed max-w-xl">
+              <p className="text-[17px] text-slate-700 mt-6 leading-relaxed max-w-xl">
                 Start with a focused diagnostic, then move through personalized practice and a
                 guided study plan that adapts to your performance over time.
               </p>
 
-              <div className="flex flex-wrap items-center gap-4 mt-9">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-8">
                 <button
                   type="button"
                   onClick={() => focusSignInPanel('signup')}
-                  className="editorial-button-primary"
+                  className="editorial-button-primary px-6 py-3"
                 >
                   Begin your diagnostic&nbsp;&nbsp;→
                 </button>
                 <button
                   type="button"
                   onClick={() => focusSignInPanel('login')}
-                  className="editorial-button-secondary"
+                  className="editorial-button-secondary px-6 py-3"
                 >
                   I have an account
                 </button>
               </div>
 
-              <ul className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-slate-600 list-none p-0 m-0">
-                {LOGIN_HERO_FEATURES.map((feature, index) => (
-                  <li key={feature} className="inline-flex items-center gap-2">
-                    {index > 0 && <span className="text-slate-300 hidden sm:inline" aria-hidden="true">·</span>}
+              <ul className="mt-8 flex flex-wrap gap-2 list-none p-0 m-0" aria-label="Platform highlights">
+                {LOGIN_HERO_FEATURES.map((feature) => (
+                  <li
+                    key={feature}
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm"
+                  >
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" aria-hidden="true" />
                     {feature}
                   </li>
@@ -371,15 +381,15 @@ export default function LoginScreen() {
               </ul>
             </div>
 
-            <aside className="rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-sm p-6 md:p-7 shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
-              <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-slate-500 mb-4">
+            <aside className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-[0_16px_48px_rgba(15,23,42,0.08)]">
+              <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-slate-600 mb-5">
                 How it works
               </p>
-              <ol className="space-y-4 text-sm text-slate-700 list-none p-0 m-0">
+              <ol className="space-y-5 text-[15px] leading-relaxed text-slate-800 list-none p-0 m-0">
                 {LOGIN_HERO_STEPS.map((step, index) => (
-                  <li key={step} className="flex gap-3">
+                  <li key={step} className="flex gap-3.5">
                     <span
-                      className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700"
+                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-800"
                       aria-hidden="true"
                     >
                       {index + 1}
@@ -392,12 +402,12 @@ export default function LoginScreen() {
           </div>
         </div>
 
-        <div className="pb-8 text-center text-[10px] tracking-[0.3em] uppercase text-slate-600">
+        <div className="relative z-30 pb-10 text-center text-xs tracking-wide text-slate-600">
           Already a candidate?{' '}
           <button
             type="button"
             onClick={() => focusSignInPanel('login')}
-            className="text-amber-700 hover:text-amber-600 underline-offset-4 hover:underline"
+            className="font-semibold text-amber-800 hover:text-amber-700 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 rounded"
           >
             Sign in ↓
           </button>
@@ -405,23 +415,23 @@ export default function LoginScreen() {
       </section>
 
       {/* ══════ SIGN IN ══════ */}
-      <section id="signin-panel" className="relative min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center px-6 md:px-10 py-24 md:py-28 relative z-30">
+      <section id="signin-panel" className="relative min-h-screen flex flex-col border-t border-slate-200/80 bg-[#f3f1eb]">
+        <div className="flex-1 flex items-center justify-center px-6 md:px-10 py-20 md:py-28 relative z-30">
           <div className="max-w-md w-full">
-            <div className="editorial-surface p-8 md:p-10">
+            <div className="editorial-surface p-8 md:p-10 rounded-3xl">
               <div className="flex justify-center mb-6">
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg mx-auto" aria-hidden="true"><Brain className="h-7 w-7 text-white" /></div>
               </div>
               <div className="text-center mb-8">
-                <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-amber-600/85 mb-2">
+                <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-amber-700 mb-2">
                   {mode === 'signup' ? 'Welcome' : mode === 'reset' ? 'Reset password' : 'Welcome back'}
                 </p>
-                <h3 className="text-2xl font-bold text-slate-900">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                   {mode === 'signup' && 'Create your account.'}
                   {mode === 'login' && 'Pick up where you left off.'}
                   {mode === 'reset' && 'We\u2019ll send a secure link.'}
-                </h3>
-                <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+                </h2>
+                <p className="text-sm text-slate-700 mt-2 leading-relaxed">
                   {mode === 'signup' && 'Save your diagnostic baseline, study plan, and redemption queue.'}
                   {mode === 'login' && 'Your diagnostic, study plan, and redemption queue are saved.'}
                   {mode === 'reset' && 'Enter your email and we\u2019ll send a secure password reset link.'}
@@ -429,12 +439,12 @@ export default function LoginScreen() {
               </div>
 
               {resetEmailSent && !error && (
-                <div className="mb-6 rounded-xl border border-emerald-300/30 bg-emerald-100 p-4">
+                <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                   <div className="flex items-start gap-3">
-                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
                     <div>
-                      <p className="text-sm font-semibold text-emerald-600">Reset email sent</p>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-300">
+                      <p className="text-sm font-semibold text-emerald-800">Reset email sent</p>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-700">
                         Check {email} for instructions to reset your password.
                       </p>
                     </div>
@@ -443,13 +453,13 @@ export default function LoginScreen() {
               )}
 
               {error && (
-                <div className="mb-6 rounded-xl border border-rose-300/30 bg-rose-100 p-4">
+                <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4">
                   <div className="flex items-start gap-3">
-                    <div className="flex-1 text-sm leading-relaxed text-rose-600">{error}</div>
+                    <div className="flex-1 text-sm leading-relaxed text-rose-800">{error}</div>
                     <button
                       type="button"
                       onClick={clearError}
-                      className="text-lg leading-none text-rose-600 transition-colors hover:text-white"
+                      className="text-lg leading-none text-rose-700 transition-colors hover:text-rose-900"
                       aria-label="Dismiss error"
                     >
                       ×
@@ -461,7 +471,7 @@ export default function LoginScreen() {
               {mode === 'reset' ? (
                 <form onSubmit={handlePasswordReset} className="space-y-4">
                   <div>
-                    <label htmlFor="reset-email" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
+                    <label htmlFor="reset-email" className="text-[11px] font-semibold tracking-wider uppercase text-slate-600 block mb-2">Email</label>
                     <input
                       id="reset-email"
                       name="email"
@@ -490,7 +500,7 @@ export default function LoginScreen() {
                     <button
                       type="button"
                       onClick={switchToLogin}
-                      className="inline-flex items-center gap-1 text-sm font-semibold text-amber-600 transition-colors hover:text-white"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-amber-800 transition-colors hover:text-amber-900"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" /> Back to sign in
                     </button>
@@ -501,7 +511,7 @@ export default function LoginScreen() {
                   <form onSubmit={handleEmailSubmit} className="space-y-4">
                     {mode === 'signup' && (
                       <div>
-                        <label htmlFor="signup-name" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Full name</label>
+                        <label htmlFor="signup-name" className="text-[11px] font-semibold tracking-wider uppercase text-slate-600 block mb-2">Full name</label>
                         <input
                           id="signup-name"
                           name="name"
@@ -516,7 +526,7 @@ export default function LoginScreen() {
                     )}
 
                     <div>
-                      <label htmlFor="auth-email" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
+                      <label htmlFor="auth-email" className="text-[11px] font-semibold tracking-wider uppercase text-slate-600 block mb-2">Email</label>
                       <input
                         id="auth-email"
                         name="email"
@@ -533,12 +543,12 @@ export default function LoginScreen() {
 
                     <div>
                       <div className="flex items-baseline justify-between mb-2">
-                        <label htmlFor="auth-password" className="text-[11px] font-medium tracking-wider uppercase text-slate-400">Password</label>
+                        <label htmlFor="auth-password" className="text-[11px] font-semibold tracking-wider uppercase text-slate-600">Password</label>
                         {mode === 'login' && (
                           <button
                             type="button"
                             onClick={switchToReset}
-                            className="text-[11px] text-amber-600 hover:underline"
+                            className="text-[11px] font-medium text-amber-800 hover:text-amber-900 hover:underline"
                           >
                             Forgot?
                           </button>
@@ -564,14 +574,14 @@ export default function LoginScreen() {
                           type="checkbox"
                           checked={consentChecked}
                           onChange={e => setConsentChecked(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 rounded border-slate-600 bg-transparent text-amber-600 focus:ring-amber-400/50"
+                          className="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500/40"
                         />
-                        <span className="text-xs leading-relaxed text-slate-400">
+                        <span className="text-xs leading-relaxed text-slate-700">
                           I agree to the{' '}
                           <button
                             type="button"
                             onClick={e => { e.stopPropagation(); window.location.hash = 'terms'; }}
-                            className="text-slate-300 hover:text-amber-600 underline underline-offset-2"
+                            className="font-medium text-amber-800 hover:text-amber-900 underline underline-offset-2"
                           >
                             Terms
                           </button>{' '}
@@ -579,7 +589,7 @@ export default function LoginScreen() {
                           <button
                             type="button"
                             onClick={e => { e.stopPropagation(); window.location.hash = 'privacy'; }}
-                            className="text-slate-300 hover:text-amber-600 underline underline-offset-2"
+                            className="font-medium text-amber-800 hover:text-amber-900 underline underline-offset-2"
                           >
                             Privacy Policy
                           </button>
@@ -606,15 +616,15 @@ export default function LoginScreen() {
                   </form>
 
                   <div className="flex items-center gap-3 my-6">
-                    <div className="flex-1 h-px bg-slate-700/40" />
-                    <span className="text-[10px] tracking-widest uppercase text-slate-600">or</span>
-                    <div className="flex-1 h-px bg-slate-700/40" />
+                    <div className="flex-1 h-px bg-slate-200" />
+                    <span className="text-[10px] font-semibold tracking-widest uppercase text-slate-500">or</span>
+                    <div className="flex-1 h-px bg-slate-200" />
                   </div>
 
                   <button
                     type="button"
                     onClick={() => { clearError(); setMode(mode === 'login' ? 'signup' : 'login'); }}
-                    className="w-full py-3 rounded-xl text-sm font-medium text-slate-300 border border-slate-700/50 hover:border-amber-300/50 hover:text-white transition"
+                    className="w-full py-3 rounded-xl text-sm font-semibold text-slate-800 border border-slate-200 bg-slate-50 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-900 transition"
                   >
                     {mode === 'login' ? 'Create an account' : 'Already have an account? Sign in'}
                   </button>
@@ -626,7 +636,7 @@ export default function LoginScreen() {
                 <button
                   type="button"
                   onClick={() => (window.location.hash = 'terms')}
-                  className="text-slate-400 hover:text-amber-600 underline underline-offset-2"
+                  className="font-medium text-amber-800 hover:text-amber-900 underline underline-offset-2"
                 >
                   Terms
                 </button>{' '}
@@ -634,10 +644,14 @@ export default function LoginScreen() {
                 <button
                   type="button"
                   onClick={() => (window.location.hash = 'privacy')}
-                  className="text-slate-400 hover:text-amber-600 underline underline-offset-2"
+                  className="font-medium text-amber-800 hover:text-amber-900 underline underline-offset-2"
                 >
                   Privacy Policy
                 </button>.
+              </p>
+
+              <p className="mt-4 rounded-xl border border-amber-100 bg-amber-50/80 px-3 py-2.5 text-center text-[11px] leading-relaxed text-slate-700">
+                Currently in beta. Not responsible for loss of data during the beta period.
               </p>
 
               {mode === 'login' && showAdminEntry && (
@@ -645,7 +659,7 @@ export default function LoginScreen() {
                   <button
                     type="button"
                     onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-700/50 bg-transparent px-3 py-2 text-xs font-semibold text-slate-400 transition-colors hover:border-amber-300/50 hover:text-white"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-900"
                     title="Admin sign in"
                   >
                     <Shield className="h-3.5 w-3.5" />
@@ -655,7 +669,7 @@ export default function LoginScreen() {
               )}
             </div>
 
-            <p className="text-center text-[10px] text-slate-700 mt-6 tracking-wider uppercase">
+            <p className="text-center text-[10px] text-slate-600 mt-6 tracking-wider uppercase">
               PASS · Beta · 2026
             </p>
           </div>
