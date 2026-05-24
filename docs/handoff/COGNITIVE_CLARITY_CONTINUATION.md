@@ -1,6 +1,6 @@
 # Handoff: Continue Cognitive Clarity Restoration (Post-PR #27)
 
-**Status:** Code draft-complete on branch. PR open. Visual + functional QA incomplete.  
+**Status:** Phase 5 complete on branch (login visual QA + doc fixes). PR #27 updated. **Merge still requires user approval** and manual functional checks on `:8888` after `netlify login`.  
 **Branch:** `feat/restore-cognitive-clarity`  
 **PR:** https://github.com/clebronrivera/PraxisMakesPerfect/pull/27  
 **Prior handoff (planning):** [`COGNITIVE_CLARITY_RESTORATION.md`](./COGNITIVE_CLARITY_RESTORATION.md)  
@@ -41,7 +41,7 @@ visual-diff/
 
 ### Known visual gaps (flag as [FOLLOWUP] in PR, fix if user approves)
 
-- **Login hero stats footer** — currently 4 colors (orange/green/blue/purple) for *"4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated"* (`LoginScreen.tsx` ~353–359: `amber-600`, `emerald-600`, `sky-600`, `indigo-600`). May be a remnant of the old D1/D2/D3/D4 domain palette that was explicitly removed elsewhere. Confirm intent: decorative accent vs accidentally preserved? Per the proficiency-coded-only decision, neutral slate or single-amber is the safe call if not intentional.
+- **Login hero stats footer** — ~~4-color domain palette~~ **fixed:** single `amber-700` accent on numbers, neutral slate separators (commit pending).
 - **Login hero** is single-column centered; mockup may differ in layout density — compare screenshots before changing JSX again.
 - **Authenticated screens** (dashboard, practice, tutor, study guide, learning path, results) were **not screenshot'd** — only login was captured.
 - **DashboardHome** `RedemptionMoon` panel intentionally stays **dark** (CC dual-tone: cream + selective dark accents).

@@ -350,13 +350,13 @@ export default function LoginScreen() {
               </div>
 
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-10 text-[11px] text-slate-500">
-                <span><span className="text-amber-600 font-semibold">4</span> domains</span>
-                <span className="text-slate-700">·</span>
-                <span><span className="text-emerald-600 font-semibold">45</span> skills</span>
-                <span className="text-slate-700">·</span>
-                <span><span className="text-sky-600 font-semibold">1,150</span> calibrated items</span>
-                <span className="text-slate-700">·</span>
-                <span><span className="text-indigo-600 font-semibold">IRT</span>-calibrated</span>
+                <span><span className="text-amber-700 font-semibold">4</span> domains</span>
+                <span className="text-slate-300">·</span>
+                <span><span className="text-amber-700 font-semibold">45</span> skills</span>
+                <span className="text-slate-300">·</span>
+                <span><span className="text-amber-700 font-semibold">1,150</span> calibrated items</span>
+                <span className="text-slate-300">·</span>
+                <span><span className="text-amber-700 font-semibold">IRT</span>-calibrated</span>
               </div>
             </div>
 
