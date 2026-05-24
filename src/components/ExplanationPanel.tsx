@@ -75,7 +75,7 @@ export default function ExplanationPanel({
     ? ((question as unknown as Record<string, unknown>)[`distractor_skill_deficit_${wrongLetter}`] as string | undefined) || ''
     : '';
 
-  const accentVar = isCorrect ? 'var(--d2-mint)' : 'var(--accent-rose)';
+  const accentVar = isCorrect ? '#059669' : '#f43f5e';
 
   return (
     <div className="space-y-4">
@@ -126,28 +126,28 @@ export default function ExplanationPanel({
 
             {/* Extended Bank Fields (Static Questions) */}
             {displayCorrectExplanation && displayCorrectExplanation !== displayRationale && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Correct explanation</p>
                 <p className="text-sm leading-relaxed text-slate-300">{displayCorrectExplanation}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).contentLimit && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Content rule</p>
                 <p className="text-sm leading-relaxed text-slate-300">{(question as unknown as Record<string, string>).contentLimit}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).complexityRationale && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Complexity</p>
                 <p className="text-sm leading-relaxed text-slate-300">{(question as unknown as Record<string, string>).complexityRationale}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).construct_actually_tested && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">What this tests</p>
                 <p className="text-sm leading-relaxed text-slate-300">{(question as unknown as Record<string, string>).construct_actually_tested}</p>
               </div>
@@ -155,13 +155,13 @@ export default function ExplanationPanel({
 
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Key concepts</p>
                 <div className="flex flex-wrap gap-2">
                   {question.keyConcepts.map((concept, i) => (
                     <span
                       key={i}
-                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300"
+                      className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-300"
                     >
                       {concept}
                     </span>
@@ -174,11 +174,11 @@ export default function ExplanationPanel({
             {(misconceptionText || skillDeficitText) && (
               <div
                 className="mt-4 border-t pt-4"
-                style={{ borderColor: 'color-mix(in srgb, var(--accent-rose) 25%, transparent)' }}
+                style={{ borderColor: 'color-mix(in srgb, #f43f5e 25%, transparent)' }}
               >
                 <p
                   className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em]"
-                  style={{ color: 'color-mix(in srgb, var(--accent-rose) 80%, white)' }}
+                  style={{ color: 'color-mix(in srgb, #f43f5e 80%, white)' }}
                 >
                   Why this was wrong
                 </p>

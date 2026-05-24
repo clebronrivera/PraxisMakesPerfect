@@ -58,9 +58,9 @@ export default function StudyPlanCard({
       : 'Generate study guide';
 
   return (
-    <section className="glass overflow-hidden">
+    <section className="editorial-surface overflow-hidden">
       {/* ── Hero header ── */}
-      <div className="border-b border-white/10 bg-[rgba(10,22,40,0.5)] px-6 py-5">
+      <div className="border-b border-slate-200 bg-[rgba(10,22,40,0.5)] px-6 py-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-sm shrink-0">
@@ -79,7 +79,7 @@ export default function StudyPlanCard({
             {canGenerate && (
               <button
                 onClick={() => setSettingsOpen(o => !o)}
-                className="btn-ghost-atelier px-3 py-2 text-xs"
+                className="editorial-button-secondary px-3 py-2 text-xs"
               >
                 Settings
                 {settingsOpen
@@ -94,8 +94,8 @@ export default function StudyPlanCard({
               disabled={!canGenerate || isGenerating || isLoading}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 !canGenerate || isGenerating || isLoading
-                  ? 'cursor-not-allowed border border-white/10 bg-white/8 text-slate-400'
-                  : 'btn-soft-glow'
+                  ? 'cursor-not-allowed border border-slate-200 bg-white/8 text-slate-400'
+                  : 'editorial-button-primary'
               }`}
             >
               {isGenerating
@@ -108,22 +108,22 @@ export default function StudyPlanCard({
 
         {/* Unlock notice */}
         {!canGenerate && (
-          <div className="mt-3 rounded-xl border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 px-4 py-3 text-xs text-[color:var(--d1-peach)] space-y-2">
+          <div className="mt-3 rounded-xl border border-amber-300/30 bg-[color:#d97706]/10 px-4 py-3 text-xs text-amber-600 space-y-2">
             <p className="font-semibold">Complete the screener + full diagnostic to unlock your guide.</p>
-            <p className="text-[color:var(--d1-peach)] leading-relaxed">Once unlocked, Claude analyzes your performance data and builds a fully personalized plan that includes:</p>
-            <ul className="mt-1 space-y-1 text-[color:var(--d1-peach)]">
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:var(--d1-peach)] shrink-0" />Readiness snapshot with your current level (Early → Ready)</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:var(--d1-peach)] shrink-0" />Priority skill clusters ranked by urgency</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:var(--d1-peach)] shrink-0" />Domain-by-domain study maps with targeted tactics</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:var(--d1-peach)] shrink-0" />Weekly study schedule based on your time budget</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:var(--d1-peach)] shrink-0" />Key vocabulary, case patterns, and checkpoint logic</li>
+            <p className="text-amber-600 leading-relaxed">Once unlocked, Claude analyzes your performance data and builds a fully personalized plan that includes:</p>
+            <ul className="mt-1 space-y-1 text-amber-600">
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Readiness snapshot with your current level (Early → Ready)</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Priority skill clusters ranked by urgency</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Domain-by-domain study maps with targeted tactics</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Weekly study schedule based on your time budget</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Key vocabulary, case patterns, and checkpoint logic</li>
             </ul>
           </div>
         )}
 
         {/* Generating status */}
         {isGenerating && (
-          <div className="mt-3 flex items-center gap-2 text-xs text-[color:var(--d1-peach)]">
+          <div className="mt-3 flex items-center gap-2 text-xs text-amber-600">
             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
             Generating your study plan — this takes about a minute…
           </div>
@@ -132,22 +132,22 @@ export default function StudyPlanCard({
 
       {/* ── Settings panel (collapsible) ── */}
       {canGenerate && settingsOpen && (
-        <div className="border-b border-white/10 bg-[rgba(10,22,40,0.5)] px-6 py-4">
+        <div className="border-b border-slate-200 bg-[rgba(10,22,40,0.5)] px-6 py-4">
           <StudyConstraintsForm value={constraints} onChange={setConstraints} />
         </div>
       )}
 
       {/* ── Error ── */}
       {error && (
-        <div className="mx-5 mt-4 flex flex-col gap-3 rounded-2xl border border-[color:var(--accent-rose)]/30 bg-[color:var(--accent-rose)]/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-5 mt-4 flex flex-col gap-3 rounded-2xl border border-rose-300/30 bg-rose-100 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-[color:var(--accent-rose)] mt-0.5 shrink-0" />
-            <p className="text-xs leading-relaxed text-[color:var(--accent-rose)]">{error}</p>
+            <AlertTriangle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+            <p className="text-xs leading-relaxed text-rose-600">{error}</p>
           </div>
           <button
             onClick={() => onGenerate(constraints)}
             disabled={!canGenerate || isGenerating}
-            className="shrink-0 rounded-xl border border-[color:var(--accent-rose)]/50 bg-[color:var(--accent-rose)]/20 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[color:var(--accent-rose)]/30 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)]"
+            className="shrink-0 rounded-xl border border-[color:#f43f5e]/50 bg-[color:#f43f5e]/20 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[color:#f43f5e]/30 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
           >
             Retry
           </button>
@@ -180,15 +180,15 @@ export default function StudyPlanCard({
                   key={entry.id}
                   type="button"
                   onClick={() => setSelectedId(entry.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
                     isActive
-                      ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/10 text-white'
-                      : 'border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:border-[color:var(--d1-peach)]/30 hover:text-white'
+                      ? 'border-amber-300/50 bg-[color:#d97706]/10 text-white'
+                      : 'border-slate-200 bg-white text-slate-400 hover:bg-slate-50 hover:border-amber-300/30 hover:text-white'
                   }`}
                 >
                   <span className={readinessBadgeCls(snap.readinessLevel)}>{readinessLabel(snap.readinessLevel)}</span>
                   <span>{date}</span>
-                  {i === 0 && <span className="font-semibold text-[color:var(--d1-peach)]">latest</span>}
+                  {i === 0 && <span className="font-semibold text-amber-600">latest</span>}
                 </button>
               );
             })}
@@ -206,7 +206,7 @@ export default function StudyPlanCard({
           >
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-[color:var(--d1-peach)]" />
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
                 <span className="text-xs text-slate-500">
                   {new Date(activePlan.generatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </span>

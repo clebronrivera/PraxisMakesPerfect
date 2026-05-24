@@ -35,8 +35,8 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-6 px-4 text-slate-200">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10">
-          <HelpCircle className="h-5 w-5 text-[color:var(--d1-peach)]" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-300/30 bg-[color:#d97706]/10">
+          <HelpCircle className="h-5 w-5 text-amber-600" />
         </div>
         <div>
           <p className="eyebrow">Support</p>
@@ -44,7 +44,7 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
         </div>
       </div>
 
-      <div className="glass divide-y divide-white/5 overflow-hidden">
+      <div className="editorial-surface divide-y divide-white/5 overflow-hidden">
         {FAQ_ENTRIES.map((entry, idx) => {
           const isOpen = openIndex === idx;
           return (
@@ -52,15 +52,15 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-white/5"
+                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-white"
               >
                 <span className="text-sm font-semibold text-white">{entry.question}</span>
                 {isOpen
-                  ? <ChevronUp className="h-4 w-4 shrink-0 text-[color:var(--d1-peach)]" />
+                  ? <ChevronUp className="h-4 w-4 shrink-0 text-amber-600" />
                   : <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />}
               </button>
               {isOpen && (
-                <div className="border-t border-[color:var(--d1-peach)]/20 bg-navy-800/40 px-6 py-4">
+                <div className="border-t border-[color:#d97706]/20 bg-white/40 px-6 py-4">
                   <p className="text-sm leading-relaxed text-slate-300">{entry.answer}</p>
                 </div>
               )}
@@ -74,13 +74,13 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
           <button
             type="button"
             onClick={onReplayTutorial}
-            className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--d3-ice)]/30 bg-[color:var(--d3-ice)]/10 px-4 py-2 text-sm font-medium text-[color:var(--d3-ice)] transition-colors hover:bg-[color:var(--d3-ice)]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+            className="inline-flex items-center gap-2 rounded-xl border border-[color:#0284c7]/30 bg-[color:#0284c7]/10 px-4 py-2 text-sm font-medium text-sky-600 transition-colors hover:bg-[color:#0284c7]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
           >
             <PlayCircle className="h-4 w-4" />
             Replay Tutorial
           </button>
         )}
-        <button type="button" onClick={onGoHome} className="btn-ghost-atelier">
+        <button type="button" onClick={onGoHome} className="editorial-button-secondary">
           Back to dashboard
         </button>
       </div>

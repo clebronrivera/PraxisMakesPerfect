@@ -66,7 +66,7 @@ export default function TutorialWalkthrough({ onDismiss, variant = 'full' }: Tut
             {/* Close button */}
             <button
               onClick={onDismiss}
-              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white hover:bg-slate-500 transition-colors"
               aria-label="Close tutorial"
             >
               <X className="h-4 w-4" />

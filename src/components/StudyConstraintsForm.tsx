@@ -50,21 +50,21 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
     : null;
 
   const activeToggleClass =
-    'bg-[color:var(--d1-peach)]/20 text-white border border-[color:var(--d1-peach)]/50';
+    'bg-[color:#d97706]/20 text-white border border-amber-300/50';
   const idleToggleClass =
-    'bg-white/5 text-slate-300 border border-white/8 hover:bg-white/10 hover:text-white hover:border-[color:var(--d1-peach)]/30';
+    'bg-white text-slate-300 border border-slate-200 hover:bg-slate-50 hover:text-white hover:border-amber-300/30';
   const focusRing =
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]';
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/8 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px]">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px]">
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
-        className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white/5 ${focusRing}`}
+        className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white ${focusRing}`}
       >
         <div className="flex items-center gap-2">
-          <Settings2 className="w-4 h-4" style={{ color: 'var(--d1-peach)' }} />
+          <Settings2 className="w-4 h-4" style={{ color: '#d97706' }} />
           <span className="text-sm font-medium text-white">Study Settings</span>
           <span className="text-xs text-slate-400">(optional — improves scheduling)</span>
         </div>
@@ -75,7 +75,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
       </button>
 
       {isOpen && (
-        <div className="space-y-5 border-t border-white/8 bg-[rgba(10,22,40,0.55)] px-4 pb-4">
+        <div className="space-y-5 border-t border-slate-200 bg-[rgba(10,22,40,0.55)] px-4 pb-4">
 
           {/* Test date */}
           <div className="pt-4 space-y-2">
@@ -89,7 +89,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                 value={value.testDate ?? ''}
                 min={new Date().toISOString().split('T')[0]}
                 onChange={e => update({ testDate: e.target.value || undefined })}
-                className={`rounded-xl border border-white/10 bg-[rgba(10,22,40,0.45)] px-3 py-2 text-sm text-slate-200 transition-colors focus:border-[color:var(--d1-peach)] focus:outline-none focus:ring-2 focus:ring-[color:var(--d1-peach)]/20 [color-scheme:dark]`}
+                className={`rounded-xl border border-slate-200 bg-[rgba(10,22,40,0.45)] px-3 py-2 text-sm text-slate-200 transition-colors focus:border-[color:#d97706] focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/20 [color-scheme:dark]`}
               />
               {weeksUntilTest !== null && (
                 <span className="text-sm text-slate-400">
@@ -178,8 +178,8 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                   onClick={() => update({ intensity: opt.value })}
                   className={`px-3 py-2.5 rounded-xl text-left transition-all border ${focusRing} ${
                     (value.intensity ?? 'moderate') === opt.value
-                      ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/15 text-white'
-                      : 'border-white/8 bg-white/5 text-slate-300 hover:border-[color:var(--d1-peach)]/30 hover:text-white'
+                      ? 'border-amber-300/50 bg-[color:#d97706]/15 text-white'
+                      : 'border-slate-200 bg-white text-slate-300 hover:border-amber-300/30 hover:text-white'
                   }`}
                 >
                   <p className="text-sm font-semibold">{opt.label}</p>

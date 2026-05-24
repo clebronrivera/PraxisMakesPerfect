@@ -2,6 +2,7 @@
 // First-use experience for each session type — atelier styling.
 
 import { Lock, Sparkles, ClipboardList, BookOpen, Shuffle } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { TutorSuggestedChips } from './TutorSuggestedChips';
 import type { TutorSkillSnapshot } from '../types/tutorChat';
 
@@ -25,21 +26,21 @@ const STUDY_ACTIVITIES = [
     label: 'Practice Questions',
     sublabel: 'Printable set based on weak areas',
     message: 'Generate a practice set of questions based on my weak areas',
-    accent: 'var(--d1-peach)',
+    accent: '#d97706',
   },
   {
     icon: BookOpen,
     label: 'Fill-in-the-Blank',
     sublabel: 'Word bank for key vocabulary',
     message: 'Create a fill-in-the-blank word bank activity for the terms I need to learn',
-    accent: 'var(--d3-ice)',
+    accent: '#0284c7',
   },
   {
     icon: Shuffle,
     label: 'Matching Activity',
     sublabel: 'Drag-and-drop term matching',
     message: 'Make a matching activity so I can practice matching terms to their definitions',
-    accent: 'var(--d4-lavender)',
+    accent: '#6366f1',
   },
 ];
 
@@ -64,7 +65,7 @@ export function TutorEmptyState({
   if (sessionType === 'floating') {
     return (
       <div className="flex flex-col items-center text-center px-4 py-6 gap-3">
-        <div className="mini-orb" style={{ width: 40, height: 40 }} aria-hidden="true" />
+        <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600" style={{ width: 40, height: 40 }} aria-hidden="true"><Brain className="text-white" style={{ width: 22, height: 22 }} /></div>
         <div>
           <p className="text-sm font-semibold text-white">Hi, I'm your tutor</p>
           <p className="text-xs text-slate-400 mt-1 leading-relaxed">
@@ -107,11 +108,11 @@ export function TutorEmptyState({
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
           style={{
-            background: 'color-mix(in srgb, var(--d1-peach) 14%, transparent)',
-            border: '1px solid color-mix(in srgb, var(--d1-peach) 30%, transparent)',
+            background: 'color-mix(in srgb, #d97706 14%, transparent)',
+            border: '1px solid color-mix(in srgb, #d97706 30%, transparent)',
           }}
         >
-          <Sparkles className="w-5 h-5" style={{ color: 'var(--d1-peach)' }} />
+          <Sparkles className="w-5 h-5" style={{ color: '#d97706' }} />
         </div>
         <div>
           <p className="text-sm font-semibold text-white">I know your skill profile.</p>
@@ -120,15 +121,15 @@ export function TutorEmptyState({
       </div>
 
       {top3.length > 0 && (
-        <div className="glass p-4 space-y-2">
+        <div className="editorial-surface p-4 space-y-2">
           <p className="eyebrow">Skills needing the most work</p>
           {top3.map(s => {
             const pct = s.accuracy !== null ? Math.round(s.accuracy * 100) : null;
             const pctColor = pct === null
-              ? 'var(--d3-ice)'
-              : pct < 40 ? 'var(--accent-rose)'
-              : pct < 60 ? 'var(--d1-peach)'
-              : 'var(--d2-mint)';
+              ? '#0284c7'
+              : pct < 40 ? '#f43f5e'
+              : pct < 60 ? '#d97706'
+              : '#059669';
             return (
               <div key={s.skillId} className="flex items-center justify-between gap-3">
                 <span className="text-[13px] text-slate-200 truncate">{s.skillName}</span>
@@ -164,7 +165,7 @@ export function TutorEmptyState({
               key={label}
               onClick={() => !disabled && onSelect(message)}
               disabled={disabled}
-              className="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+              className="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
               style={{
                 background: 'rgba(10,22,40,0.5)',
                 border: '1px solid rgba(226,232,240,0.08)',

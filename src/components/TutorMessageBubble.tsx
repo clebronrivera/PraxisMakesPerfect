@@ -2,6 +2,7 @@
 // Renders a single chat message (atelier styling), dispatching to text / quiz / artifact.
 
 import { type ReactNode } from 'react';
+import { Brain } from 'lucide-react';
 import type { ChatMessage } from '../types/tutorChat';
 import { QuizQuestionBubble } from './QuizQuestionBubble';
 import { ArtifactCard } from './ArtifactCard';
@@ -105,10 +106,10 @@ export function TutorMessageBubble({
     );
   }
 
-  // Assistant message — orb avatar on the left, navy-glass bubble
+  // Assistant message — orb avatar on the left, navy-editorial-surface bubble
   return (
     <div className="flex gap-3">
-      <div className="mini-orb mt-1" style={{ width: 26, height: 26 }} aria-hidden="true" />
+      <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600" style={{ width: 26, height: 26 }} aria-hidden="true"><Brain className="text-white" style={{ width: 14, height: 14 }} /></div>
       <div className="flex-1 min-w-0 flex flex-col gap-2">
         <div
           className="px-4 py-3.5 text-[13.5px] leading-relaxed text-slate-200"
@@ -140,7 +141,7 @@ export function TutorMessageBubble({
           <ArtifactCard
             type={message.artifactType}
             payload={message.artifactPayload}
-            variant="atelier"
+            variant="editorial"
           />
         )}
 
