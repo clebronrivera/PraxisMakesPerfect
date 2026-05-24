@@ -378,11 +378,6 @@
           </div>
           <div class="w-px h-8 bg-slate-700/40"></div>
           <div>
-            <div class="counter text-2xl font-semibold text-[color:var(--accent-ice)]" id="ct-items">0</div>
-            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-0.5">Items</div>
-          </div>
-          <div class="w-px h-8 bg-slate-700/40"></div>
-          <div>
             <div class="counter text-2xl font-semibold text-[color:var(--accent-lavender)]" id="ct-modules">0</div>
             <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-0.5">Modules</div>
           </div>
@@ -464,13 +459,11 @@
 
           <!-- Stats strip -->
           <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-slate-500 mb-10 reveal" style="animation-delay: 0.3s">
-            <span><span class="text-[color:var(--accent-peach)] font-semibold">4</span> domains</span>
+            <span>Adaptive diagnostic</span>
             <span class="text-slate-700">·</span>
-            <span><span class="text-[color:var(--accent-mint)] font-semibold">45</span> skills</span>
+            <span>Personalized study path</span>
             <span class="text-slate-700">·</span>
-            <span><span class="text-[color:var(--accent-ice)] font-semibold">1,150</span> items</span>
-            <span class="text-slate-700">·</span>
-            <span><span class="text-[color:var(--accent-lavender)] font-semibold">5</span> modules</span>
+            <span>Progress tracking</span>
           </div>
 
           <!-- Action cards -->
@@ -545,8 +538,8 @@
     { label: 'IEP components', variant: 'lavender' },
 
     // Engine / platform metadata (cream)
-    { label: '1,150 items', variant: 'cream' },
-    { label: '2PL IRT model', variant: 'cream' },
+    { label: 'Adaptive practice', variant: 'cream' },
+    { label: 'Study plan generator', variant: 'cream' },
     { label: 'SRS intervals', variant: 'cream' },
     { label: '78 case patterns', variant: 'cream' },
     { label: '412 glossary terms', variant: 'cream' },
@@ -563,7 +556,7 @@
   const CHIP_INTERVAL = 330;
   const CHIP_LIFE = 2200;
 
-  const COUNTER_TARGETS = { domains: 4, skills: 45, items: 1150, modules: 5 };
+  const COUNTER_TARGETS = { domains: 4, skills: 45, modules: 5 };
 
   // ─── Utilities ───────────────────────────────────────────────────────────
   const rand = (min, max) => Math.random() * (max - min) + min;
@@ -591,7 +584,6 @@
     const eased = 1 - Math.pow(1 - t, 3);
     document.getElementById('ct-domains').textContent  = Math.round(COUNTER_TARGETS.domains * eased);
     document.getElementById('ct-skills').textContent   = Math.round(COUNTER_TARGETS.skills * eased);
-    document.getElementById('ct-items').textContent    = Math.round(COUNTER_TARGETS.items * eased).toLocaleString();
     document.getElementById('ct-modules').textContent  = Math.round(COUNTER_TARGETS.modules * eased);
   }
 
@@ -652,7 +644,6 @@
     document.getElementById('progressbar').style.width = '0%';
     document.getElementById('ct-domains').textContent = '0';
     document.getElementById('ct-skills').textContent = '0';
-    document.getElementById('ct-items').textContent = '0';
     document.getElementById('ct-modules').textContent = '0';
     document.getElementById('tagline-main').innerHTML =
       'Tailoring your <span class="text-[color:var(--accent-peach)]">Praxis 5403</span> path…';
@@ -694,7 +685,6 @@
       cancelAnimationFrame(rafId);
       document.getElementById('ct-domains').textContent = String(COUNTER_TARGETS.domains);
       document.getElementById('ct-skills').textContent  = String(COUNTER_TARGETS.skills);
-      document.getElementById('ct-items').textContent   = COUNTER_TARGETS.items.toLocaleString();
       document.getElementById('ct-modules').textContent = String(COUNTER_TARGETS.modules);
       document.getElementById('ring-fill').style.strokeDashoffset = '0';
       document.getElementById('progressbar').style.width = '100%';

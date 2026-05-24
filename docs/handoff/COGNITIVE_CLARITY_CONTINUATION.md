@@ -41,7 +41,7 @@ visual-diff/
 
 ### Known visual gaps (flag as [FOLLOWUP] in PR, fix if user approves)
 
-- **Login hero stats footer** — ~~4-color domain palette~~ **fixed:** single `amber-700` accent on numbers, neutral slate separators (commit pending).
+- **Login hero** — **platform-level only** (no bank size, calibration claims, domain/skill counts). See `docs/decisions/2026-05-login-hero-marketing.md` and `public/mockup-login-generalized.html`.
 - **Login hero** is single-column centered; mockup may differ in layout density — compare screenshots before changing JSX again.
 - **Authenticated screens** (dashboard, practice, tutor, study guide, learning path, results) were **not screenshot'd** — only login was captured.
 - **DashboardHome** `RedemptionMoon` panel intentionally stays **dark** (CC dual-tone: cream + selective dark accents).
@@ -193,7 +193,7 @@ If netlify dev fails: netlify login, retry.
 TASKS:
 1. Walk every screen in COGNITIVE_CLARITY_CONTINUATION.md §3b; screenshot to visual-diff/after/<name>.png
 2. Run functional regression checks in §3c (diagnostic resume, orphan banner, admin, miss RPC, tutor rail)
-3. Specifically evaluate the login hero's 4-color stats footer (orange/green/blue/purple for "4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated"). Per user's no-domain-colors decision, confirm this is intentional decoration vs accidental domain palette remnant.
+3. Login hero uses generalized platform copy only (no item counts or exam-specific stat row). See ADR `docs/decisions/2026-05-login-hero-marketing.md`.
 4. Grep docs/HOW_THE_APP_WORKS.md for "navy / atelier / orb / Fraunces / editorial" and update per CLAUDE.md's mandatory-update rule for login-page copy changes.
 5. Fix visual-only issues; re-run `npm run check` after changes
 6. Update PR #27 body — check off completed items; mark [FOLLOWUP] for anything deferred

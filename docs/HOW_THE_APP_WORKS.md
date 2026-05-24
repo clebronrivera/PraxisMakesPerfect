@@ -36,9 +36,9 @@ Sign in with an email and password. All data lives in the cloud, so you can pick
 
 **Consent requirement:** During signup, users must check a consent checkbox agreeing to the [Privacy Policy](#privacy) and [Terms of Service](#terms) before their account can be created. Existing users who signed up before this requirement are shown a non-dismissable consent gate on their next login. Both documents are accessible without authentication via `#privacy` and `#terms` hash routes.
 
-Before sign-in, the public entry page is a **Cognitive Clarity** marketing hero on a cream background (`#f7f6f2`): PASS branding, the tagline **"A study plan that listens."**, and two calls to action. There is no decorative orb, starfield, or domain-colored engine visualization on the login page.
+Before sign-in, the public entry page is a **Cognitive Clarity** marketing hero on a cream background (`#f7f6f2`): PASS branding, the headline **"A study platform that listens."**, a short platform-level description, two calls to action, and a **How it works** card (three steps). There is no decorative orb, starfield, or domain-colored engine visualization on the login page.
 
-The stat row under the headline reads: **4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated** (single amber accent on the numbers, neutral slate for labels). Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
+The login hero intentionally does **not** show question-bank size, calibration claims, or exam-specific counts (for example, number of domains, skills, or items). Those details appear after sign-in once the user is in their exam context. Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
 
 Returning candidates scroll to (or click) the sign-in panel — a light editorial card with email + password, plus toggles for Sign up and Forgot password. A beta disclaimer is shown: "Currently in beta. Not responsible for loss of data during the beta period."
 

@@ -25,6 +25,19 @@ const DOMAIN_SKILL_COUNTS = PROGRESS_DOMAINS.map(d => ({
   count: getProgressSkillsForDomain(d.id).length,
 }));
 
+/** Login hero marketing copy — platform-level only (no exam counts, bank size, or calibration claims). */
+const LOGIN_HERO_FEATURES = [
+  'Adaptive diagnostic',
+  'Personalized study path',
+  'Progress tracking',
+] as const;
+
+const LOGIN_HERO_STEPS = [
+  'Complete a short diagnostic to establish your starting point.',
+  'Get a personalized study path focused on your highest-impact gaps.',
+  'Track progress and adjust your plan as your performance improves.',
+] as const;
+
 // ─── Boot sequence terminal lines ────────────────────────────────────────────
 // Each line has an optional `delay` (ms) — the time to wait *before* showing
 // this line. Defaults to 450ms. Section-end checkmarks get 900ms so the eye
@@ -34,7 +47,7 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
   { text: '> Loading ETS Praxis 5403 blueprint...', cls: 'text-emerald-400' },
   { text: '✓ Blueprint integrity verified — sha256 OK', cls: 'text-emerald-300', delay: 900 },
   { text: '> Parsing test specification...', cls: 'text-slate-400' },
-  { text: `  Found: 4 domains · ${ALL_SKILLS.length} skills · 1,150 items`, cls: 'text-cyan-400' },
+  { text: '  Found: exam blueprint + skill architecture', cls: 'text-cyan-400' },
 
   // Phase 2 — Domain + skill registration
   { text: '> Registering domain architecture...', cls: 'text-slate-400' },
@@ -42,7 +55,7 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
     text: `  DOMAIN_0${d.id} ${d.name.padEnd(30)} [${String(d.count).padStart(2)} skills]`,
     cls: ['text-amber-400', 'text-emerald-400', 'text-blue-400', 'text-purple-400'][i],
   })),
-  { text: `✓ ${ALL_SKILLS.length} skills registered across 4 domains`, cls: 'text-emerald-300', delay: 900 },
+  { text: `✓ ${ALL_SKILLS.length} skills registered across ${PROGRESS_DOMAINS.length} domains`, cls: 'text-emerald-300', delay: 900 },
 
   // Phase 3 — Module linkage
   { text: '> Linking skills to adaptive modules...', cls: 'text-slate-400' },
@@ -57,7 +70,7 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
   { text: '> Loading psychometric parameters...', cls: 'text-slate-400' },
   { text: '  2PL IRT model · difficulty + discrimination per item', cls: 'text-cyan-400' },
   { text: '  Confidence signal weighting: ENABLED', cls: 'text-cyan-400' },
-  { text: '✓ 1,150 items calibrated — engine adapts per response', cls: 'text-emerald-300', delay: 900 },
+  { text: '✓ Adaptivity online — engine adjusts after each response', cls: 'text-emerald-300', delay: 900 },
 
   // Phase 5 — Scheduling + handoff
   { text: '> Configuring spaced review scheduler...', cls: 'text-slate-400' },
@@ -285,7 +298,7 @@ export default function LoginScreen() {
   }
 
   // ═════════════════════════════════════════════════════════════════════════
-  // PHASE: HERO — atelier landing (replaces the old select + hero + signin views)
+  // PHASE: HERO — platform landing + sign-in below
   // ═════════════════════════════════════════════════════════════════════════
   return (
     <div
@@ -302,7 +315,7 @@ export default function LoginScreen() {
           </div>
         </div>
         <div className="flex items-center gap-4 md:gap-5">
-          <span className="hidden md:inline text-[10px] tracking-[0.25em] uppercase text-slate-500">Praxis 5403 · Beta</span>
+          <span className="hidden md:inline text-[10px] tracking-[0.25em] uppercase text-slate-500">Beta</span>
           <button
             type="button"
             onClick={() => focusSignInPanel('login')}
@@ -315,21 +328,19 @@ export default function LoginScreen() {
 
       {/* ══════ HERO ══════ */}
       <section className="relative min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center px-6 md:px-10 relative z-30 pt-28 pb-16">
-          <div className="max-w-6xl w-full max-w-2xl mx-auto text-center">
-
-            {/* Left — copy + CTAs */}
-            <div>
+        <div className="flex-1 flex items-center px-6 md:px-10 relative z-30 pt-28 pb-20">
+          <div className="max-w-6xl w-full mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="text-left">
               <p className="text-[11px] font-semibold tracking-[0.32em] uppercase text-amber-600/85 mb-6">
                 Adaptive · Personal · Built around your gaps
               </p>
-              <h1 className="text-5xl md:text-6xl font-bold text-slate-900 leading-[1.05] tracking-tight">
-                A study plan<br />
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 leading-[1.05] tracking-tight">
+                A study platform<br />
                 <span className="text-amber-600">that listens.</span>
               </h1>
-              <p className="text-base text-slate-600 mt-6 leading-relaxed max-w-md">
-                Four domains. 45 skills. 1,150 calibrated items — feeding one adaptive
-                engine that rebuilds itself around your gaps, one answer at a time.
+              <p className="text-base text-slate-600 mt-6 leading-relaxed max-w-xl">
+                Start with a focused diagnostic, then move through personalized practice and a
+                guided study plan that adapts to your performance over time.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 mt-9">
@@ -349,23 +360,47 @@ export default function LoginScreen() {
                 </button>
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-10 text-[11px] text-slate-500">
-                <span><span className="text-amber-700 font-semibold">4</span> domains</span>
-                <span className="text-slate-300">·</span>
-                <span><span className="text-amber-700 font-semibold">45</span> skills</span>
-                <span className="text-slate-300">·</span>
-                <span><span className="text-amber-700 font-semibold">1,150</span> calibrated items</span>
-                <span className="text-slate-300">·</span>
-                <span><span className="text-amber-700 font-semibold">IRT</span>-calibrated</span>
-              </div>
+              <ul className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-slate-600 list-none p-0 m-0">
+                {LOGIN_HERO_FEATURES.map((feature, index) => (
+                  <li key={feature} className="inline-flex items-center gap-2">
+                    {index > 0 && <span className="text-slate-300 hidden sm:inline" aria-hidden="true">·</span>}
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" aria-hidden="true" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-
+            <aside className="rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-sm p-6 md:p-7 shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
+              <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-slate-500 mb-4">
+                How it works
+              </p>
+              <ol className="space-y-4 text-sm text-slate-700 list-none p-0 m-0">
+                {LOGIN_HERO_STEPS.map((step, index) => (
+                  <li key={step} className="flex gap-3">
+                    <span
+                      className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700"
+                      aria-hidden="true"
+                    >
+                      {index + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </aside>
           </div>
         </div>
 
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] uppercase text-slate-600">
-          Already a candidate? <button type="button" onClick={() => focusSignInPanel('login')} className="text-slate-400 hover:text-amber-600 ml-2 underline-offset-4 hover:underline">Sign in ↓</button>
+        <div className="pb-8 text-center text-[10px] tracking-[0.3em] uppercase text-slate-600">
+          Already a candidate?{' '}
+          <button
+            type="button"
+            onClick={() => focusSignInPanel('login')}
+            className="text-amber-700 hover:text-amber-600 underline-offset-4 hover:underline"
+          >
+            Sign in ↓
+          </button>
         </div>
       </section>
 
