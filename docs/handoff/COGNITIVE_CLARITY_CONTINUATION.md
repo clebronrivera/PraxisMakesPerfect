@@ -47,6 +47,7 @@ visual-diff/
 - **DashboardHome** `RedemptionMoon` panel intentionally stays **dark** (CC dual-tone: cream + selective dark accents).
 - **`QuestionCard.tsx`** still has internal `isAtelier` variant branches; all callers use `variant="editorial"`. Cleanup is a separate follow-up — do not bundle into QA fixes unless asked.
 - **`TermsOfService.tsx` / `PrivacyPolicy.tsx`** — `font-serif` untouched (legal docs).
+- **Login hero stats footer** — currently 4 colors (orange/green/blue/purple) for "4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated". May be a remnant of the old D1/D2/D3/D4 domain palette that was explicitly killed. Confirm intent: decorative or accidentally preserved? Per the proficiency-coded-only decision, neutral slate or single-amber is the safe call.
 
 ---
 
@@ -193,13 +194,17 @@ If netlify dev fails: netlify login, retry.
 TASKS:
 1. Walk every screen in COGNITIVE_CLARITY_CONTINUATION.md §3b; screenshot to visual-diff/after/<name>.png
 2. Run functional regression checks in §3c (diagnostic resume, orphan banner, admin, miss RPC, tutor rail)
-3. Login hero uses generalized platform copy only (no item counts or exam-specific stat row). See ADR `docs/decisions/2026-05-login-hero-marketing.md`.
+3. Specifically evaluate the login hero's 4-color stats footer (orange/green/blue/purple for "4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated"). Per user's no-domain-colors decision, confirm this is intentional decoration vs accidental domain palette remnant.
 4. Grep docs/HOW_THE_APP_WORKS.md for "navy / atelier / orb / Fraunces / editorial" and update per CLAUDE.md's mandatory-update rule for login-page copy changes.
 5. Fix visual-only issues; re-run `npm run check` after changes
 6. Update PR #27 body — check off completed items; mark [FOLLOWUP] for anything deferred
    Use: gh pr edit 27 --body "$(cat <<'EOF' ... EOF)"
 
 TRACK PROGRESS: Use TaskCreate for the tasks above; mark in_progress when starting, completed when done.
+
+BAILOUT: If anything spirals — `git reset --hard pre-cognitive-clarity-revert` on branch; PR can be closed without merge.
+
+PR EDIT: Use `gh pr edit 27 --body "$(cat <<'EOF' ... EOF)"` for PR description updates.
 
 DO NOT:
 - Revert PR #14 mechanically
