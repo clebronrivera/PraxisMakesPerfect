@@ -152,7 +152,7 @@ function StatCard({
   return (
     <div
       className="relative overflow-hidden rounded-2xl p-5"
-      style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+      style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
       title={title}
     >
       <span
@@ -162,8 +162,7 @@ function StatCard({
       />
       <p className="eyebrow mb-2">{label}</p>
       <p
-        className={`tabular-nums leading-none font-semibold ${big ? 'text-[32px]' : 'text-[28px]'}`}
-        style={{ color: '#f1f5f9' }}
+        className={`tabular-nums leading-none font-semibold text-slate-900 ${big ? 'text-[32px]' : 'text-[28px]'}`}
       >
         {value}
       </p>
@@ -301,7 +300,7 @@ export default function ResultsDashboard({
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-6 pb-14 text-slate-200">
+    <div className="space-y-6 pb-14 text-slate-700">
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <header className="pt-4">
@@ -399,16 +398,16 @@ export default function ResultsDashboard({
             </div>
             <div
               className="rounded-xl p-4 text-center"
-              style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+              style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
             >
-              <p className="text-[26px] font-semibold text-white tabular-nums">{demonstratingCount}</p>
+              <p className="text-[26px] font-semibold text-slate-900 tabular-nums">{demonstratingCount}</p>
               <p className="text-[11px] text-slate-400 mt-1">Currently Demonstrating</p>
             </div>
             <div
               className="rounded-xl p-4 text-center"
-              style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+              style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
             >
-              <p className="text-[26px] font-semibold text-slate-400 tabular-nums">
+              <p className="text-[26px] font-semibold text-slate-700 tabular-nums">
                 {baselineProgress ? baselineProgress.skills.filter((s) => s.colorState === 'green').length : 0}
               </p>
               <p className="text-[11px] text-slate-500 mt-1">Baseline Demonstrating</p>
@@ -456,7 +455,7 @@ export default function ResultsDashboard({
               <div
                 key={domain.domainId}
                 className="relative overflow-hidden rounded-2xl"
-                style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+                style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
               >
                 <span
                   aria-hidden="true"
@@ -472,7 +471,7 @@ export default function ResultsDashboard({
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-3 mb-2.5">
-                      <p className="text-[15px] font-semibold text-white truncate">{domain.domainName}</p>
+                      <p className="text-[15px] font-semibold text-slate-900 truncate">{domain.domainName}</p>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-[13px] font-semibold tabular-nums" style={{ color }}>
                           {demonstrating} / {domain.activeSkillCount} {PROFICIENCY_META.proficient.label}
@@ -611,7 +610,7 @@ export default function ResultsDashboard({
       {conceptReport && conceptReport.concepts.length > 0 && (
         <section
           className="rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(10,22,40,0.55)', border: '1px solid rgba(226,232,240,0.08)' }}
+          style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
         >
           <button
             onClick={() => setConceptsExpanded((prev) => !prev)}
@@ -619,7 +618,7 @@ export default function ResultsDashboard({
           >
             <div className="flex items-center gap-3">
               <Lightbulb className="w-4 h-4" style={{ color: '#0284c7' }} />
-              <p className="text-[15px] font-semibold text-white">Concept insights</p>
+              <p className="text-[15px] font-semibold text-slate-900">Concept insights</p>
               {conceptReport.summary.totalGaps > 0 && (
                 <span
                   className="rounded-full px-2 py-0.5 text-[10px] font-medium"
@@ -704,7 +703,7 @@ export default function ResultsDashboard({
       {/* ── Advanced statistics ─────────────────────────────────────── */}
       <section
         className="rounded-2xl overflow-hidden"
-        style={{ background: 'rgba(10,22,40,0.55)', border: '1px solid rgba(226,232,240,0.08)' }}
+        style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
       >
         <button
           onClick={() => setAdvancedExpanded((prev) => !prev)}
@@ -712,7 +711,7 @@ export default function ResultsDashboard({
         >
           <div className="flex items-center gap-3">
             <Clock className="w-4 h-4" style={{ color: '#d97706' }} />
-            <p className="text-[15px] font-semibold text-white">Advanced statistics</p>
+            <p className="text-[15px] font-semibold text-slate-900">Advanced statistics</p>
           </div>
           {advancedExpanded
             ? <ChevronUp className="w-4 h-4 text-slate-500" />
@@ -753,14 +752,14 @@ export default function ResultsDashboard({
                                   className="w-2 h-2 rounded-full shrink-0"
                                   style={{ background: color, boxShadow: `0 0 6px ${color}` }}
                                 />
-                                <p className="truncate text-[12.5px] text-slate-300">{d.domainName}</p>
+                                <p className="truncate text-[12.5px] text-slate-700">{d.domainName}</p>
                                 {isMax && (
                                   <span className="text-[10px] uppercase tracking-wider" style={{ color: '#d97706' }}>
                                     most time
                                   </span>
                                 )}
                               </div>
-                              <span className="shrink-0 text-[12.5px] font-semibold tabular-nums text-white">
+                              <span className="shrink-0 text-[12.5px] font-semibold tabular-nums text-slate-900">
                                 {formatTime(stat.avg)}
                               </span>
                             </div>
@@ -802,7 +801,7 @@ export default function ResultsDashboard({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-[12.5px] text-slate-400">Raw accuracy</p>
-                    <span className="text-[12.5px] font-semibold tabular-nums text-white">{rawPct}%</span>
+                    <span className="text-[12.5px] font-semibold tabular-nums text-slate-900">{rawPct}%</span>
                   </div>
                   {weightedPct !== null && (
                     <div className="flex items-center justify-between gap-3">
@@ -921,7 +920,7 @@ function ConceptSection({
         {items.map((item) => (
           <div key={item.key} className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] text-slate-200 truncate">{item.primary}</p>
+              <p className="text-[13px] text-slate-700 truncate">{item.primary}</p>
               <p className="text-[11px] text-slate-500 truncate">{item.secondary}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">

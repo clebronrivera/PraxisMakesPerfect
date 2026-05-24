@@ -104,7 +104,7 @@ function StudyGuideTabWrapper({
         <h2 className="text-4xl font-semibold tracking-tight text-slate-900 leading-tight">
           A guide built around your <span className="text-amber-600">gaps.</span>
         </h2>
-        <p className="mt-3 text-[14px] text-slate-400 max-w-xl leading-relaxed">
+        <p className="mt-3 text-[14px] text-slate-600 max-w-xl leading-relaxed">
           Platform guide · your personalized study plan · vocabulary practice — all in one place.
         </p>
       </div>
@@ -145,16 +145,15 @@ function StudyGuideTabWrapper({
             ].map(item => (
               <div
                 key={item.title}
-                className="relative rounded-xl p-3 pl-4"
-                style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+                className="relative rounded-xl border border-slate-200 bg-white p-3 pl-4 shadow-sm transition hover:border-slate-300 hover:shadow-md"
               >
                 <span
                   aria-hidden="true"
                   className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full"
-                  style={{ background: item.accent, boxShadow: `0 0 6px ${item.accent}` }}
+                  style={{ background: item.accent }}
                 />
-                <p className="text-xs font-semibold text-white mb-1">{item.title}</p>
-                <p className="text-[11px] text-slate-400 leading-relaxed">{item.desc}</p>
+                <p className="text-xs font-semibold text-slate-900 mb-1">{item.title}</p>
+                <p className="text-[11px] text-slate-600 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -177,7 +176,7 @@ function StudyGuideTabWrapper({
       {activeTab === 'vocabulary' && (
         <div className="editorial-surface p-6 space-y-4">
           <p className="eyebrow mb-1">Vocabulary &amp; Term Sprint</p>
-          <p className="text-[13px] text-slate-400 leading-relaxed max-w-xl">
+          <p className="text-[13px] text-slate-600 leading-relaxed max-w-xl">
             Review your flagged terms and test your vocabulary knowledge across 396 school psychology terms.
           </p>
           <button onClick={onNavigateToGlossary} className="editorial-button-primary">
@@ -811,7 +810,7 @@ function PraxisStudyAppContent() {
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-200/20 blur-3xl" />
       </div>
 
-      <aside className={`hidden lg:flex lg:flex-shrink-0 lg:flex-col lg:bg-[#0f172a] lg:shadow-2xl transition-all duration-300 ${sidebarCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-64'}`}>
+      <aside className={`hidden lg:flex lg:flex-shrink-0 lg:flex-col lg:bg-white lg:border-r lg:border-slate-200 transition-all duration-300 ${sidebarCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-64'}`}>
         <div className={`${sidebarCollapsed ? 'p-3 pt-6' : 'p-8'}`}>
           {/* ── Logo ── */}
           <div className={`group mb-10 flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
@@ -825,7 +824,7 @@ function PraxisStudyAppContent() {
             </div>
             {!sidebarCollapsed && (
               <div>
-                <p className="text-xl font-bold italic tracking-tight text-white">
+                <p className="text-xl font-bold italic tracking-tight text-slate-900">
                   Praxis<span className="text-amber-500">.</span>Ai
                 </p>
                 <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">School Psychology 5403</p>
@@ -876,7 +875,7 @@ function PraxisStudyAppContent() {
         <div className={`px-3 pb-3 ${sidebarCollapsed ? '' : 'px-8'}`}>
           <button
             onClick={() => setSidebarCollapsed(prev => !prev)}
-            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-slate-500 hover:text-slate-300 hover:bg-white transition-all text-xs"
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all text-xs"
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {sidebarCollapsed ? (
@@ -891,7 +890,7 @@ function PraxisStudyAppContent() {
         </div>
 
         {/* ── Profile card ── */}
-        <div className={`mt-auto border-t border-slate-200 bg-black/20 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
+        <div className={`mt-auto border-t border-slate-200 bg-slate-50 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
           <button
             type="button"
             onClick={openProfileEditor}
@@ -907,12 +906,12 @@ function PraxisStudyAppContent() {
               >
                 <User
                   className="h-4 w-4"
-                  style={{ color: '#fcd34d' }}
+                  style={{ color: '#d97706' }}
                 />
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-white">{displayName}</p>
+                  <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
                   {profileRoleLabel && (
                     <p
                       className="text-[10px] font-black uppercase tracking-[0.08em] leading-snug break-words"
