@@ -98,11 +98,11 @@ function StudyGuideTabWrapper({
   ];
 
   return (
-    <div className="space-y-5 pb-16 text-slate-200">
+    <div className="space-y-5 pb-16 text-slate-900">
       <div className="pt-4">
         <p className="eyebrow mb-2">Your plan</p>
-        <h2 className="text-4xl font-semibold tracking-tight text-white leading-tight">
-          A guide built around your <span className="gradient-text-warm">gaps.</span>
+        <h2 className="text-4xl font-semibold tracking-tight text-slate-900 leading-tight">
+          A guide built around your <span className="text-amber-600">gaps.</span>
         </h2>
         <p className="mt-3 text-[14px] text-slate-400 max-w-xl leading-relaxed">
           Platform guide · your personalized study plan · vocabulary practice — all in one place.
@@ -110,24 +110,20 @@ function StudyGuideTabWrapper({
       </div>
 
       {/* Tab bar — atelier underline style */}
-      <div className="flex items-center gap-8 border-b border-white/8 overflow-x-auto">
+      <div className="flex items-center gap-8 border-b border-slate-200 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`relative py-3.5 text-[13px] font-medium transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)] ${
-              activeTab === tab.id ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+            className={`relative py-3.5 text-[13px] font-medium transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 ${
+              activeTab === tab.id ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
             {tab.label}
             {activeTab === tab.id && (
               <span
                 aria-hidden="true"
-                className="absolute -bottom-px left-0 right-0 h-0.5 rounded-full"
-                style={{
-                  background: 'linear-gradient(90deg, var(--d1-peach), var(--accent-rose), var(--d4-lavender))',
-                  boxShadow: '0 0 8px rgba(252,213,180,0.4)',
-                }}
+                className="absolute -bottom-px left-0 right-0 h-0.5 rounded-full bg-amber-500"
               />
             )}
           </button>
@@ -136,16 +132,16 @@ function StudyGuideTabWrapper({
 
       {/* Tab content */}
       {activeTab === 'platform' && (
-        <div className="glass p-6 space-y-4">
+        <div className="editorial-surface p-6 space-y-4">
           <p className="eyebrow mb-2">How to use the platform</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {[
-              { title: 'Adaptive Diagnostic', desc: '45–90 questions that adapt to your performance. Maps all 45 skills in one session.', accent: 'var(--d1-peach)' },
-              { title: 'Learning Path',       desc: 'Structured micro-lessons ordered by your gaps. Lesson → quiz → extend for each skill.', accent: 'var(--d2-mint)' },
-              { title: 'Term Sprint',         desc: '396 school psychology terms, 10 seconds each, both directions. Build vocabulary fluency.', accent: 'var(--d3-ice)' },
-              { title: 'Spaced Review',       desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.', accent: 'var(--d4-lavender)' },
-              { title: 'Redemption Rounds',   desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.', accent: 'var(--accent-rose)' },
-              { title: 'AI Tutor',            desc: 'Conversational study assistant. Ask questions, get quizzed on weak areas, generate vocabulary lists.', accent: 'var(--d1-peach)' },
+              { title: 'Adaptive Diagnostic', desc: '45–90 questions that adapt to your performance. Maps all 45 skills in one session.', accent: '#d97706' },
+              { title: 'Learning Path',       desc: 'Structured micro-lessons ordered by your gaps. Lesson → quiz → extend for each skill.', accent: '#059669' },
+              { title: 'Term Sprint',         desc: '396 school psychology terms, 10 seconds each, both directions. Build vocabulary fluency.', accent: '#0284c7' },
+              { title: 'Spaced Review',       desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.', accent: '#6366f1' },
+              { title: 'Redemption Rounds',   desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.', accent: '#f43f5e' },
+              { title: 'AI Tutor',            desc: 'Conversational study assistant. Ask questions, get quizzed on weak areas, generate vocabulary lists.', accent: '#d97706' },
             ].map(item => (
               <div
                 key={item.title}
@@ -179,12 +175,12 @@ function StudyGuideTabWrapper({
       )}
 
       {activeTab === 'vocabulary' && (
-        <div className="glass p-6 space-y-4">
+        <div className="editorial-surface p-6 space-y-4">
           <p className="eyebrow mb-1">Vocabulary &amp; Term Sprint</p>
           <p className="text-[13px] text-slate-400 leading-relaxed max-w-xl">
             Review your flagged terms and test your vocabulary knowledge across 396 school psychology terms.
           </p>
-          <button onClick={onNavigateToGlossary} className="btn-soft-glow">
+          <button onClick={onNavigateToGlossary} className="editorial-button-primary">
             Open Glossary &amp; Start Term Sprint →
           </button>
         </div>
@@ -201,13 +197,6 @@ function PraxisStudyAppContent() {
   type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
-  // Atelier rollout: which modes render in the dark-navy shell.
-  // Everything else stays in the light editorial-shell until migrated.
-  // Step 4.5 added: study-notebook, glossary, help (light-touch token pass).
-  const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([
-    'home', 'practice', 'practice-hub', 'study-guide', 'tutor', 'results',
-    'study-notebook', 'glossary', 'help',
-  ]);
 
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();
@@ -676,7 +665,7 @@ function PraxisStudyAppContent() {
   // Show loading while checking auth, loading profile, or fetching content
   if (authLoading || !isLoaded || contentLoading || canonicalLoading || canonicalQuestions.length === 0) {
     return (
-      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#f7f6f2] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-glow-cyan animate-pulse">
             <Brain className="w-5 h-5 text-white" />
@@ -805,11 +794,10 @@ function PraxisStudyAppContent() {
     );
   })();
 
-  const isAtelier = ATELIER_MODES.has(mode);
 
   return (
     <div
-      className={`${isAtelier ? 'shell-atelier' : 'editorial-shell'} flex h-screen overflow-hidden`}
+      className="editorial-shell flex h-screen overflow-hidden"
       style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}
     >
       {/* Tutorial walkthrough overlay */}
@@ -828,21 +816,17 @@ function PraxisStudyAppContent() {
           {/* ── Logo ── */}
           <div className={`group mb-10 flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
             <div className="relative">
-              {isAtelier ? (
-                <div className="mini-orb" aria-hidden="true" />
-              ) : (
-                <>
+              {<>
                   <div className="absolute inset-0 bg-amber-500 opacity-20 blur-lg transition-opacity group-hover:opacity-60" />
                   <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
                     <Brain className="h-5 w-5 text-white" />
                   </div>
-                </>
-              )}
+                </>}
             </div>
             {!sidebarCollapsed && (
               <div>
                 <p className="text-xl font-bold italic tracking-tight text-white">
-                  Praxis<span className={isAtelier ? 'text-[color:var(--d1-peach)]' : 'text-amber-500'}>.</span>Ai
+                  Praxis<span className="text-amber-500">.</span>Ai
                 </p>
                 <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">School Psychology 5403</p>
               </div>
@@ -870,7 +854,7 @@ function PraxisStudyAppContent() {
                   onClick={tab.onClick}
                   className={`editorial-sidebar-item ${
                     tab.active
-                      ? (isAtelier ? 'atelier-sidebar-item-active' : 'editorial-sidebar-item-active')
+                      ? 'editorial-sidebar-item-active'
                       : ''
                   } ${sidebarCollapsed ? 'justify-center px-0' : ''} relative`}
                   title={sidebarCollapsed ? tab.label : undefined}
@@ -892,7 +876,7 @@ function PraxisStudyAppContent() {
         <div className={`px-3 pb-3 ${sidebarCollapsed ? '' : 'px-8'}`}>
           <button
             onClick={() => setSidebarCollapsed(prev => !prev)}
-            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all text-xs"
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-slate-500 hover:text-slate-300 hover:bg-white transition-all text-xs"
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {sidebarCollapsed ? (
@@ -907,23 +891,23 @@ function PraxisStudyAppContent() {
         </div>
 
         {/* ── Profile card ── */}
-        <div className={`mt-auto border-t border-white/5 bg-black/20 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
+        <div className={`mt-auto border-t border-slate-200 bg-black/20 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
           <button
             type="button"
             onClick={openProfileEditor}
-            className={`w-full rounded-[1.75rem] border border-white/5 bg-white/5 text-left transition hover:border-white/15 hover:bg-white/10 focus:outline-none focus-visible:ring-2 ${isAtelier ? 'focus-visible:ring-[color:var(--d1-peach)]/60' : 'focus-visible:ring-amber-400/60'} ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
+            className={`w-full rounded-[1.75rem] border border-slate-200 bg-white text-left transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
           >
             <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
               <div
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
                 style={{
-                  background: isAtelier ? 'color-mix(in srgb, var(--d1-peach) 18%, transparent)' : 'rgba(245,158,11,0.2)',
-                  border: isAtelier ? '1px solid color-mix(in srgb, var(--d1-peach) 35%, transparent)' : '1px solid rgba(245,158,11,0.3)',
+                  background: 'rgba(245,158,11,0.2)',
+                  border: '1px solid rgba(245,158,11,0.3)',
                 }}
               >
                 <User
                   className="h-4 w-4"
-                  style={{ color: isAtelier ? 'var(--d1-peach)' : '#fcd34d' }}
+                  style={{ color: '#fcd34d' }}
                 />
               </div>
               {!sidebarCollapsed && (
@@ -932,7 +916,7 @@ function PraxisStudyAppContent() {
                   {profileRoleLabel && (
                     <p
                       className="text-[10px] font-black uppercase tracking-[0.08em] leading-snug break-words"
-                      style={{ color: isAtelier ? 'var(--d1-peach)' : '#f59e0b' }}
+                      style={{ color: '#f59e0b' }}
                     >
                       {profileRoleLabel}
                     </p>
@@ -947,25 +931,17 @@ function PraxisStudyAppContent() {
 
       <main className="relative z-10 flex-1 flex flex-col overflow-hidden">
         <header
-          className={`sticky top-0 z-50 border-b backdrop-blur-md ${
-            isAtelier
-              ? 'border-white/5 bg-navy-900/85'
-              : 'border-slate-200 bg-[#f7f6f2]/85'
-          }`}
+          className="sticky top-0 z-50 border-b backdrop-blur-md border-slate-200 bg-[#f7f6f2]/85"
         >
           <div className="mx-auto max-w-[92rem] px-5 py-3.5 sm:px-8">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 lg:hidden">
-                {isAtelier ? (
-                  <div className="mini-orb" aria-hidden="true" style={{ width: 36, height: 36 }} />
-                ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
                     <Brain className="h-5 w-5 text-white" />
                   </div>
-                )}
                 <div>
-                  <p className={`text-base font-bold tracking-tight ${isAtelier ? 'text-white' : 'text-slate-900'}`}>Praxis Study</p>
-                  <p className={`text-[11px] font-black uppercase tracking-[0.1em] ${isAtelier ? 'text-slate-500' : 'text-slate-400'}`}>School Psychology 5403</p>
+                  <p className="text-base font-bold tracking-tight text-slate-900">Praxis Study</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">School Psychology 5403</p>
                 </div>
               </div>
 
@@ -1241,7 +1217,7 @@ function PraxisStudyAppContent() {
                 const domainInfo = ctx?.domainId ? PROGRESS_DOMAINS.find(d => d.id === ctx.domainId) : null;
                 const contextLabel = skillName ?? (domainInfo ? `Domain ${domainInfo.id}: ${domainInfo.name}` : 'Practice session');
                 return (
-                  <div className="glass flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="editorial-surface flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="eyebrow">Resume</p>
                       <p className="mt-2 text-lg font-bold text-white">Practice in progress</p>
@@ -1253,7 +1229,7 @@ function PraxisStudyAppContent() {
                         else if (ctx?.type === 'domain' && ctx.domainId) startPractice(ctx.domainId);
                         else startPractice();
                       }}
-                      className="btn-soft-glow shrink-0"
+                      className="editorial-button-primary shrink-0"
                     >
                       Resume session →
                     </button>
@@ -1262,7 +1238,7 @@ function PraxisStudyAppContent() {
               }
 
               return (
-                <div className="glass flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="editorial-surface flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="eyebrow">Resume</p>
                     <p className="mt-2 text-lg font-bold text-white">
@@ -1325,7 +1301,7 @@ function PraxisStudyAppContent() {
                           void startAdaptiveDiagnostic();
                         }
                       }}
-                      className="btn-soft-glow"
+                      className="editorial-button-primary"
                     >
                       Resume →
                     </button>
@@ -1339,7 +1315,7 @@ function PraxisStudyAppContent() {
                           if (profile.lastSession) updateProfile({ lastSession: null });
                           if (savedSession) handleDiscardSession();
                         }}
-                        className="btn-ghost-atelier"
+                        className="editorial-button-secondary"
                       >
                         Discard
                       </button>
@@ -1387,7 +1363,7 @@ function PraxisStudyAppContent() {
                       >
                         Start over
                       </button>
-                      <button type="button" className="btn-ghost-atelier" onClick={clearAdaptiveResumeError}>
+                      <button type="button" className="editorial-button-secondary" onClick={clearAdaptiveResumeError}>
                         Dismiss
                       </button>
                     </div>
@@ -1563,7 +1539,7 @@ function PraxisStudyAppContent() {
             <div className="pt-4">
               <p className="eyebrow mb-2">Practice</p>
               <h2 className="text-4xl font-semibold tracking-tight text-white">
-                Choose your <span className="gradient-text-warm">focus.</span>
+                Choose your <span className="text-amber-600">focus.</span>
               </h2>
               <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-slate-400">
                 Practice by domain, by skill, or follow your personalized learning path.
