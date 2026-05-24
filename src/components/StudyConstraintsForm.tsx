@@ -50,36 +50,36 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
     : null;
 
   const activeToggleClass =
-    'bg-[color:#d97706]/20 text-white border border-amber-300/50';
+    'bg-amber-100 text-amber-900 border border-amber-300';
   const idleToggleClass =
-    'bg-white text-slate-300 border border-slate-200 hover:bg-slate-50 hover:text-white hover:border-amber-300/30';
+    'bg-white text-slate-600 border border-slate-200 hover:bg-amber-50 hover:text-amber-900 hover:border-amber-200';
   const focusRing =
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px]">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
-        className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white ${focusRing}`}
+        className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 ${focusRing}`}
       >
         <div className="flex items-center gap-2">
           <Settings2 className="w-4 h-4" style={{ color: '#d97706' }} />
-          <span className="text-sm font-medium text-white">Study Settings</span>
-          <span className="text-xs text-slate-400">(optional — improves scheduling)</span>
+          <span className="text-sm font-medium text-slate-900">Study Settings</span>
+          <span className="text-xs text-slate-500">(optional — improves scheduling)</span>
         </div>
         {isOpen
-          ? <ChevronUp   className="w-4 h-4 text-slate-400 flex-shrink-0" />
-          : <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          ? <ChevronUp   className="w-4 h-4 text-slate-500 flex-shrink-0" />
+          : <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0" />
         }
       </button>
 
       {isOpen && (
-        <div className="space-y-5 border-t border-slate-200 bg-[rgba(10,22,40,0.55)] px-4 pb-4">
+        <div className="space-y-5 border-t border-slate-200 bg-slate-50 px-4 pb-4">
 
           {/* Test date */}
           <div className="pt-4 space-y-2">
-            <label className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
               <Calendar className="w-3.5 h-3.5" />
               Test Date
             </label>
@@ -89,10 +89,10 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                 value={value.testDate ?? ''}
                 min={new Date().toISOString().split('T')[0]}
                 onChange={e => update({ testDate: e.target.value || undefined })}
-                className={`rounded-xl border border-slate-200 bg-[rgba(10,22,40,0.45)] px-3 py-2 text-sm text-slate-200 transition-colors focus:border-[color:#d97706] focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/20 [color-scheme:dark]`}
+                className={`rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20`}
               />
               {weeksUntilTest !== null && (
-                <span className="text-sm text-slate-400">
+                <span className="text-sm text-slate-500">
                   {weeksUntilTest === 0
                     ? 'This week!'
                     : `${weeksUntilTest} week${weeksUntilTest === 1 ? '' : 's'} away`}
@@ -103,7 +103,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Study days per week */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
               <Clock className="w-3.5 h-3.5" />
               Days per week
             </label>
@@ -125,7 +125,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Session duration */}
           <div className="space-y-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
               Minutes per session
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -146,7 +146,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Weekend block */}
           <div className="space-y-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
               Weekend study block
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -167,7 +167,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Intensity */}
           <div className="space-y-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
               Study intensity
             </label>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -178,8 +178,8 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                   onClick={() => update({ intensity: opt.value })}
                   className={`px-3 py-2.5 rounded-xl text-left transition-all border ${focusRing} ${
                     (value.intensity ?? 'moderate') === opt.value
-                      ? 'border-amber-300/50 bg-[color:#d97706]/15 text-white'
-                      : 'border-slate-200 bg-white text-slate-300 hover:border-amber-300/30 hover:text-white'
+                      ? 'border-amber-300 bg-amber-100 text-amber-900'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-900'
                   }`}
                 >
                   <p className="text-sm font-semibold">{opt.label}</p>

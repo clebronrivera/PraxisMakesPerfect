@@ -141,12 +141,12 @@ export default function SkillHelpDrawer({
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-[rgba(6,13,26,0.6)] backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[85vh] flex-col rounded-t-[2rem] border-t border-slate-200 bg-[rgba(10,22,40,0.9)] backdrop-blur-[14px]"
+        className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[85vh] flex-col rounded-t-[2rem] border-t border-white/10 bg-[#0f172a]"
         style={{ boxShadow: '0 -12px 40px -8px rgba(0,0,0,0.6)' }}
       >
 
@@ -163,7 +163,7 @@ export default function SkillHelpDrawer({
                   setActiveModuleId(primaryModule?.id ?? null);
                   if (primaryModule) progress.onOpenModule(primaryModule.id);
                 }}
-                className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-white hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
+                className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -180,7 +180,7 @@ export default function SkillHelpDrawer({
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 rounded-xl p-2 text-slate-400 transition-colors hover:bg-white hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
+            className="shrink-0 rounded-xl p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
           >
             <X className="w-4 h-4" />
           </button>
@@ -198,8 +198,8 @@ export default function SkillHelpDrawer({
                 }}
                 className={`shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
                   activeModuleId === m.id
-                    ? 'border-amber-300/50 bg-[color:#d97706]/15 text-white'
-                    : 'border-slate-200 bg-white text-slate-400 hover:border-amber-300/30 hover:text-white'
+                    ? 'border-amber-400/50 bg-amber-500/15 text-amber-300'
+                    : 'border-white/10 bg-white/6 text-slate-400 hover:border-amber-400/30 hover:bg-white/12 hover:text-white'
                 }`}
               >
                 {progress.isViewed(m.id) && (

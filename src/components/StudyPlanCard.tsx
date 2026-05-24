@@ -60,14 +60,14 @@ export default function StudyPlanCard({
   return (
     <section className="editorial-surface overflow-hidden">
       {/* ── Hero header ── */}
-      <div className="border-b border-slate-200 bg-[rgba(10,22,40,0.5)] px-6 py-5">
+      <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-sm shrink-0">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">AI Study Guide</h3>
+              <h3 className="text-lg font-bold text-slate-900">AI Study Guide</h3>
               <p className="mt-0.5 text-xs text-slate-500">
                 Personalized plan from your performance data
               </p>
@@ -132,7 +132,7 @@ export default function StudyPlanCard({
 
       {/* ── Settings panel (collapsible) ── */}
       {canGenerate && settingsOpen && (
-        <div className="border-b border-slate-200 bg-[rgba(10,22,40,0.5)] px-6 py-4">
+        <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
           <StudyConstraintsForm value={constraints} onChange={setConstraints} />
         </div>
       )}
@@ -182,8 +182,8 @@ export default function StudyPlanCard({
                   onClick={() => setSelectedId(entry.id)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
                     isActive
-                      ? 'border-amber-300/50 bg-[color:#d97706]/10 text-white'
-                      : 'border-slate-200 bg-white text-slate-400 hover:bg-slate-50 hover:border-amber-300/30 hover:text-white'
+                      ? 'border-amber-300 bg-amber-50 text-amber-900'
+                      : 'border-slate-200 bg-white text-slate-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-900'
                   }`}
                 >
                   <span className={readinessBadgeCls(snap.readinessLevel)}>{readinessLabel(snap.readinessLevel)}</span>
@@ -215,7 +215,7 @@ export default function StudyPlanCard({
                 {readinessLabel(activePlan.readinessSnapshot.readinessLevel)}
               </span>
             </div>
-            <button className="text-slate-300 group-hover:text-slate-400 transition-colors">
+            <button className="text-slate-400 group-hover:text-slate-600 transition-colors">
               {planOpen
                 ? <ChevronUp className="w-4 h-4" />
                 : <ChevronRight className="w-4 h-4" />}

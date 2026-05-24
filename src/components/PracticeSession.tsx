@@ -1032,7 +1032,7 @@ export default function PracticeSession({
       {/* ── Pause Overlay ────────────────────────────────────────────────────── */}
       {isPaused && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f7f6f2]/70 backdrop-blur-md">
-          <div className="mx-4 max-w-sm space-y-6 rounded-[2rem] border border-slate-200 p-8 text-center" style={{ background: 'rgba(10,22,40,0.95)', boxShadow: '0 24px 70px rgba(0,0,0,0.5)' }}>
+          <div className="mx-4 max-w-sm space-y-6 rounded-[2rem] border border-white/10 p-8 text-center" style={{ background: '#0f172a', boxShadow: '0 24px 70px rgba(0,0,0,0.5)' }}>
             <Pause className="mx-auto h-12 w-12 text-amber-600" />
             <div>
               <h3 className="text-xl font-bold text-white">Session Paused</h3>

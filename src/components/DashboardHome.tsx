@@ -82,12 +82,12 @@ function ReadinessArc({ pct, phase }: { pct: number; phase: string }) {
 <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full -rotate-90" aria-hidden="true">
         <defs>
           <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#fde4c1" />
-            <stop offset="50%" stopColor="#fbcfe8" />
-            <stop offset="100%" stopColor="#d8d5fc" />
+            <stop offset="0%" stopColor="#fde68a" />
+            <stop offset="50%" stopColor="#fbbf24" />
+            <stop offset="100%" stopColor="#f59e0b" />
           </linearGradient>
         </defs>
-        <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(226,232,240,0.08)" strokeWidth="8" />
+        <circle cx="100" cy="100" r="84" fill="none" stroke="#e2e8f0" strokeWidth="8" />
         <circle
           cx="100"
           cy="100"
@@ -98,7 +98,7 @@ function ReadinessArc({ pct, phase }: { pct: number; phase: string }) {
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          style={{ filter: 'drop-shadow(0 0 8px rgba(252,213,180,0.5))' }}
+          style={{ filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.5))' }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -151,7 +151,7 @@ function DomainRow({
       {/* pct */}
       <p className="text-[15px] font-semibold" style={{ color }}>{pct}%</p>
       {/* gradient bar */}
-      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(226,232,240,0.08)' }}>
+      <div className="h-1.5 rounded-full overflow-hidden bg-slate-200">
         <div
           className="h-full rounded-full"
           style={{
@@ -202,7 +202,7 @@ function RedemptionMoon({
   return (
     <div
       className="relative overflow-hidden rounded-2xl p-5"
-      style={{ background: 'rgba(6,13,26,0.75)', border: '1px solid rgba(216,180,254,0.22)' }}
+      style={{ background: '#0f172a', border: '1px solid rgba(216,180,254,0.22)' }}
     >
       {/* crescent glow */}
       <span
@@ -217,7 +217,7 @@ function RedemptionMoon({
       <span
         aria-hidden="true"
         className="absolute -top-8 -right-20 w-36 h-36 rounded-full"
-        style={{ background: 'rgba(6,13,26,0.92)' }}
+        style={{ background: '#0f172a' }}
       />
 
       <div className="relative z-10">
@@ -225,7 +225,7 @@ function RedemptionMoon({
           Quarantine · Redemption
         </p>
         <p className="text-[32px] font-semibold text-white leading-none">
-          {bankCount} <span className="text-base text-slate-500 font-normal">in orbit</span>
+          {bankCount} <span className="text-base text-slate-500 font-normal">in queue</span>
         </p>
         <p className="text-[12px] text-slate-400 mt-2 leading-relaxed">
           Questions flagged through hints or repeated misses. Clear them through focused redemption rounds.
@@ -305,13 +305,12 @@ function FeatureTile({
   return (
     <button
       onClick={onClick}
-      className="relative overflow-hidden rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
-      style={{ background: 'rgba(10,22,40,0.45)', border: `1px solid rgba(226,232,240,0.08)` }}
+      className="relative overflow-hidden rounded-2xl p-4 text-left border border-slate-200 bg-white transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
     >
       <span
         aria-hidden="true"
         className="absolute -top-10 -right-10 w-28 h-28 rounded-full"
-        style={{ background: `radial-gradient(circle, ${accent}40 0%, transparent 70%)`, opacity: 0.5 }}
+        style={{ background: `radial-gradient(circle, ${accent}20 0%, transparent 70%)`, opacity: 0.6 }}
       />
       <div className="relative">
         <div className="flex items-center justify-between mb-3">
@@ -327,8 +326,12 @@ function FeatureTile({
           </div>
           {chip && (
             <span
-              className="chip-atelier"
-              style={{ color: accent }}
+              className="text-[9px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-full"
+              style={{
+                color: accent,
+                border: `1px solid color-mix(in srgb, ${accent} 30%, transparent)`,
+                background: `color-mix(in srgb, ${accent} 12%, transparent)`,
+              }}
             >
               {chip}
             </span>
@@ -467,38 +470,13 @@ export default function DashboardHome({
 
           {/* Priority hero (peach glow) */}
           {weakestSkill ? (
-            <div
-              className="relative overflow-hidden rounded-2xl p-[18px_20px]"
-              style={{
-                background: 'rgba(10,22,40,0.6)',
-                border: '1px solid color-mix(in srgb, #d97706 28%, transparent)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(135deg, color-mix(in srgb, #d97706 12%, transparent) 0%, transparent 60%)',
-                }}
-              />
-              <span
-                aria-hidden="true"
-                className="absolute -top-8 -right-8 w-36 h-36 rounded-full"
-                style={{
-                  background:
-                    'radial-gradient(circle, color-mix(in srgb, #d97706 18%, transparent) 0%, transparent 70%)',
-                }}
-              />
-              <div className="relative flex items-center gap-4">
-                <div
-                  className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
-                  style={{ background: 'rgba(252,213,180,0.12)', border: '1px solid rgba(252,213,180,0.35)' }}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="#fcd5b4" strokeWidth="2" viewBox="0 0 24 24">
+            <div className="rounded-2xl p-[18px_20px] bg-amber-50 border border-amber-200">
+              <div className="flex items-center gap-4">
+                <div className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center bg-amber-100 border border-amber-200">
+                  <svg className="w-5 h-5" fill="none" stroke="#d97706" strokeWidth="2" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="9" />
                     <circle cx="12" cy="12" r="5" />
-                    <circle cx="12" cy="12" r="1.5" fill="#fcd5b4" />
+                    <circle cx="12" cy="12" r="1.5" fill="#d97706" />
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -508,19 +486,14 @@ export default function DashboardHome({
                     </span>
                     <span className="text-[10px] text-slate-500">{weakestSkill.domain}</span>
                   </div>
-                  <p className="text-[15px] font-semibold text-white leading-tight">{weakestSkill.name}</p>
-                  <p className="text-[12px] text-slate-400 mt-1">
-                    {weakestSkill.emergingCount} skill{weakestSkill.emergingCount !== 1 ? 's' : ''} below 60% in this
-                    domain.
+                  <p className="text-[15px] font-semibold text-slate-900 leading-tight">{weakestSkill.name}</p>
+                  <p className="text-[12px] text-slate-600 mt-1">
+                    {weakestSkill.emergingCount} skill{weakestSkill.emergingCount !== 1 ? 's' : ''} below 60% in this domain — start here.
                   </p>
                 </div>
                 <button
                   onClick={() => onStartSkillPractice(weakestSkill.skillId)}
-                  className="shrink-0 rounded-full px-4 py-2 text-[11px] font-semibold transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
-                  style={{
-                    color: '#1e1b3a',
-                    background: 'linear-gradient(135deg, #fde4c1, #d97706)',
-                  }}
+                  className="editorial-button-primary shrink-0 text-[11px] px-4 py-2 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
                 >
                   Practice →
                 </button>
@@ -542,8 +515,8 @@ export default function DashboardHome({
                 <span className="eyebrow w-14 shrink-0 text-left" style={{ color: '#0284c7' }}>
                   Then
                 </span>
-                <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(205,233,245,0.1)', border: '1px solid rgba(205,233,245,0.22)' }}>
-                  <svg className="w-4 h-4" fill="none" stroke="#cde9f5" strokeWidth="2" viewBox="0 0 24 24">
+                <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 border border-blue-100">
+                  <svg className="w-4 h-4" fill="none" stroke="#0284c7" strokeWidth="2" viewBox="0 0 24 24">
                     <path d="M4 6h16M4 12h16M4 18h10" />
                   </svg>
                 </div>
@@ -567,8 +540,8 @@ export default function DashboardHome({
               <span className="eyebrow w-14 shrink-0 text-left" style={{ color: '#059669' }}>
                 Then
               </span>
-              <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(184,242,216,0.1)', border: '1px solid rgba(184,242,216,0.22)' }}>
-                <svg className="w-4 h-4" fill="none" stroke="#b8f2d8" strokeWidth="2" viewBox="0 0 24 24">
+              <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-50 border border-emerald-100">
+                <svg className="w-4 h-4" fill="none" stroke="#059669" strokeWidth="2" viewBox="0 0 24 24">
                   <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" />
                 </svg>
               </div>
@@ -605,20 +578,20 @@ export default function DashboardHome({
                   {weeklyUsageSeconds > 0 ? formatStudyTime(weeklyUsageSeconds) : '0m'}
                 </span>
               </div>
-              <div className="h-px my-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(226,232,240,0.1), transparent)' }} />
+              <div className="h-px my-1 bg-slate-200" />
               <div>
                 <div className="flex items-baseline justify-between mb-1.5">
-                  <span className="text-[12px] text-slate-400">Daily goal</span>
-                  <span className="text-[13px] font-semibold text-white tabular-num">
+                  <span className="text-[12px] text-slate-500">Today's goal</span>
+                  <span className="text-[13px] font-semibold text-slate-900 tabular-num">
                     {dailyQuestionCount} / {dailyGoal}
                   </span>
                 </div>
-                <div className="h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                <div className="h-1.5 rounded-full bg-slate-100">
                   <div
                     className="h-1.5 rounded-full transition-all duration-500"
                     style={{
                       width: `${dailyPct}%`,
-                      background: 'linear-gradient(90deg, #d97706, #f43f5e)',
+                      background: 'linear-gradient(90deg, #fbbf24, #f59e0b)',
                     }}
                   />
                 </div>
