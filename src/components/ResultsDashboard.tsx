@@ -25,18 +25,18 @@ const EXAM_WEIGHTS: Record<number, number> = {
 
 /** Atelier domain palette (keyed by domainId). */
 const DOMAIN_COLOR: Record<number, string> = {
-  1: 'var(--d1-peach)',
-  2: 'var(--d2-mint)',
-  3: 'var(--d3-ice)',
-  4: 'var(--d4-lavender)',
+  1: '#d97706',
+  2: '#059669',
+  3: '#0284c7',
+  4: '#6366f1',
 };
 
 /** Atelier mapping for the per-skill proficiency dot. */
 const DOT_COLORS: Record<SkillColorState, string> = {
   gray: 'rgba(226,232,240,0.15)',
-  red: 'var(--accent-rose)',
-  yellow: 'var(--d1-peach)',
-  green: 'var(--d2-mint)',
+  red: '#f43f5e',
+  yellow: '#d97706',
+  green: '#059669',
 };
 
 const DOT_BORDER: Record<SkillColorState, string> = {
@@ -94,7 +94,7 @@ function JourneyTimeline({ steps }: { steps: TimelineStep[] }) {
                 className={`relative h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold`}
                 style={
                   step.done
-                    ? { background: 'var(--d2-mint)', color: '#064e3b', boxShadow: '0 0 10px var(--d2-mint)' }
+                    ? { background: '#059669', color: '#064e3b', boxShadow: '0 0 10px #059669' }
                     : isCurrent
                       ? { background: 'linear-gradient(135deg, #fde4c1, #fbcfe8)', color: '#1e1b3a', boxShadow: '0 0 14px rgba(252,213,180,0.6)' }
                       : { background: 'rgba(226,232,240,0.08)', color: '#64748b', border: '1px solid rgba(226,232,240,0.15)' }
@@ -122,7 +122,7 @@ function JourneyTimeline({ steps }: { steps: TimelineStep[] }) {
             {!isLast && (
               <div
                 className="flex-1 h-0.5 mt-3.5 mx-0.5 rounded-full"
-                style={{ background: step.done ? 'var(--d2-mint)' : 'rgba(226,232,240,0.12)' }}
+                style={{ background: step.done ? '#059669' : 'rgba(226,232,240,0.12)' }}
               />
             )}
           </div>
@@ -152,7 +152,7 @@ function StatCard({
   return (
     <div
       className="relative overflow-hidden rounded-2xl p-5"
-      style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+      style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
       title={title}
     >
       <span
@@ -162,8 +162,7 @@ function StatCard({
       />
       <p className="eyebrow mb-2">{label}</p>
       <p
-        className={`tabular-nums leading-none font-semibold ${big ? 'text-[32px]' : 'text-[28px]'}`}
-        style={{ color: '#f1f5f9' }}
+        className={`tabular-nums leading-none font-semibold text-slate-900 ${big ? 'text-[32px]' : 'text-[28px]'}`}
       >
         {value}
       </p>
@@ -301,13 +300,13 @@ export default function ResultsDashboard({
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-6 pb-14 text-slate-200">
+    <div className="space-y-6 pb-14 text-slate-700">
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <header className="pt-4">
         <p className="eyebrow mb-2">Your progress</p>
         <h1 className="text-4xl font-semibold tracking-tight leading-tight">
-          A picture of <span className="gradient-text-warm">where you stand.</span>
+          A picture of <span className="text-amber-600">where you stand.</span>
         </h1>
         <p className="mt-3 text-[14px] text-slate-400 max-w-2xl leading-relaxed">
           {(userProfile.totalQuestionsSeen ?? totalAttempts).toLocaleString()} total exposures · accuracy measured across{' '}
@@ -316,7 +315,7 @@ export default function ResultsDashboard({
       </header>
 
       {/* ── Journey timeline ─────────────────────────────────────────── */}
-      <section className="glass p-6">
+      <section className="editorial-surface p-6">
         <div className="flex items-baseline justify-between mb-5">
           <div>
             <p className="eyebrow">Your journey</p>
@@ -336,7 +335,7 @@ export default function ResultsDashboard({
             label="Questions answered"
             value={(userProfile.totalQuestionsSeen ?? totalAttempts).toLocaleString()}
             sub="All exposures incl. screener"
-            accent="var(--d1-peach)"
+            accent="#d97706"
             big
             title="Counts every question shown. Skill accuracy uses skill-practice attempts only."
           />
@@ -344,7 +343,7 @@ export default function ResultsDashboard({
             label={PROFICIENCY_META.proficient.label}
             value={demonstratingCount}
             sub={`of ${TOTAL_SKILLS} skills`}
-            accent="var(--d2-mint)"
+            accent="#059669"
             big
             title={PROFICIENCY_META.proficient.description}
           />
@@ -352,7 +351,7 @@ export default function ResultsDashboard({
             label={PROFICIENCY_META.approaching.label}
             value={approachingCount}
             sub={`of ${TOTAL_SKILLS} skills`}
-            accent="var(--d1-peach)"
+            accent="#d97706"
             big
             title={PROFICIENCY_META.approaching.description}
           />
@@ -360,7 +359,7 @@ export default function ResultsDashboard({
             label="Overall accuracy"
             value={overallAccuracy !== null ? `${overallAccuracy}%` : '—'}
             sub={`${totalCorrect.toLocaleString()} / ${totalAttempts.toLocaleString()} attempts`}
-            accent="var(--accent-rose)"
+            accent="#f43f5e"
             big
             title="Across skill practice attempts only, not total exposures."
           />
@@ -369,21 +368,21 @@ export default function ResultsDashboard({
 
       {/* ── Screener report link ─────────────────────────────────────── */}
       {hasScreenerReport && !userProfile.fullAssessmentComplete && onViewScreenerReport && (
-        <button onClick={onViewScreenerReport} className="btn-ghost-atelier">
+        <button onClick={onViewScreenerReport} className="editorial-button-secondary">
           View screener report →
         </button>
       )}
 
       {/* ── Growth since baseline ────────────────────────────────────── */}
       {hasBaseline && growthMetrics && (
-        <section className="glass p-6">
+        <section className="editorial-surface p-6">
           <p className="eyebrow mb-4">Growth since diagnostic</p>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <div
               className="rounded-xl p-4 text-center"
               style={{ background: 'rgba(184,242,216,0.08)', border: '1px solid rgba(184,242,216,0.25)' }}
             >
-              <p className="text-[26px] font-semibold tabular-nums" style={{ color: 'var(--d2-mint)' }}>
+              <p className="text-[26px] font-semibold tabular-nums" style={{ color: '#059669' }}>
                 {growthMetrics.approachingToDemo}
               </p>
               <p className="text-[11px] text-slate-400 mt-1">Skills reached Demonstrating</p>
@@ -392,23 +391,23 @@ export default function ResultsDashboard({
               className="rounded-xl p-4 text-center"
               style={{ background: 'rgba(252,213,180,0.08)', border: '1px solid rgba(252,213,180,0.25)' }}
             >
-              <p className="text-[26px] font-semibold tabular-nums" style={{ color: 'var(--d1-peach)' }}>
+              <p className="text-[26px] font-semibold tabular-nums" style={{ color: '#d97706' }}>
                 {growthMetrics.emergedToApproaching}
               </p>
               <p className="text-[11px] text-slate-400 mt-1">Skills improved a tier</p>
             </div>
             <div
               className="rounded-xl p-4 text-center"
-              style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+              style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
             >
-              <p className="text-[26px] font-semibold text-white tabular-nums">{demonstratingCount}</p>
+              <p className="text-[26px] font-semibold text-slate-900 tabular-nums">{demonstratingCount}</p>
               <p className="text-[11px] text-slate-400 mt-1">Currently Demonstrating</p>
             </div>
             <div
               className="rounded-xl p-4 text-center"
-              style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+              style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
             >
-              <p className="text-[26px] font-semibold text-slate-400 tabular-nums">
+              <p className="text-[26px] font-semibold text-slate-700 tabular-nums">
                 {baselineProgress ? baselineProgress.skills.filter((s) => s.colorState === 'green').length : 0}
               </p>
               <p className="text-[11px] text-slate-500 mt-1">Baseline Demonstrating</p>
@@ -430,7 +429,7 @@ export default function ResultsDashboard({
             <button
               onClick={() => setDomainFilter(null)}
               className="text-[11px] font-medium hover:underline"
-              style={{ color: 'var(--d1-peach)' }}
+              style={{ color: '#d97706' }}
             >
               Show all →
             </button>
@@ -444,7 +443,7 @@ export default function ResultsDashboard({
             const demonstrating = domain.strongerSkillCount;
             const barPct = Math.round((demonstrating / Math.max(domain.activeSkillCount, 1)) * 100);
             const examWeight = EXAM_WEIGHTS[domain.domainId] ?? 0;
-            const color = DOMAIN_COLOR[domain.domainId] ?? 'var(--d1-peach)';
+            const color = DOMAIN_COLOR[domain.domainId] ?? '#d97706';
 
             const baselineDomain =
               showBaseline && baselineProgress ? baselineProgress.domains.find((d) => d.domainId === domain.domainId) : null;
@@ -456,7 +455,7 @@ export default function ResultsDashboard({
               <div
                 key={domain.domainId}
                 className="relative overflow-hidden rounded-2xl"
-                style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+                style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
               >
                 <span
                   aria-hidden="true"
@@ -468,11 +467,11 @@ export default function ResultsDashboard({
                     toggleDomain(domain.domainId);
                     setDomainFilter(domainFilter === domain.domainId ? null : domain.domainId);
                   }}
-                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-3 mb-2.5">
-                      <p className="text-[15px] font-semibold text-white truncate">{domain.domainName}</p>
+                      <p className="text-[15px] font-semibold text-slate-900 truncate">{domain.domainName}</p>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-[13px] font-semibold tabular-nums" style={{ color }}>
                           {demonstrating} / {domain.activeSkillCount} {PROFICIENCY_META.proficient.label}
@@ -513,7 +512,7 @@ export default function ResultsDashboard({
                       {/* 80% goal vertical marker */}
                       <span
                         className="absolute top-[-3px] bottom-[-3px] w-px z-[2]"
-                        style={{ left: '80%', background: 'var(--d2-mint)', boxShadow: '0 0 6px var(--d2-mint)' }}
+                        style={{ left: '80%', background: '#059669', boxShadow: '0 0 6px #059669' }}
                         title="80% target"
                       />
                     </div>
@@ -521,7 +520,7 @@ export default function ResultsDashboard({
                 </button>
 
                 {isExpanded && (
-                  <div className="border-t border-white/6 px-5 pb-5 pt-4 space-y-4">
+                  <div className="border-t border-slate-200 px-5 pb-5 pt-4 space-y-4">
                     {/* Tier counts + exam weight */}
                     <div className="flex items-center justify-between gap-3 flex-wrap">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -530,7 +529,7 @@ export default function ResultsDashboard({
                             className="rounded-full px-2.5 py-0.5 text-[10px] font-medium"
                             style={{
                               background: 'rgba(251,207,232,0.12)',
-                              color: 'var(--accent-rose)',
+                              color: '#f43f5e',
                               border: '1px solid rgba(251,207,232,0.3)',
                             }}
                             title={PROFICIENCY_META.emerging.description}
@@ -543,7 +542,7 @@ export default function ResultsDashboard({
                             className="rounded-full px-2.5 py-0.5 text-[10px] font-medium"
                             style={{
                               background: 'rgba(252,213,180,0.12)',
-                              color: 'var(--d1-peach)',
+                              color: '#d97706',
                               border: '1px solid rgba(252,213,180,0.3)',
                             }}
                             title={PROFICIENCY_META.approaching.description}
@@ -556,7 +555,7 @@ export default function ResultsDashboard({
                             className="rounded-full px-2.5 py-0.5 text-[10px] font-medium"
                             style={{
                               background: 'rgba(184,242,216,0.12)',
-                              color: 'var(--d2-mint)',
+                              color: '#059669',
                               border: '1px solid rgba(184,242,216,0.3)',
                             }}
                             title={PROFICIENCY_META.proficient.description}
@@ -581,7 +580,7 @@ export default function ResultsDashboard({
                                 style={{
                                   background: DOT_COLORS[skill.colorState],
                                   border: `1px solid ${DOT_BORDER[skill.colorState]}`,
-                                  boxShadow: skill.colorState === 'green' ? '0 0 6px var(--d2-mint)' : 'none',
+                                  boxShadow: skill.colorState === 'green' ? '0 0 6px #059669' : 'none',
                                 }}
                                 title={`${skill.fullLabel}: ${skill.statusLabel}${skill.score !== null ? ` (${Math.round(skill.score * 100)}%)` : ''}`}
                               />
@@ -589,9 +588,9 @@ export default function ResultsDashboard({
                           ))}
                         </div>
                         <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px] text-slate-500">
-                          <LegendDot color="var(--accent-rose)" label={PROFICIENCY_META.emerging.label} />
-                          <LegendDot color="var(--d1-peach)" label={PROFICIENCY_META.approaching.label} />
-                          <LegendDot color="var(--d2-mint)" label={PROFICIENCY_META.proficient.label} />
+                          <LegendDot color="#f43f5e" label={PROFICIENCY_META.emerging.label} />
+                          <LegendDot color="#d97706" label={PROFICIENCY_META.approaching.label} />
+                          <LegendDot color="#059669" label={PROFICIENCY_META.proficient.label} />
                           <LegendDot color="rgba(226,232,240,0.2)" label={PROFICIENCY_META.unstarted.label} />
                         </div>
                       </div>
@@ -611,21 +610,21 @@ export default function ResultsDashboard({
       {conceptReport && conceptReport.concepts.length > 0 && (
         <section
           className="rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(10,22,40,0.55)', border: '1px solid rgba(226,232,240,0.08)' }}
+          style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
         >
           <button
             onClick={() => setConceptsExpanded((prev) => !prev)}
-            className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-white/3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+            className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
           >
             <div className="flex items-center gap-3">
-              <Lightbulb className="w-4 h-4" style={{ color: 'var(--d3-ice)' }} />
-              <p className="text-[15px] font-semibold text-white">Concept insights</p>
+              <Lightbulb className="w-4 h-4" style={{ color: '#0284c7' }} />
+              <p className="text-[15px] font-semibold text-slate-900">Concept insights</p>
               {conceptReport.summary.totalGaps > 0 && (
                 <span
                   className="rounded-full px-2 py-0.5 text-[10px] font-medium"
                   style={{
                     background: 'rgba(251,207,232,0.12)',
-                    color: 'var(--accent-rose)',
+                    color: '#f43f5e',
                     border: '1px solid rgba(251,207,232,0.3)',
                   }}
                 >
@@ -639,7 +638,7 @@ export default function ResultsDashboard({
           </button>
 
           {conceptsExpanded && (
-            <div className="space-y-5 border-t border-white/6 px-5 py-5">
+            <div className="space-y-5 border-t border-slate-200 px-5 py-5">
               <p className="text-[11.5px] text-slate-400 leading-snug">
                 Vocabulary concepts across multiple questions. Gaps = recurring weaknesses; likely vocabulary to study.
               </p>
@@ -647,10 +646,10 @@ export default function ResultsDashboard({
               {conceptReport.crossSkillGaps.length > 0 && (
                 <ConceptSection
                   title="Cross-skill vocabulary gaps"
-                  titleColor="var(--accent-rose)"
+                  titleColor="#f43f5e"
                   subtitle="Weak across multiple skills — foundational vocabulary gap."
-                  barColor="var(--accent-rose)"
-                  valueColor="var(--accent-rose)"
+                  barColor="#f43f5e"
+                  valueColor="#f43f5e"
                   items={conceptReport.crossSkillGaps.slice(0, 8).map((gap) => ({
                     key: gap.concept,
                     primary: gap.concept,
@@ -663,9 +662,9 @@ export default function ResultsDashboard({
               {conceptReport.gapConcepts.length > 0 && (
                 <ConceptSection
                   title="Weakest concepts"
-                  titleColor="var(--d1-peach)"
-                  barColor="var(--accent-rose)"
-                  valueColor="var(--accent-rose)"
+                  titleColor="#d97706"
+                  barColor="#f43f5e"
+                  valueColor="#f43f5e"
                   items={conceptReport.gapConcepts.slice(0, 10).map((c) => ({
                     key: c.concept,
                     primary: c.concept,
@@ -678,9 +677,9 @@ export default function ResultsDashboard({
               {conceptReport.strengthConcepts.length > 0 && (
                 <ConceptSection
                   title="Strongest concepts"
-                  titleColor="var(--d2-mint)"
-                  barColor="var(--d2-mint)"
-                  valueColor="var(--d2-mint)"
+                  titleColor="#059669"
+                  barColor="#059669"
+                  valueColor="#059669"
                   items={conceptReport.strengthConcepts.slice(0, 5).map((c) => ({
                     key: c.concept,
                     primary: c.concept,
@@ -690,7 +689,7 @@ export default function ResultsDashboard({
                 />
               )}
 
-              <p className="text-[11px] text-slate-500 pt-2 border-t border-white/5">
+              <p className="text-[11px] text-slate-500 pt-2 border-t border-slate-200">
                 {conceptReport.summary.totalConceptsTested} tested · {conceptReport.summary.totalGaps} gap
                 {conceptReport.summary.totalGaps !== 1 ? 's' : ''} · {conceptReport.summary.totalStrengths} strength
                 {conceptReport.summary.totalStrengths !== 1 ? 's' : ''} · {conceptReport.summary.totalCrossSkillGaps}{' '}
@@ -704,15 +703,15 @@ export default function ResultsDashboard({
       {/* ── Advanced statistics ─────────────────────────────────────── */}
       <section
         className="rounded-2xl overflow-hidden"
-        style={{ background: 'rgba(10,22,40,0.55)', border: '1px solid rgba(226,232,240,0.08)' }}
+        style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
       >
         <button
           onClick={() => setAdvancedExpanded((prev) => !prev)}
-          className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-white/3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)]"
+          className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
         >
           <div className="flex items-center gap-3">
-            <Clock className="w-4 h-4" style={{ color: 'var(--d1-peach)' }} />
-            <p className="text-[15px] font-semibold text-white">Advanced statistics</p>
+            <Clock className="w-4 h-4" style={{ color: '#d97706' }} />
+            <p className="text-[15px] font-semibold text-slate-900">Advanced statistics</p>
           </div>
           {advancedExpanded
             ? <ChevronUp className="w-4 h-4 text-slate-500" />
@@ -720,7 +719,7 @@ export default function ResultsDashboard({
         </button>
 
         {advancedExpanded && (
-          <div className="space-y-5 border-t border-white/6 px-5 py-5">
+          <div className="space-y-5 border-t border-slate-200 px-5 py-5">
             {timeStats.avgOverall === null ? (
               <p className="text-[12.5px] italic text-slate-500">No timing data recorded yet.</p>
             ) : (
@@ -728,7 +727,7 @@ export default function ResultsDashboard({
                 <div>
                   <p className="eyebrow mb-1.5">Avg time per question</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="tabular-nums text-[26px] font-semibold" style={{ color: 'var(--d1-peach)' }}>
+                    <span className="tabular-nums text-[26px] font-semibold" style={{ color: '#d97706' }}>
                       {formatTime(timeStats.avgOverall)}
                     </span>
                     <span className="text-[12px] text-slate-400">per question overall</span>
@@ -745,7 +744,7 @@ export default function ResultsDashboard({
                         .map((d, idx) => {
                           const stat = timeStats.byDomain[d.domainId];
                           const isMax = idx === 0;
-                          const color = DOMAIN_COLOR[d.domainId] ?? 'var(--d1-peach)';
+                          const color = DOMAIN_COLOR[d.domainId] ?? '#d97706';
                           return (
                             <div key={d.domainId} className="flex items-center justify-between gap-3">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -753,14 +752,14 @@ export default function ResultsDashboard({
                                   className="w-2 h-2 rounded-full shrink-0"
                                   style={{ background: color, boxShadow: `0 0 6px ${color}` }}
                                 />
-                                <p className="truncate text-[12.5px] text-slate-300">{d.domainName}</p>
+                                <p className="truncate text-[12.5px] text-slate-700">{d.domainName}</p>
                                 {isMax && (
-                                  <span className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--d1-peach)' }}>
+                                  <span className="text-[10px] uppercase tracking-wider" style={{ color: '#d97706' }}>
                                     most time
                                   </span>
                                 )}
                               </div>
-                              <span className="shrink-0 text-[12.5px] font-semibold tabular-nums text-white">
+                              <span className="shrink-0 text-[12.5px] font-semibold tabular-nums text-slate-900">
                                 {formatTime(stat.avg)}
                               </span>
                             </div>
@@ -780,7 +779,7 @@ export default function ResultsDashboard({
                             {i + 1}. {q.questionId}
                           </p>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[12.5px] font-semibold tabular-nums" style={{ color: 'var(--d1-peach)' }}>
+                            <span className="text-[12.5px] font-semibold tabular-nums" style={{ color: '#d97706' }}>
                               {formatTime(q.avgSeconds)}
                             </span>
                             <span className="text-[10px] text-slate-500">×{q.count}</span>
@@ -802,7 +801,7 @@ export default function ResultsDashboard({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-[12.5px] text-slate-400">Raw accuracy</p>
-                    <span className="text-[12.5px] font-semibold tabular-nums text-white">{rawPct}%</span>
+                    <span className="text-[12.5px] font-semibold tabular-nums text-slate-900">{rawPct}%</span>
                   </div>
                   {weightedPct !== null && (
                     <div className="flex items-center justify-between gap-3">
@@ -815,9 +814,9 @@ export default function ResultsDashboard({
                         style={{
                           color:
                             confidenceDeltaPct !== null && confidenceDeltaPct > 0
-                              ? 'var(--d2-mint)'
+                              ? '#059669'
                               : confidenceDeltaPct !== null && confidenceDeltaPct < 0
-                                ? 'var(--accent-rose)'
+                                ? '#f43f5e'
                                 : 'white',
                         }}
                       >
@@ -833,11 +832,11 @@ export default function ResultsDashboard({
                   )}
                   {confidenceStats.totalHighWrong > 0 && (
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-[12.5px]" style={{ color: 'var(--accent-rose)' }}>
+                      <p className="text-[12.5px]" style={{ color: '#f43f5e' }}>
                         Misconception flags{' '}
                         <span className="text-[10px] opacity-70">(answered Sure, got wrong)</span>
                       </p>
-                      <span className="text-[12.5px] font-semibold tabular-nums" style={{ color: 'var(--accent-rose)' }}>
+                      <span className="text-[12.5px] font-semibold tabular-nums" style={{ color: '#f43f5e' }}>
                         {confidenceStats.totalHighWrong}
                       </span>
                     </div>
@@ -861,7 +860,7 @@ export default function ResultsDashboard({
                         <p className="flex-1 truncate text-[12px] text-slate-400">{distractor}</p>
                         <span
                           className="shrink-0 text-[12px] font-semibold tabular-nums"
-                          style={{ color: 'var(--accent-rose)' }}
+                          style={{ color: '#f43f5e' }}
                         >
                           ×{count}
                         </span>
@@ -921,7 +920,7 @@ function ConceptSection({
         {items.map((item) => (
           <div key={item.key} className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] text-slate-200 truncate">{item.primary}</p>
+              <p className="text-[13px] text-slate-700 truncate">{item.primary}</p>
               <p className="text-[11px] text-slate-500 truncate">{item.secondary}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">

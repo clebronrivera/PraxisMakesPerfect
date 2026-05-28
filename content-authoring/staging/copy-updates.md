@@ -32,7 +32,7 @@ Format: `file:line | current copy (verbatim) | replacement copy | reviewer note`
 
 | # | File:Line | Current copy | Replacement | Reviewer note |
 |---|-----------|-------------|-------------|---------------|
-| 1 | `src/components/LoginScreen.tsx:78` | `detail: '45 skills · 1,150 items · 4 domains'` | `detail: '51 skills · 1,150+ items · 4 domains'` | Exam card on login screen. Item count will grow as C7 lands; "1,150+" is safe. |
+| 1 | ~~`src/components/LoginScreen.tsx`~~ | ~~item count on login~~ | **CANCELLED** | Product decision 2026-05: login hero must not show question-bank size (drifts; not desired). Domains + skills only. |
 | 2 | `src/components/LoginScreen.tsx:487` | `An adaptive diagnostic that maps your exact knowledge gaps across all 45 skills` | `An adaptive diagnostic that maps your exact knowledge gaps across all 51 skills` | Hero paragraph. |
 | 3 | `src/components/LoginScreen.tsx:493` | `'45 skills tracked'` | `'51 skills tracked'` | Proof pill. |
 | 4 | `src/components/LoginScreen.tsx:557` | `desc: 'Adaptive diagnostic maps all 45 skills in one session.'` | `desc: 'Adaptive diagnostic maps all 51 skills in one session.'` | Journey card "01 Diagnose". |

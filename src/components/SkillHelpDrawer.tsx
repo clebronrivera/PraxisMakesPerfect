@@ -141,12 +141,12 @@ export default function SkillHelpDrawer({
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-[rgba(6,13,26,0.6)] backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[85vh] flex-col rounded-t-[2rem] border-t border-white/10 bg-[rgba(10,22,40,0.9)] backdrop-blur-[14px]"
+        className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[85vh] flex-col rounded-t-[2rem] border-t border-white/10 bg-[#0f172a]"
         style={{ boxShadow: '0 -12px 40px -8px rgba(0,0,0,0.6)' }}
       >
 
@@ -154,7 +154,7 @@ export default function SkillHelpDrawer({
           <div className="h-1 w-10 rounded-full bg-white/20" />
         </div>
 
-        <div className="flex shrink-0 items-center justify-between border-b border-white/8 px-5 py-3">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-3">
           <div className="flex items-center gap-2.5 min-w-0">
             {activeModule && activeModuleId !== primaryModule?.id && (
               <button
@@ -163,12 +163,12 @@ export default function SkillHelpDrawer({
                   setActiveModuleId(primaryModule?.id ?? null);
                   if (primaryModule) progress.onOpenModule(primaryModule.id);
                 }}
-                className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-white/5 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)]"
+                className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
             )}
-            <BookOpen className="h-4 w-4 shrink-0" style={{ color: 'var(--d1-peach)' }} />
+            <BookOpen className="h-4 w-4 shrink-0" style={{ color: '#d97706' }} />
             <div className="min-w-0">
               <p className="truncate text-xs font-bold text-white">
                 {skillLabel ?? 'Skill Help'}
@@ -180,14 +180,14 @@ export default function SkillHelpDrawer({
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 rounded-xl p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)]"
+            className="shrink-0 rounded-xl p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {modules.length > 1 && (
-          <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-white/8 px-5 py-2.5">
+          <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-slate-200 px-5 py-2.5">
             {modules.map((m, i) => (
               <button
                 key={m.id}
@@ -196,16 +196,16 @@ export default function SkillHelpDrawer({
                   setActiveModuleId(m.id);
                   progress.onOpenModule(m.id);
                 }}
-                className={`shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
+                className={`shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
                   activeModuleId === m.id
-                    ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/15 text-white'
-                    : 'border-white/8 bg-white/5 text-slate-400 hover:border-[color:var(--d1-peach)]/30 hover:text-white'
+                    ? 'border-amber-400/50 bg-amber-500/15 text-amber-300'
+                    : 'border-white/10 bg-white/6 text-slate-400 hover:border-amber-400/30 hover:bg-white/12 hover:text-white'
                 }`}
               >
                 {progress.isViewed(m.id) && (
                   <span
                     className="h-1.5 w-1.5 shrink-0 rounded-full"
-                    style={{ background: 'var(--d2-mint)' }}
+                    style={{ background: '#059669' }}
                   />
                 )}
                 {i === 0 ? 'Primary' : `Extra ${i}`} · {m.id}
@@ -217,7 +217,7 @@ export default function SkillHelpDrawer({
         {!activeModule && (
           <div className="flex flex-1 items-center justify-center px-6 py-12 text-center">
             <div>
-              <BookOpen className="mx-auto mb-3 h-8 w-8" style={{ color: 'var(--d1-peach)' }} />
+              <BookOpen className="mx-auto mb-3 h-8 w-8" style={{ color: '#d97706' }} />
               <p className="text-sm text-slate-400">No lesson content found for this skill.</p>
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function SkillHelpDrawer({
               onInteractiveComplete={handleInteractiveComplete}
               sectionRefs={sectionRefs}
               completedInteractives={completedInteractives}
-              variant="atelier"
+              variant="editorial"
             />
             <div className="h-6" />
           </div>

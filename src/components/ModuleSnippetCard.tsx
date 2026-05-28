@@ -43,7 +43,7 @@ export default function ModuleSnippetCard({
     r => r.moduleId !== moduleId && r.snippet
   );
 
-  const accentVar = isHint ? 'var(--d1-peach)' : 'var(--d3-ice)';
+  const accentVar = isHint ? '#d97706' : '#0284c7';
 
   return (
     <div
@@ -71,7 +71,7 @@ export default function ModuleSnippetCard({
         {isHint && onDismiss && (
           <button
             onClick={onDismiss}
-            className="rounded-lg p-1 text-slate-400 hover:bg-white/5 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:var(--d1-peach)]"
+            className="rounded-lg p-1 text-slate-400 hover:bg-white hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-amber-500"
             title="Dismiss hint"
           >
             <X className="h-3.5 w-3.5" />
@@ -101,7 +101,7 @@ export default function ModuleSnippetCard({
 
       {/* ── Secondary module snippets (multi-module questions) ── */}
       {secondaryRefs.length > 0 && (
-        <div className="space-y-2 pt-2 border-t border-white/6">
+        <div className="space-y-2 pt-2 border-t border-slate-200">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
             Also covered in
           </p>
@@ -125,7 +125,7 @@ export default function ModuleSnippetCard({
       {moduleId && onOpenModule && (
         <button
           onClick={() => onOpenModule(moduleId)}
-          className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)] rounded"
+          className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 rounded"
           style={{ color: accentVar }}
         >
           <ExternalLink className="h-3.5 w-3.5" />

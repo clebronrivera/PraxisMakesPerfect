@@ -130,18 +130,18 @@ export default function ScreenerResults({
               <p className="text-slate-700">{report.readiness.description}</p>
               <p className="text-sm text-slate-400">{TONE_OVERALL_MEANING[report.readiness.tone]}</p>
             </div>
-            <div className="rounded-[1.5rem] border border-amber-200 bg-white/5 p-4">
+            <div className="rounded-[1.5rem] border border-amber-200 bg-white p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-700">Best Next Step</p>
               <p className="mt-2 text-sm text-slate-900">{report.readiness.nextAction}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-black/20 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Highest-Need Domains</p>
               <div className="mt-4 space-y-3">
                 {report.highestNeedDomains.map((domain) => (
-                  <div key={domain.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div key={domain.id} className="rounded-xl border border-slate-200 bg-white p-3">
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm font-semibold text-slate-900">{domain.name}</p>
                       <span className="text-sm font-bold" style={{ color: getDomainColor(domain.id) }}>
@@ -154,7 +154,7 @@ export default function ScreenerResults({
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-black/20 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Foundational Concepts To Review</p>
               <div className="mt-4 space-y-3">
                 {report.foundationalGaps.length > 0 ? (

@@ -56,7 +56,7 @@ function NotesSection({ userId }: { userId: string | null }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[color:var(--d1-peach)] border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[color:#d97706] border-t-transparent" />
       </div>
     );
   }
@@ -84,12 +84,12 @@ function NotesSection({ userId }: { userId: string | null }) {
         const skillDef = getProgressSkillDefinition(skillId);
         const isExpanded = expandedSkill === skillId;
         return (
-          <div key={skillId} className="glass overflow-hidden">
+          <div key={skillId} className="editorial-surface overflow-hidden">
             <button
               onClick={() => setExpandedSkill(isExpanded ? null : skillId)}
-              className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-white/5 transition-colors"
+              className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-white transition-colors"
             >
-              <StickyNote className="w-4 h-4 text-[color:var(--d1-peach)] shrink-0" />
+              <StickyNote className="w-4 h-4 text-amber-600 shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white truncate">{skillDef?.fullLabel ?? skillId}</p>
                 <p className="text-[10px] text-slate-500">{skillNotes.length} {skillNotes.length === 1 ? 'note' : 'notes'}</p>
@@ -98,18 +98,18 @@ function NotesSection({ userId }: { userId: string | null }) {
             </button>
 
             {isExpanded && (
-              <div className="border-t border-white/8 px-5 py-4 space-y-4">
+              <div className="border-t border-slate-200 px-5 py-4 space-y-4">
                 {skillNotes.map(n => {
                   const mod = MODULE_LOOKUP[n.module_id];
                   return (
                     <div key={n.module_id} className="space-y-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="bg-[color:var(--d1-peach)]/15 text-[color:var(--d1-peach)] text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border border-[color:var(--d1-peach)]/25">
+                        <span className="bg-[color:#d97706]/15 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border border-[color:#d97706]/25">
                           {n.module_id}
                         </span>
                         {mod && <span className="text-[11px] text-slate-400 truncate">{mod.title}</span>}
                       </div>
-                      <div className="rounded-xl border border-white/8 p-3" style={{ background: 'rgba(10,22,40,0.45)' }}>
+                      <div className="rounded-xl border border-slate-200 p-3" style={{ background: 'rgba(10,22,40,0.45)' }}>
                         <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">{n.note_text}</p>
                       </div>
                       <p className="text-[10px] text-slate-500">
@@ -213,7 +213,7 @@ function FocusSection({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[color:var(--d1-peach)] border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[color:#d97706] border-t-transparent" />
       </div>
     );
   }
@@ -227,7 +227,7 @@ function FocusSection({
   return (
     <div className="space-y-4">
       {/* Progress bar */}
-      <div className="glass px-5 py-3 flex items-center gap-4">
+      <div className="editorial-surface px-5 py-3 flex items-center gap-4">
         <div className="flex-1">
           <div className="editorial-progress-track">
             <div
@@ -280,18 +280,18 @@ function SkillFocusGroup({
   const [expanded, setExpanded] = useState(!allDone);
 
   const iconMap = {
-    vocabulary: <BookOpen className="w-3.5 h-3.5 text-[color:var(--d1-peach)]" />,
+    vocabulary: <BookOpen className="w-3.5 h-3.5 text-amber-600" />,
     misconception: <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />,
     trap: <ShieldAlert className="w-3.5 h-3.5 text-orange-500" />,
   };
 
   return (
-    <div className={`glass overflow-hidden ${allDone ? 'opacity-70' : ''}`}>
+    <div className={`editorial-surface overflow-hidden ${allDone ? 'opacity-70' : ''}`}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-white/5 transition-colors"
+        className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-white transition-colors"
       >
-        <Target className="w-4 h-4 text-[color:var(--d1-peach)] shrink-0" />
+        <Target className="w-4 h-4 text-amber-600 shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-white truncate">{skillLabel}</p>
           <p className="text-[10px] text-slate-500">{checkedCount}/{items.length} reviewed</p>
@@ -301,7 +301,7 @@ function SkillFocusGroup({
       </button>
 
       {expanded && (
-        <div className="border-t border-white/8 px-5 py-3 space-y-2">
+        <div className="border-t border-slate-200 px-5 py-3 space-y-2">
           {items.map(item => {
             const checked = checkedIds.has(item.id);
             return (
@@ -310,8 +310,8 @@ function SkillFocusGroup({
                 onClick={() => onToggleCheck(item.id)}
                 className={`flex w-full items-start gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all ${
                   checked
-                    ? 'border-white/5 bg-white/3 opacity-60'
-                    : 'border-white/8 bg-white/5 hover:border-[color:var(--d1-peach)]/40'
+                    ? 'border-slate-200 bg-white/3 opacity-60'
+                    : 'border-slate-200 bg-white hover:border-[color:#d97706]/40'
                 }`}
               >
                 <span className="mt-0.5 shrink-0">
@@ -347,7 +347,7 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
       {/* Header */}
       <div className="pt-4">
         <div className="flex items-center gap-3 mb-2">
-          <BookMarked className="w-6 h-6 text-[color:var(--d1-peach)]" />
+          <BookMarked className="w-6 h-6 text-amber-600" />
           <p className="eyebrow">Study Notebook</p>
         </div>
         <h2 className="text-4xl font-bold tracking-tight text-white">Your Notes & Focus.</h2>
@@ -362,8 +362,8 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           onClick={() => setActiveTab('notes')}
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'notes'
-              ? 'bg-gradient-to-r from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] text-[#1e1b3a] shadow-lg'
-              : 'border border-white/10 bg-white/5 text-slate-400 hover:border-[color:var(--d1-peach)]/40 hover:text-white'
+              ? 'bg-gradient-to-r from-[color:#d97706] to-[color:#6366f1] text-[#1e1b3a] shadow-lg'
+              : 'border border-slate-200 bg-white text-slate-400 hover:border-[color:#d97706]/40 hover:text-white'
           }`}
         >
           <StickyNote className="w-3.5 h-3.5" />
@@ -373,8 +373,8 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           onClick={() => setActiveTab('focus')}
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'focus'
-              ? 'bg-gradient-to-r from-[color:var(--d1-peach)] to-[color:var(--d4-lavender)] text-[#1e1b3a] shadow-lg'
-              : 'border border-white/10 bg-white/5 text-slate-400 hover:border-[color:var(--d1-peach)]/40 hover:text-white'
+              ? 'bg-gradient-to-r from-[color:#d97706] to-[color:#6366f1] text-[#1e1b3a] shadow-lg'
+              : 'border border-slate-200 bg-white text-slate-400 hover:border-[color:#d97706]/40 hover:text-white'
           }`}
         >
           <Target className="w-3.5 h-3.5" />

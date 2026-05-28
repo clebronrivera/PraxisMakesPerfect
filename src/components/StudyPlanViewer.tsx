@@ -36,9 +36,9 @@ interface StudyPlanViewerProps {
 function statusBadge(status: StudentSkillStatus): string {
   switch (status) {
     case 'unlearned':    return 'badge-slate';
-    case 'misconception': return 'badge bg-[color:var(--accent-rose)]/10 text-[color:var(--accent-rose)] border-[color:var(--accent-rose)]/30';
-    case 'unstable':     return 'badge bg-[color:var(--d1-peach)]/10 text-[color:var(--d1-peach)] border-[color:var(--d1-peach)]/30';
-    case 'developing':   return 'badge bg-[color:var(--d1-peach)]/10 text-[color:var(--d1-peach)] border-[color:var(--d1-peach)]/30';
+    case 'misconception': return 'badge bg-rose-100 text-rose-600 border-rose-300/30';
+    case 'unstable':     return 'badge bg-[color:#d97706]/10 text-amber-600 border-amber-300/30';
+    case 'developing':   return 'badge bg-[color:#d97706]/10 text-amber-600 border-amber-300/30';
     case 'near_mastery': return 'badge badge-cyan';
     case 'mastered':     return 'badge badge-mint';
   }
@@ -49,23 +49,23 @@ function urgencyConfig(urgency: ClusterUrgency): { label: string; card: string; 
     case 'urgent_now':
       return {
         label: 'Urgent now',
-        card: 'bg-[color:var(--accent-rose)]/10 border-[color:var(--accent-rose)]/30',
+        card: 'bg-rose-100 border-rose-300/30',
         badge: 'badge-coral',
-        accent: 'bg-[color:var(--accent-rose)]/100',
+        accent: 'bg-rose-1000',
       };
     case 'important_next':
       return {
         label: 'Build next',
-        card: 'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/30',
+        card: 'bg-[color:#d97706]/10 border-amber-300/30',
         badge: 'badge-amber',
-        accent: 'bg-[color:var(--d1-peach)]/100',
+        accent: 'bg-[color:#d97706]/100',
       };
     case 'maintain':
       return {
         label: 'Reinforce later',
-        card: 'bg-[color:var(--d2-mint)]/10 border-[color:var(--d2-mint)]/30',
+        card: 'bg-emerald-100 border-emerald-300/30',
         badge: 'badge-mint',
-        accent: 'bg-[color:var(--d2-mint)]/100',
+        accent: 'bg-emerald-1000',
       };
   }
 }
@@ -74,10 +74,10 @@ function readinessConfig(level: 'early' | 'developing' | 'approaching' | 'ready'
   color: string; bg: string; bar: string; pct: number;
 } {
   switch (level) {
-    case 'early':      return { color: 'text-[color:var(--accent-rose)]',    bg: 'bg-[color:var(--accent-rose)]/10 border-[color:var(--accent-rose)]/30',    bar: 'bg-[color:var(--accent-rose)]/100',    pct: 15 };
-    case 'developing': return { color: 'text-[color:var(--d1-peach)]',   bg: 'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/30',  bar: 'bg-[color:var(--d1-peach)]/100',   pct: 40 };
-    case 'approaching': return { color: 'text-[color:var(--d3-ice)]',   bg: 'bg-[color:var(--d3-ice)]/10 border-[color:var(--d3-ice)]/30',    bar: 'bg-[color:var(--d3-ice)]/100',    pct: 70 };
-    case 'ready':      return { color: 'text-[color:var(--d2-mint)]', bg: 'bg-[color:var(--d2-mint)]/10 border-[color:var(--d2-mint)]/30', bar: 'bg-[color:var(--d2-mint)]/100', pct: 95 };
+    case 'early':      return { color: 'text-rose-600',    bg: 'bg-rose-100 border-rose-300/30',    bar: 'bg-rose-1000',    pct: 15 };
+    case 'developing': return { color: 'text-amber-600',   bg: 'bg-[color:#d97706]/10 border-amber-300/30',  bar: 'bg-[color:#d97706]/100',   pct: 40 };
+    case 'approaching': return { color: 'text-sky-600',   bg: 'bg-[color:#0284c7]/10 border-[color:#0284c7]/30',    bar: 'bg-[color:#0284c7]/100',    pct: 70 };
+    case 'ready':      return { color: 'text-emerald-600', bg: 'bg-emerald-100 border-emerald-300/30', bar: 'bg-emerald-1000', pct: 95 };
   }
 }
 
@@ -86,14 +86,14 @@ function sessionTypeTag(type: SessionType): { label: string; cls: string } {
     case 'vocabulary':          return { label: 'Vocabulary',     cls: 'badge badge-violet' };
     case 'concept-review':      return { label: 'Concept',        cls: 'badge badge-cyan' };
     case 'case-practice':       return { label: 'Case Practice',  cls: 'badge badge-amber' };
-    case 'mixed-retrieval':     return { label: 'Mixed',          cls: 'badge bg-[color:var(--d2-mint)]/10 text-[color:var(--d2-mint)] border-[color:var(--d2-mint)]/30' };
+    case 'mixed-retrieval':     return { label: 'Mixed',          cls: 'badge bg-emerald-100 text-emerald-600 border-emerald-300/30' };
     case 'wrong-answer-review': return { label: 'Wrong Answers',  cls: 'badge badge-coral' };
   }
 }
 
 function TrendIcon({ trend }: { trend: TrendDirection }) {
-  if (trend === 'improving') return <ArrowUp   className="w-3 h-3 text-[color:var(--d2-mint)]" />;
-  if (trend === 'declining') return <ArrowDown className="w-3 h-3 text-[color:var(--accent-rose)]" />;
+  if (trend === 'improving') return <ArrowUp   className="w-3 h-3 text-emerald-600" />;
+  if (trend === 'declining') return <ArrowDown className="w-3 h-3 text-rose-600" />;
   if (trend === 'flat')      return <Minus     className="w-3 h-3 text-slate-500" />;
   return null;
 }
@@ -140,26 +140,26 @@ function SideRail({ plan }: { plan: StudyPlanDocumentV2 }) {
       </div>
 
       {/* Strongest area */}
-      <div className="p-3 bg-[color:var(--d2-mint)]/10 border border-[color:var(--d2-mint)]/30 rounded-xl space-y-1">
-        <p className="overline text-[color:var(--d2-mint)]">Strongest area</p>
-        <p className="text-xs font-semibold text-[color:var(--d2-mint)]">{snap.strongestArea}</p>
+      <div className="p-3 bg-emerald-100 border border-emerald-300/30 rounded-xl space-y-1">
+        <p className="overline text-emerald-600">Strongest area</p>
+        <p className="text-xs font-semibold text-emerald-600">{snap.strongestArea}</p>
       </div>
 
       {/* Next best move */}
-      <div className="p-3 bg-[color:var(--d3-ice)]/10 border border-[color:var(--d3-ice)]/30 rounded-xl space-y-1">
-        <p className="overline text-[color:var(--d3-ice)]">Next best move</p>
-        <p className="text-xs font-semibold text-[color:var(--d3-ice)]">{snap.nextBestMove}</p>
+      <div className="p-3 bg-[color:#0284c7]/10 border border-[color:#0284c7]/30 rounded-xl space-y-1">
+        <p className="overline text-sky-600">Next best move</p>
+        <p className="text-xs font-semibold text-sky-600">{snap.nextBestMove}</p>
       </div>
 
       {/* Blockers */}
       {snap.majorBlockers.length > 0 && (
-        <div className="p-3 bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/30 rounded-xl space-y-2">
-          <p className="overline text-[color:var(--accent-rose)] flex items-center gap-1">
+        <div className="p-3 bg-rose-100 border border-rose-300/30 rounded-xl space-y-2">
+          <p className="overline text-rose-600 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" /> Blockers
           </p>
           <div className="flex flex-wrap gap-1.5">
             {snap.majorBlockers.map(blocker => (
-              <span key={blocker} className="px-2 py-1 rounded-lg text-[11px] font-medium bg-[color:var(--accent-rose)]/20 text-[color:var(--accent-rose)] border border-[color:var(--accent-rose)]/30">
+              <span key={blocker} className="px-2 py-1 rounded-lg text-[11px] font-medium bg-[color:#f43f5e]/20 text-rose-600 border border-rose-300/30">
                 {blocker}
               </span>
             ))}
@@ -168,7 +168,7 @@ function SideRail({ plan }: { plan: StudyPlanDocumentV2 }) {
       )}
 
       {/* Quick stats */}
-      <div className="p-3 bg-white/5 border border-white/10 rounded-xl space-y-2">
+      <div className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
         <p className="overline">Plan summary</p>
         <div className="space-y-1.5 text-xs text-slate-500">
           <div className="flex justify-between">
@@ -181,7 +181,7 @@ function SideRail({ plan }: { plan: StudyPlanDocumentV2 }) {
           </div>
           <div className="flex justify-between">
             <span>Deficit skills</span>
-            <span className="font-semibold text-[color:var(--accent-rose)]">{plan.sourceSummary.deficitSkillCount}</span>
+            <span className="font-semibold text-rose-600">{plan.sourceSummary.deficitSkillCount}</span>
           </div>
           <div className="flex justify-between">
             <span>Priority clusters</span>
@@ -224,9 +224,9 @@ function TabOverview({ plan }: { plan: StudyPlanDocumentV2 }) {
           <p className="overline">Key insights</p>
           <div className="grid sm:grid-cols-3 gap-3">
             {interp.urgentInsights.slice(0, 3).map((insight, i) => (
-              <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
-                <div className="w-7 h-7 rounded-lg bg-[color:var(--d1-peach)]/20 flex items-center justify-center">
-                  <Zap className="w-3.5 h-3.5 text-[color:var(--d1-peach)]" />
+              <div key={i} className="p-4 bg-white border border-slate-200 rounded-2xl space-y-2">
+                <div className="w-7 h-7 rounded-lg bg-[color:#d97706]/20 flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-amber-600" />
                 </div>
                 <p className="text-xs text-slate-200 leading-relaxed">{insight}</p>
               </div>
@@ -241,8 +241,8 @@ function TabOverview({ plan }: { plan: StudyPlanDocumentV2 }) {
           <p className="overline">Observed patterns</p>
           <div className="space-y-2">
             {interp.patterns.map((pattern, i) => (
-              <div key={i} className="flex items-start gap-2.5 p-3 bg-white/5 border border-white/10 rounded-xl">
-                <TrendingUp className="w-3.5 h-3.5 text-[color:var(--d3-ice)] mt-0.5 shrink-0" />
+              <div key={i} className="flex items-start gap-2.5 p-3 bg-white border border-slate-200 rounded-xl">
+                <TrendingUp className="w-3.5 h-3.5 text-sky-600 mt-0.5 shrink-0" />
                 <p className="text-xs text-slate-300 leading-relaxed">{pattern}</p>
               </div>
             ))}
@@ -284,7 +284,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
                   </div>
                   <p className="text-xs text-slate-300 leading-relaxed">{cluster.whyItMatters}</p>
                   {cluster.blockingNote && (
-                    <p className="text-xs text-[color:var(--accent-rose)] bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/30 rounded-lg px-3 py-2">
+                    <p className="text-xs text-rose-600 bg-rose-100 border border-rose-300/30 rounded-lg px-3 py-2">
                       {cluster.blockingNote}
                     </p>
                   )}
@@ -304,7 +304,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
                   {cluster.recommendedContentTypes.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {cluster.recommendedContentTypes.map(ct => (
-                        <span key={ct} className="px-2 py-0.5 rounded-full text-[10px] bg-white/8 text-slate-300 border border-white/10">
+                        <span key={ct} className="px-2 py-0.5 rounded-full text-[10px] bg-white/8 text-slate-300 border border-slate-200">
                           {ct}
                         </span>
                       ))}
@@ -322,17 +322,17 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
         <p className="overline">Action plan</p>
         <div className="grid sm:grid-cols-3 gap-3">
           {/* Do Right Now */}
-          <div className="p-4 bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/30 rounded-2xl space-y-3">
+          <div className="p-4 bg-rose-100 border border-rose-300/30 rounded-2xl space-y-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-[color:var(--accent-rose)]/20 rounded-lg flex items-center justify-center">
-                <Zap className="w-3.5 h-3.5 text-[color:var(--accent-rose)]" />
+              <div className="w-7 h-7 bg-[color:#f43f5e]/20 rounded-lg flex items-center justify-center">
+                <Zap className="w-3.5 h-3.5 text-rose-600" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--accent-rose)]">Do right now</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-rose-600">Do right now</p>
             </div>
             <ul className="space-y-2">
               {tactical.immediateActions.map(action => (
                 <li key={action} className="flex items-start gap-2">
-                  <ArrowRight className="w-3 h-3 text-[color:var(--accent-rose)] mt-0.5 shrink-0" />
+                  <ArrowRight className="w-3 h-3 text-rose-600 mt-0.5 shrink-0" />
                   <span className="text-xs text-slate-300 leading-relaxed">{action}</span>
                 </li>
               ))}
@@ -340,17 +340,17 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
           </div>
 
           {/* This Week */}
-          <div className="p-4 bg-[color:var(--d3-ice)]/10 border border-[color:var(--d3-ice)]/30 rounded-2xl space-y-3">
+          <div className="p-4 bg-[color:#0284c7]/10 border border-[color:#0284c7]/30 rounded-2xl space-y-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-[color:var(--d3-ice)]/20 rounded-lg flex items-center justify-center">
-                <CalendarDays className="w-3.5 h-3.5 text-[color:var(--d3-ice)]" />
+              <div className="w-7 h-7 bg-[color:#0284c7]/20 rounded-lg flex items-center justify-center">
+                <CalendarDays className="w-3.5 h-3.5 text-sky-600" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--d3-ice)]">This week</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-sky-600">This week</p>
             </div>
             <ul className="space-y-2">
               {tactical.thisWeekGoals.map(goal => (
                 <li key={goal} className="flex items-start gap-2">
-                  <CheckCircle className="w-3 h-3 text-[color:var(--d3-ice)] mt-0.5 shrink-0" />
+                  <CheckCircle className="w-3 h-3 text-sky-600 mt-0.5 shrink-0" />
                   <span className="text-xs text-slate-300 leading-relaxed">{goal}</span>
                 </li>
               ))}
@@ -358,17 +358,17 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
           </div>
 
           {/* Avoid */}
-          <div className="p-4 bg-[color:var(--d1-peach)]/10 border border-[color:var(--d1-peach)]/30 rounded-2xl space-y-3">
+          <div className="p-4 bg-[color:#d97706]/10 border border-amber-300/30 rounded-2xl space-y-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-[color:var(--d1-peach)]/20 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-3.5 h-3.5 text-[color:var(--d1-peach)]" />
+              <div className="w-7 h-7 bg-[color:#d97706]/20 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--d1-peach)]">Avoid</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-600">Avoid</p>
             </div>
             <ul className="space-y-2">
               {tactical.avoidList.map(item => (
                 <li key={item} className="flex items-start gap-2">
-                  <Minus className="w-3 h-3 text-[color:var(--d1-peach)] mt-0.5 shrink-0" />
+                  <Minus className="w-3 h-3 text-amber-600 mt-0.5 shrink-0" />
                   <span className="text-xs text-slate-300 leading-relaxed">{item}</span>
                 </li>
               ))}
@@ -389,9 +389,9 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
   if (!domain) return <p className="text-sm text-slate-500">No domain data available.</p>;
 
   const scoreColor = domain.domainScore !== null
-    ? domain.domainScore >= 80 ? 'text-[color:var(--d2-mint)]'
-    : domain.domainScore >= 60 ? 'text-[color:var(--d1-peach)]'
-    : 'text-[color:var(--accent-rose)]'
+    ? domain.domainScore >= 80 ? 'text-emerald-600'
+    : domain.domainScore >= 60 ? 'text-amber-600'
+    : 'text-rose-600'
     : 'text-slate-500';
 
   return (
@@ -400,10 +400,10 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
       <div className="flex flex-wrap gap-2">
         {plan.domainStudyMaps.map(d => {
           const sc = d.domainScore !== null
-            ? d.domainScore >= 80 ? 'border-[color:var(--d2-mint)]/50 text-[color:var(--d2-mint)]'
-            : d.domainScore >= 60 ? 'border-[color:var(--d1-peach)]/50 text-[color:var(--d1-peach)]'
-            : 'border-[color:var(--accent-rose)]/50 text-[color:var(--accent-rose)]'
-            : 'border-white/10 text-slate-500';
+            ? d.domainScore >= 80 ? 'border-[color:#059669]/50 text-emerald-600'
+            : d.domainScore >= 60 ? 'border-amber-300/50 text-amber-600'
+            : 'border-[color:#f43f5e]/50 text-rose-600'
+            : 'border-slate-200 text-slate-500';
           const active = d.domainId === activeDomainId;
           return (
             <button
@@ -411,8 +411,8 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
               onClick={() => setActiveDomainId(d.domainId)}
               className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
                 active
-                  ? 'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/50 text-white'
-                  : `bg-white/5 ${sc} hover:bg-white/10`
+                  ? 'bg-[color:#d97706]/10 border-amber-300/50 text-white'
+                  : `bg-white ${sc} hover:bg-slate-50`
               }`}
             >
               <span className="block">{d.domainName}</span>
@@ -427,7 +427,7 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
       {/* Domain panels */}
       <div className="grid sm:grid-cols-2 gap-4">
         {/* Snapshot */}
-        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
+        <div className="p-4 bg-white border border-slate-200 rounded-2xl space-y-2">
           <p className="overline">Domain snapshot</p>
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-white">{domain.domainName}</p>
@@ -440,12 +440,12 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
 
         {/* Must know */}
         {domain.contentToKnow.length > 0 && (
-          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
-            <p className="overline text-[color:var(--d3-ice)]">Must know</p>
+          <div className="p-4 bg-white border border-slate-200 rounded-2xl space-y-2">
+            <p className="overline text-sky-600">Must know</p>
             <ul className="space-y-1.5">
               {domain.contentToKnow.slice(0, 5).map(item => (
                 <li key={item} className="flex items-start gap-2">
-                  <ChevronRight className="w-3 h-3 text-[color:var(--d3-ice)] mt-0.5 shrink-0" />
+                  <ChevronRight className="w-3 h-3 text-sky-600 mt-0.5 shrink-0" />
                   <span className="text-xs text-slate-300">{item}</span>
                 </li>
               ))}
@@ -455,12 +455,12 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
 
         {/* Common traps */}
         {domain.commonTraps.length > 0 && (
-          <div className="p-4 bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/30 rounded-2xl space-y-2">
-            <p className="overline text-[color:var(--accent-rose)]">Common traps</p>
+          <div className="p-4 bg-rose-100 border border-rose-300/30 rounded-2xl space-y-2">
+            <p className="overline text-rose-600">Common traps</p>
             <ul className="space-y-1.5">
               {domain.commonTraps.map(trap => (
                 <li key={trap} className="flex items-start gap-2">
-                  <AlertTriangle className="w-3 h-3 text-[color:var(--accent-rose)] mt-0.5 shrink-0" />
+                  <AlertTriangle className="w-3 h-3 text-rose-600 mt-0.5 shrink-0" />
                   <span className="text-xs text-slate-300">{trap}</span>
                 </li>
               ))}
@@ -469,14 +469,14 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
         )}
 
         {/* Case types + vocabulary */}
-        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-3">
+        <div className="p-4 bg-white border border-slate-200 rounded-2xl space-y-3">
           {domain.caseTypesToRecognize.length > 0 && (
             <div className="space-y-1.5">
-              <p className="overline text-[color:var(--d1-peach)]">Case types</p>
+              <p className="overline text-amber-600">Case types</p>
               <ul className="space-y-1">
                 {domain.caseTypesToRecognize.map(c => (
                   <li key={c} className="flex items-start gap-1.5">
-                    <ArrowRight className="w-3 h-3 text-[color:var(--d1-peach)] mt-0.5 shrink-0" />
+                    <ArrowRight className="w-3 h-3 text-amber-600 mt-0.5 shrink-0" />
                     <span className="text-xs text-slate-300">{c}</span>
                   </li>
                 ))}
@@ -485,7 +485,7 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
           )}
           {domain.keyVocabulary.length > 0 && (
             <div className="space-y-1.5">
-              <p className="overline text-[color:var(--d4-lavender)]">Key vocabulary</p>
+              <p className="overline text-indigo-600">Key vocabulary</p>
               <div className="flex flex-wrap gap-1">
                 {domain.keyVocabulary.map(term => (
                   <span key={term} className="badge badge-violet text-[10px]">{term}</span>
@@ -497,8 +497,8 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
       </div>
 
       {/* Mastery signal */}
-      <div className="p-3 bg-[color:var(--d2-mint)]/10 border border-[color:var(--d2-mint)]/30 rounded-xl">
-        <p className="text-xs text-[color:var(--d2-mint)]">
+      <div className="p-3 bg-emerald-100 border border-emerald-300/30 rounded-xl">
+        <p className="text-xs text-emerald-600">
           <span className="font-semibold">Mastery signal: </span>{domain.masteryIndicator}
         </p>
       </div>
@@ -536,9 +536,9 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
             <p className="text-sm text-slate-500">No vocabulary entries were generated.</p>
           )}
           {plan.vocabulary.map(entry => (
-            <div key={entry.term} className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2.5">
+            <div key={entry.term} className="p-4 bg-white border border-slate-200 rounded-2xl space-y-2.5">
               <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-bold text-[color:var(--d4-lavender)]">{entry.term}</p>
+                <p className="text-sm font-bold text-indigo-600">{entry.term}</p>
                 {entry.confusionRisk && (
                   <span className="shrink-0 badge badge-coral text-[10px]">Confusion risk</span>
                 )}
@@ -549,7 +549,7 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
                 <p><span className="text-slate-300">Where it shows up: </span>{entry.whereItShowsUp}</p>
               </div>
               {entry.confusionRisk && (
-                <p className="text-xs text-[color:var(--accent-rose)] bg-[color:var(--accent-rose)]/10 border border-[color:var(--accent-rose)]/30 rounded-lg px-3 py-2 leading-relaxed">
+                <p className="text-xs text-rose-600 bg-rose-100 border border-rose-300/30 rounded-lg px-3 py-2 leading-relaxed">
                   {entry.confusionRisk}
                 </p>
               )}
@@ -565,7 +565,7 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
             <p className="text-sm text-slate-500">No case patterns were generated.</p>
           )}
           {plan.casePatterns.map(pattern => (
-            <div key={pattern.patternName} className="rounded-2xl border border-white/10 overflow-hidden">
+            <div key={pattern.patternName} className="rounded-2xl border border-slate-200 overflow-hidden">
               <div className="w-full h-0.5 bg-cyan-600" />
               <div className="p-4 space-y-3">
                 <div>
@@ -574,11 +574,11 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <p className="overline text-[color:var(--d3-ice)]">Clues in scenario</p>
+                    <p className="overline text-sky-600">Clues in scenario</p>
                     <ul className="space-y-1">
                       {pattern.cluesInScenario.map(clue => (
                         <li key={clue} className="flex items-start gap-1.5">
-                          <ChevronRight className="w-3 h-3 text-[color:var(--d3-ice)] mt-0.5 shrink-0" />
+                          <ChevronRight className="w-3 h-3 text-sky-600 mt-0.5 shrink-0" />
                           <span className="text-xs text-slate-300">{clue}</span>
                         </li>
                       ))}
@@ -586,11 +586,11 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
                   </div>
                   <div className="space-y-2.5">
                     <div>
-                      <p className="overline text-[color:var(--d1-peach)]">Likely question angle</p>
+                      <p className="overline text-amber-600">Likely question angle</p>
                       <p className="text-xs text-slate-300 mt-1 leading-relaxed">{pattern.likelyQuestionAngle}</p>
                     </div>
                     <div>
-                      <p className="overline text-[color:var(--accent-rose)]">Common mistake</p>
+                      <p className="overline text-rose-600">Common mistake</p>
                       <p className="text-xs text-slate-300 mt-1 leading-relaxed">{pattern.commonMistake}</p>
                     </div>
                   </div>
@@ -624,8 +624,8 @@ function TabWeekly({ plan }: { plan: StudyPlanDocumentV2 }) {
             onClick={() => setActiveWeek(w.weekNumber)}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
               w.weekNumber === activeWeek
-                ? 'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/50 text-white'
-                : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'
+                ? 'bg-[color:#d97706]/10 border-amber-300/50 text-white'
+                : 'bg-white border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-white'
             }`}
           >
             Week {w.weekNumber}
@@ -634,14 +634,14 @@ function TabWeekly({ plan }: { plan: StudyPlanDocumentV2 }) {
       </div>
 
       {/* Week header card */}
-      <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
+      <div className="p-4 bg-white border border-slate-200 rounded-2xl">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-sm font-bold text-white">
               Week {week.weekNumber}
               {week.datesLabel && <span className="text-slate-500 font-normal"> · {week.datesLabel}</span>}
             </p>
-            <p className="text-xs text-[color:var(--d3-ice)] mt-0.5">{week.clusterFocus}</p>
+            <p className="text-xs text-sky-600 mt-0.5">{week.clusterFocus}</p>
           </div>
           <div className="text-right shrink-0">
             <p className="text-xs font-semibold text-slate-300">{totalWeekMinutes} min</p>
@@ -656,7 +656,7 @@ function TabWeekly({ plan }: { plan: StudyPlanDocumentV2 }) {
         {week.sessions.map(session => {
           const tag = sessionTypeTag(session.sessionType);
           return (
-            <div key={session.sessionLabel} className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2.5">
+            <div key={session.sessionLabel} className="p-4 bg-white border border-slate-200 rounded-2xl space-y-2.5">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className={`${tag.cls} text-[10px]`}>{tag.label}</span>
@@ -681,8 +681,8 @@ function TabWeekly({ plan }: { plan: StudyPlanDocumentV2 }) {
       </div>
 
       {/* Week checkpoint */}
-      <div className="p-3 bg-[color:var(--d4-lavender)]/10 border border-[color:var(--d4-lavender)]/30 rounded-xl">
-        <p className="text-xs text-[color:var(--d4-lavender)]">
+      <div className="p-3 bg-[color:#6366f1]/10 border border-[color:#6366f1]/30 rounded-xl">
+        <p className="text-xs text-indigo-600">
           <span className="font-semibold">Checkpoint: </span>{week.checkpointQuestion}
         </p>
       </div>
@@ -696,21 +696,21 @@ function TabMilestones({ plan }: { plan: StudyPlanDocumentV2 }) {
   const cp = plan.checkpointLogic;
 
   const milestones = [
-    { label: 'Week 2 check', content: cp.week2Check, color: 'cyan', icon: <Clock className="w-4 h-4 text-[color:var(--d3-ice)]" /> },
+    { label: 'Week 2 check', content: cp.week2Check, color: 'cyan', icon: <Clock className="w-4 h-4 text-sky-600" /> },
     { label: 'Midpoint assessment', content: cp.midpointAssessment, color: 'blue', icon: <BarChart3 className="w-4 h-4 text-blue-600" /> },
-    { label: 'Shift signal', content: cp.shiftSignal, color: 'amber', icon: <AlertTriangle className="w-4 h-4 text-[color:var(--d1-peach)]" /> },
-    { label: 'Readiness signal', content: cp.readinessSignal, color: 'emerald', icon: <CheckCircle className="w-4 h-4 text-[color:var(--d2-mint)]" /> },
+    { label: 'Shift signal', content: cp.shiftSignal, color: 'amber', icon: <AlertTriangle className="w-4 h-4 text-amber-600" /> },
+    { label: 'Readiness signal', content: cp.readinessSignal, color: 'emerald', icon: <CheckCircle className="w-4 h-4 text-emerald-600" /> },
   ] as const;
 
   const colorMap: Record<string, string> = {
-    cyan:    'bg-[color:var(--d3-ice)]/10 border-[color:var(--d3-ice)]/30',
+    cyan:    'bg-[color:#0284c7]/10 border-[color:#0284c7]/30',
     blue:    'bg-blue-50 border-blue-200',
-    amber:   'bg-[color:var(--d1-peach)]/10 border-[color:var(--d1-peach)]/30',
-    emerald: 'bg-[color:var(--d2-mint)]/10 border-[color:var(--d2-mint)]/30',
+    amber:   'bg-[color:#d97706]/10 border-amber-300/30',
+    emerald: 'bg-emerald-100 border-emerald-300/30',
   };
 
   const lineMap: Record<string, string> = {
-    cyan: 'bg-[color:var(--d3-ice)]/100', blue: 'bg-blue-500', amber: 'bg-[color:var(--d1-peach)]/100', emerald: 'bg-[color:var(--d2-mint)]/100',
+    cyan: 'bg-[color:#0284c7]/100', blue: 'bg-blue-500', amber: 'bg-[color:#d97706]/100', emerald: 'bg-emerald-1000',
   };
 
   return (
@@ -770,7 +770,7 @@ export default function StudyPlanViewer({ plan }: StudyPlanViewerProps) {
         <button
           type="button"
           onClick={() => window.print()}
-          className="study-plan-print-button flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[color:var(--d1-peach)]/30 text-slate-300 hover:text-white rounded-xl text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)]"
+          className="study-plan-print-button flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 hover:border-amber-300/30 text-slate-300 hover:text-white rounded-xl text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
         >
           <Printer className="w-3.5 h-3.5" />
           Print

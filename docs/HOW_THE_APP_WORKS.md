@@ -36,11 +36,11 @@ Sign in with an email and password. All data lives in the cloud, so you can pick
 
 **Consent requirement:** During signup, users must check a consent checkbox agreeing to the [Privacy Policy](#privacy) and [Terms of Service](#terms) before their account can be created. Existing users who signed up before this requirement are shown a non-dismissable consent gate on their next login. Both documents are accessible without authentication via `#privacy` and `#terms` hash routes.
 
-Before sign-in, the public entry page is an atelier-styled hero: a central "Adaptive Engine" orb with four feeder paths from the four domain nodes (Professional Practices · Student-Level Services · Systems-Level Services · Foundations), and the tagline **"A study plan that listens."**
+Before sign-in, the public entry page is a **Cognitive Clarity** marketing hero on a cream background (`#f7f6f2`): PASS branding in a frosted top bar, a **split layout** (narrative left, **How it works** card right), the headline **"A study platform that listens."**, a short platform-level description, two calls to action, and three feature highlights as compact pills (Adaptive diagnostic · Personalized study path · Progress tracking). There is no decorative orb, starfield, or domain-colored engine visualization on the login page.
 
-The stat row under the headline reads: **4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated.** Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
+The login hero intentionally does **not** show question-bank size, calibration claims, or exam-specific counts (for example, number of domains, skills, or items). Those details appear after sign-in once the user is in their exam context. Accent color is amber only on neutral slate typography. Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
 
-Returning candidates scroll to (or click) the sign-in panel — a glass card with email + password, plus toggles for Sign up and Forgot password. A beta disclaimer is shown: "Currently in beta. Not responsible for loss of data during the beta period."
+Returning candidates scroll to (or click) the sign-in panel — a white editorial card on a slightly deeper cream band with email + password, plus toggles for Sign up and Forgot password. A beta disclaimer is shown: "Currently in beta. Not responsible for loss of data during the beta period."
 
 **No intake phase.** Users go directly from the hero to sign-up/sign-in; exam selection and onboarding happen after authentication (see Step 1b).
 

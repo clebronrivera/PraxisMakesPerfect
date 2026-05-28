@@ -86,21 +86,21 @@ function SectionRenderer({
 
   // Token mapping per variant
   const anchorShell = isA
-    ? 'rounded-r-xl border-l-2 border-[color:var(--d1-peach)]/60 bg-[color:var(--d1-peach)]/10 px-4 py-3 space-y-1'
+    ? 'rounded-r-xl border-l-2 border-[color:#d97706]/60 bg-[color:#d97706]/10 px-4 py-3 space-y-1'
     : 'rounded-r-xl border-l-4 border-amber-400 bg-amber-50 px-4 py-3 space-y-1';
-  const anchorIcon = isA ? 'w-3.5 h-3.5 shrink-0 text-[color:var(--d1-peach)]' : 'w-3.5 h-3.5 text-amber-600 shrink-0';
+  const anchorIcon = isA ? 'w-3.5 h-3.5 shrink-0 text-amber-600' : 'w-3.5 h-3.5 text-amber-600 shrink-0';
   const anchorLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--d1-peach)]'
+    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-600'
     : 'text-xs font-black uppercase tracking-wider text-amber-700';
 
   const listLabel = anchorLabel;
-  const listBullet = isA ? 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--d1-peach)]' : 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500';
+  const listBullet = isA ? 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:#d97706]' : 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500';
 
   const compLeftShell = isA
-    ? 'bg-white/5 rounded-xl border border-white/10 overflow-hidden'
+    ? 'bg-white rounded-xl border border-slate-200 overflow-hidden'
     : 'bg-slate-50 rounded-xl border border-slate-200 overflow-hidden';
   const compLeftHead = isA
-    ? 'bg-white/5 px-4 py-2 border-b border-white/10'
+    ? 'bg-white px-4 py-2 border-b border-slate-200'
     : 'bg-slate-100 px-4 py-2 border-b border-slate-200';
   const compLeftLabel = isA
     ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-300'
@@ -109,19 +109,19 @@ function SectionRenderer({
   const compLeftText = isA ? 'text-sm text-slate-200 leading-relaxed' : 'text-sm text-slate-700 leading-relaxed';
 
   const compRightShell = isA
-    ? 'bg-[color:var(--d1-peach)]/10 rounded-xl border border-[color:var(--d1-peach)]/30 overflow-hidden'
+    ? 'bg-[color:#d97706]/10 rounded-xl border border-amber-300/30 overflow-hidden'
     : 'bg-amber-50 rounded-xl border border-amber-200 overflow-hidden';
   const compRightHead = isA
-    ? 'bg-[color:var(--d1-peach)]/15 px-4 py-2 border-b border-[color:var(--d1-peach)]/30'
+    ? 'bg-[color:#d97706]/15 px-4 py-2 border-b border-amber-300/30'
     : 'bg-amber-100 px-4 py-2 border-b border-amber-200';
   const compRightLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--d1-peach)]'
+    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-600'
     : 'text-xs font-black uppercase tracking-wider text-amber-700';
-  const compRightDot = isA ? 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--d1-peach)]' : 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400';
+  const compRightDot = isA ? 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:#d97706]' : 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400';
   const compRightText = isA ? 'text-sm text-slate-200 leading-relaxed' : 'text-sm text-slate-700 leading-relaxed';
 
   const visualShell = isA
-    ? 'rounded-xl border border-white/10 bg-white/5 p-4'
+    ? 'rounded-xl border border-slate-200 bg-white p-4'
     : 'rounded-xl border border-slate-200 bg-slate-50 p-4';
   const visualText = isA ? 'text-sm text-slate-400 italic' : 'text-sm text-slate-500 italic';
 
@@ -214,21 +214,21 @@ function SectionRenderer({
         <div
           className={
             isA
-              ? 'flex items-center gap-1.5 rounded-lg bg-[color:var(--d2-mint)]/10 border border-[color:var(--d2-mint)]/30 px-3 py-1.5 mt-3'
+              ? 'flex items-center gap-1.5 rounded-lg bg-emerald-100 border border-emerald-300/30 px-3 py-1.5 mt-3'
               : 'flex items-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 mt-3'
           }
         >
           <CheckCircle
-            className={isA ? 'w-3.5 h-3.5 text-[color:var(--d2-mint)]' : 'w-3.5 h-3.5 text-emerald-600'}
+            className={isA ? 'w-3.5 h-3.5 text-emerald-600' : 'w-3.5 h-3.5 text-emerald-600'}
           />
-          <span className={isA ? 'text-xs font-bold text-[color:var(--d2-mint)]' : 'text-xs font-bold text-emerald-700'}>
+          <span className={isA ? 'text-xs font-bold text-emerald-600' : 'text-xs font-bold text-emerald-700'}>
             Completed{completed.score != null ? ` · ${Math.round(completed.score * 100)}%` : ''}
           </span>
         </div>
       ) : null;
 
       const interactiveLabel = isA
-        ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--d1-peach)] mb-3'
+        ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-600 mb-3'
         : 'text-xs font-black uppercase tracking-wider text-amber-700 mb-3';
 
       const interactiveWrapper = (label: string | undefined, children: React.ReactNode) => (
@@ -422,11 +422,11 @@ export default function ModuleLessonViewer({
 
   // Variant-scoped chrome
   const shellCls = isA
-    ? 'bg-[rgba(10,22,40,0.55)] backdrop-blur-[14px] rounded-2xl border border-white/8 overflow-hidden'
+    ? 'bg-[rgba(10,22,40,0.55)] backdrop-blur-[14px] rounded-2xl border border-slate-200 overflow-hidden'
     : 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden';
-  const headerBorder = isA ? 'border-b border-white/8' : 'border-b border-slate-100';
+  const headerBorder = isA ? 'border-b border-slate-200' : 'border-b border-slate-100';
   const moduleIdPill = isA
-    ? 'bg-[color:var(--d1-peach)]/15 text-[color:var(--d1-peach)] text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider border border-[color:var(--d1-peach)]/30'
+    ? 'bg-[color:#d97706]/15 text-amber-600 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider border border-amber-300/30'
     : 'bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider';
   const timeCls = isA
     ? 'flex items-center gap-1 text-xs text-slate-400 ml-auto no-print'
@@ -434,23 +434,23 @@ export default function ModuleLessonViewer({
   const titleCls = isA
     ? `font-black text-white tracking-tight leading-snug ${titleSize}`
     : `font-black text-slate-900 tracking-tight leading-snug ${titleSize}`;
-  const relatedBorder = isA ? 'pt-3 border-t border-white/8 space-y-2' : 'pt-3 border-t border-slate-100 space-y-2';
+  const relatedBorder = isA ? 'pt-3 border-t border-slate-200 space-y-2' : 'pt-3 border-t border-slate-100 space-y-2';
   const seeAlsoLabel = isA
     ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400'
     : 'text-xs font-black uppercase tracking-wider text-slate-400';
   const relatedBtn = isA
-    ? 'w-full text-left px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)]'
+    ? 'w-full text-left px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500'
     : 'w-full text-left px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-amber-300 transition-colors';
   const relatedId = isA
-    ? 'text-[10px] font-mono text-[color:var(--d1-peach)] mr-2'
+    ? 'text-[10px] font-mono text-amber-600 mr-2'
     : 'text-[10px] font-mono text-amber-700 mr-2';
   const relatedTitle = isA ? 'text-xs text-slate-300' : 'text-xs text-slate-600';
-  const viewedBorder = isA ? 'pt-3 border-t border-white/8' : 'pt-3 border-t border-slate-100';
+  const viewedBorder = isA ? 'pt-3 border-t border-slate-200' : 'pt-3 border-t border-slate-100';
   const viewedOn = isA
-    ? 'bg-[color:var(--d2-mint)]/10 border-[color:var(--d2-mint)]/50 text-[color:var(--d2-mint)] hover:bg-[color:var(--d2-mint)]/15'
+    ? 'bg-emerald-100 border-[color:#059669]/50 text-emerald-600 hover:bg-[color:#059669]/15'
     : 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100';
   const viewedOff = isA
-    ? 'bg-white/5 border-white/10 text-slate-300 hover:border-[color:var(--d1-peach)]/40 hover:text-white hover:bg-white/10'
+    ? 'bg-white border-slate-200 text-slate-300 hover:border-[color:#d97706]/40 hover:text-white hover:bg-slate-50'
     : 'bg-white border-slate-200 text-slate-500 hover:border-amber-300 hover:text-slate-800';
 
   return (
@@ -512,7 +512,7 @@ export default function ModuleLessonViewer({
         <div className={viewedBorder}>
           <button
             onClick={() => onSetViewed(!isViewed)}
-            className={`w-full flex items-center justify-center gap-2.5 py-3 rounded-xl border-2 font-bold text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
+            className={`w-full flex items-center justify-center gap-2.5 py-3 rounded-xl border-2 font-bold text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
               isViewed ? viewedOn : viewedOff
             }`}
           >

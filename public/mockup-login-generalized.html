@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PASS — Generalized Login Hero Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f7f6f2] text-slate-900">
+  <header class="absolute top-0 left-0 right-0 z-10 px-6 md:px-10 py-5 md:py-6">
+    <div class="mx-auto max-w-6xl flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg text-white font-black">P</div>
+        <div>
+          <p class="text-sm font-bold tracking-wide">PASS</p>
+          <p class="text-[10px] tracking-[0.22em] uppercase text-slate-500">Platform for Adaptive Study Sessions</p>
+        </div>
+      </div>
+      <button class="text-sm text-slate-600 hover:text-slate-900">Sign in</button>
+    </div>
+  </header>
+
+  <main class="min-h-screen px-6 md:px-10 pt-28 pb-16 flex items-center">
+    <div class="mx-auto max-w-6xl w-full grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <section>
+        <p class="text-[11px] font-semibold tracking-[0.32em] uppercase text-amber-600/85 mb-6">
+          Adaptive · Personal · Built around your gaps
+        </p>
+        <h1 class="text-5xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+          A study platform<br />
+          <span class="text-amber-600">that listens.</span>
+        </h1>
+        <p class="mt-6 text-base text-slate-600 leading-relaxed max-w-xl">
+          Start with a focused diagnostic, then move through personalized practice and a guided study plan that adapts to your performance over time.
+        </p>
+
+        <div class="mt-9 flex flex-wrap gap-4">
+          <button class="px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold">
+            Begin your diagnostic →
+          </button>
+          <button class="px-6 py-3 rounded-xl border border-amber-300 text-amber-700 hover:bg-amber-50 font-semibold">
+            I have an account
+          </button>
+        </div>
+
+        <div class="mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-slate-600">
+          <span class="inline-flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-amber-600"></span>Adaptive diagnostic</span>
+          <span class="text-slate-300">·</span>
+          <span class="inline-flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-amber-600"></span>Personalized study path</span>
+          <span class="text-slate-300">·</span>
+          <span class="inline-flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-amber-600"></span>Progress tracking</span>
+        </div>
+      </section>
+
+      <aside class="rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-sm p-6 md:p-7 shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
+        <p class="text-[11px] font-semibold tracking-[0.22em] uppercase text-slate-500 mb-4">How it works</p>
+        <ol class="space-y-4 text-sm text-slate-700">
+          <li class="flex gap-3">
+            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">1</span>
+            Complete a short diagnostic to establish your starting point.
+          </li>
+          <li class="flex gap-3">
+            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">2</span>
+            Get a personalized study path focused on your highest-impact gaps.
+          </li>
+          <li class="flex gap-3">
+            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">3</span>
+            Track progress and adjust your plan as your performance improves.
+          </li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] uppercase text-slate-600">
+    Already a candidate? <span class="text-amber-700">Sign in ↓</span>
+  </footer>
+</body>
+</html>

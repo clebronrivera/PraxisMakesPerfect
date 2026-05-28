@@ -70,41 +70,41 @@ export default function TermMatcher({
     ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 mb-3'
     : 'text-[10px] font-bold uppercase text-slate-600 mb-3';
   const slotCorrect = isA
-    ? 'border-[color:var(--d2-mint)]/50 bg-[color:var(--d2-mint)]/10'
+    ? 'border-[color:#059669]/50 bg-emerald-100'
     : 'border-emerald-300 bg-emerald-50';
   const slotWrong = isA
-    ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/10'
+    ? 'border-amber-300/50 bg-[color:#d97706]/10'
     : 'border-amber-300 bg-amber-50';
   const slotIdle = isA
-    ? 'border-white/20 bg-white/5 hover:border-[color:var(--d1-peach)]/40'
+    ? 'border-white/20 bg-white hover:border-[color:#d97706]/40'
     : 'border-slate-300 bg-slate-50 hover:border-cyan-300';
   const termCls = isA ? 'font-semibold text-white mb-2' : 'font-semibold text-slate-800 mb-2';
   const defMatchedCls = isA ? 'text-xs text-slate-200 leading-normal' : 'text-xs text-slate-700 leading-normal';
   const removeBtn = isA
-    ? 'mt-0.5 text-slate-500 hover:text-[color:var(--accent-rose)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] rounded'
+    ? 'mt-0.5 text-slate-500 hover:text-rose-600 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 rounded'
     : 'mt-0.5 text-slate-400 hover:text-rose-600 transition-colors';
   const placeholderCls = isA ? 'text-xs text-slate-500 italic' : 'text-xs text-slate-400 italic';
   const defDragging = isA
-    ? 'bg-[color:var(--d1-peach)]/15 border border-[color:var(--d1-peach)]/50 opacity-75'
+    ? 'bg-[color:#d97706]/15 border border-amber-300/50 opacity-75'
     : 'bg-cyan-50 border border-cyan-300 opacity-75';
   const defIdle = isA
-    ? 'bg-white/5 border border-white/10 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/10'
+    ? 'bg-white border border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50'
     : 'bg-white border border-slate-200 hover:border-cyan-300 shadow-sm';
   const defHandle = isA ? 'w-3.5 h-3.5 mt-0.5 text-slate-500 flex-shrink-0' : 'w-3.5 h-3.5 mt-0.5 text-slate-400 flex-shrink-0';
   const defText = isA ? 'text-xs text-slate-200 leading-normal' : 'text-xs text-slate-700 leading-normal';
   const bannerCorrectCls = isA
-    ? 'rounded-xl px-4 py-3 bg-[color:var(--d2-mint)]/10 border border-[color:var(--d2-mint)]/40'
+    ? 'rounded-xl px-4 py-3 bg-emerald-100 border border-[color:#059669]/40'
     : 'rounded-lg px-4 py-3 bg-emerald-50 border border-emerald-200';
   const bannerPartialCls = isA
-    ? 'rounded-xl px-4 py-3 bg-[color:var(--d1-peach)]/10 border border-[color:var(--d1-peach)]/40'
+    ? 'rounded-xl px-4 py-3 bg-[color:#d97706]/10 border border-[color:#d97706]/40'
     : 'rounded-lg px-4 py-3 bg-amber-50 border border-amber-200';
-  const bannerCorrectText = isA ? 'text-sm font-semibold text-[color:var(--d2-mint)]' : 'text-sm font-semibold text-emerald-700';
-  const bannerPartialText = isA ? 'text-sm font-semibold text-[color:var(--d1-peach)]' : 'text-sm font-semibold text-amber-700';
+  const bannerCorrectText = isA ? 'text-sm font-semibold text-emerald-600' : 'text-sm font-semibold text-emerald-700';
+  const bannerPartialText = isA ? 'text-sm font-semibold text-amber-600' : 'text-sm font-semibold text-amber-700';
   const submitActive = isA
-    ? 'btn-soft-glow text-sm font-semibold'
+    ? 'editorial-button-primary text-sm font-semibold'
     : 'bg-cyan-600 hover:bg-cyan-700 text-white border border-transparent';
   const submitDisabled = isA
-    ? 'bg-white/5 border border-white/10 text-slate-500 cursor-not-allowed'
+    ? 'bg-white border border-slate-200 text-slate-500 cursor-not-allowed'
     : 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed';
 
   return (
