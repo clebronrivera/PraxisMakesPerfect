@@ -49,6 +49,10 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
       ))
     : null;
 
+  // Guard against a manually-typed past date (native `min` only constrains the picker)
+  const isPastTestDate =
+    !!value.testDate && value.testDate < new Date().toISOString().split('T')[0];
+
   const activeToggleClass =
     'bg-amber-100 text-amber-900 border border-amber-300';
   const idleToggleClass =
@@ -61,6 +65,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
+        aria-expanded={isOpen}
         className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 ${focusRing}`}
       >
         <div className="flex items-center gap-2">
@@ -91,7 +96,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                 onChange={e => update({ testDate: e.target.value || undefined })}
                 className={`rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20`}
               />
-              {weeksUntilTest !== null && (
+              {weeksUntilTest !== null && !isPastTestDate && (
                 <span className="text-sm text-slate-500">
                   {weeksUntilTest === 0
                     ? 'This week!'
@@ -99,6 +104,9 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
                 </span>
               )}
             </div>
+            {isPastTestDate && (
+              <p className="text-xs text-rose-600">Pick a date in the future so we can schedule your plan.</p>
+            )}
           </div>
 
           {/* Study days per week */}

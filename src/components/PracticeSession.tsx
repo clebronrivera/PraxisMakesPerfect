@@ -724,6 +724,7 @@ export default function PracticeSession({
                   ? 'border-amber-300/50 bg-[color:#d97706]/15 text-amber-600'
                   : 'border-transparent text-slate-500 hover:border-amber-300/30 hover:bg-[color:#d97706]/10 hover:text-amber-600'
               }`}
+              aria-pressed={hintOpenForQuestion === currentQuestion?.id}
               title="Open module hint — answer won't count toward score"
             >
               <Lightbulb className="w-4 h-4" />
@@ -749,7 +750,8 @@ export default function PracticeSession({
           {/* Exit button — "← Skills" for skill practice, Home icon otherwise */}
           <button
             onClick={onExitPractice}
-            className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-slate-200 hover:bg-white hover:text-white"
+            className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-slate-200 hover:bg-white hover:text-slate-900"
+            aria-label={practiceSkillId ? 'Back to Skills' : 'Exit Practice'}
             title={practiceSkillId ? 'Back to Skills' : 'Exit Practice'}
           >
             {practiceSkillId ? (
