@@ -58,7 +58,7 @@ const LIGHT_BADGE: Record<string, { badge: string; text: string }> = {
   proficient:  { badge: 'bg-emerald-100 border border-emerald-300/30 text-emerald-600', text: 'text-emerald-600' },
   approaching: { badge: 'bg-[color:#d97706]/10 border border-amber-300/30 text-amber-600',       text: 'text-amber-600'   },
   emerging:    { badge: 'bg-rose-100 border border-rose-300/30 text-rose-600',           text: 'text-rose-600'    },
-  unstarted:   { badge: 'bg-white/8 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
+  unstarted:   { badge: 'bg-slate-100 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
 };
 
 // ─── Date helpers ────────────────────────────────────────────────────────────
@@ -205,7 +205,7 @@ function DomainPanel({
           <Lock className="w-4 h-4 text-amber-600" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock domain-based practice across all four Praxis sections.
           </p>
@@ -245,7 +245,7 @@ function DomainPanel({
               <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl" style={{ backgroundColor: color }} />
               <div className="flex items-start justify-between gap-3 mb-3 pl-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-base font-semibold leading-tight text-white">{stat.domain.name}</p>
+                  <p className="text-base font-semibold leading-tight text-slate-900">{stat.domain.name}</p>
                   <p className="mt-0.5 text-[11px] text-slate-500">{stat.totalSkills} skills</p>
                 </div>
                 <button
@@ -256,7 +256,7 @@ function DomainPanel({
                 </button>
               </div>
               <div className="relative h-1.5 mb-2" style={{ overflow: 'visible' }}>
-                <div className="absolute inset-0 overflow-hidden rounded-full bg-white/8">
+                <div className="absolute inset-0 overflow-hidden rounded-full bg-slate-100">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ${barColor}`}
                     style={{ width: `${barPct}%` }}
@@ -329,7 +329,7 @@ function SkillPanel({
           <Lock className="w-4 h-4 text-amber-600" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
           </p>
@@ -359,7 +359,7 @@ function SkillPanel({
                            allRows.filter(r => r.tier === filter);
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
-    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-[color:#d97706]/10 border-amber-300/50 text-white'    },
+    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-[color:#d97706]/10 border-amber-300/50 text-amber-900'    },
     { id: 'emerging',  label: PROFICIENCY_META.emerging.label,  count: emergingCount,     css: 'text-rose-600 border-rose-300/30',     activeCss: 'bg-rose-100 border-[color:#f43f5e]/50 text-rose-600'       },
     { id: 'approaching',label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-600 border-amber-300/30', activeCss: 'bg-[color:#d97706]/10 border-amber-300/50 text-amber-600'    },
     { id: 'proficient',label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-600 border-emerald-300/30', activeCss: 'bg-emerald-100 border-[color:#059669]/50 text-emerald-600' },
@@ -377,7 +377,7 @@ function SkillPanel({
       {/* Stats row */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
-          { label: 'Assessed', value: assessedRows.length, css: 'text-white' },
+          { label: 'Assessed', value: assessedRows.length, css: 'text-slate-900' },
           { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-rose-600' },
           { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-amber-600' },
           { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-emerald-600' },
@@ -433,7 +433,7 @@ function SkillPanel({
               >
                 {/* Skill label + module code */}
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm leading-snug text-slate-200">
+                  <p className="truncate text-sm leading-snug text-slate-700">
                     {row.fullLabel}
                   </p>
                   {primaryModule && (
@@ -529,7 +529,7 @@ function LearningPathPanel({
           <Lock className="w-4 h-4 text-amber-600" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
           </p>
@@ -673,12 +673,12 @@ export default function StudyModesSection({
       {/* ── Readiness bar ───────────────────────────────────────────────── */}
       <div className="editorial-surface p-3.5">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-semibold text-slate-200">Praxis Readiness</p>
+          <p className="text-sm font-semibold text-slate-700">Praxis Readiness</p>
           <p className={`text-sm font-bold tabular-nums ${demonstratingCount >= READINESS_TARGET ? 'text-emerald-600' : 'text-slate-500'}`}>
             {demonstratingCount} / {READINESS_TARGET} {PROFICIENCY_META.proficient.label}
           </p>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-white/8">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div
             className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-1000' : 'bg-[color:#d97706]/100'}`}
             style={{ width: `${readinessBarPct}%` }}
@@ -733,7 +733,7 @@ export default function StudyModesSection({
               }`}>
                 {tab.locked ? <Lock className="w-3 h-3" /> : tab.icon}
                 <p className={`text-sm font-semibold truncate ${
-                  isActive ? 'text-white' : tab.locked ? 'text-slate-500' : 'text-slate-200'
+                  isActive ? 'text-amber-900' : tab.locked ? 'text-slate-500' : 'text-slate-700'
                 }`}>
                   {tab.label}
                 </p>

@@ -66,7 +66,7 @@ function NotesSection({ userId }: { userId: string | null }) {
       <div className="text-center py-12 space-y-3">
         <StickyNote className="w-8 h-8 mx-auto text-slate-500" />
         <p className="text-sm text-slate-500">No notes yet.</p>
-        <p className="text-xs text-slate-400">Open a module in the Learning Path and use the Study Center sidebar to add notes.</p>
+        <p className="text-xs text-slate-500">Open a module in the Learning Path and use the Study Center sidebar to add notes.</p>
       </div>
     );
   }
@@ -91,7 +91,7 @@ function NotesSection({ userId }: { userId: string | null }) {
             >
               <StickyNote className="w-4 h-4 text-amber-600 shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-white truncate">{skillDef?.fullLabel ?? skillId}</p>
+                <p className="text-sm font-bold text-slate-900 truncate">{skillDef?.fullLabel ?? skillId}</p>
                 <p className="text-[10px] text-slate-500">{skillNotes.length} {skillNotes.length === 1 ? 'note' : 'notes'}</p>
               </div>
               {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
@@ -107,10 +107,10 @@ function NotesSection({ userId }: { userId: string | null }) {
                         <span className="bg-[color:#d97706]/15 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border border-[color:#d97706]/25">
                           {n.module_id}
                         </span>
-                        {mod && <span className="text-[11px] text-slate-400 truncate">{mod.title}</span>}
+                        {mod && <span className="text-[11px] text-slate-500 truncate">{mod.title}</span>}
                       </div>
-                      <div className="rounded-xl border border-slate-200 p-3" style={{ background: 'rgba(10,22,40,0.45)' }}>
-                        <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">{n.note_text}</p>
+                      <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
+                        <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{n.note_text}</p>
                       </div>
                       <p className="text-[10px] text-slate-500">
                         Last edited {new Date(n.updated_at).toLocaleDateString()}
@@ -205,7 +205,7 @@ function FocusSection({
       <div className="text-center py-12 space-y-3">
         <Target className="w-8 h-8 mx-auto text-slate-500" />
         <p className="text-sm text-slate-500">No study plan generated yet.</p>
-        <p className="text-xs text-slate-400">Generate a study plan to see personalized focus items here.</p>
+        <p className="text-xs text-slate-500">Generate a study plan to see personalized focus items here.</p>
       </div>
     );
   }
@@ -293,7 +293,7 @@ function SkillFocusGroup({
       >
         <Target className="w-4 h-4 text-amber-600 shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-white truncate">{skillLabel}</p>
+          <p className="text-sm font-bold text-slate-900 truncate">{skillLabel}</p>
           <p className="text-[10px] text-slate-500">{checkedCount}/{items.length} reviewed</p>
         </div>
         {allDone && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
@@ -310,7 +310,7 @@ function SkillFocusGroup({
                 onClick={() => onToggleCheck(item.id)}
                 className={`flex w-full items-start gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all ${
                   checked
-                    ? 'border-slate-200 bg-white/3 opacity-60'
+                    ? 'border-slate-200 bg-slate-50 opacity-60'
                     : 'border-slate-200 bg-white hover:border-[color:#d97706]/40'
                 }`}
               >
@@ -320,12 +320,12 @@ function SkillFocusGroup({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     {iconMap[item.type]}
-                    <p className={`text-xs font-semibold leading-snug ${checked ? 'text-slate-500 line-through' : 'text-slate-100'}`}>
+                    <p className={`text-xs font-semibold leading-snug ${checked ? 'text-slate-500 line-through' : 'text-slate-700'}`}>
                       {item.text}
                     </p>
                   </div>
                   {item.detail && !checked && (
-                    <p className="mt-1 text-[11px] text-slate-400 leading-snug ml-6">{item.detail}</p>
+                    <p className="mt-1 text-[11px] text-slate-500 leading-snug ml-6">{item.detail}</p>
                   )}
                 </div>
               </button>
@@ -350,8 +350,8 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           <BookMarked className="w-6 h-6 text-amber-600" />
           <p className="eyebrow">Study Notebook</p>
         </div>
-        <h2 className="text-4xl font-bold tracking-tight text-white">Your Notes & Focus.</h2>
-        <p className="mt-2 text-sm text-slate-400 max-w-lg">
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900">Your Notes & Focus.</h1>
+        <p className="mt-2 text-sm text-slate-500 max-w-lg">
           All your module notes and AI-identified focus items in one place. Check off items as you master them.
         </p>
       </div>
@@ -362,8 +362,8 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           onClick={() => setActiveTab('notes')}
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'notes'
-              ? 'bg-gradient-to-r from-[color:#d97706] to-[color:#6366f1] text-[#1e1b3a] shadow-lg'
-              : 'border border-slate-200 bg-white text-slate-400 hover:border-[color:#d97706]/40 hover:text-white'
+              ? 'bg-amber-500 text-white shadow-sm'
+              : 'border border-slate-200 bg-white text-slate-600 hover:border-[color:#d97706]/40 hover:text-slate-900'
           }`}
         >
           <StickyNote className="w-3.5 h-3.5" />
@@ -373,8 +373,8 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           onClick={() => setActiveTab('focus')}
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'focus'
-              ? 'bg-gradient-to-r from-[color:#d97706] to-[color:#6366f1] text-[#1e1b3a] shadow-lg'
-              : 'border border-slate-200 bg-white text-slate-400 hover:border-[color:#d97706]/40 hover:text-white'
+              ? 'bg-amber-500 text-white shadow-sm'
+              : 'border border-slate-200 bg-white text-slate-600 hover:border-[color:#d97706]/40 hover:text-slate-900'
           }`}
         >
           <Target className="w-3.5 h-3.5" />

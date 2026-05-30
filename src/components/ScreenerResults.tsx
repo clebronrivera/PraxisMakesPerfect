@@ -110,7 +110,7 @@ export default function ScreenerResults({
         <p className="editorial-overline">
           Practical Study Guidance
         </p>
-        <h2 className="editorial-heading text-3xl sm:text-4xl">{title}</h2>
+        <h1 className="editorial-heading text-3xl sm:text-4xl">{title}</h1>
         <p className="editorial-copy">{subtitle}</p>
       </div>
 
@@ -126,9 +126,9 @@ export default function ScreenerResults({
               </span>
             </div>
             <div className="space-y-2">
-              <p className="text-5xl font-bold text-white">{formatPercent(report.overallScore)}</p>
+              <p className="text-5xl font-bold text-slate-900">{formatPercent(report.overallScore)}</p>
               <p className="text-slate-700">{report.readiness.description}</p>
-              <p className="text-sm text-slate-400">{TONE_OVERALL_MEANING[report.readiness.tone]}</p>
+              <p className="text-sm text-slate-500">{TONE_OVERALL_MEANING[report.readiness.tone]}</p>
             </div>
             <div className="rounded-[1.5rem] border border-amber-200 bg-white p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-700">Best Next Step</p>
@@ -137,8 +137,8 @@ export default function ScreenerResults({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-[1.5rem] border border-slate-200 bg-black/20 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Highest-Need Domains</p>
+            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Highest-Need Domains</p>
               <div className="mt-4 space-y-3">
                 {report.highestNeedDomains.map((domain) => (
                   <div key={domain.id} className="rounded-xl border border-slate-200 bg-white p-3">
@@ -148,20 +148,20 @@ export default function ScreenerResults({
                         {formatPercent(domain.score)}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-slate-400">{domain.correct} correct out of {domain.total} attempted</p>
+                    <p className="mt-1 text-xs text-slate-500">{domain.correct} correct out of {domain.total} attempted</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-slate-200 bg-black/20 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Foundational Concepts To Review</p>
+            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Foundational Concepts To Review</p>
               <div className="mt-4 space-y-3">
                 {report.foundationalGaps.length > 0 ? (
                   report.foundationalGaps.map((gap) => (
                     <div key={gap.skillId} className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                      <p className="text-sm font-semibold text-amber-100">{gap.skillName}</p>
-                      <p className="mt-1 text-xs text-amber-50/80">
+                      <p className="text-sm font-semibold text-amber-900">{gap.skillName}</p>
+                      <p className="mt-1 text-xs text-amber-800">
                         Linked to misses in {gap.triggeredBy.slice(0, 2).join(' and ')}.
                       </p>
                     </div>
