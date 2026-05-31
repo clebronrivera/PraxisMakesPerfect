@@ -75,11 +75,12 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
   { text: '  ↳ Study Guide Generator', cls: 'text-cyan-400' },
   { text: `✓ Module linkage complete — ${ALL_SKILLS.length}/${ALL_SKILLS.length} skills covered`, cls: 'text-emerald-300', delay: 900 },
 
-  // Phase 4 — Adaptivity + psychometrics
-  { text: '> Loading psychometric parameters...', cls: 'text-slate-400' },
-  { text: '  2PL IRT model · difficulty + discrimination per item', cls: 'text-cyan-400' },
+  // Phase 4 — Adaptivity + misconception engine
+  { text: '> Loading adaptive engine...', cls: 'text-slate-400' },
+  { text: '  Follow-ups by skill · alternating Recall / Application', cls: 'text-cyan-400' },
+  { text: '  Misconception detection · every distractor classified', cls: 'text-cyan-400' },
   { text: '  Confidence signal weighting: ENABLED', cls: 'text-cyan-400' },
-  { text: '✓ 1,150 items calibrated — engine adapts per response', cls: 'text-emerald-300', delay: 900 },
+  { text: '✓ Engine ready — adapts to every response', cls: 'text-emerald-300', delay: 900 },
 
   // Phase 5 — Scheduling + handoff
   { text: '> Configuring spaced review scheduler...', cls: 'text-slate-400' },
@@ -352,8 +353,9 @@ export default function LoginScreen() {
                 <span className="gradient-text">that listens.</span>
               </h1>
               <p className="text-base text-slate-400 mt-6 leading-relaxed max-w-md">
-                Four domains. 45 skills. 1,150 calibrated items — feeding one adaptive
-                engine that rebuilds itself around your gaps, one answer at a time.
+                One adaptive pass finds your real gaps — then names the misconception
+                behind every wrong answer and rebuilds your plan around them, one answer
+                at a time.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 mt-9">
@@ -374,13 +376,11 @@ export default function LoginScreen() {
               </div>
 
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-10 text-[11px] text-slate-500">
-                <span><span className="text-[color:var(--d1-peach)] font-semibold">4</span> domains</span>
+                <span><span className="text-[color:var(--d1-peach)] font-semibold">Adaptive</span> diagnostic</span>
                 <span className="text-slate-700">·</span>
-                <span><span className="text-[color:var(--d2-mint)] font-semibold">45</span> skills</span>
+                <span><span className="text-[color:var(--d2-mint)] font-semibold">Names</span> your misconceptions</span>
                 <span className="text-slate-700">·</span>
-                <span><span className="text-[color:var(--d3-ice)] font-semibold">1,150</span> calibrated items</span>
-                <span className="text-slate-700">·</span>
-                <span><span className="text-[color:var(--d4-lavender)] font-semibold">IRT</span>-calibrated</span>
+                <span><span className="text-[color:var(--d3-ice)] font-semibold">Plan</span> from your data</span>
               </div>
             </div>
 

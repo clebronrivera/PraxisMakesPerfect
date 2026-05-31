@@ -38,7 +38,7 @@ Sign in with an email and password. All data lives in the cloud, so you can pick
 
 Before sign-in, the public entry page is an atelier-styled hero: a central "Adaptive Engine" orb with four feeder paths from the four domain nodes (Professional Practices · Student-Level Services · Systems-Level Services · Foundations), and the tagline **"A study plan that listens."**
 
-The stat row under the headline reads: **4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated.** Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
+Under the headline, a short value line is followed by three honest, non-numeric proof points: **Adaptive diagnostic · Names your misconceptions · Plan from your data.** The hero intentionally avoids question-bank-size and psychometric-calibration claims — the bank is expert-authored with a 2-tier Recall/Application cognitive label, **not IRT-calibrated** (see [`docs/decisions/2026-05-login-hero-marketing.md`](decisions/2026-05-login-hero-marketing.md) and `audit-output/psychometric-readiness-audit.md`). Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
 
 Returning candidates scroll to (or click) the sign-in panel — a glass card with email + password, plus toggles for Sign up and Forgot password. A beta disclaimer is shown: "Currently in beta. Not responsible for loss of data during the beta period."
 
