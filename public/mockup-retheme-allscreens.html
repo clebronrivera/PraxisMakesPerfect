@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indigo/Violet Re-theme — All Screens</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f7f6f8; }
+    .eyebrow { font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; }
+    .surface { background:#fff; border:1px solid #e7e3ee; border-radius:1.5rem; box-shadow:0 18px 50px rgba(30,27,75,0.07); }
+    .screen { display:none; }
+    .screen.active { display:block; }
+    .topnav-btn.active { background:#fff; color:#4338ca; box-shadow:0 4px 14px rgba(30,27,75,.12); }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Screen switcher -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-violet-600 to-indigo-700 px-6 py-3 flex items-center gap-3 shadow-lg">
+    <span class="text-white font-bold text-sm mr-2">Re-theme preview ·</span>
+    <button onclick="show('dashboard',this)" class="topnav-btn active text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Dashboard</button>
+    <button onclick="show('practice',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Practice</button>
+    <button onclick="show('studyplan',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Study Plan</button>
+    <button onclick="show('progress',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Progress</button>
+    <button id="tab-report" onclick="show('report',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Full Report</button>
+    <span class="ml-auto text-indigo-100 text-xs">Brighter multi-gradient · static mockup, nothing wired</span>
+  </div>
+
+  <div class="flex min-h-screen">
+    <!-- Shared sidebar -->
+    <aside class="w-60 shrink-0 bg-white border-r border-slate-200 flex flex-col p-4 gap-1">
+      <div class="flex items-center gap-2 mb-6 px-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-black">◑</div>
+        <div><p class="font-bold text-slate-900 leading-tight">Praxis<span class="text-indigo-600">.Ai</span></p><p class="text-[9px] tracking-wide text-slate-500 uppercase">School Psychology 5403</p></div>
+      </div>
+      <a id="nav-dashboard" class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-indigo-500/30"><span class="w-6 h-6 rounded-lg bg-white/25 flex items-center justify-center text-xs">◆</span> Dashboard</a>
+      <a id="nav-practice" class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs">▶</span> Practice</a>
+      <a id="nav-progress" class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs">▥</span> Progress</a>
+      <a id="nav-studyplan" class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white text-xs">◈</span> Study Plan</a>
+      <a class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-xs">✦</span> AI Tutor</a>
+      <a class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white text-xs">▦</span> Glossary</a>
+    </aside>
+
+    <main class="flex-1 p-8 max-w-[1100px]">
+
+      <!-- ============ DASHBOARD ============ -->
+      <section id="dashboard" class="screen active">
+        <p class="eyebrow text-indigo-600 mb-1">Welcome back</p>
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-6">Hi, <span class="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">Carlos.</span></h1>
+        <div class="rounded-3xl overflow-hidden mb-6 shadow-xl shadow-indigo-500/20 bg-gradient-to-br from-violet-500 via-indigo-600 to-indigo-700">
+          <div class="p-6 flex items-center gap-8 text-white">
+            <div class="relative w-32 h-32 shrink-0">
+              <div class="absolute inset-0 rounded-full" style="background: conic-gradient(rgba(255,255,255,.95) 0%, rgba(255,255,255,.95) 41%, rgba(255,255,255,.22) 41%);"></div>
+              <div class="absolute inset-[10px] rounded-full bg-indigo-600 flex flex-col items-center justify-center">
+                <span class="text-3xl font-extrabold text-white">41%</span><span class="text-[10px] tracking-wide text-indigo-100 uppercase font-bold">Emerging</span>
+              </div>
+            </div>
+            <div class="flex-1">
+              <p class="eyebrow text-indigo-100 mb-1">Exam readiness</p>
+              <p class="text-2xl font-bold leading-snug"><span class="text-white">13</span> of 45 skills <br/>at Demonstrating.</p>
+              <p class="text-sm text-indigo-100 mt-2">19 more skills to hit your readiness target of 32.</p>
+              <div class="flex gap-6 mt-4 pt-3 border-t border-white/20">
+                <div><p class="text-[10px] uppercase tracking-wide text-indigo-200">Readiness phase</p><p class="text-sm font-bold">Developing</p></div>
+                <div><p class="text-[10px] uppercase tracking-wide text-indigo-200">This week</p><p class="text-sm font-bold">+2 skills</p></div>
+                <div><p class="text-[10px] uppercase tracking-wide text-indigo-200">Accuracy</p><p class="text-sm font-bold">74%</p></div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <button class="rounded-2xl px-5 py-2.5 text-sm font-semibold text-indigo-700 bg-white hover:bg-indigo-50 shadow-lg">Start Practice →</button>
+              <button onclick="document.getElementById('tab-report').click()" class="rounded-2xl px-5 py-2.5 text-sm font-semibold text-white bg-white/15 border border-white/30 hover:bg-white/25">View full report</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="surface p-4"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white mb-3">◐</div><p class="text-[10px] font-black uppercase tracking-wide text-cyan-700">Professional</p><p class="text-sm font-semibold text-slate-900 mt-0.5">Practices</p><p class="text-xs text-slate-500 mt-1">41% · Emerging</p><div class="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600" style="width:41%"></div></div></div>
+          <div class="surface p-4"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white mb-3">◑</div><p class="text-[10px] font-black uppercase tracking-wide text-emerald-700">Student-Level</p><p class="text-sm font-semibold text-slate-900 mt-0.5">Services</p><p class="text-xs text-slate-500 mt-1">78% · Approaching</p><div class="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-600" style="width:78%"></div></div></div>
+          <div class="surface p-4"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white mb-3">◒</div><p class="text-[10px] font-black uppercase tracking-wide text-rose-700">Systems-Level</p><p class="text-sm font-semibold text-slate-900 mt-0.5">Services</p><p class="text-xs text-slate-500 mt-1">34% · Emerging</p><div class="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-rose-500 to-pink-600" style="width:34%"></div></div></div>
+          <div class="surface p-4"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white mb-3">◓</div><p class="text-[10px] font-black uppercase tracking-wide text-amber-700">Foundations</p><p class="text-sm font-semibold text-slate-900 mt-0.5">&nbsp;</p><p class="text-xs text-slate-500 mt-1">62% · Approaching</p><div class="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-600" style="width:62%"></div></div></div>
+        </div>
+        <div class="grid grid-cols-3 gap-6">
+          <div class="col-span-2 surface p-6">
+            <div class="flex items-center justify-between mb-4"><p class="font-bold text-slate-900">Today's Focus</p><p class="eyebrow text-slate-400">Chained by priority</p></div>
+            <div class="rounded-2xl overflow-hidden bg-gradient-to-br from-rose-500 to-pink-600 p-4 flex items-center gap-4 text-white shadow-lg shadow-rose-500/20">
+              <div class="w-10 h-10 rounded-xl bg-white/25 flex items-center justify-center text-white">◎</div>
+              <div class="flex-1"><p class="text-[10px] font-black tracking-wide uppercase text-rose-100">Priority · Emerging · Systems-Level Services</p><p class="font-semibold">Ecological Assessment and Contextual Factors</p><p class="text-xs text-rose-100">9 skills below 60% in this domain — start here.</p></div>
+              <button class="rounded-xl px-4 py-2 text-sm font-semibold text-rose-700 bg-white hover:bg-rose-50">Practice →</button>
+            </div>
+            <div class="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 p-3"><span class="text-[10px] font-black uppercase text-slate-400 w-10">Then</span><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white">▦</div><div class="flex-1"><p class="text-sm font-semibold text-slate-900">Spaced review · 3 skills due</p><p class="text-xs text-slate-500">RIOT Framework, Professional Liability, Section 504…</p></div></div>
+            <div class="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 p-3"><span class="text-[10px] font-black uppercase text-slate-400 w-10">Then</span><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white">▤</div><div class="flex-1"><p class="text-sm font-semibold text-slate-900">Vocabulary review</p><p class="text-xs text-slate-500">Revisit terms from recent practice</p></div></div>
+          </div>
+          <div class="surface p-6">
+            <div class="flex items-center justify-between mb-4"><p class="font-bold text-slate-900">This Week</p><span class="text-[10px] text-slate-400">7D</span></div>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between"><span class="text-slate-500">Questions</span><span class="font-bold text-slate-900">148</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Study time</span><span class="font-bold text-slate-900">3h 42m</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Accuracy</span><span class="font-bold text-indigo-600">74%</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Today's goal</span><span class="font-bold text-slate-900">22 / 25</span></div>
+              <div class="h-2 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600" style="width:88%"></div></div>
+            </div>
+            <div class="mt-4 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 p-3 text-white flex items-center gap-2"><span class="text-lg">✦</span><div><p class="text-xs font-bold leading-tight">3-day streak</p><p class="text-[10px] text-amber-100">Keep it going today</p></div></div>
+          </div>
+        </div>
+
+        <!-- The Toolshed -->
+        <div class="mt-8">
+          <div class="mb-4"><h3 class="font-bold text-slate-900">The Toolshed</h3><p class="text-xs text-slate-500">Every tool at hand</p></div>
+          <div class="grid grid-cols-5 gap-3">
+            <!-- Fluency Drill -->
+            <div class="surface p-4 hover:-translate-y-0.5 hover:shadow-lg transition cursor-pointer">
+              <div class="flex items-start justify-between mb-3"><div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white">⚡</div><span class="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide">New</span></div>
+              <p class="text-[13px] font-semibold text-slate-900 leading-tight">Fluency Drill</p>
+              <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Rapid-fire cases, terms, concepts</p>
+            </div>
+            <!-- Vocab Quiz -->
+            <div class="surface p-4 hover:-translate-y-0.5 hover:shadow-lg transition cursor-pointer">
+              <div class="flex items-start justify-between mb-3"><div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white">▦</div><span class="text-[10px] font-bold text-slate-400">38 terms</span></div>
+              <p class="text-[13px] font-semibold text-slate-900 leading-tight">Vocab Quiz</p>
+              <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Review terms from practice</p>
+            </div>
+            <!-- Learning Path -->
+            <div class="surface p-4 hover:-translate-y-0.5 hover:shadow-lg transition cursor-pointer">
+              <div class="flex items-start justify-between mb-3"><div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white">◈</div><span class="rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide">Next</span></div>
+              <p class="text-[13px] font-semibold text-slate-900 leading-tight">Learning Path</p>
+              <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Next: IEP Eligibility Module</p>
+            </div>
+            <!-- Study Guide -->
+            <div class="surface p-4 hover:-translate-y-0.5 hover:shadow-lg transition cursor-pointer">
+              <div class="flex items-start justify-between mb-3"><div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white">▤</div><span class="text-[10px] font-bold text-slate-400">avg 9 min</span></div>
+              <p class="text-[13px] font-semibold text-slate-900 leading-tight">Study Guide</p>
+              <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">AI-generated plan from your data</p>
+            </div>
+            <!-- AI Tutor -->
+            <div class="surface p-4 hover:-translate-y-0.5 hover:shadow-lg transition cursor-pointer">
+              <div class="flex items-start justify-between mb-3"><div class="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white">✦</div><span class="rounded-full bg-rose-100 text-rose-700 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide">AI</span></div>
+              <p class="text-[13px] font-semibold text-slate-900 leading-tight">AI Tutor</p>
+              <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Ask anything, get quizzed</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PRACTICE ============ -->
+      <section id="practice" class="screen">
+        <!-- gradient session header -->
+        <div class="rounded-3xl overflow-hidden mb-5 bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/20">
+          <div class="p-5 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-white/25 flex items-center justify-center text-white text-lg">▶</div>
+            <div class="flex-1"><p class="eyebrow text-cyan-100">Skill Practice</p><p class="font-bold text-lg">Professional Practices</p></div>
+            <div class="flex items-center gap-5 text-center">
+              <div><p class="text-xl font-extrabold">4</p><p class="text-[10px] text-cyan-100 uppercase">Correct</p></div>
+              <div><p class="text-xl font-extrabold">1</p><p class="text-[10px] text-cyan-100 uppercase">Wrong</p></div>
+              <div><p class="text-xl font-extrabold">62%</p><p class="text-[10px] text-cyan-100 uppercase">All-time</p></div>
+            </div>
+            <div class="flex gap-2 ml-2">
+              <button class="rounded-xl px-3 py-2 text-xs font-semibold bg-white/15 border border-white/30 hover:bg-white/25">Hint</button>
+              <button class="rounded-xl px-3 py-2 text-xs font-semibold bg-white text-cyan-700">Exit</button>
+            </div>
+          </div>
+        </div>
+        <!-- context box -->
+        <div class="surface p-5 mb-5">
+          <div class="flex items-start gap-3"><span class="text-[10px] font-black uppercase text-cyan-700 mt-0.5">Skill 1.3</span><div><p class="font-bold text-slate-900">Ethical & Legal Standards</p><p class="text-sm text-slate-600">Applying professional ethics codes and special-education law to practice decisions.</p><p class="text-xs text-slate-500 mt-1 italic">What it looks like in answers: choices that protect student rights and follow due process.</p></div></div>
+        </div>
+        <!-- question card -->
+        <div class="surface p-6 mb-5">
+          <div class="flex items-center justify-between mb-4"><span class="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500 uppercase">Question Bank</span><button class="text-slate-400 hover:text-rose-500 text-sm">⚑ Report</button></div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 mb-4"><p class="text-[10px] font-black uppercase text-slate-400 mb-1">Case Vignette</p><p class="text-sm italic text-slate-700">A school psychologist is asked by a teacher to informally screen a student for ADHD without parental consent…</p></div>
+          <p class="text-lg font-bold text-slate-900 mb-4">What is the school psychologist's most appropriate first action?</p>
+          <div class="space-y-3">
+            <button class="w-full flex items-center gap-3 rounded-2xl border-2 border-emerald-400 bg-emerald-50 p-4 text-left"><span class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold">A</span><span class="flex-1 text-sm font-medium text-slate-900">Obtain informed parental consent before any individualized assessment.</span><span class="text-emerald-600 font-bold">✓</span></button>
+            <button class="w-full flex items-center gap-3 rounded-2xl border-2 border-slate-200 bg-white p-4 text-left hover:border-cyan-300"><span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold">B</span><span class="flex-1 text-sm font-medium text-slate-900">Conduct a brief screening and share results with the teacher only.</span></button>
+            <button class="w-full flex items-center gap-3 rounded-2xl border-2 border-slate-200 bg-white p-4 text-left hover:border-cyan-300"><span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold">C</span><span class="flex-1 text-sm font-medium text-slate-900">Recommend the teacher document behaviors for two more weeks.</span></button>
+            <button class="w-full flex items-center gap-3 rounded-2xl border-2 border-slate-200 bg-white p-4 text-left hover:border-cyan-300"><span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold">D</span><span class="flex-1 text-sm font-medium text-slate-900">Refer the student directly to a community pediatrician.</span></button>
+          </div>
+          <div class="mt-5 flex items-center gap-3"><p class="text-sm font-semibold text-slate-700">Confidence</p>
+            <button class="rounded-full px-4 py-1.5 text-xs font-bold border border-slate-200 text-slate-600">Low</button>
+            <button class="rounded-full px-4 py-1.5 text-xs font-bold bg-gradient-to-r from-violet-500 to-indigo-600 text-white">Medium</button>
+            <button class="rounded-full px-4 py-1.5 text-xs font-bold border border-slate-200 text-slate-600">High</button>
+          </div>
+        </div>
+        <!-- feedback -->
+        <div class="rounded-3xl border-2 border-emerald-200 bg-emerald-50 p-6">
+          <p class="font-bold text-emerald-700 mb-2">✓ Correct</p>
+          <p class="text-sm text-slate-700">Parental consent is required before conducting an individualized evaluation under IDEA. Informal screening to identify a disability still triggers consent protections.</p>
+          <button class="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-br from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 shadow-lg shadow-indigo-500/20">Next Question →</button>
+        </div>
+      </section>
+
+      <!-- ============ STUDY PLAN ============ -->
+      <section id="studyplan" class="screen">
+        <p class="eyebrow text-rose-600 mb-1">Your study plan</p>
+        <h1 class="text-2xl font-extrabold text-slate-900 mb-5">Personalized plan to exam-ready</h1>
+        <!-- tabs -->
+        <div class="flex gap-2 mb-5 flex-wrap">
+          <button class="rounded-full px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 shadow-lg shadow-rose-500/20">◎ Overview</button>
+          <button class="rounded-full px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">▤ Priorities</button>
+          <button class="rounded-full px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">▥ Domains</button>
+          <button class="rounded-full px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">◈ Concepts</button>
+          <button class="rounded-full px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">▦ Weekly plan</button>
+          <button class="rounded-full px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">⚑ Milestones</button>
+        </div>
+        <div class="grid grid-cols-3 gap-6">
+          <!-- main -->
+          <div class="col-span-2 space-y-5">
+            <div class="rounded-3xl overflow-hidden bg-gradient-to-br from-violet-500 via-indigo-600 to-indigo-700 text-white p-6 shadow-xl shadow-indigo-500/20">
+              <div class="flex items-center justify-between mb-3"><p class="eyebrow text-indigo-100">Readiness</p><span class="rounded-full bg-white/20 px-3 py-1 text-xs font-bold">Developing</span></div>
+              <p class="text-lg font-semibold leading-snug">You're building a foundation. Focus the next two weeks on your two weakest domains to move the needle fastest.</p>
+              <div class="h-2 rounded-full bg-white/25 mt-4 overflow-hidden"><div class="h-full rounded-full bg-white" style="width:41%"></div></div>
+            </div>
+            <div class="surface p-6">
+              <p class="eyebrow text-slate-400 mb-3">Key insights</p>
+              <div class="grid grid-cols-3 gap-3">
+                <div class="rounded-2xl border border-slate-200 p-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center mb-2 text-xs">✦</div><p class="text-xs text-slate-600">Strongest in Student-Level Services (78%) — keep it warm with light review.</p></div>
+                <div class="rounded-2xl border border-slate-200 p-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center mb-2 text-xs">✦</div><p class="text-xs text-slate-600">Systems-Level Services is your largest gap — 9 skills under 60%.</p></div>
+                <div class="rounded-2xl border border-slate-200 p-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center mb-2 text-xs">✦</div><p class="text-xs text-slate-600">Consent & ethics errors repeat — a high-yield cluster to fix early.</p></div>
+              </div>
+            </div>
+            <!-- action plan 3 cards -->
+            <div class="grid grid-cols-3 gap-4">
+              <div class="rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white p-4"><p class="text-[10px] font-black uppercase mb-2">Do Right Now</p><ul class="text-xs space-y-1.5 text-rose-50"><li>→ Drill Ecological Assessment</li><li>→ Review IDEA consent rules</li></ul></div>
+              <div class="rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-600 text-white p-4"><p class="text-[10px] font-black uppercase mb-2">This Week</p><ul class="text-xs space-y-1.5 text-sky-50"><li>✓ 20 Qs / day</li><li>✓ Finish Systems domain map</li></ul></div>
+              <div class="rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4"><p class="text-[10px] font-black uppercase mb-2">Avoid</p><ul class="text-xs space-y-1.5 text-amber-50"><li>– Cramming vocabulary</li><li>– Skipping case vignettes</li></ul></div>
+            </div>
+          </div>
+          <!-- side rail -->
+          <div class="space-y-4">
+            <div class="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-4"><p class="eyebrow text-emerald-50 mb-1">Strongest area</p><p class="font-bold">Student-Level Services</p><p class="text-xs text-emerald-50">78% · Approaching</p></div>
+            <div class="rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-600 text-white p-4"><p class="eyebrow text-sky-50 mb-1">Next best move</p><p class="text-sm font-semibold">Start the Systems-Level domain map — biggest score gain available.</p></div>
+            <div class="rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white p-4"><p class="eyebrow text-rose-50 mb-1">⚠ Blockers</p><div class="flex flex-wrap gap-1.5 mt-2"><span class="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold">Consent law</span><span class="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold">RTI tiers</span></div></div>
+            <div class="surface p-4"><p class="eyebrow text-slate-400 mb-3">Plan summary</p><div class="space-y-2 text-sm"><div class="flex justify-between"><span class="text-slate-500">Responses analyzed</span><span class="font-bold text-slate-900">214</span></div><div class="flex justify-between"><span class="text-slate-500">Domains covered</span><span class="font-bold text-slate-900">4</span></div><div class="flex justify-between"><span class="text-slate-500">Deficit skills</span><span class="font-bold text-slate-900">19</span></div><div class="flex justify-between"><span class="text-slate-500">Priority clusters</span><span class="font-bold text-slate-900">3</span></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PROGRESS ============ -->
+      <section id="progress" class="screen">
+        <p class="eyebrow text-emerald-600 mb-1">Your progress</p>
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-1">A picture of <span class="bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent">where you stand.</span></h1>
+        <p class="text-sm text-slate-500 mb-6">214 total exposures · accuracy across 187 skill attempts · 38 of 45 skills touched.</p>
+        <!-- journey timeline -->
+        <div class="surface p-6 mb-6">
+          <div class="flex items-center justify-between mb-5"><div><p class="eyebrow text-slate-400">Your journey</p><p class="text-xs text-slate-500">From first diagnostic question to exam-ready</p></div><span class="text-xs font-bold text-indigo-600">Step 3 of 5</span></div>
+          <div class="flex items-center">
+            <div class="flex flex-col items-center"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-sm">✓</div><p class="text-[10px] text-slate-500 mt-1">Baseline</p></div>
+            <div class="flex-1 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 mx-1"></div>
+            <div class="flex flex-col items-center"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-sm">✓</div><p class="text-[10px] text-slate-500 mt-1">Diagnostic</p></div>
+            <div class="flex-1 h-1 bg-gradient-to-r from-violet-500 to-indigo-600 mx-1"></div>
+            <div class="flex flex-col items-center"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center text-sm ring-4 ring-indigo-100">3</div><p class="text-[10px] font-bold text-indigo-600 mt-1">Domain practice</p></div>
+            <div class="flex-1 h-1 bg-slate-200 mx-1"></div>
+            <div class="flex flex-col items-center"><div class="w-9 h-9 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-sm">4</div><p class="text-[10px] text-slate-400 mt-1">Skill practice</p></div>
+            <div class="flex-1 h-1 bg-slate-200 mx-1"></div>
+            <div class="flex flex-col items-center"><div class="w-9 h-9 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-sm">?</div><p class="text-[10px] text-slate-400 mt-1">Exam ready</p></div>
+          </div>
+        </div>
+        <!-- stat cards -->
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="surface p-5"><p class="text-3xl font-extrabold text-slate-900">214</p><p class="text-xs text-slate-500 mt-1">Questions answered</p></div>
+          <div class="rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 shadow-lg shadow-emerald-500/20"><p class="text-3xl font-extrabold">13</p><p class="text-xs text-emerald-50 mt-1">Demonstrating · of 45</p></div>
+          <div class="rounded-3xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white p-5 shadow-lg shadow-indigo-500/20"><p class="text-3xl font-extrabold">9</p><p class="text-xs text-indigo-50 mt-1">Approaching · of 45</p></div>
+          <div class="surface p-5"><p class="text-3xl font-extrabold text-slate-900">62%</p><p class="text-xs text-slate-500 mt-1">Overall accuracy</p></div>
+        </div>
+        <!-- four domains -->
+        <p class="eyebrow text-slate-400 mb-1">The four domains</p>
+        <p class="text-xs text-slate-500 mb-4">Current fill · 80% goal marker</p>
+        <div class="space-y-3">
+          <div class="surface p-5"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center text-xs">◐</div><p class="font-bold text-slate-900">Professional Practices</p></div><span class="rounded-full bg-cyan-50 text-cyan-700 px-3 py-1 text-xs font-bold">4 / 11 Demonstrating</span></div><div class="relative h-2.5 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600" style="width:41%"></div></div></div>
+          <div class="surface p-5"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xs">◑</div><p class="font-bold text-slate-900">Student-Level Services</p></div><span class="rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-bold">9 / 12 Demonstrating</span></div><div class="relative h-2.5 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-600" style="width:78%"></div></div></div>
+          <div class="surface p-5"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center text-xs">◒</div><p class="font-bold text-slate-900">Systems-Level Services</p></div><span class="rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-bold">2 / 11 Demonstrating</span></div><div class="relative h-2.5 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-rose-500 to-pink-600" style="width:34%"></div></div></div>
+          <div class="surface p-5"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center text-xs">◓</div><p class="font-bold text-slate-900">Foundations</p></div><span class="rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-xs font-bold">6 / 11 Demonstrating</span></div><div class="relative h-2.5 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-600" style="width:62%"></div></div></div>
+        </div>
+      </section>
+
+      <!-- ============ FULL REPORT ============ -->
+      <section id="report" class="screen">
+        <div class="flex items-center justify-between mb-1">
+          <p class="eyebrow text-indigo-600">Full report</p>
+          <button class="rounded-xl px-4 py-2 text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100">↓ Download PDF</button>
+        </div>
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-1">Your complete <span class="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">readiness report.</span></h1>
+        <p class="text-sm text-slate-500 mb-6">Generated May 31 · based on 214 responses across 38 of 45 skills.</p>
+
+        <!-- readiness hero -->
+        <div class="rounded-3xl overflow-hidden mb-6 shadow-xl shadow-indigo-500/20 bg-gradient-to-br from-violet-500 via-indigo-600 to-indigo-700">
+          <div class="p-6 flex items-center gap-8 text-white">
+            <div class="relative w-28 h-28 shrink-0">
+              <div class="absolute inset-0 rounded-full" style="background: conic-gradient(rgba(255,255,255,.95) 0%, rgba(255,255,255,.95) 41%, rgba(255,255,255,.22) 41%);"></div>
+              <div class="absolute inset-[9px] rounded-full bg-indigo-600 flex flex-col items-center justify-center"><span class="text-2xl font-extrabold">41%</span><span class="text-[9px] tracking-wide text-indigo-100 uppercase font-bold">Emerging</span></div>
+            </div>
+            <div class="flex-1">
+              <p class="eyebrow text-indigo-100 mb-1">Overall readiness · Developing</p>
+              <p class="text-xl font-bold leading-snug">13 of 45 skills at Demonstrating. 19 more to reach your readiness target of 32.</p>
+              <p class="text-sm text-indigo-100 mt-2">At your current pace (~20 questions/day) you're on track to hit Ready in about 5 weeks.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- growth since baseline -->
+        <p class="eyebrow text-slate-400 mb-3">Growth since diagnostic</p>
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 shadow-lg shadow-emerald-500/20"><p class="text-3xl font-extrabold">+7</p><p class="text-xs text-emerald-50 mt-1">Skills reached Demonstrating</p></div>
+          <div class="rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 text-white p-5 shadow-lg shadow-amber-500/20"><p class="text-3xl font-extrabold">+12</p><p class="text-xs text-amber-50 mt-1">Skills improved a tier</p></div>
+          <div class="surface p-5"><p class="text-3xl font-extrabold text-slate-900">13</p><p class="text-xs text-slate-500 mt-1">Currently Demonstrating</p></div>
+          <div class="surface p-5"><p class="text-3xl font-extrabold text-slate-400">6</p><p class="text-xs text-slate-500 mt-1">Baseline Demonstrating</p></div>
+        </div>
+
+        <!-- domain w/ expanded skill table -->
+        <p class="eyebrow text-slate-400 mb-3">Domain detail · skill by skill</p>
+        <div class="surface overflow-hidden mb-3">
+          <div class="bg-gradient-to-r from-rose-500 to-pink-600 text-white p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-white/25 flex items-center justify-center">◒</div><p class="font-bold">Systems-Level Services</p></div>
+            <span class="rounded-full bg-white/20 px-3 py-1 text-xs font-bold">2 / 11 Demonstrating · 34%</span>
+          </div>
+          <table class="w-full text-sm">
+            <thead><tr class="text-left text-[10px] uppercase tracking-wide text-slate-400 border-b border-slate-100"><th class="px-4 py-2 font-bold">Skill</th><th class="px-4 py-2 font-bold">Proficiency</th><th class="px-4 py-2 font-bold">Score</th><th class="px-4 py-2 font-bold">Review</th></tr></thead>
+            <tbody class="divide-y divide-slate-50">
+              <tr><td class="px-4 py-2.5 font-medium text-slate-900">Ecological Assessment</td><td class="px-4 py-2.5"><span class="rounded-full bg-rose-50 text-rose-700 px-2.5 py-0.5 text-[11px] font-bold">Emerging</span></td><td class="px-4 py-2.5 text-slate-600">28%</td><td class="px-4 py-2.5"><span class="text-[11px] font-bold text-rose-600">Overdue</span></td></tr>
+              <tr><td class="px-4 py-2.5 font-medium text-slate-900">RTI Tier Systems</td><td class="px-4 py-2.5"><span class="rounded-full bg-rose-50 text-rose-700 px-2.5 py-0.5 text-[11px] font-bold">Emerging</span></td><td class="px-4 py-2.5 text-slate-600">35%</td><td class="px-4 py-2.5"><span class="text-[11px] font-bold text-amber-600">Due today</span></td></tr>
+              <tr><td class="px-4 py-2.5 font-medium text-slate-900">Crisis Prevention</td><td class="px-4 py-2.5"><span class="rounded-full bg-violet-50 text-violet-700 px-2.5 py-0.5 text-[11px] font-bold">Approaching</span></td><td class="px-4 py-2.5 text-slate-600">66%</td><td class="px-4 py-2.5"><span class="text-[11px] text-slate-400">Due Jun 3</span></td></tr>
+              <tr><td class="px-4 py-2.5 font-medium text-slate-900">Family-School Collaboration</td><td class="px-4 py-2.5"><span class="rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-[11px] font-bold">Demonstrating</span></td><td class="px-4 py-2.5 text-slate-600">84%</td><td class="px-4 py-2.5"><span class="text-[11px] text-slate-400">—</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- advanced metrics -->
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <div class="surface p-6">
+            <p class="eyebrow text-slate-400 mb-4">Time on task</p>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between items-center"><span class="text-slate-500">Avg time / question</span><span class="font-bold text-slate-900">1m 12s</span></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Daily study commitment</span><span class="font-bold text-slate-900">34 min</span></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Total study hours</span><span class="font-bold text-slate-900">9.7 hrs</span></div>
+            </div>
+          </div>
+          <div class="surface p-6">
+            <p class="eyebrow text-slate-400 mb-4">Confidence analysis</p>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between items-center"><span class="text-slate-500">Raw accuracy</span><span class="font-bold text-slate-900">62%</span></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Confidence-weighted</span><span class="font-bold text-indigo-600">54%</span></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Overconfidence gap</span><span class="font-bold text-rose-600">−8 pts</span></div>
+            </div>
+            <div class="mt-3 rounded-xl bg-amber-50 border border-amber-200 p-2.5 text-[11px] text-amber-800">You tend to mark "High" confidence on questions you miss — worth slowing down on those.</div>
+          </div>
+        </div>
+
+        <!-- top repeated errors -->
+        <div class="surface p-6">
+          <p class="eyebrow text-slate-400 mb-4">Top repeated errors</p>
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center text-xs font-bold">5×</span><p class="text-sm text-slate-700 flex-1">Confusing <span class="font-semibold">screening</span> with <span class="font-semibold">evaluation</span> consent requirements</p></div>
+            <div class="flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center text-xs font-bold">4×</span><p class="text-sm text-slate-700 flex-1">Misordering the <span class="font-semibold">RTI tiers</span> before referral</p></div>
+            <div class="flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center text-xs font-bold">3×</span><p class="text-sm text-slate-700 flex-1">Selecting punitive over <span class="font-semibold">function-based</span> interventions</p></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function show(id, btn){
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.topnav-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      // sidebar active state
+      document.querySelectorAll('.nav').forEach(n=>{n.className='nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50';});
+      const map={dashboard:'from-violet-500 to-indigo-600',practice:'from-cyan-500 to-blue-600',progress:'from-emerald-500 to-teal-600',studyplan:'from-rose-500 to-pink-600'};
+      const nav=document.getElementById('nav-'+id);
+      if(nav){nav.className='nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-br '+map[id]+' shadow-lg';}
+      window.scrollTo(0,0);
+    }
+  </script>
+</body>
+</html>
