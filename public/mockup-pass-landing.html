@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PASS — adaptive baseline landing (draft)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;color:#fff;background:#0b0a1c;}
+  .bg-mid{background:
+    radial-gradient(40% 40% at 84% 8%, rgba(232,121,249,.34), transparent 62%),
+    radial-gradient(40% 44% at 8% 6%, rgba(167,139,250,.34), transparent 60%),
+    radial-gradient(40% 40% at 90% 60%, rgba(6,5,14,.7), transparent 55%),
+    linear-gradient(180deg,#2a2052 0%,#1b1540 30%,#120e2c 60%,#0b0a1c 100%);}
+  .glass{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);}
+  .chip{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);}
+  .struck{text-decoration:line-through;text-decoration-color:#fb7185;text-decoration-thickness:2px;}
+  .stage{perspective:1900px;}
+  .window{transform:rotateY(-13deg) rotateX(5deg);box-shadow:0 50px 120px -28px rgba(6,5,16,.75),0 30px 70px -36px rgba(217,70,239,.4);}
+  .pv{position:relative;height:360px;overflow:hidden;background:#f7f6f8;}
+  .pv iframe{position:absolute;top:-22px;left:0;width:1360px;height:1200px;border:0;transform:scale(.44);transform-origin:top left;}
+  .float-card{box-shadow:0 26px 55px -16px rgba(6,5,16,.6);}
+  .gtxt{background:linear-gradient(90deg,#c4b5fd,#f0abfc,#a5f3fc);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .bob{animation:bob 5s ease-in-out infinite}
+</style>
+</head>
+<body class="bg-mid">
+
+<!-- NAV -->
+<header class="sticky top-0 z-50 backdrop-blur-md bg-[#0b0a1c]/60 border-b border-white/8">
+  <div class="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center gap-6">
+    <div class="flex items-center gap-2.5 mr-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center font-black text-sm">◑</div>
+      <span class="font-extrabold tracking-wide">PASS</span>
+    </div>
+    <nav class="hidden md:flex items-center gap-6 text-sm text-white/65 font-medium">
+      <a href="#how" class="hover:text-white">How it works</a>
+      <a href="#method" class="hover:text-white">The method</a>
+      <a href="#features" class="hover:text-white">Features</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-3">
+      <button class="text-sm font-semibold text-white/80 hover:text-white">Sign in</button>
+      <button class="rounded-xl px-4 py-2 text-sm font-bold text-indigo-700 bg-white hover:bg-indigo-50">Take your baseline →</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="relative max-w-7xl mx-auto px-6 md:px-10 grid lg:grid-cols-[0.92fr_1.08fr] gap-8 items-center pt-12 pb-20" style="min-height:86vh">
+  <div class="relative z-10">
+    <div class="chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-semibold text-white/85 mb-6">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span> Praxis 5403 · School Psychology
+    </div>
+    <h1 class="text-5xl md:text-[58px] font-extrabold leading-[1.03] tracking-tight mb-5">
+      Find the exact skills<br><span class="gtxt">holding you back.</span>
+    </h1>
+    <p class="text-[16.5px] leading-relaxed text-white/75 max-w-xl mb-7">
+      Take an adaptive baseline. A diagnostic algorithm — built from 15 years of combined classroom and
+      <span class="text-white font-semibold">MTSS</span> practice and the science of how we learn — maps your
+      <span class="text-white font-semibold">most granular skill gaps</span> across all 45 exam skills, then builds your plan around them.
+    </p>
+    <div class="flex flex-wrap gap-3 mb-6">
+      <button class="rounded-2xl px-6 py-3.5 text-sm font-bold text-indigo-700 bg-white shadow-xl shadow-indigo-900/40 hover:bg-indigo-50 transition">Take your adaptive baseline →</button>
+      <button class="rounded-2xl px-6 py-3.5 text-sm font-bold text-white chip hover:bg-white/20">I have an account</button>
+    </div>
+    <p class="text-[12.5px] text-white/45">Built by a school-based practitioner — not a test-prep mill.</p>
+  </div>
+
+  <!-- live product window -->
+  <div class="stage relative h-[520px] hidden lg:block">
+    <div class="window absolute right-0 top-1/2 -translate-y-1/2 w-[600px] rounded-2xl overflow-hidden border border-white/15">
+      <div class="flex items-center gap-2 px-4 py-2.5 bg-[#15122a] border-b border-white/8">
+        <span class="w-2.5 h-2.5 rounded-full bg-rose-400/70"></span><span class="w-2.5 h-2.5 rounded-full bg-amber-400/70"></span><span class="w-2.5 h-2.5 rounded-full bg-emerald-400/70"></span>
+        <span class="ml-3 text-[10px] text-white/40 font-medium rounded-md bg-white/5 px-3 py-0.5">app.pass.study/dashboard</span>
+        <span class="ml-auto flex items-center gap-1 text-[9px] font-bold text-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>LIVE</span>
+      </div>
+      <div class="pv"><iframe src="mockup-retheme-allscreens.html" title="PASS dashboard live" scrolling="no"></iframe></div>
+    </div>
+    <!-- floating: GRANULAR skill pinpointed (not 'misconception') -->
+    <div class="float-card bob absolute left-1 bottom-2 w-[300px] rounded-2xl bg-white text-slate-900 p-4 z-20">
+      <div class="flex items-center gap-1.5 mb-2"><span class="w-5 h-5 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center text-white text-[10px]">✦</span><span class="text-[10px] font-black uppercase tracking-wide text-violet-700">Granular gap pinpointed</span></div>
+      <p class="text-[15px] font-bold leading-snug mb-1">Norm- vs. criterion-referenced interpretation</p>
+      <p class="text-[11.5px] text-slate-500 mb-3">a sub-skill inside <b class="text-slate-700">Assessment &amp; Data Use</b> · not the whole domain</p>
+      <div class="flex items-center gap-2"><span class="rounded-full bg-rose-100 text-rose-700 px-2 py-0.5 text-[10px] font-bold">Tier 2 · targeted</span><span class="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-[10px] font-bold">drives 3 recent misses</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="max-w-7xl mx-auto px-6 md:px-10 py-20">
+  <p class="text-center text-[12px] font-black uppercase tracking-[.2em] text-fuchsia-300 mb-3">How it works</p>
+  <h2 class="text-center text-3xl md:text-4xl font-extrabold tracking-tight mb-3">From "study everything" to "study <span class="gtxt">this.</span>"</h2>
+  <p class="text-center text-white/60 max-w-2xl mx-auto mb-12">Three steps that mirror how strong practitioners actually move: baseline, pinpoint, then target.</p>
+  <div class="grid md:grid-cols-3 gap-5">
+    <div class="glass rounded-2xl p-6">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 grid place-items-center text-white text-lg mb-4">◎</div>
+      <p class="text-[11px] font-black text-cyan-300 mb-1">Step 1</p>
+      <h3 class="text-lg font-bold mb-2">Take an adaptive baseline</h3>
+      <p class="text-[14px] text-white/65 leading-relaxed">45–90 questions that adapt as you answer — one per skill, with targeted follow-ups exactly where you slip. No fixed-length slog.</p>
+    </div>
+    <div class="glass rounded-2xl p-6">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center text-white text-lg mb-4">⌖</div>
+      <p class="text-[11px] font-black text-fuchsia-300 mb-1">Step 2</p>
+      <h3 class="text-lg font-bold mb-2">See your granular skill map</h3>
+      <p class="text-[14px] text-white/65 leading-relaxed">The algorithm isolates the precise sub-skills and error patterns behind your misses — not "weak in assessment," but the actual gap.</p>
+    </div>
+    <div class="glass rounded-2xl p-6">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 grid place-items-center text-white text-lg mb-4">↗</div>
+      <p class="text-[11px] font-black text-emerald-300 mb-1">Step 3</p>
+      <h3 class="text-lg font-bold mb-2">Study what moves readiness</h3>
+      <p class="text-[14px] text-white/65 leading-relaxed">A personalized plan + adaptive practice, sequenced by what raises your readiness fastest and spaced so it actually sticks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE: GRANULARITY -->
+<section id="features" class="max-w-7xl mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-2 gap-12 items-center">
+  <div>
+    <p class="text-[12px] font-black uppercase tracking-[.2em] text-violet-300 mb-3">Granular by design</p>
+    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">4 domains. 45 skills.<br>The sub-skill behind every miss.</h2>
+    <p class="text-[15.5px] text-white/70 leading-relaxed mb-5">
+      Generic prep tells you you're "weak in assessment." PASS pinpoints that it's <span class="text-white font-semibold">norm- vs. criterion-referenced interpretation</span>, and that you keep confusing <span class="text-white font-semibold">screening with evaluation consent</span> — then targets exactly that, not the whole topic.
+    </p>
+    <ul class="space-y-2.5 text-[14.5px] text-white/75">
+      <li class="flex gap-2.5"><span class="text-emerald-300">✓</span> Every one of 45 skills tracked individually</li>
+      <li class="flex gap-2.5"><span class="text-emerald-300">✓</span> The specific sub-construct each question probes</li>
+      <li class="flex gap-2.5"><span class="text-emerald-300">✓</span> Repeated error patterns named and targeted</li>
+    </ul>
+  </div>
+  <div class="glass rounded-3xl p-5">
+    <div class="flex items-center justify-between mb-3"><p class="text-[11px] font-black uppercase tracking-wide text-white/50">Your weakest sub-skills</p><span class="text-[10px] text-white/40">live</span></div>
+    <div class="space-y-2.5">
+      <div class="bg-white/5 rounded-xl p-3 flex items-center gap-3"><span class="w-2 h-8 rounded bg-gradient-to-b from-rose-500 to-pink-600"></span><div class="flex-1"><p class="text-sm font-semibold">Norm- vs. criterion-referenced interpretation</p><p class="text-[11px] text-white/45">Assessment &amp; Data Use · 28%</p></div><span class="rounded-full bg-rose-500/20 text-rose-200 px-2 py-0.5 text-[10px] font-bold">Tier 2</span></div>
+      <div class="bg-white/5 rounded-xl p-3 flex items-center gap-3"><span class="w-2 h-8 rounded bg-gradient-to-b from-rose-500 to-pink-600"></span><div class="flex-1"><p class="text-sm font-semibold">Function vs. topography in FBA</p><p class="text-[11px] text-white/45">Behavioral Assessment · 33%</p></div><span class="rounded-full bg-rose-500/20 text-rose-200 px-2 py-0.5 text-[10px] font-bold">Tier 2</span></div>
+      <div class="bg-white/5 rounded-xl p-3 flex items-center gap-3"><span class="w-2 h-8 rounded bg-gradient-to-b from-amber-500 to-orange-600"></span><div class="flex-1"><p class="text-sm font-semibold">Screening vs. evaluation consent</p><p class="text-[11px] text-white/45">Ethics &amp; Law · 55%</p></div><span class="rounded-full bg-amber-500/20 text-amber-200 px-2 py-0.5 text-[10px] font-bold">Tier 1</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE: THE METHOD -->
+<section id="method" class="relative">
+  <div class="max-w-7xl mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-2 gap-12 items-center">
+    <div class="order-2 lg:order-1 glass rounded-3xl p-6">
+      <p class="text-[11px] font-black uppercase tracking-wide text-white/50 mb-4">The engine mirrors practitioner workflow</p>
+      <div class="space-y-3">
+        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 grid place-items-center text-white text-xs font-black">1</span><p class="text-sm font-semibold">Baseline <span class="text-white/45 font-normal">— adaptive diagnostic</span></p></div>
+        <div class="ml-4 h-3 w-px bg-white/20"></div>
+        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center text-white text-xs font-black">2</span><p class="text-sm font-semibold">Pinpoint <span class="text-white/45 font-normal">— granular skill + error analysis</span></p></div>
+        <div class="ml-4 h-3 w-px bg-white/20"></div>
+        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 grid place-items-center text-white text-xs font-black">3</span><p class="text-sm font-semibold">Target <span class="text-white/45 font-normal">— tiered, sequenced practice</span></p></div>
+        <div class="ml-4 h-3 w-px bg-white/20"></div>
+        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 grid place-items-center text-white text-xs font-black">4</span><p class="text-sm font-semibold">Progress-monitor <span class="text-white/45 font-normal">— spaced review + re-check</span></p></div>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-5 pt-5 border-t border-white/10">
+        <span class="chip rounded-full px-3 py-1 text-[11px] font-bold">15 yrs classroom + MTSS</span>
+        <span class="chip rounded-full px-3 py-1 text-[11px] font-bold">Spacing</span>
+        <span class="chip rounded-full px-3 py-1 text-[11px] font-bold">Retrieval practice</span>
+        <span class="chip rounded-full px-3 py-1 text-[11px] font-bold">Interleaving</span>
+      </div>
+    </div>
+    <div class="order-1 lg:order-2">
+      <p class="text-[12px] font-black uppercase tracking-[.2em] text-cyan-300 mb-3">The method</p>
+      <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Grounded in MTSS,<br>not guesswork.</h2>
+      <p class="text-[15.5px] text-white/70 leading-relaxed mb-4">
+        Every decision the engine makes mirrors how effective school-based practitioners actually work — <span class="text-white font-semibold">baseline → pinpoint → target → progress-monitor.</span>
+      </p>
+      <p class="text-[15.5px] text-white/70 leading-relaxed">
+        It was built from <span class="text-white font-semibold">15 years of combined classroom and MTSS experience</span>, with sequencing and review grounded in the science of learning — <span class="text-white font-semibold">spacing, retrieval practice, and interleaving</span>. Not flashcards. Not a generic question dump.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE: PLAN + PRACTICE -->
+<section class="max-w-7xl mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-2 gap-12 items-center">
+  <div>
+    <p class="text-[12px] font-black uppercase tracking-[.2em] text-emerald-300 mb-3">Your plan</p>
+    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">A plan built from your data —<br>not a template.</h2>
+    <p class="text-[15.5px] text-white/70 leading-relaxed mb-5">
+      Two candidates never get the same plan. PASS sequences your weeks by what raises readiness fastest, quarantines what you keep missing for focused review, and resurfaces it on a spaced schedule so it sticks.
+    </p>
+    <div class="grid grid-cols-3 gap-3">
+      <div class="glass rounded-xl p-3"><p class="text-2xl font-extrabold gtxt">45</p><p class="text-[11px] text-white/55">skills tracked</p></div>
+      <div class="glass rounded-xl p-3"><p class="text-2xl font-extrabold gtxt">1:1</p><p class="text-[11px] text-white/55">plan per learner</p></div>
+      <div class="glass rounded-xl p-3"><p class="text-2xl font-extrabold gtxt">5-box</p><p class="text-[11px] text-white/55">spaced review</p></div>
+    </div>
+  </div>
+  <div class="glass rounded-3xl p-5">
+    <div class="rounded-2xl bg-gradient-to-br from-violet-500 via-indigo-600 to-indigo-700 p-4 mb-3">
+      <p class="text-[10px] uppercase tracking-wide text-indigo-200 font-bold mb-1">This week · sequenced by impact</p>
+      <p class="text-sm font-semibold">Lock Assessment &amp; Data Use → +5% readiness</p>
+    </div>
+    <div class="space-y-2">
+      <div class="bg-white/5 rounded-xl p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 grid place-items-center text-white text-xs">↻</span><p class="text-[13px] flex-1">Redemption · 6 quarantined items</p><span class="text-[11px] text-white/40">~9 min</span></div>
+      <div class="bg-white/5 rounded-xl p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-500 to-cyan-600 grid place-items-center text-white text-xs">▦</span><p class="text-[13px] flex-1">Spaced review · 3 skills due</p><span class="text-[11px] text-white/40">~6 min</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="px-6 md:px-10 py-20">
+  <div class="max-w-5xl mx-auto rounded-3xl overflow-hidden relative" style="background:linear-gradient(135deg,#7c3aed,#6366f1 55%,#4338ca)">
+    <div class="absolute inset-0" style="background:radial-gradient(40% 80% at 85% 20%, rgba(232,121,249,.45), transparent 60%)"></div>
+    <div class="relative px-8 md:px-14 py-14 text-center">
+      <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">See your baseline in one sitting.</h2>
+      <p class="text-white/80 max-w-xl mx-auto mb-7">Stop guessing what to review. Find the exact skills between you and your license — then close them.</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <button class="rounded-2xl px-7 py-3.5 text-sm font-bold text-indigo-700 bg-white hover:bg-indigo-50 shadow-xl">Take your adaptive baseline →</button>
+        <button class="rounded-2xl px-7 py-3.5 text-sm font-bold text-white chip hover:bg-white/20">I have an account</button>
+      </div>
+      <p class="text-[12px] text-white/60 mt-5">One sitting · pick up on any device · currently in beta</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/8">
+  <div class="max-w-7xl mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row items-center gap-4 justify-between text-white/50 text-sm">
+    <div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center font-black text-xs">◑</div><span class="font-bold text-white/80">PASS</span><span class="text-white/35">· Platform for Adaptive Study Sessions</span></div>
+    <p class="text-[12px]">Currently in beta. Not responsible for loss of data during the beta period. · © 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>
