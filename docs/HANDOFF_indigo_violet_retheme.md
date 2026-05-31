@@ -160,13 +160,17 @@ just restart it. Viewport scroll on the all-screens page is finicky; resize the 
 capture lower sections.
 
 ### Still OPEN for the next session
-1. **Version control:** handoff (`docs/`) + mockups are UNCOMMITTED. User offered to add them
-   (mockups → `local/` per repo hygiene, handoff → `docs/`). Confirm + commit if desired.
+1. ~~**Version control:** UNCOMMITTED~~ — **DONE 2026-05-31 (session 3):** these artifacts had been
+   left untracked and were swept into `stash@{0}` on a branch switch (nearly lost). Recovered from the
+   stash's untracked-files commit (`9ff5e74`) and committed on branch `explore/dashboard-redesign`
+   (`2730784` recovery; the 3-screen extension follows). They can't be silently lost again.
 2. **PR #28 not merged** — still gates the branching decision (merge then branch off `main`, vs
    branch off #28). User leaned toward neither explicitly yet.
 3. **`domainColors.ts` divergence** (see above) — decide whether to adopt the brighter set globally.
-4. Screens NOT yet mocked: AI Tutor, Glossary, Login/marketing page. Mock + sign off before coding
-   those areas.
+4. ~~Screens NOT yet mocked~~ — **DONE 2026-05-31 (session 3):** AI Tutor, Glossary, and Login are now
+   mocked inside `mockup-retheme-allscreens.html` (now **8 screens** via the top switcher; Login is a
+   full-bleed pre-auth screen with the Adaptive-Engine orb + 4 domain feeder nodes). **Awaiting user
+   sign-off** on these 3 before coding those areas.
 5. Then implement **2a → 2b → 2c** per the plan above. A pure color/Toolshed re-theme does NOT
    trigger the `HOW_THE_APP_WORKS.md` update rule (no copy/label/threshold changes) — but adding
    visible metrics to Toolshed tiles is cosmetic, also no doc trigger. Don't rename status labels.

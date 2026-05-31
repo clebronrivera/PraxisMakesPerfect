@@ -26,6 +26,9 @@
     <button onclick="show('studyplan',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Study Plan</button>
     <button onclick="show('progress',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Progress</button>
     <button id="tab-report" onclick="show('report',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Full Report</button>
+    <button onclick="show('tutor',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">AI Tutor</button>
+    <button onclick="show('glossary',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Glossary</button>
+    <button onclick="show('login',this)" class="topnav-btn text-white text-sm font-bold px-4 py-1.5 rounded-full transition">Login</button>
     <span class="ml-auto text-indigo-100 text-xs">Brighter multi-gradient · static mockup, nothing wired</span>
   </div>
 
@@ -40,8 +43,8 @@
       <a id="nav-practice" class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs">▶</span> Practice</a>
       <a id="nav-progress" class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs">▥</span> Progress</a>
       <a id="nav-studyplan" class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white text-xs">◈</span> Study Plan</a>
-      <a class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-xs">✦</span> AI Tutor</a>
-      <a class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white text-xs">▦</span> Glossary</a>
+      <a id="nav-tutor" onclick="show('tutor',document.querySelector('.topnav-btn[onclick*=tutor]'))" class="nav cursor-pointer flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-xs">✦</span> AI Tutor</a>
+      <a id="nav-glossary" onclick="show('glossary',document.querySelector('.topnav-btn[onclick*=glossary]'))" class="nav cursor-pointer flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50"><span class="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white text-xs">▦</span> Glossary</a>
     </aside>
 
     <main class="flex-1 p-8 max-w-[1100px]">
@@ -356,6 +359,190 @@
         </div>
       </section>
 
+      <!-- ============ AI TUTOR ============ -->
+      <section id="tutor" class="screen">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <p class="eyebrow text-fuchsia-600 mb-1">AI Tutor · PraxisBot</p>
+            <h1 class="text-2xl font-extrabold text-slate-900">Ask anything. <span class="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">Get quizzed.</span></h1>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-full bg-white border border-slate-200 p-1">
+              <button class="rounded-full px-4 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-violet-500 to-fuchsia-600">Chat</button>
+              <button class="rounded-full px-4 py-1.5 text-xs font-bold text-slate-500">Quiz</button>
+            </div>
+            <button class="rounded-xl px-4 py-2 text-xs font-semibold text-white bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-indigo-500/20">+ New session</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-5">
+          <!-- session rail -->
+          <div class="surface p-4">
+            <p class="eyebrow text-slate-400 mb-3">Recent sessions</p>
+            <div class="space-y-2">
+              <div class="rounded-xl bg-gradient-to-br from-violet-50 to-indigo-50 border border-indigo-100 p-3">
+                <div class="flex items-center gap-2 mb-1"><span class="rounded-full bg-fuchsia-100 text-fuchsia-700 px-2 py-0.5 text-[9px] font-black uppercase">Quiz</span><span class="text-[10px] text-slate-400">just now</span></div>
+                <p class="text-[13px] font-semibold text-slate-900 leading-tight">Consent &amp; evaluation rules</p>
+                <p class="text-[11px] text-slate-500">12 messages · 1 artifact</p>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-3 hover:bg-slate-50 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1"><span class="rounded-full bg-violet-100 text-violet-700 px-2 py-0.5 text-[9px] font-black uppercase">Chat</span><span class="text-[10px] text-slate-400">yesterday</span></div>
+                <p class="text-[13px] font-semibold text-slate-900 leading-tight">RTI tiers explained</p>
+                <p class="text-[11px] text-slate-500">8 messages</p>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-3 hover:bg-slate-50 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1"><span class="rounded-full bg-violet-100 text-violet-700 px-2 py-0.5 text-[9px] font-black uppercase">Chat</span><span class="text-[10px] text-slate-400">May 28</span></div>
+                <p class="text-[13px] font-semibold text-slate-900 leading-tight">Reliability vs validity</p>
+                <p class="text-[11px] text-slate-500">15 messages · 2 artifacts</p>
+              </div>
+            </div>
+          </div>
+          <!-- chat thread -->
+          <div class="col-span-2 surface p-5 flex flex-col">
+            <div class="flex items-center gap-3 pb-4 border-b border-slate-100 mb-4">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-indigo-600 flex items-center justify-center text-white text-lg shadow-lg shadow-fuchsia-500/30">✦</div>
+              <div><p class="font-bold text-slate-900 leading-tight">PraxisBot</p><p class="text-[11px] text-slate-500">Knows your skill profile · quiz-aware</p></div>
+              <span class="ml-auto rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-[10px] font-bold">● Online</span>
+            </div>
+            <div class="space-y-4 flex-1">
+              <div class="flex justify-end"><div class="rounded-2xl rounded-tr-sm bg-gradient-to-br from-violet-500 to-indigo-600 text-white px-4 py-2.5 text-sm max-w-[80%]">Quiz me on my weakest area.</div></div>
+              <div class="flex gap-2"><div class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center text-white text-xs shrink-0">✦</div>
+                <div class="rounded-2xl rounded-tl-sm bg-slate-50 border border-slate-100 px-4 py-2.5 text-sm text-slate-700 max-w-[80%]">You're weakest in <b>Systems-Level Services</b>. Here's one on ecological assessment:</div>
+              </div>
+              <div class="ml-9 rounded-2xl border border-slate-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-4 py-2 flex items-center justify-between"><span class="text-[10px] font-black uppercase tracking-wide">Quiz · Systems-Level</span><span class="text-[10px] text-rose-100">weighted to weak skills</span></div>
+                <div class="p-4">
+                  <p class="text-sm font-semibold text-slate-900 mb-3">Which best reflects an ecological approach to assessment?</p>
+                  <div class="space-y-2 text-sm">
+                    <button class="w-full text-left rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2 flex items-center gap-2"><span class="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xs font-bold">A</span><span class="flex-1">Evaluating the student within classroom, home, and peer systems</span><span class="text-emerald-600">✓</span></button>
+                    <button class="w-full text-left rounded-xl border-2 border-slate-200 px-3 py-2 flex items-center gap-2 hover:border-rose-300"><span class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">B</span><span class="flex-1">Administering a single standardized IQ measure</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2"><div class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center text-white text-xs shrink-0">✦</div>
+                <div class="rounded-2xl rounded-tl-sm bg-slate-50 border border-slate-100 px-4 py-2.5 text-sm text-slate-700 max-w-[80%]">Correct ✓ Ecological assessment looks across <i>settings</i>, not one test. I saved your weak-area terms as a study sheet:</div>
+              </div>
+              <div class="ml-9 rounded-2xl border border-indigo-200 bg-gradient-to-br from-violet-50 to-indigo-50 p-3 flex items-center gap-3 max-w-[80%]">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center">▤</div>
+                <div class="flex-1"><p class="text-[13px] font-bold text-slate-900">Systems-Level vocab.md</p><p class="text-[11px] text-slate-500">8 terms · generated artifact</p></div>
+                <button class="rounded-lg px-3 py-1.5 text-[11px] font-bold text-indigo-700 bg-white border border-indigo-200">↓ Download</button>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2">
+              <input class="flex-1 px-3 py-2 text-sm outline-none bg-transparent" placeholder="Ask PraxisBot anything about Praxis 5403…" />
+              <button class="rounded-xl px-4 py-2 text-sm font-bold text-white bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-indigo-500/20">Send</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ GLOSSARY ============ -->
+      <section id="glossary" class="screen">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <p class="eyebrow text-sky-600 mb-1">Glossary</p>
+            <h1 class="text-2xl font-extrabold text-slate-900">Your personal <span class="bg-gradient-to-r from-sky-500 to-cyan-600 bg-clip-text text-transparent">vocabulary.</span></h1>
+          </div>
+          <div class="flex rounded-full bg-white border border-slate-200 p-1">
+            <button class="rounded-full px-4 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-sky-500 to-cyan-600">My Terms</button>
+            <button class="rounded-full px-4 py-1.5 text-xs font-bold text-slate-500">Quiz Mode</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-4 gap-3 mb-5">
+          <div class="rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-600 text-white p-4"><p class="text-2xl font-extrabold">38</p><p class="text-[11px] text-sky-50">Total terms</p></div>
+          <div class="surface p-4"><p class="text-2xl font-extrabold text-amber-600">14</p><p class="text-[11px] text-slate-500">To define</p></div>
+          <div class="surface p-4"><p class="text-2xl font-extrabold text-emerald-600">19</p><p class="text-[11px] text-slate-500">Defined</p></div>
+          <div class="surface p-4"><p class="text-2xl font-extrabold text-slate-900">24</p><p class="text-[11px] text-slate-500">Revealed</p></div>
+        </div>
+        <div class="flex items-center gap-2 mb-4 flex-wrap">
+          <button class="rounded-full px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-violet-500 to-indigo-600">All</button>
+          <button class="rounded-full px-3 py-1.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">To Define</button>
+          <button class="rounded-full px-3 py-1.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Defined</button>
+          <button class="rounded-full px-3 py-1.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Revealed</button>
+          <div class="ml-auto rounded-full bg-white border border-slate-200 px-3 py-1.5 text-xs text-slate-400">🔍 Search terms…</div>
+        </div>
+        <div class="surface overflow-hidden">
+          <table class="w-full text-sm">
+            <thead><tr class="text-left text-[10px] uppercase tracking-wide text-slate-400 border-b border-slate-100"><th class="px-4 py-2.5 font-bold">Term</th><th class="px-4 py-2.5 font-bold">What does this mean to you?</th><th class="px-4 py-2.5 font-bold">Official definition</th></tr></thead>
+            <tbody class="divide-y divide-slate-50">
+              <tr>
+                <td class="px-4 py-3 align-top"><p class="font-bold text-slate-900">Ecological assessment</p><div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full bg-gradient-to-br from-rose-500 to-pink-600"></span><span class="text-[10px] text-slate-400">Systems-Level</span></div></td>
+                <td class="px-4 py-3 align-top"><div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[13px] text-slate-700 italic">Looking at the student across home + school settings…</div></td>
+                <td class="px-4 py-3 align-top"><button class="rounded-lg px-3 py-1.5 text-[11px] font-bold text-sky-700 bg-sky-50 border border-sky-200">Reveal</button></td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 align-top"><p class="font-bold text-slate-900">Criterion-referenced</p><div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full bg-gradient-to-br from-amber-500 to-orange-600"></span><span class="text-[10px] text-slate-400">Foundations</span></div></td>
+                <td class="px-4 py-3 align-top"><div class="rounded-lg border border-dashed border-slate-300 px-3 py-2 text-[13px] text-slate-400">Write your definition…</div></td>
+                <td class="px-4 py-3 align-top"><div class="text-[13px] text-slate-600">Compares performance to a fixed standard, not a peer group.</div></td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 align-top"><p class="font-bold text-slate-900">Functional behavior</p><div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600"></span><span class="text-[10px] text-slate-400">Professional</span></div></td>
+                <td class="px-4 py-3 align-top"><div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[13px] text-slate-700 italic">The why behind a behavior — escape, attention…</div></td>
+                <td class="px-4 py-3 align-top"><button class="rounded-lg px-3 py-1.5 text-[11px] font-bold text-sky-700 bg-sky-50 border border-sky-200">Reveal</button></td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 align-top"><p class="font-bold text-slate-900">Reliability</p><div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full bg-gradient-to-br from-amber-500 to-orange-600"></span><span class="text-[10px] text-slate-400">Foundations</span></div></td>
+                <td class="px-4 py-3 align-top"><div class="rounded-lg border border-dashed border-slate-300 px-3 py-2 text-[13px] text-slate-400">Write your definition…</div></td>
+                <td class="px-4 py-3 align-top"><div class="text-[13px] text-slate-600">Consistency of a measure across time/raters/items.</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ LOGIN (public, full-bleed) ============ -->
+      <section id="login" class="screen fixed inset-0 z-40 overflow-auto" style="background:#f7f6f8">
+        <div class="min-h-full grid lg:grid-cols-2">
+          <!-- hero side -->
+          <div class="relative overflow-hidden bg-gradient-to-br from-violet-600 via-indigo-700 to-indigo-800 text-white p-10 flex flex-col">
+            <div class="flex items-center gap-2">
+              <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-black">◑</div>
+              <p class="font-bold">Praxis<span class="text-indigo-200">.Ai</span></p>
+            </div>
+            <!-- adaptive engine orb + 4 domain feeder nodes -->
+            <div class="relative mx-auto my-6 w-full max-w-sm aspect-square">
+              <svg viewBox="0 0 400 400" class="absolute inset-0 w-full h-full">
+                <line x1="200" y1="200" x2="60" y2="70" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+                <line x1="200" y1="200" x2="340" y2="70" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+                <line x1="200" y1="200" x2="60" y2="330" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+                <line x1="200" y1="200" x2="340" y2="330" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+              </svg>
+              <div class="absolute -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 shadow-lg flex items-center justify-center text-[9px] font-black text-white text-center leading-none" style="left:15%;top:17.5%">PP</div>
+              <div class="absolute -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg flex items-center justify-center text-[9px] font-black text-white text-center leading-none" style="left:85%;top:17.5%">SLS</div>
+              <div class="absolute -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-gradient-to-br from-rose-400 to-pink-600 shadow-lg flex items-center justify-center text-[9px] font-black text-white text-center leading-none" style="left:15%;top:82.5%">SYS</div>
+              <div class="absolute -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 shadow-lg flex items-center justify-center text-[9px] font-black text-white text-center leading-none" style="left:85%;top:82.5%">FND</div>
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full bg-gradient-to-br from-white via-indigo-50 to-fuchsia-100 shadow-2xl shadow-fuchsia-500/40 flex flex-col items-center justify-center" style="box-shadow:0 0 60px rgba(232,121,249,.5)">
+                <span class="text-[10px] font-black uppercase tracking-wide text-indigo-600 text-center leading-tight">Adaptive<br>Engine</span>
+              </div>
+            </div>
+            <div class="mt-auto">
+              <h1 class="text-4xl font-extrabold mb-3 leading-tight">A study plan<br>that listens.</h1>
+              <p class="text-indigo-200 text-sm mb-6">4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated</p>
+              <div class="flex flex-wrap gap-3">
+                <button class="rounded-2xl px-6 py-3 text-sm font-bold text-indigo-700 bg-white hover:bg-indigo-50 shadow-lg">Begin your diagnostic →</button>
+                <button class="rounded-2xl px-6 py-3 text-sm font-bold text-white bg-white/15 border border-white/30 hover:bg-white/25">I have an account</button>
+              </div>
+            </div>
+          </div>
+          <!-- sign-in side -->
+          <div class="flex items-center justify-center p-10">
+            <div class="w-full max-w-sm">
+              <h2 class="text-2xl font-extrabold text-slate-900 mb-1">Welcome back</h2>
+              <p class="text-sm text-slate-500 mb-6">Sign in to pick up where you left off — on any device.</p>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
+              <input class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm mb-4 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" placeholder="you@example.com" />
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Password</label>
+              <input type="password" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm mb-5 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" placeholder="••••••••" value="password" />
+              <button class="w-full rounded-2xl py-3 text-sm font-bold text-white bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 shadow-lg shadow-indigo-500/30">Sign in →</button>
+              <div class="flex justify-between text-xs font-semibold mt-4">
+                <button class="text-indigo-600 hover:text-indigo-700">Create account</button>
+                <button class="text-slate-500 hover:text-slate-700">Forgot password?</button>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-8 leading-relaxed">Currently in beta. Not responsible for loss of data during the beta period.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -367,7 +554,7 @@
       btn.classList.add('active');
       // sidebar active state
       document.querySelectorAll('.nav').forEach(n=>{n.className='nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50';});
-      const map={dashboard:'from-violet-500 to-indigo-600',practice:'from-cyan-500 to-blue-600',progress:'from-emerald-500 to-teal-600',studyplan:'from-rose-500 to-pink-600'};
+      const map={dashboard:'from-violet-500 to-indigo-600',practice:'from-cyan-500 to-blue-600',progress:'from-emerald-500 to-teal-600',studyplan:'from-rose-500 to-pink-600',tutor:'from-fuchsia-500 to-purple-600',glossary:'from-sky-500 to-cyan-600'};
       const nav=document.getElementById('nav-'+id);
       if(nav){nav.className='nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-br '+map[id]+' shadow-lg';}
       window.scrollTo(0,0);
