@@ -66,9 +66,10 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
   { text: '  ↳ Study Guide Generator', cls: 'text-cyan-400' },
   { text: `✓ Module linkage complete — ${ALL_SKILLS.length}/${ALL_SKILLS.length} skills covered`, cls: 'text-emerald-300', delay: 900 },
 
-  // Phase 4 — Adaptivity + psychometrics
-  { text: '> Loading psychometric parameters...', cls: 'text-slate-400' },
-  { text: '  2PL IRT model · difficulty + discrimination per item', cls: 'text-cyan-400' },
+  // Phase 4 — Adaptivity + misconception engine
+  { text: '> Loading adaptive engine...', cls: 'text-slate-400' },
+  { text: '  Per-skill follow-ups · Recall / Application alternation', cls: 'text-cyan-400' },
+  { text: '  Misconception detection · every distractor classified', cls: 'text-cyan-400' },
   { text: '  Confidence signal weighting: ENABLED', cls: 'text-cyan-400' },
   { text: '✓ Adaptivity online — engine adjusts after each response', cls: 'text-emerald-300', delay: 900 },
 
