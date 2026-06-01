@@ -11,7 +11,9 @@
 > preview_start("mockup")                      # serves public/*.html on :3033
 > open http://localhost:3033/mockup-pass-landing.html
 > ```
-> **Outstanding production action:** merge **PR #30** (boot-terminal honesty fix) once CI is green.
+> **Outstanding production action:** ~~merge **PR #30** (boot-terminal honesty fix) once CI is green.~~
+> ✅ **DONE 2026-06-01** — PR #30 squash-merged (commit `73a48be`); honesty track closed. Next up is
+> the **landing polish → React implementation** decision (see "Open items" below).
 
 ---
 
@@ -102,8 +104,8 @@ session: hide the hero iframe + disable `backdrop-filter`, then shift the page w
 
 ## Open items / next steps (prioritized)
 
-1. **PUSH `explore/dashboard-redesign`** — it's local-only; everything above is at risk until pushed. ⚠️
-2. **Merge PR #30** once CI is green (closes the honesty track; unauthenticated entry fully honest).
+1. ✅ ~~PUSH `explore/dashboard-redesign`~~ — pushed to origin 2026-05-31.
+2. ✅ ~~Merge PR #30~~ — merged 2026-06-01 (commit `73a48be`); honesty track closed.
 3. **Landing polish:** add Carlos's **photo**; confirm exact **bio/credential** wording; optional —
    personalize the hero trust line with his name; optional — pull "everything adapts to the way you learn"
    into its own full-width band.
