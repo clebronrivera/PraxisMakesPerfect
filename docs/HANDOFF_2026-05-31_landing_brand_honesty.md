@@ -3,13 +3,15 @@
 > Self-contained continuation doc for the 2026-05-31 session. Captures every thread, branch/PR state,
 > decisions, and next steps so anyone (or a future Claude session) can pick up cold.
 >
-> ## ⚠️ READ FIRST
-> **Almost all of this session's work lives only on the LOCAL branch `explore/dashboard-redesign`
-> (16 commits, NOT pushed to origin).** The landing page, founder's note, `PASS_STORY.md`, and the
-> re-theme mockups are not backed up remotely. **First action on resume: push it.**
+> ## ✅ RESUME HERE
+> This session's work lives on branch **`explore/dashboard-redesign`** — **pushed to origin 2026-05-31**,
+> so it's backed up. To continue in a new context window:
 > ```
-> git push -u origin explore/dashboard-redesign
+> git checkout explore/dashboard-redesign     # mockups + landing + docs
+> preview_start("mockup")                      # serves public/*.html on :3033
+> open http://localhost:3033/mockup-pass-landing.html
 > ```
+> **Outstanding production action:** merge **PR #30** (boot-terminal honesty fix) once CI is green.
 
 ---
 
