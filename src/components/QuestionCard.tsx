@@ -171,7 +171,7 @@ export default function QuestionCard({
                     key={letter}
                     onClick={() => onSelectAnswer(letter)}
                     disabled={disabled || showFeedback || isSubmitting}
-                    className={`flex w-full items-start gap-4 rounded-2xl border px-4 py-3 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)] ${tone.container} ${
+                    className={`flex w-full items-start gap-4 rounded-2xl border px-4 py-3 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent-to)] ${tone.container} ${
                       disabled || showFeedback || isSubmitting ? '' : 'hover:-translate-y-0.5'
                     }`}
                   >
@@ -201,7 +201,7 @@ export default function QuestionCard({
             <button
               key={level}
               onClick={() => onConfidenceChange(level)}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--accent-to)] ${
                 confidence === level ? confidenceActive : confidenceIdle
               }`}
             >
