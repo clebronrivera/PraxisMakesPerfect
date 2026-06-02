@@ -583,6 +583,27 @@ An interactive vocabulary knowledge check using terms from the **master glossary
 
 ---
 
+## Vocabulary Fluency Drill
+
+The **Fluency Drill** is a timed, rapid-fire vocabulary game, launched from the Dashboard "Toolshed" (the **Fluency Drill** and **Vocab Quiz** tiles both open it). Unlike the glossary's session-only Quiz Mode, the Fluency Drill **feeds your data**.
+
+**Setup — three choices:**
+1. **Scope** (with a live term count on each): **Weak areas** (terms from your lowest-scoring skills), **Sharpen** (almost-there skills, 60–80%), **All terms**, and one option per **content area** (e.g. Psychometrics & Assessment, Legal & Ethics). Scopes appear only when they have at least 4 drillable terms.
+2. **Direction**: **Definition → Term**, **Term → Definition**, or **Mixed**.
+3. **Pace** (seconds per card, def→term / term→def): **Relaxed** 10/12 · **Standard** 7/10 (default) · **Fast** 5/7.
+
+**How it works:** Up to 20 multiple-choice cards, one term each, against a countdown. Answer before the timer runs out — a timeout counts as a miss. Distractors are drawn from the same skill neighborhood for plausibility. A streak counter and running score show during play.
+
+**Data feedback (this is the key difference from Quiz Mode):**
+- **Skill priority** — if you miss terms for the same skill **twice or more** in one drill, that skill gets a low-confidence nudge through the existing adaptive engine, so it resurfaces in practice. A single slip never moves a skill.
+- **Glossary flags** — every missed term is added to your personal glossary (if not already there) and flagged for review, raising a `miss_count` alert you clear by revealing the term.
+
+**Results screen:** overall percentage, a summary of how many skills were nudged, and a "N terms sent to your Glossary" alert with a shortcut to review them.
+
+Raw attempts are logged to a `vocab_attempts` table for auditability. (A later global score recompute can fade the priority nudge — re-drill to re-assert it.)
+
+---
+
 ## Concept Insights — Progress Dashboard
 
 The **Progress** page includes a **Concept Insights** section that surfaces vocabulary-level performance analytics across all answered questions.
