@@ -107,7 +107,7 @@ function TextInput({
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500/60 focus:ring-2 focus:ring-amber-200/50 transition-all text-sm"
+      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-200/50 transition-all text-sm"
     />
   );
 }
@@ -123,7 +123,7 @@ function TextAreaInput({
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500/60 focus:ring-2 focus:ring-amber-200/50 transition-all text-sm resize-none"
+      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-200/50 transition-all text-sm resize-none"
     />
   );
 }
@@ -146,7 +146,7 @@ function SelectInput({
       value={value}
       onChange={e => onChange(e.target.value)}
       disabled={disabled}
-      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-amber-500/60 focus:ring-2 focus:ring-amber-200/50 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-200/50 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <option value="">{placeholder}</option>
       {options.map((option) => (
@@ -169,16 +169,16 @@ function RadioCard({
       onClick={onClick}
       className={`w-full text-left px-4 py-3.5 rounded-xl border transition-all flex items-center gap-3 ${
         selected
-          ? 'border-amber-500/40 bg-amber-50 text-slate-900'
+          ? 'border-indigo-500/40 bg-indigo-50 text-slate-900'
           : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
       }`}
     >
       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-        selected ? 'border-amber-500 bg-amber-500' : 'border-slate-300'
+        selected ? 'border-indigo-500 bg-indigo-500' : 'border-slate-300'
       }`}>
         {selected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
       </div>
-      {icon && <div className={selected ? 'text-amber-600' : 'text-slate-400'}>{icon}</div>}
+      {icon && <div className={selected ? 'text-indigo-600' : 'text-slate-400'}>{icon}</div>}
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium">{label}</div>
         {description && <div className="text-xs text-slate-400 mt-0.5">{description}</div>}
@@ -198,12 +198,12 @@ function CheckboxCard({
       onClick={onClick}
       className={`w-full text-left px-4 py-3 rounded-xl border transition-all flex items-center gap-3 ${
         checked
-          ? 'border-amber-500/40 bg-amber-50 text-slate-900'
+          ? 'border-indigo-500/40 bg-indigo-50 text-slate-900'
           : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
       }`}
     >
       <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${
-        checked ? 'border-amber-500 bg-amber-500' : 'border-slate-300'
+        checked ? 'border-indigo-500 bg-indigo-500' : 'border-slate-300'
       }`}>
         {checked && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
       </div>
@@ -685,9 +685,9 @@ function ProgressDots({ total, current }: { total: number; current: number }) {
           key={i}
           className={`rounded-full transition-all duration-300 ${
             i === current
-              ? 'w-6 h-2 bg-amber-500'
+              ? 'w-6 h-2 bg-indigo-500'
               : i < current
-              ? 'w-2 h-2 bg-amber-400'
+              ? 'w-2 h-2 bg-indigo-400'
               : 'w-2 h-2 bg-slate-200'
           }`}
         />
@@ -855,7 +855,7 @@ export default function OnboardingFlow({
         {/* Top wordmark */}
         {variant !== 'embedded' && (
           <div className="mb-7 flex items-center justify-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
               <Brain className="h-4 w-4 text-white" />
             </div>
             <span className="text-sm font-semibold text-slate-700">Praxis Makes Perfect</span>
@@ -886,7 +886,7 @@ export default function OnboardingFlow({
           {/* Step header bar */}
           <div className="px-6 pt-5 pb-4 border-b border-slate-200">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 shrink-0">
                 {config.icon}
               </div>
               <div className="flex-1 min-w-0">
@@ -964,7 +964,7 @@ export default function OnboardingFlow({
               type="button"
               onClick={handleNext}
               disabled={!canAdvance() || saving}
-              className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-500/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
             >
               {saving ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Mail, KeyRound, CheckCircle } from 'lucide-react';
 import OnboardingFlow from './OnboardingFlow';
 import type { UserProfileData } from './OnboardingFlow';
@@ -30,11 +30,23 @@ export default function ProfileEditorPanel({
     setResetStatus(error ? 'error' : 'sent');
   };
 
+  // Escape-to-close + body scroll-lock while the panel is open.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 z-[100] flex items-stretch justify-end">
       <button
         type="button"
-        className="absolute inset-0 bg-white backdrop-blur-sm"
+        className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm"
         onClick={onClose}
         aria-label="Close"
       />
@@ -47,15 +59,15 @@ export default function ProfileEditorPanel({
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
           <div>
-            <p id="profile-editor-title" className="text-[11px] font-black uppercase tracking-[0.1em] text-amber-500">
+            <p id="profile-editor-title" className="text-[11px] font-black uppercase tracking-[0.1em] text-indigo-600">
               Account
             </p>
-            <p className="text-sm font-semibold text-white">Profile &amp; onboarding</p>
+            <p className="text-sm font-semibold text-slate-900">Profile &amp; onboarding</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white/5 p-2 text-slate-600 transition hover:bg-white/10 hover:text-white"
+            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
             aria-label="Close profile editor"
           >
             <X className="h-5 w-5" />
@@ -76,7 +88,7 @@ export default function ProfileEditorPanel({
               type="button"
               onClick={handlePasswordReset}
               disabled={resetStatus === 'sending' || resetStatus === 'sent'}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
             >
               <KeyRound className="h-3.5 w-3.5" />
               {resetStatus === 'sending' ? 'Sending…' : 'Send password reset email'}
