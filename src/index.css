@@ -328,3 +328,63 @@
     box-shadow: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PASS LANDING PAGE — scoped violet/fuchsia theme
+   ───────────────────────────────────────────────────────────────────────────
+   ALL rules below are namespaced under `.pass-landing` so they never touch the
+   authenticated app (which has its own Cognitive-Clarity theme). The landing uses
+   only `pl-`-prefixed helpers, so there is no class-name collision with the app.
+   Ported from public/mockup-pass-landing.html. These live outside @layer so
+   Tailwind's content purge leaves them alone.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.pass-landing {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #fff;
+  background:
+    radial-gradient(40% 40% at 84% 8%, rgba(232, 121, 249, 0.34), transparent 62%),
+    radial-gradient(40% 44% at 8% 6%, rgba(167, 139, 250, 0.34), transparent 60%),
+    radial-gradient(40% 40% at 90% 60%, rgba(6, 5, 14, 0.7), transparent 55%),
+    linear-gradient(180deg, #2a2052 0%, #1b1540 30%, #120e2c 60%, #0b0a1c 100%);
+}
+
+/* Frosted glass surface */
+.pass-landing .pl-glass {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Pill / chip */
+.pass-landing .pl-chip {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Gradient text (violet → fuchsia → cyan) */
+.pass-landing .pl-gtxt {
+  background: linear-gradient(90deg, #c4b5fd, #f0abfc, #a5f3fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 3D browser window for the live dashboard preview */
+.pass-landing .pl-stage { perspective: 1900px; }
+.pass-landing .pl-window {
+  transform: rotateY(-13deg) rotateX(5deg);
+  box-shadow:
+    0 50px 120px -28px rgba(6, 5, 16, 0.75),
+    0 30px 70px -36px rgba(217, 70, 239, 0.4);
+}
+
+/* Floating callout card + bob animation */
+.pass-landing .pl-float { box-shadow: 0 26px 55px -16px rgba(6, 5, 16, 0.6); }
+.pass-landing .pl-bob { animation: pl-bob 5s ease-in-out infinite; }
+@keyframes pl-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pass-landing .pl-bob { animation: none; }
+}
