@@ -25,27 +25,9 @@ const DOMAIN_SKILL_COUNTS = PROGRESS_DOMAINS.map(d => ({
   count: getProgressSkillsForDomain(d.id).length,
 }));
 
-// ─── Atelier domain palette for hero engine nodes ────────────────────────────
-const DOMAIN_NODE_COLORS: Record<number, string> = {
-  1: '#fcd5b4', // peach — Professional Practices
-  2: '#b8f2d8', // mint — Student-Level Services
-  3: '#cde9f5', // ice — Systems-Level Services
-  4: '#d8d5fc', // lavender — Foundations
-};
-
-// Engine-box nodes mapped to the 4 domains. Domain 1 → NW, 2 → NE, 3 → SE, 4 → SW
-// (matches mockup-entry-A-atelier.html).
-const ENGINE_NODES = PROGRESS_DOMAINS.map((d, i) => {
-  const positionIdx = i + 1;                // 1..4
-  const skillCount = getProgressSkillsForDomain(d.id).length;
-  return {
-    domainId: d.id,
-    name: d.name,
-    count: skillCount,
-    positionClass: `node-d${positionIdx}`,
-    color: DOMAIN_NODE_COLORS[d.id] ?? '#fcd5b4',
-  };
-});
+// ─── Shared landing className fragments ──────────────────────────────────────
+const GTXT = 'bg-gradient-to-r from-violet-300 via-fuchsia-300 to-cyan-200 bg-clip-text text-transparent';
+const GLASS = 'bg-white/[0.06] backdrop-blur-md border border-white/10';
 
 // ─── Boot sequence terminal lines ────────────────────────────────────────────
 // Each line has an optional `delay` (ms) — the time to wait *before* showing
@@ -75,11 +57,11 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
   { text: '  ↳ Study Guide Generator', cls: 'text-cyan-400' },
   { text: `✓ Module linkage complete — ${ALL_SKILLS.length}/${ALL_SKILLS.length} skills covered`, cls: 'text-emerald-300', delay: 900 },
 
-  // Phase 4 — Adaptivity + psychometrics
-  { text: '> Loading psychometric parameters...', cls: 'text-slate-400' },
-  { text: '  2PL IRT model · difficulty + discrimination per item', cls: 'text-cyan-400' },
+  // Phase 4 — Adaptivity
+  { text: '> Loading adaptive engine...', cls: 'text-slate-400' },
+  { text: '  1 question per skill · adaptive follow-ups on missed skills', cls: 'text-cyan-400' },
   { text: '  Confidence signal weighting: ENABLED', cls: 'text-cyan-400' },
-  { text: '✓ 1,150 items calibrated — engine adapts per response', cls: 'text-emerald-300', delay: 900 },
+  { text: '✓ 1,150 items mapped to 45 skills — engine adapts per response', cls: 'text-emerald-300', delay: 900 },
 
   // Phase 5 — Scheduling + handoff
   { text: '> Configuring spaced review scheduler...', cls: 'text-slate-400' },
@@ -240,6 +222,7 @@ export default function LoginScreen() {
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [showAdminEntry, setShowAdminEntry] = useState(false);
   const [consentChecked, setConsentChecked] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   // ── Entry flow state ───────────────────────────────────────────────────────
   const [entryPhase, setEntryPhase] = useState<EntryPhase>(() =>
@@ -287,13 +270,11 @@ export default function LoginScreen() {
   const switchToReset = () => { clearError(); setResetEmailSent(false); setMode('reset'); };
   const switchToLogin = () => { clearError(); setResetEmailSent(false); setMode('login'); };
 
-  const focusSignInPanel = useCallback((nextMode: 'login' | 'signup') => {
+  const openAuth = useCallback((nextMode: 'login' | 'signup') => {
     clearError();
     setResetEmailSent(false);
     setMode(nextMode);
-    window.requestAnimationFrame(() => {
-      document.getElementById('signin-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    setAuthOpen(true);
   }, [clearError]);
 
   const handleBootComplete = useCallback(() => setEntryPhase('hero'), []);
@@ -311,165 +292,315 @@ export default function LoginScreen() {
   // ═════════════════════════════════════════════════════════════════════════
   return (
     <div
-      className="min-h-screen text-slate-200"
-      style={{ background: 'var(--navy-900)', fontFamily: "'Inter', system-ui, sans-serif" }}
+      className="min-h-screen text-white"
+      style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        backgroundColor: '#0b0a1c',
+        backgroundImage:
+          'radial-gradient(40% 40% at 84% 8%, rgba(232,121,249,.34), transparent 62%),' +
+          'radial-gradient(40% 44% at 8% 6%, rgba(167,139,250,.34), transparent 60%),' +
+          'radial-gradient(40% 40% at 90% 60%, rgba(6,5,14,.7), transparent 55%),' +
+          'linear-gradient(180deg,#2a2052 0%,#1b1540 30%,#120e2c 60%,#0b0a1c 100%)',
+        backgroundAttachment: 'fixed',
+      }}
     >
-      <div className="starfield" aria-hidden="true" />
-
-      {/* ══════ Top bar ══════ */}
-      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 md:px-10 py-5 md:py-6">
-        <div className="flex items-center gap-3">
-          <div className="mini-orb" aria-hidden="true" />
-          <div>
-            <p className="text-sm font-bold text-white tracking-wide">PASS</p>
-            <p className="text-[10px] tracking-[0.22em] uppercase text-slate-500">Platform for Adaptive Study Sessions</p>
+      {/* ══════ NAV ══════ */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0b0a1c]/60 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center gap-6">
+          <div className="flex items-center gap-2.5 mr-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center font-black text-sm">◑</div>
+            <span className="font-extrabold tracking-wide">PASS</span>
+          </div>
+          <nav className="hidden md:flex items-center gap-6 text-sm text-white/65 font-medium">
+            <a href="#how" className="hover:text-white transition-colors">How it works</a>
+            <a href="#method" className="hover:text-white transition-colors">The method</a>
+            <a href="#features" className="hover:text-white transition-colors">Features</a>
+          </nav>
+          <div className="ml-auto flex items-center gap-3">
+            <button type="button" onClick={() => openAuth('login')} className="text-sm font-semibold text-white/80 hover:text-white transition-colors">Sign in</button>
+            <button type="button" onClick={() => openAuth('signup')} className="rounded-xl px-4 py-2 text-sm font-bold text-indigo-700 bg-white hover:bg-indigo-50 transition-colors">Take your baseline →</button>
           </div>
         </div>
-        <div className="flex items-center gap-4 md:gap-5">
-          <span className="hidden md:inline text-[10px] tracking-[0.25em] uppercase text-slate-500">Praxis 5403 · Beta</span>
-          <button
-            type="button"
-            onClick={() => focusSignInPanel('login')}
-            className="text-sm text-slate-300 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[color:var(--d1-peach)] rounded"
-          >
-            Sign in
-          </button>
-        </div>
-      </div>
+      </header>
 
       {/* ══════ HERO ══════ */}
-      <section className="relative min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center px-6 md:px-10 relative z-30 pt-28 pb-16">
-          <div className="max-w-6xl w-full grid md:grid-cols-[1.05fr_1fr] gap-10 md:gap-12 items-center">
-
-            {/* Left — copy + CTAs */}
-            <div>
-              <p className="text-[11px] font-semibold tracking-[0.32em] uppercase text-[color:var(--d1-peach)]/85 mb-6">
-                Adaptive · Personal · Built around your gaps
-              </p>
-              <h1 className="font-serif text-5xl md:text-6xl font-semibold text-white leading-[1.05] tracking-tight">
-                A study plan<br />
-                <span className="gradient-text">that listens.</span>
-              </h1>
-              <p className="text-base text-slate-400 mt-6 leading-relaxed max-w-md">
-                Four domains. 45 skills. 1,150 calibrated items — feeding one adaptive
-                engine that rebuilds itself around your gaps, one answer at a time.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 mt-9">
-                <button
-                  type="button"
-                  onClick={() => focusSignInPanel('signup')}
-                  className="btn-soft-glow"
-                >
-                  Begin your diagnostic&nbsp;&nbsp;→
-                </button>
-                <button
-                  type="button"
-                  onClick={() => focusSignInPanel('login')}
-                  className="btn-ghost-atelier"
-                >
-                  I have an account
-                </button>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-10 text-[11px] text-slate-500">
-                <span><span className="text-[color:var(--d1-peach)] font-semibold">4</span> domains</span>
-                <span className="text-slate-700">·</span>
-                <span><span className="text-[color:var(--d2-mint)] font-semibold">45</span> skills</span>
-                <span className="text-slate-700">·</span>
-                <span><span className="text-[color:var(--d3-ice)] font-semibold">1,150</span> calibrated items</span>
-                <span className="text-slate-700">·</span>
-                <span><span className="text-[color:var(--d4-lavender)] font-semibold">IRT</span>-calibrated</span>
-              </div>
-            </div>
-
-            {/* Right — engine visualization */}
-            <div className="flex items-center justify-center" aria-hidden="true">
-              <div className="engine-box">
-
-                {/* SVG gradient feeder paths */}
-                <svg
-                  className="absolute inset-0 w-full h-full"
-                  viewBox="0 0 560 560"
-                  preserveAspectRatio="xMidYMid meet"
-                  style={{ pointerEvents: 'none' }}
-                >
-                  <defs>
-                    <linearGradient id="pathD1" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#fcd5b4" stopOpacity="0.55" />
-                      <stop offset="100%" stopColor="#fcd5b4" stopOpacity="0" />
-                    </linearGradient>
-                    <linearGradient id="pathD2" x1="1" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#b8f2d8" stopOpacity="0.55" />
-                      <stop offset="100%" stopColor="#b8f2d8" stopOpacity="0" />
-                    </linearGradient>
-                    <linearGradient id="pathD3" x1="1" y1="1" x2="0" y2="0">
-                      <stop offset="0%" stopColor="#cde9f5" stopOpacity="0.55" />
-                      <stop offset="100%" stopColor="#cde9f5" stopOpacity="0" />
-                    </linearGradient>
-                    <linearGradient id="pathD4" x1="0" y1="1" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#d8d5fc" stopOpacity="0.55" />
-                      <stop offset="100%" stopColor="#d8d5fc" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M 100 100 Q 170 180, 280 280" stroke="url(#pathD1)" strokeWidth="1.5" fill="none" />
-                  <path d="M 460 100 Q 390 180, 280 280" stroke="url(#pathD2)" strokeWidth="1.5" fill="none" />
-                  <path d="M 460 460 Q 390 380, 280 280" stroke="url(#pathD3)" strokeWidth="1.5" fill="none" />
-                  <path d="M 100 460 Q 170 380, 280 280" stroke="url(#pathD4)" strokeWidth="1.5" fill="none" />
-                </svg>
-
-                {/* Central orb */}
-                <div className="engine-orb-halo" />
-                <div className="engine-orb">
-                  <div className="engine-orb-inner" />
-                </div>
-
-                {/* Domain nodes at 4 corners */}
-                {ENGINE_NODES.map(node => (
-                  <div
-                    key={node.domainId}
-                    className={`domain-node ${node.positionClass}`}
-                    style={{ ['--node-color' as unknown as string]: node.color } as React.CSSProperties}
-                  >
-                    {node.positionClass === 'node-d1' || node.positionClass === 'node-d4' ? (
-                      <>
-                        <div className="node-label">
-                          <p className="name">{node.name}</p>
-                          <p className="count">{node.count} SKILLS</p>
-                        </div>
-                        <div className="node-dot" />
-                      </>
-                    ) : (
-                      <>
-                        <div className="node-dot" />
-                        <div className="node-label">
-                          <p className="name">{node.name}</p>
-                          <p className="count">{node.count} SKILLS</p>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
-
-                <div className="engine-caption">
-                  <p className="text-[10px] tracking-[0.32em] uppercase text-slate-500">The Adaptive Engine</p>
-                </div>
-              </div>
-            </div>
-
+      <section className="relative max-w-7xl mx-auto px-6 md:px-10 grid lg:grid-cols-[0.92fr_1.08fr] gap-8 items-center pt-12 pb-20" style={{ minHeight: '86vh' }}>
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-semibold text-white/85 mb-6 bg-white/10 border border-white/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" /> Praxis 5403 · School Psychology
           </div>
+          <h1 className="text-5xl md:text-[58px] font-extrabold leading-[1.03] tracking-tight mb-5">
+            Find the exact skills<br /><span className={GTXT}>holding you back.</span>
+          </h1>
+          <p className="text-[16.5px] leading-relaxed text-white/75 max-w-xl mb-7">
+            Take an adaptive baseline. A diagnostic algorithm — built by an educator with almost two decades of experience across classroom
+            instruction, <span className="text-white font-semibold">MTSS</span>, and student support, grounded in the science of how we learn — pinpoints the exact{' '}
+            <span className="text-white font-semibold">micro-skills</span> you&apos;re missing across the entire exam blueprint, then builds your plan around them.
+          </p>
+          <div className="flex flex-wrap gap-3 mb-6">
+            <button type="button" onClick={() => openAuth('signup')} className="rounded-2xl px-6 py-3.5 text-sm font-bold text-indigo-700 bg-white shadow-xl shadow-indigo-900/40 hover:bg-indigo-50 transition">Take your adaptive baseline →</button>
+            <button type="button" onClick={() => openAuth('login')} className="rounded-2xl px-6 py-3.5 text-sm font-bold text-white bg-white/10 border border-white/20 hover:bg-white/20 transition">I have an account</button>
+          </div>
+          <p className="text-[12.5px] text-white/45">Built by an educator — not a test-prep mill.</p>
         </div>
 
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] uppercase text-slate-600">
-          Already a candidate? <button type="button" onClick={() => focusSignInPanel('login')} className="text-slate-400 hover:text-[color:var(--d1-peach)] ml-2 underline-offset-4 hover:underline">Sign in ↓</button>
+        {/* live product window */}
+        <div className="relative h-[520px] hidden lg:block" style={{ perspective: '1900px' }} aria-hidden="true">
+          <div
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] rounded-2xl overflow-hidden border border-white/15"
+            style={{ transform: 'rotateY(-13deg) rotateX(5deg)', boxShadow: '0 50px 120px -28px rgba(6,5,16,.75), 0 30px 70px -36px rgba(217,70,239,.4)' }}
+          >
+            <div className="flex items-center gap-2 px-4 py-2.5 bg-[#15122a] border-b border-white/10">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-400/70" /><span className="w-2.5 h-2.5 rounded-full bg-amber-400/70" /><span className="w-2.5 h-2.5 rounded-full bg-emerald-400/70" />
+              <span className="ml-3 text-[10px] text-white/40 font-medium rounded-md bg-white/5 px-3 py-0.5">app.pass.study/dashboard</span>
+              <span className="ml-auto flex items-center gap-1 text-[9px] font-bold text-emerald-300"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />LIVE</span>
+            </div>
+            {/* compact dashboard snapshot */}
+            <div className="bg-[#f7f6f8] p-4 h-[340px]">
+              <p className="text-[10px] font-black uppercase tracking-wide text-slate-400">Welcome back</p>
+              <p className="text-lg font-extrabold text-slate-900 mb-3">Hi, Carlos.</p>
+              <div className="rounded-2xl bg-gradient-to-br from-violet-500 via-indigo-600 to-indigo-700 p-4 text-white mb-3">
+                <p className="text-[9px] font-black uppercase tracking-wide text-indigo-100">Exam readiness</p>
+                <p className="text-xl font-extrabold leading-tight mt-0.5">13 skills <span className="font-semibold text-indigo-100">at Demonstrating</span></p>
+                <p className="text-[11px] text-indigo-100 mt-1">19 more to reach your readiness target.</p>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { g: 'from-cyan-500 to-blue-600', t: 'Professional', p: '41%' },
+                  { g: 'from-emerald-500 to-teal-600', t: 'Student-Level', p: '78%' },
+                  { g: 'from-rose-500 to-pink-600', t: 'Systems-Level', p: '34%' },
+                  { g: 'from-amber-500 to-orange-600', t: 'Foundations', p: '62%' },
+                ].map((d) => (
+                  <div key={d.t} className="rounded-xl bg-white border border-slate-200 p-2">
+                    <div className={`w-6 h-6 rounded-lg bg-gradient-to-br ${d.g} mb-2`} />
+                    <p className="text-[8px] font-black uppercase text-slate-500 leading-tight">{d.t}</p>
+                    <p className="text-[10px] font-bold text-slate-900">{d.p}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* floating: micro-skill pinpointed */}
+          <div className="bob absolute left-1 bottom-2 w-[300px] rounded-2xl bg-white text-slate-900 p-4 z-20" style={{ boxShadow: '0 26px 55px -16px rgba(6,5,16,.6)' }}>
+            <div className="flex items-center gap-1.5 mb-2"><span className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center text-white text-[10px]">✦</span><span className="text-[10px] font-black uppercase tracking-wide text-violet-700">Micro-skill pinpointed</span></div>
+            <p className="text-[15px] font-bold leading-snug mb-1">Norm- vs. criterion-referenced interpretation</p>
+            <p className="text-[11.5px] text-slate-500 mb-3">a micro-skill inside <b className="text-slate-700">Assessment &amp; Data Use</b> · not the whole topic</p>
+            <div className="flex items-center gap-2"><span className="rounded-full bg-rose-100 text-rose-700 px-2 py-0.5 text-[10px] font-bold">Tier 2 · targeted</span><span className="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-[10px] font-bold">drives 3 recent misses</span></div>
+          </div>
         </div>
       </section>
 
-      {/* ══════ SIGN IN ══════ */}
-      <section id="signin-panel" className="relative min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center px-6 md:px-10 py-24 md:py-28 relative z-30">
-          <div className="max-w-md w-full">
+      {/* ══════ HOW IT WORKS ══════ */}
+      <section id="how" className="max-w-7xl mx-auto px-6 md:px-10 py-20">
+        <p className="text-center text-[12px] font-black uppercase tracking-[.2em] text-fuchsia-300 mb-3">How it works</p>
+        <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight mb-3">From &quot;study everything&quot; to &quot;study <span className={GTXT}>this.</span>&quot;</h2>
+        <p className="text-center text-white/60 max-w-2xl mx-auto mb-12">Three steps that mirror how strong practitioners actually move: baseline, pinpoint, then target.</p>
+        <div className="grid md:grid-cols-3 gap-5">
+          {[
+            { g: 'from-cyan-500 to-blue-600', icon: '◎', step: 'Step 1', sc: 'text-cyan-300', h: 'Take an adaptive baseline', b: 'An adaptive set that grows with you — one question per skill, plus targeted follow-ups exactly where you slip. No fixed-length slog.' },
+            { g: 'from-violet-500 to-fuchsia-600', icon: '⌖', step: 'Step 2', sc: 'text-fuchsia-300', h: 'See your micro-skill map', b: 'The algorithm isolates the precise micro-skills and error patterns behind your misses — not "weak in assessment," but the actual gap.' },
+            { g: 'from-emerald-500 to-teal-600', icon: '↗', step: 'Step 3', sc: 'text-emerald-300', h: 'Study what moves readiness', b: 'A personalized plan + adaptive practice, sequenced by what raises your readiness fastest and spaced so it actually sticks.' },
+          ].map((s) => (
+            <div key={s.step} className={GLASS + ' rounded-2xl p-6'}>
+              <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.g} grid place-items-center text-white text-lg mb-4`}>{s.icon}</div>
+              <p className={`text-[11px] font-black mb-1 ${s.sc}`}>{s.step}</p>
+              <h3 className="text-lg font-bold mb-2">{s.h}</h3>
+              <p className="text-[14px] text-white/65 leading-relaxed">{s.b}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════ MICRO-SKILL PRECISION ══════ */}
+      <section id="features" className="max-w-7xl mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <p className="text-[12px] font-black uppercase tracking-[.2em] text-violet-300 mb-3">Micro-skill precision</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">We don&apos;t stop at skills.<br />We target the <span className={GTXT}>micro-skill.</span></h2>
+          <p className="text-[15.5px] text-white/70 leading-relaxed mb-5">
+            Generic prep tells you you&apos;re &quot;weak in assessment.&quot; PASS pinpoints that it&apos;s <span className="text-white font-semibold">norm- vs. criterion-referenced interpretation</span>, and that you keep confusing <span className="text-white font-semibold">screening with evaluation consent</span> — then targets exactly that, not the whole topic.
+          </p>
+          <ul className="space-y-2.5 text-[14.5px] text-white/75">
+            <li className="flex gap-2.5"><span className="text-emerald-300">✓</span> Every exam skill broken down to its micro-skills</li>
+            <li className="flex gap-2.5"><span className="text-emerald-300">✓</span> The exact micro-skill each question probes</li>
+            <li className="flex gap-2.5"><span className="text-emerald-300">✓</span> Repeated error patterns named and targeted</li>
+          </ul>
+        </div>
+        <div className={GLASS + ' rounded-3xl p-5'}>
+          <div className="flex items-center justify-between mb-3"><p className="text-[11px] font-black uppercase tracking-wide text-white/50">Your weakest micro-skills</p><span className="text-[10px] text-white/40">live</span></div>
+          <div className="space-y-2.5">
+            {[
+              { bar: 'from-rose-500 to-pink-600', t: 'Norm- vs. criterion-referenced interpretation', s: 'Assessment & Data Use · 28%', tier: 'Tier 2', tc: 'bg-rose-500/20 text-rose-200' },
+              { bar: 'from-rose-500 to-pink-600', t: 'Function vs. topography in FBA', s: 'Behavioral Assessment · 33%', tier: 'Tier 2', tc: 'bg-rose-500/20 text-rose-200' },
+              { bar: 'from-amber-500 to-orange-600', t: 'Screening vs. evaluation consent', s: 'Ethics & Law · 55%', tier: 'Tier 1', tc: 'bg-amber-500/20 text-amber-200' },
+            ].map((m) => (
+              <div key={m.t} className="bg-white/5 rounded-xl p-3 flex items-center gap-3">
+                <span className={`w-2 h-8 rounded bg-gradient-to-b ${m.bar}`} />
+                <div className="flex-1"><p className="text-sm font-semibold">{m.t}</p><p className="text-[11px] text-white/45">{m.s}</p></div>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${m.tc}`}>{m.tier}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ THE METHOD ══════ */}
+      <section id="method" className="max-w-7xl mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-2 gap-12 items-center">
+        <div className={'order-2 lg:order-1 rounded-3xl p-6 ' + GLASS}>
+          <p className="text-[11px] font-black uppercase tracking-wide text-white/50 mb-4">The engine mirrors practitioner workflow</p>
+          <div className="space-y-3">
+            {[
+              { g: 'from-cyan-500 to-blue-600', n: '1', t: 'Baseline', d: '— adaptive diagnostic' },
+              { g: 'from-violet-500 to-fuchsia-600', n: '2', t: 'Pinpoint', d: '— micro-skill + error analysis' },
+              { g: 'from-rose-500 to-pink-600', n: '3', t: 'Target', d: '— tiered, sequenced practice' },
+              { g: 'from-emerald-500 to-teal-600', n: '4', t: 'Progress-monitor', d: '— spaced review + re-check' },
+            ].map((r, i) => (
+              <div key={r.n}>
+                <div className="flex items-center gap-3"><span className={`w-8 h-8 rounded-lg bg-gradient-to-br ${r.g} grid place-items-center text-white text-xs font-black`}>{r.n}</span><p className="text-sm font-semibold">{r.t} <span className="text-white/45 font-normal">{r.d}</span></p></div>
+                {i < 3 && <div className="ml-4 h-3 w-px bg-white/20" />}
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 mt-5 pt-5 border-t border-white/10">
+            {['~2 decades educator · MTSS', 'Spacing', 'Retrieval practice', 'Interleaving'].map((c) => (
+              <span key={c} className="rounded-full px-3 py-1 text-[11px] font-bold bg-white/10 border border-white/20">{c}</span>
+            ))}
+          </div>
+        </div>
+        <div className="order-1 lg:order-2">
+          <p className="text-[12px] font-black uppercase tracking-[.2em] text-cyan-300 mb-3">The method</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Grounded in MTSS,<br />not guesswork.</h2>
+          <p className="text-[15.5px] text-white/70 leading-relaxed mb-4">
+            Every decision the engine makes mirrors how effective school-based practitioners actually work — <span className="text-white font-semibold">baseline → pinpoint → target → progress-monitor.</span>
+          </p>
+          <p className="text-[15.5px] text-white/70 leading-relaxed">
+            It was built by an educator with <span className="text-white font-semibold">almost two decades across classroom instruction, MTSS, intervention, and school-based student support</span> — with sequencing and review grounded in the science of learning: <span className="text-white font-semibold">spacing, retrieval practice, and interleaving</span>. Not flashcards. Not a generic question dump.
+          </p>
+        </div>
+      </section>
+
+      {/* ══════ WHY IT'S FASTER ══════ */}
+      <section className="max-w-7xl mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <p className="text-[12px] font-black uppercase tracking-[.2em] text-amber-300 mb-3">Why it&apos;s faster</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Stop re-studying<br />what you already know.</h2>
+          <p className="text-[15.5px] text-white/70 leading-relaxed mb-4">
+            Because our test algorithm isolates the <span className="text-white font-semibold">micro-skills</span> you&apos;re missing — not broad topics — every minute you study goes to a gap that&apos;s actually costing you points. No grinding back through material you&apos;ve already mastered.
+          </p>
+          <p className="text-[15.5px] text-white/70 leading-relaxed">
+            Generic prep makes you review every topic, end to end, on every pass. PASS sends you straight to the handful of micro-skills standing between you and a pass.
+          </p>
+        </div>
+        <div className={GLASS + ' rounded-3xl p-6'}>
+          <p className="text-[11px] font-black uppercase tracking-wide text-white/50 mb-5">Where your study hours go</p>
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-1.5"><span className="text-[12px] font-semibold text-white/70">Generic prep</span><span className="text-[11px] text-white/40">reviews all of it</span></div>
+            <div className="h-8 rounded-lg overflow-hidden flex">
+              <div className="bg-white/10 flex items-center pl-2" style={{ width: '78%' }}><span className="text-[10px] text-white/45 font-medium">material you already know</span></div>
+              <div className="bg-gradient-to-r from-rose-500 to-pink-600" style={{ width: '22%' }} />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1.5"><span className="text-[12px] font-semibold text-white">With PASS</span><span className="text-[11px] text-emerald-300">straight to your micro-gaps</span></div>
+            <div className="h-8 rounded-lg overflow-hidden flex">
+              <div className="bg-gradient-to-r from-rose-500 to-pink-600" style={{ width: '22%' }} />
+              <div className="bg-gradient-to-r from-emerald-500/60 to-teal-600/60 flex items-center pl-2" style={{ width: '78%' }}><span className="text-[10px] font-bold text-white/90">time back in your week</span></div>
+            </div>
+          </div>
+          <p className="text-[11px] text-white/40 mt-4 text-center">Same exam. Same gaps closed. A fraction of the hours.</p>
+        </div>
+      </section>
+
+      {/* ══════ PLAN + PRACTICE ══════ */}
+      <section className="max-w-7xl mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <p className="text-[12px] font-black uppercase tracking-[.2em] text-emerald-300 mb-3">Your plan</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">A plan built from your data —<br />not a template.</h2>
+          <p className="text-[15.5px] text-white/70 leading-relaxed mb-5">
+            Two candidates never get the same plan. PASS sequences your weeks by what raises readiness fastest, quarantines what you keep missing for focused review, and resurfaces it on a spaced schedule so it sticks.
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {[{ t: 'Micro', s: 'skill targeting' }, { t: '1:1', s: 'plan per learner' }, { t: 'Spaced', s: 'for retention' }].map((x) => (
+              <div key={x.t} className={GLASS + ' rounded-xl p-3'}><p className={'text-2xl font-extrabold ' + GTXT}>{x.t}</p><p className="text-[11px] text-white/55">{x.s}</p></div>
+            ))}
+          </div>
+        </div>
+        <div className={GLASS + ' rounded-3xl p-5'}>
+          <div className="rounded-2xl bg-gradient-to-br from-violet-500 via-indigo-600 to-indigo-700 p-4 mb-3">
+            <p className="text-[10px] uppercase tracking-wide text-indigo-200 font-bold mb-1">This week · sequenced by impact</p>
+            <p className="text-sm font-semibold">Lock Assessment &amp; Data Use → +5% readiness</p>
+          </div>
+          <div className="space-y-2">
+            <div className="bg-white/5 rounded-xl p-3 flex items-center gap-3"><span className="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 grid place-items-center text-white text-xs">↻</span><p className="text-[13px] flex-1">Redemption · 6 quarantined items</p><span className="text-[11px] text-white/40">~9 min</span></div>
+            <div className="bg-white/5 rounded-xl p-3 flex items-center gap-3"><span className="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-500 to-cyan-600 grid place-items-center text-white text-xs">▦</span><p className="text-[13px] flex-1">Spaced review · 3 skills due</p><span className="text-[11px] text-white/40">~6 min</span></div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ FOUNDER'S NOTE ══════ */}
+      <section className="max-w-4xl mx-auto px-6 md:px-10 py-20">
+        <div className={GLASS + ' rounded-3xl p-8 md:p-10 relative overflow-hidden'}>
+          <div className="absolute -top-24 -right-20 w-64 h-64 rounded-full" style={{ background: 'radial-gradient(circle, rgba(232,121,249,.22), transparent 70%)' }} />
+          <p className="text-[12px] font-black uppercase tracking-[.2em] text-fuchsia-300 mb-6 relative">Why I built PASS</p>
+          <div className="flex items-center gap-4 mb-6 relative">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-400/30 to-fuchsia-500/25 border border-white/20 grid place-items-center text-white/70 text-lg font-bold shrink-0">CLR</div>
+            <div>
+              <p className="text-lg font-bold text-white leading-tight">Carlos Lebron Rivera</p>
+              <p className="text-[12.5px] text-white/55 mt-0.5 leading-snug">Educational Consultant · Reading Specialist · Special Education Specialist &amp; Advocate · Educational Assessor</p>
+            </div>
+          </div>
+          <div className="space-y-4 text-[16px] leading-relaxed text-white/80 relative">
+            <p>For years I&apos;ve worked the hardest end of education — <span className="text-white font-semibold">complex case management</span>, special-education advocacy, and the school–parent conflicts no one else wants to touch. Giving educators a way to study <span className="text-white font-semibold">efficiently</span> and reclaim their time became my passion.</p>
+            <p>PASS came from the coaching room. Too often, teachers were pushed to <span className="text-white font-semibold">perform</span> for whatever the district was chasing that month — a theatrical show instead of real learning. But when a teacher came to a coaching cycle genuinely <span className="text-white font-semibold">curious</span> — owning a perceived gap, naming the challenge themselves — everything changed. Their own idea of what to improve told us exactly which <span className="text-white font-semibold">data to look at</span> and which <span className="text-white font-semibold">specific skills and behaviors to target.</span></p>
+            <p>That&apos;s the engine behind PASS. It leverages <span className="text-white font-semibold">AI and the science of learning</span>, but it works the way a strong interventionist does — <span className="text-white font-semibold">triage</span> the real problem, <span className="text-white font-semibold">triangulate</span> across every signal, respond to the data. Deliberate about every move and every selection, pulling the maximum signal from <span className="text-white font-semibold">every response</span> — so that everything you do here <span className="text-white font-semibold">adapts to the way you learn,</span> not the average test-taker. From that, the <span className="text-white font-semibold">Platform for Adaptive Study Sessions</span> was born.</p>
+          </div>
+          <div className="flex items-center gap-3 mt-7 relative">
+            <div className="h-px w-8 bg-white/30" />
+            <p className="text-[14px] text-white/70"><span className="font-bold text-white">Carlos Lebron Rivera</span> · Founder, PASS</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ FINAL CTA ══════ */}
+      <section className="px-6 md:px-10 py-20">
+        <div className="max-w-5xl mx-auto rounded-3xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#7c3aed,#6366f1 55%,#4338ca)' }}>
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(40% 80% at 85% 20%, rgba(232,121,249,.45), transparent 60%)' }} />
+          <div className="relative px-8 md:px-14 py-14 text-center">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">See your baseline in one sitting.</h2>
+            <p className="text-white/80 max-w-xl mx-auto mb-7">Stop guessing what to review. Find the exact skills between you and your license — then close them.</p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <button type="button" onClick={() => openAuth('signup')} className="rounded-2xl px-7 py-3.5 text-sm font-bold text-indigo-700 bg-white hover:bg-indigo-50 shadow-xl">Take your adaptive baseline →</button>
+              <button type="button" onClick={() => openAuth('login')} className="rounded-2xl px-7 py-3.5 text-sm font-bold text-white bg-white/10 border border-white/20 hover:bg-white/20">I have an account</button>
+            </div>
+            <p className="text-[12px] text-white/60 mt-5">One sitting · pick up on any device · currently in beta</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ FOOTER ══════ */}
+      <footer className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row items-center gap-4 justify-between text-white/50 text-sm">
+          <div className="flex items-center gap-2.5"><div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center font-black text-xs">◑</div><span className="font-bold text-white/80">PASS</span><span className="text-white/35">· Platform for Adaptive Study Sessions</span></div>
+          <p className="text-[12px]">Currently in beta. Not responsible for loss of data during the beta period. · © 2026</p>
+        </div>
+      </footer>
+
+      {/* ══════ AUTH MODAL ══════ */}
+      {authOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm px-4 py-8 sm:py-12"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setAuthOpen(false)}
+        >
+          <div className="relative w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              onClick={() => setAuthOpen(false)}
+              aria-label="Close"
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/80 transition hover:bg-white/20 hover:text-white"
+            >
+              ×
+            </button>
             <div className="glass p-8 md:p-10">
               <div className="flex justify-center mb-6">
                 <div className="mini-orb" style={{ width: 56, height: 56 }} aria-hidden="true" />
@@ -717,12 +848,9 @@ export default function LoginScreen() {
               )}
             </div>
 
-            <p className="text-center text-[10px] text-slate-700 mt-6 tracking-wider uppercase">
-              PASS · Beta · 2026
-            </p>
           </div>
         </div>
-      </section>
+      )}
     </div>
   );
 }
