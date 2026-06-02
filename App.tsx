@@ -99,25 +99,25 @@ function StudyGuideTabWrapper({
   ];
 
   return (
-    <div className="space-y-5 pb-16 text-slate-200">
+    <div className="space-y-5 pb-16 text-slate-700">
       <div className="pt-4">
-        <p className="eyebrow mb-2">Your plan</p>
-        <h2 className="text-4xl font-semibold tracking-tight text-white leading-tight">
-          A guide built around your <span className="gradient-text-warm">gaps.</span>
+        <p className="eyebrow text-indigo-600 mb-2">Your plan</p>
+        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+          A guide built around your <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">gaps.</span>
         </h2>
-        <p className="mt-3 text-[14px] text-slate-400 max-w-xl leading-relaxed">
+        <p className="mt-3 text-[14px] text-slate-500 max-w-xl leading-relaxed">
           Platform guide · your personalized study plan · vocabulary practice — all in one place.
         </p>
       </div>
 
       {/* Tab bar — atelier underline style */}
-      <div className="flex items-center gap-8 border-b border-white/8 overflow-x-auto">
+      <div className="flex items-center gap-8 border-b border-slate-200 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`relative py-3.5 text-[13px] font-medium transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)] ${
-              activeTab === tab.id ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+            className={`relative py-3.5 text-[13px] font-medium transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706] ${
+              activeTab === tab.id ? 'text-slate-900' : 'text-slate-400 hover:text-slate-900'
             }`}
           >
             {tab.label}
@@ -126,7 +126,7 @@ function StudyGuideTabWrapper({
                 aria-hidden="true"
                 className="absolute -bottom-px left-0 right-0 h-0.5 rounded-full"
                 style={{
-                  background: 'linear-gradient(90deg, var(--d1-peach), var(--accent-rose), var(--d4-lavender))',
+                  background: 'linear-gradient(90deg, #d97706, #e11d48, #7c3aed)',
                   boxShadow: '0 0 8px rgba(252,213,180,0.4)',
                 }}
               />
@@ -137,28 +137,28 @@ function StudyGuideTabWrapper({
 
       {/* Tab content */}
       {activeTab === 'platform' && (
-        <div className="glass p-6 space-y-4">
+        <div className="editorial-surface p-6 space-y-4">
           <p className="eyebrow mb-2">How to use the platform</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {[
-              { title: 'Adaptive Diagnostic', desc: '45–90 questions that adapt to your performance. Maps all 45 skills in one session.', accent: 'var(--d1-peach)' },
-              { title: 'Learning Path',       desc: 'Structured micro-lessons ordered by your gaps. Lesson → quiz → extend for each skill.', accent: 'var(--d2-mint)' },
-              { title: 'Term Sprint',         desc: '396 school psychology terms, 10 seconds each, both directions. Build vocabulary fluency.', accent: 'var(--d3-ice)' },
-              { title: 'Spaced Review',       desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.', accent: 'var(--d4-lavender)' },
-              { title: 'Redemption Rounds',   desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.', accent: 'var(--accent-rose)' },
-              { title: 'AI Tutor',            desc: 'Conversational study assistant. Ask questions, get quizzed on weak areas, generate vocabulary lists.', accent: 'var(--d1-peach)' },
+              { title: 'Adaptive Diagnostic', desc: '45–90 questions that adapt to your performance. Maps all 45 skills in one session.', accent: '#d97706' },
+              { title: 'Learning Path',       desc: 'Structured micro-lessons ordered by your gaps. Lesson → quiz → extend for each skill.', accent: '#059669' },
+              { title: 'Term Sprint',         desc: '396 school psychology terms, 10 seconds each, both directions. Build vocabulary fluency.', accent: '#0284c7' },
+              { title: 'Spaced Review',       desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.', accent: '#7c3aed' },
+              { title: 'Redemption Rounds',   desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.', accent: '#e11d48' },
+              { title: 'AI Tutor',            desc: 'Conversational study assistant. Ask questions, get quizzed on weak areas, generate vocabulary lists.', accent: '#d97706' },
             ].map(item => (
               <div
                 key={item.title}
                 className="relative rounded-xl p-3 pl-4"
-                style={{ background: 'rgba(10,22,40,0.5)', border: '1px solid rgba(226,232,240,0.08)' }}
+                style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}
               >
                 <span
                   aria-hidden="true"
                   className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full"
                   style={{ background: item.accent, boxShadow: `0 0 6px ${item.accent}` }}
                 />
-                <p className="text-xs font-semibold text-white mb-1">{item.title}</p>
+                <p className="text-xs font-semibold text-slate-900 mb-1">{item.title}</p>
                 <p className="text-[11px] text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
@@ -180,12 +180,12 @@ function StudyGuideTabWrapper({
       )}
 
       {activeTab === 'vocabulary' && (
-        <div className="glass p-6 space-y-4">
+        <div className="editorial-surface p-6 space-y-4">
           <p className="eyebrow mb-1">Vocabulary &amp; Term Sprint</p>
           <p className="text-[13px] text-slate-400 leading-relaxed max-w-xl">
             Review your flagged terms and test your vocabulary knowledge across 396 school psychology terms.
           </p>
-          <button onClick={onNavigateToGlossary} className="btn-soft-glow">
+          <button onClick={onNavigateToGlossary} className="editorial-button-primary">
             Open Glossary &amp; Start Term Sprint →
           </button>
         </div>
@@ -208,7 +208,7 @@ function PraxisStudyAppContent() {
   // Indigo/violet light re-theme: modes are removed from this set as each screen
   // is re-themed to the light shell (mockup: public/mockup-retheme-allscreens.html).
   const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([
-    'study-guide', 'tutor', 'results',
+    'tutor', 'results',
     'study-notebook', 'glossary', 'help',
   ]);
 
