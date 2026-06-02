@@ -6,7 +6,7 @@ import {
   X, ChevronLeft, ChevronRight,
   Sparkles, ClipboardCheck, LayoutDashboard, Dumbbell,
   Bot, TrendingUp, BookOpen, RotateCcw,
-  Target, GitBranch, Gauge, PauseCircle, Rocket,
+  Target, GitBranch, Gauge, PauseCircle, Rocket, Zap,
 } from 'lucide-react';
 import { TUTORIAL_SLIDES, DIAGNOSTIC_TUTORIAL_SLIDES } from '../data/tutorial-slides';
 import type { TutorialSlide } from '../data/tutorial-slides';
@@ -14,7 +14,7 @@ import type { TutorialSlide } from '../data/tutorial-slides';
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   Sparkles, ClipboardCheck, LayoutDashboard, Dumbbell,
   Bot, TrendingUp, BookOpen, RotateCcw,
-  Target, GitBranch, Gauge, PauseCircle, Rocket,
+  Target, GitBranch, Gauge, PauseCircle, Rocket, Zap,
 };
 
 const GRADIENT_CLASSES = [
