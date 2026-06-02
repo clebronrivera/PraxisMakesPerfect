@@ -12,11 +12,11 @@ export interface TutorialSlide {
 export const TUTORIAL_SLIDES: TutorialSlide[] = [
   {
     id: 'welcome',
-    title: 'Welcome to Praxis Makes Perfect',
+    title: 'Welcome to PASS',
     description: 'Your personalized study companion for the Praxis 5403 School Psychology exam. Here\'s a quick tour of everything you can do.',
     icon: 'Sparkles',
     highlights: [
-      '450+ practice questions across 45 skills',
+      '1,150 practice questions across 45 skills',
       'AI-powered study guides tailored to your gaps',
       'Real-time progress tracking with proficiency levels',
       'Adaptive practice that targets your weakest areas',
