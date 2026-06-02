@@ -522,19 +522,6 @@ function PraxisStudyAppContent() {
   // Rotate affirmation pills in the top bar based on cumulative activity.
   // Seed changes as the user answers more questions or builds a streak, so
   // returning users see different phrases over time without any state management.
-  const headerAffirmations = useMemo(() => {
-    const PAIRS: [string, string][] = [
-      ['Keep going', 'One step at a time'],
-      ['Stay consistent', 'Small reps compound'],
-      ['Show up again', 'That is the whole job'],
-      ['Progress is quiet', 'Keep practicing'],
-      ['Earn it every day', 'No shortcuts here'],
-      ['Trust the process', 'You are closer than you think'],
-    ];
-    const seed = (profile.totalQuestionsSeen ?? 0) + (profile.streak ?? 0);
-    return PAIRS[seed % PAIRS.length];
-  }, [profile.totalQuestionsSeen, profile.streak]);
-
   const weeklyUsageSeconds = useMemo(
     () => recentActivityDays.reduce((total, day) => total + day.seconds, 0),
     [recentActivityDays]
@@ -993,8 +980,6 @@ function PraxisStudyAppContent() {
               </div>
 
               <div className="hidden md:flex flex-wrap items-center gap-2">
-                <span className="editorial-pill">{headerAffirmations[0]}</span>
-                <span className="editorial-pill">{headerAffirmations[1]}</span>
                 {(profile.streak ?? 0) > 0 && (
                   <span className="editorial-pill">
                     <Flame className="h-3.5 w-3.5" />
