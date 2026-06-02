@@ -52,21 +52,21 @@ export function QuizQuestionBubble({
     <div
       className={`mt-2 p-4 rounded-xl border backdrop-blur-[14px] ${
         isSubmitted
-          ? 'border-white/6 bg-[rgba(10,22,40,0.35)] opacity-75'
-          : 'border-white/8 bg-[rgba(10,22,40,0.55)]'
+          ? 'border-slate-200 bg-[#ffffff] opacity-75'
+          : 'border-slate-200 bg-[#ffffff]'
       }`}
     >
       {isMultiSelect && !isSubmitted && (
         <p
           className="text-[10px] tracking-[0.22em] uppercase font-semibold mb-2 flex items-center gap-1"
-          style={{ color: 'var(--d1-peach)' }}
+          style={{ color: '#d97706' }}
         >
           <CheckSquare className="w-3 h-3" />
           Select all that apply
         </p>
       )}
 
-      <p className="text-sm text-white font-medium mb-3">{stem}</p>
+      <p className="text-sm text-slate-900 font-medium mb-3">{stem}</p>
 
       <div className="space-y-2">
         {choices.map(choice => {
@@ -78,15 +78,15 @@ export function QuizQuestionBubble({
               disabled={isSubmitted || disabled}
               className={`w-full text-left flex items-start gap-3 p-2.5 rounded-lg border text-sm transition-colors
                 ${isSelected
-                  ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/10 text-white'
-                  : 'border-white/8 bg-[rgba(10,22,40,0.45)] text-slate-300 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/5'
+                  ? 'border-[color:#d97706]/50 bg-[color:#d97706]/10 text-slate-900'
+                  : 'border-slate-200 bg-[#ffffff] text-slate-600 hover:border-[color:#d97706]/40 hover:bg-slate-50'
                 }
                 ${(isSubmitted || disabled) ? 'cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
               <span
                 className={`shrink-0 w-5 h-5 rounded-${isMultiSelect ? 'sm' : 'full'} border-2 flex items-center justify-center mt-0.5
-                  ${isSelected ? 'border-[color:var(--d1-peach)] bg-[color:var(--d1-peach)]/80' : 'border-white/30'}
+                  ${isSelected ? 'border-[color:#d97706] bg-[color:#d97706]/80' : 'border-indigo-300'}
                 `}
               >
                 {isSelected && (
@@ -108,7 +108,7 @@ export function QuizQuestionBubble({
         <button
           onClick={handleSubmit}
           disabled={selected.length === 0 || disabled}
-          className="btn-soft-glow mt-3 w-full py-2 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+          className="editorial-button-primary mt-3 w-full py-2 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Submit Answer
         </button>

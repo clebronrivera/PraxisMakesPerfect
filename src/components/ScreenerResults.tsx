@@ -21,7 +21,7 @@ interface ScreenerResultsProps {
 
 const toneStyles: Record<ReadinessTone, string> = {
   ready: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  building: 'border-amber-200 bg-amber-50 text-amber-700',
+  building: 'border-indigo-200 bg-indigo-50 text-indigo-700',
   priority: 'border-rose-200 bg-rose-50 text-rose-700'
 };
 
@@ -64,8 +64,8 @@ export default function ScreenerResults({
   if (report.totalQuestions === 0 || report.domainSummaries.length === 0) {
     return (
       <div className="editorial-surface flex min-h-[400px] flex-col items-center justify-center space-y-4 p-10 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50">
-          <AlertTriangle className="h-7 w-7 text-amber-700" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50">
+          <AlertTriangle className="h-7 w-7 text-indigo-700" />
         </div>
         <p className="text-lg font-semibold text-slate-900">Result data is not available for this assessment yet.</p>
         <p className="max-w-xl text-sm text-slate-500">
@@ -130,8 +130,8 @@ export default function ScreenerResults({
               <p className="text-slate-700">{report.readiness.description}</p>
               <p className="text-sm text-slate-400">{TONE_OVERALL_MEANING[report.readiness.tone]}</p>
             </div>
-            <div className="rounded-[1.5rem] border border-amber-200 bg-white/5 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-700">Best Next Step</p>
+            <div className="rounded-[1.5rem] border border-indigo-200 bg-white/5 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-indigo-700">Best Next Step</p>
               <p className="mt-2 text-sm text-slate-900">{report.readiness.nextAction}</p>
             </div>
           </div>
@@ -159,9 +159,9 @@ export default function ScreenerResults({
               <div className="mt-4 space-y-3">
                 {report.foundationalGaps.length > 0 ? (
                   report.foundationalGaps.map((gap) => (
-                    <div key={gap.skillId} className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                      <p className="text-sm font-semibold text-amber-100">{gap.skillName}</p>
-                      <p className="mt-1 text-xs text-amber-50/80">
+                    <div key={gap.skillId} className="rounded-xl border border-indigo-200 bg-indigo-50 p-3">
+                      <p className="text-sm font-semibold text-indigo-100">{gap.skillName}</p>
+                      <p className="mt-1 text-xs text-indigo-50/80">
                         Linked to misses in {gap.triggeredBy.slice(0, 2).join(' and ')}.
                       </p>
                     </div>
@@ -180,7 +180,7 @@ export default function ScreenerResults({
       <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="editorial-surface p-6">
           <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-amber-700" />
+            <BarChart3 className="h-5 w-5 text-indigo-700" />
             <h3 className="text-lg font-semibold text-slate-900">Performance by Domain</h3>
           </div>
           <p className="mt-2 text-sm text-slate-500">
@@ -220,7 +220,7 @@ export default function ScreenerResults({
         <div className="space-y-6">
           <div className="editorial-surface p-6">
             <div className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-amber-700" />
+              <Target className="h-5 w-5 text-indigo-700" />
               <h3 className="text-lg font-semibold text-slate-900">Study Next</h3>
             </div>
             <div className="mt-5 space-y-3">
@@ -228,7 +228,7 @@ export default function ScreenerResults({
                 <button
                   key={domain.id}
                   onClick={() => onStartPractice?.(domain.id)}
-                  className="editorial-surface-soft w-full p-4 text-left transition-colors hover:border-amber-200"
+                  className="editorial-surface-soft w-full p-4 text-left transition-colors hover:border-indigo-200"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div>
@@ -271,7 +271,7 @@ export default function ScreenerResults({
 
       <section className="editorial-surface p-6">
         <div className="flex items-center gap-2">
-          <Layers className="h-5 w-5 text-amber-700" />
+          <Layers className="h-5 w-5 text-indigo-700" />
           <h3 className="text-lg font-semibold text-slate-900">Domain Drilldown</h3>
         </div>
         <p className="mt-2 text-sm text-slate-500">
@@ -341,9 +341,9 @@ export default function ScreenerResults({
                     <div className="mt-3 space-y-2">
                       {domain.foundationalGaps.length > 0 ? (
                         domain.foundationalGaps.map((gap) => (
-                          <div key={gap.skillId} className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                            <p className="text-sm font-semibold text-amber-700">{gap.skillName}</p>
-                            <p className="mt-1 text-xs text-amber-700">
+                          <div key={gap.skillId} className="rounded-xl border border-indigo-200 bg-indigo-50 p-3">
+                            <p className="text-sm font-semibold text-indigo-700">{gap.skillName}</p>
+                            <p className="mt-1 text-xs text-indigo-700">
                               Review this before harder work in {gap.triggeredBy.slice(0, 2).join(' and ')}.
                             </p>
                           </div>
@@ -411,7 +411,7 @@ export default function ScreenerResults({
 
       <div className="editorial-surface-soft p-4 text-sm text-slate-500">
         <div className="flex items-start gap-3">
-          <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-700" />
+          <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-indigo-700" />
           <p>
             Domain readiness here is a practical study signal, not a formal scaled score. Each domain uses the questions you actually saw in this assessment, and prerequisite review is only surfaced when linked metadata exists for the missed skill.
           </p>

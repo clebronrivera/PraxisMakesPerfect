@@ -31,7 +31,7 @@ interface ScoreReportProps {
 
 const getScoreColor = (score: number) => {
   if (score >= DEMONSTRATING_THRESHOLD) return { text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' };
-  if (score >= APPROACHING_THRESHOLD) return { text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' };
+  if (score >= APPROACHING_THRESHOLD) return { text: 'text-indigo-700', bg: 'bg-indigo-50', border: 'border-indigo-200' };
   return { text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' };
 };
 
@@ -246,7 +246,7 @@ export default function ScoreReport({
                 diagnosticSummary.readiness.tone === 'ready'
                   ? 'bg-emerald-50 text-emerald-700'
                   : diagnosticSummary.readiness.tone === 'building'
-                  ? 'bg-amber-100 text-amber-700'
+                  ? 'bg-indigo-100 text-indigo-700'
                   : 'bg-rose-50 text-rose-700'
               }`}>
                 {diagnosticSummary.readiness.label}
@@ -260,12 +260,12 @@ export default function ScoreReport({
 
       {/* Confidence callout — only when overconfidence pattern detected */}
       {diagnosticSummary?.confidence?.interpretation === 'possible_overconfidence' && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-700 mt-0.5 shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-indigo-700 mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-amber-900">Confidence Pattern Detected</p>
-              <p className="mt-1 text-sm text-amber-800">
+              <p className="text-sm font-semibold text-indigo-900">Confidence Pattern Detected</p>
+              <p className="mt-1 text-sm text-indigo-800">
                 {diagnosticSummary.confidence.totalHighWrong > 0
                   ? `${diagnosticSummary.confidence.totalHighWrong} high-confidence wrong answer${diagnosticSummary.confidence.totalHighWrong !== 1 ? 's' : ''} detected. `
                   : ''}
@@ -280,14 +280,14 @@ export default function ScoreReport({
       <div className="grid grid-cols-2 gap-4">
         <div className="editorial-stat-card">
           <div className="flex items-center gap-3 mb-2">
-            <Clock className="w-5 h-5 text-amber-700" />
+            <Clock className="w-5 h-5 text-indigo-700" />
             <p className="text-sm text-slate-500">Total Time</p>
           </div>
           <p className="text-2xl font-bold text-slate-900">{formatTime(totalTime)}</p>
         </div>
         <div className="editorial-stat-card">
           <div className="flex items-center gap-3 mb-2">
-            <Timer className="w-5 h-5 text-amber-700" />
+            <Timer className="w-5 h-5 text-indigo-700" />
             <p className="text-sm text-slate-500">Avg Time/Question</p>
           </div>
           <p className="text-2xl font-bold text-slate-900">{formatTime(avgTimePerQuestion)}</p>
@@ -298,7 +298,7 @@ export default function ScoreReport({
       {longestQuestions.length > 0 && (
         <div className="editorial-surface p-6">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
-            <Timer className="w-5 h-5 text-amber-700" />
+            <Timer className="w-5 h-5 text-indigo-700" />
             Questions That Took the Longest
           </h3>
           <div className="space-y-3">
@@ -342,7 +342,7 @@ export default function ScoreReport({
       {/* Domain Scores */}
       <div className="editorial-surface p-6">
         <h3 className="mb-6 flex items-center gap-2 font-semibold text-slate-900">
-          <BarChart3 className="w-5 h-5 text-amber-700" />
+          <BarChart3 className="w-5 h-5 text-indigo-700" />
           Performance by Domain
         </h3>
         <div className="space-y-4">
@@ -382,7 +382,7 @@ export default function ScoreReport({
       {/* Weakest Areas */}
       {weakestDomains.length > 0 && (
         <div className="editorial-surface p-6">
-          <h3 className="mb-4 flex items-center gap-2 font-semibold text-amber-700">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold text-indigo-700">
             <AlertTriangle className="w-5 h-5" />
             Areas for Improvement
           </h3>
@@ -394,7 +394,7 @@ export default function ScoreReport({
                 <div key={domain} className="editorial-surface-soft p-4">
                   <div className="flex justify-between items-start mb-2">
                     <p className="font-medium text-slate-900">{domainInfo?.name}</p>
-                    <span className="text-sm text-amber-700 font-semibold">
+                    <span className="text-sm text-indigo-700 font-semibold">
                       {Math.round((domainScore?.score || 0) * 100)}%
                     </span>
                   </div>
@@ -412,7 +412,7 @@ export default function ScoreReport({
       {(diagnosticSummary?.missedConcepts?.length ?? 0) > 0 && (
         <div className="editorial-surface p-6">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
-            <Lightbulb className="w-5 h-5 text-amber-700" />
+            <Lightbulb className="w-5 h-5 text-indigo-700" />
             Key Concepts to Review
           </h3>
           <div className="space-y-2">
@@ -437,7 +437,7 @@ export default function ScoreReport({
       {/* Foundational Gaps */}
       {(diagnosticSummary?.foundationalGaps?.length ?? 0) > 0 && (
         <div className="editorial-surface p-6">
-          <h3 className="mb-4 flex items-center gap-2 font-semibold text-amber-700">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold text-indigo-700">
             <AlertTriangle className="w-5 h-5" />
             Foundational Gaps
           </h3>

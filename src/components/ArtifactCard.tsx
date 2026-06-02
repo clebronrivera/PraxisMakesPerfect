@@ -209,16 +209,16 @@ function isArtifactEmpty(type: string, payload: Record<string, unknown>): boolea
 function EmptyArtifactNotice({ type, variant = 'editorial' }: { type: string; variant?: ArtifactVariant }) {
   if (variant === 'atelier') {
     return (
-      <div className="mt-1 p-4 text-center text-sm rounded-xl border border-dashed border-[color:var(--d1-peach)]/40 bg-[color:var(--d1-peach)]/8 text-[color:var(--d1-peach)]">
+      <div className="mt-1 p-4 text-center text-sm rounded-xl border border-dashed border-[color:#d97706]/40 bg-[color:#d97706]/8 text-[color:#d97706]">
         <p className="font-medium">No content could be generated for this {formatType(type).toLowerCase()}.</p>
         <p className="text-xs text-slate-400 mt-1">Try asking about a different skill or topic.</p>
       </div>
     );
   }
   return (
-    <div className="mt-1 p-4 text-center text-sm text-amber-700 bg-amber-50 rounded-lg border border-dashed border-amber-300">
+    <div className="mt-1 p-4 text-center text-sm text-indigo-700 bg-indigo-50 rounded-lg border border-dashed border-indigo-300">
       <p className="font-medium">No content could be generated for this {formatType(type).toLowerCase()}.</p>
-      <p className="text-xs text-amber-600 mt-1">Try asking about a different skill or topic.</p>
+      <p className="text-xs text-indigo-600 mt-1">Try asking about a different skill or topic.</p>
     </div>
   );
 }
@@ -241,17 +241,17 @@ function PracticeSetRenderer({ payload, variant = 'editorial' }: { payload: Reco
 
   const isA = variant === 'atelier';
   const cardCls = isA
-    ? 'border border-white/8 rounded-xl p-3 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px]'
-    : 'border border-amber-200 rounded-lg p-3 bg-white';
+    ? 'border border-slate-200 rounded-xl p-3 bg-[#ffffff] backdrop-blur-[14px]'
+    : 'border border-indigo-200 rounded-lg p-3 bg-white';
   const skillCls = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] mb-1 text-[color:var(--d1-peach)]'
-    : 'text-xs font-semibold text-amber-700 mb-1';
-  const stemCls = isA ? 'text-sm text-white mb-2 leading-snug' : 'text-sm text-stone-800 mb-2 leading-snug';
-  const choiceCls = isA ? 'text-sm text-slate-300' : 'text-sm text-stone-700';
+    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] mb-1 text-[color:#d97706]'
+    : 'text-xs font-semibold text-indigo-700 mb-1';
+  const stemCls = isA ? 'text-sm text-slate-900 mb-2 leading-snug' : 'text-sm text-stone-800 mb-2 leading-snug';
+  const choiceCls = isA ? 'text-sm text-slate-600' : 'text-sm text-stone-700';
   const revealCls = isA
-    ? 'flex items-center gap-1.5 text-xs transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] rounded text-[color:var(--d1-peach)]'
-    : 'flex items-center gap-1.5 text-xs text-amber-700 hover:text-amber-900 transition-colors';
-  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+    ? 'flex items-center gap-1.5 text-xs transition-colors hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706] rounded text-[color:#d97706]'
+    : 'flex items-center gap-1.5 text-xs text-indigo-700 hover:text-indigo-900 transition-colors';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-indigo-700';
 
   return (
     <div className="space-y-3 mt-1">
@@ -299,16 +299,16 @@ function FillInBlankRenderer({ payload, variant = 'editorial' }: { payload: Reco
 
   const isA = variant === 'atelier';
   const bankCls = isA
-    ? 'rounded-xl p-2.5 text-xs border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 text-slate-200'
-    : 'bg-amber-100 rounded-lg p-2 text-xs text-amber-800';
-  const sentenceCls = isA ? 'text-sm text-slate-200 leading-relaxed' : 'text-sm text-stone-800 leading-relaxed';
+    ? 'rounded-xl p-2.5 text-xs border border-[color:#d97706]/30 bg-[color:#d97706]/10 text-slate-700'
+    : 'bg-indigo-100 rounded-lg p-2 text-xs text-indigo-800';
+  const sentenceCls = isA ? 'text-sm text-slate-700 leading-relaxed' : 'text-sm text-stone-800 leading-relaxed';
   const blankRevealedCls = isA
-    ? 'border-[color:var(--d2-mint)] text-[color:var(--d2-mint)]'
+    ? 'border-[color:#059669] text-[color:#059669]'
     : 'border-green-500 text-green-700';
   const blankIdleCls = isA
-    ? 'border-[color:var(--d1-peach)] text-[color:var(--d1-peach)] hover:text-white hover:border-white'
-    : 'border-amber-500 text-amber-500 hover:border-amber-700';
-  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+    ? 'border-[color:#d97706] text-[color:#d97706] hover:text-slate-900 hover:border-white'
+    : 'border-indigo-500 text-indigo-500 hover:border-indigo-700';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-indigo-700';
 
   return (
     <div className="mt-1 space-y-3">
@@ -378,29 +378,29 @@ function MatchingRenderer({ payload, variant = 'editorial' }: { payload: Record<
 
   const isA = variant === 'atelier';
   const successTextCls = isA
-    ? 'text-xs font-semibold flex items-center gap-1 text-[color:var(--d2-mint)]'
+    ? 'text-xs font-semibold flex items-center gap-1 text-[color:#059669]'
     : 'text-xs text-green-700 font-semibold flex items-center gap-1';
   const columnLabelCls = isA
     ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400'
     : 'text-xs font-semibold text-stone-500 uppercase tracking-wide';
   const termMatchedCls = isA
-    ? 'border-[color:var(--d2-mint)]/50 bg-[color:var(--d2-mint)]/15 text-white cursor-default'
+    ? 'border-[color:#059669]/50 bg-[color:#059669]/15 text-slate-900 cursor-default'
     : 'border-green-400 bg-green-50 text-green-800 cursor-default';
   const termSelectedCls = isA
-    ? 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/15 text-white'
-    : 'border-amber-500 bg-amber-50 text-amber-900';
+    ? 'border-[color:#d97706]/50 bg-[color:#d97706]/15 text-slate-900'
+    : 'border-indigo-500 bg-indigo-50 text-indigo-900';
   const termIdleCls = isA
-    ? 'border-white/10 bg-white/5 text-slate-200 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/10'
-    : 'border-stone-200 bg-white text-stone-800 hover:border-amber-400';
+    ? 'border-slate-200 bg-slate-50 text-slate-700 hover:border-[color:#d97706]/40 hover:bg-slate-100'
+    : 'border-stone-200 bg-white text-stone-800 hover:border-indigo-400';
   const defMatchedCls = termMatchedCls;
   const defFailCls = isA
-    ? 'border-[color:var(--accent-rose)]/50 bg-[color:var(--accent-rose)]/15 text-white'
+    ? 'border-[color:#e11d48]/50 bg-[color:#e11d48]/15 text-slate-900'
     : 'border-red-400 bg-red-50 text-red-800';
   const defActiveIdleCls = termIdleCls;
   const defPassiveIdleCls = isA
-    ? 'border-white/8 bg-white/5 text-slate-400 cursor-default'
+    ? 'border-slate-200 bg-slate-50 text-slate-400 cursor-default'
     : 'border-stone-200 bg-white text-stone-600 cursor-default';
-  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-indigo-700';
 
   return (
     <div className="mt-1 space-y-2">
@@ -416,7 +416,7 @@ function MatchingRenderer({ payload, variant = 'editorial' }: { payload: Record<
             <button
               key={i}
               onClick={() => selectTerm(i)}
-              className={`w-full text-left text-xs p-2 rounded-lg border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
+              className={`w-full text-left text-xs p-2 rounded-lg border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706] ${
                 matches.has(i) ? termMatchedCls : selected.termIdx === i ? termSelectedCls : termIdleCls
               }`}
             >
@@ -432,7 +432,7 @@ function MatchingRenderer({ payload, variant = 'editorial' }: { payload: Record<
               <button
                 key={shuffledIdx}
                 onClick={() => selectDef(shuffledIdx)}
-                className={`w-full text-left text-xs p-2 rounded-lg border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)] ${
+                className={`w-full text-left text-xs p-2 rounded-lg border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706] ${
                   isMatched
                     ? defMatchedCls
                     : selected.defIdx === shuffledIdx
@@ -481,23 +481,23 @@ export function ArtifactCard({ type, payload, variant = 'editorial' }: ArtifactC
   const isPrintable = ['practice-set', 'fill-in-blank', 'matching-activity'].includes(type);
 
   const shellCls = isA
-    ? 'mt-2 p-4 rounded-2xl border border-white/8 bg-[rgba(10,22,40,0.55)] backdrop-blur-[14px]'
-    : 'editorial-surface mt-2 p-4 rounded-lg border border-amber-200 bg-amber-50';
-  const iconCls = isA ? 'w-4 h-4 text-[color:var(--d1-peach)]' : 'w-4 h-4 text-amber-700';
-  const labelCls = isA ? 'text-sm font-semibold text-white' : 'text-sm font-semibold text-amber-900';
+    ? 'mt-2 p-4 rounded-2xl border border-slate-200 bg-[#ffffff] backdrop-blur-[14px]'
+    : 'editorial-surface mt-2 p-4 rounded-lg border border-indigo-200 bg-indigo-50';
+  const iconCls = isA ? 'w-4 h-4 text-[color:#d97706]' : 'w-4 h-4 text-indigo-700';
+  const labelCls = isA ? 'text-sm font-semibold text-slate-900' : 'text-sm font-semibold text-indigo-900';
   const printBtnCls = isA
-    ? 'btn-ghost-atelier flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full'
-    : 'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white border border-amber-400 text-amber-700 hover:bg-amber-100 transition-colors';
+    ? 'editorial-button-secondary flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full'
+    : 'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white border border-indigo-400 text-indigo-700 hover:bg-indigo-100 transition-colors';
   const downloadBtnCls = isA
-    ? 'btn-soft-glow flex items-center gap-1.5 text-xs px-3 py-1.5'
-    : 'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-amber-600 text-white hover:bg-amber-700 transition-colors';
-  const vocabTermCls = isA ? 'font-semibold text-white' : 'font-semibold text-amber-900';
-  const vocabDefCls = isA ? 'text-slate-300' : 'text-amber-800';
-  const weakLabelCls = isA ? 'text-slate-200' : 'text-amber-900';
+    ? 'editorial-button-primary flex items-center gap-1.5 text-xs px-3 py-1.5'
+    : 'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-indigo-600 text-slate-900 hover:bg-indigo-700 transition-colors';
+  const vocabTermCls = isA ? 'font-semibold text-slate-900' : 'font-semibold text-indigo-900';
+  const vocabDefCls = isA ? 'text-slate-600' : 'text-indigo-800';
+  const weakLabelCls = isA ? 'text-slate-700' : 'text-indigo-900';
   const weakPctCls = isA
-    ? 'text-xs bg-[color:var(--d1-peach)]/20 text-[color:var(--d1-peach)] px-2 py-0.5 rounded-full font-medium'
-    : 'text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-medium';
-  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-amber-700';
+    ? 'text-xs bg-[color:#d97706]/20 text-[color:#d97706] px-2 py-0.5 rounded-full font-medium'
+    : 'text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-full font-medium';
+  const moreCls = isA ? 'text-xs text-slate-400' : 'text-xs text-indigo-700';
 
   return (
     <div className={shellCls}>

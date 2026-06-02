@@ -124,8 +124,8 @@ export default function RedemptionRoundSession({
       <div className="mx-auto max-w-lg py-12 px-4 text-center space-y-8">
         <div className="editorial-surface p-8 space-y-6">
           <div className="flex items-center justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-amber-50">
-              <Trophy className="h-8 w-8 text-amber-600" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-indigo-50">
+              <Trophy className="h-8 w-8 text-indigo-600" />
             </div>
           </div>
 
@@ -138,9 +138,9 @@ export default function RedemptionRoundSession({
           </div>
 
           {newBest ? (
-            <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4">
-              <p className="text-sm font-black uppercase tracking-[0.1em] text-amber-700">New personal best!</p>
-              <p className="mt-1 text-xs text-amber-600">Previous best: {Math.round(highScore)}%</p>
+            <div className="rounded-2xl bg-indigo-50 border border-indigo-200 p-4">
+              <p className="text-sm font-black uppercase tracking-[0.1em] text-indigo-700">New personal best!</p>
+              <p className="mt-1 text-xs text-indigo-600">Previous best: {Math.round(highScore)}%</p>
             </div>
           ) : (
             <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4">
@@ -179,7 +179,7 @@ export default function RedemptionRoundSession({
         <div className="flex-1 mx-4">
           <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-1000 ${timerWarning ? 'bg-red-500' : 'bg-amber-400'}`}
+              className={`h-full rounded-full transition-all duration-1000 ${timerWarning ? 'bg-red-500' : 'bg-indigo-400'}`}
               style={{ width: `${timerPct}%` }}
             />
           </div>
@@ -191,8 +191,8 @@ export default function RedemptionRoundSession({
 
       {/* ── Redemption badge ── */}
       <div className="flex items-center gap-2">
-        <RotateCcw className="h-3.5 w-3.5 text-amber-600" />
-        <span className="text-[11px] font-black uppercase tracking-[0.1em] text-amber-700">Redemption Round</span>
+        <RotateCcw className="h-3.5 w-3.5 text-indigo-600" />
+        <span className="text-[11px] font-black uppercase tracking-[0.1em] text-indigo-700">Redemption Round</span>
       </div>
 
       {/* ── Question card ── */}
@@ -212,13 +212,13 @@ export default function RedemptionRoundSession({
                 onClick={() => setSelectedAnswer(letter)}
                 className={`w-full rounded-2xl border px-4 py-3.5 text-left text-sm font-medium transition-all ${
                   isSelected
-                    ? 'border-amber-400 bg-amber-50 text-slate-900'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-amber-200 hover:bg-amber-50/30'
+                    ? 'border-indigo-400 bg-indigo-50 text-slate-900'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:bg-indigo-50/30'
                 }`}
               >
                 <span className="inline-flex items-center gap-3">
                   <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black ${
-                    isSelected ? 'bg-amber-400 text-white' : 'bg-slate-100 text-slate-500'
+                    isSelected ? 'bg-indigo-400 text-slate-900' : 'bg-slate-100 text-slate-500'
                   }`}>
                     {letter}
                   </span>

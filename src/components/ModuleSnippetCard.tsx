@@ -43,13 +43,13 @@ export default function ModuleSnippetCard({
     r => r.moduleId !== moduleId && r.snippet
   );
 
-  const accentVar = isHint ? 'var(--d1-peach)' : 'var(--d3-ice)';
+  const accentVar = isHint ? '#d97706' : '#0284c7';
 
   return (
     <div
       className="rounded-2xl border backdrop-blur-[14px] p-4 space-y-3"
       style={{
-        background: `color-mix(in srgb, ${accentVar} 8%, rgba(10,22,40,0.55))`,
+        background: `color-mix(in srgb, ${accentVar} 8%, #ffffff)`,
         borderColor: `color-mix(in srgb, ${accentVar} 30%, transparent)`,
       }}
     >
@@ -71,7 +71,7 @@ export default function ModuleSnippetCard({
         {isHint && onDismiss && (
           <button
             onClick={onDismiss}
-            className="rounded-lg p-1 text-slate-400 hover:bg-white/5 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:var(--d1-peach)]"
+            className="rounded-lg p-1 text-slate-400 hover:bg-slate-50 hover:text-slate-900 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:#d97706]"
             title="Dismiss hint"
           >
             <X className="h-3.5 w-3.5" />
@@ -92,7 +92,7 @@ export default function ModuleSnippetCard({
       {/* ── Primary snippet ── */}
       {snippet && (
         <blockquote
-          className="border-l-2 pl-3 text-sm leading-relaxed text-slate-200"
+          className="border-l-2 pl-3 text-sm leading-relaxed text-slate-700"
           style={{ borderColor: `color-mix(in srgb, ${accentVar} 50%, transparent)` }}
         >
           <span className="underline decoration-2 underline-offset-2 decoration-white/20">{snippet}</span>
@@ -101,13 +101,13 @@ export default function ModuleSnippetCard({
 
       {/* ── Secondary module snippets (multi-module questions) ── */}
       {secondaryRefs.length > 0 && (
-        <div className="space-y-2 pt-2 border-t border-white/6">
+        <div className="space-y-2 pt-2 border-t border-slate-200">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
             Also covered in
           </p>
           {secondaryRefs.slice(0, 2).map(ref => (
             <div key={ref.moduleId} className="space-y-1">
-              <p className="text-[11px] font-semibold text-slate-300">
+              <p className="text-[11px] font-semibold text-slate-600">
                 {ref.moduleId} — {ref.moduleTitle}
               </p>
               <blockquote
@@ -125,7 +125,7 @@ export default function ModuleSnippetCard({
       {moduleId && onOpenModule && (
         <button
           onClick={() => onOpenModule(moduleId)}
-          className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--d1-peach)] rounded"
+          className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706] rounded"
           style={{ color: accentVar }}
         >
           <ExternalLink className="h-3.5 w-3.5" />

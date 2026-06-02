@@ -310,7 +310,7 @@ export default function FullAssessment({
           <div className="flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{timerLabel}</span>
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-700" />
+              <Clock className="w-4 h-4 text-indigo-700" />
               <span className="text-xl font-mono text-slate-900">{formattedTime}</span>
             </div>
           </div>
@@ -332,12 +332,12 @@ export default function FullAssessment({
 
       {/* Inactivity Warning */}
       {showInactivityWarning && !isPaused && (
-        <div className="flex items-center gap-4 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4 animate-pulse">
-          <div className="rounded-xl bg-amber-100 p-2">
-            <Clock className="w-5 h-5 text-amber-700" />
+        <div className="flex items-center gap-4 rounded-[1.5rem] border border-indigo-200 bg-indigo-50 p-4 animate-pulse">
+          <div className="rounded-xl bg-indigo-100 p-2">
+            <Clock className="w-5 h-5 text-indigo-700" />
           </div>
           <div>
-            <p className="text-sm font-bold text-amber-900">Still there? Your test will pause soon.</p>
+            <p className="text-sm font-bold text-indigo-900">Still there? Your test will pause soon.</p>
           </div>
         </div>
       )}
@@ -348,7 +348,7 @@ export default function FullAssessment({
           <div className="mx-4 max-w-md space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl">
             <div className="flex justify-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fbfaf7]">
-                <Pause className="w-10 h-10 text-amber-700" />
+                <Pause className="w-10 h-10 text-indigo-700" />
               </div>
             </div>
             <div className="space-y-2">
