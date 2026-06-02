@@ -1264,11 +1264,11 @@ function PraxisStudyAppContent() {
                 const domainInfo = ctx?.domainId ? PROGRESS_DOMAINS.find(d => d.id === ctx.domainId) : null;
                 const contextLabel = skillName ?? (domainInfo ? `Domain ${domainInfo.id}: ${domainInfo.name}` : 'Practice session');
                 return (
-                  <div className="glass flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="editorial-surface flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="eyebrow">Resume</p>
-                      <p className="mt-2 text-lg font-bold text-white">Practice in progress</p>
-                      <p className="mt-1 text-sm text-slate-400">{contextLabel}</p>
+                      <p className="eyebrow text-indigo-600">Resume</p>
+                      <p className="mt-2 text-lg font-bold text-slate-900">Practice in progress</p>
+                      <p className="mt-1 text-sm text-slate-500">{contextLabel}</p>
                     </div>
                     <button
                       onClick={() => {
@@ -1276,7 +1276,7 @@ function PraxisStudyAppContent() {
                         else if (ctx?.type === 'domain' && ctx.domainId) startPractice(ctx.domainId);
                         else startPractice();
                       }}
-                      className="btn-soft-glow shrink-0"
+                      className="editorial-button-primary shrink-0"
                     >
                       Resume session →
                     </button>
@@ -1285,16 +1285,16 @@ function PraxisStudyAppContent() {
               }
 
               return (
-                <div className="glass flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="editorial-surface flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="eyebrow">Resume</p>
-                    <p className="mt-2 text-lg font-bold text-white">
+                    <p className="eyebrow text-indigo-600">Resume</p>
+                    <p className="mt-2 text-lg font-bold text-slate-900">
                       {profile.lastSession?.mode === 'adaptive' ? 'Diagnostic in progress'
                         : profile.lastSession?.mode === 'full' ? 'Full diagnostic in progress'
                         : hasOrphanedAdaptive ? 'Diagnostic in progress'
                         : 'Screener in progress'}
                     </p>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 text-sm text-slate-500">
                       {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex >= 0
                         ? `Question ${profile.lastSession.questionIndex + 1}. `
                         : hasOrphanedAdaptive && (profile.adaptiveResponseCount ?? 0) > 0
@@ -1348,7 +1348,7 @@ function PraxisStudyAppContent() {
                           void startAdaptiveDiagnostic();
                         }
                       }}
-                      className="btn-soft-glow"
+                      className="editorial-button-primary"
                     >
                       Resume →
                     </button>
@@ -1362,7 +1362,7 @@ function PraxisStudyAppContent() {
                           if (profile.lastSession) updateProfile({ lastSession: null });
                           if (savedSession) handleDiscardSession();
                         }}
-                        className="btn-ghost-atelier"
+                        className="editorial-button-secondary"
                       >
                         Discard
                       </button>
@@ -1410,7 +1410,7 @@ function PraxisStudyAppContent() {
                       >
                         Start over
                       </button>
-                      <button type="button" className="btn-ghost-atelier" onClick={clearAdaptiveResumeError}>
+                      <button type="button" className="editorial-button-ghost" onClick={clearAdaptiveResumeError}>
                         Dismiss
                       </button>
                     </div>
@@ -1424,7 +1424,7 @@ function PraxisStudyAppContent() {
                     <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
                       <div className="editorial-surface p-6 lg:p-7">
                         <p className="editorial-overline">Dashboard</p>
-                        <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to Praxis Study</h2>
+                        <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to PASS</h2>
                         <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
                           Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.
                         </p>
