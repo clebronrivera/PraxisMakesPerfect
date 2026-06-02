@@ -155,7 +155,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
               onBlur={handleBlur}
               rows={3}
               placeholder="Write what this term means to you…"
-              className="w-full text-[13px] text-slate-100 bg-[#ffffff] border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/30 focus:border-[color:#d97706]/50 placeholder:text-slate-500 transition"
+              className="w-full text-[13px] text-slate-900 bg-[#ffffff] border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400/50 placeholder:text-slate-500 transition"
             />
             <div className="h-4 mt-1 flex items-center">
               {saving && (
@@ -386,7 +386,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search terms…"
-                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-[#ffffff] text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/20 focus:border-[color:#d97706]/50"
+                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-[#ffffff] text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 focus:border-indigo-400/50"
                     />
                   </div>
 

@@ -237,7 +237,7 @@ export function TutorChatPage({
               placeholder={chat.mode === 'quiz' ? 'Type "quiz me" or ask a question…' : 'Ask anything about this skill, or tell me how to quiz you…'}
               rows={1}
               disabled={chat.isSending}
-              className="flex-1 resize-none bg-transparent border-0 outline-none text-slate-100 text-[13.5px] font-[inherit] placeholder:text-slate-500 min-h-[22px] leading-[1.5] p-0"
+              className="flex-1 resize-none bg-transparent border-0 outline-none text-slate-900 text-[13.5px] font-[inherit] placeholder:text-slate-500 min-h-[22px] leading-[1.5] p-0"
               style={{ maxHeight: '180px', overflowY: 'auto' }}
             />
             <div className="flex items-center gap-2">

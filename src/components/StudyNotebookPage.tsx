@@ -320,7 +320,7 @@ function SkillFocusGroup({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     {iconMap[item.type]}
-                    <p className={`text-xs font-semibold leading-snug ${checked ? 'text-slate-500 line-through' : 'text-slate-100'}`}>
+                    <p className={`text-xs font-semibold leading-snug ${checked ? 'text-slate-500 line-through' : 'text-slate-900'}`}>
                       {item.text}
                     </p>
                   </div>

@@ -139,7 +139,7 @@ export function TutorMessageBubble({
           <ArtifactCard
             type={message.artifactType}
             payload={message.artifactPayload}
-            variant="atelier"
+            variant="editorial"
           />
         )}
 

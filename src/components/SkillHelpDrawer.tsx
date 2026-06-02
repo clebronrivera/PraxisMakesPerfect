@@ -243,7 +243,7 @@ export default function SkillHelpDrawer({
               onInteractiveComplete={handleInteractiveComplete}
               sectionRefs={sectionRefs}
               completedInteractives={completedInteractives}
-              variant="atelier"
+              variant="editorial"
             />
             <div className="h-6" />
           </div>
