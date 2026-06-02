@@ -28,6 +28,9 @@ const DOMAIN_SKILL_COUNTS = PROGRESS_DOMAINS.map(d => ({
 // ─── Shared landing className fragments ──────────────────────────────────────
 const GTXT = 'bg-gradient-to-r from-violet-300 via-fuchsia-300 to-cyan-200 bg-clip-text text-transparent';
 const GLASS = 'bg-white/[0.06] backdrop-blur-md border border-white/10';
+// Auth modal (light card) field + submit styles
+const INPUT_CLS = 'w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder:text-slate-400';
+const SUBMIT_CLS = 'w-full mt-1 inline-flex items-center justify-center rounded-2xl py-3 text-sm font-bold text-white bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 shadow-lg shadow-indigo-500/30 transition disabled:cursor-not-allowed disabled:opacity-60';
 
 // ─── Boot sequence terminal lines ────────────────────────────────────────────
 // Each line has an optional `delay` (ms) — the time to wait *before* showing
@@ -597,37 +600,31 @@ export default function LoginScreen() {
               type="button"
               onClick={() => setAuthOpen(false)}
               aria-label="Close"
-              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/80 transition hover:bg-white/20 hover:text-white"
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-slate-700"
             >
               ×
             </button>
-            <div className="glass p-8 md:p-10">
-              <div className="flex justify-center mb-6">
-                <div className="mini-orb" style={{ width: 56, height: 56 }} aria-hidden="true" />
+            <div className="rounded-3xl bg-white p-8 shadow-2xl shadow-indigo-900/40">
+              <div className="flex items-center gap-2.5 mb-6">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 grid place-items-center text-white font-black">◑</div>
+                <span className="font-extrabold tracking-wide text-slate-900">PASS</span>
               </div>
-              <div className="text-center mb-8">
-                <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-[color:var(--d1-peach)]/85 mb-2">
-                  {mode === 'signup' ? 'Welcome' : mode === 'reset' ? 'Reset password' : 'Welcome back'}
-                </p>
-                <h3 className="font-serif text-2xl font-semibold text-white">
-                  {mode === 'signup' && 'Create your account.'}
-                  {mode === 'login' && 'Pick up where you left off.'}
-                  {mode === 'reset' && 'We\u2019ll send a secure link.'}
-                </h3>
-                <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-                  {mode === 'signup' && 'Save your diagnostic baseline, study plan, and redemption queue.'}
-                  {mode === 'login' && 'Your diagnostic, study plan, and redemption queue are saved.'}
-                  {mode === 'reset' && 'Enter your email and we\u2019ll send a secure password reset link.'}
-                </p>
-              </div>
+              <h2 className="text-2xl font-extrabold text-slate-900 mb-1">
+                {mode === 'signup' ? 'Create your account' : mode === 'reset' ? 'Reset password' : 'Welcome back'}
+              </h2>
+              <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+                {mode === 'signup' && 'Save your baseline, study plan, and redemption queue.'}
+                {mode === 'login' && 'Sign in to pick up where you left off \u2014 on any device.'}
+                {mode === 'reset' && 'Enter your email and we\u2019ll send a secure reset link.'}
+              </p>
 
               {resetEmailSent && !error && (
-                <div className="mb-6 rounded-xl border border-[color:var(--d2-mint)]/30 bg-[color:var(--d2-mint)]/10 p-4">
+                <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                   <div className="flex items-start gap-3">
-                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--d2-mint)]" />
+                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
                     <div>
-                      <p className="text-sm font-semibold text-[color:var(--d2-mint)]">Reset email sent</p>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-300">
+                      <p className="text-sm font-semibold text-emerald-700">Reset email sent</p>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-600">
                         Check {email} for instructions to reset your password.
                       </p>
                     </div>
@@ -636,13 +633,13 @@ export default function LoginScreen() {
               )}
 
               {error && (
-                <div className="mb-6 rounded-xl border border-[color:var(--accent-rose)]/30 bg-[color:var(--accent-rose)]/10 p-4">
+                <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-4">
                   <div className="flex items-start gap-3">
-                    <div className="flex-1 text-sm leading-relaxed text-[color:var(--accent-rose)]">{error}</div>
+                    <div className="flex-1 text-sm leading-relaxed text-rose-700">{error}</div>
                     <button
                       type="button"
                       onClick={clearError}
-                      className="text-lg leading-none text-[color:var(--accent-rose)] transition-colors hover:text-white"
+                      className="text-lg leading-none text-rose-400 transition-colors hover:text-rose-600"
                       aria-label="Dismiss error"
                     >
                       ×
@@ -654,7 +651,7 @@ export default function LoginScreen() {
               {mode === 'reset' ? (
                 <form onSubmit={handlePasswordReset} className="space-y-4">
                   <div>
-                    <label htmlFor="reset-email" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
+                    <label htmlFor="reset-email" className="block text-xs font-bold uppercase tracking-wide text-slate-500 mb-1.5">Email</label>
                     <input
                       id="reset-email"
                       name="email"
@@ -665,13 +662,13 @@ export default function LoginScreen() {
                       onChange={e => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       required
-                      className="field-input"
+                      className={INPUT_CLS}
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={loading || !email}
-                    className="btn-soft-glow w-full mt-2 disabled:cursor-not-allowed disabled:opacity-60"
+                    className={SUBMIT_CLS}
                   >
                     {loading ? (
                       <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Sending</span>
@@ -683,7 +680,7 @@ export default function LoginScreen() {
                     <button
                       type="button"
                       onClick={switchToLogin}
-                      className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--d1-peach)] transition-colors hover:text-white"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 transition-colors hover:text-indigo-800"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" /> Back to sign in
                     </button>
@@ -694,7 +691,7 @@ export default function LoginScreen() {
                   <form onSubmit={handleEmailSubmit} className="space-y-4">
                     {mode === 'signup' && (
                       <div>
-                        <label htmlFor="signup-name" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Full name</label>
+                        <label htmlFor="signup-name" className="block text-xs font-bold uppercase tracking-wide text-slate-500 mb-1.5">Full name</label>
                         <input
                           id="signup-name"
                           name="name"
@@ -703,13 +700,13 @@ export default function LoginScreen() {
                           value={displayName}
                           onChange={e => setDisplayName(e.target.value)}
                           placeholder="Your name"
-                          className="field-input"
+                          className={INPUT_CLS}
                         />
                       </div>
                     )}
 
                     <div>
-                      <label htmlFor="auth-email" className="text-[11px] font-medium tracking-wider uppercase text-slate-400 block mb-2">Email</label>
+                      <label htmlFor="auth-email" className="block text-xs font-bold uppercase tracking-wide text-slate-500 mb-1.5">Email</label>
                       <input
                         id="auth-email"
                         name="email"
@@ -720,18 +717,18 @@ export default function LoginScreen() {
                         onChange={e => setEmail(e.target.value)}
                         placeholder="you@example.com"
                         required
-                        className="field-input"
+                        className={INPUT_CLS}
                       />
                     </div>
 
                     <div>
                       <div className="flex items-baseline justify-between mb-2">
-                        <label htmlFor="auth-password" className="text-[11px] font-medium tracking-wider uppercase text-slate-400">Password</label>
+                        <label htmlFor="auth-password" className="text-xs font-bold uppercase tracking-wide text-slate-500">Password</label>
                         {mode === 'login' && (
                           <button
                             type="button"
                             onClick={switchToReset}
-                            className="text-[11px] text-[color:var(--d1-peach)] hover:underline"
+                            className="text-[11px] font-semibold text-indigo-600 hover:underline"
                           >
                             Forgot?
                           </button>
@@ -747,7 +744,7 @@ export default function LoginScreen() {
                         placeholder="At least 6 characters"
                         required
                         minLength={6}
-                        className="field-input"
+                        className={INPUT_CLS}
                       />
                     </div>
 
@@ -757,14 +754,14 @@ export default function LoginScreen() {
                           type="checkbox"
                           checked={consentChecked}
                           onChange={e => setConsentChecked(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 rounded border-slate-600 bg-transparent text-[color:var(--d1-peach)] focus:ring-[color:var(--d1-peach)]/50"
+                          className="mt-0.5 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-400/50"
                         />
-                        <span className="text-xs leading-relaxed text-slate-400">
+                        <span className="text-xs leading-relaxed text-slate-500">
                           I agree to the{' '}
                           <button
                             type="button"
                             onClick={e => { e.stopPropagation(); window.location.hash = 'terms'; }}
-                            className="text-slate-300 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
+                            className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
                           >
                             Terms
                           </button>{' '}
@@ -772,7 +769,7 @@ export default function LoginScreen() {
                           <button
                             type="button"
                             onClick={e => { e.stopPropagation(); window.location.hash = 'privacy'; }}
-                            className="text-slate-300 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
+                            className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
                           >
                             Privacy Policy
                           </button>
@@ -783,7 +780,7 @@ export default function LoginScreen() {
                     <button
                       type="submit"
                       disabled={loading || !email || !password || (mode === 'signup' && !consentChecked)}
-                      className="btn-soft-glow w-full mt-2 disabled:cursor-not-allowed disabled:opacity-60"
+                      className={SUBMIT_CLS}
                     >
                       {loading ? (
                         <span className="inline-flex items-center gap-2">
@@ -799,27 +796,27 @@ export default function LoginScreen() {
                   </form>
 
                   <div className="flex items-center gap-3 my-6">
-                    <div className="flex-1 h-px bg-slate-700/40" />
-                    <span className="text-[10px] tracking-widest uppercase text-slate-600">or</span>
-                    <div className="flex-1 h-px bg-slate-700/40" />
+                    <div className="flex-1 h-px bg-slate-200" />
+                    <span className="text-[10px] tracking-widest uppercase text-slate-400">or</span>
+                    <div className="flex-1 h-px bg-slate-200" />
                   </div>
 
                   <button
                     type="button"
                     onClick={() => { clearError(); setMode(mode === 'login' ? 'signup' : 'login'); }}
-                    className="w-full py-3 rounded-xl text-sm font-medium text-slate-300 border border-slate-700/50 hover:border-[color:var(--d1-peach)]/50 hover:text-white transition"
+                    className="w-full py-3 rounded-2xl text-sm font-semibold text-indigo-700 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition"
                   >
                     {mode === 'login' ? 'Create an account' : 'Already have an account? Sign in'}
                   </button>
                 </>
               )}
 
-              <p className="text-center text-[11px] text-slate-600 mt-6 leading-relaxed">
+              <p className="text-center text-[11px] text-slate-400 mt-6 leading-relaxed">
                 By continuing you agree to our{' '}
                 <button
                   type="button"
                   onClick={() => (window.location.hash = 'terms')}
-                  className="text-slate-400 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
+                  className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
                 >
                   Terms
                 </button>{' '}
@@ -827,7 +824,7 @@ export default function LoginScreen() {
                 <button
                   type="button"
                   onClick={() => (window.location.hash = 'privacy')}
-                  className="text-slate-400 hover:text-[color:var(--d1-peach)] underline underline-offset-2"
+                  className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
                 >
                   Privacy Policy
                 </button>.
@@ -838,7 +835,7 @@ export default function LoginScreen() {
                   <button
                     type="button"
                     onClick={() => setEmail(PRIMARY_ADMIN_EMAIL)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-700/50 bg-transparent px-3 py-2 text-xs font-semibold text-slate-400 transition-colors hover:border-[color:var(--d1-peach)]/50 hover:text-white"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-indigo-300 hover:text-indigo-700"
                     title="Admin sign in"
                   >
                     <Shield className="h-3.5 w-3.5" />
