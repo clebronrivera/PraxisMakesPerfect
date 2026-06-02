@@ -208,8 +208,8 @@ function PraxisStudyAppContent() {
   // Indigo/violet light re-theme: modes are removed from this set as each screen
   // is re-themed to the light shell (mockup: public/mockup-retheme-allscreens.html).
   const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([
-    'practice', 'practice-hub', 'study-guide', 'tutor', 'results',
-    'study-notebook', 'glossary', 'fluency-drill', 'help',
+    'study-guide', 'tutor', 'results',
+    'study-notebook', 'glossary', 'help',
   ]);
 
   // Use hooks for profile and adaptive learning
@@ -1569,11 +1569,11 @@ function PraxisStudyAppContent() {
         {mode === 'practice-hub' && (
           <div className="space-y-6 pb-16">
             <div className="pt-4">
-              <p className="eyebrow mb-2">Practice</p>
-              <h2 className="text-4xl font-semibold tracking-tight text-white">
-                Choose your <span className="gradient-text-warm">focus.</span>
+              <p className="eyebrow text-indigo-600 mb-2">Practice</p>
+              <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">
+                Choose your <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">focus.</span>
               </h2>
-              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-slate-400">
+              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-slate-500">
                 Practice by domain, by skill, or follow your personalized learning path.
               </p>
             </div>
