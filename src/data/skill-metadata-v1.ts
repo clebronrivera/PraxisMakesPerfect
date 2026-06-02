@@ -14,6 +14,16 @@
  *
  * Secondary fields (add after v1 proves useful):
  *   prerequisiteSkills, commonQuestionPatterns, studyActions, masteryIndicators
+ *
+ * ── Library scope (read before "fixing" apparent skill drift) ──
+ * This file is a CONTENT LIBRARY, intentionally broader than the 45-skill runtime
+ * taxonomy in src/utils/progressTaxonomy.ts. Only a subset of these entries is wired
+ * to a runtime skill (via src/data/skillIdMap.ts); the rest are an authored RESERVE
+ * — distinct exam topics and alternates — NOT dead weight or "missing" skills. The
+ * `NEW-*` prefix is a historical naming artifact, not a quality tier: measured, the
+ * `NEW-*` entries are as rich as the `*-S0n` entries. Do NOT bulk-delete "orphaned"
+ * entries or bulk-re-point `NEW-*` mappings on the assumption they are placeholders.
+ * See docs/HANDOFF_2026-06-02_skill-coverage-audit-response.md.
  */
 
 import type { ContentCluster } from '../types/studyPlanTypes';
@@ -454,6 +464,21 @@ export const skillMetadataV1: Record<string, SkillMetadataV1> = {
     caseArchetypes: [
       "Determining appropriate text difficulty for a struggling reader during an intervention",
       "Matching a student's current skill level to appropriate practice materials"
+    ],
+    lawsFrameworks: [],
+  },
+
+  "ACAD-S06": {
+    skillId: "ACAD-S06",
+    contentCluster: "academic-intervention",
+    vocabulary: ["behaviorism", "constructivism", "social learning theory", "information processing", "zone of proximal development (ZPD)", "scaffolding", "schema"],
+    commonMisconceptions: [
+      "Behaviorist and constructivist approaches are interchangeable regardless of the learning goal",
+      "Scaffolding means permanently simplifying a task rather than providing temporary support that fades as competence grows"
+    ],
+    caseArchetypes: [
+      "Choosing between direct instruction and discovery learning based on the specific learning objective",
+      "Designing instruction within a student's zone of proximal development and fading support as mastery develops"
     ],
     lawsFrameworks: [],
   },
@@ -1156,6 +1181,21 @@ export const skillMetadataV1: Record<string, SkillMetadataV1> = {
       "Correcting a school's practice of using a student as an interpreter for their parent"
     ],
     lawsFrameworks: ["Title VI (language access for limited English proficiency individuals)", "IDEA (parent participation rights)"],
+  },
+
+  "DIV-S08": {
+    skillId: "DIV-S08",
+    contentCluster: "diversity-and-equity",
+    vocabulary: ["continuum of special education services", "least restrictive environment (LRE)", "related services", "individualized supports", "culturally responsive special education", "overrepresentation"],
+    commonMisconceptions: [
+      "More restrictive placements automatically provide better support for students with significant needs",
+      "Eligibility and service decisions are unaffected by a student's cultural and linguistic background"
+    ],
+    caseArchetypes: [
+      "Team determining the least restrictive environment along the service continuum for a student with significant support needs",
+      "Distinguishing a disability from a cultural or linguistic difference before recommending special education services"
+    ],
+    lawsFrameworks: ["IDEA (LRE and the continuum of services)", "Section 504 (access to services)"],
   },
 
   // ─── Domain 9: Research & Program Evaluation ──────────────────────────────
