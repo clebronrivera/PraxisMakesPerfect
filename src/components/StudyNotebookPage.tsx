@@ -362,7 +362,7 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           onClick={() => setActiveTab('notes')}
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'notes'
-              ? 'bg-gradient-to-r from-[color:#d97706] to-[color:#7c3aed] text-[#1e1b3a] shadow-lg'
+              ? 'grad-chrome text-white shadow-lg'
               : 'border border-slate-200 bg-slate-50 text-slate-400 hover:border-[color:#d97706]/40 hover:text-slate-900'
           }`}
         >
@@ -373,7 +373,7 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           onClick={() => setActiveTab('focus')}
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'focus'
-              ? 'bg-gradient-to-r from-[color:#d97706] to-[color:#7c3aed] text-[#1e1b3a] shadow-lg'
+              ? 'grad-chrome text-white shadow-lg'
               : 'border border-slate-200 bg-slate-50 text-slate-400 hover:border-[color:#d97706]/40 hover:text-slate-900'
           }`}
         >
