@@ -813,7 +813,7 @@ function PraxisStudyAppContent() {
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-violet-200/20 blur-3xl" />
       </div>
 
-      <aside className={`hidden lg:flex lg:flex-shrink-0 lg:flex-col transition-all duration-300 ${isAtelier ? 'lg:bg-[#0f172a] lg:shadow-2xl' : 'lg:bg-white lg:border-r lg:border-slate-200'} ${sidebarCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-64'}`}>
+      <aside className={`hidden md:flex md:flex-shrink-0 md:flex-col transition-all duration-300 ${isAtelier ? 'md:bg-[#0f172a] md:shadow-2xl' : 'md:bg-white md:border-r md:border-slate-200'} ${sidebarCollapsed ? 'md:w-[4.5rem]' : 'md:w-64'}`}>
         <div className={`${sidebarCollapsed ? 'p-3 pt-6' : 'p-8'}`}>
           {/* ── Logo ── */}
           <div className={`group mb-10 flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
@@ -965,7 +965,7 @@ function PraxisStudyAppContent() {
         >
           <div className="mx-auto max-w-[92rem] px-5 py-3.5 sm:px-8">
             <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 lg:hidden">
+              <div className="flex items-center gap-3 md:hidden">
                 {isAtelier ? (
                   <div className="mini-orb" aria-hidden="true" style={{ width: 36, height: 36 }} />
                 ) : (
@@ -992,7 +992,7 @@ function PraxisStudyAppContent() {
                 <button
                   type="button"
                   onClick={openProfileEditor}
-                  className="editorial-topbar-button lg:hidden"
+                  className="editorial-topbar-button md:hidden"
                   title="Profile and onboarding"
                 >
                   <User className="w-4 h-4" />
@@ -1121,7 +1121,7 @@ function PraxisStudyAppContent() {
               </div>
             </div>
 
-            <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
+            <div className="mt-4 flex gap-2 overflow-x-auto md:hidden">
               {(() => {
                 const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
                 const tabs = [
