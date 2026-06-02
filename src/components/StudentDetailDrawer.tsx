@@ -148,6 +148,20 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
     return () => { active = false; };
   }, [user.id]);
 
+  // ── Modal a11y: Escape-to-close + body scroll-lock ─────────────────────────
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
   // ── Domain Stats ──────────────────────────────────────────────────────────
   const domainStats: DomainStat[] = PROGRESS_DOMAINS.map((domain) => {
     const domainResponses = responses.filter(
@@ -235,18 +249,22 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
   return (
     <div className="fixed inset-0 z-50 flex items-stretch justify-end" onClick={onClose}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="student-detail-title"
         className="relative flex h-full w-full max-w-3xl flex-col overflow-y-auto bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">{displayName}</h2>
+            <h2 id="student-detail-title" className="text-lg font-semibold text-slate-900">{displayName}</h2>
             <p className="text-sm text-slate-500">{user.authMetrics?.email || user.id}</p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-xl border border-slate-200 p-2 text-slate-500 hover:bg-slate-50"
+            aria-label="Close student detail"
+            className="rounded-xl border border-slate-200 p-2 text-slate-500 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
           >
             <X className="h-5 w-5" />
           </button>
@@ -254,7 +272,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
 
         {isLoading ? (
           <div className="flex flex-1 items-center justify-center p-12">
-            <RefreshCw className="h-8 w-8 animate-spin text-amber-500" />
+            <RefreshCw className="h-8 w-8 animate-spin text-indigo-500" />
           </div>
         ) : error ? (
           <div className="p-6 text-center">
@@ -274,7 +292,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
             {/* ── Panel 1: Domain Performance ── */}
             <section>
               <div className="mb-3 flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-amber-700" />
+                <BarChart3 className="h-4 w-4 text-indigo-700" />
                 <h3 className="font-semibold text-slate-900">Domain Performance</h3>
               </div>
               <div className="space-y-3">
@@ -305,7 +323,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
             <section>
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-amber-700" />
+                  <BarChart3 className="h-4 w-4 text-indigo-700" />
                   <h3 className="font-semibold text-slate-900">Skill Breakdown</h3>
                 </div>
                 <div className="flex gap-1">
@@ -313,10 +331,10 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                     <button
                       key={s}
                       onClick={() => setSkillSort(s)}
-                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                         skillSort === s
-                          ? 'bg-amber-500 text-white'
-                          : 'border border-slate-200 text-slate-500 hover:border-amber-200'
+                          ? 'bg-indigo-600 text-white'
+                          : 'border border-slate-200 text-slate-500 hover:border-indigo-200'
                       }`}
                     >
                       {s === 'accuracy' ? 'Accuracy' : s === 'attempts' ? 'Attempts' : 'Avg Time'}
@@ -341,9 +359,9 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                           <p className="font-medium text-slate-900">{s.label}</p>
                           <p className="font-mono text-xs text-slate-400">{s.skillId}</p>
                         </td>
-                        <td className="px-4 py-3 text-right">{s.attempts}</td>
+                        <td className="px-4 py-3 text-right font-mono">{s.attempts}</td>
                         <td className="px-4 py-3 text-right">
-                          <span className={`font-semibold ${
+                          <span className={`font-mono font-semibold ${
                             s.accuracy >= DEMONSTRATING_THRESHOLD * 100 ? 'text-emerald-600' : s.accuracy >= APPROACHING_THRESHOLD * 100 ? 'text-amber-700' : 'text-rose-600'
                           }`}>
                             {s.accuracy}%
@@ -362,7 +380,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
             {/* ── Panel 3: Session Timeline ── */}
             <section>
               <div className="mb-3 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-amber-700" />
+                <TrendingUp className="h-4 w-4 text-indigo-700" />
                 <h3 className="font-semibold text-slate-900">Session Timeline</h3>
               </div>
               <div className="overflow-x-auto rounded-2xl border border-slate-200">
@@ -385,9 +403,9 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                             {formatMode(s.mode)}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-right">{s.questions}</td>
+                        <td className="px-4 py-3 text-right font-mono">{s.questions}</td>
                         <td className="px-4 py-3 text-right">
-                          <span className={`font-semibold ${
+                          <span className={`font-mono font-semibold ${
                             s.accuracy >= DEMONSTRATING_THRESHOLD * 100 ? 'text-emerald-600' : s.accuracy >= APPROACHING_THRESHOLD * 100 ? 'text-amber-700' : 'text-rose-600'
                           }`}>
                             {s.accuracy}%
@@ -406,7 +424,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
             {/* ── Panel 4: Time Distribution ── */}
             <section>
               <div className="mb-3 flex items-center gap-2">
-                <Clock className="h-4 w-4 text-amber-700" />
+                <Clock className="h-4 w-4 text-indigo-700" />
                 <h3 className="font-semibold text-slate-900">Time Distribution</h3>
                 {timeDist && (
                   <span className="text-xs text-slate-400">{timeDist.count} timed responses</span>
@@ -448,7 +466,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
               return (
                 <section>
                   <div className="mb-3 flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-amber-700" />
+                    <BookOpen className="h-4 w-4 text-indigo-700" />
                     <h3 className="font-semibold text-slate-900">Adaptive Diagnostic Audit</h3>
                     <span className="text-xs text-slate-400">{adaptiveRows.length} questions</span>
                   </div>
@@ -538,7 +556,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
             {/* ── Panel 6: Most Missed Skills ── */}
             <section>
               <div className="mb-3 flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-amber-700" />
+                <AlertTriangle className="h-4 w-4 text-indigo-700" />
                 <h3 className="font-semibold text-slate-900">Most Missed Skills</h3>
               </div>
               {missedSkills.length === 0 ? (

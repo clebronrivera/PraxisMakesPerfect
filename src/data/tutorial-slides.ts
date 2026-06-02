@@ -65,7 +65,7 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
     icon: 'Zap',
     highlights: [
       'Fluency Drill \u2014 rapid-fire cases, terms, and concepts against the clock',
-      'Glossary & Term Sprint \u2014 396 school psychology terms, both directions',
+      'Glossary \u2014 396 school psychology terms with official definitions',
       'Flag terms from practice and revisit them anytime',
       'Strengthens recognition so questions feel faster on exam day',
     ],

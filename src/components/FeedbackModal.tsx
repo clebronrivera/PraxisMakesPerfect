@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MessageSquare, X } from 'lucide-react';
 import {
   BetaFeedbackCategory,
   useBetaFeedback
 } from '../hooks/useBetaFeedback';
+import { notifyToast } from '../utils/toast';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -37,10 +38,6 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
   const [message, setMessage] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  if (!isOpen) {
-    return null;
-  }
-
   const resetForm = () => {
     setCategory('bug');
     setContextType('general');
@@ -53,6 +50,30 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     resetForm();
     onClose();
   };
+
+  // Escape-to-close + body scroll-lock while the dialog is open.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
+  if (!isOpen) {
+    return null;
+  }
 
   const handleSubmit = async () => {
     if (!message.trim()) {
@@ -70,6 +91,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         page: typeof window !== 'undefined' ? window.location.hash || 'home' : 'home',
         appVersion: 'beta'
       });
+      notifyToast('Thanks! Your feedback was submitted.', 'info');
       handleClose();
     } catch (error: unknown) {
       console.error('[FeedbackModal] Error submitting feedback:', error);
@@ -94,12 +116,20 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4"
-      onClick={handleClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+      {/* Backdrop: keyboard-safe close affordance (not a bare clickable div). */}
+      <button
+        type="button"
+        aria-label="Close feedback form"
+        onClick={handleClose}
+        className="absolute inset-0 cursor-default bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+      />
       <div
-        className="w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-2xl shadow-black/50"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="feedback-modal-title"
+        aria-describedby="feedback-modal-description"
+        className="relative w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-2xl shadow-black/50"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-6 flex items-start justify-between gap-4">
@@ -108,16 +138,17 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               <MessageSquare className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-slate-900">Beta Feedback</h3>
-              <p className="text-sm text-slate-400">
+              <h3 id="feedback-modal-title" className="text-xl font-semibold text-slate-900">Beta Feedback</h3>
+              <p id="feedback-modal-description" className="text-sm text-slate-500">
                 Share bugs, feature requests, content issues, or anything confusing.
               </p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             title="Close feedback form"
+            aria-label="Close feedback form"
           >
             <X className="h-5 w-5" />
           </button>
@@ -137,15 +168,16 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                 <button
                   key={option.value}
                   type="button"
+                  aria-pressed={category === option.value}
                   onClick={() => setCategory(option.value)}
-                  className={`rounded-2xl border p-4 text-left transition-colors ${
+                  className={`rounded-2xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                     category === option.value
                       ? 'border-cyan-400/60 bg-cyan-50 text-slate-900'
                       : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-slate-100'
                   }`}
                 >
                   <p className="font-medium">{option.label}</p>
-                  <p className="mt-1 text-sm text-slate-400">{option.description}</p>
+                  <p className="mt-1 text-sm text-slate-500">{option.description}</p>
                 </button>
               ))}
             </div>
@@ -157,7 +189,8 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               <select
                 value={contextType}
                 onChange={(event) => setContextType(event.target.value as typeof contextType)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-slate-900 outline-none transition-colors focus:border-amber-400"
+                aria-label="Where did it happen?"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-slate-900 outline-none transition-colors focus:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-300"
               >
                 {CONTEXT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -173,7 +206,8 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                 value={featureArea}
                 onChange={(event) => setFeatureArea(event.target.value)}
                 placeholder="Example: Practice mode, screener, study plan"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition-colors focus:border-amber-400"
+                aria-label="Feature or tool name"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition-colors focus:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-300"
               />
             </label>
           </div>
@@ -185,7 +219,8 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Describe what happened, what felt off, or what you expected instead."
               rows={7}
-              className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition-colors focus:border-amber-400"
+              aria-label="What should we know?"
+              className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition-colors focus:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-300"
             />
           </label>
 
@@ -193,7 +228,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             <button
               type="button"
               onClick={handleClose}
-              className="rounded-xl border border-slate-200 px-4 py-2.5 text-slate-600 transition-colors hover:bg-slate-100"
+              className="rounded-xl border border-slate-200 px-4 py-2.5 text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               Cancel
             </button>
@@ -201,7 +236,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="rounded-xl bg-cyan-500 px-4 py-2.5 font-medium text-slate-950 transition-colors hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+              className="rounded-xl bg-cyan-500 px-4 py-2.5 font-medium text-slate-950 transition-colors hover:bg-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
             >
               {isSubmitting ? 'Submitting...' : 'Send feedback'}
             </button>

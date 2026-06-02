@@ -1,7 +1,7 @@
 // src/components/OnboardingFlow.tsx
 // Multi-step onboarding flow to collect user profile info after sign-up
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Brain, ChevronRight, ChevronLeft, Check, GraduationCap,
   BookOpen, Target, Award, Loader2, User, AlertCircle
@@ -753,6 +753,41 @@ export default function OnboardingFlow({
     }
   };
 
+  // Lightweight inline hint naming the first required field still missing on the
+  // current step. Mirrors canAdvance() — no change to what is actually required.
+  const missingFieldHint = (): string | null => {
+    switch (currentStep) {
+      case 'role':
+        return data.account_role === '' ? 'Choose the option that best describes you.' : null;
+      case 'pathway': {
+        const missing: string[] = [];
+        if (data.account_role === 'graduate_student') {
+          if (!data.program_type) missing.push('program type');
+          if (!data.delivery_mode) missing.push('delivery mode');
+          if (!data.training_stage) missing.push('training stage');
+        } else if (data.account_role === 'certification_only') {
+          if (!data.current_role) missing.push('current role');
+          if (!data.certification_route) missing.push('certification route');
+        }
+        return missing.length ? `Please select your ${missing.join(', ')} to continue.` : null;
+      }
+      case 'exam': {
+        const missing: string[] = [];
+        if (data.primary_exam === '') missing.push('primary exam');
+        if (!data.retake_status) missing.push('attempt status');
+        return missing.length ? `Please select your ${missing.join(' and ')} to continue.` : null;
+      }
+      case 'goals': {
+        if (mode === 'edit') return null;
+        const missing: string[] = [];
+        if (data.study_goals.length === 0) missing.push('at least one study goal');
+        if (!data.weekly_study_hours) missing.push('weekly study availability');
+        return missing.length ? `Please pick ${missing.join(' and ')} to continue.` : null;
+      }
+      default: return null;
+    }
+  };
+
   const handleNext = async () => {
     setSaveError(null);
     if (isLast) {
@@ -773,6 +808,38 @@ export default function OnboardingFlow({
     setSaveError(null);
     setStepIndex(prev => Math.max(0, prev - 1));
   };
+
+  const handleSkipOrBack = () => {
+    if (isFirst) {
+      if (mode === 'edit' && onCancel) onCancel();
+      else if (onSkip) void onSkip();
+    } else {
+      handleBack();
+    }
+  };
+
+  // Keyboard navigation: Enter advances when Next is enabled, Escape skips/cancels
+  // (or steps back). Ignore Enter while focus is in a textarea so multi-line input
+  // still works.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (e.key === 'Enter') {
+        if (tag === 'TEXTAREA') return;
+        if (!saving && canAdvance()) {
+          e.preventDefault();
+          void handleNext();
+        }
+      } else if (e.key === 'Escape') {
+        if (saving) return;
+        e.preventDefault();
+        handleSkipOrBack();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
 
   const rootShell =
     variant === 'embedded'
@@ -863,19 +930,20 @@ export default function OnboardingFlow({
             </div>
           )}
 
+          {/* Validation hint — names the required field still missing */}
+          {!canAdvance() && !saving && missingFieldHint() && (
+            <div className="mx-6 mb-2 flex items-start gap-1.5 text-xs text-slate-500" aria-live="polite">
+              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
+              <span>{missingFieldHint()}</span>
+            </div>
+          )}
+
           {/* Footer nav */}
           <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between gap-4">
             <button
               type="button"
-              onClick={() => {
-                if (isFirst) {
-                  if (mode === 'edit' && onCancel) onCancel();
-                  else if (onSkip) void onSkip();
-                } else {
-                  handleBack();
-                }
-              }}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:text-slate-600"
+              onClick={handleSkipOrBack}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-500 transition-colors hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               {isFirst ? (
                 mode === 'edit' && onCancel ? (
@@ -896,7 +964,7 @@ export default function OnboardingFlow({
               type="button"
               onClick={handleNext}
               disabled={!canAdvance() || saving}
-              className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-500/20 transition-all"
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-500/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
             >
               {saving ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>

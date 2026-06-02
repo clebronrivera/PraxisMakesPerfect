@@ -367,7 +367,7 @@ export default function PracticeSession({
         hintRedemptionFiredRef.current.add(currentQuestion.id);
         onHintRedemption?.(currentQuestion.id, currentQuestion.skillId ?? null);
         setRedemptionToast(
-          'This question has been moved to Redemption. It won\'t appear in normal practice until you answer it correctly 3 times in a Redemption Round.'
+          'Because you used a hint, this question is now quarantined. It is removed from normal practice and will only reappear inside a Redemption Round, where you must answer it correctly 3 times to clear it.'
         );
         setTimeout(() => setRedemptionToast(null), 6000);
       }
@@ -651,15 +651,20 @@ export default function PracticeSession({
 
       {/* ── Redemption quarantine toast ───────────────────────────────────────── */}
       {redemptionToast && (
-        <div className="animate-in fade-in slide-in-from-top-2 duration-300 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm text-slate-700 flex items-start gap-3">
+        <div
+          role="status"
+          aria-live="polite"
+          className="animate-in fade-in slide-in-from-top-2 duration-300 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm text-slate-700 flex items-start gap-3"
+        >
           <RotateCcw className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
           <div>
-            <p className="font-bold text-slate-900">Moved to Redemption</p>
+            <p className="font-bold text-slate-900">Quarantined to a Redemption Round</p>
             <p className="mt-1 text-xs leading-relaxed text-amber-600">{redemptionToast}</p>
           </div>
           <button
             onClick={() => setRedemptionToast(null)}
-            className="ml-auto shrink-0 text-amber-600 hover:text-amber-600"
+            aria-label="Dismiss notice"
+            className="ml-auto shrink-0 rounded text-amber-600 hover:text-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
           >
             <X className="h-4 w-4" />
           </button>
@@ -683,7 +688,7 @@ export default function PracticeSession({
             {sessionStats.highConfidenceWrong > 0 && (
               <span
                 className="text-amber-600"
-                title={`Answered wrong despite selecting ${getConfidenceDisplayLabel('high')} - worth extra review`}
+                title={`Overconfident: you answered incorrectly while marking ${getConfidenceDisplayLabel('high')} confidence. These are worth extra review.`}
               >
                 Overconfident: {sessionStats.highConfidenceWrong}
               </span>
@@ -719,17 +724,22 @@ export default function PracticeSession({
                 // Mark hint used as soon as panel opens — this is intentional and irreversible
                 setHintUsedIds(prev => new Set(prev).add(qid));
               }}
-              className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+              aria-label={
+                hintUsedIds.has(currentQuestion?.id ?? '')
+                  ? 'Hint used — this question will be quarantined to a Redemption Round'
+                  : 'Open module hint. Using a hint quarantines this question — it will not count toward your score and you will clear it in a Redemption Round'
+              }
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                 hintOpenForQuestion === currentQuestion?.id
                   ? 'border-indigo-300 bg-indigo-100 text-indigo-700'
                   : 'border-transparent text-slate-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700'
               }`}
-              title="Open module hint — answer won't count toward score"
+              title="Using a hint quarantines this question: it won't count toward your score, and you'll clear it later in a Redemption Round."
             >
               <Lightbulb className="w-4 h-4" />
               <span className="hidden sm:inline">Hint</span>
               {hintUsedIds.has(currentQuestion?.id ?? '') && (
-                <span className="ml-0.5 text-[10px] text-indigo-600">(used)</span>
+                <span role="status" aria-live="polite" className="ml-0.5 text-[10px] text-indigo-600">(used)</span>
               )}
             </button>
           )}
@@ -782,7 +792,11 @@ export default function PracticeSession({
 
       {/* ── Pool Reset Notice ────────────────────────────────────────────────── */}
       {poolResetMessage && (
-        <div className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-sky-200 bg-sky-50 px-4 py-3 duration-300">
+        <div
+          role="status"
+          aria-live="polite"
+          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-sky-200 bg-sky-50 px-4 py-3 duration-300"
+        >
           <RotateCcw className="h-4 w-4 flex-shrink-0 text-sky-600" />
           <span className="text-sm text-sky-800">
             You've worked through all available questions in this skill. Restarting the pool for continued practice.
@@ -992,7 +1006,7 @@ export default function PracticeSession({
               <div className="flex items-center gap-2.5 rounded-[1.25rem] border border-indigo-200 bg-indigo-50 px-4 py-3">
                 <Lightbulb className="h-4 w-4 flex-shrink-0 text-accent" />
                 <span className="text-sm text-slate-700">
-                  Hint was used — this answer was not counted toward your score.
+                  Hint was used — this answer didn't count toward your score, and this question will be quarantined to a Redemption Round (clear it by answering correctly 3 times there).
                 </span>
               </div>
             )}

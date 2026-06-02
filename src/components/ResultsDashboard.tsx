@@ -46,6 +46,26 @@ const DOT_BORDER: Record<SkillColorState, string> = {
   green: 'transparent',
 };
 
+/**
+ * Non-color glyph per proficiency state so the dots are distinguishable without
+ * relying on color alone (accessibility). green=✓ demonstrating, ~=approaching,
+ * !=emerging, empty=not started.
+ */
+const DOT_GLYPH: Record<SkillColorState, string> = {
+  gray: '',
+  red: '!',
+  yellow: '~',
+  green: '✓',
+};
+
+/** Glyph text color, chosen for contrast against each dot fill. */
+const DOT_GLYPH_COLOR: Record<SkillColorState, string> = {
+  gray: '#94a3b8',
+  red: '#ffffff',
+  yellow: '#ffffff',
+  green: '#ffffff',
+};
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface ResultsDashboardProps {
@@ -576,22 +596,26 @@ export default function ResultsDashboard({
                           {domain.skills.map((skill) => (
                             <div key={skill.skillId} className="flex justify-center">
                               <div
-                                className="h-4 w-4 rounded-full shrink-0"
+                                className="h-4 w-4 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold leading-none"
                                 style={{
                                   background: DOT_COLORS[skill.colorState],
                                   border: `1px solid ${DOT_BORDER[skill.colorState]}`,
                                   boxShadow: skill.colorState === 'green' ? '0 0 6px #059669' : 'none',
+                                  color: DOT_GLYPH_COLOR[skill.colorState],
                                 }}
                                 title={`${skill.fullLabel}: ${skill.statusLabel}${skill.score !== null ? ` (${Math.round(skill.score * 100)}%)` : ''}`}
-                              />
+                                aria-label={`${skill.fullLabel}: ${skill.statusLabel}`}
+                              >
+                                <span aria-hidden="true">{DOT_GLYPH[skill.colorState]}</span>
+                              </div>
                             </div>
                           ))}
                         </div>
-                        <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px] text-slate-500">
-                          <LegendDot color="#e11d48" label={PROFICIENCY_META.emerging.label} />
-                          <LegendDot color="#d97706" label={PROFICIENCY_META.approaching.label} />
-                          <LegendDot color="#059669" label={PROFICIENCY_META.proficient.label} />
-                          <LegendDot color="#e2e8f0" label={PROFICIENCY_META.unstarted.label} />
+                        <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px] text-slate-600">
+                          <LegendDot state="red" label={PROFICIENCY_META.emerging.label} />
+                          <LegendDot state="yellow" label={PROFICIENCY_META.approaching.label} />
+                          <LegendDot state="green" label={PROFICIENCY_META.proficient.label} />
+                          <LegendDot state="gray" label={PROFICIENCY_META.unstarted.label} />
                         </div>
                       </div>
                     ) : (
@@ -943,10 +967,19 @@ function ConceptSection({
 
 // ─── Legend dot ─────────────────────────────────────────────────────────────
 
-function LegendDot({ color, label }: { color: string; label: string }) {
+function LegendDot({ state, label }: { state: SkillColorState; label: string }) {
   return (
     <div className="flex items-center gap-1.5">
-      <span className="w-2 h-2 rounded-full shrink-0" style={{ background: color }} />
+      <span
+        className="w-4 h-4 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold leading-none"
+        style={{
+          background: DOT_COLORS[state],
+          border: `1px solid ${DOT_BORDER[state]}`,
+          color: DOT_GLYPH_COLOR[state],
+        }}
+      >
+        <span aria-hidden="true">{DOT_GLYPH[state]}</span>
+      </span>
       <span>{label}</span>
     </div>
   );

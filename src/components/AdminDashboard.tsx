@@ -909,9 +909,9 @@ export default function AdminDashboard({
                       One row per consolidated issue cluster. Use the CSV export for spreadsheet work.
                     </p>
                   </div>
-                  <div className="overflow-x-auto">
+                  <div className="max-h-[70vh] overflow-auto">
                     <table className="min-w-full divide-y divide-slate-200 text-left">
-                      <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                      <thead className="sticky top-0 z-10 bg-slate-50 text-xs uppercase tracking-wide text-slate-500 shadow-sm">
                         <tr>
                           <th className="px-6 py-4">Issue</th>
                           <th className="px-6 py-4">Bucket</th>
@@ -1145,9 +1145,9 @@ export default function AdminDashboard({
                   </p>
                 )}
               </div>
-              <div className="overflow-x-auto">
+              <div className="max-h-[70vh] overflow-auto">
                 <table className="min-w-full divide-y divide-slate-200 text-left">
-                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <thead className="sticky top-0 z-10 bg-slate-50 text-xs uppercase tracking-wide text-slate-500 shadow-sm">
                     <tr>
                       <th className="px-6 py-4">User</th>
                       <th className="px-6 py-4">Created</th>
@@ -1160,11 +1160,25 @@ export default function AdminDashboard({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/70 text-sm">
-                    {users.map((entry) => (
+                    {users.map((entry) => {
+                      const studentLabel =
+                        entry.authMetrics?.displayName || entry.authMetrics?.email || entry.id;
+                      return (
                       <tr
                         key={entry.id}
-                        className="align-top text-slate-700 cursor-pointer hover:bg-indigo-50/40 transition-colors"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`View details for ${studentLabel}`}
+                        className="align-top text-slate-700 cursor-pointer hover:bg-indigo-50/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400"
                         onClick={() => setSelectedStudent(entry)}
+                        onKeyDown={(event) => {
+                          // Ignore keys that originate from the inner action buttons.
+                          if (event.target !== event.currentTarget) return;
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            setSelectedStudent(entry);
+                          }
+                        }}
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
@@ -1229,8 +1243,10 @@ export default function AdminDashboard({
                             <button
                               type="button"
                               disabled={resettingUserId === entry.id}
-                              onClick={() => void runAssessmentReset(entry.id, 'screener')}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+                              aria-busy={resettingUserId === entry.id}
+                              aria-label={`Reset baseline assessment for ${studentLabel} — archives then deletes their baseline screener responses`}
+                              onClick={(event) => { event.stopPropagation(); void runAssessmentReset(entry.id, 'screener'); }}
+                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
                               Reset baseline
@@ -1238,8 +1254,10 @@ export default function AdminDashboard({
                             <button
                               type="button"
                               disabled={resettingUserId === entry.id}
-                              onClick={() => void runAssessmentReset(entry.id, 'full_diagnostic')}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
+                              aria-busy={resettingUserId === entry.id}
+                              aria-label={`Reset adaptive diagnostic for ${studentLabel} — archives then deletes their diagnostic responses`}
+                              onClick={(event) => { event.stopPropagation(); void runAssessmentReset(entry.id, 'full_diagnostic'); }}
+                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
                               Reset diagnostic
@@ -1248,11 +1266,13 @@ export default function AdminDashboard({
                               <button
                                 type="button"
                                 disabled={resettingUserId === entry.id}
-                                onClick={() => void runDeleteUser(
+                                aria-busy={resettingUserId === entry.id}
+                                aria-label={`Permanently delete ALL data for ${studentLabel} — removes responses, progress, study plans, and reports; cannot be undone`}
+                                onClick={(event) => { event.stopPropagation(); void runDeleteUser(
                                   entry.id,
                                   entry.authMetrics?.email || entry.authMetrics?.displayName || entry.id
-                                )}
-                                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-50"
+                                ); }}
+                                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 disabled:opacity-50"
                               >
                                 <AlertTriangle className="h-3.5 w-3.5" />
                                 Delete all data
@@ -1261,7 +1281,8 @@ export default function AdminDashboard({
                           </div>
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

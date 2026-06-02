@@ -8,8 +8,18 @@ interface ActiveToast extends ToastDetail {
 
 /**
  * App-root listener that renders toasts dispatched via notifyToast / notifyError.
- * Auto-dismisses after 5 seconds. Non-blocking, stacks up to 3.
+ * Auto-dismisses after a length-scaled timeout (base 5s + 10ms/char, capped at
+ * 12s) so long messages stay readable; manual dismiss is always available.
+ * Non-blocking, stacks up to 3.
  */
+const TOAST_BASE_MS = 5000;
+const TOAST_PER_CHAR_MS = 10;
+const TOAST_MAX_MS = 12000;
+
+function getToastDuration(message: string): number {
+  return Math.min(TOAST_BASE_MS + message.length * TOAST_PER_CHAR_MS, TOAST_MAX_MS);
+}
+
 export default function ToastHost() {
   const [toasts, setToasts] = useState<ActiveToast[]>([]);
 
@@ -21,7 +31,7 @@ export default function ToastHost() {
       setToasts((prev) => [...prev, { ...detail, id }].slice(-3));
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 5000);
+      }, getToastDuration(detail.message));
     };
     window.addEventListener(TOAST_EVENT, handler);
     return () => window.removeEventListener(TOAST_EVENT, handler);
@@ -40,13 +50,14 @@ export default function ToastHost() {
           <div
             key={t.id}
             className={`pointer-events-auto flex items-start gap-3 rounded-xl border px-4 py-3 text-sm shadow-lg ${styles}`}
-            role="status"
+            role={isError ? 'alert' : 'status'}
+            aria-live={isError ? 'assertive' : 'polite'}
           >
             <span className="flex-1">{t.message}</span>
             <button
               onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}
-              className="shrink-0 opacity-60 hover:opacity-100"
-              aria-label="Dismiss"
+              className="shrink-0 rounded opacity-60 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+              aria-label="Dismiss notification"
             >
               <X className="h-4 w-4" />
             </button>

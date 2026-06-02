@@ -47,20 +47,32 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
       <div className="editorial-surface divide-y divide-slate-100 overflow-hidden">
         {FAQ_ENTRIES.map((entry, idx) => {
           const isOpen = openIndex === idx;
+          const panelId = `faq-panel-${idx}`;
+          const buttonId = `faq-button-${idx}`;
           return (
             <div key={idx}>
-              <button
-                type="button"
-                onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-slate-50"
-              >
-                <span className="text-sm font-semibold text-slate-900">{entry.question}</span>
-                {isOpen
-                  ? <ChevronUp className="h-4 w-4 shrink-0 text-accent" />
-                  : <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />}
-              </button>
+              <h2 className="m-0">
+                <button
+                  type="button"
+                  id={buttonId}
+                  onClick={() => setOpenIndex(isOpen ? null : idx)}
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-indigo-400"
+                >
+                  <span className="text-sm font-semibold text-slate-900">{entry.question}</span>
+                  {isOpen
+                    ? <ChevronUp aria-hidden="true" className="h-4 w-4 shrink-0 text-accent" />
+                    : <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-slate-500" />}
+                </button>
+              </h2>
               {isOpen && (
-                <div className="border-t border-slate-100 bg-slate-50 px-6 py-4">
+                <div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  className="border-t border-slate-100 bg-slate-50 px-6 py-4"
+                >
                   <p className="text-sm leading-relaxed text-slate-600">{entry.answer}</p>
                 </div>
               )}

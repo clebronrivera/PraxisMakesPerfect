@@ -14,7 +14,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { CheckCircle2, XCircle, Timer } from 'lucide-react';
+import { CheckCircle2, XCircle, Timer, Pause, Play } from 'lucide-react';
 import { generateVocabQuiz, type VocabQuizItem, type QuizType } from '../utils/vocabQuizGenerator';
 import { skillsForTerm } from '../utils/vocabSkillIndex';
 
@@ -64,6 +64,12 @@ function typesForDirection(direction: DrillDirection): QuizType[] {
   return ['term', 'definition'];
 }
 
+/** True when the user has asked the OS to reduce motion. */
+function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 /** Map seconds remaining to a semantic accent for the timer bar (light theme). */
 function timerColor(t: number, total: number): string {
   const frac = total > 0 ? t / total : 0;
@@ -99,6 +105,10 @@ export default function FluencyDrillSession({
   const [phase, setPhase] = useState<Phase>('playing');
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Honor the OS reduce-motion setting; the numeric "Ns" still conveys time.
+  const [reduceMotion] = useState(prefersReducedMotion);
 
   const item = queue[currentIndex];
   const secondsForItem = item
@@ -134,12 +144,14 @@ export default function FluencyDrillSession({
     setSelectedAnswer(null);
     setIsRevealed(false);
     setTimeLeft(next.type === 'term' ? secondsByDirection.term : secondsByDirection.definition);
+    setIsPaused(false);
     advancePending.current = false;
   }
 
   // ── Timer countdown ────────────────────────────────────────────────────────
   useEffect(() => {
-    if (phase !== 'playing' || isRevealed) return;
+    // While paused (WCAG 2.2.1), the clock does not decrement and timeout cannot fire.
+    if (phase !== 'playing' || isRevealed || isPaused) return;
 
     if (timeLeft <= 0) {
       if (!advancePending.current) {
@@ -156,7 +168,7 @@ export default function FluencyDrillSession({
 
     const t = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
     return () => clearTimeout(t);
-  }, [timeLeft, phase, isRevealed, currentIndex]);
+  }, [timeLeft, phase, isRevealed, currentIndex, isPaused]);
 
   // ── Handle answer selection ───────────────────────────────────────────────
   function handleSelect(label: string) {
@@ -221,20 +233,35 @@ export default function FluencyDrillSession({
         </div>
       </div>
 
-      {/* Timer bar */}
-      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+      {/* Timer bar — numeric "Ns" below conveys time; motion is decorative only */}
+      <div
+        className="relative h-1.5 w-full overflow-hidden rounded-full bg-slate-100"
+        role="timer"
+        aria-label={`Time remaining: ${timeLeft} seconds${isPaused ? ', paused' : ''}`}
+      >
         <div
-          className="h-full rounded-full transition-all duration-1000 ease-linear"
+          className={`h-full rounded-full ${reduceMotion ? '' : 'transition-all duration-1000 ease-linear'}`}
           style={{ width: `${timerPct}%`, background: barColor }}
         />
       </div>
 
-      {/* Direction badge + seconds */}
+      {/* Direction badge + seconds + pause/resume (WCAG 2.2.1) */}
       <div className="flex items-center gap-2">
         <span className="editorial-pill">
           {isTermToDefinition ? 'Term → Definition' : 'Definition → Term'}
         </span>
         <span className="text-[11px] text-slate-400">{timeLeft}s</span>
+        <button
+          type="button"
+          onClick={() => setIsPaused((p) => !p)}
+          disabled={isRevealed}
+          aria-pressed={isPaused}
+          aria-label={isPaused ? 'Resume timer' : 'Pause timer'}
+          className="ml-auto inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 transition hover:border-violet-300 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isPaused ? <Play size={12} /> : <Pause size={12} />}
+          {isPaused ? 'Resume' : 'Pause'}
+        </button>
       </div>
 
       {/* Question card */}
@@ -263,7 +290,8 @@ export default function FluencyDrillSession({
               key={choice.label}
               onClick={() => handleSelect(choice.label)}
               disabled={isRevealed}
-              className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-left transition ${cls}`}
+              aria-label={`Choice ${choice.label}: ${choice.text}`}
+              className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${cls}`}
             >
               <span
                 className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold ${
@@ -311,7 +339,11 @@ export default function FluencyDrillSession({
 
       {/* Exit */}
       <div className="flex justify-center">
-        <button onClick={onExit} className="text-xs text-slate-400 underline underline-offset-2 hover:text-slate-600">
+        <button
+          onClick={onExit}
+          aria-label="Exit drill"
+          className="rounded text-xs text-slate-400 underline underline-offset-2 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+        >
           Exit drill
         </button>
       </div>

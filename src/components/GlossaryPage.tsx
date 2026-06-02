@@ -23,6 +23,7 @@ import {
   BookMarked,
   Sparkles,
   Zap,
+  PencilLine,
 } from 'lucide-react';
 import {
   loadGlossaryTerms,
@@ -77,6 +78,9 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
   const [revealing, setRevealing] = useState(false);
   const prevText = useRef(entry.user_definition ?? '');
 
+  // Stable, unique id so the textarea can be associated with a real <label>.
+  const definitionId = `glossary-def-${entry.term.replace(/[^a-zA-Z0-9]+/g, '-')}`;
+
   const officialDef = OFFICIAL_DEFINITIONS[entry.term] ?? 'Definition not available.';
 
   // Auto-save on blur
@@ -126,18 +130,19 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
               </p>
             )}
           </div>
+          {/* Always-visible text + icon status badge (not color-alone). */}
           <div className="shrink-0">
             {isRevealed ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: '#059669' }}>
-                <CheckCircle2 size={10} /> Revealed
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
+                <CheckCircle2 size={11} /> Revealed
               </span>
             ) : hasDef ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: '#4f46e5' }}>
-                <Circle size={10} /> Defined
+              <span className="inline-flex items-center gap-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
+                <PencilLine size={11} /> Defined
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500">
-                <Circle size={10} /> To define
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                <Circle size={11} /> To define
               </span>
             )}
           </div>
@@ -147,8 +152,11 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* User's definition */}
           <div>
-            <p className="eyebrow mb-2">Your definition</p>
+            <label htmlFor={definitionId} className="eyebrow mb-2 block">
+              Your definition of “{entry.term}”
+            </label>
             <textarea
+              id={definitionId}
               value={localText}
               onChange={(e) => setLocalText(e.target.value)}
               onBlur={handleBlur}
@@ -301,7 +309,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
         <div className="px-6 pt-5 pb-0 flex items-end gap-1">
           <button
             onClick={() => setActiveTab('terms')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
+            aria-pressed={activeTab === 'terms'}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
               activeTab === 'terms'
                 ? 'bg-[#ffffff] text-slate-900 border-slate-200 relative z-10 -mb-px'
                 : 'bg-transparent text-slate-500 border-transparent hover:text-slate-600'
@@ -317,7 +326,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
           </button>
           <button
             onClick={() => setActiveTab('quiz')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
+            aria-pressed={activeTab === 'quiz'}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
               activeTab === 'quiz'
                 ? 'bg-[#ffffff] text-slate-900 border-slate-200 relative z-10 -mb-px'
                 : 'bg-transparent text-slate-500 border-transparent hover:text-slate-600'
@@ -385,6 +395,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search terms…"
+                      aria-label="Search glossary terms"
                       className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-[#ffffff] text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 focus:border-indigo-400/50"
                     />
                   </div>
@@ -402,7 +413,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                       <button
                         key={id}
                         onClick={() => setFilter(id)}
-                        className={`text-xs px-3 py-1 rounded-full border transition font-medium ${
+                        aria-pressed={filter === id}
+                        className={`text-xs px-3 py-1 rounded-full border transition font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                           filter === id
                             ? 'grad-chrome text-white border-transparent'
                             : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-slate-900'

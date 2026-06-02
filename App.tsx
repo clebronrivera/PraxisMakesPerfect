@@ -143,7 +143,7 @@ function StudyGuideTabWrapper({
             {[
               { title: 'Adaptive Diagnostic', desc: '45–90 questions that adapt to your performance. Maps all 45 skills in one session.', accent: '#d97706' },
               { title: 'Learning Path',       desc: 'Structured micro-lessons ordered by your gaps. Lesson → quiz → extend for each skill.', accent: '#059669' },
-              { title: 'Term Sprint',         desc: '396 school psychology terms, 10 seconds each, both directions. Build vocabulary fluency.', accent: '#0284c7' },
+              { title: 'Fluency Drill',       desc: 'Rapid-fire vocabulary against the clock, both directions, across 396 terms. Misses feed your skill data.', accent: '#0284c7' },
               { title: 'Spaced Review',       desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.', accent: '#7c3aed' },
               { title: 'Redemption Rounds',   desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.', accent: '#e11d48' },
               { title: 'AI Tutor',            desc: 'Conversational study assistant. Ask questions, get quizzed on weak areas, generate vocabulary lists.', accent: '#d97706' },
@@ -181,12 +181,12 @@ function StudyGuideTabWrapper({
 
       {activeTab === 'vocabulary' && (
         <div className="editorial-surface p-6 space-y-4">
-          <p className="eyebrow mb-1">Vocabulary &amp; Term Sprint</p>
+          <p className="eyebrow mb-1">Vocabulary &amp; Glossary</p>
           <p className="text-[13px] text-slate-400 leading-relaxed max-w-xl">
             Review your flagged terms and test your vocabulary knowledge across 396 school psychology terms.
           </p>
           <button onClick={onNavigateToGlossary} className="editorial-button-primary">
-            Open Glossary &amp; Start Term Sprint →
+            Open Glossary →
           </button>
         </div>
       )}

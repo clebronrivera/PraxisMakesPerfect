@@ -88,9 +88,10 @@ export function TutorChatPage({
           <button
             onClick={chat.startNewSession}
             title="New chat"
+            aria-label="Start new chat session"
             className="w-7 h-7 rounded-full border border-slate-300 text-slate-900 flex items-center justify-center hover:border-indigo-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
 
@@ -99,7 +100,8 @@ export function TutorChatPage({
           <div className="flex p-0.5 rounded-full border border-slate-200 bg-[#ffffff]">
             <button
               onClick={() => chat.setMode('chat')}
-              className={`flex-1 py-1.5 rounded-full text-[11px] font-medium transition-colors ${
+              aria-pressed={chat.mode === 'chat'}
+              className={`flex-1 py-1.5 rounded-full text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                 chat.mode === 'chat'
                   ? 'grad-chrome text-white font-semibold'
                   : 'text-slate-400 hover:text-slate-700'
@@ -109,7 +111,8 @@ export function TutorChatPage({
             </button>
             <button
               onClick={() => chat.setMode('quiz')}
-              className={`flex-1 py-1.5 rounded-full text-[11px] font-medium transition-colors ${
+              aria-pressed={chat.mode === 'quiz'}
+              className={`flex-1 py-1.5 rounded-full text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                 chat.mode === 'quiz'
                   ? 'grad-chrome text-white font-semibold'
                   : 'text-slate-400 hover:text-slate-700'
@@ -128,7 +131,9 @@ export function TutorChatPage({
               <button
                 key={session.id}
                 onClick={() => chat.selectSession(session.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors border ${
+                aria-current={isActive ? 'true' : undefined}
+                aria-label={`Open chat session: ${session.title || 'Untitled chat'}, ${session.messageCount} ${session.messageCount === 1 ? 'message' : 'messages'}`}
+                className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                   isActive
                     ? 'bg-violet-50 border-violet-200'
                     : 'border-transparent hover:bg-slate-50'
@@ -173,8 +178,8 @@ export function TutorChatPage({
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-5 space-y-5">
           {chat.isHydratingSession && (
-            <div className="flex justify-center py-4">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+            <div className="flex justify-center py-4" role="status" aria-label="Loading conversation">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" aria-hidden="true" />
             </div>
           )}
 
@@ -183,7 +188,7 @@ export function TutorChatPage({
               onClick={chat.loadOlderMessages}
               className="w-full flex items-center justify-center gap-1 text-[11px] text-slate-500 hover:text-slate-700 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 rounded"
             >
-              <ChevronUp className="w-3 h-3" />
+              <ChevronUp className="w-3 h-3" aria-hidden="true" />
               Load older messages
             </button>
           )}
@@ -211,8 +216,8 @@ export function TutorChatPage({
           ))}
 
           {chat.isSending && (
-            <div className="flex items-center gap-2 text-slate-500 text-sm">
-              <div className="flex gap-1">
+            <div className="flex items-center gap-2 text-slate-500 text-sm" role="status">
+              <div className="flex gap-1" aria-hidden="true">
                 <span className="w-1.5 h-1.5 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                 <span className="w-1.5 h-1.5 bg-indigo-700 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -222,7 +227,7 @@ export function TutorChatPage({
           )}
 
           {chat.error && (
-            <div className="text-[11px] text-rose-600 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2">
+            <div role="alert" className="text-[11px] text-rose-600 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2">
               {chat.error}
             </div>
           )}
@@ -239,6 +244,7 @@ export function TutorChatPage({
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={chat.mode === 'quiz' ? 'Type "quiz me" or ask a question…' : 'Ask anything about this skill, or tell me how to quiz you…'}
+              aria-label="Message the AI Tutor"
               rows={1}
               disabled={chat.isSending}
               className="flex-1 resize-none bg-transparent border-0 outline-none text-slate-900 text-[13.5px] font-[inherit] placeholder:text-slate-500 min-h-[22px] leading-[1.5] p-0"
@@ -248,19 +254,21 @@ export function TutorChatPage({
               <button
                 type="button"
                 title="Attach context"
+                aria-label="Attach context"
                 className="editorial-button-secondary"
                 style={{ padding: '8px 10px' }}
               >
-                <Paperclip className="w-3.5 h-3.5" />
+                <Paperclip className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || chat.isSending}
+                aria-label="Send message"
                 className="editorial-button-primary disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{ padding: '9px 18px', fontSize: 12 }}
               >
                 <span className="inline-flex items-center gap-1.5">
-                  <Send className="w-3.5 h-3.5" />
+                  <Send className="w-3.5 h-3.5" aria-hidden="true" />
                   Send
                 </span>
               </button>

@@ -53,7 +53,7 @@
   }
 
   .editorial-sidebar-item {
-    @apply w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100;
+    @apply w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500;
   }
 
   .editorial-sidebar-item-active {
@@ -89,7 +89,7 @@
   }
 
   .editorial-button-primary {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all text-white;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500;
     background-image: linear-gradient(135deg, var(--accent-from) 0%, var(--accent-to) 100%);
   }
 
@@ -99,7 +99,7 @@
   }
 
   .editorial-button-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border text-sm font-semibold transition-all;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500;
     background-color: #f5f3ff;
     border-color: #ddd6fe;
     color: #6d28d9;
@@ -112,7 +112,7 @@
   }
 
   .editorial-button-dark {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all text-white;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500;
     background-color: #1a1a1a;
   }
 
@@ -121,7 +121,7 @@
   }
 
   .editorial-button-ghost {
-    @apply inline-flex items-center gap-2 text-sm font-semibold transition-colors text-indigo-600 hover:text-indigo-800;
+    @apply inline-flex items-center gap-2 text-sm font-semibold transition-colors text-indigo-600 hover:text-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500;
   }
 
   .editorial-progress-track {
@@ -370,5 +370,22 @@
   * {
     border-radius: 0 !important;
     box-shadow: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLOBAL REDUCED-MOTION GUARD
+   Augments the targeted reduced-motion block above (orb/halo/node/starfield).
+   Globally collapses transitions, animations, and smooth scrolling for users
+   who request reduced motion. Heavy named animations are still disabled above.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

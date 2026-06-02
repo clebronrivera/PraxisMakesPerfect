@@ -404,7 +404,8 @@ function SkillPanel({
           <button
             key={btn.id}
             onClick={() => onFilterChange(btn.id)}
-            className={`px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all ${
+            aria-pressed={filter === btn.id}
+            className={`px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
               filter === btn.id ? btn.activeCss : `bg-transparent ${btn.css} hover:opacity-80`
             }`}
           >
@@ -479,8 +480,9 @@ function SkillPanel({
                 {/* Help button — opens SkillHelpDrawer */}
                 <button
                   onClick={() => onOpenHelp(row.skillId, row.fullLabel)}
-                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
                   title="View skill lesson"
+                  aria-label={`View lesson for ${row.fullLabel}`}
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
                 </button>
@@ -691,7 +693,7 @@ export default function StudyModesSection({
       {srsOverdueCount > 0 && fullAssessmentComplete && (
         <button
           onClick={() => { setSelectedMode('skill'); setSkillFilter('overdue'); }}
-          className="w-full flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-left transition-colors hover:bg-violet-100"
+          className="w-full flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-left transition-colors hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <RefreshCw className="w-3.5 h-3.5 shrink-0 text-violet-600" />
           <div>
@@ -705,11 +707,11 @@ export default function StudyModesSection({
         </button>
       )}
 
-      {/* ── Term Sprint info ─────────────────────────────────────────────── */}
+      {/* ── Fluency Drill info ───────────────────────────────────────────── */}
       {fullAssessmentComplete && (
         <div className="rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-2.5">
-          <p className="text-xs font-bold text-blue-800">Term Sprint</p>
-          <p className="text-xs text-blue-700 mt-0.5">396 school psychology terms · 10 seconds each · both directions</p>
+          <p className="text-xs font-bold text-blue-800">Fluency Drill</p>
+          <p className="text-xs text-blue-700 mt-0.5">Timed, rapid-fire vocabulary cards · scoped to your weak areas · both directions · missed terms feed your practice</p>
         </div>
       )}
 
@@ -721,8 +723,10 @@ export default function StudyModesSection({
             <button
               key={tab.id}
               onClick={() => setSelectedMode(tab.id)}
+              aria-pressed={isActive}
               className={`
                 p-3 rounded-xl border text-left transition-all
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400
                 ${isActive
                   ? 'bg-indigo-50 border-indigo-400'
                   : 'bg-slate-50 border-slate-200 hover:border-indigo-300'}
