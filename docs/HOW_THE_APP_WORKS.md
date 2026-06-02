@@ -36,11 +36,11 @@ Sign in with an email and password. All data lives in the cloud, so you can pick
 
 **Consent requirement:** During signup, users must check a consent checkbox agreeing to the [Privacy Policy](#privacy) and [Terms of Service](#terms) before their account can be created. Existing users who signed up before this requirement are shown a non-dismissable consent gate on their next login. Both documents are accessible without authentication via `#privacy` and `#terms` hash routes.
 
-Before sign-in, the public entry page is an atelier-styled hero: a central "Adaptive Engine" orb with four feeder paths from the four domain nodes (Professional Practices · Student-Level Services · Systems-Level Services · Foundations), and the tagline **"A study plan that listens."**
+Before sign-in, the public entry page is a scrolling marketing landing (indigo/violet on a dark canvas) headlined **"Find the exact skills holding you back."** The positioning is an **adaptive baseline that pinpoints the exact micro-skills you're missing** across the exam blueprint, then builds a plan around them — built by an educator with ~two decades across classroom instruction, MTSS, and student support. The hero shows a live-dashboard preview with a "micro-skill pinpointed" callout. Sections below: How it works (baseline → pinpoint → target), Micro-skill precision, The Method (grounded in MTSS), Why it's faster, A plan built from your data, a founder's note (Carlos Lebron Rivera), and a final CTA.
 
-The stat row under the headline reads: **4 domains · 45 skills · 1,150 calibrated items · IRT-calibrated.** Two CTAs sit side-by-side: "Begin your diagnostic →" (routes to sign-up) and "I have an account" (scrolls to the sign-in form below).
+**No psychometric/marketing claims that the product can't back up.** The item bank is expert-authored, **not** IRT-calibrated — the landing and the `?boot=1` boot terminal must never claim "IRT-calibrated", "2PL IRT model", or "calibrated items". Honest proof points only (adaptive baseline · micro-skill diagnosis · plan from your data). The "1,150 items / 45 skills / 4 domains" counts are true and may appear.
 
-Returning candidates scroll to (or click) the sign-in panel — a glass card with email + password, plus toggles for Sign up and Forgot password. A beta disclaimer is shown: "Currently in beta. Not responsible for loss of data during the beta period."
+CTAs ("Take your adaptive baseline →" / "Sign in" / "I have an account") open the **auth modal** — a clean white card with email + password and toggles for Create account / Forgot password (sign-in, sign-up, and reset modes). A beta disclaimer is shown in the footer: "Currently in beta. Not responsible for loss of data during the beta period."
 
 **No intake phase.** Users go directly from the hero to sign-up/sign-in; exam selection and onboarding happen after authentication (see Step 1b).
 
