@@ -101,13 +101,12 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
   const isRevealed = entry.revealed;
   const hasDef = localText.trim().length > 0;
 
-  // Atelier card-style row: vertical layout, editorial-surface surface, clear status.
-  const statusColor = isRevealed ? '#059669' : hasDef ? '#0284c7' : '#e2e8f0';
+  // Light editorial card-style row: vertical layout, white surface, clear status.
+  const statusColor = isRevealed ? '#059669' : hasDef ? '#4f46e5' : '#e2e8f0';
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden transition-colors hover:bg-slate-50"
-      style={{ background: '#ffffff', border: '1px solid #e6dfd4' }}
+      className="editorial-surface relative overflow-hidden transition-colors hover:bg-slate-50"
     >
       {/* Left accent stripe */}
       <span
@@ -133,7 +132,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
                 <CheckCircle2 size={10} /> Revealed
               </span>
             ) : hasDef ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: '#0284c7' }}>
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: '#4f46e5' }}>
                 <Circle size={10} /> Defined
               </span>
             ) : (
@@ -178,8 +177,8 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
               <div
                 className="text-[13px] text-slate-700 leading-relaxed rounded-lg px-3 py-2 min-h-[86px]"
                 style={{
-                  background: 'color-mix(in srgb, #0284c7 8%, transparent)',
-                  border: '1px solid color-mix(in srgb, #0284c7 25%, transparent)',
+                  background: 'color-mix(in srgb, #4f46e5 8%, transparent)',
+                  border: '1px solid color-mix(in srgb, #4f46e5 25%, transparent)',
                 }}
               >
                 {officialDef}
@@ -193,11 +192,11 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
                 <button
                   onClick={handleReveal}
                   disabled={revealing}
-                  className="self-start inline-flex items-center gap-1.5 text-xs font-medium rounded-lg px-3 py-1.5 transition disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706]"
+                  className="self-start inline-flex items-center gap-1.5 text-xs font-medium rounded-lg px-3 py-1.5 transition disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#4f46e5]"
                   style={{
-                    color: '#0284c7',
-                    background: 'color-mix(in srgb, #0284c7 10%, transparent)',
-                    border: '1px solid color-mix(in srgb, #0284c7 30%, transparent)',
+                    color: '#4f46e5',
+                    background: 'color-mix(in srgb, #4f46e5 10%, transparent)',
+                    border: '1px solid color-mix(in srgb, #4f46e5 30%, transparent)',
                   }}
                 >
                   {revealing ? <Loader2 size={12} className="animate-spin" /> : <Eye size={12} />}
@@ -290,7 +289,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center py-24">
-        <Loader2 className="animate-spin text-[color:#0284c7]" size={28} />
+        <Loader2 className="animate-spin text-indigo-500" size={28} />
       </div>
     );
   }
@@ -311,7 +310,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
             <BookMarked size={14} />
             My Terms
             {total > 0 && (
-              <span className="ml-1 text-[10px] bg-[color:#0284c7]/15 text-[color:#0284c7] rounded-full px-1.5 py-0.5 font-bold">
+              <span className="ml-1 text-[10px] bg-indigo-500/15 text-indigo-600 rounded-full px-1.5 py-0.5 font-bold">
                 {total}
               </span>
             )}
@@ -335,7 +334,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
         <Suspense
           fallback={
             <div className="flex-1 flex items-center justify-center py-24">
-              <Loader2 className="animate-spin text-[color:#7c3aed]" size={28} />
+              <Loader2 className="animate-spin text-indigo-500" size={28} />
             </div>
           }
         >
@@ -350,12 +349,12 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
           <div className="sticky top-[53px] z-10">
             <div className="px-6 pt-4 pb-4 bg-white border-b border-slate-200 backdrop-blur-md">
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-xl bg-[color:#0284c7]/15 flex items-center justify-center">
-                  <BookMarked size={18} className="text-[color:#0284c7]" />
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/15 flex items-center justify-center">
+                  <BookMarked size={18} className="text-indigo-600" />
                 </div>
                 <div>
                   <h1 className="text-lg font-bold text-slate-900">My Glossary</h1>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Words added when you miss a question. Define them, then reveal the
                     official meaning to compare.
                   </p>
@@ -461,9 +460,9 @@ function StatChip({
 }) {
   const colors = {
     slate:   'bg-slate-100 text-slate-600 border border-slate-200',
-    amber:   'bg-[color:#d97706]/10 text-[color:#d97706] border border-[color:#d97706]/30',
-    indigo:  'bg-[color:#7c3aed]/10 text-[color:#7c3aed] border border-[color:#7c3aed]/30',
-    emerald: 'bg-[color:#059669]/10 text-[color:#059669] border border-[color:#059669]/30',
+    amber:   'bg-amber-500/10 text-amber-600 border border-amber-500/30',
+    indigo:  'bg-indigo-500/10 text-indigo-600 border border-indigo-500/30',
+    emerald: 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30',
   };
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${colors[color]}`}>
@@ -475,20 +474,20 @@ function StatChip({
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-24 px-6 text-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-[color:#0284c7]/10 flex items-center justify-center">
-        <Sparkles size={28} className="text-[color:#0284c7]" />
+      <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center">
+        <Sparkles size={28} className="text-indigo-600" />
       </div>
       <div>
         <h2 className="text-base font-semibold text-slate-900 mb-1">
           Your glossary is empty
         </h2>
-        <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
+        <p className="text-sm text-slate-500 max-w-xs leading-relaxed">
           When you get a practice question wrong, the key vocabulary words from
           that skill will automatically appear here for you to define and study.
         </p>
       </div>
       <div className="mt-2 flex flex-col gap-2 text-left bg-slate-50 border border-slate-200 rounded-xl p-4 max-w-sm w-full">
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
           How it works
         </p>
         <Step n={1} text="Answer a practice question incorrectly" />
@@ -503,7 +502,7 @@ function EmptyState() {
 function Step({ n, text }: { n: number; text: string }) {
   return (
     <div className="flex items-start gap-2 text-xs text-slate-600">
-      <span className="w-5 h-5 rounded-full bg-[color:#0284c7]/15 text-[color:#0284c7] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-[color:#0284c7]/30">
+      <span className="w-5 h-5 rounded-full bg-indigo-500/15 text-indigo-600 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-indigo-500/30">
         {n}
       </span>
       {text}

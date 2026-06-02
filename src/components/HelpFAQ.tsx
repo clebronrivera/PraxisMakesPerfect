@@ -35,16 +35,16 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-6 px-4 text-slate-700">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:#d97706]/30 bg-[color:#d97706]/10">
-          <HelpCircle className="h-5 w-5 text-[color:#d97706]" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl grad-chrome">
+          <HelpCircle className="h-5 w-5 text-white" />
         </div>
         <div>
-          <p className="eyebrow">Support</p>
+          <p className="editorial-overline">Support</p>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Help &amp; FAQ</h1>
         </div>
       </div>
 
-      <div className="editorial-surface divide-y divide-white/5 overflow-hidden">
+      <div className="editorial-surface divide-y divide-slate-100 overflow-hidden">
         {FAQ_ENTRIES.map((entry, idx) => {
           const isOpen = openIndex === idx;
           return (
@@ -56,11 +56,11 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
               >
                 <span className="text-sm font-semibold text-slate-900">{entry.question}</span>
                 {isOpen
-                  ? <ChevronUp className="h-4 w-4 shrink-0 text-[color:#d97706]" />
+                  ? <ChevronUp className="h-4 w-4 shrink-0 text-accent" />
                   : <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />}
               </button>
               {isOpen && (
-                <div className="border-t border-[color:#d97706]/20 bg-slate-100/40 px-6 py-4">
+                <div className="border-t border-slate-100 bg-slate-50 px-6 py-4">
                   <p className="text-sm leading-relaxed text-slate-600">{entry.answer}</p>
                 </div>
               )}
@@ -74,7 +74,7 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
           <button
             type="button"
             onClick={onReplayTutorial}
-            className="inline-flex items-center gap-2 rounded-xl border border-[color:#0284c7]/30 bg-[color:#0284c7]/10 px-4 py-2 text-sm font-medium text-[color:#0284c7] transition-colors hover:bg-[color:#0284c7]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706]"
+            className="editorial-button-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400/60"
           >
             <PlayCircle className="h-4 w-4" />
             Replay Tutorial

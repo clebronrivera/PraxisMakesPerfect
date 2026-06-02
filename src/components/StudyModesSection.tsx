@@ -201,8 +201,8 @@ function DomainPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
-          <Lock className="w-4 h-4 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50">
+          <Lock className="w-4 h-4 text-indigo-600" />
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
@@ -226,8 +226,8 @@ function DomainPanel({
 
   return (
     <div className="space-y-3">
-      <p className="eyebrow flex items-center gap-1.5">
-        <TrendingUp className="w-3 h-3 text-amber-600" />
+      <p className="eyebrow text-indigo-600 flex items-center gap-1.5">
+        <TrendingUp className="w-3 h-3 text-indigo-600" />
         Domain overview — most concern first
       </p>
       <div className="space-y-2.5">
@@ -263,7 +263,7 @@ function DomainPanel({
                   />
                 </div>
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-amber-500/70"
+                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-500/70"
                   style={{ left: '70%' }}
                   title="70% mastery goal"
                 />
@@ -325,8 +325,8 @@ function SkillPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
-          <Lock className="w-4 h-4 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50">
+          <Lock className="w-4 h-4 text-indigo-600" />
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
@@ -359,7 +359,7 @@ function SkillPanel({
                            allRows.filter(r => r.tier === filter);
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
-    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-amber-50 border-amber-400 text-slate-900'    },
+    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-indigo-50 border-indigo-400 text-slate-900'  },
     { id: 'emerging',  label: PROFICIENCY_META.emerging.label,  count: emergingCount,     css: 'text-rose-600 border-rose-300',     activeCss: 'bg-rose-50 border-rose-400 text-rose-600'       },
     { id: 'approaching',label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-600 border-amber-300', activeCss: 'bg-amber-50 border-amber-400 text-amber-600'    },
     { id: 'proficient',label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-600 border-emerald-300', activeCss: 'bg-emerald-50 border-emerald-400 text-emerald-600' },
@@ -394,7 +394,7 @@ function SkillPanel({
 
       {/* Usage hint */}
       <p className="flex items-center gap-1.5 text-sm text-slate-500">
-        <HelpCircle className="w-3 h-3 shrink-0 text-amber-600" />
+        <HelpCircle className="w-3 h-3 shrink-0 text-indigo-600" />
         Tap Practice for questions · tap the help icon to open the skill lesson
       </p>
 
@@ -479,7 +479,7 @@ function SkillPanel({
                 {/* Help button — opens SkillHelpDrawer */}
                 <button
                   onClick={() => onOpenHelp(row.skillId, row.fullLabel)}
-                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-amber-50 hover:text-amber-600"
+                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
                   title="View skill lesson"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
@@ -525,8 +525,8 @@ function LearningPathPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50">
-          <Lock className="w-4 h-4 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50">
+          <Lock className="w-4 h-4 text-indigo-600" />
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
@@ -680,7 +680,7 @@ export default function StudyModesSection({
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div
-            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-500' : 'bg-amber-500'}`}
+            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-500' : 'bg-indigo-500'}`}
             style={{ width: `${readinessBarPct}%` }}
           />
         </div>
@@ -724,12 +724,12 @@ export default function StudyModesSection({
               className={`
                 p-3 rounded-xl border text-left transition-all
                 ${isActive
-                  ? 'bg-amber-50 border-amber-400'
-                  : 'bg-slate-50 border-slate-200 hover:border-amber-300'}
+                  ? 'bg-indigo-50 border-indigo-400'
+                  : 'bg-slate-50 border-slate-200 hover:border-indigo-300'}
               `}
             >
               <div className={`flex items-center gap-1.5 mb-1 ${
-                isActive ? 'text-amber-600' : tab.locked ? 'text-slate-400' : 'text-slate-500'
+                isActive ? 'text-indigo-600' : tab.locked ? 'text-slate-400' : 'text-slate-500'
               }`}>
                 {tab.locked ? <Lock className="w-3 h-3" /> : tab.icon}
                 <p className={`text-sm font-semibold truncate ${

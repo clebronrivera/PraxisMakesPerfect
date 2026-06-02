@@ -56,7 +56,7 @@ function NotesSection({ userId }: { userId: string | null }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[color:#d97706] border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
       </div>
     );
   }
@@ -89,7 +89,7 @@ function NotesSection({ userId }: { userId: string | null }) {
               onClick={() => setExpandedSkill(isExpanded ? null : skillId)}
               className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-slate-50 transition-colors"
             >
-              <StickyNote className="w-4 h-4 text-[color:#d97706] shrink-0" />
+              <StickyNote className="w-4 h-4 text-accent shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-slate-900 truncate">{skillDef?.fullLabel ?? skillId}</p>
                 <p className="text-[10px] text-slate-500">{skillNotes.length} {skillNotes.length === 1 ? 'note' : 'notes'}</p>
@@ -104,12 +104,12 @@ function NotesSection({ userId }: { userId: string | null }) {
                   return (
                     <div key={n.module_id} className="space-y-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="bg-[color:#d97706]/15 text-[color:#d97706] text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border border-[color:#d97706]/25">
+                        <span className="bg-indigo-500/12 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border border-indigo-500/25">
                           {n.module_id}
                         </span>
-                        {mod && <span className="text-[11px] text-slate-400 truncate">{mod.title}</span>}
+                        {mod && <span className="text-[11px] text-slate-500 truncate">{mod.title}</span>}
                       </div>
-                      <div className="rounded-xl border border-slate-200 p-3" style={{ background: '#ffffff' }}>
+                      <div className="editorial-surface-soft p-3">
                         <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{n.note_text}</p>
                       </div>
                       <p className="text-[10px] text-slate-500">
@@ -213,7 +213,7 @@ function FocusSection({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[color:#d97706] border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
       </div>
     );
   }
@@ -280,7 +280,7 @@ function SkillFocusGroup({
   const [expanded, setExpanded] = useState(!allDone);
 
   const iconMap = {
-    vocabulary: <BookOpen className="w-3.5 h-3.5 text-[color:#d97706]" />,
+    vocabulary: <BookOpen className="w-3.5 h-3.5 text-accent" />,
     misconception: <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />,
     trap: <ShieldAlert className="w-3.5 h-3.5 text-orange-500" />,
   };
@@ -291,7 +291,7 @@ function SkillFocusGroup({
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-slate-50 transition-colors"
       >
-        <Target className="w-4 h-4 text-[color:#d97706] shrink-0" />
+        <Target className="w-4 h-4 text-accent shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-slate-900 truncate">{skillLabel}</p>
           <p className="text-[10px] text-slate-500">{checkedCount}/{items.length} reviewed</p>
@@ -311,7 +311,7 @@ function SkillFocusGroup({
                 className={`flex w-full items-start gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all ${
                   checked
                     ? 'border-slate-200 bg-slate-50 opacity-60'
-                    : 'border-slate-200 bg-slate-50 hover:border-[color:#d97706]/40'
+                    : 'border-slate-200 bg-slate-50 hover:border-indigo-400/50'
                 }`}
               >
                 <span className="mt-0.5 shrink-0">
@@ -325,7 +325,7 @@ function SkillFocusGroup({
                     </p>
                   </div>
                   {item.detail && !checked && (
-                    <p className="mt-1 text-[11px] text-slate-400 leading-snug ml-6">{item.detail}</p>
+                    <p className="mt-1 text-[11px] text-slate-500 leading-snug ml-6">{item.detail}</p>
                   )}
                 </div>
               </button>
@@ -347,11 +347,11 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
       {/* Header */}
       <div className="pt-4">
         <div className="flex items-center gap-3 mb-2">
-          <BookMarked className="w-6 h-6 text-[color:#d97706]" />
-          <p className="eyebrow">Study Notebook</p>
+          <BookMarked className="w-6 h-6 text-accent" />
+          <p className="editorial-overline">Study Notebook</p>
         </div>
         <h2 className="text-4xl font-bold tracking-tight text-slate-900">Your Notes & Focus.</h2>
-        <p className="mt-2 text-sm text-slate-400 max-w-lg">
+        <p className="mt-2 text-sm text-slate-500 max-w-lg">
           All your module notes and AI-identified focus items in one place. Check off items as you master them.
         </p>
       </div>
@@ -363,7 +363,7 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'notes'
               ? 'grad-chrome text-white shadow-lg'
-              : 'border border-slate-200 bg-slate-50 text-slate-400 hover:border-[color:#d97706]/40 hover:text-slate-900'
+              : 'border border-slate-200 bg-slate-50 text-slate-500 hover:border-indigo-400/50 hover:text-slate-900'
           }`}
         >
           <StickyNote className="w-3.5 h-3.5" />
@@ -374,7 +374,7 @@ export default function StudyNotebookPage({ userId, latestStudyPlan }: StudyNote
           className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
             activeTab === 'focus'
               ? 'grad-chrome text-white shadow-lg'
-              : 'border border-slate-200 bg-slate-50 text-slate-400 hover:border-[color:#d97706]/40 hover:text-slate-900'
+              : 'border border-slate-200 bg-slate-50 text-slate-500 hover:border-indigo-400/50 hover:text-slate-900'
           }`}
         >
           <Target className="w-3.5 h-3.5" />

@@ -40,9 +40,9 @@ const DOT_COLORS: Record<SkillColorState, string> = {
 };
 
 const DOT_BORDER: Record<SkillColorState, string> = {
-  gray: 'rgba(226,232,240,0.25)',
-  red: 'rgba(251,207,232,0.6)',
-  yellow: 'rgba(252,213,180,0.6)',
+  gray: 'rgba(226,232,240,0.6)',
+  red: 'rgba(225,29,72,0.4)',
+  yellow: 'rgba(217,119,6,0.4)',
   green: 'transparent',
 };
 
@@ -96,7 +96,7 @@ function JourneyTimeline({ steps }: { steps: TimelineStep[] }) {
                   step.done
                     ? { background: '#059669', color: '#064e3b', boxShadow: '0 0 10px #059669' }
                     : isCurrent
-                      ? { background: 'linear-gradient(135deg, #fde4c1, #fbcfe8)', color: '#1e1b3a', boxShadow: '0 0 14px rgba(252,213,180,0.6)' }
+                      ? { background: 'linear-gradient(135deg, #8b5cf6, #4f46e5)', color: '#ffffff', boxShadow: '0 0 14px rgba(139,92,246,0.45)' }
                       : { background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }
                 }
               >
@@ -320,7 +320,7 @@ export default function ResultsDashboard({
         <div className="flex items-baseline justify-between mb-5">
           <div>
             <p className="eyebrow">Your journey</p>
-            <p className="text-[13px] text-slate-400 mt-1">From first diagnostic question to exam-ready</p>
+            <p className="text-[13px] text-slate-500 mt-1">From first diagnostic question to exam-ready</p>
           </div>
           <span className="text-[11px] text-slate-500">
             Step {timelineSteps.filter((s) => s.done).length + 1} of {timelineSteps.length}
@@ -336,7 +336,7 @@ export default function ResultsDashboard({
             label="Questions answered"
             value={(userProfile.totalQuestionsSeen ?? totalAttempts).toLocaleString()}
             sub="All exposures incl. screener"
-            accent="#d97706"
+            accent="#4f46e5"
             big
             title="Counts every question shown. Skill accuracy uses skill-practice attempts only."
           />
@@ -381,34 +381,34 @@ export default function ResultsDashboard({
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <div
               className="rounded-xl p-4 text-center"
-              style={{ background: 'rgba(184,242,216,0.08)', border: '1px solid rgba(184,242,216,0.25)' }}
+              style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)' }}
             >
               <p className="text-[26px] font-semibold tabular-nums" style={{ color: '#059669' }}>
                 {growthMetrics.approachingToDemo}
               </p>
-              <p className="text-[11px] text-slate-400 mt-1">Skills reached Demonstrating</p>
+              <p className="text-[11px] text-slate-500 mt-1">Skills reached Demonstrating</p>
             </div>
             <div
               className="rounded-xl p-4 text-center"
-              style={{ background: 'rgba(252,213,180,0.08)', border: '1px solid rgba(252,213,180,0.25)' }}
+              style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)' }}
             >
               <p className="text-[26px] font-semibold tabular-nums" style={{ color: '#d97706' }}>
                 {growthMetrics.emergedToApproaching}
               </p>
-              <p className="text-[11px] text-slate-400 mt-1">Skills improved a tier</p>
+              <p className="text-[11px] text-slate-500 mt-1">Skills improved a tier</p>
             </div>
             <div
               className="rounded-xl p-4 text-center"
               style={{ background: '#ffffff', border: '1px solid #e6dfd4' }}
             >
               <p className="text-[26px] font-semibold text-slate-900 tabular-nums">{demonstratingCount}</p>
-              <p className="text-[11px] text-slate-400 mt-1">Currently Demonstrating</p>
+              <p className="text-[11px] text-slate-500 mt-1">Currently Demonstrating</p>
             </div>
             <div
               className="rounded-xl p-4 text-center"
               style={{ background: '#ffffff', border: '1px solid #e6dfd4' }}
             >
-              <p className="text-[26px] font-semibold text-slate-400 tabular-nums">
+              <p className="text-[26px] font-semibold text-slate-500 tabular-nums">
                 {baselineProgress ? baselineProgress.skills.filter((s) => s.colorState === 'green').length : 0}
               </p>
               <p className="text-[11px] text-slate-500 mt-1">Baseline Demonstrating</p>
@@ -429,8 +429,7 @@ export default function ResultsDashboard({
           {domainFilter !== null && (
             <button
               onClick={() => setDomainFilter(null)}
-              className="text-[11px] font-medium hover:underline"
-              style={{ color: '#d97706' }}
+              className="text-[11px] font-medium hover:underline text-accent"
             >
               Show all →
             </button>
@@ -444,7 +443,7 @@ export default function ResultsDashboard({
             const demonstrating = domain.strongerSkillCount;
             const barPct = Math.round((demonstrating / Math.max(domain.activeSkillCount, 1)) * 100);
             const examWeight = EXAM_WEIGHTS[domain.domainId] ?? 0;
-            const color = DOMAIN_COLOR[domain.domainId] ?? '#d97706';
+            const color = DOMAIN_COLOR[domain.domainId] ?? '#4f46e5';
 
             const baselineDomain =
               showBaseline && baselineProgress ? baselineProgress.domains.find((d) => d.domainId === domain.domainId) : null;
@@ -468,7 +467,7 @@ export default function ResultsDashboard({
                     toggleDomain(domain.domainId);
                     setDomainFilter(domainFilter === domain.domainId ? null : domain.domainId);
                   }}
-                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706]"
+                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-3 mb-2.5">
@@ -529,9 +528,9 @@ export default function ResultsDashboard({
                           <span
                             className="rounded-full px-2.5 py-0.5 text-[10px] font-medium"
                             style={{
-                              background: 'rgba(251,207,232,0.12)',
+                              background: 'rgba(225,29,72,0.1)',
                               color: '#e11d48',
-                              border: '1px solid rgba(251,207,232,0.3)',
+                              border: '1px solid rgba(225,29,72,0.25)',
                             }}
                             title={PROFICIENCY_META.emerging.description}
                           >
@@ -542,9 +541,9 @@ export default function ResultsDashboard({
                           <span
                             className="rounded-full px-2.5 py-0.5 text-[10px] font-medium"
                             style={{
-                              background: 'rgba(252,213,180,0.12)',
+                              background: 'rgba(217,119,6,0.1)',
                               color: '#d97706',
-                              border: '1px solid rgba(252,213,180,0.3)',
+                              border: '1px solid rgba(217,119,6,0.25)',
                             }}
                             title={PROFICIENCY_META.approaching.description}
                           >
@@ -555,9 +554,9 @@ export default function ResultsDashboard({
                           <span
                             className="rounded-full px-2.5 py-0.5 text-[10px] font-medium"
                             style={{
-                              background: 'rgba(184,242,216,0.12)',
+                              background: 'rgba(5,150,105,0.1)',
                               color: '#059669',
-                              border: '1px solid rgba(184,242,216,0.3)',
+                              border: '1px solid rgba(5,150,105,0.25)',
                             }}
                             title={PROFICIENCY_META.proficient.description}
                           >
@@ -592,7 +591,7 @@ export default function ResultsDashboard({
                           <LegendDot color="#e11d48" label={PROFICIENCY_META.emerging.label} />
                           <LegendDot color="#d97706" label={PROFICIENCY_META.approaching.label} />
                           <LegendDot color="#059669" label={PROFICIENCY_META.proficient.label} />
-                          <LegendDot color="rgba(226,232,240,0.2)" label={PROFICIENCY_META.unstarted.label} />
+                          <LegendDot color="#e2e8f0" label={PROFICIENCY_META.unstarted.label} />
                         </div>
                       </div>
                     ) : (
@@ -615,7 +614,7 @@ export default function ResultsDashboard({
         >
           <button
             onClick={() => setConceptsExpanded((prev) => !prev)}
-            className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706]"
+            className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
           >
             <div className="flex items-center gap-3">
               <Lightbulb className="w-4 h-4" style={{ color: '#0284c7' }} />
@@ -624,9 +623,9 @@ export default function ResultsDashboard({
                 <span
                   className="rounded-full px-2 py-0.5 text-[10px] font-medium"
                   style={{
-                    background: 'rgba(251,207,232,0.12)',
+                    background: 'rgba(225,29,72,0.1)',
                     color: '#e11d48',
-                    border: '1px solid rgba(251,207,232,0.3)',
+                    border: '1px solid rgba(225,29,72,0.25)',
                   }}
                 >
                   {conceptReport.summary.totalGaps} gap{conceptReport.summary.totalGaps !== 1 ? 's' : ''}
@@ -640,7 +639,7 @@ export default function ResultsDashboard({
 
           {conceptsExpanded && (
             <div className="space-y-5 border-t border-slate-200 px-5 py-5">
-              <p className="text-[11.5px] text-slate-400 leading-snug">
+              <p className="text-[11.5px] text-slate-500 leading-snug">
                 Vocabulary concepts across multiple questions. Gaps = recurring weaknesses; likely vocabulary to study.
               </p>
 
@@ -708,10 +707,10 @@ export default function ResultsDashboard({
       >
         <button
           onClick={() => setAdvancedExpanded((prev) => !prev)}
-          className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706]"
+          className="flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
         >
           <div className="flex items-center gap-3">
-            <Clock className="w-4 h-4" style={{ color: '#d97706' }} />
+            <Clock className="w-4 h-4" style={{ color: '#4f46e5' }} />
             <p className="text-[15px] font-semibold text-slate-900">Advanced statistics</p>
           </div>
           {advancedExpanded
@@ -728,10 +727,10 @@ export default function ResultsDashboard({
                 <div>
                   <p className="eyebrow mb-1.5">Avg time per question</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="tabular-nums text-[26px] font-semibold" style={{ color: '#d97706' }}>
+                    <span className="tabular-nums text-[26px] font-semibold" style={{ color: '#4f46e5' }}>
                       {formatTime(timeStats.avgOverall)}
                     </span>
-                    <span className="text-[12px] text-slate-400">per question overall</span>
+                    <span className="text-[12px] text-slate-500">per question overall</span>
                   </div>
                 </div>
 
@@ -745,7 +744,7 @@ export default function ResultsDashboard({
                         .map((d, idx) => {
                           const stat = timeStats.byDomain[d.domainId];
                           const isMax = idx === 0;
-                          const color = DOMAIN_COLOR[d.domainId] ?? '#d97706';
+                          const color = DOMAIN_COLOR[d.domainId] ?? '#4f46e5';
                           return (
                             <div key={d.domainId} className="flex items-center justify-between gap-3">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -755,7 +754,7 @@ export default function ResultsDashboard({
                                 />
                                 <p className="truncate text-[12.5px] text-slate-600">{d.domainName}</p>
                                 {isMax && (
-                                  <span className="text-[10px] uppercase tracking-wider" style={{ color: '#d97706' }}>
+                                  <span className="text-[10px] uppercase tracking-wider" style={{ color: '#4f46e5' }}>
                                     most time
                                   </span>
                                 )}
@@ -780,7 +779,7 @@ export default function ResultsDashboard({
                             {i + 1}. {q.questionId}
                           </p>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[12.5px] font-semibold tabular-nums" style={{ color: '#d97706' }}>
+                            <span className="text-[12.5px] font-semibold tabular-nums" style={{ color: '#4f46e5' }}>
                               {formatTime(q.avgSeconds)}
                             </span>
                             <span className="text-[10px] text-slate-500">×{q.count}</span>
@@ -796,17 +795,17 @@ export default function ResultsDashboard({
             {rawPct !== null && (
               <div>
                 <p className="eyebrow mb-1.5">Confidence-adjusted accuracy</p>
-                <p className="mb-2.5 text-[11.5px] text-slate-400 leading-snug">
+                <p className="mb-2.5 text-[11.5px] text-slate-500 leading-snug">
                   High-confidence wrong answers get penalized. A gap between raw and adjusted suggests misconceptions.
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-[12.5px] text-slate-400">Raw accuracy</p>
+                    <p className="text-[12.5px] text-slate-500">Raw accuracy</p>
                     <span className="text-[12.5px] font-semibold tabular-nums text-slate-900">{rawPct}%</span>
                   </div>
                   {weightedPct !== null && (
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-[12.5px] text-slate-400">
+                      <p className="text-[12.5px] text-slate-500">
                         Confidence-weighted
                         <span className="ml-1.5 text-[10px] text-slate-500">(Sure×1.2, Guess×0.8, Sure+wrong×0.5)</span>
                       </p>
@@ -818,7 +817,7 @@ export default function ResultsDashboard({
                               ? '#059669'
                               : confidenceDeltaPct !== null && confidenceDeltaPct < 0
                                 ? '#e11d48'
-                                : 'white',
+                                : '#0f172a',
                         }}
                       >
                         {weightedPct}%
@@ -844,7 +843,7 @@ export default function ResultsDashboard({
                   )}
                 </div>
                 {confidenceStats.interpretation === 'possible_overconfidence' && (
-                  <p className="mt-2 text-[11.5px] leading-snug text-slate-400 italic">
+                  <p className="mt-2 text-[11.5px] leading-snug text-slate-500 italic">
                     High-confidence wrong answers are pulling your effective score below raw — likely a misconception worth targeting.
                   </p>
                 )}
@@ -858,7 +857,7 @@ export default function ResultsDashboard({
                   <div className="space-y-1 mb-3">
                     {topErrors.map(([distractor, count]) => (
                       <div key={distractor} className="flex items-center justify-between gap-3">
-                        <p className="flex-1 truncate text-[12px] text-slate-400">{distractor}</p>
+                        <p className="flex-1 truncate text-[12px] text-slate-500">{distractor}</p>
                         <span
                           className="shrink-0 text-[12px] font-semibold tabular-nums"
                           style={{ color: '#e11d48' }}
@@ -872,7 +871,7 @@ export default function ResultsDashboard({
                 {(userProfile.errorPatterns ?? []).length > 0 && (
                   <div className="space-y-1">
                     {(userProfile.errorPatterns ?? []).slice(0, 5).map((pattern, i) => (
-                      <p key={i} className="text-[11.5px] leading-relaxed text-slate-400">
+                      <p key={i} className="text-[11.5px] leading-relaxed text-slate-500">
                         • {pattern}
                       </p>
                     ))}

@@ -88,7 +88,7 @@ export function TutorChatPage({
           <button
             onClick={chat.startNewSession}
             title="New chat"
-            className="w-7 h-7 rounded-full border border-slate-300 text-slate-900 flex items-center justify-center hover:border-[color:#d97706] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706]"
+            className="w-7 h-7 rounded-full border border-slate-300 text-slate-900 flex items-center justify-center hover:border-indigo-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
@@ -101,7 +101,7 @@ export function TutorChatPage({
               onClick={() => chat.setMode('chat')}
               className={`flex-1 py-1.5 rounded-full text-[11px] font-medium transition-colors ${
                 chat.mode === 'chat'
-                  ? 'bg-gradient-to-br from-[#fde4c1] to-[#fbcfe8] text-[#1e1b3a] font-semibold'
+                  ? 'grad-chrome text-white font-semibold'
                   : 'text-slate-400 hover:text-slate-700'
               }`}
             >
@@ -111,7 +111,7 @@ export function TutorChatPage({
               onClick={() => chat.setMode('quiz')}
               className={`flex-1 py-1.5 rounded-full text-[11px] font-medium transition-colors ${
                 chat.mode === 'quiz'
-                  ? 'bg-gradient-to-br from-[#fde4c1] to-[#fbcfe8] text-[#1e1b3a] font-semibold'
+                  ? 'grad-chrome text-white font-semibold'
                   : 'text-slate-400 hover:text-slate-700'
               }`}
             >
@@ -130,7 +130,7 @@ export function TutorChatPage({
                 onClick={() => chat.selectSession(session.id)}
                 className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors border ${
                   isActive
-                    ? 'bg-[rgba(252,213,180,0.08)] border-[rgba(252,213,180,0.25)]'
+                    ? 'bg-violet-50 border-violet-200'
                     : 'border-transparent hover:bg-slate-50'
                 }`}
               >
@@ -155,7 +155,11 @@ export function TutorChatPage({
 
         {/* Header */}
         <header className="editorial-surface mx-4 mt-4 px-5 py-3.5 flex items-center gap-4 flex-shrink-0">
-          <div className="mini-orb" style={{ width: 28, height: 28 }} aria-hidden="true" />
+          <div
+            className="grad-chrome rounded-full shrink-0"
+            style={{ width: 28, height: 28, boxShadow: '0 0 18px rgba(139,92,246,0.35)' }}
+            aria-hidden="true"
+          />
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-semibold text-slate-900">
               {activeSession?.title || 'Ask anything, get quizzed'}
@@ -170,14 +174,14 @@ export function TutorChatPage({
         <div className="flex-1 overflow-y-auto px-4 py-5 space-y-5">
           {chat.isHydratingSession && (
             <div className="flex justify-center py-4">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[color:#d97706] border-t-transparent" />
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
             </div>
           )}
 
           {chat.hasOlderMessages && !chat.isHydratingSession && (
             <button
               onClick={chat.loadOlderMessages}
-              className="w-full flex items-center justify-center gap-1 text-[11px] text-slate-500 hover:text-slate-700 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706] rounded"
+              className="w-full flex items-center justify-center gap-1 text-[11px] text-slate-500 hover:text-slate-700 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 rounded"
             >
               <ChevronUp className="w-3 h-3" />
               Load older messages
@@ -209,16 +213,16 @@ export function TutorChatPage({
           {chat.isSending && (
             <div className="flex items-center gap-2 text-slate-500 text-sm">
               <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 bg-[color:#d97706] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-1.5 h-1.5 bg-[color:#e11d48] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-1.5 h-1.5 bg-[color:#7c3aed] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <span className="w-1.5 h-1.5 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-1.5 h-1.5 bg-indigo-700 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
               <span className="text-xs">Tutor is thinking…</span>
             </div>
           )}
 
           {chat.error && (
-            <div className="text-[11px] text-[color:#e11d48] bg-[color:#e11d48]/10 border border-[color:#e11d48]/30 rounded-lg px-3 py-2">
+            <div className="text-[11px] text-rose-600 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2">
               {chat.error}
             </div>
           )}
@@ -228,7 +232,7 @@ export function TutorChatPage({
 
         {/* Composer */}
         <div className="px-4 pb-4 flex-shrink-0">
-          <div className="flex items-end gap-3 p-3.5 rounded-2xl bg-[#ffffff] border border-slate-200 focus-within:border-[color:#d97706]/50 focus-within:ring-2 focus-within:ring-[color:#d97706]/20 transition-colors">
+          <div className="flex items-end gap-3 p-3.5 rounded-2xl bg-white border border-slate-200 focus-within:border-indigo-400/50 focus-within:ring-2 focus-within:ring-indigo-400/20 transition-colors">
             <textarea
               ref={inputRef}
               value={input}
@@ -317,7 +321,7 @@ export function TutorChatPage({
                 <div key={m.id} className="flex items-start gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
                   <div
                     className="w-1 self-stretch rounded-full"
-                    style={{ background: m.artifactType === 'quiz' ? '#e11d48' : '#0284c7' }}
+                    style={{ background: m.artifactType === 'quiz' ? '#e11d48' : '#4f46e5' }}
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-[11px] font-medium text-slate-900 truncate">
@@ -331,8 +335,8 @@ export function TutorChatPage({
           )}
         </div>
 
-        <div className="rounded-xl p-4 border" style={{ borderColor: 'rgba(252,213,180,0.25)', background: 'rgba(252,213,180,0.04)' }}>
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold mb-2" style={{ color: '#d97706' }}>Suggestion</p>
+        <div className="rounded-xl p-4 border" style={{ borderColor: 'rgba(139,92,246,0.22)', background: 'rgba(139,92,246,0.05)' }}>
+          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold mb-2 text-accent">Suggestion</p>
           <p className="text-[12px] text-slate-600 leading-relaxed">
             When this chat ends, ask the tutor to <span className="text-slate-900 font-semibold">add a 10-minute spaced review</span> to lock in what you learned.
           </p>

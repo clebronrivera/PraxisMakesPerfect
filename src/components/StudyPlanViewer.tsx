@@ -128,7 +128,7 @@ function SideRail({ plan }: { plan: StudyPlanDocumentV2 }) {
           </span>
         </div>
         <div className="space-y-1.5">
-          <div className="progress-track">
+          <div className="editorial-progress-track">
             <div className={`${rc.bar} h-full rounded-full`} style={{ width: `${rc.pct}%` }} />
           </div>
           {snap.testTimeline && (
@@ -213,7 +213,7 @@ function TabOverview({ plan }: { plan: StudyPlanDocumentV2 }) {
             {snap.readinessLevel.replace('_', ' ')}
           </span>
         </div>
-        <div className="mt-4 progress-track">
+        <div className="mt-4 editorial-progress-track">
           <div className={`${rc.bar} h-full rounded-full transition-all duration-700`} style={{ width: `${rc.pct}%` }} />
         </div>
       </div>
@@ -225,8 +225,8 @@ function TabOverview({ plan }: { plan: StudyPlanDocumentV2 }) {
           <div className="grid sm:grid-cols-3 gap-3">
             {interp.urgentInsights.slice(0, 3).map((insight, i) => (
               <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-                <div className="w-7 h-7 rounded-lg bg-[color:#d97706]/20 flex items-center justify-center">
-                  <Zap className="w-3.5 h-3.5 text-[color:#d97706]" />
+                <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-indigo-600" />
                 </div>
                 <p className="text-xs text-slate-700 leading-relaxed">{insight}</p>
               </div>
@@ -409,9 +409,9 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
             <button
               key={d.domainId}
               onClick={() => setActiveDomainId(d.domainId)}
-              className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
+              className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 ${
                 active
-                  ? 'bg-[color:#d97706]/10 border-[color:#d97706]/50 text-slate-900'
+                  ? 'bg-indigo-50 border-indigo-300 text-slate-900'
                   : `bg-slate-50 ${sc} hover:bg-slate-100`
               }`}
             >
@@ -514,16 +514,20 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
   return (
     <div className="space-y-4">
       {/* Sub-tab toggle */}
-      <div className="tab-bar w-fit">
+      <div className="flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-xl w-fit">
         <button
           onClick={() => setSubTab('vocab')}
-          className={subTab === 'vocab' ? 'tab-item-active' : 'tab-item'}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 ${
+            subTab === 'vocab' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+          }`}
         >
           Vocabulary ({plan.vocabulary.length})
         </button>
         <button
           onClick={() => setSubTab('cases')}
-          className={subTab === 'cases' ? 'tab-item-active' : 'tab-item'}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 ${
+            subTab === 'cases' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+          }`}
         >
           Case patterns ({plan.casePatterns.length})
         </button>
@@ -622,9 +626,9 @@ function TabWeekly({ plan }: { plan: StudyPlanDocumentV2 }) {
           <button
             key={w.weekNumber}
             onClick={() => setActiveWeek(w.weekNumber)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 ${
               w.weekNumber === activeWeek
-                ? 'bg-[color:#d97706]/10 border-[color:#d97706]/50 text-slate-900'
+                ? 'bg-indigo-50 border-indigo-300 text-slate-900'
                 : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
@@ -770,7 +774,7 @@ export default function StudyPlanViewer({ plan }: StudyPlanViewerProps) {
         <button
           type="button"
           onClick={() => window.print()}
-          className="study-plan-print-button flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-[color:#d97706]/30 text-slate-600 hover:text-slate-900 rounded-xl text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
+          className="study-plan-print-button flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-indigo-300 text-slate-600 hover:text-slate-900 rounded-xl text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60"
         >
           <Printer className="w-3.5 h-3.5" />
           Print
@@ -784,12 +788,16 @@ export default function StudyPlanViewer({ plan }: StudyPlanViewerProps) {
         <div className="flex-1 min-w-0 space-y-4">
           {/* Tab bar */}
           <div className="study-plan-tab-bar overflow-x-auto">
-            <div className="tab-bar min-w-max">
+            <div className="flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-xl min-w-max">
               {TABS.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 whitespace-nowrap ${activeTab === tab.id ? 'tab-item-active' : 'tab-item'}`}
+                  className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 ${
+                    activeTab === tab.id
+                      ? 'bg-white text-indigo-700 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
                 >
                   {tab.icon}
                   {tab.label}

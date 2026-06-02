@@ -608,8 +608,8 @@ export default function PracticeSession({
     if (analyzedQuestions.length === 0) {
       return (
         <div className="editorial-surface mx-auto max-w-md p-12 text-center space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-amber-50">
-            <Zap className="h-8 w-8 text-amber-600" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] grad-chrome">
+            <Zap className="h-8 w-8 text-white" />
           </div>
           <div>
             <h3 className="text-xl font-bold text-slate-900">No Questions Found</h3>
@@ -670,7 +670,7 @@ export default function PracticeSession({
       <div className="editorial-surface flex items-center justify-between gap-4 p-5">
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-amber-600" />
+            <Zap className="h-5 w-5 text-accent" />
             <span className="text-sm font-semibold text-slate-700">
               {practiceSkillId ? `Skill Practice` : practiceDomain ? 'Domain Review' : 'Practice'}
             </span>
@@ -721,15 +721,15 @@ export default function PracticeSession({
               }}
               className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
                 hintOpenForQuestion === currentQuestion?.id
-                  ? 'border-amber-400 bg-amber-100 text-amber-600'
-                  : 'border-transparent text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600'
+                  ? 'border-indigo-300 bg-indigo-100 text-indigo-700'
+                  : 'border-transparent text-slate-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700'
               }`}
               title="Open module hint — answer won't count toward score"
             >
               <Lightbulb className="w-4 h-4" />
               <span className="hidden sm:inline">Hint</span>
               {hintUsedIds.has(currentQuestion?.id ?? '') && (
-                <span className="ml-0.5 text-[10px] text-amber-600">(used)</span>
+                <span className="ml-0.5 text-[10px] text-indigo-600">(used)</span>
               )}
             </button>
           )}
@@ -738,7 +738,7 @@ export default function PracticeSession({
           {practiceSkillId && (
             <button
               onClick={() => setHelpDrawerOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600"
+              className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-sm text-slate-500 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
               title="Open skill lesson for help"
             >
               <BookOpen className="w-4 h-4" />
@@ -818,14 +818,14 @@ export default function PracticeSession({
           ? prevDistractorNoteRef.current
           : null;
         return (
-          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-amber-300 bg-amber-50 px-4 py-3 duration-300">
-            <Lightbulb className="h-4 w-4 flex-shrink-0 text-amber-600 mt-0.5" />
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-indigo-200 bg-indigo-50 px-4 py-3 duration-300">
+            <Lightbulb className="h-4 w-4 flex-shrink-0 text-accent mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-slate-900">
                 {streak >= 2 ? 'One more look — here\'s what tripped you up:' : 'Second chance — read carefully.'}
               </p>
               {tip && (
-                <p className="mt-1 text-xs leading-relaxed text-amber-600">{tip}</p>
+                <p className="mt-1 text-xs leading-relaxed text-indigo-700">{tip}</p>
               )}
             </div>
           </div>
@@ -873,11 +873,11 @@ export default function PracticeSession({
       {streakMessage && consecutiveCorrect >= 2 && (
         <div
           key={streakMessage}
-          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-amber-300 bg-amber-50 px-4 py-3 duration-300"
+          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-indigo-200 bg-indigo-50 px-4 py-3 duration-300"
         >
-          <Flame className="h-4 w-4 flex-shrink-0 text-amber-600" />
+          <Flame className="h-4 w-4 flex-shrink-0 text-accent" />
           <span className="text-sm font-semibold text-slate-900">{streakMessage}</span>
-          <span className="ml-auto text-xs font-medium text-amber-700">{consecutiveCorrect} in a row</span>
+          <span className="ml-auto text-xs font-medium text-indigo-700">{consecutiveCorrect} in a row</span>
         </div>
       )}
 
@@ -989,8 +989,8 @@ export default function PracticeSession({
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Hint-used notice */}
             {wasHintUsed && (
-              <div className="flex items-center gap-2.5 rounded-[1.25rem] border border-amber-300 bg-amber-50 px-4 py-3">
-                <Lightbulb className="h-4 w-4 flex-shrink-0 text-amber-600" />
+              <div className="flex items-center gap-2.5 rounded-[1.25rem] border border-indigo-200 bg-indigo-50 px-4 py-3">
+                <Lightbulb className="h-4 w-4 flex-shrink-0 text-accent" />
                 <span className="text-sm text-slate-700">
                   Hint was used — this answer was not counted toward your score.
                 </span>
@@ -1032,7 +1032,7 @@ export default function PracticeSession({
       {isPaused && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-md">
           <div className="mx-4 max-w-sm space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 text-center" style={{ boxShadow: '0 24px 70px rgba(15,23,42,0.18)' }}>
-            <Pause className="mx-auto h-12 w-12 text-amber-600" />
+            <Pause className="mx-auto h-12 w-12 text-accent" />
             <div>
               <h3 className="text-xl font-bold text-slate-900">Session Paused</h3>
               <p className="mt-2 text-sm text-slate-500">Your progress is safely stored. Resume when you&apos;re ready.</p>
