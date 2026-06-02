@@ -208,7 +208,7 @@ function PraxisStudyAppContent() {
   // Indigo/violet light re-theme: modes are removed from this set as each screen
   // is re-themed to the light shell (mockup: public/mockup-retheme-allscreens.html).
   const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([
-    'study-notebook', 'glossary', 'help',
+    'study-notebook', 'help',
   ]);
 
   // Use hooks for profile and adaptive learning
