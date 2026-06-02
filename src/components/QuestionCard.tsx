@@ -22,7 +22,6 @@ interface QuestionCardProps {
   isSubmitting?: boolean;
   assessmentType?: 'pre' | 'full' | 'adaptive' | 'practice';
   hideFooterControls?: boolean;
-  variant?: 'atelier' | 'editorial';
 }
 
 export default function QuestionCard({
@@ -37,13 +36,11 @@ export default function QuestionCard({
   showFeedback,
   isSubmitting = false,
   assessmentType = 'practice',
-  hideFooterControls = false,
-  variant = 'editorial'
+  hideFooterControls = false
 }: QuestionCardProps) {
   const [showReportModal, setShowReportModal] = useState(false);
   const isConfidenceVisible = !hideFooterControls && !showFeedback && selectedAnswers.length > 0;
   const correctAnswersList = question.correct_answer || question.correctAnswers || [];
-  const isAtelier = variant === 'atelier';
 
   // Determine source display
   const getSourceDisplay = () => {
@@ -57,40 +54,6 @@ export default function QuestionCard({
   };
 
   const getChoiceTone = (isSelected: boolean, isCorrect: boolean) => {
-    if (isAtelier) {
-      if (showFeedback && isCorrect) {
-        return {
-          container: 'border-[color:var(--d2-mint)]/50 bg-[color:var(--d2-mint)]/10',
-          chip: 'bg-[color:var(--d2-mint)]/30 text-white border border-[color:var(--d2-mint)]/60',
-          text: 'text-white',
-          icon: 'text-[color:var(--d2-mint)]',
-        };
-      }
-      if (showFeedback && isSelected && !isCorrect) {
-        return {
-          container: 'border-[color:var(--accent-rose)]/50 bg-[color:var(--accent-rose)]/10',
-          chip: 'bg-[color:var(--accent-rose)]/30 text-white border border-[color:var(--accent-rose)]/60',
-          text: 'text-white',
-          icon: 'text-[color:var(--accent-rose)]',
-        };
-      }
-      if (isSelected) {
-        return {
-          container: 'border-[color:var(--d1-peach)]/50 bg-[color:var(--d1-peach)]/10',
-          chip: 'bg-[color:var(--d1-peach)]/25 text-white border border-[color:var(--d1-peach)]/60',
-          text: 'text-white',
-          icon: 'text-[color:var(--d1-peach)]',
-        };
-      }
-      return {
-        container: 'border-white/10 bg-white/5 hover:border-[color:var(--d1-peach)]/40 hover:bg-white/8',
-        chip: 'border border-white/10 bg-[rgba(10,22,40,0.5)] text-slate-400',
-        text: 'text-slate-200',
-        icon: 'text-slate-400',
-      };
-    }
-
-    // Editorial (default)
     if (showFeedback && isCorrect) {
       return {
         container: 'border-emerald-300 bg-emerald-50',
@@ -126,52 +89,22 @@ export default function QuestionCard({
     };
   };
 
-  // Variant-scoped class strings
-  const cardShell = isAtelier
-    ? 'overflow-hidden rounded-2xl border border-white/8 bg-[rgba(10,22,40,0.55)] backdrop-blur-[14px]'
-    : 'editorial-surface overflow-hidden';
-  const headerShell = isAtelier
-    ? 'flex items-center justify-between border-b border-white/8 bg-[rgba(10,22,40,0.4)] px-6 py-3'
-    : 'flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-3';
-  const sourcePill = isAtelier
-    ? 'inline-flex items-center rounded-full border border-[color:var(--d1-peach)]/40 bg-[color:var(--d1-peach)]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-[color:var(--d1-peach)]'
-    : 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700';
-  const flagButton = isAtelier
-    ? 'rounded-xl border border-transparent bg-white/5 p-2.5 text-slate-400 transition-all hover:border-[color:var(--d1-peach)]/30 hover:bg-white/10 hover:text-[color:var(--d1-peach)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--d1-peach)]'
-    : 'rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700';
-  const caseShell = isAtelier
-    ? 'rounded-2xl border border-[color:var(--d1-peach)]/30 bg-[color:var(--d1-peach)]/10 p-5'
-    : 'rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5';
-  const caseHeading = isAtelier
-    ? 'mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--d1-peach)]'
-    : 'mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700';
-  const caseBody = isAtelier
-    ? 'text-sm leading-relaxed italic text-slate-200'
-    : 'text-sm leading-relaxed italic text-slate-700';
-  const stemText = isAtelier
-    ? 'text-[1.1rem] font-semibold leading-8 text-white sm:text-[1.25rem]'
-    : 'text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]';
-  const multiSelectPill = isAtelier
-    ? 'inline-flex items-center rounded-full border border-[color:var(--d1-peach)]/40 bg-[color:var(--d1-peach)]/15 px-3 py-1 text-xs font-semibold text-[color:var(--d1-peach)]'
-    : 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700';
-  const confidenceShell = isAtelier
-    ? 'mt-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/8 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px] px-4 py-3'
-    : 'editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-4 py-3';
-  const confidenceLabel = isAtelier
-    ? 'text-sm font-semibold text-slate-200'
-    : 'text-sm font-semibold text-slate-700';
-  const confidenceActive = isAtelier
-    ? 'border-[color:var(--d1-peach)]/60 bg-[color:var(--d1-peach)]/20 text-white'
-    : 'border-slate-900 bg-slate-900 text-white';
-  const confidenceIdle = isAtelier
-    ? 'border-white/10 bg-white/5 text-slate-300 hover:border-[color:var(--d1-peach)]/40 hover:text-white'
-    : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900';
-  const submitBtn = isAtelier
-    ? 'btn-soft-glow min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50'
-    : 'editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50';
-  const nextBtn = isAtelier
-    ? 'btn-soft-glow min-w-[12rem] inline-flex items-center justify-center gap-2'
-    : 'editorial-button-dark min-w-[12rem]';
+  // Editorial class strings
+  const cardShell = 'editorial-surface overflow-hidden';
+  const headerShell = 'flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-3';
+  const sourcePill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700';
+  const flagButton = 'rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700';
+  const caseShell = 'rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5';
+  const caseHeading = 'mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700';
+  const caseBody = 'text-sm leading-relaxed italic text-slate-700';
+  const stemText = 'text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]';
+  const multiSelectPill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700';
+  const confidenceShell = 'editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-4 py-3';
+  const confidenceLabel = 'text-sm font-semibold text-slate-700';
+  const confidenceActive = 'border-slate-900 bg-slate-900 text-white';
+  const confidenceIdle = 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900';
+  const submitBtn = 'editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50';
+  const nextBtn = 'editorial-button-dark min-w-[12rem]';
 
   return (
     <>

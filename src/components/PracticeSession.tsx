@@ -959,7 +959,6 @@ export default function PracticeSession({
         disabled={isPaused}
         showFeedback={showFeedback}
         assessmentType="practice"
-        variant="editorial"
       />
 
       {/* ── Hint Panel (before submitting) ──────────────────────────────────── */}

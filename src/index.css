@@ -134,36 +134,6 @@
     background: linear-gradient(90deg, var(--accent-from) 0%, var(--accent-to) 100%);
   }
 
-  /* ── Surface cards ─────────────────────────────────────── */
-  .card {
-    @apply bg-slate-900/60 border border-slate-800/60 rounded-2xl;
-  }
-
-  .card-elevated {
-    @apply bg-slate-800/60 border border-slate-700/50 rounded-2xl;
-  }
-
-  .card-focus {
-    @apply bg-white/[0.04] border border-white/10 rounded-2xl;
-  }
-
-  .card-accent-cyan {
-    @apply bg-cyan-500/8 border border-cyan-500/20 rounded-2xl;
-  }
-
-  .card-accent-coral {
-    @apply bg-rose-500/8 border border-rose-500/20 rounded-2xl;
-  }
-
-  .card-accent-mint {
-    @apply bg-emerald-500/8 border border-emerald-500/20 rounded-2xl;
-  }
-
-  /* ── Stat cards ───────────────────────────────────────── */
-  .stat-card {
-    @apply p-4 bg-navy-900/80 border border-navy-700/60 rounded-2xl;
-  }
-
   /* ── Buttons ──────────────────────────────────────────── */
   .btn-primary {
     @apply px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-xl transition-all active:scale-[0.98];
@@ -266,16 +236,14 @@
 
 @layer base {
   :root {
-    --navy-950:     #03070e;
+    /* Retained tokens still referenced by the frozen LoginScreen.tsx
+       (dark sign-in shell) and QuestionCard focus outlines. */
     --navy-900:     #060d1a;
-    --navy-800:     #0a1628;
-    --navy-700:     #0f1e38;
     --d1-peach:     #fcd5b4;
     --d2-mint:      #b8f2d8;
     --d3-ice:       #cde9f5;
     --d4-lavender:  #d8d5fc;
     --accent-rose:  #fbcfe8;
-    --accent-cream: #fff3de;
 
     /* ── Indigo/Violet re-theme (light) — single source of truth ── */
     --page-bg:      #f7f6f8;   /* cool light page (mockup)            */
@@ -292,15 +260,9 @@
 /* Atelier utilities live OUTSIDE @layer components so Tailwind's content-based
    purge leaves them alone until target screens start referencing them. */
 
-/* ── Glass surfaces ───────────────────────────────────────── */
+/* ── Glass surface (frozen LoginScreen.tsx) ───────────────── */
 .glass {
   background: rgba(10, 22, 40, 0.55);
-  border: 1px solid rgba(226, 232, 240, 0.08);
-  backdrop-filter: blur(14px);
-  border-radius: 20px;
-}
-.glass-deep {
-  background: rgba(6, 13, 26, 0.7);
   border: 1px solid rgba(226, 232, 240, 0.08);
   backdrop-filter: blur(14px);
   border-radius: 20px;
@@ -313,13 +275,6 @@
   background-clip: text;
   color: transparent;
 }
-.gradient-text-warm {
-  background: linear-gradient(135deg, #fde4c1, #fbcfe8);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 /* ── Mini orb (brand mark) ────────────────────────────────── */
 .mini-orb {
   width: 40px;
@@ -478,18 +433,6 @@
   color: #94a3b8;
 }
 
-/* ── Chip ─────────────────────────────────────────────────── */
-.chip-atelier {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 600;
-  border: 1px solid currentColor;
-}
-
 /* ── Buttons ──────────────────────────────────────────────── */
 .btn-soft-glow {
   padding: 11px 22px;
@@ -538,42 +481,6 @@
 .hair-divider-atelier {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(226, 232, 240, 0.1), transparent);
-}
-
-/* ── Shell (outer flex container, per-mode) ───────────────── */
-.shell-atelier {
-  @apply min-h-screen text-slate-100;
-  background-color: var(--navy-900);
-  position: relative;
-  isolation: isolate;
-}
-.shell-atelier::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    radial-gradient(1px 1px at 12% 14%, rgba(252, 213, 180, 0.32), transparent 40%),
-    radial-gradient(1px 1px at 88% 18%, rgba(216, 213, 252, 0.28), transparent 40%),
-    radial-gradient(1px 1px at 58% 72%, rgba(187, 247, 208, 0.22), transparent 40%),
-    radial-gradient(1px 1px at 24% 86%, rgba(205, 233, 245, 0.22), transparent 40%),
-    radial-gradient(1px 1px at 94% 62%, rgba(251, 207, 232, 0.28), transparent 40%),
-    radial-gradient(1px 1px at 6%  52%, rgba(216, 213, 252, 0.22), transparent 40%);
-  opacity: 0.55;
-}
-
-/* ── Sidebar active (atelier variant) ─────────────────────── */
-.atelier-sidebar-item-active {
-  background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 55%, #d8d5fc 100%);
-  color: #1e1b3a;
-  box-shadow:
-    0 0 22px rgba(252, 213, 180, 0.28),
-    0 12px 24px -8px rgba(0, 0, 0, 0.35);
-}
-.atelier-sidebar-item-active:hover {
-  color: #1e1b3a;
-  background: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 55%, #d8d5fc 100%);
 }
 
 /* Keyframes for raw class usage. tailwind.config.js re-declares these

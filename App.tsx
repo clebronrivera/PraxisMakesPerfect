@@ -202,13 +202,6 @@ function PraxisStudyAppContent() {
   type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'fluency-drill' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
-  // Atelier rollout: which modes render in the dark-navy shell.
-  // Everything else stays in the light editorial-shell until migrated.
-  // Step 4.5 added: study-notebook, glossary, help (light-touch token pass).
-  // Indigo/violet light re-theme: modes are removed from this set as each screen
-  // is re-themed to the light shell (mockup: public/mockup-retheme-allscreens.html).
-  const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([]);
-
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();
   const { questions: fetchedQuestions, isLoading: contentLoading, domains: fetchedDomains, skills: fetchedSkills } = useContent();
@@ -792,11 +785,9 @@ function PraxisStudyAppContent() {
     );
   })();
 
-  const isAtelier = ATELIER_MODES.has(mode);
-
   return (
     <div
-      className={`${isAtelier ? 'shell-atelier' : 'editorial-shell'} flex h-screen overflow-hidden`}
+      className="editorial-shell flex h-screen overflow-hidden"
       style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}
     >
       {/* Tutorial walkthrough overlay */}
@@ -810,25 +801,21 @@ function PraxisStudyAppContent() {
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-violet-200/20 blur-3xl" />
       </div>
 
-      <aside className={`hidden md:flex md:flex-shrink-0 md:flex-col transition-all duration-300 ${isAtelier ? 'md:bg-[#0f172a] md:shadow-2xl' : 'md:bg-white md:border-r md:border-slate-200'} ${sidebarCollapsed ? 'md:w-[4.5rem]' : 'md:w-64'}`}>
+      <aside className={`hidden md:flex md:flex-shrink-0 md:flex-col transition-all duration-300 md:bg-white md:border-r md:border-slate-200 ${sidebarCollapsed ? 'md:w-[4.5rem]' : 'md:w-64'}`}>
         <div className={`${sidebarCollapsed ? 'p-3 pt-6' : 'p-8'}`}>
           {/* ── Logo ── */}
           <div className={`group mb-10 flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
             <div className="relative">
-              {isAtelier ? (
-                <div className="mini-orb" aria-hidden="true" />
-              ) : (
-                <div className="relative flex h-10 w-10 items-center justify-center rounded-xl grad-chrome shadow-lg shadow-indigo-500/30">
-                  <Brain className="h-5 w-5 text-white" />
-                </div>
-              )}
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl grad-chrome shadow-lg shadow-indigo-500/30">
+                <Brain className="h-5 w-5 text-white" />
+              </div>
             </div>
             {!sidebarCollapsed && (
               <div>
-                <p className={`text-xl font-bold tracking-tight ${isAtelier ? 'italic text-white' : 'text-slate-900'}`}>
+                <p className="text-xl font-bold tracking-tight text-slate-900">
                   PASS
                 </p>
-                <p className={`text-[11px] font-black uppercase tracking-[0.1em] ${isAtelier ? 'text-slate-500' : 'text-slate-500'}`}>School Psychology 5403</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">School Psychology 5403</p>
               </div>
             )}
           </div>
@@ -849,42 +836,22 @@ function PraxisStudyAppContent() {
                 { label: 'Help', icon: <HelpCircle className="w-4 h-4" />, grad: 'from-indigo-400 to-violet-500', onClick: () => setMode('help'), active: mode === 'help', show: true },
               ];
               return tabs.filter(tab => tab.show).map(tab => {
-                if (!isAtelier) {
-                  // Light sidebar: per-item gradient icon tile; active = full-row hue gradient.
-                  return (
-                    <button
-                      key={tab.label}
-                      onClick={tab.onClick}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 relative ${
-                        tab.active
-                          ? `text-white bg-gradient-to-br ${tab.grad} shadow-lg shadow-indigo-500/20`
-                          : 'text-slate-600 hover:bg-slate-50'
-                      } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
-                      title={sidebarCollapsed ? tab.label : undefined}
-                    >
-                      <span className={`relative shrink-0 flex h-6 w-6 items-center justify-center rounded-lg ${tab.active ? 'bg-white/25 text-white' : `bg-gradient-to-br ${tab.grad} text-white`}`}>
-                        {tab.icon}
-                        {tab.badge && !tab.active && (
-                          <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
-                        )}
-                      </span>
-                      {!sidebarCollapsed && tab.label}
-                    </button>
-                  );
-                }
+                // Light sidebar: per-item gradient icon tile; active = full-row hue gradient.
                 return (
                   <button
                     key={tab.label}
                     onClick={tab.onClick}
-                    className={`editorial-sidebar-item ${
-                      tab.active ? 'atelier-sidebar-item-active' : ''
-                    } ${sidebarCollapsed ? 'justify-center px-0' : ''} relative`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 relative ${
+                      tab.active
+                        ? `text-white bg-gradient-to-br ${tab.grad} shadow-lg shadow-indigo-500/20`
+                        : 'text-slate-600 hover:bg-slate-50'
+                    } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
                     title={sidebarCollapsed ? tab.label : undefined}
                   >
-                    <span className="relative shrink-0">
+                    <span className={`relative shrink-0 flex h-6 w-6 items-center justify-center rounded-lg ${tab.active ? 'bg-white/25 text-white' : `bg-gradient-to-br ${tab.grad} text-white`}`}>
                       {tab.icon}
                       {tab.badge && !tab.active && (
-                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-500" />
+                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
                       )}
                     </span>
                     {!sidebarCollapsed && tab.label}
@@ -899,7 +866,7 @@ function PraxisStudyAppContent() {
         <div className={`px-3 pb-3 ${sidebarCollapsed ? '' : 'px-8'}`}>
           <button
             onClick={() => setSidebarCollapsed(prev => !prev)}
-            className={`w-full flex items-center justify-center gap-2 rounded-xl py-2 transition-all text-xs ${isAtelier ? 'text-slate-500 hover:text-slate-300 hover:bg-white/5' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'}`}
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 transition-all text-xs text-slate-500 hover:text-slate-700 hover:bg-slate-100"
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {sidebarCollapsed ? (
@@ -914,32 +881,23 @@ function PraxisStudyAppContent() {
         </div>
 
         {/* ── Profile card ── */}
-        <div className={`mt-auto border-t ${isAtelier ? 'border-white/5 bg-black/20' : 'border-slate-200 bg-slate-50/60'} ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
+        <div className={`mt-auto border-t border-slate-200 bg-slate-50/60 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
           <button
             type="button"
             onClick={openProfileEditor}
-            className={`w-full rounded-[1.75rem] border text-left transition focus:outline-none focus-visible:ring-2 ${isAtelier ? 'border-white/5 bg-white/5 hover:border-white/15 hover:bg-white/10 focus-visible:ring-[color:var(--d1-peach)]/60' : 'border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50 focus-visible:ring-indigo-400/60'} ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
+            className={`w-full rounded-[1.75rem] border text-left transition focus:outline-none focus-visible:ring-2 border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50 focus-visible:ring-indigo-400/60 ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
           >
             <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
-              <div
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${isAtelier ? '' : 'grad-chrome'}`}
-                style={isAtelier ? {
-                  background: 'color-mix(in srgb, var(--d1-peach) 18%, transparent)',
-                  border: '1px solid color-mix(in srgb, var(--d1-peach) 35%, transparent)',
-                } : undefined}
-              >
-                <User
-                  className="h-4 w-4"
-                  style={{ color: isAtelier ? 'var(--d1-peach)' : '#ffffff' }}
-                />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full grad-chrome">
+                <User className="h-4 w-4" style={{ color: '#ffffff' }} />
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <p className={`truncate text-sm font-bold ${isAtelier ? 'text-white' : 'text-slate-900'}`}>{displayName}</p>
+                  <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
                   {profileRoleLabel && (
                     <p
                       className="text-[10px] font-black uppercase tracking-[0.08em] leading-snug break-words"
-                      style={{ color: isAtelier ? 'var(--d1-peach)' : '#6d28d9' }}
+                      style={{ color: '#6d28d9' }}
                     >
                       {profileRoleLabel}
                     </p>
@@ -953,26 +911,16 @@ function PraxisStudyAppContent() {
       </aside>
 
       <main className="relative z-10 flex-1 flex flex-col overflow-hidden">
-        <header
-          className={`sticky top-0 z-50 border-b backdrop-blur-md ${
-            isAtelier
-              ? 'border-white/5 bg-navy-900/85'
-              : 'border-slate-200 bg-[#f7f6f8]/85'
-          }`}
-        >
+        <header className="sticky top-0 z-50 border-b backdrop-blur-md border-slate-200 bg-[#f7f6f8]/85">
           <div className="mx-auto max-w-[92rem] px-5 py-3.5 sm:px-8">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 md:hidden">
-                {isAtelier ? (
-                  <div className="mini-orb" aria-hidden="true" style={{ width: 36, height: 36 }} />
-                ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl grad-chrome shadow-lg shadow-indigo-500/30">
-                    <Brain className="h-5 w-5 text-white" />
-                  </div>
-                )}
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl grad-chrome shadow-lg shadow-indigo-500/30">
+                  <Brain className="h-5 w-5 text-white" />
+                </div>
                 <div>
-                  <p className={`text-base font-bold tracking-tight ${isAtelier ? 'text-white' : 'text-slate-900'}`}>PASS</p>
-                  <p className={`text-[11px] font-black uppercase tracking-[0.1em] ${isAtelier ? 'text-slate-500' : 'text-slate-400'}`}>School Psychology 5403</p>
+                  <p className="text-base font-bold tracking-tight text-slate-900">PASS</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">School Psychology 5403</p>
                 </div>
               </div>
 
