@@ -205,8 +205,10 @@ function PraxisStudyAppContent() {
   // Atelier rollout: which modes render in the dark-navy shell.
   // Everything else stays in the light editorial-shell until migrated.
   // Step 4.5 added: study-notebook, glossary, help (light-touch token pass).
+  // Indigo/violet light re-theme: modes are removed from this set as each screen
+  // is re-themed to the light shell (mockup: public/mockup-retheme-allscreens.html).
   const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([
-    'home', 'practice', 'practice-hub', 'study-guide', 'tutor', 'results',
+    'practice', 'practice-hub', 'study-guide', 'tutor', 'results',
     'study-notebook', 'glossary', 'fluency-drill', 'help',
   ]);
 
