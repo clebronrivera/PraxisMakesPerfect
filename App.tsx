@@ -63,6 +63,7 @@ import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
 const OnboardingFlow = lazy(() => import('./src/components/OnboardingFlow'));
 const ProfileEditorPanel = lazy(() => import('./src/components/ProfileEditorPanel'));
+const AccountPage = lazy(() => import('./src/components/AccountPage'));
 const PrivacyPolicy = lazy(() => import('./src/components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./src/components/TermsOfService'));
 
@@ -199,7 +200,7 @@ function StudyGuideTabWrapper({
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'fluency-drill' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'fluency-drill' | 'account' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
@@ -884,7 +885,7 @@ function PraxisStudyAppContent() {
         <div className={`mt-auto border-t border-slate-200 bg-slate-50/60 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
           <button
             type="button"
-            onClick={openProfileEditor}
+            onClick={() => setMode('account')}
             className={`w-full rounded-[1.75rem] border text-left transition focus:outline-none focus-visible:ring-2 border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50 focus-visible:ring-indigo-400/60 ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
           >
             <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
@@ -936,7 +937,7 @@ function PraxisStudyAppContent() {
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={openProfileEditor}
+                  onClick={() => setMode('account')}
                   className="editorial-topbar-button md:hidden"
                   title="Profile and onboarding"
                 >
@@ -1615,6 +1616,18 @@ function PraxisStudyAppContent() {
               onApplyNudges={(ids) => ids.forEach((id) => { void updateSkillProgress(id, false, 'low'); })}
               onExit={() => setMode('home')}
               onNavigateToGlossary={() => setMode('glossary')}
+            />
+          </Suspense>
+        )}
+
+        {/* ACCOUNT PAGE */}
+        {mode === 'account' && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading account…</div>}>
+            <AccountPage
+              profile={profile}
+              displayName={displayName}
+              onEditAnswers={openProfileEditor}
+              onSignOut={logout}
             />
           </Suspense>
         )}
