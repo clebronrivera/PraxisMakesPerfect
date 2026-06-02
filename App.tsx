@@ -207,9 +207,7 @@ function PraxisStudyAppContent() {
   // Step 4.5 added: study-notebook, glossary, help (light-touch token pass).
   // Indigo/violet light re-theme: modes are removed from this set as each screen
   // is re-themed to the light shell (mockup: public/mockup-retheme-allscreens.html).
-  const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([
-    'study-notebook', 'help',
-  ]);
+  const ATELIER_MODES: ReadonlySet<AppMode> = new Set<AppMode>([]);
 
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();

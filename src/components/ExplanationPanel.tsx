@@ -75,7 +75,7 @@ export default function ExplanationPanel({
     ? ((question as unknown as Record<string, unknown>)[`distractor_skill_deficit_${wrongLetter}`] as string | undefined) || ''
     : '';
 
-  const accentVar = isCorrect ? 'var(--d2-mint)' : 'var(--accent-rose)';
+  const accentVar = isCorrect ? '#059669' : '#e11d48';
 
   return (
     <div className="space-y-4">
@@ -83,7 +83,7 @@ export default function ExplanationPanel({
       <div
         className="rounded-2xl border p-6 backdrop-blur-[14px]"
         style={{
-          background: `color-mix(in srgb, ${accentVar} 10%, rgba(10,22,40,0.55))`,
+          background: `color-mix(in srgb, ${accentVar} 10%, #ffffff)`,
           borderColor: `color-mix(in srgb, ${accentVar} 30%, transparent)`,
           boxShadow: '0 4px 24px -4px rgba(0,0,0,0.4)',
         }}
@@ -103,65 +103,65 @@ export default function ExplanationPanel({
             )}
           </div>
           <div className="flex-1">
-            <h4 className="font-semibold mb-2 text-white">
+            <h4 className="font-semibold mb-2 text-slate-900">
               {isCorrect ? 'Correct!' : 'Not quite right'}
             </h4>
             <div className="space-y-2 mb-3">
               {!isCorrect && userAnswerSummary && (
-                <p className="text-sm leading-relaxed text-slate-300">
-                  <span className="font-semibold text-white">Your selection:</span>{' '}
+                <p className="text-sm leading-relaxed text-slate-600">
+                  <span className="font-semibold text-slate-900">Your selection:</span>{' '}
                   {userAnswerSummary}
                 </p>
               )}
               {correctAnswerSummary && (
-                <p className="text-sm leading-relaxed text-slate-300">
-                  <span className="font-semibold text-white">
+                <p className="text-sm leading-relaxed text-slate-600">
+                  <span className="font-semibold text-slate-900">
                     {getQuestionCorrectAnswers(question).length > 1 ? 'Correct responses:' : 'Correct answer:'}
                   </span>{' '}
                   {correctAnswerSummary}
                 </p>
               )}
             </div>
-            <p className="text-sm leading-relaxed text-slate-300">{displayRationale}</p>
+            <p className="text-sm leading-relaxed text-slate-600">{displayRationale}</p>
 
             {/* Extended Bank Fields (Static Questions) */}
             {displayCorrectExplanation && displayCorrectExplanation !== displayRationale && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Correct explanation</p>
-                <p className="text-sm leading-relaxed text-slate-300">{displayCorrectExplanation}</p>
+                <p className="text-sm leading-relaxed text-slate-600">{displayCorrectExplanation}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).contentLimit && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Content rule</p>
-                <p className="text-sm leading-relaxed text-slate-300">{(question as unknown as Record<string, string>).contentLimit}</p>
+                <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).contentLimit}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).complexityRationale && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Complexity</p>
-                <p className="text-sm leading-relaxed text-slate-300">{(question as unknown as Record<string, string>).complexityRationale}</p>
+                <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).complexityRationale}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).construct_actually_tested && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">What this tests</p>
-                <p className="text-sm leading-relaxed text-slate-300">{(question as unknown as Record<string, string>).construct_actually_tested}</p>
+                <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).construct_actually_tested}</p>
               </div>
             )}
 
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
-              <div className="mt-4 border-t border-white/8 pt-4">
+              <div className="mt-4 border-t border-slate-200 pt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Key concepts</p>
                 <div className="flex flex-wrap gap-2">
                   {question.keyConcepts.map((concept, i) => (
                     <span
                       key={i}
-                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300"
+                      className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600"
                     >
                       {concept}
                     </span>
@@ -174,16 +174,16 @@ export default function ExplanationPanel({
             {(misconceptionText || skillDeficitText) && (
               <div
                 className="mt-4 border-t pt-4"
-                style={{ borderColor: 'color-mix(in srgb, var(--accent-rose) 25%, transparent)' }}
+                style={{ borderColor: 'color-mix(in srgb, #e11d48 25%, transparent)' }}
               >
                 <p
                   className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em]"
-                  style={{ color: 'color-mix(in srgb, var(--accent-rose) 80%, white)' }}
+                  style={{ color: 'color-mix(in srgb, #e11d48 80%, white)' }}
                 >
                   Why this was wrong
                 </p>
                 {misconceptionText && (
-                  <p className="text-sm leading-relaxed text-slate-300">{misconceptionText}</p>
+                  <p className="text-sm leading-relaxed text-slate-600">{misconceptionText}</p>
                 )}
                 {skillDeficitText && (
                   <p className="mt-1.5 text-xs text-slate-400">

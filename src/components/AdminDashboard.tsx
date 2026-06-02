@@ -575,7 +575,7 @@ export default function AdminDashboard({
     <div className="space-y-6">
       <div className="editorial-surface flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <div className="flex items-center gap-3 text-amber-700">
+          <div className="flex items-center gap-3 text-indigo-700">
             <Shield className="h-8 w-8" />
             <h2 className="text-2xl font-bold text-slate-900">Beta Admin Dashboard</h2>
           </div>
@@ -602,10 +602,10 @@ export default function AdminDashboard({
         </div>
       </div>
 
-      <div className="editorial-surface-soft rounded-2xl border border-amber-200 bg-amber-50 p-5">
+      <div className="editorial-surface-soft rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-700">Testing Shortcuts</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-700">Testing Shortcuts</p>
             <p className="mt-2 text-sm text-slate-600">
               Jump back into the app instantly while staying signed in as admin.
             </p>
@@ -649,8 +649,8 @@ export default function AdminDashboard({
             onClick={() => setActiveTab(tab)}
             className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] transition-all ${
               activeTab === tab
-                ? 'bg-amber-500 text-slate-900 shadow-md'
-                : 'border border-slate-200 bg-white text-slate-500 hover:border-amber-200 hover:text-slate-700'
+                ? 'bg-indigo-500 text-slate-900 shadow-md'
+                : 'border border-slate-200 bg-white text-slate-500 hover:border-indigo-200 hover:text-slate-700'
             }`}
           >
             {label}
@@ -660,7 +660,7 @@ export default function AdminDashboard({
 
       {isLoading ? (
         <div className="editorial-surface p-10 text-center">
-          <RefreshCw className="mx-auto mb-3 h-8 w-8 animate-spin text-amber-500" />
+          <RefreshCw className="mx-auto mb-3 h-8 w-8 animate-spin text-indigo-500" />
           <p className="text-slate-500">Loading admin data...</p>
         </div>
       ) : (
@@ -747,7 +747,7 @@ export default function AdminDashboard({
 
               <div className="grid gap-6 lg:grid-cols-2">
                 <QueuePanel
-                  icon={<MessageSquare className="h-5 w-5 text-amber-700" />}
+                  icon={<MessageSquare className="h-5 w-5 text-indigo-700" />}
                   title="Latest Beta Feedback"
                   items={recentFeedback.map((item) => ({
                     id: item.id || item.userId,
@@ -758,7 +758,7 @@ export default function AdminDashboard({
                   emptyLabel="No beta feedback yet."
                 />
                 <QueuePanel
-                  icon={<ClipboardList className="h-5 w-5 text-amber-700" />}
+                  icon={<ClipboardList className="h-5 w-5 text-indigo-700" />}
                   title="Latest Question Reports"
                   items={recentReports.map((item) => ({
                     id: item.id || item.questionId,
@@ -847,7 +847,7 @@ export default function AdminDashboard({
                         <div key={theme.bucket} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] px-4 py-3">
                           <div className="flex items-center justify-between gap-3">
                             <p className="text-sm text-slate-800">{theme.bucket}</p>
-                            <span className="text-sm font-semibold text-amber-700">{theme.count}</span>
+                            <span className="text-sm font-semibold text-indigo-700">{theme.count}</span>
                           </div>
                         </div>
                       ))}
@@ -864,7 +864,7 @@ export default function AdminDashboard({
                         <div key={item.questionId} className="rounded-2xl border border-slate-200 bg-[#fbfaf7] px-4 py-3">
                           <div className="flex items-center justify-between gap-3">
                             <p className="font-medium text-slate-900">{item.questionId}</p>
-                            <span className="text-sm font-semibold text-amber-700">{item.count}</span>
+                            <span className="text-sm font-semibold text-indigo-700">{item.count}</span>
                           </div>
                         </div>
                       ))}
@@ -987,7 +987,7 @@ export default function AdminDashboard({
               </div>
             ) : (
               <div className="editorial-surface p-10 text-center">
-                <RefreshCw className={`mx-auto mb-3 h-8 w-8 text-amber-700 ${isAuditLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`mx-auto mb-3 h-8 w-8 text-indigo-700 ${isAuditLoading ? 'animate-spin' : ''}`} />
                 <p className="text-slate-700">
                   {isAuditLoading ? 'Building audit from live feedback and the bundled question bank...' : 'Audit data is unavailable right now.'}
                 </p>
@@ -1009,7 +1009,7 @@ export default function AdminDashboard({
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                        <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-700">
                           {item.category}
                         </span>
                         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">
@@ -1036,7 +1036,7 @@ export default function AdminDashboard({
                         <select
                           value={item.status}
                           onChange={(event) => handleFeedbackStatusChange(item.id!, event.target.value as BetaFeedbackStatus)}
-                          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-amber-300"
+                          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-indigo-300"
                         >
                           {FEEDBACK_STATUS_OPTIONS.map((status) => (
                             <option key={status} value={status}>
@@ -1070,7 +1070,7 @@ export default function AdminDashboard({
                           item.severity === 'critical'
                             ? 'bg-rose-50 text-rose-700'
                             : item.severity === 'major'
-                              ? 'bg-amber-100 text-amber-700'
+                              ? 'bg-indigo-100 text-indigo-700'
                               : 'bg-slate-100 text-slate-700'
                         }`}>
                           {item.severity}
@@ -1109,7 +1109,7 @@ export default function AdminDashboard({
                         <select
                           value={item.status}
                           onChange={(event) => handleReportStatusChange(item.id!, event.target.value as QuestionReport['status'])}
-                          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-amber-300"
+                          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-indigo-300"
                         >
                           {REPORT_STATUS_OPTIONS.map((status) => (
                             <option key={status} value={status}>
@@ -1132,7 +1132,7 @@ export default function AdminDashboard({
                 <p className="text-sm text-slate-400">
                   Login counts are tracked as authenticated app sessions for beta analytics. Use the actions column to
                   archive and clear screener or full/diagnostic data for a learner (requires{' '}
-                  <code className="rounded bg-slate-100 px-1 text-xs text-amber-600">SUPABASE_SERVICE_ROLE_KEY</code> on
+                  <code className="rounded bg-slate-100 px-1 text-xs text-indigo-600">SUPABASE_SERVICE_ROLE_KEY</code> on
                   Netlify for the admin-reset API).
                 </p>
                 {resetNotice && (
@@ -1163,7 +1163,7 @@ export default function AdminDashboard({
                     {users.map((entry) => (
                       <tr
                         key={entry.id}
-                        className="align-top text-slate-700 cursor-pointer hover:bg-amber-50/40 transition-colors"
+                        className="align-top text-slate-700 cursor-pointer hover:bg-indigo-50/40 transition-colors"
                         onClick={() => setSelectedStudent(entry)}
                       >
                         <td className="px-6 py-4">
@@ -1197,7 +1197,7 @@ export default function AdminDashboard({
                               <span className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-700">Archived assessment</span>
                             )}
                             {(entry.practiceResponseCount ?? 0) > 0 && (
-                              <span className="rounded-full bg-amber-50 px-3 py-1 text-xs text-amber-700">
+                              <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-700">
                                 Practice {entry.practiceResponseCount}
                               </span>
                             )}
@@ -1215,7 +1215,7 @@ export default function AdminDashboard({
                               </span>
                             )}
                             {isInProgress(entry) && !isDropped(entry) && entry.lastSession && (
-                              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs text-amber-800">
+                              <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs text-indigo-800">
                                 In Progress Q{entry.lastSession.questionIndex} · {entry.lastSession.mode}
                               </span>
                             )}
@@ -1302,7 +1302,7 @@ function MetricCard({
   return (
     <div className="editorial-surface p-5">
       <div className="mb-4 flex items-center justify-between">
-        <span className="rounded-2xl bg-slate-100 p-3 text-amber-700">{icon}</span>
+        <span className="rounded-2xl bg-slate-100 p-3 text-indigo-700">{icon}</span>
         <p className="text-3xl font-bold text-slate-900">{valueFormatter ? valueFormatter(value) : value}</p>
       </div>
       <p className="text-sm font-medium text-slate-700">{label}</p>
@@ -1364,9 +1364,9 @@ function DecisionPill({
   tone: 'info' | 'success' | 'warn' | 'danger' | 'neutral';
 }) {
   const styles = {
-    info: 'bg-amber-100 text-amber-700',
+    info: 'bg-indigo-100 text-indigo-700',
     success: 'bg-emerald-50 text-emerald-700',
-    warn: 'bg-amber-50 text-amber-700',
+    warn: 'bg-indigo-50 text-indigo-700',
     danger: 'bg-rose-50 text-rose-700',
     neutral: 'bg-slate-100 text-slate-500'
   } as const;
