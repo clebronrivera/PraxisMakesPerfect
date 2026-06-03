@@ -5,6 +5,9 @@
 > doc + reflected in `docs/HOW_THE_APP_WORKS.md`)**.
 >
 > Companion docs:
+> - `docs/PRODUCT_ROADMAP_2026-06-02.md` — full capture of the 2026-06-02 direction-setting session
+>   (glossary overhaul #1 priority, tutorial/dashboard/practice/progress/notebook workstreams, open
+>   decisions). The detailed list behind several items below.
 > - `docs/product-ideas-from-cleanup-2026-04-16.md` — archived-branch research (incl. the Term Sprint
 >   origin at commit `35db028`). Read-only research material.
 > - `.claude/plans/mighty-conjuring-hummingbird.md` — the full execution handoff for the Active/Next items
@@ -37,10 +40,20 @@ overwhelming). **Pure presentation/IA refactor — no study-plan regeneration, n
 
 ## NEXT — queued after Active
 
-### Retire the embedded glossary vocab quiz (partial)
+### Glossary overhaul  ·  *#1 PRIORITY (promoted 2026-06-02)*
+Full 396-term, filterable, searchable glossary from the start, backed by a per-term **smart weight**
+(rises on correct exposure, falls on misses) powering a weak-areas filter, a per-term proficiency meter,
+and a `getWeakTermsForTutor()` seam for AI flashcards. **Removes** the write-your-definition/reveal flow
+and the embedded Quiz Mode tab (Fluency Drill becomes the single vocab path — closes the item below).
+**Absorbs** the PARKED "Glossary → pure-reference refactor." Data layer first, then mockup-first UI.
+- Full design + build order: `docs/PRODUCT_ROADMAP_2026-06-02.md` §B and
+  `.claude/plans/okay-currently-uh-currently-reactive-lantern.md`.
+- ⚠ Apply migration `0024_vocab_attempts.sql` to Supabase **before** the new `0026` (it extends `0024`).
+
+### Retire the embedded glossary vocab quiz (partial) — *folded into the Glossary overhaul above*
 `VocabularyQuizMode.tsx` (the "Quiz Mode" tab inside `GlossaryPage`) still exists. The Dashboard vocab
-tiles now route to the Fluency Drill instead — **remaining:** remove or hide the Quiz Mode tab in
-`GlossaryPage` so the drill is the single vocab path. (Part 2.5, the tab itself.)
+tiles now route to the Fluency Drill instead — **remaining:** remove the Quiz Mode tab in `GlossaryPage`
+so the drill is the single vocab path. Now part of the overhaul's UI rebuild.
 
 ### Fluency Drill — follow-ups
 - **Select-all-that-apply** variant — deferred from v1 (the glossary is term/definition pairs with no
@@ -55,12 +68,12 @@ tiles now route to the Fluency Drill instead — **remaining:** remove or hide t
 
 ## PARKED — captured, not scheduled
 
-### Glossary → pure-reference refactor
-Make the glossary an **independent, well-organized, read-only reference** (no user-written
-definitions): render `master-glossary.json` A–Z, searchable, with flagged-term alert badges. Relocate
-the existing personal-definition workflow into `StudyNotebookPage.tsx`. `GlossaryPage.tsx` is ~90% the
-personal-definition flow today, so this is effectively a new page. Coworker task (citations) tracked
-separately — see below.
+### Glossary → pure-reference refactor — *SUPERSEDED by the Glossary overhaul (NEXT, above)*
+Original idea: make the glossary an **independent, well-organized, read-only reference** (no user-written
+definitions): render `master-glossary.json` A–Z, searchable, with flagged-term alert badges. The
+2026-06-02 Glossary overhaul subsumes this and adds per-term smart weighting + filters; the
+personal-definition workflow is being **removed entirely** rather than relocated to the notebook (revisit
+in §G of the roadmap). Coworker citations task still feeds the official definitions — see below.
 
 ### AI Tutor time-limited worksheet locker
 A "locker" view in `TutorChatPage` for saved AI-Tutor artifacts, backed by a new table with TTL/expiry

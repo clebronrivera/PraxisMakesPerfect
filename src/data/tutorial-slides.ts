@@ -16,7 +16,7 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
     description: 'Your personalized study companion for the Praxis 5403 School Psychology exam. Here\'s a quick tour of everything you can do.',
     icon: 'Sparkles',
     highlights: [
-      '1,150 practice questions across 45 skills',
+      'Practice questions mapped to all 45 skills',
       'AI-powered study guides tailored to your gaps',
       'Real-time progress tracking with proficiency levels',
       'Adaptive practice that targets your weakest areas',

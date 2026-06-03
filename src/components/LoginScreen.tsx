@@ -41,7 +41,7 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
   { text: '> Loading ETS Praxis 5403 blueprint...', cls: 'text-emerald-400' },
   { text: '✓ Blueprint integrity verified — sha256 OK', cls: 'text-emerald-300', delay: 900 },
   { text: '> Parsing test specification...', cls: 'text-slate-400' },
-  { text: `  Found: 4 domains · ${ALL_SKILLS.length} skills · 1,150 items`, cls: 'text-cyan-400' },
+  { text: `  Found: 4 domains · ${ALL_SKILLS.length} skills`, cls: 'text-cyan-400' },
 
   // Phase 2 — Domain + skill registration
   { text: '> Registering domain architecture...', cls: 'text-slate-400' },
@@ -64,7 +64,7 @@ const BOOT_LINES: Array<{ text: string; cls: string; delay?: number }> = [
   { text: '> Loading adaptive engine...', cls: 'text-slate-400' },
   { text: '  1 question per skill · adaptive follow-ups on missed skills', cls: 'text-cyan-400' },
   { text: '  Confidence signal weighting: ENABLED', cls: 'text-cyan-400' },
-  { text: '✓ 1,150 items mapped to 45 skills — engine adapts per response', cls: 'text-emerald-300', delay: 900 },
+  { text: '✓ Items mapped to 45 skills — engine adapts per response', cls: 'text-emerald-300', delay: 900 },
 
   // Phase 5 — Scheduling + handoff
   { text: '> Configuring spaced review scheduler...', cls: 'text-slate-400' },
