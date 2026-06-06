@@ -37,6 +37,15 @@ yarn-error.log*
 # Test results
 test-results.txt
 
+# Question Bank Vault mockup — contains full bank + answer keys + distractor
+# feedback; must never ship as a public static asset. Kept local only; the
+# real feature is the auth-gated admin React tab (QuestionBankTab.tsx).
+public/mockup-question-bank-data.json
+public/mockup-question-bank-audit.html
+# Defensive: catch any stray copy at repo root, too.
+/mockup-question-bank-audit.html
+/mockup-question-bank-data.json
+
 # Temporary files
 *.tmp
 .cache/
