@@ -85,15 +85,24 @@ The product owner's exit-ticket / full-parity idea collides with question reuse.
 - **Retirement doesn't cross surfaces:** practice retirement is **localStorage-only, practice-only** ([PracticeSession.tsx:33-51](../src/components/PracticeSession.tsx)); a question retired in practice can still appear in the mini-quiz and vice versa.
 - **Double-count:** proficiency aggregation has **no `question_id` dedupe** ([globalScoreCalculator.ts:150-262](../src/utils/globalScoreCalculator.ts)); mini-quiz answers log as `"practice"` (30% bucket). So the same item answered in mini-quiz **and** practice counts as **two** practice attempts for that skill.
 
-### 3.2 Options (pick one before exit-ticket work)
+### 3.2 Options
 | Option | What it does | Trade-off |
 |---|---|---|
 | **B1 — Role tagging** | Tag/partition each question's role (teaching-example vs assessment) or maintain per-skill sub-pools | Cleanest separation; requires authoring/migration over 1,150 items |
 | **B2 — Cross-surface exclusion window** | Reuse the redemption-blacklist pattern: a question shown in a module is excluded from practice for N days (and vice versa) | Low effort, reuses precedent; needs shared (Supabase) "recently seen" state — retirement must move off localStorage |
-| **B3 — Reuse, reframe + dedupe** | Allow reuse but present differently (teaching context vs graded) and dedupe encounters within a time window; fix proficiency to dedupe by `question_id` | Keeps pool flexibility ("fluidity" as a feature); requires aggregation change |
-| **B4 — Status quo + accept** | Mini-quiz *is* the exit ticket; accept reuse | Zero work; leaves the double-count and repeat-encounter issues the owner flagged |
+| **B3 — Reuse, reframe + dedupe** | Allow reuse but present repeats as reinforcement/retry practice and rely on the deduped scoring layer so the repeat doesn't inflate proficiency/readiness | Keeps pool flexibility ("fluidity" as a feature); no exposure controls |
+| **B4 — Status quo + accept** | Mini-quiz *is* the exit ticket; accept reuse | Zero work; leaves the repeat-encounter framing unaddressed |
 
-**Recommendation:** B2 or B3. Both require moving practice retirement/"seen" state to Supabase (already noted as deferred-but-wanted in [PracticeSession.tsx:48-51](../src/components/PracticeSession.tsx)) and fixing the proficiency double-count.
+### 3.3 ✅ DECISION — Track B V1 = **B3** (product owner, 2026-06-06)
+**Chosen:** **B3 — allow encounter reuse, reframe repeats as practice/reinforcement, and prevent score inflation through `question_id` dedupe.**
+
+The scoring half of B3 is **already shipped** (commit `cea4af9` — dedupe in `updateSkillProgress` by `question_id`, latest-wins, legacy totals preserved, source-tagged). The remaining B3 work is presentation-only: frame a repeated item as reinforcement/retry rather than a fresh graded question. No pool/bank changes.
+
+**Explicitly NOT in scope for V1 (do not build yet):**
+- **B1** — do **not** split the bank into teaching vs assessment roles.
+- **B2** — do **not** build a Supabase-backed cross-surface exclusion/retirement system, and do **not** move practice retirement off localStorage in this pass.
+
+**Revisit trigger:** future exit-ticket or assessment-validity work may reopen B1/B2 if cleaner item-exposure controls are needed.
 
 ---
 
@@ -115,7 +124,7 @@ The product owner's exit-ticket / full-parity idea collides with question reuse.
 1. **A1** engagement read hook + a read-only dashboard card (mockup-first).
 2. **A3/A4** alert engine + completion→practice CTA (mockup-first for the card).
 3. **A2** admin correlation report.
-4. **Decide Track B option** → then build exit tickets / fix double-count.
+4. ~~Decide Track B option~~ → **DONE: B3 chosen (§3.3); scoring half shipped (`cea4af9`). Remaining B3 work = reframe repeats as reinforcement (presentation only).**
 
 ---
 
@@ -129,7 +138,7 @@ The product owner's exit-ticket / full-parity idea collides with question reuse.
 ---
 
 ## 7 — Open decisions for the product owner
-1. **Track B option** (B1–B4 above) — gates exit tickets.
+1. ~~**Track B option** (B1–B4 above)~~ — **RESOLVED 2026-06-06: B3 (see §3.3).** Allow reuse, reframe repeats as reinforcement, rely on `question_id` dedupe (shipped). B1/B2 deferred until exit-ticket/assessment-validity work needs exposure controls.
 2. **Engagement metric surface** — user-facing card now, or backend-only until A2 correlation proves it matters?
 3. **Alert delivery** — in-app dashboard only, or later email/push?
 4. **Fix the proficiency double-count now** (dedupe by `question_id`) regardless of Track B? (Recommended yes — it's a latent diagnostic-accuracy bug independent of exit tickets.)
