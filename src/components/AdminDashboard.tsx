@@ -35,9 +35,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
 import StudentDetailDrawer from './StudentDetailDrawer';
 import ItemAnalysisTab from './ItemAnalysisTab';
+import QuestionBankTab from './QuestionBankTab';
 import { SentryTestButton } from './SentryTestButton';
 
-type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users' | 'item-analysis' | 'chat-activity';
+type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users' | 'item-analysis' | 'question-bank' | 'chat-activity';
 
 interface LastSession {
   sessionId: string;
@@ -642,6 +643,7 @@ export default function AdminDashboard({
           ['reports', 'Question Reports'],
           ['users', 'Users'],
           ['item-analysis', 'Item Analysis'],
+          ['question-bank', 'Question Bank'],
           ['chat-activity', 'AI Tutor']
         ] as const).map(([tab, label]) => (
           <button
@@ -1269,6 +1271,9 @@ export default function AdminDashboard({
           )}
           {activeTab === 'item-analysis' && (
             <ItemAnalysisTab />
+          )}
+          {activeTab === 'question-bank' && (
+            <QuestionBankTab />
           )}
           {activeTab === 'chat-activity' && (
             <ChatActivityTab />
