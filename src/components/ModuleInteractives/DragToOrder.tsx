@@ -73,30 +73,30 @@ export default function DragToOrder({
 
   const promptCls = isA ? 'text-sm text-slate-400 italic' : 'text-sm text-slate-600 italic';
   const rowDragging = isA
-    ? 'bg-[color:#d97706]/15 border-amber-300/50 opacity-75'
+    ? 'bg-[color:#d97706]/15 border-[color:#d97706]/50 opacity-75'
     : 'bg-cyan-50 border-cyan-300 opacity-75';
   const rowIdle = isA
-    ? 'bg-white border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50'
+    ? 'bg-slate-50 border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50'
     : 'bg-white border-slate-200 hover:border-cyan-300 shadow-sm';
   const badgeCls = isA
-    ? 'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[color:#d97706]/20 border border-[color:#d97706]/40 font-bold text-sm text-amber-600'
+    ? 'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[color:#d97706]/20 border border-[color:#d97706]/40 font-bold text-sm text-[color:#d97706]'
     : 'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100 border border-cyan-200 text-cyan-700 font-bold text-sm';
-  const itemTextCls = isA ? 'text-sm text-slate-200 leading-normal' : 'text-sm text-slate-700 leading-normal';
+  const itemTextCls = isA ? 'text-sm text-slate-700 leading-normal' : 'text-sm text-slate-700 leading-normal';
   const handleCls = isA ? 'w-4 h-4 text-slate-500 mt-1 flex-shrink-0' : 'w-4 h-4 text-slate-400 mt-1 flex-shrink-0';
   const correctBannerCls = isA
-    ? 'rounded-xl bg-emerald-100 border border-[color:#059669]/40 px-4 py-3'
+    ? 'rounded-xl bg-[color:#059669]/10 border border-[color:#059669]/40 px-4 py-3'
     : 'rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3';
-  const correctBannerText = isA ? 'text-sm font-semibold text-emerald-600' : 'text-sm text-emerald-700 font-semibold';
+  const correctBannerText = isA ? 'text-sm font-semibold text-[color:#059669]' : 'text-sm text-emerald-700 font-semibold';
   const wrongBannerCls = isA
-    ? 'rounded-xl bg-rose-100 border border-[color:#f43f5e]/40 px-4 py-3 flex items-center justify-between gap-3'
+    ? 'rounded-xl bg-[color:#e11d48]/10 border border-[color:#e11d48]/40 px-4 py-3 flex items-center justify-between gap-3'
     : 'rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 flex items-center justify-between gap-3';
-  const wrongBannerText = isA ? 'text-sm font-semibold text-rose-600' : 'text-sm text-rose-700 font-semibold';
+  const wrongBannerText = isA ? 'text-sm font-semibold text-[color:#e11d48]' : 'text-sm text-rose-700 font-semibold';
   const retryBtnCls = isA
-    ? 'text-xs font-semibold underline whitespace-nowrap text-rose-600 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 rounded'
+    ? 'text-xs font-semibold underline whitespace-nowrap text-[color:#e11d48] hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706] rounded'
     : 'text-xs font-semibold text-rose-600 underline hover:text-rose-800 whitespace-nowrap';
   const submitBtnCls = isA
     ? 'editorial-button-primary w-full text-sm font-semibold'
-    : 'w-full py-2 rounded-lg font-semibold text-sm transition-colors bg-cyan-600 hover:bg-cyan-700 text-white border border-transparent';
+    : 'w-full py-2 rounded-lg font-semibold text-sm transition-colors bg-cyan-600 hover:bg-cyan-700 text-slate-900 border border-transparent';
 
   return (
     <div className="space-y-4">

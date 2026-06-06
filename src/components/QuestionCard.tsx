@@ -22,7 +22,6 @@ interface QuestionCardProps {
   isSubmitting?: boolean;
   assessmentType?: 'pre' | 'full' | 'adaptive' | 'practice';
   hideFooterControls?: boolean;
-  variant?: 'atelier' | 'editorial';
 }
 
 export default function QuestionCard({
@@ -37,13 +36,11 @@ export default function QuestionCard({
   showFeedback,
   isSubmitting = false,
   assessmentType = 'practice',
-  hideFooterControls = false,
-  variant = 'editorial'
+  hideFooterControls = false
 }: QuestionCardProps) {
   const [showReportModal, setShowReportModal] = useState(false);
   const isConfidenceVisible = !hideFooterControls && !showFeedback && selectedAnswers.length > 0;
   const correctAnswersList = question.correct_answer || question.correctAnswers || [];
-  const isAtelier = variant === 'atelier';
 
   // Determine source display
   const getSourceDisplay = () => {
@@ -57,40 +54,6 @@ export default function QuestionCard({
   };
 
   const getChoiceTone = (isSelected: boolean, isCorrect: boolean) => {
-    if (isAtelier) {
-      if (showFeedback && isCorrect) {
-        return {
-          container: 'border-[color:#059669]/50 bg-emerald-100',
-          chip: 'bg-[color:#059669]/30 text-white border border-[color:#059669]/60',
-          text: 'text-white',
-          icon: 'text-emerald-600',
-        };
-      }
-      if (showFeedback && isSelected && !isCorrect) {
-        return {
-          container: 'border-[color:#f43f5e]/50 bg-rose-100',
-          chip: 'bg-[color:#f43f5e]/30 text-white border border-[color:#f43f5e]/60',
-          text: 'text-white',
-          icon: 'text-rose-600',
-        };
-      }
-      if (isSelected) {
-        return {
-          container: 'border-amber-300/50 bg-[color:#d97706]/10',
-          chip: 'bg-[color:#d97706]/25 text-white border border-[color:#d97706]/60',
-          text: 'text-white',
-          icon: 'text-amber-600',
-        };
-      }
-      return {
-        container: 'border-slate-200 bg-white hover:border-[color:#d97706]/40 hover:bg-white/8',
-        chip: 'border border-slate-200 bg-[rgba(10,22,40,0.5)] text-slate-400',
-        text: 'text-slate-200',
-        icon: 'text-slate-400',
-      };
-    }
-
-    // Editorial (default)
     if (showFeedback && isCorrect) {
       return {
         container: 'border-emerald-300 bg-emerald-50',
@@ -126,52 +89,22 @@ export default function QuestionCard({
     };
   };
 
-  // Variant-scoped class strings
-  const cardShell = isAtelier
-    ? 'overflow-hidden rounded-2xl border border-slate-200 bg-[rgba(10,22,40,0.55)] backdrop-blur-[14px]'
-    : 'editorial-surface overflow-hidden';
-  const headerShell = isAtelier
-    ? 'flex items-center justify-between border-b border-slate-200 bg-[rgba(10,22,40,0.4)] px-6 py-3'
-    : 'flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-3';
-  const sourcePill = isAtelier
-    ? 'inline-flex items-center rounded-full border border-[color:#d97706]/40 bg-[color:#d97706]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-600'
-    : 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700';
-  const flagButton = isAtelier
-    ? 'rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-300/30 hover:bg-slate-50 hover:text-amber-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500'
-    : 'rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700';
-  const caseShell = isAtelier
-    ? 'rounded-2xl border border-amber-300/30 bg-[color:#d97706]/10 p-5'
-    : 'rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5';
-  const caseHeading = isAtelier
-    ? 'mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-600'
-    : 'mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700';
-  const caseBody = isAtelier
-    ? 'text-sm leading-relaxed italic text-slate-200'
-    : 'text-sm leading-relaxed italic text-slate-700';
-  const stemText = isAtelier
-    ? 'text-[1.1rem] font-semibold leading-8 text-white sm:text-[1.25rem]'
-    : 'text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]';
-  const multiSelectPill = isAtelier
-    ? 'inline-flex items-center rounded-full border border-[color:#d97706]/40 bg-[color:#d97706]/15 px-3 py-1 text-xs font-semibold text-amber-600'
-    : 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700';
-  const confidenceShell = isAtelier
-    ? 'mt-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px] px-4 py-3'
-    : 'editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-4 py-3';
-  const confidenceLabel = isAtelier
-    ? 'text-sm font-semibold text-slate-200'
-    : 'text-sm font-semibold text-slate-700';
-  const confidenceActive = isAtelier
-    ? 'border-[color:#d97706]/60 bg-[color:#d97706]/20 text-white'
-    : 'border-slate-900 bg-slate-900 text-white';
-  const confidenceIdle = isAtelier
-    ? 'border-slate-200 bg-white text-slate-300 hover:border-[color:#d97706]/40 hover:text-white'
-    : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900';
-  const submitBtn = isAtelier
-    ? 'editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50'
-    : 'editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50';
-  const nextBtn = isAtelier
-    ? 'editorial-button-primary min-w-[12rem] inline-flex items-center justify-center gap-2'
-    : 'editorial-button-dark min-w-[12rem]';
+  // Editorial class strings
+  const cardShell = 'editorial-surface overflow-hidden';
+  const headerShell = 'flex items-center justify-between border-b border-slate-200 bg-[#fbfaf7] px-6 py-3';
+  const sourcePill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700';
+  const flagButton = 'rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700';
+  const caseShell = 'rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5';
+  const caseHeading = 'mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700';
+  const caseBody = 'text-sm leading-relaxed italic text-slate-700';
+  const stemText = 'text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]';
+  const multiSelectPill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700';
+  const confidenceShell = 'editorial-surface-soft mt-4 flex flex-wrap items-center justify-between gap-4 px-4 py-3';
+  const confidenceLabel = 'text-sm font-semibold text-slate-700';
+  const confidenceActive = 'border-slate-900 bg-slate-900 text-white';
+  const confidenceIdle = 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900';
+  const submitBtn = 'editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50';
+  const nextBtn = 'editorial-button-dark min-w-[12rem]';
 
   return (
     <>
@@ -238,7 +171,7 @@ export default function QuestionCard({
                     key={letter}
                     onClick={() => onSelectAnswer(letter)}
                     disabled={disabled || showFeedback || isSubmitting}
-                    className={`flex w-full items-start gap-4 rounded-2xl border px-4 py-3 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 ${tone.container} ${
+                    className={`flex w-full items-start gap-4 rounded-2xl border px-4 py-3 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent-to)] ${tone.container} ${
                       disabled || showFeedback || isSubmitting ? '' : 'hover:-translate-y-0.5'
                     }`}
                   >
@@ -268,7 +201,7 @@ export default function QuestionCard({
             <button
               key={level}
               onClick={() => onConfidenceChange(level)}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--accent-to)] ${
                 confidence === level ? confidenceActive : confidenceIdle
               }`}
             >

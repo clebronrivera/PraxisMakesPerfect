@@ -43,20 +43,20 @@ export default function CardFlip({ cards, prompt, onComplete, variant = 'editori
 
   const promptCls = isA ? 'text-sm text-slate-400 italic' : 'text-sm text-slate-600 italic';
   const frontCls = isA
-    ? 'absolute w-full h-full bg-white border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center text-center backdrop-blur-[14px]'
+    ? 'absolute w-full h-full bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center text-center backdrop-blur-[14px]'
     : 'absolute w-full h-full bg-white border-2 border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center text-center shadow-sm';
-  const frontTitle = isA ? 'text-lg font-bold text-white mb-2' : 'text-lg font-bold text-slate-800 mb-2';
+  const frontTitle = isA ? 'text-lg font-bold text-slate-900 mb-2' : 'text-lg font-bold text-slate-800 mb-2';
   const frontHint = isA
     ? 'text-[10px] text-slate-500 uppercase tracking-wide'
     : 'text-[10px] text-slate-400 uppercase tracking-wide';
   const backCls = isA
-    ? 'absolute w-full h-full bg-emerald-100 border border-[color:#059669]/40 rounded-xl p-4 flex items-center justify-center backdrop-blur-[14px]'
+    ? 'absolute w-full h-full bg-[color:#059669]/10 border border-[color:#059669]/40 rounded-xl p-4 flex items-center justify-center backdrop-blur-[14px]'
     : 'absolute w-full h-full bg-emerald-50 border-2 border-emerald-200 rounded-xl p-4 flex items-center justify-center shadow-sm';
-  const backText = isA ? 'text-sm text-white leading-normal text-center' : 'text-sm text-emerald-800 leading-normal text-center';
+  const backText = isA ? 'text-sm text-slate-900 leading-normal text-center' : 'text-sm text-emerald-800 leading-normal text-center';
   const doneCls = isA
-    ? 'rounded-xl bg-emerald-100 border border-[color:#059669]/40 px-4 py-3'
+    ? 'rounded-xl bg-[color:#059669]/10 border border-[color:#059669]/40 px-4 py-3'
     : 'rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3';
-  const doneText = isA ? 'text-sm font-semibold text-emerald-600' : 'text-sm text-emerald-700 font-semibold';
+  const doneText = isA ? 'text-sm font-semibold text-[color:#059669]' : 'text-sm text-emerald-700 font-semibold';
 
   return (
     <div className="space-y-4">
@@ -71,7 +71,7 @@ export default function CardFlip({ cards, prompt, onComplete, variant = 'editori
           <button
             key={card.id}
             onClick={() => toggleFlip(card.id)}
-            className="relative h-32 perspective cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 rounded-xl"
+            className="relative h-32 perspective cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706] rounded-xl"
           >
             <div
               className="relative w-full h-full transition-transform duration-500 transform-gpu"

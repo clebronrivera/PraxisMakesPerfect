@@ -159,7 +159,7 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 - Status: resolved
 - Area: documentation / Cursor rules / codebase overview / question bank
-- Summary: Full codebase alignment audit (`docs/PraxisMakesPerfect_Alignment_Report_2026-03-23.docx`) identified 7 bugs and 10 action items across 3 priority tiers. Key finding: the report was working from a partially stale snapshot — several issues it flagged had already been fixed in code. Here is the item-by-item disposition:
+- Summary: Full codebase alignment audit (`archive/docs-cleanup-2026-06-02/PraxisMakesPerfect_Alignment_Report_2026-03-23.docx`) identified 7 bugs and 10 action items across 3 priority tiers. Key finding: the report was working from a partially stale snapshot — several issues it flagged had already been fixed in code. Here is the item-by-item disposition:
 
   **P1 — Critical (all resolved):**
   - P1-1 (production build blocker): Already resolved. `ModuleSection` union includes interactive/visual variants, `InteractiveScenario` is exported, `tsc --noEmit` passes clean.
@@ -181,7 +181,7 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
   - Populate `.cursor/rules/mistake_registry.mdc` with recurring patterns (domain-count drift, Firebase naming, ghost fields).
   - Address health check content warnings (Generation Capacity, Distractor Audit, Blueprint Alignment).
 
-- Source of truth: `docs/PraxisMakesPerfect_Alignment_Report_2026-03-23.docx` supersedes the archived gap analysis in `archive/docs-legacy-2026-03-14/DOMAIN_COVERAGE_GAP_ANALYSIS.md`. This ledger entry supersedes the report's own status claims where the report was stale.
+- Source of truth: `archive/docs-cleanup-2026-06-02/PraxisMakesPerfect_Alignment_Report_2026-03-23.docx` supersedes the archived gap analysis in `archive/docs-legacy-2026-03-14/DOMAIN_COVERAGE_GAP_ANALYSIS.md`. This ledger entry supersedes the report's own status claims where the report was stale.
 - Code anchors:
   `.cursor/rules/domain_rules.mdc`
   `.cursor/rules/agent_protocols.mdc`

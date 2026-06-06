@@ -89,7 +89,7 @@ Zero E2E coverage today — [tests/](../tests/) is pure-logic unit only. Highest
 - **Sourcemap upload to Sentry** — for better stack traces post-launch.
 - **ReDoS lint findings** — 19 `detect-unsafe-regex` warnings in [src/utils/tutorIntentClassifier.ts](../src/utils/tutorIntentClassifier.ts). Code reviewed — all benign (no nested quantifiers). Accept-and-document rather than fix.
 - **Tutor-chat rate limit** — lower per-call cost (1,500 tokens), lower priority than study-plan.
-- **questions.json runtime-fetch / bundle-chunk deduplication** — two copies ship today (see [BUILD_BUNDLE_SIZE_WARNINGS.md](BUILD_BUNDLE_SIZE_WARNINGS.md)). Cleanup, not a launch gate.
+- **questions.json runtime-fetch / bundle-chunk deduplication** — two copies ship today (see [BUILD_BUNDLE_SIZE_WARNINGS.md](../archive/docs-cleanup-2026-06-02/BUILD_BUNDLE_SIZE_WARNINGS.md)). Cleanup, not a launch gate.
 
 ---
 
@@ -108,7 +108,7 @@ Then: invite first batch of users.
 ## Out of scope for launch readiness (but tracked elsewhere)
 
 - Redesign chain (`phase-0`/`phase-1`/`phase-2a`) — mockup-first review required per [CLAUDE.md](../CLAUDE.md#ui-redesign-workflow--mandatory-mockup-first-rule). Archive rather than revive for this launch.
-- Rename migration plan (`docs/RENAME_MIGRATION_PLAN.md`) — separate effort.
+- Rename migration plan (`archive/docs-cleanup-2026-06-02/RENAME_MIGRATION_PLAN.md`) — separate effort.
 - Content authoring phases (A/B/C/D) — ongoing, separate pipeline.
 
 ---

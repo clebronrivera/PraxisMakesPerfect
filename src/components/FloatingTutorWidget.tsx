@@ -76,8 +76,8 @@ export function FloatingTutorWidget({
           {/* Panel header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-stone-200 bg-stone-50 shrink-0">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center">
-                <Bot className="w-3.5 h-3.5 text-amber-700" />
+              <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
+                <Bot className="w-3.5 h-3.5 text-indigo-700" />
               </div>
               <div>
                 <p className="text-xs font-semibold text-stone-800">PraxisBot</p>
@@ -148,13 +148,13 @@ export function FloatingTutorWidget({
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask anything about Praxis 5403…"
-                className="flex-1 rounded-xl border border-stone-200 px-3 py-2 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                className="flex-1 rounded-xl border border-stone-200 px-3 py-2 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 disabled={chat.isSending}
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || chat.isSending}
-                className="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center hover:bg-amber-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>
@@ -167,7 +167,7 @@ export function FloatingTutorWidget({
       <button
         onClick={() => setIsOpen(prev => !prev)}
         className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95
-          ${isOpen ? 'bg-stone-700' : 'bg-amber-600 hover:bg-amber-700'}
+          ${isOpen ? 'bg-stone-700' : 'bg-indigo-600 hover:bg-indigo-700'}
         `}
         aria-label={isOpen ? 'Close PraxisBot' : 'Open PraxisBot'}
       >

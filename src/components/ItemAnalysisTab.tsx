@@ -176,13 +176,19 @@ export default function ItemAnalysisTab() {
   }, [items]);
 
   function SortBtn({ field, label }: { field: SortField; label: string }) {
+    const isActive = sortField === field;
+    const ariaLabel = isActive
+      ? `Sort by ${label}, currently ${sortDir === 'desc' ? 'descending' : 'ascending'} — click to toggle`
+      : `Sort by ${label}`;
     return (
       <button
+        type="button"
         onClick={() => handleSort(field)}
-        className="flex items-center gap-1 hover:text-amber-700"
+        aria-label={ariaLabel}
+        className="flex items-center gap-1 rounded transition-colors hover:text-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
       >
         {label}
-        {sortField === field
+        {isActive
           ? sortDir === 'desc'
             ? <ChevronDown className="h-3 w-3" />
             : <ChevronUp className="h-3 w-3" />
@@ -194,7 +200,7 @@ export default function ItemAnalysisTab() {
   if (isLoading) {
     return (
       <div className="editorial-surface p-12 text-center">
-        <RefreshCw className="mx-auto mb-3 h-8 w-8 animate-spin text-amber-500" />
+        <RefreshCw className="mx-auto mb-3 h-8 w-8 animate-spin text-indigo-500" />
         <p className="text-slate-500">Loading item analysis — this may take a moment for large datasets...</p>
       </div>
     );
@@ -267,7 +273,7 @@ export default function ItemAnalysisTab() {
             <select
               value={domainFilter}
               onChange={(e) => setDomainFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-300"
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               {DOMAIN_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -279,7 +285,7 @@ export default function ItemAnalysisTab() {
             <select
               value={flagFilter}
               onChange={(e) => setFlagFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-300"
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               {FLAG_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -291,7 +297,7 @@ export default function ItemAnalysisTab() {
             <select
               value={clusterTagFilter}
               onChange={(e) => setClusterTagFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-300"
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               <option value="">All Clusters</option>
               {clusterTagOptions.map((tag) => (
@@ -304,7 +310,7 @@ export default function ItemAnalysisTab() {
             <select
               value={minAttempts}
               onChange={(e) => setMinAttempts(Number(e.target.value))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-300"
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               {[1, 3, 5, 10, 20].map((n) => (
                 <option key={n} value={n}>{n}+</option>
@@ -347,8 +353,17 @@ export default function ItemAnalysisTab() {
                 <>
                   <tr
                     key={item.questionId}
-                    className="cursor-pointer align-top text-slate-700 hover:bg-amber-50/30 transition-colors"
+                    className="cursor-pointer align-top text-slate-700 transition-colors hover:bg-indigo-50/40 focus-visible:bg-indigo-50/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={expandedRow === item.questionId}
                     onClick={() => setExpandedRow(expandedRow === item.questionId ? null : item.questionId)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setExpandedRow(expandedRow === item.questionId ? null : item.questionId);
+                      }
+                    }}
                   >
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
@@ -494,7 +509,7 @@ export default function ItemAnalysisTab() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-5 py-10 text-center text-slate-400">
-                    No items match the current filters.
+                    No items match the current filters — try adjusting Domain, Flags, or Min Attempts.
                   </td>
                 </tr>
               )}
