@@ -716,7 +716,7 @@ function PraxisStudyAppContent() {
           <h2 className="mb-2 text-xl font-bold text-slate-900">Updated Terms & Privacy Policy</h2>
           <p className="mb-6 text-sm leading-relaxed text-slate-600">
             We've published our Privacy Policy and Terms of Service. Please review and accept
-            them to continue using PraxisMakesPerfect.
+            them to continue using PASS.
           </p>
           <div className="mb-6 flex flex-col gap-2">
             <button

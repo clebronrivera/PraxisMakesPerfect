@@ -46,6 +46,11 @@ public/mockup-question-bank-audit.html
 /mockup-question-bank-audit.html
 /mockup-question-bank-data.json
 
+# Design mockups must never ship as public static assets — they are served
+# verbatim from public/ in production. Keep mockups local only.
+public/mockup-*.html
+/mockup-*.html
+
 # Temporary files
 *.tmp
 .cache/
