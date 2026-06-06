@@ -25,7 +25,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
 
           <h2>1. Acceptance</h2>
           <p>
-            By creating an account or using PraxisMakesPerfect (the "Service"), you agree to these Terms
+            By creating an account or using PASS (the "Service"), you agree to these Terms
             of Service ("Terms") and our{' '}
             <button
               onClick={() => {
@@ -47,7 +47,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
 
           <h2>3. The Service</h2>
           <p>
-            PraxisMakesPerfect provides study tools, practice questions, adaptive diagnostics, AI-powered
+            PASS provides study tools, practice questions, adaptive diagnostics, AI-powered
             tutoring, and progress tracking for candidates preparing for the Praxis series of
             educator certification examinations. The Service is owned and operated by{' '}
             <strong>Dream Enterprises LLC</strong>, a Florida limited liability company.
@@ -55,7 +55,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
           <p>
             <strong>
               Praxis is a registered trademark of Educational Testing Service (ETS).
-              PraxisMakesPerfect is not affiliated with, endorsed by, or sponsored by ETS.
+              PASS is not affiliated with, endorsed by, or sponsored by ETS.
             </strong>
           </p>
 
@@ -157,7 +157,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
 
           <h2>13. Contact</h2>
           <p>
-            Dream Enterprises LLC — PraxisMakesPerfect
+            Dream Enterprises LLC — PASS
             <br />
             Email:{' '}
             <a href="mailto:dreamenterprisesllc@outlook.com">dreamenterprisesllc@outlook.com</a>

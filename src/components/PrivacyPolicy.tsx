@@ -22,7 +22,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
 
           <h2>1. Who We Are</h2>
           <p>
-            PraxisMakesPerfect ("PraxisMakesPerfect," "we," "us," or "our") is an online study platform
+            PASS ("PASS," "we," "us," or "our") is an online study platform
             for candidates preparing for the Praxis series of educator certification examinations. The
             service is owned and operated by <strong>Dream Enterprises LLC</strong>, a Florida limited
             liability company.
@@ -30,7 +30,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
           <p>
             <strong>
               Praxis is a registered trademark of Educational Testing Service (ETS).
-              PraxisMakesPerfect is not affiliated with, endorsed by, or sponsored by ETS. ETS has not
+              PASS is not affiliated with, endorsed by, or sponsored by ETS. ETS has not
               reviewed or approved any content on this platform.
             </strong>
           </p>
@@ -41,7 +41,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
 
           <h2>2. Scope and Age Restriction</h2>
           <p>
-            This Policy applies to your use of the PraxisMakesPerfect website, web application, and any
+            This Policy applies to your use of the PASS website, web application, and any
             related services (collectively, the "Service").
           </p>
           <p>
@@ -92,7 +92,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
 
           <h2>4. How the AI Tutor Works</h2>
           <p>
-            PraxisMakesPerfect includes an <strong>AI Tutor</strong> feature. When you interact with the
+            PASS includes an <strong>AI Tutor</strong> feature. When you interact with the
             AI Tutor, the text you submit — along with limited contextual information about the question
             or skill you are studying — is transmitted to a <strong>third-party large language model
             provider, Anthropic, PBC, via the Anthropic API</strong>. Anthropic processes that input to
@@ -171,7 +171,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
             <li>
               <strong>Legal and safety:</strong> when required by law, subpoena, or legal process, or
               when we believe disclosure is necessary to protect the rights, property, or safety of
-              PraxisMakesPerfect, our users, or others.
+              PASS, our users, or others.
             </li>
             <li>
               <strong>Business transfers:</strong> in connection with a merger, acquisition, financing, or
@@ -248,7 +248,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
 
           <h2>13. Contact</h2>
           <p>
-            Dream Enterprises LLC — PraxisMakesPerfect
+            Dream Enterprises LLC — PASS
             <br />
             Email:{' '}
             <a href="mailto:dreamenterprisesllc@outlook.com">dreamenterprisesllc@outlook.com</a>
