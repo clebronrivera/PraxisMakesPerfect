@@ -27,7 +27,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { incrementDailyQuestionCount } from '../hooks/useDailyQuestionCount';
 import { addDailyStudySeconds } from '../hooks/useDailyStudyTime';
 import { addTermsFromWrongAnswer } from '../services/glossaryService';
-import { APPROACHING_THRESHOLD } from '../utils/skillProficiency';
+import { APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD } from '../utils/skillProficiency';
 import skillVocabMap from '../data/skill-vocabulary-map.json';
 
 // ─── Question retirement ──────────────────────────────────────────────────────
@@ -636,8 +636,8 @@ export default function PracticeSession({
 
   const pctColor =
     allTimePct === null ? '' :
-    allTimePct >= 80 ? 'text-emerald-600' :
-    allTimePct >= 60 ? 'text-amber-600' :
+    allTimePct >= DEMONSTRATING_THRESHOLD * 100 ? 'text-emerald-600' :
+    allTimePct >= APPROACHING_THRESHOLD * 100 ? 'text-amber-600' :
     'text-rose-600';
 
   // Retirement progress for this pool (shown as a subtle pill when first pass is done)

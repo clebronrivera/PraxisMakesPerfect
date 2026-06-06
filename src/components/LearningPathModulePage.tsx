@@ -35,6 +35,7 @@ import {
   Trophy, RotateCcw, PanelRight, Printer,
 } from 'lucide-react';
 import { getAllModulesForSkill } from '../data/learningModules';
+import { APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD } from '../utils/skillProficiency';
 import skillVocabMap from '../data/skill-vocabulary-map.json';
 import ModuleLessonViewer from './ModuleLessonViewer';
 import AccordionModule from './AccordionModule';
@@ -263,7 +264,7 @@ function QuizResults({
   onReturnToPath: () => void;
 }) {
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
-  const tier = pct >= 80 ? 'demonstrating' : pct >= 60 ? 'approaching' : 'emerging';
+  const tier = pct >= DEMONSTRATING_THRESHOLD * 100 ? 'demonstrating' : pct >= APPROACHING_THRESHOLD * 100 ? 'approaching' : 'emerging';
   const tierConfig = {
     demonstrating: { color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Demonstrating', msg: 'Excellent work — you\'re meeting the threshold for this skill.' },
     approaching: { color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', label: 'Approaching', msg: 'Getting closer — keep practicing to reach Demonstrating.' },

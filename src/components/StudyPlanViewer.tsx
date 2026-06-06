@@ -20,6 +20,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { StudyPlanDocumentV2 } from '../services/studyPlanService';
+import { APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD } from '../utils/skillProficiency';
 import type {
   ClusterUrgency,
   SessionType,
@@ -389,8 +390,8 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
   if (!domain) return <p className="text-sm text-slate-500">No domain data available.</p>;
 
   const scoreColor = domain.domainScore !== null
-    ? domain.domainScore >= 80 ? 'text-emerald-600'
-    : domain.domainScore >= 60 ? 'text-amber-600'
+    ? domain.domainScore >= DEMONSTRATING_THRESHOLD * 100 ? 'text-emerald-600'
+    : domain.domainScore >= APPROACHING_THRESHOLD * 100 ? 'text-amber-600'
     : 'text-rose-600'
     : 'text-slate-500';
 
@@ -400,8 +401,8 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
       <div className="flex flex-wrap gap-2">
         {plan.domainStudyMaps.map(d => {
           const sc = d.domainScore !== null
-            ? d.domainScore >= 80 ? 'border-[color:#059669]/50 text-emerald-600'
-            : d.domainScore >= 60 ? 'border-amber-300/50 text-amber-600'
+            ? d.domainScore >= DEMONSTRATING_THRESHOLD * 100 ? 'border-[color:#059669]/50 text-emerald-600'
+            : d.domainScore >= APPROACHING_THRESHOLD * 100 ? 'border-amber-300/50 text-amber-600'
             : 'border-[color:#f43f5e]/50 text-rose-600'
             : 'border-slate-200 text-slate-500';
           const active = d.domainId === activeDomainId;
