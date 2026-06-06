@@ -69,7 +69,7 @@ interface LearningPathModulePageProps {
   /** All analyzed questions — filtered by skillId to build the mini-quiz */
   analyzedQuestions: AnalyzedQuestion[];
   /** Called for each answered question to keep skill_scores in sync */
-  onSkillProgressUpdate: (skillId: string, isCorrect: boolean) => void;
+  onSkillProgressUpdate: (skillId: string, isCorrect: boolean, questionId?: string) => void;
   /** Navigate back to the Learning Path node map */
   onBack: () => void;
   /** Latest study plan from App.tsx — used for Focus Items in Study Center */
@@ -469,9 +469,10 @@ export default function LearningPathModulePage({
     // Update LP Supabase progress with blended accuracy
     await lpSupabase.submitQuestions(skillId, correct, total, interactiveScore);
 
-    // Update skill_scores for each answered question
+    // Update skill_scores for each answered question. Pass questionId so the same
+    // item answered here and in regular practice is deduped (not double-counted).
     for (const r of results) {
-      onSkillProgressUpdate(skillId, r.isCorrect);
+      onSkillProgressUpdate(skillId, r.isCorrect, r.questionId);
     }
 
     // ── Redemption Rounds integration ─────────────────────────────────────
