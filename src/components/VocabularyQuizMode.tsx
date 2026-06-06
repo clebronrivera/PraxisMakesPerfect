@@ -10,6 +10,7 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
+import { APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD } from '../utils/skillProficiency';
 import {
   CheckCircle2,
   XCircle,
@@ -389,9 +390,9 @@ export default function VocabularyQuizMode({ userTerms }: VocabularyQuizModeProp
   // ─── REVIEW SCREEN ────────────────────────────────────────────────────
   if (quizState === 'review' && session) {
     const scoreColor =
-      stats.pct >= 80 ? 'text-emerald-600' : stats.pct >= 60 ? 'text-amber-600' : 'text-rose-600';
+      stats.pct >= DEMONSTRATING_THRESHOLD * 100 ? 'text-emerald-600' : stats.pct >= APPROACHING_THRESHOLD * 100 ? 'text-amber-600' : 'text-rose-600';
     const scoreBg =
-      stats.pct >= 80 ? 'bg-emerald-50' : stats.pct >= 60 ? 'bg-amber-50' : 'bg-rose-50';
+      stats.pct >= DEMONSTRATING_THRESHOLD * 100 ? 'bg-emerald-50' : stats.pct >= APPROACHING_THRESHOLD * 100 ? 'bg-amber-50' : 'bg-rose-50';
 
     return (
       <div className="flex-1 flex flex-col py-8 px-6 overflow-y-auto">

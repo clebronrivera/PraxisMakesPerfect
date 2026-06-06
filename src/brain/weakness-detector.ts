@@ -1,5 +1,6 @@
 import { AnalyzedQuestion } from './question-analyzer';
 import { PatternId } from './template-schema';
+import { APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 
 export interface UserResponse {
   questionId: string;
@@ -94,7 +95,7 @@ export function detectWeaknesses(
   
   // Find weakest domains (score < 60%)
   const weakestDomains = Object.entries(domainScores)
-    .filter(([_, score]) => score.total > 0 && (score.correct / score.total) < 0.6)
+    .filter(([_, score]) => score.total > 0 && (score.correct / score.total) < APPROACHING_THRESHOLD)
     .sort((a, b) => (a[1].correct / a[1].total) - (b[1].correct / b[1].total))
     .map(([domain]) => parseInt(domain));
   

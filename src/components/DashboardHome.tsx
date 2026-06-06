@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { Zap, BookOpen, Map as MapIcon, ClipboardList, MessageCircle } from 'lucide-react';
 import { PROGRESS_SKILLS, PROGRESS_DOMAINS } from '../utils/progressTaxonomy';
 import { formatStudyTime } from '../hooks/useDailyStudyTime';
-import { PROFICIENCY_META, TOTAL_SKILLS } from '../utils/skillProficiency';
+import { PROFICIENCY_META, TOTAL_SKILLS, APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD } from '../utils/skillProficiency';
 import type { ProgressSummary } from '../utils/progressSummaries';
 
 // ─── Props ──────────────────────────────────────────────────────────────────
@@ -635,9 +635,9 @@ export default function DashboardHome({
                 ? Math.round((domain.strongerSkillCount / domain.activeSkillCount) * 100)
                 : 0;
             const profLabel =
-              pct >= 80
+              pct >= DEMONSTRATING_THRESHOLD * 100
                 ? PROFICIENCY_META.proficient.label
-                : pct >= 60
+                : pct >= APPROACHING_THRESHOLD * 100
                   ? PROFICIENCY_META.approaching.label
                   : PROFICIENCY_META.emerging.label;
 

@@ -6,6 +6,7 @@ import { AnalyzedQuestion } from '../brain/question-analyzer';
 import { CONTENT_POLICY } from '../config/content-policy';
 import { ACTIVE_LAUNCH_FEATURES } from '../utils/launchConfig';
 import { filterByPreferredTier } from '../utils/questionDifficulty';
+import { APPROACHING_THRESHOLD, DEMONSTRATING_THRESHOLD } from '../utils/skillProficiency';
 
 export function useAdaptiveLearning() {
   // Question history is managed by components, not the hook
@@ -21,8 +22,8 @@ export function useAdaptiveLearning() {
     const score = skill.score ?? 0;
     let priority = 0;
     // Base: accuracy band
-    if (score < 0.6) priority += 3;
-    else if (score < 0.8) priority += 2;
+    if (score < APPROACHING_THRESHOLD) priority += 3;
+    else if (score < DEMONSTRATING_THRESHOLD) priority += 2;
     else priority += 1;
     // Rule 1: recent high-confidence wrong answers (rolling 10-window)
     const hcw = skill.recentHighConfidenceWrongCount ?? 0;

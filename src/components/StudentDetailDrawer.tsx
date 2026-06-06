@@ -290,7 +290,7 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
                       <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
                         <div
                           className={`h-2 rounded-full transition-all ${
-                            d.pct >= 80 ? 'bg-emerald-500' : d.pct >= 60 ? 'bg-amber-400' : 'bg-rose-400'
+                            d.pct >= DEMONSTRATING_THRESHOLD * 100 ? 'bg-emerald-500' : d.pct >= APPROACHING_THRESHOLD * 100 ? 'bg-amber-400' : 'bg-rose-400'
                           }`}
                           style={{ width: `${d.pct}%` }}
                         />
