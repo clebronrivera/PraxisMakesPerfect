@@ -33,35 +33,47 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 py-6 px-4 text-slate-200">
+    <div className="mx-auto max-w-2xl space-y-6 py-6 px-4 text-slate-700">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-300/30 bg-[color:#d97706]/10">
-          <HelpCircle className="h-5 w-5 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl grad-chrome">
+          <HelpCircle className="h-5 w-5 text-white" />
         </div>
         <div>
-          <p className="eyebrow">Support</p>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Help &amp; FAQ</h1>
+          <p className="editorial-overline">Support</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Help &amp; FAQ</h1>
         </div>
       </div>
 
-      <div className="editorial-surface divide-y divide-white/5 overflow-hidden">
+      <div className="editorial-surface divide-y divide-slate-100 overflow-hidden">
         {FAQ_ENTRIES.map((entry, idx) => {
           const isOpen = openIndex === idx;
+          const panelId = `faq-panel-${idx}`;
+          const buttonId = `faq-button-${idx}`;
           return (
             <div key={idx}>
-              <button
-                type="button"
-                onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-white"
-              >
-                <span className="text-sm font-semibold text-white">{entry.question}</span>
-                {isOpen
-                  ? <ChevronUp className="h-4 w-4 shrink-0 text-amber-600" />
-                  : <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />}
-              </button>
+              <h2 className="m-0">
+                <button
+                  type="button"
+                  id={buttonId}
+                  onClick={() => setOpenIndex(isOpen ? null : idx)}
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-indigo-400"
+                >
+                  <span className="text-sm font-semibold text-slate-900">{entry.question}</span>
+                  {isOpen
+                    ? <ChevronUp aria-hidden="true" className="h-4 w-4 shrink-0 text-accent" />
+                    : <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-slate-500" />}
+                </button>
+              </h2>
               {isOpen && (
-                <div className="border-t border-[color:#d97706]/20 bg-white/40 px-6 py-4">
-                  <p className="text-sm leading-relaxed text-slate-300">{entry.answer}</p>
+                <div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  className="border-t border-slate-100 bg-slate-50 px-6 py-4"
+                >
+                  <p className="text-sm leading-relaxed text-slate-600">{entry.answer}</p>
                 </div>
               )}
             </div>
@@ -74,7 +86,7 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
           <button
             type="button"
             onClick={onReplayTutorial}
-            className="inline-flex items-center gap-2 rounded-xl border border-[color:#0284c7]/30 bg-[color:#0284c7]/10 px-4 py-2 text-sm font-medium text-sky-600 transition-colors hover:bg-[color:#0284c7]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+            className="editorial-button-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400/60"
           >
             <PlayCircle className="h-4 w-4" />
             Replay Tutorial

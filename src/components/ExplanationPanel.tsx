@@ -75,24 +75,31 @@ export default function ExplanationPanel({
     ? ((question as unknown as Record<string, unknown>)[`distractor_skill_deficit_${wrongLetter}`] as string | undefined) || ''
     : '';
 
-  const cardClass = isCorrect
-    ? 'rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm'
-    : 'rounded-2xl border border-slate-200 bg-white p-6 shadow-sm';
-  const iconWrapClass = isCorrect
-    ? 'flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 border border-emerald-200'
-    : 'flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 border border-rose-200';
-  const iconColor = isCorrect ? '#059669' : '#dc2626';
+  const accentVar = isCorrect ? '#059669' : '#e11d48';
 
   return (
     <div className="space-y-4">
       {/* Original Rationale Panel */}
-      <div className={cardClass}>
+      <div
+        className="rounded-2xl border p-6 backdrop-blur-[14px]"
+        style={{
+          background: `color-mix(in srgb, ${accentVar} 10%, #ffffff)`,
+          borderColor: `color-mix(in srgb, ${accentVar} 30%, transparent)`,
+          boxShadow: '0 4px 24px -4px rgba(0,0,0,0.4)',
+        }}
+      >
         <div className="flex items-start gap-4">
-          <div className={iconWrapClass}>
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-2xl"
+            style={{
+              background: `color-mix(in srgb, ${accentVar} 18%, transparent)`,
+              border: `1px solid color-mix(in srgb, ${accentVar} 40%, transparent)`,
+            }}
+          >
             {isCorrect ? (
-              <CheckCircle className="h-5 w-5" style={{ color: iconColor }} />
+              <CheckCircle className="h-5 w-5" style={{ color: accentVar }} />
             ) : (
-              <XCircle className="h-5 w-5" style={{ color: iconColor }} />
+              <XCircle className="h-5 w-5" style={{ color: accentVar }} />
             )}
           </div>
           <div className="flex-1">
@@ -101,13 +108,13 @@ export default function ExplanationPanel({
             </h4>
             <div className="space-y-2 mb-3">
               {!isCorrect && userAnswerSummary && (
-                <p className="text-sm leading-relaxed text-slate-700">
+                <p className="text-sm leading-relaxed text-slate-600">
                   <span className="font-semibold text-slate-900">Your selection:</span>{' '}
                   {userAnswerSummary}
                 </p>
               )}
               {correctAnswerSummary && (
-                <p className="text-sm leading-relaxed text-slate-700">
+                <p className="text-sm leading-relaxed text-slate-600">
                   <span className="font-semibold text-slate-900">
                     {getQuestionCorrectAnswers(question).length > 1 ? 'Correct responses:' : 'Correct answer:'}
                   </span>{' '}
@@ -115,46 +122,46 @@ export default function ExplanationPanel({
                 </p>
               )}
             </div>
-            <p className="text-sm leading-relaxed text-slate-700">{displayRationale}</p>
+            <p className="text-sm leading-relaxed text-slate-600">{displayRationale}</p>
 
             {/* Extended Bank Fields (Static Questions) */}
             {displayCorrectExplanation && displayCorrectExplanation !== displayRationale && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">Correct explanation</p>
-                <p className="text-sm leading-relaxed text-slate-700">{displayCorrectExplanation}</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Correct explanation</p>
+                <p className="text-sm leading-relaxed text-slate-600">{displayCorrectExplanation}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).contentLimit && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">Content rule</p>
-                <p className="text-sm leading-relaxed text-slate-700">{(question as unknown as Record<string, string>).contentLimit}</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Content rule</p>
+                <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).contentLimit}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).complexityRationale && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">Complexity</p>
-                <p className="text-sm leading-relaxed text-slate-700">{(question as unknown as Record<string, string>).complexityRationale}</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Complexity</p>
+                <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).complexityRationale}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).construct_actually_tested && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">What this tests</p>
-                <p className="text-sm leading-relaxed text-slate-700">{(question as unknown as Record<string, string>).construct_actually_tested}</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">What this tests</p>
+                <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).construct_actually_tested}</p>
               </div>
             )}
 
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">Key concepts</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Key concepts</p>
                 <div className="flex flex-wrap gap-2">
                   {question.keyConcepts.map((concept, i) => (
                     <span
                       key={i}
-                      className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
+                      className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600"
                     >
                       {concept}
                     </span>
@@ -165,15 +172,21 @@ export default function ExplanationPanel({
 
             {/* Why this was wrong — misconception + knowledge gap from distractor classification */}
             {(misconceptionText || skillDeficitText) && (
-              <div className="mt-4 border-t border-rose-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-rose-700">
+              <div
+                className="mt-4 border-t pt-4"
+                style={{ borderColor: 'color-mix(in srgb, #e11d48 25%, transparent)' }}
+              >
+                <p
+                  className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em]"
+                  style={{ color: 'color-mix(in srgb, #e11d48 80%, white)' }}
+                >
                   Why this was wrong
                 </p>
                 {misconceptionText && (
-                  <p className="text-sm leading-relaxed text-slate-700">{misconceptionText}</p>
+                  <p className="text-sm leading-relaxed text-slate-600">{misconceptionText}</p>
                 )}
                 {skillDeficitText && (
-                  <p className="mt-1.5 text-xs text-slate-600">
+                  <p className="mt-1.5 text-xs text-slate-400">
                     <span className="font-semibold">Knowledge gap:</span> {skillDeficitText}
                   </p>
                 )}

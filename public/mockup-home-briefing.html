@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home — The Briefing (Direction C)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fbf6ee; --ink:#2b2520; --soft:#6f665b; --line:#ece3d6;
+    --accent:#c2683c; --accent-soft:#f4e3d6; --green:#3f7d57; --orb1:#f6b07a; --orb2:#d4736a;
+  }
+  body{background:linear-gradient(170deg,#fdf9f3 0%,#f7ede1 48%,#f3e7e2 100%);color:var(--ink);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  .serif{font-family:'Newsreader',Georgia,serif;}
+  .card{background:rgba(255,255,255,.72);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.9);box-shadow:0 30px 60px -40px rgba(120,80,50,.45);}
+  .orb{background:radial-gradient(circle at 32% 30%, var(--orb1), var(--orb2));box-shadow:0 0 0 6px rgba(246,176,122,.16),0 14px 30px -10px rgba(212,115,106,.6);}
+  .pill{background:rgba(255,255,255,.7);border:1px solid var(--line);}
+  .btn{background:var(--ink);color:var(--cream);}
+  .btn:hover{background:#000}
+  .breathe{animation:breathe 5s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+</style>
+</head>
+<body>
+<div class="max-w-2xl mx-auto px-6 min-h-screen flex flex-col">
+
+  <!-- soft top -->
+  <header class="flex items-center justify-between py-6">
+    <span class="serif text-[17px] font-semibold tracking-tight">Praxis</span>
+    <span class="text-[13px]" style="color:var(--soft)">Saturday · May 31 · <span style="color:var(--ink)">38 days out</span></span>
+  </header>
+
+  <main class="flex-1 flex flex-col justify-center pb-10">
+
+    <!-- coach identity -->
+    <div class="flex items-center gap-3 mb-5">
+      <div class="orb breathe w-11 h-11 rounded-full shrink-0"></div>
+      <div>
+        <p class="text-[15px] font-semibold leading-tight">PraxisBot</p>
+        <p class="text-[12.5px]" style="color:var(--soft)">Your morning briefing</p>
+      </div>
+    </div>
+
+    <!-- the briefing -->
+    <section class="card rounded-[26px] p-7 sm:p-9 mb-6">
+      <p class="serif text-[22px] sm:text-[26px] leading-[1.5] font-[440]" style="color:#332c25">
+        Good morning, Maya. You're <b class="font-semibold">38 days out</b> and you've climbed
+        <b class="font-semibold" style="color:var(--green)">13 points</b> since your baseline — that's real progress, not noise.
+        <br><br>
+        Here's the honest picture: three of your four domains are on track. The one pulling you down is
+        <b class="font-semibold">Foundations</b> — and inside it there's a specific mix-up,
+        <span class="italic" style="color:var(--accent)">reliability vs. validity</span>, that surfaced again in yesterday's set.
+        It's the single highest-leverage thing you can touch today.
+      </p>
+
+      <!-- the one action -->
+      <button class="btn w-full rounded-2xl px-6 py-4 mt-8 text-left flex items-center justify-between gap-4 shadow-lg">
+        <span>
+          <span class="block text-[12px] tracking-wide uppercase opacity-70">Your first 15 minutes</span>
+          <span class="block text-[16px] font-semibold">Clear the reliability-vs-validity belief →</span>
+        </span>
+        <span class="serif text-[26px] opacity-90">15′</span>
+      </button>
+
+      <!-- soft alternative -->
+      <p class="text-[13.5px] leading-relaxed mt-5" style="color:var(--soft)">
+        Got an hour? <span style="color:var(--ink)">15′ belief fix · 20′ Foundations practice · 10′ review 7 due · 15′ mixed.</span>
+        Or just do the 15. Momentum beats marathon.
+      </p>
+    </section>
+
+    <!-- quiet mood chips -->
+    <div class="flex flex-wrap items-center gap-2.5 mb-2">
+      <span class="pill rounded-full px-3.5 py-1.5 text-[13px]">Readiness <b>68%</b> <span style="color:var(--green)">↑</span></span>
+      <span class="pill rounded-full px-3.5 py-1.5 text-[13px]">🔥 <b>6-day</b> streak</span>
+      <span class="pill rounded-full px-3.5 py-1.5 text-[13px]"><b>340</b> answered</span>
+      <span class="pill rounded-full px-3.5 py-1.5 text-[13px]" style="color:var(--soft)">Open the full numbers ▾</span>
+    </div>
+
+  </main>
+
+  <!-- reassurance -->
+  <footer class="pb-8">
+    <p class="serif italic text-[16px] text-center" style="color:var(--soft)">
+      “You don't need to do everything. You need the next right thing — I'll tell you what it is each morning.”
+    </p>
+  </footer>
+</div>
+</body>
+</html>

@@ -4,6 +4,8 @@ Reviewed on 2026-03-14. Last updated 2026-04-01 (added PHASE_C_HANDOFF.md; Phase
 
 This registry records the classification and final disposition of every reviewed root-level markdown file. Each file is represented exactly once.
 
+> **Scope note (added 2026-06-02):** This table covers only the **2026-03-14 root-level** documentation cleanup. It does **not** catalog the current `docs/` set, which has grown substantially since. For the current active doc set see `docs/DOCS_SYSTEM.md`; for the 2026-06-02 `docs/` cleanup (what was archived and why) see `archive/docs-cleanup-2026-06-02/README.md` and the `CHANGELOG.md` 2026-06-02 entry. This registry should either be refreshed to cover the live `docs/` set or treated as historical, root-only.
+
 | File | Bucket | Status | Disposition | Replacement / Active Reference | Stale Assumptions | Notes |
 |---|---|---|---|---|---|---|
 | `AGENTS.md` | Canonical source | Active | Keep in root | Self, `docs/WORKFLOW_GROUNDING.md`, `docs/ISSUE_LEDGER.md` | No | Repo-local grounding entrypoint for IDE/agent workflow and where durable rules vs issue notes belong. |

@@ -60,10 +60,10 @@ export default function StudyPlanCard({
   return (
     <section className="editorial-surface overflow-hidden">
       {/* ── Hero header ── */}
-      <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+      <div className="border-b border-slate-200 bg-[#f8fafc] px-6 py-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-sm shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-sm shrink-0">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -94,7 +94,7 @@ export default function StudyPlanCard({
               disabled={!canGenerate || isGenerating || isLoading}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 !canGenerate || isGenerating || isLoading
-                  ? 'cursor-not-allowed border border-slate-200 bg-white/8 text-slate-400'
+                  ? 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400'
                   : 'editorial-button-primary'
               }`}
             >
@@ -108,22 +108,22 @@ export default function StudyPlanCard({
 
         {/* Unlock notice */}
         {!canGenerate && (
-          <div className="mt-3 rounded-xl border border-amber-300/30 bg-[color:#d97706]/10 px-4 py-3 text-xs text-amber-600 space-y-2">
+          <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-xs text-indigo-700 space-y-2">
             <p className="font-semibold">Complete the screener + full diagnostic to unlock your guide.</p>
-            <p className="text-amber-600 leading-relaxed">Once unlocked, Claude analyzes your performance data and builds a fully personalized plan that includes:</p>
-            <ul className="mt-1 space-y-1 text-amber-600">
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Readiness snapshot with your current level (Early → Ready)</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Priority skill clusters ranked by urgency</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Domain-by-domain study maps with targeted tactics</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Weekly study schedule based on your time budget</li>
-              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-[color:#d97706] shrink-0" />Key vocabulary, case patterns, and checkpoint logic</li>
+            <p className="text-indigo-700 leading-relaxed">Once unlocked, Claude analyzes your performance data and builds a fully personalized plan that includes:</p>
+            <ul className="mt-1 space-y-1 text-indigo-700">
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />Readiness snapshot with your current level (Early → Ready)</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />Priority skill clusters ranked by urgency</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />Domain-by-domain study maps with targeted tactics</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />Weekly study schedule based on your time budget</li>
+              <li className="flex items-start gap-2"><span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />Key vocabulary, case patterns, and checkpoint logic</li>
             </ul>
           </div>
         )}
 
         {/* Generating status */}
         {isGenerating && (
-          <div className="mt-3 flex items-center gap-2 text-xs text-amber-600">
+          <div className="mt-3 flex items-center gap-2 text-xs text-accent">
             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
             Generating your study plan — this takes about a minute…
           </div>
@@ -132,22 +132,22 @@ export default function StudyPlanCard({
 
       {/* ── Settings panel (collapsible) ── */}
       {canGenerate && settingsOpen && (
-        <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
+        <div className="border-b border-slate-200 bg-[#f8fafc] px-6 py-4">
           <StudyConstraintsForm value={constraints} onChange={setConstraints} />
         </div>
       )}
 
       {/* ── Error ── */}
       {error && (
-        <div className="mx-5 mt-4 flex flex-col gap-3 rounded-2xl border border-rose-300/30 bg-rose-100 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-5 mt-4 flex flex-col gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-2.5">
             <AlertTriangle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
-            <p className="text-xs leading-relaxed text-rose-600">{error}</p>
+            <p className="text-xs leading-relaxed text-rose-700">{error}</p>
           </div>
           <button
             onClick={() => onGenerate(constraints)}
             disabled={!canGenerate || isGenerating}
-            className="shrink-0 rounded-xl border border-[color:#f43f5e]/50 bg-[color:#f43f5e]/20 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[color:#f43f5e]/30 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
+            className="shrink-0 rounded-xl border border-rose-300 bg-rose-100 px-3 py-1.5 text-xs font-semibold text-rose-700 transition-colors hover:bg-rose-200 disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-indigo-400/60"
           >
             Retry
           </button>
@@ -167,7 +167,7 @@ export default function StudyPlanCard({
       {/* ── History selector (when multiple) ── */}
       {history.length > 1 && (
         <div className="px-5 pt-4 space-y-2">
-          <p className="overline">Past generations</p>
+          <p className="editorial-overline">Past generations</p>
           <div className="flex flex-wrap gap-2">
             {history.map((entry, i) => {
               const snap = entry.plan.readinessSnapshot;
@@ -180,15 +180,15 @@ export default function StudyPlanCard({
                   key={entry.id}
                   type="button"
                   onClick={() => setSelectedId(entry.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all focus-visible:ring-2 focus-visible:ring-indigo-400/60 ${
                     isActive
-                      ? 'border-amber-300 bg-amber-50 text-amber-900'
-                      : 'border-slate-200 bg-white text-slate-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-900'
+                      ? 'border-indigo-300 bg-indigo-50 text-slate-900'
+                      : 'border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:border-indigo-200 hover:text-slate-900'
                   }`}
                 >
                   <span className={readinessBadgeCls(snap.readinessLevel)}>{readinessLabel(snap.readinessLevel)}</span>
                   <span>{date}</span>
-                  {i === 0 && <span className="font-semibold text-amber-600">latest</span>}
+                  {i === 0 && <span className="font-semibold text-accent">latest</span>}
                 </button>
               );
             })}
@@ -206,7 +206,7 @@ export default function StudyPlanCard({
           >
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-amber-600" />
+                <Clock className="w-3.5 h-3.5 text-accent" />
                 <span className="text-xs text-slate-500">
                   {new Date(activePlan.generatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </span>

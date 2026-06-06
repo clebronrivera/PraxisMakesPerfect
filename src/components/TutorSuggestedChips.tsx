@@ -18,7 +18,7 @@ export function TutorSuggestedChips({ suggestions, onSelect, disabled }: TutorSu
           key={i}
           onClick={() => onSelect(s)}
           disabled={disabled}
-          className="text-xs px-3 py-1.5 rounded-full border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 hover:border-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-xs px-3 py-1.5 rounded-full border border-indigo-300 bg-indigo-50 text-indigo-800 hover:bg-indigo-100 hover:border-indigo-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {s}
         </button>

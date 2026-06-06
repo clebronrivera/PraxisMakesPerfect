@@ -51,6 +51,9 @@ public/mockup-question-bank-audit.html
 public/mockup-*.html
 /mockup-*.html
 
+# Tooling artifacts
+.playwright-mcp/
+
 # Temporary files
 *.tmp
 .cache/

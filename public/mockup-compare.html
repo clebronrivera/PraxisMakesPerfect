@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare — Real vs Brighter</title>
+  <style>
+    body { margin:0; font-family: system-ui, sans-serif; background:#e9e7ef; }
+    .row { display:flex; gap:16px; padding:16px; justify-content:center; }
+    .col { width:660px; }
+    .label { font-weight:800; font-size:13px; padding:6px 0; text-align:center; color:#1e1b4b; }
+    /* clip box matches the SCALED iframe footprint so columns don't overlap */
+    .frame-wrap { width:660px; height:780px; overflow:hidden; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.12); background:#f7f6f8; }
+    /* render each mockup at 1320px wide then scale 0.5 → 660px visible */
+    iframe { width:1320px; height:1560px; border:0; transform: scale(0.5); transform-origin: top left; }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <div class="col">
+      <div class="label">EXAMPLE 1 — REAL DOMAIN COLORS (Blue · Green · Purple · Amber)</div>
+      <div class="frame-wrap"><iframe src="/mockup-dialed-real-colors.html" scrolling="no"></iframe></div>
+    </div>
+    <div class="col">
+      <div class="label">EXAMPLE 2 — BRIGHTER COLORS (Cyan · Emerald · Rose · Amber)</div>
+      <div class="frame-wrap"><iframe src="/mockup-dialed-bright-colors.html" scrolling="no"></iframe></div>
+    </div>
+  </div>
+</body>
+</html>

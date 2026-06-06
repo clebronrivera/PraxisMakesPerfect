@@ -17,6 +17,7 @@ const PracticeSession = lazy(() => import('./src/components/PracticeSession'));
 const LearningPathModulePage = lazy(() => import('./src/components/LearningPathModulePage'));
 const StudyNotebookPage = lazy(() => import('./src/components/StudyNotebookPage'));
 const GlossaryPage = lazy(() => import('./src/components/GlossaryPage'));
+const FluencyDrillPage = lazy(() => import('./src/components/FluencyDrillPage'));
 const HelpFAQ = lazy(() => import('./src/components/HelpFAQ'));
 const AdminDashboard = lazy(() => import('./src/components/AdminDashboard'));
 const StudyPlanCard = lazy(() => import('./src/components/StudyPlanCard'));
@@ -62,6 +63,7 @@ import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
 const OnboardingFlow = lazy(() => import('./src/components/OnboardingFlow'));
 const ProfileEditorPanel = lazy(() => import('./src/components/ProfileEditorPanel'));
+const AccountPage = lazy(() => import('./src/components/AccountPage'));
 const PrivacyPolicy = lazy(() => import('./src/components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./src/components/TermsOfService'));
 
@@ -98,13 +100,13 @@ function StudyGuideTabWrapper({
   ];
 
   return (
-    <div className="space-y-5 pb-16 text-slate-900">
+    <div className="space-y-5 pb-16 text-slate-700">
       <div className="pt-4">
-        <p className="eyebrow mb-2">Your plan</p>
-        <h2 className="text-4xl font-semibold tracking-tight text-slate-900 leading-tight">
-          A guide built around your <span className="text-amber-600">gaps.</span>
+        <p className="eyebrow text-indigo-600 mb-2">Your plan</p>
+        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+          A guide built around your <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">gaps.</span>
         </h2>
-        <p className="mt-3 text-[14px] text-slate-600 max-w-xl leading-relaxed">
+        <p className="mt-3 text-[14px] text-slate-500 max-w-xl leading-relaxed">
           Platform guide · your personalized study plan · vocabulary practice — all in one place.
         </p>
       </div>
@@ -115,15 +117,19 @@ function StudyGuideTabWrapper({
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`relative py-3.5 text-[13px] font-medium transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 ${
-              activeTab === tab.id ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'
+            className={`relative py-3.5 text-[13px] font-medium transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706] ${
+              activeTab === tab.id ? 'text-slate-900' : 'text-slate-400 hover:text-slate-900'
             }`}
           >
             {tab.label}
             {activeTab === tab.id && (
               <span
                 aria-hidden="true"
-                className="absolute -bottom-px left-0 right-0 h-0.5 rounded-full bg-amber-500"
+                className="absolute -bottom-px left-0 right-0 h-0.5 rounded-full"
+                style={{
+                  background: 'linear-gradient(90deg, #d97706, #e11d48, #7c3aed)',
+                  boxShadow: '0 0 8px rgba(252,213,180,0.4)',
+                }}
               />
             )}
           </button>
@@ -138,14 +144,15 @@ function StudyGuideTabWrapper({
             {[
               { title: 'Adaptive Diagnostic', desc: '45–90 questions that adapt to your performance. Maps all 45 skills in one session.', accent: '#d97706' },
               { title: 'Learning Path',       desc: 'Structured micro-lessons ordered by your gaps. Lesson → quiz → extend for each skill.', accent: '#059669' },
-              { title: 'Term Sprint',         desc: '396 school psychology terms, 10 seconds each, both directions. Build vocabulary fluency.', accent: '#0284c7' },
-              { title: 'Spaced Review',       desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.', accent: '#6366f1' },
-              { title: 'Redemption Rounds',   desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.', accent: '#f43f5e' },
+              { title: 'Fluency Drill',       desc: 'Rapid-fire vocabulary against the clock, both directions, across 396 terms. Misses feed your skill data.', accent: '#0284c7' },
+              { title: 'Spaced Review',       desc: 'Questions reappear at optimized intervals (1d, 3d, 7d). 2–3× more effective than blocked practice.', accent: '#7c3aed' },
+              { title: 'Redemption Rounds',   desc: 'Questions you miss 3× or use hints on are quarantined. Clear them with 3 correct answers.', accent: '#e11d48' },
               { title: 'AI Tutor',            desc: 'Conversational study assistant. Ask questions, get quizzed on weak areas, generate vocabulary lists.', accent: '#d97706' },
             ].map(item => (
               <div
                 key={item.title}
-                className="relative rounded-xl border border-slate-200 bg-white p-3 pl-4 shadow-sm transition hover:border-slate-300 hover:shadow-md"
+                className="relative rounded-xl p-3 pl-4"
+                style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}
               >
                 <span
                   aria-hidden="true"
@@ -153,7 +160,7 @@ function StudyGuideTabWrapper({
                   style={{ background: item.accent }}
                 />
                 <p className="text-xs font-semibold text-slate-900 mb-1">{item.title}</p>
-                <p className="text-[11px] text-slate-600 leading-relaxed">{item.desc}</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -175,12 +182,12 @@ function StudyGuideTabWrapper({
 
       {activeTab === 'vocabulary' && (
         <div className="editorial-surface p-6 space-y-4">
-          <p className="eyebrow mb-1">Vocabulary &amp; Term Sprint</p>
-          <p className="text-[13px] text-slate-600 leading-relaxed max-w-xl">
+          <p className="eyebrow mb-1">Vocabulary &amp; Glossary</p>
+          <p className="text-[13px] text-slate-400 leading-relaxed max-w-xl">
             Review your flagged terms and test your vocabulary knowledge across 396 school psychology terms.
           </p>
           <button onClick={onNavigateToGlossary} className="editorial-button-primary">
-            Open Glossary &amp; Start Term Sprint →
+            Open Glossary →
           </button>
         </div>
       )}
@@ -193,9 +200,8 @@ function StudyGuideTabWrapper({
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'fluency-drill' | 'account' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
-
 
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();
@@ -507,19 +513,6 @@ function PraxisStudyAppContent() {
   // Rotate affirmation pills in the top bar based on cumulative activity.
   // Seed changes as the user answers more questions or builds a streak, so
   // returning users see different phrases over time without any state management.
-  const headerAffirmations = useMemo(() => {
-    const PAIRS: [string, string][] = [
-      ['Keep going', 'One step at a time'],
-      ['Stay consistent', 'Small reps compound'],
-      ['Show up again', 'That is the whole job'],
-      ['Progress is quiet', 'Keep practicing'],
-      ['Earn it every day', 'No shortcuts here'],
-      ['Trust the process', 'You are closer than you think'],
-    ];
-    const seed = (profile.totalQuestionsSeen ?? 0) + (profile.streak ?? 0);
-    return PAIRS[seed % PAIRS.length];
-  }, [profile.totalQuestionsSeen, profile.streak]);
-
   const weeklyUsageSeconds = useMemo(
     () => recentActivityDays.reduce((total, day) => total + day.seconds, 0),
     [recentActivityDays]
@@ -793,7 +786,6 @@ function PraxisStudyAppContent() {
     );
   })();
 
-
   return (
     <div
       className="editorial-shell flex h-screen overflow-hidden"
@@ -806,26 +798,23 @@ function PraxisStudyAppContent() {
         </Suspense>
       )}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-[24rem] bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.12),_transparent_45%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.08),_transparent_35%)]" />
-        <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-200/20 blur-3xl" />
+        <div className="absolute inset-x-0 top-0 h-[24rem] bg-[radial-gradient(circle_at_top_left,_rgba(139,92,246,0.10),_transparent_45%),radial-gradient(circle_at_top_right,_rgba(79,70,229,0.08),_transparent_35%)]" />
+        <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-violet-200/20 blur-3xl" />
       </div>
 
-      <aside className={`hidden lg:flex lg:flex-shrink-0 lg:flex-col lg:bg-white lg:border-r lg:border-slate-200 transition-all duration-300 ${sidebarCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-64'}`}>
+      <aside className={`hidden md:flex md:flex-shrink-0 md:flex-col transition-all duration-300 md:bg-white md:border-r md:border-slate-200 ${sidebarCollapsed ? 'md:w-[4.5rem]' : 'md:w-64'}`}>
         <div className={`${sidebarCollapsed ? 'p-3 pt-6' : 'p-8'}`}>
           {/* ── Logo ── */}
           <div className={`group mb-10 flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
             <div className="relative">
-              {<>
-                  <div className="absolute inset-0 bg-amber-500 opacity-20 blur-lg transition-opacity group-hover:opacity-60" />
-                  <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
-                    <Brain className="h-5 w-5 text-white" />
-                  </div>
-                </>}
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl grad-chrome shadow-lg shadow-indigo-500/30">
+                <Brain className="h-5 w-5 text-white" />
+              </div>
             </div>
             {!sidebarCollapsed && (
               <div>
-                <p className="text-xl font-bold italic tracking-tight text-slate-900">
-                  Praxis<span className="text-amber-500">.</span>Ai
+                <p className="text-xl font-bold tracking-tight text-slate-900">
+                  PASS
                 </p>
                 <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">School Psychology 5403</p>
               </div>
@@ -838,35 +827,38 @@ function PraxisStudyAppContent() {
               const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
               const notebookHasNew = studyPlanHistory.length > 0; // Show dot when study plan exists
               const tabs = [
-                { label: 'Dashboard', icon: <Brain className="w-4 h-4" />, onClick: () => setMode('home'), active: mode === 'home', show: true },
-                { label: 'Practice', icon: <Zap className="w-4 h-4" />, onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
-                { label: 'Progress', icon: <BarChart3 className="w-4 h-4" />, onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
-                { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
-                { label: 'AI Tutor', icon: <Bot className="w-4 h-4" />, onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
-                { label: 'Study Notebook', icon: <BookMarked className="w-4 h-4" />, onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
-                { label: 'Glossary', icon: <BookOpen className="w-4 h-4" />, onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
-                { label: 'Help', icon: <HelpCircle className="w-4 h-4" />, onClick: () => setMode('help'), active: mode === 'help', show: true },
+                { label: 'Dashboard', icon: <Brain className="w-4 h-4" />, grad: 'from-violet-500 to-indigo-600', onClick: () => setMode('home'), active: mode === 'home', show: true },
+                { label: 'Practice', icon: <Zap className="w-4 h-4" />, grad: 'from-cyan-500 to-blue-600', onClick: () => setMode('practice-hub'), active: isActivePractice, show: true },
+                { label: 'Progress', icon: <BarChart3 className="w-4 h-4" />, grad: 'from-emerald-500 to-teal-600', onClick: () => setMode('results'), active: mode === 'results', show: Boolean(hasReadinessData) },
+                { label: 'Study Plan', icon: <BookOpen className="w-4 h-4" />, grad: 'from-rose-500 to-pink-600', onClick: () => setMode('study-guide'), active: mode === 'study-guide', show: ACTIVE_LAUNCH_FEATURES.studyGuide },
+                { label: 'AI Tutor', icon: <Bot className="w-4 h-4" />, grad: 'from-fuchsia-500 to-purple-600', onClick: () => setMode('tutor'), active: mode === 'tutor', show: ACTIVE_LAUNCH_FEATURES.tutorChat && Boolean(profile.adaptiveDiagnosticComplete) },
+                { label: 'Study Notebook', icon: <BookMarked className="w-4 h-4" />, grad: 'from-amber-500 to-orange-600', onClick: () => setMode('study-notebook'), active: mode === 'study-notebook', show: true, badge: notebookHasNew },
+                { label: 'Glossary', icon: <BookOpen className="w-4 h-4" />, grad: 'from-sky-500 to-cyan-600', onClick: () => setMode('glossary'), active: mode === 'glossary', show: true },
+                { label: 'Help', icon: <HelpCircle className="w-4 h-4" />, grad: 'from-indigo-400 to-violet-500', onClick: () => setMode('help'), active: mode === 'help', show: true },
               ];
-              return tabs.filter(tab => tab.show).map(tab => (
-                <button
-                  key={tab.label}
-                  onClick={tab.onClick}
-                  className={`editorial-sidebar-item ${
-                    tab.active
-                      ? 'editorial-sidebar-item-active'
-                      : ''
-                  } ${sidebarCollapsed ? 'justify-center px-0' : ''} relative`}
-                  title={sidebarCollapsed ? tab.label : undefined}
-                >
-                  <span className="relative shrink-0">
-                    {tab.icon}
-                    {tab.badge && !tab.active && (
-                      <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-500" />
-                    )}
-                  </span>
-                  {!sidebarCollapsed && tab.label}
-                </button>
-              ));
+              return tabs.filter(tab => tab.show).map(tab => {
+                // Light sidebar: per-item gradient icon tile; active = full-row hue gradient.
+                return (
+                  <button
+                    key={tab.label}
+                    onClick={tab.onClick}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 relative ${
+                      tab.active
+                        ? `text-white bg-gradient-to-br ${tab.grad} shadow-lg shadow-indigo-500/20`
+                        : 'text-slate-600 hover:bg-slate-50'
+                    } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
+                    title={sidebarCollapsed ? tab.label : undefined}
+                  >
+                    <span className={`relative shrink-0 flex h-6 w-6 items-center justify-center rounded-lg ${tab.active ? 'bg-white/25 text-white' : `bg-gradient-to-br ${tab.grad} text-white`}`}>
+                      {tab.icon}
+                      {tab.badge && !tab.active && (
+                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                      )}
+                    </span>
+                    {!sidebarCollapsed && tab.label}
+                  </button>
+                );
+              });
             })()}
           </nav>
         </div>
@@ -875,7 +867,7 @@ function PraxisStudyAppContent() {
         <div className={`px-3 pb-3 ${sidebarCollapsed ? '' : 'px-8'}`}>
           <button
             onClick={() => setSidebarCollapsed(prev => !prev)}
-            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all text-xs"
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 transition-all text-xs text-slate-500 hover:text-slate-700 hover:bg-slate-100"
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {sidebarCollapsed ? (
@@ -890,24 +882,15 @@ function PraxisStudyAppContent() {
         </div>
 
         {/* ── Profile card ── */}
-        <div className={`mt-auto border-t border-slate-200 bg-slate-50 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
+        <div className={`mt-auto border-t border-slate-200 bg-slate-50/60 ${sidebarCollapsed ? 'p-3' : 'p-6'}`}>
           <button
             type="button"
-            onClick={openProfileEditor}
-            className={`w-full rounded-[1.75rem] border border-slate-200 bg-white text-left transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
+            onClick={() => setMode('account')}
+            className={`w-full rounded-[1.75rem] border text-left transition focus:outline-none focus-visible:ring-2 border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50 focus-visible:ring-indigo-400/60 ${sidebarCollapsed ? 'p-2 flex justify-center' : 'p-4'}`}
           >
             <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
-              <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                style={{
-                  background: 'rgba(245,158,11,0.2)',
-                  border: '1px solid rgba(245,158,11,0.3)',
-                }}
-              >
-                <User
-                  className="h-4 w-4"
-                  style={{ color: '#d97706' }}
-                />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full grad-chrome">
+                <User className="h-4 w-4" style={{ color: '#ffffff' }} />
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
@@ -915,7 +898,7 @@ function PraxisStudyAppContent() {
                   {profileRoleLabel && (
                     <p
                       className="text-[10px] font-black uppercase tracking-[0.08em] leading-snug break-words"
-                      style={{ color: '#f59e0b' }}
+                      style={{ color: '#6d28d9' }}
                     >
                       {profileRoleLabel}
                     </p>
@@ -929,24 +912,20 @@ function PraxisStudyAppContent() {
       </aside>
 
       <main className="relative z-10 flex-1 flex flex-col overflow-hidden">
-        <header
-          className="sticky top-0 z-50 border-b backdrop-blur-md border-slate-200 bg-[#f7f6f2]/85"
-        >
+        <header className="sticky top-0 z-50 border-b backdrop-blur-md border-slate-200 bg-[#f7f6f8]/85">
           <div className="mx-auto max-w-[92rem] px-5 py-3.5 sm:px-8">
             <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 lg:hidden">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl">
-                    <Brain className="h-5 w-5 text-white" />
-                  </div>
+              <div className="flex items-center gap-3 md:hidden">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl grad-chrome shadow-lg shadow-indigo-500/30">
+                  <Brain className="h-5 w-5 text-white" />
+                </div>
                 <div>
-                  <p className="text-base font-bold tracking-tight text-slate-900">Praxis Study</p>
+                  <p className="text-base font-bold tracking-tight text-slate-900">PASS</p>
                   <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">School Psychology 5403</p>
                 </div>
               </div>
 
               <div className="hidden md:flex flex-wrap items-center gap-2">
-                <span className="editorial-pill">{headerAffirmations[0]}</span>
-                <span className="editorial-pill">{headerAffirmations[1]}</span>
                 {(profile.streak ?? 0) > 0 && (
                   <span className="editorial-pill">
                     <Flame className="h-3.5 w-3.5" />
@@ -958,8 +937,8 @@ function PraxisStudyAppContent() {
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={openProfileEditor}
-                  className="editorial-topbar-button lg:hidden"
+                  onClick={() => setMode('account')}
+                  className="editorial-topbar-button md:hidden"
                   title="Profile and onboarding"
                 >
                   <User className="w-4 h-4" />
@@ -1088,7 +1067,7 @@ function PraxisStudyAppContent() {
               </div>
             </div>
 
-            <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
+            <div className="mt-4 flex gap-2 overflow-x-auto md:hidden">
               {(() => {
                 const isActivePractice = mode === 'practice' || mode === 'practice-hub' || mode === 'learning-path-module';
                 const tabs = [
@@ -1107,7 +1086,7 @@ function PraxisStudyAppContent() {
                     onClick={tab.onClick}
                     className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all ${
                       tab.active
-                        ? 'bg-amber-500 text-slate-900'
+                        ? 'grad-chrome text-white'
                         : 'border border-slate-200 bg-white text-slate-500'
                     }`}
                   >
@@ -1218,9 +1197,9 @@ function PraxisStudyAppContent() {
                 return (
                   <div className="editorial-surface flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="eyebrow">Resume</p>
-                      <p className="mt-2 text-lg font-bold text-white">Practice in progress</p>
-                      <p className="mt-1 text-sm text-slate-400">{contextLabel}</p>
+                      <p className="eyebrow text-indigo-600">Resume</p>
+                      <p className="mt-2 text-lg font-bold text-slate-900">Practice in progress</p>
+                      <p className="mt-1 text-sm text-slate-500">{contextLabel}</p>
                     </div>
                     <button
                       onClick={() => {
@@ -1239,14 +1218,14 @@ function PraxisStudyAppContent() {
               return (
                 <div className="editorial-surface flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="eyebrow">Resume</p>
-                    <p className="mt-2 text-lg font-bold text-white">
+                    <p className="eyebrow text-indigo-600">Resume</p>
+                    <p className="mt-2 text-lg font-bold text-slate-900">
                       {profile.lastSession?.mode === 'adaptive' ? 'Diagnostic in progress'
                         : profile.lastSession?.mode === 'full' ? 'Full diagnostic in progress'
                         : hasOrphanedAdaptive ? 'Diagnostic in progress'
                         : 'Screener in progress'}
                     </p>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 text-sm text-slate-500">
                       {profile.lastSession?.questionIndex != null && profile.lastSession.questionIndex >= 0
                         ? `Question ${profile.lastSession.questionIndex + 1}. `
                         : hasOrphanedAdaptive && (profile.adaptiveResponseCount ?? 0) > 0
@@ -1362,7 +1341,7 @@ function PraxisStudyAppContent() {
                       >
                         Start over
                       </button>
-                      <button type="button" className="editorial-button-secondary" onClick={clearAdaptiveResumeError}>
+                      <button type="button" className="editorial-button-ghost" onClick={clearAdaptiveResumeError}>
                         Dismiss
                       </button>
                     </div>
@@ -1376,7 +1355,7 @@ function PraxisStudyAppContent() {
                     <div className="grid gap-5 xl:grid-cols-[minmax(0,1.75fr)_minmax(18rem,20rem)]">
                       <div className="editorial-surface p-6 lg:p-7">
                         <p className="editorial-overline">Dashboard</p>
-                        <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to Praxis Study</h2>
+                        <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to PASS</h2>
                         <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
                           Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.
                         </p>
@@ -1536,11 +1515,11 @@ function PraxisStudyAppContent() {
         {mode === 'practice-hub' && (
           <div className="space-y-6 pb-16">
             <div className="pt-4">
-              <p className="eyebrow mb-2">Practice</p>
-              <h2 className="text-4xl font-semibold tracking-tight text-white">
-                Choose your <span className="text-amber-600">focus.</span>
+              <p className="eyebrow text-indigo-600 mb-2">Practice</p>
+              <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">
+                Choose your <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">focus.</span>
               </h2>
-              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-slate-400">
+              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-slate-500">
                 Practice by domain, by skill, or follow your personalized learning path.
               </p>
             </div>
@@ -1625,6 +1604,31 @@ function PraxisStudyAppContent() {
         {mode === 'glossary' && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading glossary…</div>}>
             <GlossaryPage userId={user?.id ?? null} />
+          </Suspense>
+        )}
+
+        {/* VOCABULARY FLUENCY DRILL */}
+        {mode === 'fluency-drill' && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading drill…</div>}>
+            <FluencyDrillPage
+              userId={user?.id ?? ''}
+              skillScores={profile.skillScores}
+              onApplyNudges={(ids) => ids.forEach((id) => { void updateSkillProgress(id, false, 'low'); })}
+              onExit={() => setMode('home')}
+              onNavigateToGlossary={() => setMode('glossary')}
+            />
+          </Suspense>
+        )}
+
+        {/* ACCOUNT PAGE */}
+        {mode === 'account' && (
+          <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading account…</div>}>
+            <AccountPage
+              profile={profile}
+              displayName={displayName}
+              onEditAnswers={openProfileEditor}
+              onSignOut={logout}
+            />
           </Suspense>
         )}
 

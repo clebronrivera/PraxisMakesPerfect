@@ -55,10 +55,10 @@ import type { UserProfile } from '../hooks/useProgressTracking';
 // PROFICIENCY_META uses dark-mode colours; these overrides apply when
 // badges are rendered on white/editorial-surface backgrounds.
 const LIGHT_BADGE: Record<string, { badge: string; text: string }> = {
-  proficient:  { badge: 'bg-emerald-100 border border-emerald-300/30 text-emerald-600', text: 'text-emerald-600' },
-  approaching: { badge: 'bg-[color:#d97706]/10 border border-amber-300/30 text-amber-600',       text: 'text-amber-600'   },
-  emerging:    { badge: 'bg-rose-100 border border-rose-300/30 text-rose-600',           text: 'text-rose-600'    },
-  unstarted:   { badge: 'bg-white/8 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
+  proficient:  { badge: 'bg-emerald-50 border border-emerald-300 text-emerald-600', text: 'text-emerald-600' },
+  approaching: { badge: 'bg-amber-50 border border-amber-300 text-amber-600',       text: 'text-amber-600'   },
+  emerging:    { badge: 'bg-rose-50 border border-rose-300 text-rose-600',           text: 'text-rose-600'    },
+  unstarted:   { badge: 'bg-slate-100 border border-slate-200 text-slate-500',       text: 'text-slate-500'   },
 };
 
 // ─── Date helpers ────────────────────────────────────────────────────────────
@@ -201,11 +201,11 @@ function DomainPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:#d97706]/10">
-          <Lock className="w-4 h-4 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50">
+          <Lock className="w-4 h-4 text-indigo-600" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock domain-based practice across all four Praxis sections.
           </p>
@@ -226,15 +226,15 @@ function DomainPanel({
 
   return (
     <div className="space-y-3">
-      <p className="eyebrow flex items-center gap-1.5">
-        <TrendingUp className="w-3 h-3 text-amber-600" />
+      <p className="eyebrow text-indigo-600 flex items-center gap-1.5">
+        <TrendingUp className="w-3 h-3 text-indigo-600" />
         Domain overview — most concern first
       </p>
       <div className="space-y-2.5">
         {stats.map((stat) => {
           const color = getDomainColor(stat.domain.id);
           const barPct = stat.demonstratingPct;
-          const barColor = barPct >= 70 ? 'bg-[color:#059669]' : barPct >= 50 ? 'bg-[color:#d97706]' : 'bg-[color:#f43f5e]';
+          const barColor = barPct >= 70 ? 'bg-emerald-500' : barPct >= 50 ? 'bg-amber-500' : 'bg-rose-500';
           const labelColor = barPct >= 70 ? 'text-emerald-600' : barPct >= 50 ? 'text-amber-600' : 'text-rose-600';
 
           return (
@@ -245,7 +245,7 @@ function DomainPanel({
               <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl" style={{ backgroundColor: color }} />
               <div className="flex items-start justify-between gap-3 mb-3 pl-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-base font-semibold leading-tight text-white">{stat.domain.name}</p>
+                  <p className="text-base font-semibold leading-tight text-slate-900">{stat.domain.name}</p>
                   <p className="mt-0.5 text-[11px] text-slate-500">{stat.totalSkills} skills</p>
                 </div>
                 <button
@@ -256,14 +256,14 @@ function DomainPanel({
                 </button>
               </div>
               <div className="relative h-1.5 mb-2" style={{ overflow: 'visible' }}>
-                <div className="absolute inset-0 overflow-hidden rounded-full bg-white/8">
+                <div className="absolute inset-0 overflow-hidden rounded-full bg-slate-100">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ${barColor}`}
                     style={{ width: `${barPct}%` }}
                   />
                 </div>
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-[color:#d97706]/100/70"
+                  className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-500/70"
                   style={{ left: '70%' }}
                   title="70% mastery goal"
                 />
@@ -274,17 +274,17 @@ function DomainPanel({
                 </p>
                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
                   {stat.emergingCount > 0 && (
-                    <span className="rounded-full bg-rose-100 border border-rose-300/30 px-1.5 py-0.5 text-[11px] font-medium text-rose-600">
+                    <span className="rounded-full bg-rose-50 border border-rose-300 px-1.5 py-0.5 text-[11px] font-medium text-rose-600">
                       {stat.emergingCount} {PROFICIENCY_META.emerging.label}
                     </span>
                   )}
                   {stat.approachingCount > 0 && (
-                    <span className="rounded-full bg-[color:#d97706]/10 border border-amber-300/30 px-1.5 py-0.5 text-[11px] font-medium text-amber-600">
+                    <span className="rounded-full bg-amber-50 border border-amber-300 px-1.5 py-0.5 text-[11px] font-medium text-amber-600">
                       {stat.approachingCount} {PROFICIENCY_META.approaching.label}
                     </span>
                   )}
                   {stat.demonstratingCount > 0 && (
-                    <span className="rounded-full bg-emerald-100 border border-emerald-300/30 px-1.5 py-0.5 text-[11px] font-medium text-emerald-600">
+                    <span className="rounded-full bg-emerald-50 border border-emerald-300 px-1.5 py-0.5 text-[11px] font-medium text-emerald-600">
                       {stat.demonstratingCount} {PROFICIENCY_META.proficient.label}
                     </span>
                   )}
@@ -325,11 +325,11 @@ function SkillPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:#d97706]/10">
-          <Lock className="w-4 h-4 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50">
+          <Lock className="w-4 h-4 text-indigo-600" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock targeted skill-by-skill practice across all 45 skills.
           </p>
@@ -359,10 +359,10 @@ function SkillPanel({
                            allRows.filter(r => r.tier === filter);
 
   const filterButtons: Array<{ id: SkillFilter; label: string; count: number; css: string; activeCss: string }> = [
-    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-[color:#d97706]/10 border-amber-300/50 text-white'    },
-    { id: 'emerging',  label: PROFICIENCY_META.emerging.label,  count: emergingCount,     css: 'text-rose-600 border-rose-300/30',     activeCss: 'bg-rose-100 border-[color:#f43f5e]/50 text-rose-600'       },
-    { id: 'approaching',label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-600 border-amber-300/30', activeCss: 'bg-[color:#d97706]/10 border-amber-300/50 text-amber-600'    },
-    { id: 'proficient',label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-600 border-emerald-300/30', activeCss: 'bg-emerald-100 border-[color:#059669]/50 text-emerald-600' },
+    { id: 'all',       label: 'All',                            count: allRows.length,    css: 'text-slate-500 border-slate-200',   activeCss: 'bg-indigo-50 border-indigo-400 text-slate-900'  },
+    { id: 'emerging',  label: PROFICIENCY_META.emerging.label,  count: emergingCount,     css: 'text-rose-600 border-rose-300',     activeCss: 'bg-rose-50 border-rose-400 text-rose-600'       },
+    { id: 'approaching',label: PROFICIENCY_META.approaching.label, count: approachingCount, css: 'text-amber-600 border-amber-300', activeCss: 'bg-amber-50 border-amber-400 text-amber-600'    },
+    { id: 'proficient',label: PROFICIENCY_META.proficient.label, count: demonstratingCount, css: 'text-emerald-600 border-emerald-300', activeCss: 'bg-emerald-50 border-emerald-400 text-emerald-600' },
     ...(srsOverdueCount > 0 ? [{
       id: 'overdue' as SkillFilter,
       label: `Due (${srsOverdueCount})`,
@@ -377,7 +377,7 @@ function SkillPanel({
       {/* Stats row */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
-          { label: 'Assessed', value: assessedRows.length, css: 'text-white' },
+          { label: 'Assessed', value: assessedRows.length, css: 'text-slate-900' },
           { label: PROFICIENCY_META.emerging.label, value: emergingCount, css: 'text-rose-600' },
           { label: PROFICIENCY_META.approaching.label, value: approachingCount, css: 'text-amber-600' },
           { label: PROFICIENCY_META.proficient.label, value: demonstratingCount, css: 'text-emerald-600' },
@@ -394,7 +394,7 @@ function SkillPanel({
 
       {/* Usage hint */}
       <p className="flex items-center gap-1.5 text-sm text-slate-500">
-        <HelpCircle className="w-3 h-3 shrink-0 text-amber-600" />
+        <HelpCircle className="w-3 h-3 shrink-0 text-indigo-600" />
         Tap Practice for questions · tap the help icon to open the skill lesson
       </p>
 
@@ -404,7 +404,8 @@ function SkillPanel({
           <button
             key={btn.id}
             onClick={() => onFilterChange(btn.id)}
-            className={`px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all ${
+            aria-pressed={filter === btn.id}
+            className={`px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
               filter === btn.id ? btn.activeCss : `bg-transparent ${btn.css} hover:opacity-80`
             }`}
           >
@@ -433,7 +434,7 @@ function SkillPanel({
               >
                 {/* Skill label + module code */}
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm leading-snug text-slate-200">
+                  <p className="truncate text-sm leading-snug text-slate-700">
                     {row.fullLabel}
                   </p>
                   {primaryModule && (
@@ -459,12 +460,12 @@ function SkillPanel({
                     / 86_400_000
                   );
                   if (daysOut < 0) return (
-                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-[color:#d97706]/10 border border-amber-300/30 text-amber-600 shrink-0">
+                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-300 text-amber-600 shrink-0">
                       Overdue
                     </span>
                   );
                   if (daysOut === 0) return (
-                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-[color:#d97706]/10 border border-amber-300/30 text-amber-600 shrink-0">
+                    <span className="rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-amber-50 border border-amber-300 text-amber-600 shrink-0">
                       Due today
                     </span>
                   );
@@ -479,8 +480,9 @@ function SkillPanel({
                 {/* Help button — opens SkillHelpDrawer */}
                 <button
                   onClick={() => onOpenHelp(row.skillId, row.fullLabel)}
-                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-[color:#d97706]/10 hover:text-amber-600"
+                  className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
                   title="View skill lesson"
+                  aria-label={`View lesson for ${row.fullLabel}`}
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
                 </button>
@@ -525,11 +527,11 @@ function LearningPathPanel({
   if (isLocked) {
     return (
       <div className="py-10 flex flex-col items-center gap-4 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:#d97706]/10">
-          <Lock className="w-4 h-4 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50">
+          <Lock className="w-4 h-4 text-indigo-600" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-200">Unlocks after the adaptive diagnostic</p>
+          <p className="text-sm font-semibold text-slate-700">Unlocks after the adaptive diagnostic</p>
           <p className="mt-1 max-w-xs mx-auto text-xs leading-normal text-slate-500">
             Complete the adaptive diagnostic to unlock your personalized learning path, ordered by your areas of greatest need.
           </p>
@@ -673,14 +675,14 @@ export default function StudyModesSection({
       {/* ── Readiness bar ───────────────────────────────────────────────── */}
       <div className="editorial-surface p-3.5">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-semibold text-slate-200">Praxis Readiness</p>
+          <p className="text-sm font-semibold text-slate-700">Praxis Readiness</p>
           <p className={`text-sm font-bold tabular-nums ${demonstratingCount >= READINESS_TARGET ? 'text-emerald-600' : 'text-slate-500'}`}>
             {demonstratingCount} / {READINESS_TARGET} {PROFICIENCY_META.proficient.label}
           </p>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-white/8">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div
-            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-1000' : 'bg-[color:#d97706]/100'}`}
+            className={`h-full rounded-full transition-all duration-700 ${demonstratingCount >= READINESS_TARGET ? 'bg-emerald-500' : 'bg-indigo-500'}`}
             style={{ width: `${readinessBarPct}%` }}
           />
         </div>
@@ -691,7 +693,7 @@ export default function StudyModesSection({
       {srsOverdueCount > 0 && fullAssessmentComplete && (
         <button
           onClick={() => { setSelectedMode('skill'); setSkillFilter('overdue'); }}
-          className="w-full flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-left transition-colors hover:bg-violet-100"
+          className="w-full flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-left transition-colors hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <RefreshCw className="w-3.5 h-3.5 shrink-0 text-violet-600" />
           <div>
@@ -705,11 +707,11 @@ export default function StudyModesSection({
         </button>
       )}
 
-      {/* ── Term Sprint info ─────────────────────────────────────────────── */}
+      {/* ── Fluency Drill info ───────────────────────────────────────────── */}
       {fullAssessmentComplete && (
         <div className="rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-2.5">
-          <p className="text-xs font-bold text-blue-800">Term Sprint</p>
-          <p className="text-xs text-blue-700 mt-0.5">396 school psychology terms · 10 seconds each · both directions</p>
+          <p className="text-xs font-bold text-blue-800">Fluency Drill</p>
+          <p className="text-xs text-blue-700 mt-0.5">Timed, rapid-fire vocabulary cards · scoped to your weak areas · both directions · missed terms feed your practice</p>
         </div>
       )}
 
@@ -721,19 +723,21 @@ export default function StudyModesSection({
             <button
               key={tab.id}
               onClick={() => setSelectedMode(tab.id)}
+              aria-pressed={isActive}
               className={`
                 p-3 rounded-xl border text-left transition-all
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400
                 ${isActive
-                  ? 'bg-[color:#d97706]/10 border-amber-300/50'
-                  : 'bg-white border-slate-200 hover:border-amber-300/30'}
+                  ? 'bg-indigo-50 border-indigo-400'
+                  : 'bg-slate-50 border-slate-200 hover:border-indigo-300'}
               `}
             >
               <div className={`flex items-center gap-1.5 mb-1 ${
-                isActive ? 'text-amber-600' : tab.locked ? 'text-slate-400' : 'text-slate-500'
+                isActive ? 'text-indigo-600' : tab.locked ? 'text-slate-400' : 'text-slate-500'
               }`}>
                 {tab.locked ? <Lock className="w-3 h-3" /> : tab.icon}
                 <p className={`text-sm font-semibold truncate ${
-                  isActive ? 'text-white' : tab.locked ? 'text-slate-500' : 'text-slate-200'
+                  isActive ? 'text-slate-900' : tab.locked ? 'text-slate-500' : 'text-slate-700'
                 }`}>
                   {tab.label}
                 </p>

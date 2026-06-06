@@ -12,11 +12,11 @@ export interface TutorialSlide {
 export const TUTORIAL_SLIDES: TutorialSlide[] = [
   {
     id: 'welcome',
-    title: 'Welcome to Praxis Makes Perfect',
+    title: 'Welcome to PASS',
     description: 'Your personalized study companion for the Praxis 5403 School Psychology exam. Here\'s a quick tour of everything you can do.',
     icon: 'Sparkles',
     highlights: [
-      '450+ practice questions across 45 skills',
+      'Practice questions mapped to all 45 skills',
       'AI-powered study guides tailored to your gaps',
       'Real-time progress tracking with proficiency levels',
       'Adaptive practice that targets your weakest areas',
@@ -55,6 +55,19 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
       'By Domain \u2014 broad review of an entire domain',
       'By Skill \u2014 deep dive into a specific skill',
       'Learning Path \u2014 structured modules ordered by your weakest skills',
+      'Spaced Review \u2014 missed skills resurface at optimized intervals (1d, 3d, 7d)',
+    ],
+  },
+  {
+    id: 'vocabulary',
+    title: 'Vocabulary & Fluency',
+    description: 'Build fast, automatic recall of the terms and concepts the exam leans on \u2014 in short, rapid-fire sessions you can fit between longer study blocks.',
+    icon: 'Zap',
+    highlights: [
+      'Fluency Drill \u2014 rapid-fire cases, terms, and concepts against the clock',
+      'Glossary \u2014 396 school psychology terms with official definitions',
+      'Flag terms from practice and revisit them anytime',
+      'Strengthens recognition so questions feel faster on exam day',
     ],
   },
   {
@@ -77,8 +90,8 @@ export const TUTORIAL_SLIDES: TutorialSlide[] = [
     highlights: [
       'Domain-level accuracy bars with proficiency badges',
       'Skill breakdown table: accuracy, attempts, trends',
-      'Time distribution stats per session',
       'Top 10 most-missed skills highlighted',
+      'Study Notebook — your saved focus items and study notes in one place',
     ],
   },
   {

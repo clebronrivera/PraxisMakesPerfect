@@ -70,41 +70,41 @@ export default function TermMatcher({
     ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 mb-3'
     : 'text-[10px] font-bold uppercase text-slate-600 mb-3';
   const slotCorrect = isA
-    ? 'border-[color:#059669]/50 bg-emerald-100'
+    ? 'border-[color:#059669]/50 bg-[color:#059669]/10'
     : 'border-emerald-300 bg-emerald-50';
   const slotWrong = isA
-    ? 'border-amber-300/50 bg-[color:#d97706]/10'
-    : 'border-amber-300 bg-amber-50';
+    ? 'border-[color:#d97706]/50 bg-[color:#d97706]/10'
+    : 'border-indigo-300 bg-indigo-50';
   const slotIdle = isA
-    ? 'border-white/20 bg-white hover:border-[color:#d97706]/40'
+    ? 'border-slate-200 bg-slate-50 hover:border-[color:#d97706]/40'
     : 'border-slate-300 bg-slate-50 hover:border-cyan-300';
-  const termCls = isA ? 'font-semibold text-white mb-2' : 'font-semibold text-slate-800 mb-2';
-  const defMatchedCls = isA ? 'text-xs text-slate-200 leading-normal' : 'text-xs text-slate-700 leading-normal';
+  const termCls = isA ? 'font-semibold text-slate-900 mb-2' : 'font-semibold text-slate-800 mb-2';
+  const defMatchedCls = isA ? 'text-xs text-slate-700 leading-normal' : 'text-xs text-slate-700 leading-normal';
   const removeBtn = isA
-    ? 'mt-0.5 text-slate-500 hover:text-rose-600 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 rounded'
+    ? 'mt-0.5 text-slate-500 hover:text-[color:#e11d48] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706] rounded'
     : 'mt-0.5 text-slate-400 hover:text-rose-600 transition-colors';
   const placeholderCls = isA ? 'text-xs text-slate-500 italic' : 'text-xs text-slate-400 italic';
   const defDragging = isA
-    ? 'bg-[color:#d97706]/15 border border-amber-300/50 opacity-75'
+    ? 'bg-[color:#d97706]/15 border border-[color:#d97706]/50 opacity-75'
     : 'bg-cyan-50 border border-cyan-300 opacity-75';
   const defIdle = isA
-    ? 'bg-white border border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50'
+    ? 'bg-slate-50 border border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50'
     : 'bg-white border border-slate-200 hover:border-cyan-300 shadow-sm';
   const defHandle = isA ? 'w-3.5 h-3.5 mt-0.5 text-slate-500 flex-shrink-0' : 'w-3.5 h-3.5 mt-0.5 text-slate-400 flex-shrink-0';
-  const defText = isA ? 'text-xs text-slate-200 leading-normal' : 'text-xs text-slate-700 leading-normal';
+  const defText = isA ? 'text-xs text-slate-700 leading-normal' : 'text-xs text-slate-700 leading-normal';
   const bannerCorrectCls = isA
-    ? 'rounded-xl px-4 py-3 bg-emerald-100 border border-[color:#059669]/40'
+    ? 'rounded-xl px-4 py-3 bg-[color:#059669]/10 border border-[color:#059669]/40'
     : 'rounded-lg px-4 py-3 bg-emerald-50 border border-emerald-200';
   const bannerPartialCls = isA
     ? 'rounded-xl px-4 py-3 bg-[color:#d97706]/10 border border-[color:#d97706]/40'
-    : 'rounded-lg px-4 py-3 bg-amber-50 border border-amber-200';
-  const bannerCorrectText = isA ? 'text-sm font-semibold text-emerald-600' : 'text-sm font-semibold text-emerald-700';
-  const bannerPartialText = isA ? 'text-sm font-semibold text-amber-600' : 'text-sm font-semibold text-amber-700';
+    : 'rounded-lg px-4 py-3 bg-indigo-50 border border-indigo-200';
+  const bannerCorrectText = isA ? 'text-sm font-semibold text-[color:#059669]' : 'text-sm font-semibold text-emerald-700';
+  const bannerPartialText = isA ? 'text-sm font-semibold text-[color:#d97706]' : 'text-sm font-semibold text-indigo-700';
   const submitActive = isA
     ? 'editorial-button-primary text-sm font-semibold'
-    : 'bg-cyan-600 hover:bg-cyan-700 text-white border border-transparent';
+    : 'bg-cyan-600 hover:bg-cyan-700 text-slate-900 border border-transparent';
   const submitDisabled = isA
-    ? 'bg-white border border-slate-200 text-slate-500 cursor-not-allowed'
+    ? 'bg-slate-50 border border-slate-200 text-slate-500 cursor-not-allowed'
     : 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed';
 
   return (

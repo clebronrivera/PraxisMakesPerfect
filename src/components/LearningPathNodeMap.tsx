@@ -64,10 +64,10 @@ function getNodeStyle(lpStatus: LearningPathStatus, overallTier: ReturnType<type
   if (lpStatus === 'mastered' || overallTier === 'proficient' || lpStatus === 'demonstrating') {
     return {
       ring: 'border-[color:#059669]/40',
-      bg: 'bg-emerald-100',
-      badge: 'bg-[color:#059669]/20 text-emerald-600',
-      label: 'text-white',
-      connector: '#b8f2d8',
+      bg: 'bg-[color:#059669]/10',
+      badge: 'bg-[color:#059669]/20 text-[color:#059669]',
+      label: 'text-slate-900',
+      connector: '#059669',
     };
   }
 
@@ -76,30 +76,30 @@ function getNodeStyle(lpStatus: LearningPathStatus, overallTier: ReturnType<type
     return {
       ring: 'border-[color:#d97706]/40',
       bg: 'bg-[color:#d97706]/10',
-      badge: 'bg-[color:#d97706]/20 text-amber-600',
-      label: 'text-white',
-      connector: '#fcd5b4',
+      badge: 'bg-[color:#d97706]/20 text-[color:#d97706]',
+      label: 'text-slate-900',
+      connector: '#d97706',
     };
   }
 
   // Emerging — rose
   if (lpStatus === 'emerging' || overallTier === 'emerging') {
     return {
-      ring: 'border-[color:#f43f5e]/40',
-      bg: 'bg-rose-100',
-      badge: 'bg-[color:#f43f5e]/20 text-rose-600',
-      label: 'text-white',
-      connector: '#fbcfe8',
+      ring: 'border-[color:#e11d48]/40',
+      bg: 'bg-[color:#e11d48]/10',
+      badge: 'bg-[color:#e11d48]/20 text-[color:#e11d48]',
+      label: 'text-slate-900',
+      connector: '#e11d48',
     };
   }
 
   // Unstarted — neutral
   return {
     ring: 'border-slate-200',
-    bg: 'bg-white',
-    badge: 'bg-white/10 text-slate-400',
-    label: 'text-slate-300',
-    connector: 'rgba(255,255,255,0.25)',
+    bg: 'bg-slate-50',
+    badge: 'bg-slate-50 text-slate-400',
+    label: 'text-slate-600',
+    connector: '#cbd5e1',
   };
 }
 
@@ -215,16 +215,16 @@ function NodeCard({
       title={tooltipText}
       className={`
         relative flex min-h-[120px] w-full flex-col items-start gap-3 rounded-2xl border p-3.5 text-left backdrop-blur-[14px] transition-all duration-200 sm:min-h-[128px]
-        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500
+        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#d97706]
         ${style.ring} ${style.bg}
         ${isMastered
           ? 'cursor-not-allowed opacity-60'
-          : 'hover:-translate-y-0.5 hover:bg-white/8 active:scale-[0.98]'}
+          : 'hover:-translate-y-0.5 hover:bg-slate-50 active:scale-[0.98]'}
       `}
       style={{ boxShadow: isMastered ? undefined : '0 4px 24px -8px rgba(0,0,0,0.4)' }}
     >
       <div className="flex w-full items-start justify-between gap-2">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border bg-[rgba(10,22,40,0.4)] ${style.ring}`}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border bg-[#ffffff] ${style.ring}`}>
           {isMastered ? (
             <CheckCircle className="h-4 w-4" style={{ color: '#059669' }} />
           ) : (
@@ -241,7 +241,7 @@ function NodeCard({
             />
           )}
           {!isMastered && (
-            <div className="flex h-7 min-w-[1.75rem] items-center justify-center rounded-full border border-[color:#d97706]/40 bg-[rgba(10,22,40,0.6)] px-1.5">
+            <div className="flex h-7 min-w-[1.75rem] items-center justify-center rounded-full border border-[color:#d97706]/40 bg-[#ffffff] px-1.5">
               <span
                 className="text-[11px] font-bold tabular-nums"
                 style={{ color: '#d97706' }}
@@ -264,8 +264,8 @@ function NodeCard({
           <span
             className="mt-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px] font-semibold"
             style={{
-              background: 'color-mix(in srgb, #6366f1 18%, transparent)',
-              color: '#6366f1',
+              background: 'color-mix(in srgb, #7c3aed 18%, transparent)',
+              color: '#7c3aed',
             }}
           >
             {naspDomain}
@@ -280,7 +280,7 @@ function NodeCard({
         <div className="flex items-center gap-1.5">
           {node.visitCount > 1 && !isMastered && (
             <span
-              className="rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-bold text-slate-300"
+              className="rounded-full bg-slate-50 px-1.5 py-0.5 text-[9px] font-bold text-slate-600"
               title={`${node.visitCount} visits`}
             >
               {node.visitCount}x
@@ -434,7 +434,7 @@ export default function LearningPathNodeMap({
       {/* Sort toggle */}
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Sort</span>
-        <div className="flex gap-0.5 bg-white border border-slate-200 rounded-lg p-0.5">
+        <div className="flex gap-0.5 bg-slate-50 border border-slate-200 rounded-lg p-0.5">
           {([
             { id: 'weakest' as const, label: 'Weakest First' },
             { id: 'quick-wins' as const, label: 'Quick Wins' },
@@ -443,10 +443,10 @@ export default function LearningPathNodeMap({
             <button
               key={opt.id}
               onClick={() => setSortMode(opt.id)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706] ${
                 sortMode === opt.id
-                  ? 'bg-[color:#d97706]/15 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-white'
+                  ? 'bg-[color:#d97706]/15 text-slate-900'
+                  : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
               {opt.label}
@@ -456,13 +456,13 @@ export default function LearningPathNodeMap({
         <span className="ml-auto text-xs text-slate-500">{activeCount} active · {masteredCount} mastered</span>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-[rgba(10,22,40,0.45)] backdrop-blur-[14px] flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm leading-relaxed text-slate-300">
+      <div className="rounded-2xl border border-slate-200 bg-[#ffffff] backdrop-blur-[14px] flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm leading-relaxed text-slate-600">
           {activeCount} skills to strengthen · {masteredCount} {PROFICIENCY_META.proficient.label}
         </p>
         <div className="flex flex-wrap items-center gap-3">
           {[
-            { color: '#f43f5e', label: PROFICIENCY_META.emerging.label },
+            { color: '#e11d48', label: PROFICIENCY_META.emerging.label },
             { color: '#d97706', label: PROFICIENCY_META.approaching.label },
             { color: '#059669', label: PROFICIENCY_META.proficient.label },
             { color: 'rgba(255,255,255,0.4)', label: PROFICIENCY_META.unstarted.label },
@@ -478,7 +478,7 @@ export default function LearningPathNodeMap({
         </div>
       </div>
 
-      <div className="max-h-[72vh] overflow-y-auto rounded-2xl border border-slate-200 bg-[rgba(10,22,40,0.5)] backdrop-blur-[14px] p-3 sm:p-4">
+      <div className="max-h-[72vh] overflow-y-auto rounded-2xl border border-slate-200 bg-[#ffffff] backdrop-blur-[14px] p-3 sm:p-4">
         <div ref={gridRef} className="relative">
           {svgPaths.length > 0 && (
             <svg
@@ -539,7 +539,7 @@ export default function LearningPathNodeMap({
         <div className="border-t border-slate-200 pt-3">
           <button
             onClick={() => setMasteredExpanded(prev => !prev)}
-            className="flex items-center gap-2 w-full text-left group focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 rounded"
+            className="flex items-center gap-2 w-full text-left group focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706] rounded"
           >
             {masteredExpanded
               ? <ChevronUp className="w-4 h-4" style={{ color: '#059669' }} />
@@ -547,7 +547,7 @@ export default function LearningPathNodeMap({
             <span className="text-sm font-semibold" style={{ color: '#059669' }}>
               {masteredNodes.length} mastered skill{masteredNodes.length !== 1 ? 's' : ''}
             </span>
-            <span className="text-xs text-slate-500 group-hover:text-slate-300">
+            <span className="text-xs text-slate-500 group-hover:text-slate-600">
               {masteredExpanded ? 'Click to collapse' : 'Click to expand'}
             </span>
           </button>
@@ -557,13 +557,13 @@ export default function LearningPathNodeMap({
                 <button
                   key={node.skillId}
                   onClick={() => onNodeClick(node.skillId)}
-                  className="rounded-xl border border-emerald-300/30 bg-emerald-100 p-2.5 text-center transition-all hover:bg-[color:#059669]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500"
+                  className="rounded-xl border border-[color:#059669]/30 bg-[color:#059669]/10 p-2.5 text-center transition-all hover:bg-[color:#059669]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
                 >
                   <CheckCircle
                     className="w-3.5 h-3.5 mx-auto mb-1"
                     style={{ color: '#059669' }}
                   />
-                  <div className="text-[10px] font-bold text-white">{node.shortLabel}</div>
+                  <div className="text-[10px] font-bold text-slate-900">{node.shortLabel}</div>
                   {node.overallScore !== null && (
                     <div className="text-[9px]" style={{ color: '#059669' }}>
                       {Math.round(node.overallScore * 100)}%

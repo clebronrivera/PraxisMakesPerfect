@@ -7,6 +7,17 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-06-02
+
+### docs/ cleanup — sheriff pass
+
+Decluttered `docs/` down to the canonical/active set defined by `docs/DOCS_SYSTEM.md` (plus current backlog/roadmap/brand/decisions/specs and the two newest handoffs). All moves via `git mv` (history preserved); nothing deleted except untracked `.DS_Store` junk. Full manifest: `archive/docs-cleanup-2026-06-02/README.md`.
+
+- **[Chore — Archive superseded docs]** Moved ~50 superseded/shipped/point-in-time docs out of `docs/` into `archive/docs-cleanup-2026-06-02/`: shipped handoffs (rename plan, indigo/violet retheme, landing honesty, dashboard redesign brief+handoff, bundle warnings, UI structure audit), older 2026-03/04 content+diagnostic planning, the two `_superseded_` plan trees, the `gap-closer-*` plans, all 7 `audits/`, and the stray `PraxisMakesPerfect_Alignment_Report_2026-03-23.docx` binary. — `docs/`, `archive/docs-cleanup-2026-06-02/`
+- **[Fix — Repoint references]** Updated links in kept docs to the new archive paths: `docs/ISSUE_LEDGER.md` (the .docx, ×2) and `docs/LAUNCH_READINESS.md` (bundle warnings, rename plan). — `docs/ISSUE_LEDGER.md`, `docs/LAUNCH_READINESS.md`
+- **[Chore — Remove junk]** Deleted `docs/.DS_Store` and `docs/plans/.DS_Store` (untracked, gitignored). Empty `docs/plans/` and `docs/audits/` directories removed.
+- **[Note]** `docs/DOCUMENT_REGISTRY.md` flagged as stale (it catalogs only the 2026-03-14 root cleanup, not the current `docs/` set); scope note added.
+
 ## 2026-04-15
 
 ### Launch Gate P0 Hotfix — `hotfix/launch-gate-p0` (PR #6)

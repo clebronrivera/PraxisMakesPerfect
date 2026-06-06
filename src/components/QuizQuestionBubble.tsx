@@ -52,8 +52,8 @@ export function QuizQuestionBubble({
     <div
       className={`mt-2 p-4 rounded-xl border backdrop-blur-[14px] ${
         isSubmitted
-          ? 'border-slate-200 bg-[rgba(10,22,40,0.35)] opacity-75'
-          : 'border-slate-200 bg-[rgba(10,22,40,0.55)]'
+          ? 'border-slate-200 bg-[#ffffff] opacity-75'
+          : 'border-slate-200 bg-[#ffffff]'
       }`}
     >
       {isMultiSelect && !isSubmitted && (
@@ -66,7 +66,7 @@ export function QuizQuestionBubble({
         </p>
       )}
 
-      <p className="text-sm text-white font-medium mb-3">{stem}</p>
+      <p className="text-sm text-slate-900 font-medium mb-3">{stem}</p>
 
       <div className="space-y-2">
         {choices.map(choice => {
@@ -78,15 +78,15 @@ export function QuizQuestionBubble({
               disabled={isSubmitted || disabled}
               className={`w-full text-left flex items-start gap-3 p-2.5 rounded-lg border text-sm transition-colors
                 ${isSelected
-                  ? 'border-amber-300/50 bg-[color:#d97706]/10 text-white'
-                  : 'border-slate-200 bg-[rgba(10,22,40,0.45)] text-slate-300 hover:border-[color:#d97706]/40 hover:bg-white'
+                  ? 'border-[color:#d97706]/50 bg-[color:#d97706]/10 text-slate-900'
+                  : 'border-slate-200 bg-[#ffffff] text-slate-600 hover:border-[color:#d97706]/40 hover:bg-slate-50'
                 }
                 ${(isSubmitted || disabled) ? 'cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
               <span
                 className={`shrink-0 w-5 h-5 rounded-${isMultiSelect ? 'sm' : 'full'} border-2 flex items-center justify-center mt-0.5
-                  ${isSelected ? 'border-[color:#d97706] bg-[color:#d97706]/80' : 'border-white/30'}
+                  ${isSelected ? 'border-[color:#d97706] bg-[color:#d97706]/80' : 'border-indigo-300'}
                 `}
               >
                 {isSelected && (

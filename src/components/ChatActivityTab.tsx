@@ -155,7 +155,7 @@ export default function ChatActivityTab() {
       <div className="space-y-4">
         <button
           onClick={() => setSelectedSession(null)}
-          className="flex items-center gap-2 text-sm text-amber-700 hover:text-amber-900 transition-colors"
+          className="flex items-center gap-2 text-sm text-indigo-700 hover:text-indigo-900 transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to sessions
@@ -179,7 +179,7 @@ export default function ChatActivityTab() {
 
         {detailLoading ? (
           <div className="p-8 text-center">
-            <RefreshCw className="mx-auto h-6 w-6 animate-spin text-amber-500" />
+            <RefreshCw className="mx-auto h-6 w-6 animate-spin text-indigo-500" />
           </div>
         ) : (
           <div className="space-y-3">
@@ -240,7 +240,7 @@ export default function ChatActivityTab() {
   if (isLoading) {
     return (
       <div className="p-10 text-center">
-        <RefreshCw className="mx-auto h-8 w-8 animate-spin text-amber-500" />
+        <RefreshCw className="mx-auto h-8 w-8 animate-spin text-indigo-500" />
         <p className="mt-2 text-sm text-slate-500">Loading chat activity...</p>
       </div>
     );
@@ -262,7 +262,7 @@ export default function ChatActivityTab() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <MessageSquare className="w-5 h-5 text-amber-600" />
+          <MessageSquare className="w-5 h-5 text-indigo-600" />
           <h3 className="font-semibold text-slate-800">
             AI Tutor Sessions
             <span className="ml-2 text-xs font-normal text-slate-400">
@@ -276,9 +276,10 @@ export default function ChatActivityTab() {
             <button
               key={range}
               onClick={() => setDateRange(range)}
-              className={`text-xs px-3 py-1 rounded-full transition-colors ${
+              aria-pressed={dateRange === range}
+              className={`text-xs px-3 py-1 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
                 dateRange === range
-                  ? 'bg-amber-500 text-white'
+                  ? 'bg-indigo-500 text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -288,7 +289,8 @@ export default function ChatActivityTab() {
           {/* CSV export */}
           <button
             onClick={exportCsv}
-            className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+            aria-label="Export sessions as CSV"
+            className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
           >
             <Download className="w-3 h-3" />
             CSV
@@ -320,7 +322,16 @@ export default function ChatActivityTab() {
                 <tr
                   key={s.id}
                   onClick={() => openSession(s)}
-                  className="cursor-pointer hover:bg-amber-50 transition-colors"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openSession(s);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open session: ${s.title || 'Untitled'} by ${s.displayName}`}
+                  className="cursor-pointer hover:bg-indigo-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400"
                 >
                   <td className="px-4 py-3 font-medium text-slate-800">
                     {s.displayName}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indigo/Violet Re-theme — Dashboard mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f7f6f8; }
+    .eyebrow { font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; }
+    .surface { background:#fff; border:1px solid #e7e3ee; border-radius:1.5rem; box-shadow:0 18px 50px rgba(30,27,75,0.07); }
+    .sidebar-active { background:#eef2ff; color:#4338ca; box-shadow: inset 3px 0 0 #6366f1; }
+  </style>
+</head>
+<body class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-60 shrink-0 bg-white border-r border-slate-200 flex flex-col p-4 gap-1">
+    <div class="flex items-center gap-2 mb-6 px-2">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-black">◑</div>
+      <div><p class="font-bold text-slate-900 leading-tight">Praxis<span class="text-indigo-600">.Ai</span></p><p class="text-[9px] tracking-wide text-slate-500 uppercase">School Psychology 5403</p></div>
+    </div>
+    <a class="sidebar-active flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold">● Dashboard</a>
+    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">○ Practice</a>
+    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">○ Progress</a>
+    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">○ Study Plan</a>
+    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">○ AI Tutor</a>
+    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">○ Glossary</a>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-8 max-w-[1100px]">
+    <p class="eyebrow text-indigo-600 mb-1">Welcome back</p>
+    <h1 class="text-3xl font-extrabold text-slate-900 mb-6">Hi, <span class="bg-gradient-to-r from-violet-500 to-indigo-600 bg-clip-text text-transparent">Carlos.</span></h1>
+
+    <!-- Exam readiness -->
+    <div class="surface p-6 flex items-center gap-8 mb-6">
+      <!-- arc -->
+      <div class="relative w-32 h-32 shrink-0">
+        <div class="absolute inset-0 rounded-full" style="background: conic-gradient(#8b5cf6 0%, #6366f1 41%, #e7e3ee 41%);"></div>
+        <div class="absolute inset-[10px] rounded-full bg-white flex flex-col items-center justify-center">
+          <span class="text-3xl font-extrabold text-slate-900">41%</span>
+          <span class="text-[10px] tracking-wide text-indigo-500 uppercase font-bold">Emerging</span>
+        </div>
+      </div>
+      <div class="flex-1">
+        <p class="eyebrow text-slate-500 mb-1">Exam readiness</p>
+        <p class="text-2xl font-bold text-slate-900 leading-snug"><span class="text-indigo-600">13</span> of 45 skills <br/>at Demonstrating.</p>
+        <p class="text-sm text-slate-500 mt-2">19 more skills to hit your readiness target of 32.</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <button class="rounded-2xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-br from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 shadow-lg shadow-indigo-500/20">Start Practice →</button>
+        <button class="rounded-2xl px-5 py-2.5 text-sm font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100">View full report</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Today's focus -->
+      <div class="col-span-2 surface p-6">
+        <div class="flex items-center justify-between mb-4">
+          <p class="font-bold text-slate-900">Today's Focus</p>
+          <p class="eyebrow text-slate-400">Chained by priority</p>
+        </div>
+        <!-- priority block -->
+        <div class="rounded-2xl border border-indigo-200 bg-indigo-50/70 p-4 flex items-center gap-4">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white">◎</div>
+          <div class="flex-1">
+            <p class="text-[10px] font-black tracking-wide uppercase text-indigo-600">Priority · Emerging · Professional Practices</p>
+            <p class="font-semibold text-slate-900">Ecological Assessment and Contextual Factors</p>
+            <p class="text-xs text-slate-600">9 skills below 60% in this domain — start here.</p>
+          </div>
+          <button class="rounded-xl px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700">Practice →</button>
+        </div>
+        <!-- then rows -->
+        <div class="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 p-3">
+          <span class="text-[10px] font-black tracking-wide uppercase text-slate-400 w-10">Then</span>
+          <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">▦</div>
+          <div class="flex-1"><p class="text-sm font-semibold text-slate-900">Spaced review · 3 skills due</p><p class="text-xs text-slate-500">RIOT Framework, Professional Liability, Section 504…</p></div>
+        </div>
+        <div class="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 p-3">
+          <span class="text-[10px] font-black tracking-wide uppercase text-slate-400 w-10">Then</span>
+          <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center text-violet-600">▤</div>
+          <div class="flex-1"><p class="text-sm font-semibold text-slate-900">Vocabulary review</p><p class="text-xs text-slate-500">Revisit terms from recent practice</p></div>
+        </div>
+      </div>
+
+      <!-- This week -->
+      <div class="surface p-6">
+        <div class="flex items-center justify-between mb-4"><p class="font-bold text-slate-900">This Week</p><span class="text-[10px] text-slate-400">7D</span></div>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between"><span class="text-slate-500">Questions</span><span class="font-bold text-slate-900">0</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Accuracy</span><span class="font-bold text-indigo-600">47%</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Today's goal</span><span class="font-bold text-slate-900">0 / 20</span></div>
+          <div class="h-2 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-600" style="width:8%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-xs text-slate-400 mt-8 text-center">Indigo/violet re-theme proposal — translates the current amber Cognitive Clarity dashboard into the tutorial's gradient language. Light editorial surfaces kept; amber-500 accent → violet→indigo.</p>
+  </main>
+</body>
+</html>

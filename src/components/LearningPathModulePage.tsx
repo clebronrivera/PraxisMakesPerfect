@@ -108,8 +108,8 @@ function SectionHeader({
         ${isLocked
           ? 'cursor-not-allowed border-slate-200 bg-[#fbfaf7] opacity-60'
           : isOpen
-            ? 'border-amber-300 bg-amber-50'
-            : 'border-slate-200 bg-white hover:border-amber-200'}
+            ? 'border-indigo-300 bg-indigo-50'
+            : 'border-slate-200 bg-white hover:border-indigo-200'}
       `}
     >
       {/* Number badge */}
@@ -119,7 +119,7 @@ function SectionHeader({
           ? 'bg-emerald-100 text-emerald-700'
           : isLocked
             ? 'bg-slate-100 text-slate-400'
-            : 'bg-amber-100 text-amber-700'}
+            : 'bg-indigo-100 text-indigo-700'}
       `}>
         {isComplete ? <CheckCircle className="w-4 h-4" /> : isLocked ? <Lock className="w-3.5 h-3.5" /> : number}
       </div>
@@ -266,7 +266,7 @@ function QuizResults({
   const tier = pct >= 80 ? 'demonstrating' : pct >= 60 ? 'approaching' : 'emerging';
   const tierConfig = {
     demonstrating: { color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Demonstrating', msg: 'Excellent work — you\'re meeting the threshold for this skill.' },
-    approaching: { color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', label: 'Approaching', msg: 'Getting closer — keep practicing to reach Demonstrating.' },
+    approaching: { color: 'text-indigo-700', bg: 'bg-indigo-50 border-indigo-200', label: 'Approaching', msg: 'Getting closer — keep practicing to reach Demonstrating.' },
     emerging: { color: 'text-rose-700', bg: 'bg-rose-50 border-rose-200', label: 'Emerging', msg: 'Review the lesson content and try again to build fluency.' },
   }[tier];
 
@@ -533,7 +533,7 @@ export default function LearningPathModulePage({
         {/* Print button */}
         <button
           onClick={() => window.print()}
-          className="shrink-0 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-400 hover:border-amber-200 hover:text-amber-700 transition-all"
+          className="shrink-0 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-400 hover:border-indigo-200 hover:text-indigo-700 transition-all"
           title="Print lesson"
         >
           <Printer className="w-4 h-4" />
@@ -544,14 +544,14 @@ export default function LearningPathModulePage({
           onClick={() => setSidebarOpen(prev => !prev)}
           className={`shrink-0 rounded-xl border p-2.5 transition-all relative ${
             sidebarOpen
-              ? 'border-amber-300 bg-amber-50 text-amber-700'
-              : 'border-slate-200 bg-white text-slate-400 hover:border-amber-200 hover:text-amber-700'
+              ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+              : 'border-slate-200 bg-white text-slate-400 hover:border-indigo-200 hover:text-indigo-700'
           }`}
           title="Toggle Study Center"
         >
           <PanelRight className="w-4 h-4" />
           {focusItems.newCount > 0 && !sidebarOpen && (
-            <span className="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-amber-500 px-1 text-[8px] font-bold text-white">
+            <span className="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-indigo-500 px-1 text-[8px] font-bold text-slate-900">
               {focusItems.newCount}
             </span>
           )}
@@ -573,7 +573,7 @@ export default function LearningPathModulePage({
                 ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
                 : step.locked
                   ? 'border-slate-200 bg-white text-slate-400'
-                  : 'border-amber-200 bg-amber-50 text-amber-700'}
+                  : 'border-indigo-200 bg-indigo-50 text-indigo-700'}
             `}
           >
             {step.done ? (
@@ -581,7 +581,7 @@ export default function LearningPathModulePage({
             ) : step.locked ? (
               <Lock className="w-3 h-3" />
             ) : (
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[8px] font-bold text-amber-700">{i + 1}</span>
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[8px] font-bold text-indigo-700">{i + 1}</span>
             )}
             {step.label}
           </div>
@@ -723,7 +723,7 @@ export default function LearningPathModulePage({
 
             {s2Submitting ? (
               <div className="py-8 text-center">
-                <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
+                <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
                 <p className="text-sm text-slate-500">Saving your results…</p>
               </div>
             ) : quizDone ? (
@@ -767,7 +767,7 @@ export default function LearningPathModulePage({
         {openSection === 3 && s2Complete && (
           <div className="mt-2 px-1">
             <div className="space-y-2 rounded-[1.75rem] border border-dashed border-slate-300 bg-[#fbfaf7] p-6 text-center">
-              <RotateCcw className="mx-auto h-6 w-6 text-amber-700" />
+              <RotateCcw className="mx-auto h-6 w-6 text-indigo-700" />
               <p className="text-xs font-semibold text-slate-700">Coming Soon</p>
               <p className="text-[10px] leading-relaxed text-slate-500">
                 Extended learning activities for this skill will appear here in a future update.
