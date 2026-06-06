@@ -33,18 +33,18 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 py-6 px-4 text-slate-200">
+    <div className="mx-auto max-w-2xl space-y-6 py-6 px-4 text-slate-700">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-300/30 bg-[color:#d97706]/10">
           <HelpCircle className="h-5 w-5 text-amber-600" />
         </div>
         <div>
           <p className="eyebrow">Support</p>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Help &amp; FAQ</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Help &amp; FAQ</h1>
         </div>
       </div>
 
-      <div className="editorial-surface divide-y divide-white/5 overflow-hidden">
+      <div className="editorial-surface divide-y divide-slate-200 overflow-hidden">
         {FAQ_ENTRIES.map((entry, idx) => {
           const isOpen = openIndex === idx;
           return (
@@ -54,14 +54,14 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
                 className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-white"
               >
-                <span className="text-sm font-semibold text-white">{entry.question}</span>
+                <span className="text-sm font-semibold text-slate-900">{entry.question}</span>
                 {isOpen
                   ? <ChevronUp className="h-4 w-4 shrink-0 text-amber-600" />
                   : <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />}
               </button>
               {isOpen && (
-                <div className="border-t border-[color:#d97706]/20 bg-white/40 px-6 py-4">
-                  <p className="text-sm leading-relaxed text-slate-300">{entry.answer}</p>
+                <div className="border-t border-[color:#d97706]/20 bg-slate-50 px-6 py-4">
+                  <p className="text-sm leading-relaxed text-slate-700">{entry.answer}</p>
                 </div>
               )}
             </div>

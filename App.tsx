@@ -960,7 +960,8 @@ function PraxisStudyAppContent() {
                   type="button"
                   onClick={openProfileEditor}
                   className="editorial-topbar-button lg:hidden"
-                  title="Profile and onboarding"
+                  aria-label="Profile and onboarding"
+          title="Profile and onboarding"
                 >
                   <User className="w-4 h-4" />
                 </button>
@@ -970,6 +971,7 @@ function PraxisStudyAppContent() {
                   <button
                     onClick={() => setLbOpen(prev => !prev)}
                     className="editorial-topbar-button"
+                    aria-label="Leaderboard"
                     title="Leaderboard"
                   >
                     <Trophy className="w-4 h-4" />
@@ -1061,6 +1063,7 @@ function PraxisStudyAppContent() {
                 <button
                   onClick={() => setIsFeedbackModalOpen(true)}
                   className="editorial-topbar-button"
+                  aria-label="Send feedback"
                   title="Send feedback"
                 >
                   <MessageSquare className="w-4 h-4" />
@@ -1069,6 +1072,7 @@ function PraxisStudyAppContent() {
                   <button
                     onClick={openAdminDashboard}
                     className="editorial-topbar-button"
+                    aria-label="Admin"
                     title="Admin"
                   >
                     <Shield className="w-4 h-4" />
@@ -1081,6 +1085,7 @@ function PraxisStudyAppContent() {
                     setMode('home');
                   }}
                   className="editorial-topbar-button"
+                  aria-label="Log out"
                   title="Log out"
                 >
                   <LogOut className="w-4 h-4" />

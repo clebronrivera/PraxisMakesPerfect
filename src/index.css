@@ -87,7 +87,7 @@
   }
 
   .editorial-button-primary {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500;
     background-color: #f59e0b;
     color: #1a1a1a;
   }
@@ -98,7 +98,7 @@
   }
 
   .editorial-button-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border text-sm font-semibold transition-all;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500;
     background-color: #fffaf0;
     border-color: #f0d7a7;
     color: #b45309;
@@ -111,7 +111,7 @@
   }
 
   .editorial-button-dark {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all text-white;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500;
     background-color: #1a1a1a;
   }
 
@@ -120,7 +120,7 @@
   }
 
   .editorial-button-ghost {
-    @apply inline-flex items-center gap-2 text-sm font-semibold transition-colors text-amber-700 hover:text-amber-800;
+    @apply inline-flex items-center gap-2 text-sm font-semibold transition-colors text-amber-700 hover:text-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 rounded;
   }
 
   .editorial-progress-track {

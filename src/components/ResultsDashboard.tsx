@@ -33,14 +33,14 @@ const DOMAIN_COLOR: Record<number, string> = {
 
 /** Atelier mapping for the per-skill proficiency dot. */
 const DOT_COLORS: Record<SkillColorState, string> = {
-  gray: 'rgba(226,232,240,0.15)',
+  gray: '#e2e8f0',
   red: '#f43f5e',
   yellow: '#d97706',
   green: '#059669',
 };
 
 const DOT_BORDER: Record<SkillColorState, string> = {
-  gray: 'rgba(226,232,240,0.25)',
+  gray: '#cbd5e1',
   red: 'rgba(251,207,232,0.6)',
   yellow: 'rgba(252,213,180,0.6)',
   green: 'transparent',
@@ -97,7 +97,7 @@ function JourneyTimeline({ steps }: { steps: TimelineStep[] }) {
                     ? { background: '#059669', color: '#064e3b', boxShadow: '0 0 10px #059669' }
                     : isCurrent
                       ? { background: 'linear-gradient(135deg, #fde4c1, #fbcfe8)', color: '#1e1b3a', boxShadow: '0 0 14px rgba(252,213,180,0.6)' }
-                      : { background: 'rgba(226,232,240,0.08)', color: '#64748b', border: '1px solid rgba(226,232,240,0.15)' }
+                      : { background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }
                 }
               >
                 {step.done
@@ -108,7 +108,7 @@ function JourneyTimeline({ steps }: { steps: TimelineStep[] }) {
               </div>
               <p
                 className={`mt-2 max-w-[92px] text-center text-[11px] font-medium leading-tight ${
-                  step.done ? 'text-white' : isCurrent ? 'text-white' : 'text-slate-500'
+                  step.done ? 'text-slate-900' : isCurrent ? 'text-slate-900' : 'text-slate-500'
                 }`}
               >
                 {step.label}
@@ -122,7 +122,7 @@ function JourneyTimeline({ steps }: { steps: TimelineStep[] }) {
             {!isLast && (
               <div
                 className="flex-1 h-0.5 mt-3.5 mx-0.5 rounded-full"
-                style={{ background: step.done ? '#059669' : 'rgba(226,232,240,0.12)' }}
+                style={{ background: step.done ? '#059669' : '#e2e8f0' }}
               />
             )}
           </div>
@@ -486,7 +486,7 @@ export default function ResultsDashboard({
                     <div className="relative h-2" style={{ overflow: 'visible' }}>
                       <div
                         className="absolute inset-0 rounded-full overflow-hidden"
-                        style={{ background: 'rgba(226,232,240,0.06)' }}
+                        style={{ background: '#e2e8f0' }}
                       >
                         <div
                           className="h-full rounded-full relative z-[1] transition-all duration-700"
@@ -503,8 +503,8 @@ export default function ResultsDashboard({
                           className="absolute top-0 bottom-0 w-px z-[2]"
                           style={{
                             left: `${baselineBarPct}%`,
-                            background: 'rgba(226,232,240,0.35)',
-                            boxShadow: '0 0 4px rgba(226,232,240,0.4)',
+                            background: '#94a3b8',
+                            boxShadow: 'none',
                           }}
                           title={`Baseline: ${baselineBarPct}%`}
                         />
@@ -591,7 +591,7 @@ export default function ResultsDashboard({
                           <LegendDot color="#f43f5e" label={PROFICIENCY_META.emerging.label} />
                           <LegendDot color="#d97706" label={PROFICIENCY_META.approaching.label} />
                           <LegendDot color="#059669" label={PROFICIENCY_META.proficient.label} />
-                          <LegendDot color="rgba(226,232,240,0.2)" label={PROFICIENCY_META.unstarted.label} />
+                          <LegendDot color="#cbd5e1" label={PROFICIENCY_META.unstarted.label} />
                         </div>
                       </div>
                     ) : (
@@ -924,7 +924,7 @@ function ConceptSection({
               <p className="text-[11px] text-slate-500 truncate">{item.secondary}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(226,232,240,0.06)' }}>
+              <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: '#e2e8f0' }}>
                 <div
                   className="h-full rounded-full"
                   style={{ width: `${Math.round(item.accuracy * 100)}%`, background: barColor }}

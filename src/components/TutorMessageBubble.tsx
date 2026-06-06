@@ -28,18 +28,18 @@ function renderMarkdown(text: string): ReactNode[] {
 
     if (line.startsWith('- ') || line.startsWith('* ')) {
       result.push(
-        <li key={key} className="text-slate-300 ml-4 list-disc">
+        <li key={key} className="text-slate-700 ml-4 list-disc">
           {renderInline(line.slice(2))}
         </li>
       );
     } else if (line.startsWith('## ')) {
-      result.push(<h3 key={key} className="font-semibold text-white mt-2 mb-1">{line.slice(3)}</h3>);
+      result.push(<h3 key={key} className="font-semibold text-slate-900 mt-2 mb-1">{line.slice(3)}</h3>);
     } else if (line.startsWith('# ')) {
-      result.push(<h2 key={key} className="font-bold text-white mt-2 mb-1">{line.slice(2)}</h2>);
+      result.push(<h2 key={key} className="font-bold text-slate-900 mt-2 mb-1">{line.slice(2)}</h2>);
     } else if (line.trim() === '') {
       result.push(<br key={key} />);
     } else {
-      result.push(<p key={key} className="mb-1 last:mb-0 text-slate-200">{renderInline(line)}</p>);
+      result.push(<p key={key} className="mb-1 last:mb-0 text-slate-800">{renderInline(line)}</p>);
     }
   }
 
@@ -57,13 +57,12 @@ function renderInline(text: string): ReactNode[] {
       parts.push(text.slice(lastIndex, match.index));
     }
     if (match[1] !== undefined) {
-      parts.push(<strong key={match.index} className="font-semibold text-white">{match[1]}</strong>);
+      parts.push(<strong key={match.index} className="font-semibold text-slate-900">{match[1]}</strong>);
     } else if (match[2] !== undefined) {
       parts.push(
         <code
           key={match.index}
-          className="px-1 rounded text-xs font-mono text-slate-200"
-          style={{ background: 'rgba(226,232,240,0.08)' }}
+          className="px-1 rounded text-xs font-mono text-slate-700 bg-slate-100"
         >
           {match[2]}
         </code>
@@ -93,7 +92,7 @@ export function TutorMessageBubble({
     return (
       <div className="flex justify-end">
         <div
-          className="max-w-[78%] px-4 py-3 text-[13.5px] text-slate-100 leading-relaxed"
+          className="max-w-[78%] px-4 py-3 text-[13.5px] text-slate-800 leading-relaxed"
           style={{
             background: 'linear-gradient(135deg, rgba(252,213,180,0.15), rgba(216,213,252,0.1))',
             border: '1px solid rgba(252,213,180,0.25)',
@@ -112,10 +111,10 @@ export function TutorMessageBubble({
       <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600" style={{ width: 26, height: 26 }} aria-hidden="true"><Brain className="text-white" style={{ width: 14, height: 14 }} /></div>
       <div className="flex-1 min-w-0 flex flex-col gap-2">
         <div
-          className="px-4 py-3.5 text-[13.5px] leading-relaxed text-slate-200"
+          className="px-4 py-3.5 text-[13.5px] leading-relaxed text-slate-800"
           style={{
-            background: 'rgba(10,22,40,0.65)',
-            border: '1px solid rgba(226,232,240,0.08)',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
             borderRadius: '4px 18px 18px 18px',
           }}
         >

@@ -49,7 +49,7 @@ export default function ModuleSnippetCard({
     <div
       className="rounded-2xl border backdrop-blur-[14px] p-4 space-y-3"
       style={{
-        background: `color-mix(in srgb, ${accentVar} 8%, rgba(10,22,40,0.55))`,
+        background: `color-mix(in srgb, ${accentVar} 8%, white)`,
         borderColor: `color-mix(in srgb, ${accentVar} 30%, transparent)`,
       }}
     >
@@ -71,7 +71,7 @@ export default function ModuleSnippetCard({
         {isHint && onDismiss && (
           <button
             onClick={onDismiss}
-            className="rounded-lg p-1 text-slate-400 hover:bg-white hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-amber-500"
+            className="rounded-lg p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-amber-500"
             title="Dismiss hint"
           >
             <X className="h-3.5 w-3.5" />
@@ -83,7 +83,7 @@ export default function ModuleSnippetCard({
       {moduleTitle && (
         <p
           className="text-[11px] font-semibold uppercase tracking-wide"
-          style={{ color: `color-mix(in srgb, ${accentVar} 80%, white)` }}
+          style={{ color: accentVar }}
         >
           {moduleId} — {moduleTitle}
         </p>
@@ -92,29 +92,29 @@ export default function ModuleSnippetCard({
       {/* ── Primary snippet ── */}
       {snippet && (
         <blockquote
-          className="border-l-2 pl-3 text-sm leading-relaxed text-slate-200"
+          className="border-l-2 pl-3 text-sm leading-relaxed text-slate-700"
           style={{ borderColor: `color-mix(in srgb, ${accentVar} 50%, transparent)` }}
         >
-          <span className="underline decoration-2 underline-offset-2 decoration-white/20">{snippet}</span>
+          <span className="underline decoration-2 underline-offset-2 decoration-slate-300">{snippet}</span>
         </blockquote>
       )}
 
       {/* ── Secondary module snippets (multi-module questions) ── */}
       {secondaryRefs.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-slate-200">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
             Also covered in
           </p>
           {secondaryRefs.slice(0, 2).map(ref => (
             <div key={ref.moduleId} className="space-y-1">
-              <p className="text-[11px] font-semibold text-slate-300">
+              <p className="text-[11px] font-semibold text-slate-700">
                 {ref.moduleId} — {ref.moduleTitle}
               </p>
               <blockquote
-                className="border-l-2 pl-3 text-xs leading-relaxed text-slate-400"
+                className="border-l-2 pl-3 text-xs leading-relaxed text-slate-600"
                 style={{ borderColor: `color-mix(in srgb, ${accentVar} 30%, transparent)` }}
               >
-                <span className="underline decoration-2 underline-offset-2 decoration-white/15">{ref.snippet}</span>
+                <span className="underline decoration-2 underline-offset-2 decoration-slate-300">{ref.snippet}</span>
               </blockquote>
             </div>
           ))}
@@ -125,7 +125,7 @@ export default function ModuleSnippetCard({
       {moduleId && onOpenModule && (
         <button
           onClick={() => onOpenModule(moduleId)}
-          className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 rounded"
+          className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 rounded"
           style={{ color: accentVar }}
         >
           <ExternalLink className="h-3.5 w-3.5" />

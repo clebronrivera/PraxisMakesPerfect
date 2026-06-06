@@ -149,7 +149,7 @@ export default function ReportQuestionModal({
             <p className="text-slate-600 mb-4">What are you reporting?</p>
             <div className="space-y-2">
               {TARGET_OPTIONS.map(target => (
-                <label key={target} className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors">
+                <label key={target} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
                   <input
                     type="checkbox"
                     checked={targets.includes(target)}
@@ -163,7 +163,7 @@ export default function ReportQuestionModal({
             <button
               onClick={() => targets.length > 0 && setStep(2)}
               disabled={targets.length === 0}
-              className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
+              className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
             >
               Next
             </button>
@@ -176,7 +176,7 @@ export default function ReportQuestionModal({
             <p className="text-slate-600 mb-4">What type of issue?</p>
             <div className="space-y-2">
               {ISSUE_TYPE_OPTIONS.map(issueType => (
-                <label key={issueType} className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors">
+                <label key={issueType} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
                   <input
                     type="checkbox"
                     checked={issueTypes.includes(issueType)}
@@ -190,14 +190,14 @@ export default function ReportQuestionModal({
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={() => issueTypes.length > 0 && setStep(3)}
                 disabled={issueTypes.length === 0}
-                className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
+                className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
               >
                 Next
               </button>
@@ -211,7 +211,7 @@ export default function ReportQuestionModal({
             <p className="text-slate-600 mb-4">Severity</p>
             <div className="space-y-2">
               {SEVERITY_OPTIONS.map(option => (
-                <label key={option.value} className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors">
+                <label key={option.value} className="flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
                   <input
                     type="radio"
                     name="severity"
@@ -222,7 +222,7 @@ export default function ReportQuestionModal({
                   />
                   <div>
                     <div className="text-slate-700 font-medium">{option.label}</div>
-                    <div className="text-slate-400 text-sm">{option.description}</div>
+                    <div className="text-slate-500 text-sm">{option.description}</div>
                   </div>
                 </label>
               ))}
@@ -230,7 +230,7 @@ export default function ReportQuestionModal({
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(2)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg transition-colors"
               >
                 Back
               </button>
@@ -258,7 +258,7 @@ export default function ReportQuestionModal({
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg transition-colors"
               >
                 Back
               </button>

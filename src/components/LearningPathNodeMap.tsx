@@ -66,7 +66,7 @@ function getNodeStyle(lpStatus: LearningPathStatus, overallTier: ReturnType<type
       ring: 'border-[color:#059669]/40',
       bg: 'bg-emerald-100',
       badge: 'bg-[color:#059669]/20 text-emerald-600',
-      label: 'text-white',
+      label: 'text-emerald-900',
       connector: '#b8f2d8',
     };
   }
@@ -75,9 +75,9 @@ function getNodeStyle(lpStatus: LearningPathStatus, overallTier: ReturnType<type
   if (lpStatus === 'approaching' || overallTier === 'approaching') {
     return {
       ring: 'border-[color:#d97706]/40',
-      bg: 'bg-[color:#d97706]/10',
+      bg: 'bg-amber-100',
       badge: 'bg-[color:#d97706]/20 text-amber-600',
-      label: 'text-white',
+      label: 'text-amber-900',
       connector: '#fcd5b4',
     };
   }
@@ -88,7 +88,7 @@ function getNodeStyle(lpStatus: LearningPathStatus, overallTier: ReturnType<type
       ring: 'border-[color:#f43f5e]/40',
       bg: 'bg-rose-100',
       badge: 'bg-[color:#f43f5e]/20 text-rose-600',
-      label: 'text-white',
+      label: 'text-rose-900',
       connector: '#fbcfe8',
     };
   }
@@ -97,8 +97,8 @@ function getNodeStyle(lpStatus: LearningPathStatus, overallTier: ReturnType<type
   return {
     ring: 'border-slate-200',
     bg: 'bg-white',
-    badge: 'bg-white/10 text-slate-400',
-    label: 'text-slate-300',
+    badge: 'bg-white border border-slate-200 text-slate-500',
+    label: 'text-slate-700',
     connector: 'rgba(255,255,255,0.25)',
   };
 }
@@ -224,7 +224,7 @@ function NodeCard({
       style={{ boxShadow: isMastered ? undefined : '0 4px 24px -8px rgba(0,0,0,0.4)' }}
     >
       <div className="flex w-full items-start justify-between gap-2">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border bg-[rgba(10,22,40,0.4)] ${style.ring}`}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border bg-white/70 ${style.ring}`}>
           {isMastered ? (
             <CheckCircle className="h-4 w-4" style={{ color: '#059669' }} />
           ) : (
@@ -241,7 +241,7 @@ function NodeCard({
             />
           )}
           {!isMastered && (
-            <div className="flex h-7 min-w-[1.75rem] items-center justify-center rounded-full border border-[color:#d97706]/40 bg-[rgba(10,22,40,0.6)] px-1.5">
+            <div className="flex h-7 min-w-[1.75rem] items-center justify-center rounded-full border border-[color:#d97706]/40 bg-white/80 px-1.5">
               <span
                 className="text-[11px] font-bold tabular-nums"
                 style={{ color: '#d97706' }}
@@ -280,7 +280,7 @@ function NodeCard({
         <div className="flex items-center gap-1.5">
           {node.visitCount > 1 && !isMastered && (
             <span
-              className="rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-bold text-slate-300"
+              className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold text-slate-600"
               title={`${node.visitCount} visits`}
             >
               {node.visitCount}x
@@ -445,8 +445,8 @@ export default function LearningPathNodeMap({
               onClick={() => setSortMode(opt.id)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 ${
                 sortMode === opt.id
-                  ? 'bg-[color:#d97706]/15 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-white'
+                  ? 'bg-[color:#d97706]/15 text-amber-900'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
               {opt.label}

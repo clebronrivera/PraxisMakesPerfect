@@ -102,12 +102,12 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
   const hasDef = localText.trim().length > 0;
 
   // Atelier card-style row: vertical layout, editorial-surface surface, clear status.
-  const statusColor = isRevealed ? '#059669' : hasDef ? '#0284c7' : 'rgba(226,232,240,0.2)';
+  const statusColor = isRevealed ? '#059669' : hasDef ? '#0284c7' : '#cbd5e1';
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden transition-colors hover:bg-white/4"
-      style={{ background: 'rgba(10,22,40,0.45)', border: '1px solid rgba(226,232,240,0.08)' }}
+      className="relative rounded-2xl overflow-hidden transition-colors hover:bg-slate-50"
+      style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
     >
       {/* Left accent stripe */}
       <span
@@ -120,7 +120,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
         {/* Header: term + status */}
         <div className="flex items-baseline justify-between gap-3 flex-wrap">
           <div className="flex-1 min-w-0">
-            <p className="serif text-[18px] font-semibold text-white leading-snug tracking-tight">{entry.term}</p>
+            <p className="serif text-[18px] font-semibold text-slate-900 leading-snug tracking-tight">{entry.term}</p>
             {entry.added_from_skill_id && (
               <p className="text-[10px] text-slate-500 font-mono mt-0.5 tracking-wider">
                 {entry.added_from_skill_id}
@@ -155,7 +155,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
               onBlur={handleBlur}
               rows={3}
               placeholder="Write what this term means to you…"
-              className="w-full text-[13px] text-slate-100 bg-[rgba(6,13,26,0.7)] border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/30 focus:border-amber-300/50 placeholder:text-slate-500 transition"
+              className="w-full text-[13px] text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/30 focus:border-amber-300/50 placeholder:text-slate-500 transition"
             />
             <div className="h-4 mt-1 flex items-center">
               {saving && (
@@ -176,7 +176,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
             <p className="eyebrow mb-2">Official definition</p>
             {isRevealed ? (
               <div
-                className="text-[13px] text-slate-200 leading-relaxed rounded-lg px-3 py-2 min-h-[86px]"
+                className="text-[13px] text-slate-700 leading-relaxed rounded-lg px-3 py-2 min-h-[86px]"
                 style={{
                   background: 'color-mix(in srgb, #0284c7 8%, transparent)',
                   border: '1px solid color-mix(in srgb, #0284c7 25%, transparent)',
@@ -296,7 +296,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto text-slate-200">
+    <div className="flex-1 overflow-y-auto text-slate-700">
       {/* ── Tab bar ────────────────────────────────────────────────────────── */}
       <div className="sticky top-0 z-20 bg-[#f7f6f2]/85 border-b border-slate-200 backdrop-blur-md">
         <div className="px-6 pt-5 pb-0 flex items-end gap-1">
@@ -304,8 +304,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
             onClick={() => setActiveTab('terms')}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
               activeTab === 'terms'
-                ? 'bg-[rgba(10,22,40,0.85)] text-white border-slate-200 relative z-10 -mb-px'
-                : 'bg-transparent text-slate-500 border-transparent hover:text-slate-300'
+                ? 'bg-white text-slate-900 border-slate-200 relative z-10 -mb-px'
+                : 'bg-transparent text-slate-500 border-transparent hover:text-slate-700'
             }`}
           >
             <BookMarked size={14} />
@@ -320,8 +320,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
             onClick={() => setActiveTab('quiz')}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition ${
               activeTab === 'quiz'
-                ? 'bg-[rgba(10,22,40,0.85)] text-white border-slate-200 relative z-10 -mb-px'
-                : 'bg-transparent text-slate-500 border-transparent hover:text-slate-300'
+                ? 'bg-white text-slate-900 border-slate-200 relative z-10 -mb-px'
+                : 'bg-transparent text-slate-500 border-transparent hover:text-slate-700'
             }`}
           >
             <Zap size={14} />
@@ -354,8 +354,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                   <BookMarked size={18} className="text-sky-600" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold text-white">My Glossary</h1>
-                  <p className="text-xs text-slate-400">
+                  <h1 className="text-lg font-bold text-slate-900">My Glossary</h1>
+                  <p className="text-xs text-slate-500">
                     Words added when you miss a question. Define them, then reveal the
                     official meaning to compare.
                   </p>
@@ -386,7 +386,7 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search terms…"
-                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-[rgba(6,13,26,0.7)] text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/20 focus:border-amber-300/50"
+                      className="w-full pl-7 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-slate-50 text-slate-700 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[color:#d97706]/20 focus:border-amber-300/50"
                     />
                   </div>
 
@@ -405,8 +405,8 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
                         onClick={() => setFilter(id)}
                         className={`text-xs px-3 py-1 rounded-full border transition font-medium ${
                           filter === id
-                            ? 'bg-gradient-to-r from-[color:#d97706] to-[color:#6366f1] text-[#1e1b3a] border-transparent'
-                            : 'bg-white text-slate-400 border-slate-200 hover:border-[color:#d97706]/40 hover:text-white'
+                            ? 'bg-amber-500 text-white border-transparent'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-[color:#d97706]/40 hover:text-slate-900'
                         }`}
                       >
                         {label}
@@ -460,7 +460,7 @@ function StatChip({
   color: 'slate' | 'amber' | 'indigo' | 'emerald';
 }) {
   const colors = {
-    slate:   'bg-white text-slate-300 border border-slate-200',
+    slate:   'bg-white text-slate-600 border border-slate-200',
     amber:   'bg-[color:#d97706]/10 text-amber-600 border border-amber-300/30',
     indigo:  'bg-[color:#6366f1]/10 text-indigo-600 border border-[color:#6366f1]/30',
     emerald: 'bg-emerald-100 text-emerald-600 border border-emerald-300/30',
@@ -479,16 +479,16 @@ function EmptyState() {
         <Sparkles size={28} className="text-sky-600" />
       </div>
       <div>
-        <h2 className="text-base font-semibold text-white mb-1">
+        <h2 className="text-base font-semibold text-slate-900 mb-1">
           Your glossary is empty
         </h2>
-        <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
+        <p className="text-sm text-slate-600 max-w-xs leading-relaxed">
           When you get a practice question wrong, the key vocabulary words from
           that skill will automatically appear here for you to define and study.
         </p>
       </div>
       <div className="mt-2 flex flex-col gap-2 text-left bg-white border border-slate-200 rounded-xl p-4 max-w-sm w-full">
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
           How it works
         </p>
         <Step n={1} text="Answer a practice question incorrectly" />
@@ -502,7 +502,7 @@ function EmptyState() {
 
 function Step({ n, text }: { n: number; text: string }) {
   return (
-    <div className="flex items-start gap-2 text-xs text-slate-300">
+    <div className="flex items-start gap-2 text-xs text-slate-600">
       <span className="w-5 h-5 rounded-full bg-[color:#0284c7]/15 text-sky-600 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-[color:#0284c7]/30">
         {n}
       </span>
