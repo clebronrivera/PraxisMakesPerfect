@@ -46,11 +46,11 @@ interface ModuleCatalogEntry {
 - `status`: `new` = no `module_visit_sessions` row; `in_progress` = visited but lesson/interactives incomplete; `reviewed` = lesson viewed **and** the module's interactive sections completed (see §5 caveat).
 - `eligible` (gate, not recommendation): `proficiency !== 'proficient'` (below Demonstrating). This only decides *whether a module is in play*.
 - **`priorityScore = examWeight × gapToThreshold × learnability`** — THE key correction. Every runtime ranking today is **gap-only** and must NOT be copied: `LearningPathNodeMap` sorts by "overall deficit first", and `studyPlanPreprocessor.urgencyScore` is status+trend+accuracy with **no exam weight**. Blueprint-weight data exists but is unused at runtime (only in offline scripts `blueprint-alignment.ts` / `bottleneck-finder.ts`).
-  - `examWeight`: **= `SKILL_BLUEPRINT[skill].slots` alone** (per-skill exam items, 1–2). RESOLVED empirically (§10): do **NOT** multiply by `PRAXIS_WEIGHTS[domain]`. `SKILL_BLUEPRINT.domain` is the **4 app domains** (slots sum to 32/24/20/24%); `PRAXIS_WEIGHTS` is keyed by the **10 Praxis blueprint domains** — indexing one with the other is a category error, not just double-counting. slots already operationalizes the blueprint at skill grain in the correct taxonomy. (Coarse — mostly 1–2; finer 10-domain weighting would need a skill→Praxis-domain map via `skillMetadata.domainId`, future.)
+  - `examWeight`: **= `SKILL_BLUEPRINT[skill].slots` — PROVISIONAL best-available proxy, NOT validated as faithful to the blueprint.** Do **NOT** multiply by `PRAXIS_WEIGHTS[domain]` (`SKILL_BLUEPRINT.domain` = 4 app domains; `PRAXIS_WEIGHTS` = 10 Praxis domains — category error). **Fidelity test run** (slots mapped through each skill's true NASP domain via `questions.json.domain_name` vs `PRAXIS_WEIGHTS`): mean gap 4pp, **max 8pp**, and slots **materially under-weights Mental/Behavioral Health (7% vs 14%)** and over-weights Family-School (13% vs 5%). So slots is *curriculum* distribution, only approximately exam weight. **TODO (file, don't paper over):** (a) crosswalk is only 40/45 skills (`domain_name` missing on DBD-10, ACA-09, FAM-03, DIV-01, DIV-05); (b) `PRAXIS_WEIGHTS` provenance is itself uncertain (domain 1 = 0.32 implausibly high) — validate it's the current NASP blueprint before treating examWeight as settled. Eliminating `slots×domain` did **not** validate `slots`.
   - `gapToThreshold`: `max(0, 0.80 − score)` — **the ONLY place gap/proficiency enters the formula.**
-  - `learnability` (0–1, **tractability ONLY — must not re-encode gap**): `trendFactor × prereqFactor`.
-    - `trendFactor`: improving/flat = 1, declining < 1. Trend (momentum) is the *one* genuine tractability signal inside `urgencyScore` — take it, **discard the rest**. `urgencyScore` is a *priority* signal dominated by `status` + `accuracy` (both gap-like); reusing it wholesale would smuggle gap back in a 2nd/3rd time (the same error class this exercise exists to catch).
-    - `prereqFactor`: prereqs met = 1, else < 1 (`prereqGraph`) — a tractability signal that is NOT in `urgencyScore`.
+  - `learnability` (**composite clamped to [0.2, 1.2]**, tractability ONLY — must not re-encode gap): `clamp(trendFactor × prereqFactor, 0.2, 1.2)`. Clamp the **composite**, not each factor — two stacked discounts (0.2 × 0.2) are a ~36× swing that would let learnability overpower `examWeight × gap`, the exact thing the formula exists to prevent. Learnability only **reorders within similar-priority clusters**; it never flips magnitude. (2nd invariant — see §5.)
+    - `trendFactor`: improving/flat = 1, declining < 1. Trend (momentum) is the *one* genuine tractability signal inside `urgencyScore` — take it, **discard the rest**. `urgencyScore` is a *priority* signal dominated by `status` + `accuracy` (both gap-like); reusing it wholesale would smuggle gap back in a 2nd/3rd time.
+    - `prereqFactor`: prereqs met = 1, else < 1 (`prereqGraph`) — a tractability signal NOT in `urgencyScore`. **But prereq is routing, not just scoring:** a blocked high-value module must not just sink silently via a discount — it **defers AND surfaces its unblocker** ("Do *X* first"). That's a UX affordance on the card, not only a number (see §6).
     - **Excluded on purpose:** *proximity-to-threshold* (that's `gapToThreshold` again), and `flagged`/`status`/`accuracy` (severity, not tractability — keep flagged as an optional separate additive bump, never inside learnability).
 
   For reference, the exact `urgencyScore` decomposition (pin before reuse): `statusWeight[status] + trendPenalty[trend] + (confidenceIssue?15:0) + (fragilityFlag?10:0) + (100−currentAccuracy)/10`. Only `trendPenalty[trend]` is tractability; the rest is gap/severity. (My earlier transcript described its inputs three inconsistent ways — this is the canonical one.)
@@ -75,9 +75,9 @@ No migration, no backfill — existing users' history immediately yields correct
 - `ModulesBrowser` (container: view/group state, renders the pieces) → replaces `LearningPathNodeMap` in `StudyModesSection`.
 - `AdaptiveSummary` (the gap-closing strip, only in Adaptive).
 - `PriorityModules` ("Close these first").
-- `DomainSection` + `ModuleCard` (by-domain).
+- `DomainSection` + `ModuleCard` (by-domain). **`ModuleCard` blocked-state:** when a high-value module has unmet prereqs, it shows a **"Do *X* first → " unblocker** (links to the prereq module) rather than silently sinking — prereq is routing, not just a score discount.
 - `WeaknessList` + `ModuleRow` (by-weakness).
-- `useModuleCatalog` selector (the data layer; unit-tested).
+- `useModuleCatalog` selector (the data layer; unit-tested per the §10 invariants).
 
 ## 7 — Accessibility (carry the verify-agent findings into the build)
 - Whole card = one `<button>`/`<a>` → opens the module; **no nested pseudo-CTA control** (the mockup's inner `→` becomes visual-only text, or the card is a link).
@@ -108,8 +108,13 @@ No migration, no backfill — existing users' history immediately yields correct
 4. **View persistence:** per-user, **server-side** (Supabase prefs row, not localStorage, since users switch devices); persist the last choice but **first-visit default = By weakness** (time-pays-off), not By domain (browse-the-curriculum). A localStorage stub is acceptable for step 1 to keep the selector pure.
 
 ### Resolved 2026-06-07 (post empirical check)
-- **`examWeight` = `slots` alone.** Settled by summing `SKILL_BLUEPRINT` slots per domain vs `PRAXIS_WEIGHTS`: different taxonomies (4 app vs 10 Praxis), so `slots × PRAXIS_WEIGHTS[domain]` is a category error. slots is the per-skill blueprint signal in the right taxonomy.
-- **`learnability` = `trendFactor × prereqFactor`** — tractability only. Proximity-to-threshold is excluded (= gap, already in `gapToThreshold`). `urgencyScore` is NOT reused wholesale (it's a gap-dominated priority signal); only its `trend` term feeds learnability.
-- **Gap appears in exactly one term** (`gapToThreshold`). This is the invariant to hold when implementing — verify it in the selector's unit tests.
+- **`examWeight` = `slots` — PROVISIONAL, not validated.** `slots × PRAXIS_WEIGHTS[domain]` ruled out (4-app vs 10-Praxis taxonomy = category error). Fidelity test (slots through true NASP domain vs `PRAXIS_WEIGHTS`): mean 4pp / **max 8pp** divergence, **MBH under-weighted 7% vs 14%**, Family-School over 13% vs 5%. So slots is *best available proxy with a known fidelity caveat*, not a verified blueprint weight. **TODOs:** complete the 40/45 crosswalk; verify `PRAXIS_WEIGHTS` is the real current blueprint (domain1=0.32 is suspect).
+- **`learnability` = `clamp(trendFactor × prereqFactor, 0.2, 1.2)`** — tractability only. Proximity-to-threshold excluded (= gap). `urgencyScore` not reused wholesale (gap-dominated); only its `trend` term feeds learnability. Prereq also drives a **UX unblocker affordance** (§3/§6), not only a discount.
+
+### Invariants to encode as selector unit tests (the review-held rules, made executable)
+1. **Gap appears in exactly one term** (`gapToThreshold`) — no other field may be a monotonic function of `score`/proficiency.
+2. **`learnability` composite ∈ [0.2, 1.2]** — clamp on the product, so it reorders within clusters but never overpowers `examWeight × gap`.
+3. **examWeight = `slots`** (provisional) — assert the source, so any future change is a deliberate, test-visible decision.
+4. Discount **constants are externalized** (config object), not inline magic numbers.
 
 Nothing logic-affecting remains open; the formula's *constants* (e.g. how much `declining` or unmet-prereqs discounts learnability) are tuning, to be set against real student profiles during step 1.
