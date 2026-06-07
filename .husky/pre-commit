@@ -1,1 +1,1 @@
-npm run scan:types && npm run lint
+npm run scan:types && npm run scan:colors && npm run lint
