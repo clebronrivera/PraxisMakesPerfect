@@ -322,20 +322,22 @@ Practice on a specific skill — any of the 45 individual competency areas. The 
 
 ---
 
-### Learning Path
-A personalized **visual node map** — a winding road of skill nodes ordered from the user's lowest-performing skill to highest, styled like a game progression path.
+### Learning Path — Module Browser
+A **student-friendly module browser** (`ModulesBrowser`, replacing the older deficit-sorted "node map"). It presents the 58 learning modules as a readable catalog so students always know what to study next.
 
-**Visual design:** Nodes alternate left and right along a central dotted SVG connector line, creating an S-curve "road" effect. Each node is a circular card showing the skill name, status badge, accuracy %, and a lock icon on mastered skills.
+**Views (toggle):**
+- **Regular** — all modules. **Adaptive** — only "gap-closing" modules (skills not yet Demonstrating); modules for mastered skills are hidden, and progress is shown for the *recommended bucket* (e.g. "3 / 11 recommended modules completed · 27%", "N mastered hidden").
 
-**Node color rules:**
-- Rose (red) — Emerging skills (< 60%)
-- Amber — Approaching skills (60–79%)
-- Emerald (green) — Demonstrating / Mastered skills
-- Slate (grey) — Not started
+**Grouping (toggle):**
+- **By domain** — modules grouped under the 4 app domains (each with its color + a "reviewed / total" bar). **By weakness** — a single list ranked weakest/highest-impact first, with each skill's proficiency %.
 
-**Ordering:** Nodes are sorted by accuracy ascending (lowest = top = first priority). Mastered skills sink to the bottom and are inactive (non-clickable).
+**"Close these first"** surfaces the highest-impact modules — ranked by `priorityScore = examWeight × gapToThreshold × learnability` (exam-blueprint-weighted, not raw lowest-score) — capped at 3 and **unpadded** (shrinks honestly as you near mastery). Ranking lives in `src/utils/moduleCatalog.ts` (pure, unit-tested invariants); live data is adapted in `src/hooks/useModuleCatalog.ts`.
 
-**Clicking a node** opens the **Learning Path Module Page** — a full-screen experience for that skill with three sequential sections:
+**Module card** shows: domain-colored icon, title, "what you'll learn" line, `⏱ time` + `✦ activities`, and a status pill — **Not started / In progress / Reviewed** (status conveyed by text + icon, not color alone). A module blocked by an unmet prerequisite surfaces a "do a prerequisite first" affordance.
+
+> Status note (2026-06-07): module status is currently a per-*skill* proxy (Reviewed = the skill is Demonstrating/mastered; In progress = lesson viewed). True per-*module* completion from `section_interactions` is a pending refinement. View choice persists via localStorage (server-side per-user prefs pending).
+
+**Clicking a module** opens the **Learning Path Module Page** — a full-screen experience for that skill with three sequential sections:
 
 ---
 

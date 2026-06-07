@@ -1553,8 +1553,10 @@ function PraxisStudyAppContent() {
                 userId={user?.id ?? null}
                 profile={profile}
                 analyzedQuestions={analyzedQuestions}
-                onSkillProgressUpdate={(skillId, isCorrect) => {
-                  updateSkillProgress(skillId, isCorrect, 'medium');
+                onSkillProgressUpdate={(skillId, isCorrect, questionId) => {
+                  // Tag as 'module' and pass questionId so a question answered in
+                  // both the mini-quiz and practice is deduped, not double-counted.
+                  updateSkillProgress(skillId, isCorrect, 'medium', questionId, undefined, 'module');
                 }}
                 onBack={() => {
                   setLearningPathSkillId(null);
