@@ -31,6 +31,7 @@ const GUARDED = [
   'public/mockup-modules-redesign.html',
   'public/mockup-modules-redesign-v2.html',
   'src/components/ModulesBrowser.tsx',
+  'src/preview/PreviewHarness.tsx',
   // Add Track-A React files here as they are built, e.g.:
   // 'src/components/ModuleEngagementCard.tsx',
   // 'src/components/ActionItemsCard.tsx',

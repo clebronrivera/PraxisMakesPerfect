@@ -7,12 +7,20 @@ import { initSentry } from './utils/sentry';
 // Initialize Sentry before any other work — no-ops when VITE_SENTRY_DSN is absent
 initSentry();
 
+// DEV-ONLY preview harness for auth-gated screens (?preview=<key>). import.meta.env.DEV
+// is false in production builds, so this branch tree-shakes out and never ships.
+const previewKey = import.meta.env.DEV
+  ? new URLSearchParams(window.location.search).get('preview')
+  : null;
+
 // Check required env vars before loading Supabase-dependent modules.
 // Without this, missing env vars produce a silent blank white page in production.
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (previewKey) {
+  import('./preview/PreviewHarness').then(({ renderPreview }) => renderPreview(previewKey));
+} else if (!supabaseUrl || !supabaseAnonKey) {
   const root = document.getElementById('root')!;
   root.innerHTML = `
     <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#e2e8f0;font-family:system-ui;padding:24px;">
