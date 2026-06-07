@@ -34,25 +34,37 @@ interface ModuleCatalogEntry {
   proficiency: SkillProficiencyLevel;   // emerging|approaching|proficient|unstarted
   scorePct: number | null;
   mastered: boolean;                     // proficiency === 'proficient' (≥80%)
-  recommended: boolean;                  // !mastered  → gap-closing bucket
+  eligible: boolean;                     // !mastered → in play (gate, NOT the recommendation)
   flagged: boolean;
-  priorityScore: number;                 // ranking, higher = more urgent
+  examWeight: number;                    // SKILL_BLUEPRINT[skill].slots (× PRAXIS_WEIGHTS[domain] opt)
+  gapToThreshold: number;                // max(0, 0.80 - score) — recoverable points to Demonstrating
+  priorityScore: number;                 // examWeight × gapToThreshold × learnability  (NOT gap-only)
   estMinutes: number; activityCount: number;
 }
 ```
 **Derivation rules:**
 - `status`: `new` = no `module_visit_sessions` row; `in_progress` = visited but lesson/interactives incomplete; `reviewed` = lesson viewed **and** the module's interactive sections completed (see §5 caveat).
-- `mastered`/`recommended`: from skill proficiency. `recommended = proficiency !== 'proficient'`. (Confirm threshold with owner — default = below Demonstrating.)
-- `priorityScore`: weight by (1) lower proficiency, (2) `flagged`, (3) prereq depth/# dependents from `prereqGraph`. Reuse the deficit-first ordering already in `LearningPathNodeMap` so behavior is consistent.
+- `eligible` (gate, not recommendation): `proficiency !== 'proficient'` (below Demonstrating). This only decides *whether a module is in play*.
+- **`priorityScore = examWeight × gapToThreshold × learnability`** — THE key correction. Every runtime ranking today is **gap-only** and must NOT be copied: `LearningPathNodeMap` sorts by "overall deficit first", and `studyPlanPreprocessor.urgencyScore` is status+trend+accuracy with **no exam weight**. Blueprint-weight data exists but is unused at runtime (only in offline scripts `blueprint-alignment.ts` / `bottleneck-finder.ts`).
+  - `examWeight`: per-skill exam representation = `SKILL_BLUEPRINT[skill].slots` (items that skill gets on the exam, 1–2), optionally × `PRAXIS_WEIGHTS[SKILL_BLUEPRINT[skill].domain]`. **NB:** these are the **10 Praxis blueprint domains**, distinct from the **4 app/UI domains** (§2) — weighting is per-skill so it's independent of the UI grouping.
+  - `gapToThreshold`: `max(0, 0.80 − score)` — points recoverable to Demonstrating (goal is passing, not 100%).
+  - `learnability` (0–1, tunable): "expected gain per study minute" — higher when near threshold (fast win), prereqs met (`prereqGraph`), trend not declining; `flagged` boosts. Can reuse the existing `urgencyScore` signals (status/trend/confidence) as the basis. This is what makes a **65% on a 25%-weight skill outrank a 40% on a 2%-weight skill** — the test-prep-correct triage.
+  - **Honesty guard:** proficiency is a heuristic score (scripted-branch engine, not IRT). UI copy says "recommended / highest-impact", never a psychometric "mastery probability."
 - `estMinutes` / `activityCount`: compute from `module.sections` — `activityCount = sections.filter(interactive).length`; `estMinutes` = heuristic (≈1 min per paragraph/anchor + 1 min per activity), rounded.
 
-## 4 — View + grouping logic (component state, not persisted for v1)
-- **Regular vs Adaptive:** Adaptive filters to `recommended` entries (mastered hidden) and computes the **recommended-bucket progress** = `reviewed && recommended` / `recommended` (the "3 / 11 · 27%" + "N mastered hidden"). Regular shows all, overall progress = `reviewed` / 58.
-- **Group by Domain vs Weakness:** domain → group by `domainId` (4 sections, each domain's gradient + "X reviewed / Y total"); weakness → flat list sorted by `proficiency` asc then `priorityScore` desc.
-- **Priority ("Close these first")**: top N by `priorityScore` (e.g. 2–3), always shown; in Adaptive it's the lead.
+## 4 — View + grouping logic (persisted per user — §10.4)
+- **Eligibility gate vs ranking — two distinct mechanisms (do not conflate):** `eligible` (`<80%`) decides *whether* a module is in play; `priorityScore` decides *order*. "Recommended" and "Close these first" are both just the top of the **single** ranked-eligible set — not separate threshold bands that can disagree.
+- **Regular vs Adaptive:** Adaptive shows only `eligible` modules (mastered hidden) and the **recommended-bucket progress** = `reviewed && eligible` / `eligible` (the "3 / 11 · 27%" + "N mastered hidden"). Regular shows all; overall progress = `reviewed` / 58.
+- **Group by Domain vs Weakness:** domain → group by app `domainId` (4 sections, each domain's gradient + "X reviewed / Y total"); weakness → flat list ranked by `priorityScore` desc (exam-weighted, not raw proficiency).
+- **Priority ("Close these first")**: top **`min(3, count of genuinely-prioritized)`** by `priorityScore` — **unpadded**, so a near-mastered student doesn't see filler. Always shown; in Adaptive it's the lead.
 
 ## 5 — Key data decision (the one real gap)
-**Per-module completion granularity.** `learning_path_progress` is **per skill**, but cards are **per module** and a skill has 1–4 modules. For v1, derive per-module `reviewed` from `section_interactions` (all the module's sections `became_visible` + all its interactive sections `exercise_completed`). If that proves noisy, add a per-module completion flag (small migration) — **flag for owner**, don't assume. Until decided, `reviewed` can fall back to "skill mastered" as a coarse proxy.
+**Per-module completion granularity (decided 2026-06-07: derive now).** `learning_path_progress` is **per skill**, but cards are **per module** (a skill has 1–4 modules). For v1, derive per-module status from `section_interactions`, computed once per selector pass (not per render):
+- `reviewed` = every section `became_visible` **AND** every interactive section has `exercise_completed`. → "Reviewed" means **exposed to the material**, not a self-judged readiness.
+- `in_progress` = visited but not all sections/interactives done.
+- `new` = no `module_visit_sessions` row.
+
+No migration, no backfill — existing users' history immediately yields correct state. **Future:** a learner-controlled self-assessment flag ("I've got this") is the more useful affordance for a study tool; when added, **seed it from this derived exposure value** so existing users aren't dumped into an empty state.
 
 ## 6 — Components
 - `ModulesBrowser` (container: view/group state, renders the pieces) → replaces `LearningPathNodeMap` in `StudyModesSection`.
@@ -84,8 +96,13 @@ interface ModuleCatalogEntry {
 - Verify against the **real 58-module / 4-domain** counts when wiring (mockup counts are illustrative).
 - This is the React phase — the mockup-first visual gate is already passed (`mockup-modules-redesign-v2.html`).
 
-## 10 — Open decisions for the owner
-1. **"Recommended" threshold** — below Demonstrating (≥80%) = gap-closing? Or a different cutoff.
-2. **Per-module completion** (§5) — derive from `section_interactions`, or add a per-module flag?
-3. **Priority count** — how many in "Close these first" (2 / 3 / 5)?
-4. **View persistence** — remember Regular/Adaptive + group choice per user, or reset each visit?
+## 10 — Decisions (RESOLVED 2026-06-07 with owner)
+1. **Recommended = ranking, not a threshold.** `<80%` is the eligibility gate only; the blueprint-weighted `priorityScore` does the recommending. (Collapses the old "threshold" + "priority count" into one mechanism.)
+2. **Per-module completion:** derive from `section_interactions` now ("Reviewed = exposed", §5). Add a self-assessment flag later, seeded from the derived value.
+3. **Priority count:** `min(3, genuinely-prioritized)` — unpadded; shrinks honestly near mastery.
+4. **View persistence:** per-user, **server-side** (Supabase prefs row, not localStorage, since users switch devices); persist the last choice but **first-visit default = By weakness** (time-pays-off), not By domain (browse-the-curriculum). A localStorage stub is acceptable for step 1 to keep the selector pure.
+
+### Still to lock before/while building the selector (the only logic-affecting unknowns)
+- **`examWeight` composition:** `SKILL_BLUEPRINT[skill].slots` alone, or `slots × PRAXIS_WEIGHTS[domain]`? (slots is already per-skill; domain weight adds emphasis but risks double-counting.)
+- **`learnability` factors + curve:** which signals (proximity-to-threshold, prereqs-met, trend, flagged) and their weights. Recommend starting from the existing `urgencyScore` signal set, inverted where needed for "fast win," and tuning against a few real student profiles.
+Everything else is fully specified; steps 2–5 (presentation) don't depend on these.
