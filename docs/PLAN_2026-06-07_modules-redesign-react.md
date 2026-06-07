@@ -46,9 +46,14 @@ interface ModuleCatalogEntry {
 - `status`: `new` = no `module_visit_sessions` row; `in_progress` = visited but lesson/interactives incomplete; `reviewed` = lesson viewed **and** the module's interactive sections completed (see §5 caveat).
 - `eligible` (gate, not recommendation): `proficiency !== 'proficient'` (below Demonstrating). This only decides *whether a module is in play*.
 - **`priorityScore = examWeight × gapToThreshold × learnability`** — THE key correction. Every runtime ranking today is **gap-only** and must NOT be copied: `LearningPathNodeMap` sorts by "overall deficit first", and `studyPlanPreprocessor.urgencyScore` is status+trend+accuracy with **no exam weight**. Blueprint-weight data exists but is unused at runtime (only in offline scripts `blueprint-alignment.ts` / `bottleneck-finder.ts`).
-  - `examWeight`: per-skill exam representation = `SKILL_BLUEPRINT[skill].slots` (items that skill gets on the exam, 1–2), optionally × `PRAXIS_WEIGHTS[SKILL_BLUEPRINT[skill].domain]`. **NB:** these are the **10 Praxis blueprint domains**, distinct from the **4 app/UI domains** (§2) — weighting is per-skill so it's independent of the UI grouping.
-  - `gapToThreshold`: `max(0, 0.80 − score)` — points recoverable to Demonstrating (goal is passing, not 100%).
-  - `learnability` (0–1, tunable): "expected gain per study minute" — higher when near threshold (fast win), prereqs met (`prereqGraph`), trend not declining; `flagged` boosts. Can reuse the existing `urgencyScore` signals (status/trend/confidence) as the basis. This is what makes a **65% on a 25%-weight skill outrank a 40% on a 2%-weight skill** — the test-prep-correct triage.
+  - `examWeight`: **= `SKILL_BLUEPRINT[skill].slots` alone** (per-skill exam items, 1–2). RESOLVED empirically (§10): do **NOT** multiply by `PRAXIS_WEIGHTS[domain]`. `SKILL_BLUEPRINT.domain` is the **4 app domains** (slots sum to 32/24/20/24%); `PRAXIS_WEIGHTS` is keyed by the **10 Praxis blueprint domains** — indexing one with the other is a category error, not just double-counting. slots already operationalizes the blueprint at skill grain in the correct taxonomy. (Coarse — mostly 1–2; finer 10-domain weighting would need a skill→Praxis-domain map via `skillMetadata.domainId`, future.)
+  - `gapToThreshold`: `max(0, 0.80 − score)` — **the ONLY place gap/proficiency enters the formula.**
+  - `learnability` (0–1, **tractability ONLY — must not re-encode gap**): `trendFactor × prereqFactor`.
+    - `trendFactor`: improving/flat = 1, declining < 1. Trend (momentum) is the *one* genuine tractability signal inside `urgencyScore` — take it, **discard the rest**. `urgencyScore` is a *priority* signal dominated by `status` + `accuracy` (both gap-like); reusing it wholesale would smuggle gap back in a 2nd/3rd time (the same error class this exercise exists to catch).
+    - `prereqFactor`: prereqs met = 1, else < 1 (`prereqGraph`) — a tractability signal that is NOT in `urgencyScore`.
+    - **Excluded on purpose:** *proximity-to-threshold* (that's `gapToThreshold` again), and `flagged`/`status`/`accuracy` (severity, not tractability — keep flagged as an optional separate additive bump, never inside learnability).
+
+  For reference, the exact `urgencyScore` decomposition (pin before reuse): `statusWeight[status] + trendPenalty[trend] + (confidenceIssue?15:0) + (fragilityFlag?10:0) + (100−currentAccuracy)/10`. Only `trendPenalty[trend]` is tractability; the rest is gap/severity. (My earlier transcript described its inputs three inconsistent ways — this is the canonical one.)
   - **Honesty guard:** proficiency is a heuristic score (scripted-branch engine, not IRT). UI copy says "recommended / highest-impact", never a psychometric "mastery probability."
 - `estMinutes` / `activityCount`: compute from `module.sections` — `activityCount = sections.filter(interactive).length`; `estMinutes` = heuristic (≈1 min per paragraph/anchor + 1 min per activity), rounded.
 
@@ -102,7 +107,9 @@ No migration, no backfill — existing users' history immediately yields correct
 3. **Priority count:** `min(3, genuinely-prioritized)` — unpadded; shrinks honestly near mastery.
 4. **View persistence:** per-user, **server-side** (Supabase prefs row, not localStorage, since users switch devices); persist the last choice but **first-visit default = By weakness** (time-pays-off), not By domain (browse-the-curriculum). A localStorage stub is acceptable for step 1 to keep the selector pure.
 
-### Still to lock before/while building the selector (the only logic-affecting unknowns)
-- **`examWeight` composition:** `SKILL_BLUEPRINT[skill].slots` alone, or `slots × PRAXIS_WEIGHTS[domain]`? (slots is already per-skill; domain weight adds emphasis but risks double-counting.)
-- **`learnability` factors + curve:** which signals (proximity-to-threshold, prereqs-met, trend, flagged) and their weights. Recommend starting from the existing `urgencyScore` signal set, inverted where needed for "fast win," and tuning against a few real student profiles.
-Everything else is fully specified; steps 2–5 (presentation) don't depend on these.
+### Resolved 2026-06-07 (post empirical check)
+- **`examWeight` = `slots` alone.** Settled by summing `SKILL_BLUEPRINT` slots per domain vs `PRAXIS_WEIGHTS`: different taxonomies (4 app vs 10 Praxis), so `slots × PRAXIS_WEIGHTS[domain]` is a category error. slots is the per-skill blueprint signal in the right taxonomy.
+- **`learnability` = `trendFactor × prereqFactor`** — tractability only. Proximity-to-threshold is excluded (= gap, already in `gapToThreshold`). `urgencyScore` is NOT reused wholesale (it's a gap-dominated priority signal); only its `trend` term feeds learnability.
+- **Gap appears in exactly one term** (`gapToThreshold`). This is the invariant to hold when implementing — verify it in the selector's unit tests.
+
+Nothing logic-affecting remains open; the formula's *constants* (e.g. how much `declining` or unmet-prereqs discounts learnability) are tuning, to be set against real student profiles during step 1.
