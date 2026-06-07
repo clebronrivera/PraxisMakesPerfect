@@ -29,6 +29,7 @@ const FORBIDDEN = {
 const GUARDED = [
   'public/mockup-track-a-engagement.html',
   'public/mockup-modules-redesign.html',
+  'public/mockup-modules-redesign-v2.html',
   // Add Track-A React files here as they are built, e.g.:
   // 'src/components/ModuleEngagementCard.tsx',
   // 'src/components/ActionItemsCard.tsx',
