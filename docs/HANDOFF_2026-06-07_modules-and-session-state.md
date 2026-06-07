@@ -39,7 +39,9 @@ Replaced the deficit-sorted snake **`LearningPathNodeMap`** with a student-frien
 
 **Verified:** `scan:types` ✓ · `scan:colors` ✓ (4 guarded files) · `lint` ✓ · **191 tests** ✓ · `build` ✓.
 
-**NOT yet done — live render.** The Learning Path tab is auth-gated; the preview server only serves static mockups. The component compiles, matches the approved mockup, and passes all static checks, but **has not been rendered in the running app**. First next step: `npm run dev:netlify` (or vite), log in, open Practice → Learning Path, confirm it renders with real data.
+**Live render — DONE via the dev preview harness** (commit `457f058`). The auth gate is bypassed in dev by a new harness: `npm run dev` → `http://localhost:5173/?preview=modules` mounts the real `ModulesBrowser` with stub data (no login). Verified rendering Regular/by-domain + by-weakness — the actual React component, not a mockup. (The OLD `dev:mock` / `VITE_PREVIEW_HOME_DASHBOARD` flag was vestigial/never wired — replaced by this.) Still pending: render against a **real logged-in account** end-to-end (the harness uses stub data), and the per-module-status / examWeight caveats below.
+
+**Preview-harness finding (tuning):** with stub data, **unstarted skills (0 attempts → gap 0.80) outrank partially-learned weak skills (e.g. Emerging 42% → gap 0.38)** in priority, because `gapToThreshold` is largest for the untouched. Decide whether unstarted should be de-prioritized until diagnosed, or kept (coverage-first). This is a `priorityScore`/eligibility tuning call the harness surfaced.
 
 ---
 
