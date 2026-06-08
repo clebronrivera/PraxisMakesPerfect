@@ -23,7 +23,9 @@
  *
  * Writes:
  *   src/data/questionObjectiveMap.json   — committed (the 1,150-entry map)
- *   scripts/ets-seed-report.json         — gitignored review aid (fallback/distribution)
+ *   scripts/ets-seed-report.json         — gitignored review aid. Carries `reviewQueue`
+ *                                          {fallback, multiTag}: the exact Pack 1 work list,
+ *                                          each item with its stem + candidate objectives.
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -74,6 +76,7 @@ for (const domain of etsData.domains) {
       TOPIC.set(t.code, {
         keywords: (t.keywords || []).map((k) => k.toLowerCase()),
         textTokens: new Set(tokenize(t.text).filter((w) => !STOP.has(w))),
+        text: t.text, // human-readable objective text (for the Pack 1 review queue)
       });
     }
   }
@@ -151,8 +154,14 @@ const report = {
   reasonCounts: { sole: 0, keyword: 0, unmatched: 0, manual: 0 },
   invalidCodes: [], fallbackBySkill: {}, fallbackByDomain: { 1: 0, 2: 0, 3: 0, 4: 0 },
   topFallbackSkills: [], topicDistribution: {}, sample: [],
+  // Pack 1 review queues: exact items a human must disambiguate, each with stem + candidate
+  // objectives (code + text). fallback = primary assigned by default; multiTag = two objectives.
+  reviewQueue: { fallback: [], multiTag: [] },
 };
 const perSkillTotal = {};
+const candidatesOf = (skill) =>
+  (skillObjectiveMap[skill] || []).map((code) => ({ code, text: TOPIC.get(code)?.text || '' }));
+const stemOf = (q) => String(q.question_stem || '').replace(/\s+/g, ' ').trim().slice(0, 240);
 
 for (const q of sorted) {
   let entry, reason;
@@ -179,13 +188,24 @@ for (const q of sorted) {
     report.fallbackCount++;
     report.fallbackBySkill[skill] = (report.fallbackBySkill[skill] || 0) + 1;
     report.fallbackByDomain[skillDomain(skill)]++;
+    report.reviewQueue.fallback.push({
+      id: q.UNIQUEID, skill, currentTag: entry.ets_topics[0], stem: stemOf(q), candidates: candidatesOf(skill),
+    });
   } else if (entry.method === 'manual') {
     report.manualCount++;
   } else {
     report.seededCount++;
   }
   if (entry.verified === true) report.verifiedCount++;
-  if (entry.ets_topics.length > 1) report.multiTaggedCount++;
+  if (entry.ets_topics.length > 1) {
+    report.multiTaggedCount++;
+    // multi-tag items still needing review (resolved 'manual' ones are already verified, skip them)
+    if (entry.method !== 'manual') {
+      report.reviewQueue.multiTag.push({
+        id: q.UNIQUEID, skill, currentTags: entry.ets_topics, stem: stemOf(q), candidates: candidatesOf(skill),
+      });
+    }
+  }
 }
 report.orphanedManual = [...preservedManual.keys()]; // manual entries whose question is gone
 
