@@ -7,6 +7,7 @@ import {
   allDrillSkillIds,
   ALL_DRILL_TERMS,
 } from '../src/utils/vocabSkillIndex';
+import { PROGRESS_SKILLS } from '../src/utils/progressTaxonomy';
 
 describe('vocabSkillIndex', () => {
   it('exposes a non-empty, lowercase-unique set of drillable terms', () => {
@@ -52,5 +53,23 @@ describe('vocabSkillIndex', () => {
         expect(union.has(term.toLowerCase())).toBe(true);
       }
     }
+  });
+
+  // ─── Re-point regression guards (Phase 0a) ──────────────────────────────────
+  // After re-pointing the drill source from skill-metadata-v1 (79 terms, ~20
+  // un-drillable skills) to skill-vocabulary-map.json (396 terms), every one of the
+  // 45 progress skills must be drillable.
+
+  it('all 45 progress skills are drillable', () => {
+    const drillable = new Set(allDrillSkillIds());
+    const missing = PROGRESS_SKILLS.map((s) => s.skillId).filter((id) => !drillable.has(id));
+    expect(missing, `un-drillable skills: ${missing.join(', ')}`).toEqual([]);
+  });
+
+  it('every progress skill has at least 4 drillable terms (drill scope floor)', () => {
+    const thin = PROGRESS_SKILLS
+      .map((s) => ({ id: s.skillId, n: termsForSkill(s.skillId).length }))
+      .filter((s) => s.n < 4);
+    expect(thin, `skills below 4 terms: ${thin.map((s) => `${s.id}:${s.n}`).join(', ')}`).toEqual([]);
   });
 });

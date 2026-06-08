@@ -1,17 +1,20 @@
 /**
  * vocabSkillIndex — shared term↔skill mapping for the Vocabulary Fluency Drill.
  *
- * Sources the term→skill relationship from `skill-metadata-v1.ts` (the authoritative
- * content layer the study guide already uses), intersected with the master glossary
- * so every count and scope only references DRILLABLE terms — i.e. terms that have a
- * real definition the quiz generator can build a question from. Using the metadata as
- * the source of truth (rather than `skill-vocabulary-map.json`) avoids drift between
- * the two mappings.
+ * Sources the term→skill relationship from `skill-vocabulary-map.json` (396 terms across
+ * all 45 progress skills), intersected with the master glossary so every count and scope
+ * only references DRILLABLE terms — i.e. terms that have a real definition the quiz
+ * generator can build a question from. This is the SAME source `vocabQuizGenerator.ts`
+ * reads, so the drill and the quiz can no longer drift apart.
+ *
+ * The map is keyed by progress skill IDs (e.g. `ACA-09`) — what every drill consumer
+ * queries with. This fixes the prior bug where the metadata-keyed source
+ * (`skill-metadata-v1.ts`, keyed `DBDM-S01` …) left ~20 of 45 skills un-drillable.
  *
  * Pure utility — no React, no side effects. Built once at module load.
  */
 
-import { skillMetadataV1 } from '../data/skill-metadata-v1';
+import skillVocabMapJson from '../data/skill-vocabulary-map.json';
 import glossaryData from '../data/master-glossary.json';
 
 interface GlossaryEntry {
@@ -35,10 +38,15 @@ const skillToTerms = new Map<string, string[]>();
 /** termLower → skillIds that list it as vocabulary. */
 const termToSkills = new Map<string, string[]>();
 
-for (const meta of Object.values(skillMetadataV1)) {
+const vocabMap = skillVocabMapJson as {
+  skills: Record<string, { skillId: string; vocabularyTerms: string[] }>;
+};
+
+for (const skillData of Object.values(vocabMap.skills)) {
+  const { skillId } = skillData;
   const seen = new Set<string>();
   const terms: string[] = [];
-  for (const term of meta.vocabulary) {
+  for (const term of skillData.vocabularyTerms) {
     const lower = term.toLowerCase();
     if (!DRILLABLE_TERMS.has(lower)) continue; // skip terms absent from the glossary
     if (!seen.has(lower)) {
@@ -47,12 +55,12 @@ for (const meta of Object.values(skillMetadataV1)) {
     }
     const owners = termToSkills.get(lower);
     if (owners) {
-      if (!owners.includes(meta.skillId)) owners.push(meta.skillId);
+      if (!owners.includes(skillId)) owners.push(skillId);
     } else {
-      termToSkills.set(lower, [meta.skillId]);
+      termToSkills.set(lower, [skillId]);
     }
   }
-  skillToTerms.set(meta.skillId, terms);
+  skillToTerms.set(skillId, terms);
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
