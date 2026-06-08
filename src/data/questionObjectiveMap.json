@@ -1,0 +1,8135 @@
+{
+  "meta": {
+    "seededAt": "2026-06-07",
+    "generator": "scripts/migrations/seed-question-ets-topics.mjs",
+    "source": "skillObjectiveMap.ts + ets-content-topics.json (keyword + text-token match)",
+    "totalMapped": 1150,
+    "seededCount": 1011,
+    "fallbackCount": 139,
+    "verifiedCount": 0,
+    "note": "Provisional machine-seeded objective tags. method:\"fallback\" = low-confidence (human review queue). Never read by scoring."
+  },
+  "questions": {
+    "PQ_ACA-02_1": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_10": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_11": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_12": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_13": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_14": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_15": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_16": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_17": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_18": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_19": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_2": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_20": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_3": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_4": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_5": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_6": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_7": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_8": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-02_9": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_1": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_10": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_11": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_12": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_13": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_14": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_15": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_16": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_17": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_18": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_19": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_2": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_20": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_3": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_4": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_5": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_6": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_7": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_8": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-03_9": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_1": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_10": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_11": {
+      "ets_topics": [
+        "II.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_12": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-04_13": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_14": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_15": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_16": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_17": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_18": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_19": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_2": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_20": {
+      "ets_topics": [
+        "II.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_3": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_4": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_5": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_6": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_7": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_8": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-04_9": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_1": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_10": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_11": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_12": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_13": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_14": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_15": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_16": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_17": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_18": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_19": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_2": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_20": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_3": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_4": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_5": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_6": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_7": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_8": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-06_9": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_1": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_10": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_11": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_12": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_13": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_14": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_15": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_16": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_17": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_18": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_19": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_2": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_20": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_3": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_4": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_5": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_6": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_7": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_8": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-07_9": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-08_1": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-08_10": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_11": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-08_12": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_13": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_14": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_15": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_16": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_17": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_18": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_19": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_2": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_20": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_3": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_4": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_5": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_6": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_7": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-08_8": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-08_9": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-09_1": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-09_10": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-09_11": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_12": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-09_13": {
+      "ets_topics": [
+        "II.B.1.d",
+        "II.B.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_14": {
+      "ets_topics": [
+        "II.B.1.d",
+        "II.B.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_15": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_16": {
+      "ets_topics": [
+        "II.B.1.d",
+        "II.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_17": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_18": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_19": {
+      "ets_topics": [
+        "II.B.1.d",
+        "II.B.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_2": {
+      "ets_topics": [
+        "II.B.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_20": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_3": {
+      "ets_topics": [
+        "II.B.1.d",
+        "II.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_4": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_5": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_6": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ACA-09_7": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_8": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ACA-09_9": {
+      "ets_topics": [
+        "II.B.1.d",
+        "II.B.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_1": {
+      "ets_topics": [
+        "I.B.1.a",
+        "I.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_10": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_11": {
+      "ets_topics": [
+        "I.B.1.a",
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_12": {
+      "ets_topics": [
+        "I.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_13": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_CON-01_14": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_15": {
+      "ets_topics": [
+        "I.B.1.a",
+        "I.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_16": {
+      "ets_topics": [
+        "I.B.1.c",
+        "I.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_17": {
+      "ets_topics": [
+        "I.B.1.b",
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_18": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_19": {
+      "ets_topics": [
+        "I.B.2.a",
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_2": {
+      "ets_topics": [
+        "I.B.1.a",
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_20": {
+      "ets_topics": [
+        "I.B.1.a",
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_3": {
+      "ets_topics": [
+        "I.B.1.a",
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_4": {
+      "ets_topics": [
+        "I.B.1.a",
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_5": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_6": {
+      "ets_topics": [
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_7": {
+      "ets_topics": [
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_8": {
+      "ets_topics": [
+        "I.B.1.c",
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_CON-01_9": {
+      "ets_topics": [
+        "I.B.1.b",
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_1": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_10": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_11": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_12": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_13": {
+      "ets_topics": [
+        "I.A.1.a",
+        "I.A.2.i"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_14": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_15": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_16": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DBD-01_17": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_18": {
+      "ets_topics": [
+        "I.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_19": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_2": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_20": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_3": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_4": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_5": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_6": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_7": {
+      "ets_topics": [
+        "I.A.1.a",
+        "I.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_8": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-01_9": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_1": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_10": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_11": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_12": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_13": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_14": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_15": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_16": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_17": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_18": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_19": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_2": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_20": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_3": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_4": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_5": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_6": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_7": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_8": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-03_9": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_1": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_10": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_11": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_12": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_13": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_14": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DBD-05_15": {
+      "ets_topics": [
+        "I.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_16": {
+      "ets_topics": [
+        "I.A.2.c",
+        "I.A.4.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_17": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DBD-05_18": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_19": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_2": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_20": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DBD-05_3": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_4": {
+      "ets_topics": [
+        "I.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_5": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_6": {
+      "ets_topics": [
+        "I.A.2.c",
+        "I.A.4.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_7": {
+      "ets_topics": [
+        "I.A.4.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_8": {
+      "ets_topics": [
+        "I.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-05_9": {
+      "ets_topics": [
+        "I.A.2.b",
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_1": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_10": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_11": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_12": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_13": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_14": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_15": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_16": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_17": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_18": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_19": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_2": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_20": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_3": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_4": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_5": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_6": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_7": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_8": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-06_9": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_1": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_10": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_11": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_12": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_13": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_14": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_15": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_16": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_17": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_18": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_19": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_2": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_20": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_3": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_4": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_5": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_6": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_7": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_8": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-07_9": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_1": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_10": {
+      "ets_topics": [
+        "I.A.2.g",
+        "I.A.2.j"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_11": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_12": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_13": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_14": {
+      "ets_topics": [
+        "I.A.2.j"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_15": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_16": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_17": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_18": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_19": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_2": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_20": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_3": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_4": {
+      "ets_topics": [
+        "I.A.2.g",
+        "I.A.2.j"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_5": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_6": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_7": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_8": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-08_9": {
+      "ets_topics": [
+        "I.A.2.j"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_1": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_10": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_11": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_12": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_13": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_14": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_15": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_16": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_17": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_18": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_19": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_2": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_20": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_3": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_4": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_5": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_6": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_7": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_8": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-09_9": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_1": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_10": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_11": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_12": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_13": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_14": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_15": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_16": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_17": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_18": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_19": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_2": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_20": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_3": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_4": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_5": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_6": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_7": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_8": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DBD-10_9": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_1": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_10": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_11": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DEV-01_12": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_13": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_14": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_15": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DEV-01_16": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_17": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_18": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_19": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DEV-01_2": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_20": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_3": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DEV-01_4": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_5": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DEV-01_6": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DEV-01_7": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DEV-01_8": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DEV-01_9": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-01_1": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_10": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_11": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_12": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_13": {
+      "ets_topics": [
+        "IV.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_14": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_15": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_16": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-01_17": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-01_18": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_19": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-01_2": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-01_20": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_3": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-01_4": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_5": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-01_6": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_7": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_8": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-01_9": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_1": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_10": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_11": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_12": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_13": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_14": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_15": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_16": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_17": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_18": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_19": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_2": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_20": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_3": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_4": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_5": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_6": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_7": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-03_8": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-03_9": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_DIV-05_1": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_10": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_11": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_12": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_13": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_14": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_15": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_16": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_17": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_18": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_19": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_2": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_20": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_3": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_4": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_5": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_6": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_7": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_8": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_DIV-05_9": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_1": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_10": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_11": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_12": {
+      "ets_topics": [
+        "IV.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_13": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_14": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_15": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_16": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_17": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_18": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_19": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_2": {
+      "ets_topics": [
+        "IV.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_20": {
+      "ets_topics": [
+        "IV.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_3": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_4": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_5": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_6": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_7": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_8": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-01_9": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_1": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_10": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_11": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_12": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_13": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_14": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_15": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_16": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_17": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_ETH-02_18": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_19": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_2": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_20": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_3": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_4": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_5": {
+      "ets_topics": [
+        "IV.C.2.d",
+        "IV.C.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_6": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_7": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_8": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-02_9": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_1": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_10": {
+      "ets_topics": [
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_11": {
+      "ets_topics": [
+        "IV.C.3.a",
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_12": {
+      "ets_topics": [
+        "IV.C.3.b",
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_13": {
+      "ets_topics": [
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_14": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_15": {
+      "ets_topics": [
+        "IV.C.3.a",
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_16": {
+      "ets_topics": [
+        "IV.C.3.a",
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_17": {
+      "ets_topics": [
+        "IV.C.3.b",
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_18": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_19": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_2": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_20": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_3": {
+      "ets_topics": [
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_4": {
+      "ets_topics": [
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_5": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_6": {
+      "ets_topics": [
+        "IV.C.3.a",
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_7": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_8": {
+      "ets_topics": [
+        "IV.C.3.b",
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_ETH-03_9": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_1": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_10": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_FAM-02_11": {
+      "ets_topics": [
+        "III.C.1.a",
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_12": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_13": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_14": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_15": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_FAM-02_16": {
+      "ets_topics": [
+        "III.C.1.a",
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_17": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_18": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_19": {
+      "ets_topics": [
+        "III.C.1.a",
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_2": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_FAM-02_20": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_3": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_4": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_FAM-02_5": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_6": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_7": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-02_8": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_FAM-02_9": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_1": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_10": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_11": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_12": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_13": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_14": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_15": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_16": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_17": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_18": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_19": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_2": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_20": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_3": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_4": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_5": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_6": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_7": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_8": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_FAM-03_9": {
+      "ets_topics": [
+        "III.C.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_1": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_10": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_11": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_12": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_13": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_14": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_15": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_16": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_17": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_18": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_19": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_2": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_20": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_3": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_4": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_5": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_6": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_7": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_8": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-01_9": {
+      "ets_topics": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_1": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_10": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_11": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_12": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_13": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_14": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_15": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_16": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_17": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_18": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_19": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_2": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_20": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_3": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_4": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_5": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_6": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_7": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_8": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-02_9": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_1": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_10": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_11": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_12": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_13": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_14": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_15": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_16": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_17": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_18": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_19": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_2": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_20": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_3": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_4": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_5": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_6": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_7": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_8": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-03_9": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_1": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_10": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_11": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_12": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_13": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_14": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_15": {
+      "ets_topics": [
+        "IV.C.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_16": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_17": {
+      "ets_topics": [
+        "IV.C.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_18": {
+      "ets_topics": [
+        "IV.C.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_19": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_2": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_20": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_3": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_4": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_5": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_6": {
+      "ets_topics": [
+        "IV.C.2.c",
+        "IV.C.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_7": {
+      "ets_topics": [
+        "IV.C.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_8": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_LEG-04_9": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_1": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_10": {
+      "ets_topics": [
+        "II.B.2.a",
+        "II.B.2.f"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_11": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_12": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_13": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_14": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_15": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_16": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_17": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_18": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_19": {
+      "ets_topics": [
+        "II.B.2.a",
+        "II.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_2": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_20": {
+      "ets_topics": [
+        "II.B.1.b",
+        "II.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_3": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_4": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_5": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-02_6": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_7": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_8": {
+      "ets_topics": [
+        "II.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-02_9": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-03_1": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_10": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_11": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-03_12": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_13": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_14": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_15": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-03_16": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_17": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_18": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_19": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_2": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-03_20": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-03_3": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_4": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_5": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_6": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_7": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_8": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-03_9": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_1": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_10": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_11": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_12": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_13": {
+      "ets_topics": [
+        "II.B.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_14": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-04_15": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-04_16": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_MBH-04_17": {
+      "ets_topics": [
+        "II.B.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_18": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_19": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_2": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_20": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_3": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_4": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_5": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_6": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_7": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_8": {
+      "ets_topics": [
+        "II.B.2.e",
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-04_9": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_1": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_10": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_11": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_12": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_13": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_14": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_15": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_16": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_17": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_18": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_19": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_2": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_20": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_3": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_4": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_5": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_6": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_7": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_8": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_MBH-05_9": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_1": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_10": {
+      "ets_topics": [
+        "I.A.3.b",
+        "I.A.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_11": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_PSY-01_12": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_13": {
+      "ets_topics": [
+        "I.A.3.b",
+        "I.A.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_14": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_15": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_16": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_17": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_18": {
+      "ets_topics": [
+        "I.A.3.c",
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_19": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_2": {
+      "ets_topics": [
+        "I.A.3.b",
+        "I.A.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_20": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_3": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_4": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_5": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_PSY-01_6": {
+      "ets_topics": [
+        "I.A.3.c",
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_7": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_8": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-01_9": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_1": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_10": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_11": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_12": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_13": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_14": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_15": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_16": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_17": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_18": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_19": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_2": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_20": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_3": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_4": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_5": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_6": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_7": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_8": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-02_9": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_1": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_10": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_11": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_12": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_13": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_14": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_15": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_16": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_17": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_18": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_19": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_2": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_20": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_3": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_4": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_5": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_6": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_7": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_8": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-03_9": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_1": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_PSY-04_10": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_11": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_12": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_13": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_14": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_15": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_16": {
+      "ets_topics": [
+        "I.A.3.e",
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_17": {
+      "ets_topics": [
+        "I.A.3.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_18": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_19": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_PSY-04_2": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_20": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_3": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_4": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_5": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_6": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_PSY-04_7": {
+      "ets_topics": [
+        "I.A.3.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_8": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_PSY-04_9": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_1": {
+      "ets_topics": [
+        "IV.B.1.e",
+        "IV.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_10": {
+      "ets_topics": [
+        "IV.B.1.b",
+        "IV.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_11": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-02_12": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-02_13": {
+      "ets_topics": [
+        "IV.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_14": {
+      "ets_topics": [
+        "IV.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_15": {
+      "ets_topics": [
+        "IV.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_16": {
+      "ets_topics": [
+        "IV.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_17": {
+      "ets_topics": [
+        "IV.B.1.b",
+        "IV.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_18": {
+      "ets_topics": [
+        "IV.B.1.d",
+        "IV.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_19": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_2": {
+      "ets_topics": [
+        "IV.B.1.f"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_20": {
+      "ets_topics": [
+        "IV.B.1.e",
+        "IV.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_3": {
+      "ets_topics": [
+        "IV.B.1.d",
+        "IV.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_4": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_5": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_6": {
+      "ets_topics": [
+        "IV.B.1.f"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_7": {
+      "ets_topics": [
+        "IV.B.1.d",
+        "IV.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-02_8": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-02_9": {
+      "ets_topics": [
+        "IV.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_1": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_10": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_11": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_12": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_13": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_14": {
+      "ets_topics": [
+        "IV.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_15": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_16": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_17": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_18": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_19": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_2": {
+      "ets_topics": [
+        "IV.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_20": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_3": {
+      "ets_topics": [
+        "IV.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_4": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_5": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_RES-03_6": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_7": {
+      "ets_topics": [
+        "IV.B.1.a",
+        "IV.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_8": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_RES-03_9": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SAF-01_1": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_10": {
+      "ets_topics": [
+        "III.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_11": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_12": {
+      "ets_topics": [
+        "III.B.1.b",
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_13": {
+      "ets_topics": [
+        "III.B.1.a",
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_14": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_15": {
+      "ets_topics": [
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_16": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_17": {
+      "ets_topics": [
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_18": {
+      "ets_topics": [
+        "III.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_19": {
+      "ets_topics": [
+        "III.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_2": {
+      "ets_topics": [
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_20": {
+      "ets_topics": [
+        "III.B.1.a",
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_3": {
+      "ets_topics": [
+        "III.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_4": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_5": {
+      "ets_topics": [
+        "III.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_6": {
+      "ets_topics": [
+        "III.B.1.e",
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_7": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-01_8": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SAF-01_9": {
+      "ets_topics": [
+        "III.B.1.a",
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_1": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_10": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_11": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_12": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_13": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_14": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_15": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_16": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_17": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_18": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_19": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_2": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_20": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_3": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_4": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_5": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_6": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_7": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_8": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-03_9": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_1": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_10": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_11": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_12": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_13": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_14": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_15": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_16": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_17": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_18": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_19": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_2": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_20": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_3": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_4": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_5": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_6": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_7": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_8": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SAF-04_9": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_1": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_10": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_11": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_12": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_13": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_14": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_15": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_16": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_17": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_18": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_19": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_2": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_20": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_3": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_4": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_5": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_6": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_7": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_8": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-02_9": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-03_1": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_10": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_11": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_12": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_13": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_14": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_15": {
+      "ets_topics": [
+        "III.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-03_16": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_17": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_18": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_19": {
+      "ets_topics": [
+        "III.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-03_2": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-03_20": {
+      "ets_topics": [
+        "III.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-03_3": {
+      "ets_topics": [
+        "III.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-03_4": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_5": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_6": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_7": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_8": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-03_9": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "PQ_SWP-04_1": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_10": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_11": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_12": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_13": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_14": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_15": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_16": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_17": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_18": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_19": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_2": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_20": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_3": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_4": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_5": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_6": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_7": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_8": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "PQ_SWP-04_9": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_001": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_002": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_003": {
+      "ets_topics": [
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_004": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_005": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_006": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_007": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_008": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_009": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_010": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_011": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_012": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_013": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_014": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_015": {
+      "ets_topics": [
+        "I.B.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_016": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_017": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_018": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_019": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_020": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_021": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_022": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_023": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_024": {
+      "ets_topics": [
+        "III.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_025": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_026": {
+      "ets_topics": [
+        "I.A.3.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_027": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_028": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_029": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_030": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_031": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_032": {
+      "ets_topics": [
+        "I.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_033": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_034": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_035": {
+      "ets_topics": [
+        "IV.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_036": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_037": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_038": {
+      "ets_topics": [
+        "IV.C.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_039": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_040": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_041": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_042": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_043": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_044": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_045": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_046": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_047": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_048": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_049": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_050": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_051": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_052": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_053": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_054": {
+      "ets_topics": [
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_055": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_056": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_057": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_058": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_059": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_060": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_061": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_062": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_063": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_064": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_065": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_066": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_067": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_068": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_069": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_070": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_071": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_072": {
+      "ets_topics": [
+        "II.B.2.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_073": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_074": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_075": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_076": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_077": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_078": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_079": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_080": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_081": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_082": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_083": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_084": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_085": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_086": {
+      "ets_topics": [
+        "I.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_087": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_088": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_089": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_090": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_091": {
+      "ets_topics": [
+        "I.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_092": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_093": {
+      "ets_topics": [
+        "IV.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_094": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_095": {
+      "ets_topics": [
+        "IV.B.1.b"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_096": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_097": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_098": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_099": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_100": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_101": {
+      "ets_topics": [
+        "IV.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_102": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_103": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_104": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_105": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_106": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_107": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_108": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_109": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_110": {
+      "ets_topics": [
+        "II.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_111": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_112": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_113": {
+      "ets_topics": [
+        "III.B.1.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_114": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_115": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_116": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_117": {
+      "ets_topics": [
+        "II.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_118": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_119": {
+      "ets_topics": [
+        "IV.C.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_120": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_121": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_122": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_123": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_124": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_125": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_126": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_127": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_128": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_129": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_130": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_131": {
+      "ets_topics": [
+        "I.A.2.i"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_132": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_133": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_134": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_135": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_136": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_137": {
+      "ets_topics": [
+        "I.A.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_138": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_139": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_140": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_141": {
+      "ets_topics": [
+        "I.A.2.e"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_142": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_143": {
+      "ets_topics": [
+        "I.A.2.g"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_144": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_145": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_146": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_147": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_148": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_149": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_150": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_151": {
+      "ets_topics": [
+        "III.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_152": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_153": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_154": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_155": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_156": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_157": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_158": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_159": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_160": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_161": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_162": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_163": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_164": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_165": {
+      "ets_topics": [
+        "III.B.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_166": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_167": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_168": {
+      "ets_topics": [
+        "I.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_169": {
+      "ets_topics": [
+        "I.A.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_170": {
+      "ets_topics": [
+        "I.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_171": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_172": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_173": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_174": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_175": {
+      "ets_topics": [
+        "I.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_176": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_177": {
+      "ets_topics": [
+        "II.B.3.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_178": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_179": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_180": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_181": {
+      "ets_topics": [
+        "III.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_182": {
+      "ets_topics": [
+        "II.A.2.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_183": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_184": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_185": {
+      "ets_topics": [
+        "IV.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_186": {
+      "ets_topics": [
+        "IV.B.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_187": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_188": {
+      "ets_topics": [
+        "II.A.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_189": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_190": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_191": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_192": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_193": {
+      "ets_topics": [
+        "III.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_194": {
+      "ets_topics": [
+        "III.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_195": {
+      "ets_topics": [
+        "II.A.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_196": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_197": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_198": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_199": {
+      "ets_topics": [
+        "II.A.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_200": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_201": {
+      "ets_topics": [
+        "I.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_202": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_203": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_204": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_205": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_206": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_207": {
+      "ets_topics": [
+        "I.B.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_208": {
+      "ets_topics": [
+        "I.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_209": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_210": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_211": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_212": {
+      "ets_topics": [
+        "IV.C.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_213": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_214": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_215": {
+      "ets_topics": [
+        "IV.C.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_216": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_217": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_218": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_219": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_220": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_221": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_222": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_223": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_224": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_225": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_226": {
+      "ets_topics": [
+        "IV.C.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_227": {
+      "ets_topics": [
+        "IV.C.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_228": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_229": {
+      "ets_topics": [
+        "I.B.1.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_230": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_231": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_232": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_233": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_234": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_235": {
+      "ets_topics": [
+        "II.A.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_236": {
+      "ets_topics": [
+        "II.B.1.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_237": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_238": {
+      "ets_topics": [
+        "II.B.2.a"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_239": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_240": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_241": {
+      "ets_topics": [
+        "IV.C.2.a"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_242": {
+      "ets_topics": [
+        "II.B.2.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_243": {
+      "ets_topics": [
+        "II.B.2.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_244": {
+      "ets_topics": [
+        "II.A.1.c"
+      ],
+      "method": "fallback",
+      "verified": false
+    },
+    "item_245": {
+      "ets_topics": [
+        "IV.C.3.b"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_246": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_247": {
+      "ets_topics": [
+        "III.A.1.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_248": {
+      "ets_topics": [
+        "I.A.3.d"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_249": {
+      "ets_topics": [
+        "II.B.3.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    },
+    "item_250": {
+      "ets_topics": [
+        "III.B.1.c"
+      ],
+      "method": "seeded",
+      "verified": false
+    }
+  }
+}
