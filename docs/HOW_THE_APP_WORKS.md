@@ -29,6 +29,27 @@ Within those 4 domains there are **45 distinct skills** — specific competency 
 
 ---
 
+## Content Architecture & Connectivity
+
+Everything in the app hangs off one spine, so the questions, the exam weights, and the adaptive engine all speak the same language:
+
+```
+Domain (4)  →  Skill (45, the measured/scored unit)  →  Objective  →  content
+```
+
+- **Domain → Skill** is the measured spine. Each skill carries an exam weight and a knowledge type, and the diagnostic scores you at the **skill** level.
+- **Objective (the "microscale")** is the granular learning target *below* a skill — sourced from the **79 official ETS content topics** (the published outline, e.g. "I.A.1.a — methods of information gathering / RIOT"). A skill decomposes into 1–4 objectives.
+- Every **content type tags to an objective**, which rolls up to its skill → domain → exam weight:
+  - **Question** measures an objective · **Lesson/Module** teaches it · **Vocabulary** defines it · **Case/vignette** applies it · **Misconception** is what learners get wrong about it · **Framework/law** is the authority behind it.
+
+This lets a missed question route to the exact lesson that re-teaches it, and lets diagnosis go *below* the skill ("strong on screening, weak on record-review" inside one skill) — without changing how scoring works (the skill stays the scored unit; the objective is a descriptive/diagnostic facet).
+
+**Connectivity uses one shared key — the ETS topic code — reused across questions, lessons, and vocab.** It is *not* a separate ID scheme. The content data is largely in place (1,150 skill-tagged questions, 396 glossary terms, per-skill metadata); the active work is **wiring** it to the objective layer and authoring dedicated module content for under-served skills.
+
+> **Current state vs. target, and the full plan:** the objective layer and several cross-content links are a build-in-progress, specified in **`docs/CONTENT_ARCHITECTURE_AND_GAPS_2026-06-07.md`** (the ideal model, connectivity rules, gap analysis, and authoring spec). The module-specific coverage detail is in `docs/MODULE_CONTENT_GAP_2026-06-07.md`. Keep both in sync with this section as the wiring lands.
+
+---
+
 ## The User Journey — Step by Step
 
 ### Step 1: Create an Account
