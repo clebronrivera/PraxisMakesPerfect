@@ -37,16 +37,33 @@ Everything in the app hangs off one spine, so the questions, the exam weights, a
 Domain (4)  →  Skill (45, the measured/scored unit)  →  Objective  →  content
 ```
 
-- **Domain → Skill** is the measured spine. Each skill carries an exam weight and a knowledge type, and the diagnostic scores you at the **skill** level.
-- **Objective (the "microscale")** is the granular learning target *below* a skill — sourced from the **79 official ETS content topics** (the published outline, e.g. "I.A.1.a — methods of information gathering / RIOT"). A skill decomposes into 1–4 objectives.
-- Every **content type tags to an objective**, which rolls up to its skill → domain → exam weight:
-  - **Question** measures an objective · **Lesson/Module** teaches it · **Vocabulary** defines it · **Case/vignette** applies it · **Misconception** is what learners get wrong about it · **Framework/law** is the authority behind it.
+**Four terms, kept distinct:**
 
-This lets a missed question route to the exact lesson that re-teaches it, and lets diagnosis go *below* the skill ("strong on screening, weak on record-review" inside one skill) — without changing how scoring works (the skill stays the scored unit; the objective is a descriptive/diagnostic facet).
+| Term | What it is | Where it lives |
+|---|---|---|
+| **Scored skill** | One of the 45 skills — the **measured/mastery unit**. The diagnostic and all proficiency/readiness math run at this level. | `progressTaxonomy.ts` |
+| **Descriptive objective** | An **ETS topic code** (e.g. `I.A.1.a`), the granular learning target *below* a skill. Descriptive/routing only — **never scored**. | the 79 topics in `ets-content-topics.json` |
+| **Content tag** | The objective code(s) attached to a piece of content (e.g. a question's `ets_topics`). | `questionObjectiveMap.json` |
+| **Module owner** | The single canonical skill a lesson primarily teaches (`primarySkillId`); the full many-to-many lives in `SKILL_MODULE_MAP`. | `learningModules.ts` |
 
-**Connectivity uses one shared key — the ETS topic code — reused across questions, lessons, and vocab.** It is *not* a separate ID scheme. The content data is largely in place (1,150 skill-tagged questions, 396 glossary terms, per-skill metadata); the active work is **wiring** it to the objective layer and authoring dedicated module content for under-served skills.
+- **Domain → Skill** is the measured spine. Each skill carries an exam weight and knowledge type, and the diagnostic scores you at the **skill** level.
+- **Objective** is sourced from the **79 official ETS content topics**. The skill→objective map is curated within each app domain (`skillObjectiveMap.ts`); every skill owns ≥ 1 objective and every one of the 79 objectives is owned by ≥ 1 skill.
+- Diagnosis can go *below* the skill ("strong on screening, weak on record-review" inside one skill) **without changing how scoring works** — the skill stays the scored unit; the objective is a descriptive facet.
 
-> **Current state vs. target, and the full plan:** the objective layer and several cross-content links are a build-in-progress, specified in **`docs/CONTENT_ARCHITECTURE_AND_GAPS_2026-06-07.md`** (the ideal model, connectivity rules, gap analysis, and authoring spec). The module-specific coverage detail is in `docs/MODULE_CONTENT_GAP_2026-06-07.md`. Keep both in sync with this section as the wiring lands.
+**Connectivity uses one shared key — the ETS topic code — reused across questions, modules, and vocab.** It is *not* a separate ID scheme.
+
+**What's wired today:**
+- The **Vocabulary Fluency Drill** reads the canonical 396-term map (`skill-vocabulary-map.json`), so **all 45 skills are drillable** (it previously reached ~20).
+- **5 cold-start skills** (ACA-09, DBD-10, DIV-01, DIV-05, FAM-03) now carry foundational anchor items, so the adaptive engine can seed them on first contact.
+- **`skillObjectiveMap.ts`** links all 45 skills → their ETS objectives (with an explicit primary per skill).
+- **`questionObjectiveMap.json`** tags all 1,150 questions with 1–2 objectives. **These tags are provisional and machine-seeded** — every entry is `verified: false`, and entries marked `method: "fallback"` are the prioritized **human-review queue** (genuinely ambiguous, multi-objective skills). They are stored separately from `questions.json` so they stay reviewable and reversible.
+- **`primarySkillId`** on all 58 modules fixes domain attribution; `SKILL_MODULE_MAP` remains the authoritative many-to-many index.
+
+> **Do not add objective-level mastery or scoring** until the objective tags are human-reviewed and promoted to `verified: true`. A boundary-guard test (`tests/objectiveBoundaryGuard.test.ts`) fails the build if any scoring/mastery/selection file imports the objective maps.
+
+**Future attachment points (Phase 2+, reserved, not yet wired):** modules declare their objectives (`etsTopicIds`) · one consolidated vocabulary registry (the study-plan vocab still reads `skill-metadata-v1`) · misconception→question links · objective→exam-weight rollup · prerequisite graph repair · framework/law registry · reusable case bank.
+
+> **Full plan:** the ideal model, connectivity rules, gap analysis, and authoring spec live in **`docs/CONTENT_ARCHITECTURE_AND_GAPS_2026-06-07.md`**; module-specific coverage in `docs/MODULE_CONTENT_GAP_2026-06-07.md`. Keep both in sync with this section as more wiring lands.
 
 ---
 
@@ -615,7 +632,7 @@ The **Fluency Drill** is a timed, rapid-fire vocabulary game, launched from the 
 2. **Direction**: **Definition → Term**, **Term → Definition**, or **Mixed**.
 3. **Pace** (seconds per card, def→term / term→def): **Relaxed** 10/12 · **Standard** 7/10 (default) · **Fast** 5/7.
 
-**How it works:** Up to 20 multiple-choice cards, one term each, against a countdown. Answer before the timer runs out — a timeout counts as a miss. Distractors are drawn from the same skill neighborhood for plausibility. A streak counter and running score show during play.
+**How it works:** Up to 20 multiple-choice cards, one term each, against a countdown. Answer before the timer runs out — a timeout counts as a miss. Distractors are drawn from the same skill neighborhood for plausibility. A streak counter and running score show during play. Terms come from the canonical 396-term map (`skill-vocabulary-map.json`) — the same source the Vocab Quiz uses — so **every one of the 45 skills is drillable** (22–67 terms each).
 
 **Data feedback (this is the key difference from Quiz Mode):**
 - **Skill priority** — if you miss terms for the same skill **twice or more** in one drill, that skill gets a low-confidence nudge through the existing adaptive engine, so it resurfaces in practice. A single slip never moves a skill.

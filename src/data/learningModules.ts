@@ -122,6 +122,19 @@ export interface LearningModule {
   id: string;
   /** Short human-readable title shown in the Learning Path list. */
   title: string;
+  /**
+   * Canonical skill owner — the single progress skill this module primarily teaches.
+   * Used for domain attribution and reporting; replaces the old "arbitrary first-declared
+   * home" derivation. SKILL_MODULE_MAP remains the authoritative many-to-many index of every
+   * skill that references this module (a module can legitimately support several skills).
+   * Derivation + curated exceptions are documented in MODULE_PRIMARY_OVERRIDES below.
+   */
+  primarySkillId: string;
+  /**
+   * Reserved for Phase 2: the ETS objectives this module teaches (to be derived from the
+   * questionObjectiveMap of the questions it routes). Unpopulated in this phase.
+   */
+  etsTopicIds?: string[];
   /** Full rich sections rendered inside the lesson viewer. */
   sections: ModuleSection[];
 
@@ -153,6 +166,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-01',
+    primarySkillId: 'LEG-01',
     title: 'FERPA and Student Confidentiality',
     sections: [
       { type: 'anchor', label: 'The scenario that trips people up', text: 'A teacher casually shares a student\'s test results with a helpful colleague — even a reading specialist next door. Feels like good teamwork. It is actually a FERPA violation.' },
@@ -179,6 +193,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-02',
+    primarySkillId: 'DBD-08',
     title: 'RTI Data: Universal Screening vs. Progress Monitoring',
     sections: [
       { type: 'paragraph', text: 'Response to Intervention (RTI) runs on two specific data engines. Get these terms exactly right — the exam uses both and will offer plausible-sounding alternatives.' },
@@ -213,6 +228,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-03',
+    primarySkillId: 'DBD-07',
     title: 'Functional Behavioral Assessment (FBA): Required First Step',
     sections: [
       { type: 'paragraph', text: 'Before writing any formal behavior support plan, a school psychologist must conduct a Functional Behavioral Assessment. This is not optional — it is the legally expected and best-practice foundation for any individualized behavior plan.' },
@@ -234,6 +250,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-04',
+    primarySkillId: 'DBD-06',
     title: 'Starting Broad: Why the BASC Comes First',
     sections: [
       { type: 'paragraph', text: 'When a student presents with multiple concerns — withdrawal, sadness, AND anxiety — the correct starting tool is a broad-spectrum behavioral and emotional assessment. The Behavior Assessment System for Children (BASC) is the gold-standard choice because it captures a wide range of internalizing and externalizing concerns across multiple raters.' },
@@ -255,6 +272,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-05',
+    primarySkillId: 'DBD-06',
     title: 'Vineland Discrepancies: Rater Perception Differences',
     sections: [
       { type: 'paragraph', text: 'When a parent and teacher complete the same adaptive behavior scale (e.g., Vineland) and the scores differ significantly, the most defensible interpretation is that the raters perceive the child\'s behavior differently across different environments — not that the test is broken.' },
@@ -276,6 +294,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-06',
+    primarySkillId: 'PSY-03',
     title: 'MTSS Tiers: What Belongs at Tier 1 vs. Tier 3',
     sections: [
       { type: 'paragraph', text: 'Tier 1 of the Multi-Tiered System of Supports is universal — it applies to ALL students. It emphasizes clear expectations, explicit and direct instruction, and corrective feedback for the entire school population. The defining feature of Tier 1 is its universal, preventive nature.' },
@@ -301,6 +320,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-07',
+    primarySkillId: 'DBD-03',
     title: 'Reading Standard Scores on Cognitive Assessments',
     sections: [
       { type: 'paragraph', text: 'On most mainstream cognitive assessments, the normative mean is 100 with a standard deviation of 15. Here is how key benchmark scores translate:' },
@@ -323,6 +343,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-08',
+    primarySkillId: 'PSY-02',
     title: 'Reliability and Validity: What the Numbers Mean',
     sections: [
       { type: 'paragraph', text: 'Psychometric adequacy is judged by specific coefficient benchmarks. Test-retest reliability of 0.79 is acceptable but on the lower end of convention — most experts prefer 0.80 or higher. A convergent validity coefficient of 0.58 indicates only moderate association between the new test and the established one.' },
@@ -344,6 +365,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-09',
+    primarySkillId: 'DBD-01',
     title: 'Curriculum-Based Measurement (CBM): Progress Tracking, Not Replacement',
     sections: [
       { type: 'paragraph', text: 'A Curriculum-Based Measurement is a brief, repeatable assessment taken directly from a student\'s own curriculum materials. It measures how a student is progressing in basic academic skills over time — reading fluency, math computation, spelling.' },
@@ -369,6 +391,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-10',
+    primarySkillId: 'ACA-08',
     title: "Working Memory: Keeping Information 'Online'",
     sections: [
       { type: 'paragraph', text: 'Working memory is the cognitive ability to hold and manipulate information in an active mental workspace while simultaneously completing a task. It is distinct from short-term memory (passive holding) and long-term memory (stored information).' },
@@ -403,6 +426,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-11',
+    primarySkillId: 'DBD-03',
     title: 'Matrices Subtests = Nonverbal / Fluid Reasoning',
     sections: [
       { type: 'paragraph', text: 'Matrix Reasoning subtests (found on the WISC, DAS, and other cognitive batteries) require the student to identify a missing piece of a visual pattern — rows and columns of shapes, designs, or objects with a piece removed. The student must reason by induction and analogy to solve the pattern.' },
@@ -441,6 +465,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D1-12',
+    primarySkillId: 'DBD-05',
     title: 'Projective Tests: Supplementary, Not Standalone',
     sections: [
       { type: 'paragraph', text: 'Projective tests (Rorschach, Draw-a-Person, Sentence Completion) have a legitimate but limited role in school psychological assessment. They are best used to gather supplementary qualitative information — additional texture and hypotheses about a student\'s inner life.' },
@@ -481,6 +506,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D2-01',
+    primarySkillId: 'CON-01',
     title: 'The Nonhierarchical Collaborative Consultation Model',
     sections: [
       { type: 'paragraph', text: 'When a school psychologist begins a professional consultation with a teacher, the recommended starting framework is nonhierarchical and collaborative. This means both the psychologist and the consultee (teacher) are treated as equal experts — the psychologist brings psychological knowledge; the teacher brings knowledge of the student and classroom context.' },
@@ -502,6 +528,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D2-02',
+    primarySkillId: 'CON-01',
     title: 'Consultee-Centered Consultation: Building the Teacher, Not Solving the Problem',
     sections: [
       { type: 'paragraph', text: "In a consultee-centered model, the goal is not just to fix one student's problem — it is to develop the consultee's (usually the teacher's) own skills and capacities so they can address similar situations independently in the future." },
@@ -523,6 +550,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D2-03',
+    primarySkillId: 'CON-01',
     title: 'Professional Learning Communities (PLCs): The Three Driving Questions',
     sections: [
       { type: 'paragraph', text: 'PLCs are collaborative professional development structures in which staff meet regularly to examine data and improve student outcomes. They are driven by three specific questions:' },
@@ -545,6 +573,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D2-04',
+    primarySkillId: 'FAM-03',
     title: 'Systemic Drug Prevention: Community Coalition Over Classroom Talks',
     sections: [
       { type: 'paragraph', text: 'When a school psychologist faces a community-wide substance abuse problem affecting multiple families and students, the most effective intervention is not a single classroom program or a teacher training — it is a broad-spectrum coalition that brings together parents, school staff, and community partners.' },
@@ -569,6 +598,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D3-01',
+    primarySkillId: 'ACA-04',
     title: 'Evidence-Based Teaching: Explicit and Systematic Instruction',
     sections: [
       { type: 'paragraph', text: 'Explicit and systematic instruction is the gold standard for teaching foundational academic skills, particularly reading and math. Explicit means skills are taught directly and clearly — nothing is left to be discovered by the student. Systematic means the instruction follows a deliberate sequence, building from simpler to more complex skills.' },
@@ -591,6 +621,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D3-02',
+    primarySkillId: 'ACA-07',
     title: 'Reading Programs: Phonological Processing Comes First',
     sections: [
       { type: 'paragraph', text: 'For beginning readers, the most research-supported foundation is phonological processing — the ability to hear, identify, and manipulate the sound structure of language. Phonemic awareness (awareness of individual sounds/phonemes) is the most critical early reading skill.' },
@@ -613,6 +644,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D3-03',
+    primarySkillId: 'SWP-02',
     title: 'Grade Retention: NASP Does Not Endorse It',
     sections: [
       { type: 'paragraph', text: 'The National Association of School Psychologists does not endorse grade retention as an effective intervention. Research consistently shows that retention does not produce lasting academic gains and carries significant social-emotional costs for students.' },
@@ -651,6 +683,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D3-04',
+    primarySkillId: 'ACA-02',
     title: "Accommodations vs. Modifications — Giving Students a Voice",
     sections: [
       { type: 'paragraph', text: 'When a student with a disability (such as a visual impairment) is given a challenging assignment, best practice is to involve the student in identifying appropriate accommodations. Students who have input into their own learning experience stronger ownership and better outcomes.' },
@@ -676,6 +709,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D3-05',
+    primarySkillId: 'ACA-06',
     title: 'Intrinsic Motivation: Why Choice Beats Candy',
     sections: [
       { type: 'paragraph', text: 'Research on motivation shows that tangible rewards (stickers, candy, prizes) can actually undermine intrinsic motivation by shifting a student\'s focus from the activity itself to the external reward. When the reward disappears, motivation often collapses.' },
@@ -701,6 +735,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D3-06',
+    primarySkillId: 'ACA-03',
     title: 'Chunking: The Memory Strategy for Long Lists',
     sections: [
       { type: 'paragraph', text: 'Chunking is a well-researched memory strategy in which information is grouped into meaningful clusters to reduce the burden on working memory. The classic example is a phone number: rather than remembering ten individual digits, we remember three chunks (area code, prefix, number).' },
@@ -737,6 +772,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-01',
+    primarySkillId: 'MBH-03',
     title: 'CBT: The Most Supported School-Based Counseling Approach',
     sections: [
       { type: 'paragraph', text: 'Cognitive Behavioral Therapy is the most extensively researched and widely adopted psychotherapy approach in school psychology. It is grounded in the principle that thoughts, feelings, and behaviors are interconnected — changing maladaptive thought patterns leads to changes in both emotional states and behavior.' },
@@ -758,6 +794,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-02',
+    primarySkillId: 'MBH-03',
     title: 'Negative Reinforcement vs. Punishment: The Perennial Confusion',
     sections: [
       { type: 'paragraph', text: 'These two terms are among the most commonly confused in all of school psychology. The key is this: reinforcement — whether positive or negative — always INCREASES a behavior. Punishment always DECREASES a behavior.' },
@@ -784,6 +821,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-03',
+    primarySkillId: 'MBH-03',
     title: 'Applied Behavior Analysis (ABA): Structure and Task Analysis',
     sections: [
       { type: 'paragraph', text: 'Applied Behavior Analysis is the systematic application of behavioral principles to teach new skills and reduce problematic behaviors, particularly for students with autism spectrum disorder. ABA uses task analysis (breaking complex behaviors into small, sequential steps), discrete trial instruction (repeated, structured learning trials), and systematic reinforcement.' },
@@ -794,6 +832,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-04',
+    primarySkillId: 'MBH-03',
     title: 'Reinforcement Fading: Teaching Independence',
     sections: [
       { type: 'paragraph', text: 'A hallmark of effective behavioral intervention is a planned exit strategy. After a new behavior is established using prompts and reinforcers, those supports must be systematically removed (faded) so the student can perform the behavior independently without external scaffolding.' },
@@ -817,6 +856,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-05',
+    primarySkillId: 'MBH-04',
     title: 'Bullying: An Abuse of Power, Not Just Aggression',
     sections: [
       { type: 'paragraph', text: 'Bullying has a specific conceptual definition in the research literature that differentiates it from general aggression or conflict. The defining features are: repetition (not a one-time incident), intentionality, and — critically — an imbalance of power between the aggressor and the target.' },
@@ -842,6 +882,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-06',
+    primarySkillId: 'MBH-05',
     title: "Broca's Area, the Amygdala, and Brain-Behavior Basics",
     sections: [
       { type: 'paragraph', text: 'The amygdala is the brain structure most strongly associated with emotional processing, particularly fear, threat detection, and the fight-or-flight response. It is part of the limbic system, which governs emotional and memory functions.' },
@@ -852,6 +893,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-07',
+    primarySkillId: 'SAF-03',
     title: 'Suicide Assessment: Never Leave the Student Alone',
     sections: [
       { type: 'paragraph', text: 'When a school psychologist is conducting a suicide risk assessment, the most critical safety practice is continuous supervision — the student must never be left unsupervised at any point during the process. This is the non-negotiable floor of safe practice.' },
@@ -862,6 +904,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-08',
+    primarySkillId: 'SAF-03',
     title: 'Confidentiality Limits: When to Breach and When Not To',
     sections: [
       { type: 'paragraph', text: 'Confidentiality in counseling has specific, defined exceptions. A psychologist must breach confidentiality when there is a risk of harm to the student or others. The exceptions include:' },
@@ -873,6 +916,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D4-09',
+    primarySkillId: 'DEV-01',
     title: "Erikson's Stages: School-Age Reference Card",
     sections: [
       { type: 'paragraph', text: "Erikson's psychosocial theory is a consistent source of exam questions. Know the school-age stages by their age ranges and core challenges:" },
@@ -909,6 +953,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D5-01',
+    primarySkillId: 'SAF-01',
     title: 'PBIS: The NASP-Endorsed System-Wide Practice',
     sections: [
       { type: 'paragraph', text: 'Positive Behavioral Interventions and Supports is the system-wide framework endorsed by NASP for promoting positive student behavior across an entire school. PBIS is proactive, data-driven, and tiered — it matches the intensity of support to the level of student need.' },
@@ -919,6 +964,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D5-02',
+    primarySkillId: 'SWP-04',
     title: 'RTI at the Systems Level: Not for Retention Decisions',
     sections: [
       { type: 'paragraph', text: 'Response to Intervention is a problem-solving framework used to identify learning difficulties, target intervention strategies, monitor progress, and evaluate intervention effectiveness. It is not a tool for making grade retention decisions.' },
@@ -942,6 +988,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D5-03',
+    primarySkillId: 'SAF-01',
     title: 'CASEL and Social-Emotional Learning',
     sections: [
       { type: 'paragraph', text: 'The Collaborative for Academic, Social, and Emotional Learning (CASEL) framework defines five core competencies for SEL. These are testable content:' },
@@ -952,6 +999,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D5-04',
+    primarySkillId: 'DIV-03',
     title: 'Disproportionality: Group Membership and Unequal Outcomes',
     sections: [
       { type: 'paragraph', text: 'Disproportionality refers to group differences in specific educational outcomes or in individuals\' risk for those outcomes based on group membership (race, ethnicity, socioeconomic status, language background, etc.). This is not about individual unfairness — it is about systemic patterns that affect entire groups at higher or lower rates than their proportion of the population.' },
@@ -964,6 +1012,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D6-01',
+    primarySkillId: 'SAF-04',
     title: 'Crisis Prevention: The Primary Emphasis',
     sections: [
       { type: 'paragraph', text: "In crisis planning, prevention is the primary focus. The best approach to a crisis is preventing it from happening in the first place — through proactive identification of risk, regular practice of crisis protocols, building protective factors school-wide, and training staff." },
@@ -974,6 +1023,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D6-02',
+    primarySkillId: 'SAF-04',
     title: 'Suicide Contagion: The First Priority After a Student Death',
     sections: [
       { type: 'paragraph', text: 'When a student dies by suicide, the immediate priority for school staff is planning to prevent contagion effects — the risk that other vulnerable students may be influenced toward suicidal behavior by exposure to news of the death. Before making announcements or providing direct support to classmates, key staff must be briefed to identify at-risk students.' },
@@ -984,6 +1034,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D6-03',
+    primarySkillId: 'SAF-03',
     title: 'Threat Assessment: Duty to Warn',
     sections: [
       { type: 'paragraph', text: 'When a student makes a specific, credible threat of violence against an identifiable person or group, the school psychologist has a legal and ethical duty to warn — to notify the administration AND the parents of the students who have been threatened. This duty overrides general confidentiality.' },
@@ -1011,6 +1062,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D6-04',
+    primarySkillId: 'SAF-01',
     title: 'Bullying Intervention: Restorative Practices Over Zero Tolerance',
     sections: [
       { type: 'paragraph', text: "Zero-tolerance policies for bullying — automatic suspension, expulsion, or severe punishment regardless of context — are not endorsed by NASP and are not effective in reducing bullying. They create disparate impact on minority students and students with disabilities." },
@@ -1023,6 +1075,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D7-01',
+    primarySkillId: 'FAM-02',
     title: 'Starting Family Collaboration: Understand Values First',
     sections: [
       { type: 'paragraph', text: "When a school psychologist sets out to build collaborative relationships with families from diverse cultural backgrounds, the most important starting point is not logistics (schedules, contact methods) — it is understanding the family's values and their perceptions of the school-family relationship." },
@@ -1033,6 +1086,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D7-02',
+    primarySkillId: 'FAM-02',
     title: 'Mandated Reporting: Your Personal Duty Cannot Be Delegated',
     sections: [
       { type: 'paragraph', text: 'As a school psychologist, you are a mandated reporter. When you have reasonable suspicion of child abuse or neglect, you have a personal, non-delegable legal duty to report to police or child protective services (social services). Telling the principal or the school social worker is not sufficient to discharge your legal obligation.' },
@@ -1045,6 +1099,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D8-01',
+    primarySkillId: 'PSY-04',
     title: 'Testing ELL and Diverse Students: Caution and Cultural Humility',
     sections: [
       { type: 'paragraph', text: 'When assessing students from diverse cultural backgrounds, standardized tests may underrepresent their true abilities due to cultural loading in test content, language demands, and norming samples that may not reflect the student\'s background.' },
@@ -1055,6 +1110,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D8-02',
+    primarySkillId: 'DBD-03',
     title: 'The Universal Nonverbal Intelligence Test (UNIT) for Special Populations',
     sections: [
       { type: 'paragraph', text: 'When assessing a student who is deaf, hard of hearing, or a non-English speaker, standard verbal cognitive batteries are inappropriate as primary tools because they conflate language ability with intelligence. The Universal Nonverbal Intelligence Test (UNIT) was designed specifically for these populations.' },
@@ -1065,6 +1121,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D8-03',
+    primarySkillId: 'PSY-04',
     title: 'Systemic Racism and Disproportionality: Know the Vocabulary',
     sections: [
       { type: 'paragraph', text: 'NASP and the broader school psychology field use specific terminology to discuss equity and justice. These terms appear on the exam with their precise meanings:' },
@@ -1075,6 +1132,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D8-04',
+    primarySkillId: 'DIV-05',
     title: 'Intellectual Disability Evaluation: WISC + Vineland Required',
     sections: [
       { type: 'paragraph', text: 'To identify an intellectual disability, school psychologists must gather two types of formal data: a cognitive assessment (measuring intellectual functioning) AND an adaptive behavior assessment (measuring practical, real-world functioning). Both domains must show significant deficits.' },
@@ -1087,6 +1145,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D9-01',
+    primarySkillId: 'RES-03',
     title: 'Research Design Vocabulary: Experimental and Control Groups',
     sections: [
       { type: 'paragraph', text: 'Research design questions are a consistent source of confusion. Here are the precise definitions:' },
@@ -1097,6 +1156,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D9-02',
+    primarySkillId: 'RES-03',
     title: 'Correlations: Negative Can Be Stronger Than Positive',
     sections: [
       { type: 'paragraph', text: 'A correlation coefficient ranges from -1.00 to +1.00. The strength of a correlation is determined by its absolute value — how far from zero it is — not by its sign. A correlation of -0.98 indicates a nearly perfect relationship between two variables (as one increases, the other decreases almost perfectly).' },
@@ -1107,6 +1167,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D9-03',
+    primarySkillId: 'PSY-02',
     title: 'Validity vs. Reliability: A Critical Distinction',
     sections: [
       { type: 'paragraph', text: 'Reliability is about consistency — does the test give the same results when repeated under the same conditions? It is measured over time (test-retest) or within the test itself (internal consistency).' },
@@ -1118,6 +1179,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D9-04',
+    primarySkillId: 'DBD-01',
     title: 'RTI Data Analysis: Three Levels',
     sections: [
       { type: 'paragraph', text: 'When analyzing RTI progress monitoring data, school psychologists examine three properties of the data set:' },
@@ -1128,6 +1190,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D9-05',
+    primarySkillId: 'RES-02',
     title: 'Implementation Science: Dissemination Comes First',
     sections: [
       { type: 'paragraph', text: "When a school is deciding whether to adopt a new program or practice, the first stage of implementation is Dissemination — exploring the fit between the program and the school's context, capacity, and needs. This is when questions like 'Does this fit our culture?' and 'Do our staff have the skills to implement this?' are asked." },
@@ -1140,6 +1203,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-01',
+    primarySkillId: 'LEG-02',
     title: 'IDEA and Child Find: The Identification Mandate',
     sections: [
       { type: 'paragraph', text: "The Individuals with Disabilities Education Act (IDEA) is the federal law that governs special education in the United States. Among its core provisions is Child Find — a mandate requiring all school districts to actively seek out and identify children with potential disabilities, even before a referral is made." },
@@ -1151,6 +1215,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-02',
+    primarySkillId: 'LEG-02',
     title: 'The Stay-Put Rule: Triggered by Due Process',
     sections: [
       { type: 'paragraph', text: "The 'stay-put' rule (also called the educational placement protection) prevents a school from unilaterally changing a special education student's placement once a due process proceeding has been initiated. The student must remain in their current educational placement until the legal process is resolved." },
@@ -1161,6 +1226,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-03',
+    primarySkillId: 'ETH-01',
     title: 'Ethical Violations: Address at the Lowest Level First',
     sections: [
       { type: 'paragraph', text: "When a school psychologist becomes aware of an ethical violation by a colleague, the recommended first step in low-to-moderate severity cases is to address the situation informally and directly with the person — not to immediately escalate to administrators or licensing boards." },
@@ -1171,6 +1237,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-04',
+    primarySkillId: 'LEG-01',
     title: "Test Protocols and Parent Access: Copyright Is Protected",
     sections: [
       { type: 'paragraph', text: "Parents have a legal right to review their child's educational records, including evaluation reports. However, test protocols — the actual testing materials — are copyright-protected, and allowing parents to copy them violates copyright law and test security agreements." },
@@ -1181,6 +1248,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-05',
+    primarySkillId: 'LEG-01',
     title: 'Parental Consent for Regular Education Students',
     sections: [
       { type: 'paragraph', text: "When a school psychologist is asked to provide counseling or assessment services to a regular education student (one not currently identified for special education), written parental consent must be obtained before beginning. This is best practice and protects both the student's rights and the psychologist's professional standing." },
@@ -1191,6 +1259,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-06',
+    primarySkillId: 'LEG-02',
     title: "LRE and 'Reasonable Educational Progress'",
     sections: [
       { type: 'paragraph', text: "The least restrictive environment (LRE) principle requires that students with disabilities be educated alongside their non-disabled peers to the maximum extent appropriate. A student should only be placed in a more restrictive setting if the nature or severity of the disability is such that education in general education classes — even with supplementary aids and services — cannot be achieved satisfactorily." },
@@ -1201,6 +1270,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-07',
+    primarySkillId: 'ETH-03',
     title: "NCSP Credential and NASP's Role",
     sections: [
       { type: 'paragraph', text: 'The National Association of School Psychologists (NASP) is the primary professional organization for school psychologists in the United States. NASP is also the primary accreditation body for the Nationally Certified School Psychologist (NCSP) credential.' },
@@ -1213,6 +1283,7 @@ export const LEARNING_MODULES: LearningModule[] = [
 
   {
     id: 'MOD-D10-08',
+    primarySkillId: 'LEG-04',
     title: 'Major Legal Cases — Quick Reference',
     sections: [
       { type: 'paragraph', text: 'Several landmark legal cases are specific exam targets. They are far easier to remember when you group them by the question each one answers, rather than memorizing a flat list. Four themes cover almost everything the exam asks: (1) assessment bias and fair testing, (2) the FAPE standard, (3) placement and discipline, and (4) English Language Learners.' },
@@ -1255,6 +1326,23 @@ export const MODULE_LOOKUP: Record<string, LearningModule> = Object.fromEntries(
 //
 // When updating skills or adding new modules, update this mapping.
 // ──────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Curated overrides for module → primarySkillId (the canonical owner).
+ *
+ * Default derivation (see scripts/migrations or modulePrimarySkill test): a module owned as
+ * the index-0 (primary) module of exactly one skill goes to that skill; otherwise the
+ * referencing skill with the greatest question volume wins (lexical tie-break). These five
+ * modules are exceptions where the topically-correct owner is clearer than raw volume.
+ * Every override here is still one of the module's SKILL_MODULE_MAP referencing skills.
+ */
+export const MODULE_PRIMARY_OVERRIDES: Record<string, { skillId: string; rationale: string }> = {
+  'MOD-D1-01': { skillId: 'LEG-01', rationale: 'FERPA / records confidentiality is the core topic (over DBD-10 records review)' },
+  'MOD-D1-06': { skillId: 'PSY-03', rationale: 'problem-solving framework / MTSS in assessment is the core topic (over SWP-04)' },
+  'MOD-D8-01': { skillId: 'PSY-04', rationale: 'assessment of culturally & linguistically diverse students is the core topic' },
+  'MOD-D10-01': { skillId: 'LEG-02', rationale: 'IDEA / special-education law is the core topic (over DIV-05/LEG-03)' },
+  'MOD-D10-03': { skillId: 'ETH-01', rationale: 'NASP ethics & ethical problem-solving is the core topic (over ETH-02)' },
+};
 
 export const SKILL_MODULE_MAP: Record<string, string[]> = {
   // ── Professional Practices (App Domain 1) ──────────────────────────────────

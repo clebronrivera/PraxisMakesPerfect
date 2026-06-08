@@ -10,6 +10,17 @@
  * Matching was done by comparing fullLabel (progressTaxonomy) against
  * vocabulary terms and content descriptions (skill-metadata-v1).
  * Where no clear 1:1 match exists, the entry maps to null.
+ *
+ * ─── Canonical ID crosswalk (start here when tracing a skill end-to-end) ────────
+ * The progress skill ID is the hub everything joins on. For a given skill (e.g. 'DBD-01'):
+ *   • metadata ID      → progressToMetadataId[skillId]                 (this file)
+ *   • primary objective → primaryObjectiveBySkill[skillId]             (src/data/skillObjectiveMap.ts)
+ *   • all objectives    → skillObjectiveMap[skillId]                   (src/data/skillObjectiveMap.ts)
+ *   • primary module    → SKILL_MODULE_MAP[skillId][0]                 (src/data/learningModules.ts)
+ *   • all modules       → SKILL_MODULE_MAP[skillId]                    (src/data/learningModules.ts)
+ *   • vocabulary        → skill-vocabulary-map.json.skills[skillId]    (src/data/skill-vocabulary-map.json)
+ * The objective layer (ETS codes) is the ONE shared key reused across questions, modules, and
+ * vocab — it is descriptive only and never participates in scoring.
  */
 
 export const progressToMetadataId: Record<string, string> = {
