@@ -7,14 +7,17 @@
  * read by scoring/mastery logic. Every entry carries provenance: method + verified:false.
  *
  * Run (imports the TS map, so use tsx):
- *   npx tsx scripts/migrations/seed-question-ets-topics.mjs                    # full re-seed
+ *   npx tsx scripts/migrations/seed-question-ets-topics.mjs                    # re-seed (see guard)
  *   npx tsx scripts/migrations/seed-question-ets-topics.mjs --preserve-manual  # keep human edits
+ *   npx tsx scripts/migrations/seed-question-ets-topics.mjs --force            # wipe + re-seed
  *
  * --preserve-manual: re-reads the existing questionObjectiveMap.json and KEEPS every entry a
  *   human has reviewed (method:"manual") instead of recomputing it. Use this flag for ANY re-seed
- *   once Pack 1 verification has started — a plain re-run would clobber that hand-tagging. Entries
- *   whose question no longer exists are dropped and logged as "orphaned", preserving id-parity
- *   with questions.json. Without the flag the seeder is a clean re-seed (every entry machine-made).
+ *   once Pack 1 verification has started. Entries whose question no longer exists are dropped and
+ *   logged as "orphaned", preserving id-parity with questions.json.
+ * Safety guard: a plain (no-flag) run REFUSES to start if the existing map holds any method:"manual"
+ *   entries — pass --preserve-manual to keep them or --force to intentionally discard and re-seed
+ *   from scratch. With no map (or no manual entries) the no-flag run is a clean machine re-seed.
  *
  * Deterministic + idempotent: no Date.now()/random; output sorted by UNIQUEID. Re-running
  * on unchanged inputs reproduces a byte-identical questionObjectiveMap.json (the no-flag path is
@@ -36,7 +39,27 @@ import { skillObjectiveMap, primaryObjectiveBySkill } from '../../src/data/skill
 const SEEDED_AT = '2026-06-07'; // fixed for idempotency — do not replace with a live date
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PRESERVE_MANUAL = process.argv.includes('--preserve-manual');
+const FORCE = process.argv.includes('--force');
 const MAP_PATH = join(ROOT, 'src/data/questionObjectiveMap.json');
+
+// ─── Safety: never silently wipe human-verified tags ─────────────────────────────
+// A plain re-run overwrites the whole map with machine guesses. If the existing map already
+// holds reviewed entries (method:"manual"), refuse unless the caller is explicit: --preserve-manual
+// to KEEP them, or --force to intentionally discard and re-seed from scratch. (This turns the
+// Pack-1-wiping footgun into a loud, recoverable error.)
+if (!PRESERVE_MANUAL && !FORCE) {
+  try {
+    const prev = JSON.parse(readFileSync(MAP_PATH, 'utf-8'));
+    const manual = Object.values(prev.questions || {}).filter((e) => e && (e.method === 'manual' || e.verified === true)).length;
+    if (manual > 0) {
+      console.error(`✖ Refusing to overwrite ${manual} human-verified (method:"manual") tag(s) in src/data/questionObjectiveMap.json.`);
+      console.error('  Re-run with --preserve-manual to KEEP them, or --force to intentionally wipe and re-seed from scratch.');
+      process.exit(1);
+    }
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err; // no map yet → safe to seed
+  }
+}
 
 const questions = JSON.parse(readFileSync(join(ROOT, 'src/data/questions.json'), 'utf-8'));
 const etsData = JSON.parse(readFileSync(join(ROOT, 'src/data/ets-content-topics.json'), 'utf-8'));
