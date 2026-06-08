@@ -502,6 +502,100 @@ export const LEARNING_MODULES: LearningModule[] = [
     ],
   },
 
+  {
+    id: 'MOD-D1-13',
+    primarySkillId: 'DBD-10',
+    title: 'Background Information and Records Review: The R in RIOT',
+    sections: [
+      { type: 'anchor', label: 'The mistake practitioners make', text: 'Reading the cumulative folder feels like paperwork before the real work starts. It is the real work. A psychologist who skips the file and goes straight to cognitive testing may miss years of prior interventions, medical diagnoses, and school changes — all of which are essential context for interpreting any new score.' },
+      { type: 'paragraph', text: 'Records review is the "R" in the RIOT multi-method assessment framework (Records, Interviews, Observations, Tests). It is not a preliminary formality — it is a systematic data-gathering method in its own right. Sources to review include: the cumulative folder (grades, attendance, discipline history), prior psychological and special-education evaluations, speech-language and occupational therapy reports, medical records (if released by the family), and current progress-monitoring data.' },
+      { type: 'paragraph', text: 'The goal of records review is hypothesis generation. Before you administer a single test, you should be able to ask: When did this concern first appear? What interventions or supports have already been tried — and with what outcomes? Have there been any significant changes (family, school, medical) that correspond with a change in functioning? Has the student changed schools repeatedly? A student who has attended five schools in four years has a mobility hypothesis that must be tested before attributing deficits to internal processing problems.' },
+      { type: 'comparison', leftHeader: 'What records review reveals', rightHeader: 'What testing alone cannot tell you', rows: [
+        { left: 'Prior cognitive and academic scores — is there a change over time?', right: 'Whether current scores represent a new pattern or a stable one' },
+        { left: 'Intervention history — what was tried, with what fidelity and result', right: 'Whether the student has had meaningful exposure to instruction' },
+        { left: 'Medical and developmental history — diagnoses, medications, hospitalizations', right: 'Whether a health variable is a better explanation than a cognitive deficit' },
+        { left: 'School mobility and attendance patterns', right: 'Whether gaps in learning are instructional, not cognitive, in origin' },
+      ] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'First step in a new referral',
+        prompt: 'A school psychologist receives a referral for a 4th grader with declining grades and behavior concerns. What is the most defensible first step?',
+        options: [
+          { id: 'o1', label: 'Administer the WISC-V to establish a cognitive baseline', isCorrect: false, explanation: 'Testing without background context risks misinterpreting scores. Cognitive baselines mean more when you know what previous evaluations showed.' },
+          { id: 'o2', label: 'Review cumulative records, prior evaluations, attendance, and intervention data first', isCorrect: true, explanation: 'Correct. Records review generates the hypotheses that guide the rest of the evaluation — which tests to choose and how to interpret results.' },
+          { id: 'o3', label: 'Conduct a classroom observation immediately', isCorrect: false, explanation: 'Valuable, but an observation without background context provides less interpretive power than if you already knew the history.' },
+          { id: 'o4', label: 'Interview the student to hear their own perspective', isCorrect: false, explanation: 'Important — but typically comes after establishing background context, not as the first step.' },
+        ],
+      },
+      { type: 'anchor', label: 'Memory anchor', text: 'Records are not background — they are data. The file tells you what happened before you arrived: prior test scores, tried-and-failed interventions, medical events, and school changes. Skipping it does not save time; it creates blind spots.' },
+    ],
+  },
+
+  {
+    id: 'MOD-D1-14',
+    primarySkillId: 'DBD-09',
+    title: 'Ecological Assessment: The Environment Is Part of the Diagnosis',
+    sections: [
+      { type: 'anchor', label: 'The insight ecological assessment offers', text: 'A student who struggles in large-group whole-class instruction but performs at grade level in small-group pullout is not demonstrating a processing deficit — they are demonstrating an environment-learning mismatch. Ecological assessment locates the problem where it actually lives.' },
+      { type: 'paragraph', text: 'Ecological assessment systematically examines the multiple environments in which a student functions — classroom, home, peer context, school culture — to understand how contextual variables interact with student behavior and achievement. Rather than asking only "what is wrong with this student?", ecological assessment asks "what is the relationship between this student and their environment, and where is the fit breaking down?"' },
+      { type: 'paragraph', text: 'Bronfenbrenner\'s ecological systems theory provides the conceptual map: the microsystem includes the immediate classroom and family environments; the mesosystem includes the connections between them (parent-teacher relationships, home-school communication); the exosystem includes community and district factors (available resources, neighborhood safety); the macrosystem includes cultural values and policy. School psychologists conducting ecological assessments gather data across at least the microsystem and mesosystem levels.' },
+      { type: 'list', label: 'What ecological data to collect', items: [
+        'Classroom: instructional delivery format, class size and density, sensory environment, teacher interaction style, peer dynamics and inclusion',
+        'Home: routines, sleep, supervision, family stressors, parent literacy and language, access to materials',
+        'School-level: discipline policies, staff consistency, transition supports, community partnerships',
+        'Cross-setting: which environments produce competence and which produce difficulty — and what differs between them',
+      ] },
+      { type: 'comparison', leftHeader: 'Ecological Assessment', rightHeader: 'Functional Behavioral Assessment (FBA)', rows: [
+        { left: 'Examines the full range of contextual variables contributing to learning or behavioral difficulties', right: 'Identifies the specific antecedents, behavior, and consequences maintaining a targeted behavior' },
+        { left: 'Answers: "What in this student\'s environments is contributing to the problem?"', right: 'Answers: "Why does this specific behavior occur — what function does it serve?"' },
+        { left: 'Broader in scope; may suggest environmental restructuring or systems-level change', right: 'Narrower in focus; drives a specific behavioral support plan' },
+      ] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Ecological vs. FBA',
+        prompt: 'A student frequently argues and shuts down during whole-class math instruction but completes work without difficulty in a small-group resource room. Which assessment approach is MOST indicated?',
+        options: [
+          { id: 'o1', label: 'Administer a cognitive battery to rule out a math learning disability', isCorrect: false, explanation: 'The environment-specific pattern suggests an instructional context issue, not a cognitive deficit. A cognitive battery won\'t explain the cross-setting discrepancy.' },
+          { id: 'o2', label: 'Conduct an ecological assessment examining both instructional settings', isCorrect: true, explanation: 'Correct. The cross-setting discrepancy is the key signal — behavior changes with environment. Ecological assessment examines what differs between settings.' },
+          { id: 'o3', label: 'Conduct an FBA to determine the function of the arguing behavior', isCorrect: false, explanation: 'FBA is valuable for understanding the specific behavior\'s function, but the broader cross-setting question calls for ecological assessment first.' },
+          { id: 'o4', label: 'Refer for a psychiatric evaluation', isCorrect: false, explanation: 'Premature. The data suggests an instructional environment mismatch, not a psychiatric presentation.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'MOD-D1-15',
+    primarySkillId: 'PSY-01',
+    title: 'Reading Score Reports: Standard Scores, Percentiles, and Error Bands',
+    sections: [
+      { type: 'anchor', label: 'The mistake that appears in real reports', text: 'A 25th-percentile score is not "25% correct." Writing it that way in a psychological report is a fundamental error. Percentile rank means the student performed as well as or better than 25% of same-age peers — it says nothing about how many items they answered correctly.' },
+      { type: 'paragraph', text: 'Standard scores (SS) place a student on the normal distribution. The mean is 100 and the standard deviation is 15. An SS of 85 is one standard deviation below the mean (16th percentile); an SS of 115 is one SD above (84th percentile); an SS of 70 is two SDs below the mean (2nd percentile). Most cognitive and achievement batteries use this scale because it allows direct comparison across subtests and across evaluations over time.' },
+      { type: 'paragraph', text: 'Every score carries measurement error, quantified as the Standard Error of Measurement (SEM). Rather than reporting a point score, best practice is to report a confidence interval: "SS 85–95 (90% confidence)." This communicates that the student\'s true score likely falls within a range. It is the primary reason eligibility decisions should never rest on a single score — the obtained score is one estimate with uncertainty built in. The norm group also matters: always note who the student is being compared to and when the norms were collected. An instrument normed in 2004 on a non-representative sample provides less valid comparison than a recently updated measure.' },
+      { type: 'comparison', leftHeader: 'Score Type', rightHeader: 'What it means / When to use it', rows: [
+        { left: 'Standard Score (SS) — mean 100, SD 15', right: 'How the student compares to same-age peers on the normal curve. Use for eligibility decisions and cross-test comparison.' },
+        { left: 'Percentile Rank (PR)', right: 'Percentage of same-age peers the student performed as well as or better than. Not percentage of items correct. Use for communicating with families.' },
+        { left: 'Age / Grade Equivalent (AE / GE)', right: 'Average age or grade for which the student\'s raw score is typical. Frequently misinterpreted — NASP recommends not relying on them as a primary index.' },
+        { left: 'Confidence Interval (SEM-based)', right: 'Range within which the true score likely falls. Always report alongside SS for eligibility decisions.' },
+      ] },
+      {
+        type: 'interactive',
+        interactiveType: 'term-matcher',
+        label: 'Score type definitions',
+        prompt: 'Match each score type to its correct interpretation.',
+        pairs: [
+          { term: 'Standard Score of 85', definition: 'One standard deviation below the mean; 16th percentile; below average range' },
+          { term: '50th Percentile Rank', definition: 'Student performed as well as or better than 50% of same-age peers — average performance, not 50% of items correct' },
+          { term: 'Grade Equivalent of 2.3', definition: 'The student\'s raw score equals the average for students in the 3rd month of 2nd grade — does NOT mean the student reads at a 2nd-grade level' },
+          { term: 'Confidence Interval SS 88–98', definition: 'Range within which the student\'s true score falls at 90% confidence; derived from the test\'s standard error of measurement' },
+        ],
+      },
+      { type: 'anchor', label: 'Norm group and recency matter', text: 'Always identify who the student is being compared to and when the norms were collected. A test normed 20 years ago on a non-representative sample provides less valid normative comparison than a recently updated instrument. Outdated norms can systematically over- or underestimate a student\'s standing.' },
+    ],
+  },
+
   // ── Domain 2: Consultation & Collaboration ────────────────────────────────
 
   {
@@ -949,6 +1043,59 @@ export const LEARNING_MODULES: LearningModule[] = [
     ],
   },
 
+  {
+    id: 'MOD-D4-10',
+    primarySkillId: 'ACA-09',
+    title: 'Health Conditions, Trauma, and Mental Health: When Biology Meets Learning',
+    sections: [
+      { type: 'anchor', label: 'The clinical reframe', text: 'A student who cannot concentrate in class is not necessarily choosing not to learn. Unmanaged diabetes, pediatric epilepsy, chronic anxiety, and complex trauma all interfere with the same cognitive systems — attention, working memory, processing speed, and executive function — that drive academic learning. The label differs; the educational impact does not.' },
+      { type: 'paragraph', text: 'Health conditions most commonly affecting educational performance include: ADHD (impaired attention and impulse control); seizure disorders (post-ictal confusion and medication side effects on cognition); asthma (absences and fatigue from oxygen fluctuations); diabetes (glucose instability impairs concentration and memory); and chronic pain or fatigue conditions. Students do not need to qualify for special education to receive support. A health condition that substantially limits a major life activity — including learning or concentrating — qualifies a student for a Section 504 accommodation plan, which can address attendance flexibility, medication access, reduced workloads, and extended time.' },
+      { type: 'paragraph', text: 'Mental health conditions impose their own cognitive costs. Depression slows processing speed, impairs memory encoding, and creates motivational deficits that look like laziness. Anxiety overloads working memory with worry, leaving fewer cognitive resources for academic tasks — which is why an anxious student may understand material at home but freeze on tests. Post-traumatic stress disorder (PTSD) keeps the brain\'s threat-detection system hyperactivated: the amygdala prioritizes scanning for danger over the prefrontal cortex\'s capacity for planning, memory consolidation, and learning. Trauma-related behavior that looks like defiance or inattention is often a dysregulated stress response — not a willful choice, and not amenable to punishment-only approaches.' },
+      {
+        type: 'interactive',
+        interactiveType: 'card-flip',
+        label: 'Health and mental health — educational impact',
+        prompt: 'Flip each card to see how the condition affects learning and what the school psychologist should consider.',
+        cards: [
+          { id: 'c1', front: 'Type 1 Diabetes (uncontrolled)', back: 'Glucose instability impairs attention, memory, and processing speed. The student may need scheduled snack access, flexible attendance for medical appointments, and a 504 plan for blood-sugar monitoring protocols.' },
+          { id: 'c2', front: 'Generalized Anxiety Disorder', back: 'Working memory is overloaded with worry; performance declines under evaluative conditions. May look like disengagement or avoidance. Accommodations: extended time, low-stakes check-ins, reduced evaluative pressure.' },
+          { id: 'c3', front: 'Complex (Developmental) Trauma', back: 'Chronic stress impairs prefrontal cortex function — planning, regulation, and new learning are all compromised. Trauma-informed practices (predictability, relational safety, co-regulation) are the evidence-based response, not punishment.' },
+          { id: 'c4', front: 'Pediatric Epilepsy with Medication', back: 'Antiepileptic medications can cause cognitive dulling, fatigue, or mood changes; post-ictal states cause temporary confusion. Consider extended time, rest provisions, and frequent academic progress checks.' },
+        ],
+      },
+      { type: 'anchor', label: 'School psychologist role', text: 'The job is not to diagnose the medical or psychiatric condition — that belongs to medical providers. The job is to assess the educational impact: how does this student\'s health or mental health condition currently affect cognitive, behavioral, and academic functioning? That functional analysis drives 504 planning, IEP services, and evidence-based intervention design.' },
+    ],
+  },
+
+  {
+    id: 'MOD-D4-11',
+    primarySkillId: 'MBH-02',
+    title: 'Counseling in Schools: Individual, Group, and Measuring What Changes',
+    sections: [
+      { type: 'anchor', label: 'The accountability question', text: 'Running a counseling group for six weeks is not the same as providing evidence-based counseling. If you cannot demonstrate that students improved — using pre/post data, behavioral observations, or teacher ratings — you cannot distinguish "therapy worked" from "the student would have improved anyway." Outcome measurement is not optional; it is what makes counseling a professional service.' },
+      { type: 'paragraph', text: 'Individual counseling is the most intensive and tailored format: one psychologist with one student, allowing full customization of approach, pacing, and content. It is appropriate for presentations requiring confidentiality (LGBTQ+ identity exploration, suicidal ideation, abuse disclosures), complex or severe psychopathology, acute crisis response, or cases where the student\'s specific needs differ substantially from any available group format. The tradeoff is time: one student per hour limits the psychologist\'s reach across a caseload.' },
+      { type: 'paragraph', text: 'Group counseling is more efficient — typically four to eight students with a shared presenting concern — and offers therapeutic factors that individual work cannot replicate: universality ("I\'m not the only one going through this"), altruism (helping others deepens one\'s own understanding), peer modeling (observing effective coping from a peer is often more powerful than hearing it from an adult), and cohesion (the relational safety of the group becomes therapeutic in itself). Well-indicated group formats include grief groups, anxiety-management skills groups, social skills training, coping skills, and trauma-focused groups for students with a shared experience.' },
+      { type: 'comparison', leftHeader: 'Individual Counseling', rightHeader: 'Group Counseling (4–8 students)', rows: [
+        { left: 'One student, fully customized approach', right: 'Shared presenting concern; structured around common themes' },
+        { left: 'Best when: confidentiality critical, acute crisis, complex presentation', right: 'Best when: shared experience, peer support valuable, efficient reach needed' },
+        { left: 'Mechanism: psychologist-student alliance, personalized intervention', right: 'Mechanisms: universality, altruism, peer modeling, group cohesion' },
+        { left: 'Outcome: pre/post scales, behavioral tracking — individually measured', right: 'Outcome: individual and group-level measures; fidelity to group protocol also checked' },
+      ] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Format selection',
+        prompt: 'Six students who all witnessed the same school shooting are displaying anxiety, sleep disturbance, and academic decline. What counseling format is MOST appropriate as the primary school-based intervention?',
+        options: [
+          { id: 'o1', label: 'Individual CBT with each of the six students', isCorrect: false, explanation: 'Resource-intensive and misses key group therapeutic factors — particularly universality, which is especially powerful for shared-trauma presentations.' },
+          { id: 'o2', label: 'Trauma-informed group counseling using an evidence-based group protocol', isCorrect: true, explanation: 'Correct. Shared trauma is one of the clearest indications for group: universality reduces isolation; evidence-based group trauma protocols exist (e.g., Skills for Psychological Recovery, group TF-CBT).' },
+          { id: 'o3', label: 'Refer all six to community mental health', isCorrect: false, explanation: 'May be appropriate as a supplement for severe cases, but is not the most appropriate primary school-based response when group counseling is well-indicated.' },
+          { id: 'o4', label: 'Psychoeducation-only classroom presentation for all affected students', isCorrect: false, explanation: 'Psychoeducation is a useful Tier 1 supplement, but insufficient as the primary treatment for clinical-level trauma presentations.' },
+        ],
+      },
+    ],
+  },
+
   // ── Domain 5: School-Wide Practices to Promote Learning ──────────────────
 
   {
@@ -1005,6 +1152,36 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'Disproportionality refers to group differences in specific educational outcomes or in individuals\' risk for those outcomes based on group membership (race, ethnicity, socioeconomic status, language background, etc.). This is not about individual unfairness — it is about systemic patterns that affect entire groups at higher or lower rates than their proportion of the population.' },
       { type: 'paragraph', text: 'The most common example in school psychology is disproportionate representation of minority students in special education, discipline, and gifted programs. NASP considers addressing disproportionality a core social justice obligation.' },
       { type: 'anchor', label: 'Key distinction', text: "Disproportionality is not the same as 'racial privilege' (a sociological concept) or simply 'socioeconomic status.' It specifically refers to differential group outcomes or risk levels based on group membership. Know the definition precisely." },
+    ],
+  },
+
+  {
+    id: 'MOD-D5-05',
+    primarySkillId: 'SWP-03',
+    title: 'Selecting and Monitoring Evidence-Based Schoolwide Practices',
+    sections: [
+      { type: 'anchor', label: 'The distinction the exam tests', text: 'An evidence-based practice implemented without fidelity is not evidence-based practice. Two different skills are required: selecting a practice with research support, then monitoring that it is being implemented correctly and producing results. Many schools do the first; fewer do the second.' },
+      { type: 'paragraph', text: 'A practice qualifies as evidence-based when peer-reviewed research — ideally randomized controlled trials replicated across settings and populations — demonstrates that it produces better outcomes than comparison conditions. Key registries: What Works Clearinghouse (WWC) for academic programs and instructional practices; SAMHSA\'s National Registry of Evidence-based Programs and Practices (NREPP) for mental health and substance use programs; CASEL\'s program guide for social-emotional learning. The right starting question is not "Is this popular?" but "Does rigorous research support this practice for students like ours, with this presenting concern, in a school context?"' },
+      { type: 'paragraph', text: 'Using data to SELECT a practice means matching the school\'s assessed need to a registry-supported EBP. Start with data identifying the problem (e.g., suspension data showing disparate rates, or universal screening indicating 30% of students below reading benchmarks), then consult the registry and select the program with the strongest fit for your context and population. Using data to MONITOR a practice means collecting implementation fidelity data (are staff following the protocol?) and outcome data (are student indicators improving?). A program with a strong research base can fail in a specific school if implemented inconsistently — fidelity data catches that early, before it is too late to course-correct.' },
+      { type: 'comparison', leftHeader: 'Selecting an EBP', rightHeader: 'Monitoring an EBP', rows: [
+        { left: 'Question: "Does rigorous evidence support this for our context?"', right: 'Question: "Are we implementing it correctly, and is it working here?"' },
+        { left: 'Data used: needs assessment, registry review, population and setting match', right: 'Data used: fidelity checklists, direct observation, student outcome measures' },
+        { left: 'Timing: before adoption', right: 'Timing: ongoing throughout implementation' },
+        { left: 'Psychologist\'s role: research consultant, team facilitator, registry guide', right: 'Psychologist\'s role: fidelity monitor, outcome interpreter, data presenter to team' },
+      ] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Applying EBP selection at the systems level',
+        prompt: 'A principal asks the school psychologist to recommend a schoolwide anti-bullying program. What should the psychologist do FIRST?',
+        options: [
+          { id: 'o1', label: 'Recommend the program most widely used in the district', isCorrect: false, explanation: 'Popularity is not evidence. The most-used program may lack rigorous research support, or may not fit this school\'s specific population and bullying patterns.' },
+          { id: 'o2', label: 'Assess the school\'s specific bullying patterns and population, then consult the WWC and match the evidence to the school\'s context', isCorrect: true, explanation: 'Correct. Needs assessment first, registry consultation second — this is evidence-based selection at the systems level.' },
+          { id: 'o3', label: 'Design a custom school-specific program from scratch', isCorrect: false, explanation: 'Resource-intensive and bypasses the existing evidence base. Established EBPs have a track record; custom programs do not.' },
+          { id: 'o4', label: 'Survey teachers about what has worked in their classrooms', isCorrect: false, explanation: 'Teacher input is valuable but is not a substitute for systematic evidence review. Informal impressions cannot establish a practice as evidence-based.' },
+        ],
+      },
+      { type: 'anchor', label: 'When an EBP "doesn\'t work"', text: 'Before concluding that an evidence-based program failed, ask: was it implemented as designed? Fidelity data often reveal that the program was modified, abbreviated, or inconsistently delivered — which explains the failure better than a flaw in the underlying research.' },
     ],
   },
 
@@ -1138,6 +1315,35 @@ export const LEARNING_MODULES: LearningModule[] = [
       { type: 'paragraph', text: 'To identify an intellectual disability, school psychologists must gather two types of formal data: a cognitive assessment (measuring intellectual functioning) AND an adaptive behavior assessment (measuring practical, real-world functioning). Both domains must show significant deficits.' },
       { type: 'paragraph', text: 'The most common assessment pairing is the WISC (cognitive) and the Vineland Adaptive Behavior Scales (adaptive functioning). The threshold for intellectual disability is typically a standard score at least 2 standard deviations below the mean on both instruments — approximately SS 69 or below on cognitive measures, with corresponding adaptive deficits.' },
       { type: 'anchor', label: 'Legal and best-practice note', text: 'An ID determination requires deficits in BOTH cognitive functioning AND adaptive behavior. A low IQ score alone is insufficient. An adaptive behavior deficit alone is insufficient. Both must be present.' },
+    ],
+  },
+
+  {
+    id: 'MOD-D8-05',
+    primarySkillId: 'DIV-01',
+    title: 'Designing Interventions That Fit the Student\'s Culture and Community',
+    sections: [
+      { type: 'anchor', label: 'The mistake that looks like evidence-based practice', text: 'An EBP validated primarily on White, middle-class, English-speaking populations is not automatically evidence-based for a student from a different cultural community. Selecting a program without considering cultural fit, then attributing lack of progress to the student, is a common and consequential error.' },
+      { type: 'paragraph', text: 'Cultural factors in intervention design involve more than translating materials. Effective cultural adaptation means intentionally modifying the delivery, framing, metaphors, examples, and relational style of an intervention to fit the student\'s cultural world — while preserving the core mechanisms that make the EBP work. In CBT, for example, the mechanism (identifying and restructuring unhelpful cognitions) stays intact; what changes is how it is introduced, which cultural scenarios are used as examples, and how the family\'s role is integrated. Stripping out the core mechanism to seem more culturally comfortable undermines the evidence base; ignoring cultural fit undermines engagement and generalization. The goal is cultural adaptation, not cultural abandonment.' },
+      { type: 'paragraph', text: 'Community liaisons are a distinct and often underused resource. A community liaison is a trusted bridge between the school system and a specific cultural community — a person who holds the community\'s trust and understands both the school\'s systems and the community\'s values, norms, help-seeking patterns, and history with institutions. A liaison is not a translator. A translator converts language; a liaison converts meaning — explaining why a family may be skeptical of mental health labels, what forms of support are culturally acceptable or stigmatizing, who the appropriate decision-maker is in the family or community structure, and how the school can build credibility. Liaisons are especially valuable when systemic mistrust between a community and public institutions runs deep.' },
+      { type: 'comparison', leftHeader: 'Culture-Blind Approach', rightHeader: 'Culturally Responsive Approach', rows: [
+        { left: '"We treat all students the same" — ignores structural and cultural differences in access and fit', right: 'Assesses cultural fit; adapts delivery while preserving evidence-based mechanisms' },
+        { left: 'Family treated as recipient of decisions; consent as a procedural checkbox', right: 'Family engaged as a design partner; values and community strengths actively incorporated' },
+        { left: 'Lack of engagement attributed to the student or family', right: 'Lack of engagement investigated as a potential fit, trust, or relevance problem' },
+        { left: 'Community liaison absent or used only for language translation', right: 'Community liaison consulted as a bridge: meaning, stigma, cultural decision-making, trust-building' },
+      ] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: 'Culturally responsive next step',
+        prompt: 'A school psychologist is 6 sessions into a CBT-based anxiety intervention with a Latinx adolescent. The student is not engaging and the family seems hesitant to continue. What is the MOST culturally responsive next step?',
+        options: [
+          { id: 'o1', label: 'Continue the protocol as designed — EBPs should not be modified', isCorrect: false, explanation: 'Cultural adaptation of delivery and framing is not the same as abandoning the evidence base. Rigid protocol adherence that ignores cultural fit is not evidence-based practice; it is mechanical compliance.' },
+          { id: 'o2', label: 'Discontinue counseling and refer to community mental health', isCorrect: false, explanation: 'May eventually be appropriate, but premature without first exploring the fit problem. Referrals without addressing barriers to engagement often result in non-completion.' },
+          { id: 'o3', label: 'Meet with the family to understand their concerns, explore cultural meanings of anxiety and help-seeking, and adapt the CBT delivery and framing while preserving its core mechanisms', isCorrect: true, explanation: 'Correct. Culturally responsive practice means understanding the family\'s frame, adapting what is adaptable, and engaging them as partners — not abandoning an evidence-based approach.' },
+          { id: 'o4', label: 'Switch to play therapy, which is more universally applicable across cultures', isCorrect: false, explanation: 'No evidence that play therapy is more culturally universal than adapted CBT. For anxiety in adolescents, CBT has a stronger evidence base. The solution is cultural adaptation, not modality switching.' },
+        ],
+      },
     ],
   },
 
@@ -1310,6 +1516,61 @@ export const LEARNING_MODULES: LearningModule[] = [
     ],
   },
 
+  {
+    id: 'MOD-D10-09',
+    primarySkillId: 'ETH-02',
+    title: 'Malpractice, Negligence, and Supervisory Liability',
+    sections: [
+      { type: 'anchor', label: 'What negligence actually requires', text: 'Not every bad outcome is malpractice. A school psychologist who does everything correctly and still cannot prevent a student crisis has not committed negligence. Four specific elements must all be present for a liability claim — missing even one breaks the case.' },
+      { type: 'paragraph', text: 'Malpractice is professional negligence: a failure to meet the standard of care that a reasonably competent school psychologist in the same specialty would have provided under similar circumstances. The standard is not perfection — it is what a competent peer would do. Four elements must all be present: (1) Duty — the practitioner owed the client a professional duty of care, established by the professional relationship; (2) Breach — they failed to meet the standard of care; (3) Causation — the breach directly caused the harm (not merely that harm occurred while they were involved); (4) Damages — the client suffered actual harm as a result. If any element is absent, the legal claim fails.' },
+      { type: 'paragraph', text: 'Supervisory liability is a specific application. A licensed psychologist who supervises an intern, practicum student, or unlicensed practitioner assumes professional responsibility for that supervisee\'s work. Supervisory liability can arise two ways: the supervisor assigned a task outside the supervisee\'s competency, or the supervisor failed to provide adequate oversight of a task within scope. Signing off on reports without reviewing them, delegating independent assessment to a trainee without checks, or failing to ensure a supervisee fulfilled mandatory reporting obligations are common routes to supervisory liability claims.' },
+      {
+        type: 'interactive',
+        interactiveType: 'scenario-sorter',
+        label: 'Liability or standard of care?',
+        prompt: 'Sort each scenario into the correct category.',
+        scenarios: [
+          { id: 's1', text: 'A school psychologist decides not to report suspected physical abuse, reasoning that the marks "probably have an innocent explanation"', category: 'POTENTIAL LIABILITY' },
+          { id: 's2', text: 'A psychologist provides cognitive testing but refers to a specialist for domains outside her training, documenting the referral in the file', category: 'WITHIN STANDARD' },
+          { id: 's3', text: 'A supervisor signs a trainee\'s comprehensive evaluation report without reading it', category: 'POTENTIAL LIABILITY' },
+          { id: 's4', text: 'A psychologist uses a test normed 12 years ago, notes the limitation in the report, and supplements with a current instrument', category: 'WITHIN STANDARD' },
+          { id: 's5', text: 'A school psychologist provides neuropsychological assessment with no specific training in that domain and without supervision', category: 'POTENTIAL LIABILITY' },
+        ],
+        categories: ['POTENTIAL LIABILITY', 'WITHIN STANDARD'],
+      },
+      { type: 'anchor', label: 'Negligence by omission', text: 'Liability arises from failing to act as readily as from acting wrongly. Common omissions: failing to report suspected abuse, failing to conduct a required suicide risk assessment, failing to document a consultation or referral, failing to provide adequate supervision. When uncertain whether an action is required, the defensible move is to act and document.' },
+    ],
+  },
+
+  {
+    id: 'MOD-D10-10',
+    primarySkillId: 'LEG-03',
+    title: 'Section 504 and ADA: Broader Protection, Lower Bar Than IDEA',
+    sections: [
+      { type: 'anchor', label: 'The threshold that trips people up', text: '504 has a lower eligibility bar than IDEA — intentionally. A student does not need to be failing academically to qualify for a 504 plan. A health condition that substantially limits any major life activity — including concentrating, walking, or attending school — triggers 504 protection, whether or not special education is needed.' },
+      { type: 'paragraph', text: 'Section 504 of the Rehabilitation Act (1973) prohibits discrimination against people with disabilities by programs receiving federal funding — including all public schools. The Americans with Disabilities Act (1990) extends similar protections into the broader public sphere; ADA Title II applies specifically to public schools. Together they protect students who have a physical or mental impairment that substantially limits one or more major life activities. Major life activities include learning, reading, concentrating, thinking, communicating, walking, standing, seeing, and hearing.' },
+      { type: 'paragraph', text: 'This eligibility threshold is lower than IDEA\'s. IDEA requires the disability to adversely affect educational performance in a way that necessitates specialized instruction. 504 requires only that a disability substantially limits a major life activity — a student can perform on grade level academically and still qualify. Common 504-qualifying conditions: ADHD with significant functional impairment even at average grades; asthma limiting attendance and physical activity; diabetes requiring medical management during school; depression or anxiety substantially impairing concentration. The 504 plan is a general education accommodation document — not a special education placement — and specifies reasonable accommodations: extended time, preferential seating, medication access, attendance flexibility.' },
+      { type: 'comparison', leftHeader: 'IDEA / IEP', rightHeader: 'Section 504 Plan', rows: [
+        { left: 'Eligibility: disability adversely affects educational performance AND requires special education', right: 'Eligibility: disability substantially limits any major life activity (academic failure not required)' },
+        { left: 'Document: Individualized Education Program (IEP)', right: 'Document: 504 Accommodation Plan (general education document)' },
+        { left: 'Process: multidisciplinary team, formal evaluation, annual reviews, IDEA due process rights', right: 'Process: 504 meeting with staff and parents; flexible documentation; no mandated formal evaluation' },
+        { left: 'Services: specialized instruction and related services (OT, speech, counseling)', right: 'Services: reasonable accommodations in general education (extended time, medical access, seating adjustments)' },
+      ] },
+      {
+        type: 'interactive',
+        interactiveType: 'click-selector',
+        label: '504 vs. IEP: which framework applies?',
+        prompt: 'A 7th grader with well-controlled asthma performs on grade level but frequently misses school during flare seasons and cannot participate in PE. Her parents request accommodations. What is the MOST appropriate next step?',
+        options: [
+          { id: 'o1', label: 'Evaluate for IDEA eligibility under Other Health Impairment (OHI)', isCorrect: false, explanation: 'OHI is a valid path, but requires a full special education evaluation and IEP — a more intensive process when the student does not need specialized instruction. 504 is the more direct and proportionate fit.' },
+          { id: 'o2', label: 'Develop a 504 plan addressing attendance allowances, PE modifications, and medication / nurse access', isCorrect: true, explanation: 'Correct. Asthma substantially limits the major life activities of attending school and physical activity. The student does not need special education, but does need accommodations — 504 is designed for exactly this.' },
+          { id: 'o3', label: 'Take no action because the student is performing on grade level', isCorrect: false, explanation: 'Grade-level academic performance does not disqualify a student from 504 protection. The disability need only substantially limit any major life activity — not specifically academic performance.' },
+          { id: 'o4', label: 'Refer to the school counselor for support with managing absences', isCorrect: false, explanation: 'Counseling may be a useful supplement, but does not address the structural accommodation need created by the health condition.' },
+        ],
+      },
+    ],
+  },
+
 ];
 
 // ─── Module Lookup Map ─────────────────────────────────────────────────────────
@@ -1353,9 +1614,9 @@ export const SKILL_MODULE_MAP: Record<string, string[]> = {
   'DBD-06': ['MOD-D1-04', 'MOD-D1-05', 'MOD-D4-06'],
   'DBD-07': ['MOD-D1-03', 'MOD-D4-02', 'MOD-D4-03'],
   'DBD-08': ['MOD-D1-02', 'MOD-D1-09', 'MOD-D9-04'],
-  'DBD-09': ['MOD-D8-01', 'MOD-D7-01'],
-  'DBD-10': ['MOD-D1-01', 'MOD-D10-04', 'MOD-D10-05'],
-  'PSY-01': ['MOD-D1-07', 'MOD-D1-08', 'MOD-D9-02'],
+  'DBD-09': ['MOD-D1-14', 'MOD-D8-01', 'MOD-D7-01'],
+  'DBD-10': ['MOD-D1-13', 'MOD-D1-01', 'MOD-D10-04', 'MOD-D10-05'],
+  'PSY-01': ['MOD-D1-15', 'MOD-D1-07', 'MOD-D1-08', 'MOD-D9-02'],
   'PSY-02': ['MOD-D1-08', 'MOD-D9-03'],
   'PSY-03': ['MOD-D1-06', 'MOD-D5-02', 'MOD-D9-04'],
   'PSY-04': ['MOD-D8-01', 'MOD-D8-02', 'MOD-D8-03'],
@@ -1367,9 +1628,9 @@ export const SKILL_MODULE_MAP: Record<string, string[]> = {
   'ACA-06': ['MOD-D3-05', 'MOD-D4-02'],
   'ACA-07': ['MOD-D3-02', 'MOD-D8-01'],
   'ACA-08': ['MOD-D1-10', 'MOD-D4-06'],
-  'ACA-09': ['MOD-D4-06', 'MOD-D8-04'],
+  'ACA-09': ['MOD-D4-10', 'MOD-D4-06', 'MOD-D8-04'],
   'DEV-01': ['MOD-D4-09'],
-  'MBH-02': ['MOD-D4-01', 'MOD-D4-07', 'MOD-D4-08'],
+  'MBH-02': ['MOD-D4-11', 'MOD-D4-01', 'MOD-D4-07', 'MOD-D4-08'],
   'MBH-03': ['MOD-D4-01', 'MOD-D4-02', 'MOD-D4-03', 'MOD-D4-04'],
   'MBH-04': ['MOD-D4-05', 'MOD-D4-06', 'MOD-D4-09'],
   'MBH-05': ['MOD-D4-06'],
@@ -1381,19 +1642,19 @@ export const SKILL_MODULE_MAP: Record<string, string[]> = {
   'SAF-03': ['MOD-D6-03', 'MOD-D4-07', 'MOD-D4-08'],
   'SAF-04': ['MOD-D6-01', 'MOD-D6-02', 'MOD-D6-03'],
   'SWP-02': ['MOD-D3-03', 'MOD-D5-02'],
-  'SWP-03': ['MOD-D5-01', 'MOD-D5-03', 'MOD-D9-05'],
+  'SWP-03': ['MOD-D5-05', 'MOD-D5-01', 'MOD-D5-03', 'MOD-D9-05'],
   'SWP-04': ['MOD-D1-06', 'MOD-D5-02', 'MOD-D5-04'],
 
   // ── Foundations of School Psychology (App Domain 4) ───────────────────────
-  'DIV-01': ['MOD-D8-01', 'MOD-D8-03', 'MOD-D7-01'],
+  'DIV-01': ['MOD-D8-05', 'MOD-D8-01', 'MOD-D8-03', 'MOD-D7-01'],
   'DIV-03': ['MOD-D5-04', 'MOD-D8-03'],
   'DIV-05': ['MOD-D8-04', 'MOD-D10-01', 'MOD-D10-06'],
   'ETH-01': ['MOD-D10-03', 'MOD-D10-07'],
-  'ETH-02': ['MOD-D10-03', 'MOD-D10-07'],
+  'ETH-02': ['MOD-D10-09', 'MOD-D10-03', 'MOD-D10-07'],
   'ETH-03': ['MOD-D10-07'],
   'LEG-01': ['MOD-D1-01', 'MOD-D10-04', 'MOD-D10-05'],
   'LEG-02': ['MOD-D10-01', 'MOD-D10-02', 'MOD-D10-06'],
-  'LEG-03': ['MOD-D10-01', 'MOD-D10-06'],
+  'LEG-03': ['MOD-D10-10', 'MOD-D10-01', 'MOD-D10-06'],
   'LEG-04': ['MOD-D10-08', 'MOD-D10-02'],
   'RES-02': ['MOD-D9-05'],
   'RES-03': ['MOD-D9-01', 'MOD-D9-02', 'MOD-D9-03'],
