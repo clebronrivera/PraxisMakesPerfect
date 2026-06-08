@@ -102,4 +102,20 @@ describe('questions.json schema validation', () => {
       `Unknown tags found:\n${unknownTags.join('\n')}`,
     ).toHaveLength(0);
   });
+
+  // Cold-start anchor coverage (Phase 0b): the adaptive engine prefers is_foundational
+  // items to seed low-attempt/unseen skills. These 5 skills previously had zero, breaking
+  // cold-start; each must keep at least 2 foundational anchors.
+  it('every cold-start skill has at least 2 foundational anchor items', () => {
+    const COLD_START_SKILLS = ['ACA-09', 'DBD-10', 'DIV-01', 'DIV-05', 'FAM-03'];
+    const counts = COLD_START_SKILLS.map((skill) => ({
+      skill,
+      n: questions.filter((q) => q.current_skill_id === skill && q.is_foundational === true).length,
+    }));
+    const short = counts.filter((c) => c.n < 2);
+    expect(
+      short,
+      `cold-start skills with < 2 foundational items: ${short.map((c) => `${c.skill}:${c.n}`).join(', ')}`,
+    ).toEqual([]);
+  });
 });
