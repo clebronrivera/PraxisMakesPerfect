@@ -6,8 +6,9 @@
     "totalMapped": 1150,
     "seededCount": 1011,
     "fallbackCount": 139,
+    "manualCount": 0,
     "verifiedCount": 0,
-    "note": "Provisional machine-seeded objective tags. method:\"fallback\" = low-confidence (human review queue). Never read by scoring."
+    "note": "Provisional machine-seeded objective tags. method:\"fallback\" = low-confidence (human review queue); method:\"manual\" = human-verified (Pack 1), preserved by --preserve-manual. Never read by scoring."
   },
   "questions": {
     "PQ_ACA-02_1": {

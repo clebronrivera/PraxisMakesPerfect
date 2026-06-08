@@ -34,12 +34,17 @@ commit + push them so a new chat can see them.
 
 ## 🔧 IMMEDIATE TO-DOs (small, do these before handing off content work)
 
-1. **Commit + push the two new docs** (`CONTENT_AUTHORING_PLAN_2026-06-07.md`, this file). Until
-   pushed, a new chat/session won't see them.
-2. **Build the seeder `--preserve-manual` guard.** The seeder (`scripts/migrations/seed-question-ets-topics.mjs`)
-   overwrites `questionObjectiveMap.json` wholesale. Once a human edits tags by hand (Pack 1,
-   `method:"manual"`), a re-run would wipe that. Add a flag that re-reads the existing file and
-   keeps any `method:"manual"` entries. **This must land before anyone starts Pack 1.** (~1 hr eng.)
+1. ✅ **DONE — Committed + pushed the two new docs** (`CONTENT_AUTHORING_PLAN_2026-06-07.md`, this
+   file). A new chat can now see them on origin.
+2. ✅ **DONE — Seeder `--preserve-manual` guard built** (`scripts/migrations/seed-question-ets-topics.mjs`).
+   `npx tsx scripts/migrations/seed-question-ets-topics.mjs --preserve-manual` re-reads the existing
+   `questionObjectiveMap.json` and keeps every `method:"manual"` entry; entries for retired questions
+   are dropped (logged as "orphaned"). The no-flag path is unchanged (clean re-seed) and stays
+   byte-identical for the questions block (meta now also carries `manualCount`/`verifiedCount`).
+   **Also unblocked Pack 1 acceptance:** `tests/questionObjectiveMap.test.ts` previously asserted
+   *every* entry is `verified:false` (Pack 1 would have failed `npm test` the moment it set
+   `verified:true`). It now allows `method:"manual"` entries to be `verified:true` while still
+   forcing seeded/fallback tags to stay `verified:false`. All 6 gates green.
 3. **Decide deploy timing.** Phase 0/1 is user-visible (drill now covers all 45 skills; cold-start
    works) but nothing is live. Deploy when ready, or batch with Phase 2.
 
@@ -105,7 +110,8 @@ Two tracks: **content authoring** (Packs 1–6, fully specified in `CONTENT_AUTH
 - **Skill stays the scored unit; objectives are descriptive.** No objective-level scoring —
   `tests/objectiveBoundaryGuard.test.ts` fails the build if a scoring file imports the objective maps.
 - Objective codes must stay within a skill's `skillObjectiveMap` set (tests enforce it).
-- **Don't re-run the seeder over hand-edited tags** until the `--preserve-manual` flag exists.
+- **Re-run the seeder with `--preserve-manual`** once Pack 1 hand-editing has started (a plain
+  re-run still clobbers `method:"manual"` tags — the flag is opt-in).
 - Module ids are stable — never rename, only add. The `NEW-*` / 54 legacy metadata entries are
   **real content; do not delete** (a prior audit wrongly proposed this).
 - Cool indigo/violet palette only. Run the 5-command gate before every PR:
@@ -121,7 +127,7 @@ Two tracks: **content authoring** (Packs 1–6, fully specified in `CONTENT_AUTH
 | `src/data/ets-content-topics.json` | the 79 ETS objectives (source of truth for codes) |
 | `src/data/learningModules.ts` | 58 modules; `primarySkillId`, `SKILL_MODULE_MAP`, `MODULE_PRIMARY_OVERRIDES`, reserved `etsTopicIds?` |
 | `src/data/skillIdMap.ts` | canonical ID crosswalk (progress ↔ metadata ↔ objective ↔ module ↔ vocab) |
-| `scripts/migrations/seed-question-ets-topics.mjs` | the seeder (needs `--preserve-manual`) |
+| `scripts/migrations/seed-question-ets-topics.mjs` | the seeder (`--preserve-manual` guard built ✅) |
 | `tests/objectiveBoundaryGuard.test.ts` | enforces objectives-never-scored |
 
 ---
@@ -130,7 +136,8 @@ Two tracks: **content authoring** (Packs 1–6, fully specified in `CONTENT_AUTH
 > Work in `/Users/lebron/Documents/PMP-hopeful-benz` on branch `claude/hopeful-benz-866a30`.
 > Read `docs/HANDOFF_2026-06-07_content-architecture-phase2.md`, then
 > `docs/CONTENT_AUTHORING_PLAN_2026-06-07.md`. Phase 0/1 (the objective-spine wiring) is done and
-> pushed. Start with the IMMEDIATE TO-DOs: (1) build the seeder `--preserve-manual` guard, then
-> (2) [pick a Pack — e.g. "author the 3 cold-start owned modules ACA-09/DBD-10/DIV-01 from Pack 2",
-> or "verify the ACA-08 fallback objective tags from Pack 1"]. Keep the skill as the scored unit;
+> pushed, and the seeder `--preserve-manual` guard is built (immediate to-dos 1 & 2 ✅). Pick a Pack
+> — e.g. "author the 3 cold-start owned modules ACA-09/DBD-10/DIV-01 from Pack 2", or "verify the
+> ACA-08 fallback objective tags from Pack 1" (edit `questionObjectiveMap.json` → `method:"manual"`,
+> `verified:true`; re-seed only with `--preserve-manual`). Keep the skill as the scored unit;
 > objectives stay descriptive (boundary-guard test). Run the 5-command gate before committing.

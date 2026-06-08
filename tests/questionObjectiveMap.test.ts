@@ -45,29 +45,36 @@ describe('questionObjectiveMap (seeded objective tags)', () => {
     expect(violations, `codes outside the skill's objective set: ${violations.slice(0, 10).join(', ')}`).toEqual([]);
   });
 
-  it('every question has 1–2 objectives and a valid method', () => {
+  it('every question has 1–2 objectives, a valid method, and only manual tags may be verified', () => {
     const bad: string[] = [];
     for (const [id, e] of Object.entries(entries)) {
       if (!Array.isArray(e.ets_topics) || e.ets_topics.length < 1 || e.ets_topics.length > 2) {
         bad.push(`${id}: ${e.ets_topics?.length} topics`);
       }
       if (!VALID_METHODS.has(e.method)) bad.push(`${id}: method="${e.method}"`);
-      if (e.verified !== false) bad.push(`${id}: verified=${e.verified}`);
+      if (typeof e.verified !== 'boolean') bad.push(`${id}: verified=${e.verified} (not boolean)`);
+      // Machine-seeded tags (seeded/fallback) are never human-verified. Only method:"manual"
+      // (Pack 1 review) may carry verified:true — and the seeder's --preserve-manual guard keeps it.
+      if (e.method !== 'manual' && e.verified !== false) bad.push(`${id}: ${e.method} but verified=${e.verified}`);
     }
     expect(bad, `malformed entries: ${bad.slice(0, 10).join(', ')}`).toEqual([]);
   });
 
-  it('reports provisional-tag metrics (informational, non-failing)', () => {
+  it('reports tag metrics; machine tags stay unverified, manual tags may be verified', () => {
     const all = Object.values(entries);
     const seeded = all.filter((e) => e.method === 'seeded').length;
     const fallback = all.filter((e) => e.method === 'fallback').length;
+    const manual = all.filter((e) => e.method === 'manual').length;
     const multi = all.filter((e) => e.ets_topics.length > 1).length;
-    const unverified = all.filter((e) => e.verified === false).length;
-    // These are provisional, machine-seeded tags — none are human-verified yet.
-    // method:"fallback" is the prioritized human-review queue.
+    const verified = all.filter((e) => e.verified === true).length;
+    // Provisional machine tags; method:"fallback" is the prioritized human-review queue.
+    // method:"manual" + verified:true is the output of Pack 1 review.
     console.info(
-      `  ℹ questionObjectiveMap: ${seeded} seeded, ${fallback} fallback, ${multi} multi-tagged, ${unverified} unverified (human-review queue = fallback)`,
+      `  ℹ questionObjectiveMap: ${seeded} seeded, ${fallback} fallback, ${manual} manual, ${multi} multi-tagged, ${verified} verified (review queue = fallback)`,
     );
-    expect(unverified).toBe(all.length); // nothing is verified yet, by design
+    // Invariant: no machine-generated tag may be marked verified; every verified tag is manual.
+    const machineVerified = all.filter((e) => e.method !== 'manual' && e.verified === true);
+    expect(machineVerified, 'seeded/fallback tags must stay verified:false').toEqual([]);
+    expect(verified).toBeLessThanOrEqual(manual);
   });
 });

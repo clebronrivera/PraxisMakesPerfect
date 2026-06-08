@@ -78,9 +78,10 @@ Concentrated in: CON-01 (12), LEG-01 (11), ETH-03 (7), RES-02 (7), ACA-09 (6), P
 Set `method: "manual"` and `verified: true` once reviewed; fix `ets_topics` if wrong. **Only use
 codes already in that skill's `skillObjectiveMap[skill]` set** (the test enforces this).
 
-**Acceptance.** `npm test` green (parity + allowed-codes hold); `verifiedCount` rises in `meta`;
-ideally fallback count → 0. **Do NOT re-run the seeder after manual edits** — it overwrites
-`method:"manual"`. (Engineer note: add a `--preserve-manual` guard before any future re-seed.)
+**Acceptance.** `npm test` green (parity + allowed-codes hold; the map test now allows
+`method:"manual"` entries to be `verified:true`); `verifiedCount` rises in `meta`; ideally fallback
+count → 0. **If you re-seed, use `npx tsx scripts/migrations/seed-question-ets-topics.mjs --preserve-manual`**
+— that guard (built 2026-06-07) keeps your `method:"manual"` tags. A plain re-run still overwrites them.
 
 **Effort.** ~210 items, ~1–2 min each = ~5–7 focused hours. **Who:** anyone with school-psych
 content knowledge; no coding beyond editing JSON.
@@ -231,12 +232,12 @@ Section types: `paragraph` · `anchor` (highlighted hook) · `list` · `comparis
 
 ## Who does what
 - **Content SME (school psych):** Packs 2, 3, 5, 6, and the judgment in Pack 1.
-- **Engineer:** the derivation/guard for Pack 4, the seeder `--preserve-manual` flag, the
-  `frameworkRegistry.ts` shape, and reviewing PRs (run the 5-command gate).
+- **Engineer:** the derivation/guard for Pack 4 (the seeder `--preserve-manual` flag is already
+  built ✅), the `frameworkRegistry.ts` shape, and reviewing PRs (run the 5-command gate).
 - **Either:** Pack 1 JSON edits.
 
 ## Guardrails (don't undo the wiring)
 - Objective codes must stay within a skill's `skillObjectiveMap` set (tests enforce it).
-- Don't re-run the seeder after manual tag edits until the `--preserve-manual` flag exists.
+- After manual tag edits, re-seed only with `--preserve-manual` (the guard exists; a plain re-run clobbers them).
 - Keep the scored unit = skill; no objective-level scoring (the boundary-guard test will fail).
 - Module ids are stable — never rename; only add.

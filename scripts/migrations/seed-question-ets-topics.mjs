@@ -7,11 +7,19 @@
  * read by scoring/mastery logic. Every entry carries provenance: method + verified:false.
  *
  * Run (imports the TS map, so use tsx):
- *   npx tsx scripts/migrations/seed-question-ets-topics.mjs
+ *   npx tsx scripts/migrations/seed-question-ets-topics.mjs                    # full re-seed
+ *   npx tsx scripts/migrations/seed-question-ets-topics.mjs --preserve-manual  # keep human edits
+ *
+ * --preserve-manual: re-reads the existing questionObjectiveMap.json and KEEPS every entry a
+ *   human has reviewed (method:"manual") instead of recomputing it. Use this flag for ANY re-seed
+ *   once Pack 1 verification has started — a plain re-run would clobber that hand-tagging. Entries
+ *   whose question no longer exists are dropped and logged as "orphaned", preserving id-parity
+ *   with questions.json. Without the flag the seeder is a clean re-seed (every entry machine-made).
  *
  * Deterministic + idempotent: no Date.now()/random; output sorted by UNIQUEID. Re-running
- * on unchanged inputs reproduces a byte-identical questionObjectiveMap.json. Re-run whenever
- * questions.json or skillObjectiveMap.ts changes (the parity test fails loudly if stale).
+ * on unchanged inputs reproduces a byte-identical questionObjectiveMap.json (the no-flag path is
+ * input-only; --preserve-manual additionally folds in the prior file's manual entries). Re-run
+ * whenever questions.json or skillObjectiveMap.ts changes (the parity test fails loudly if stale).
  *
  * Writes:
  *   src/data/questionObjectiveMap.json   — committed (the 1,150-entry map)
@@ -25,9 +33,28 @@ import { skillObjectiveMap, primaryObjectiveBySkill } from '../../src/data/skill
 
 const SEEDED_AT = '2026-06-07'; // fixed for idempotency — do not replace with a live date
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const PRESERVE_MANUAL = process.argv.includes('--preserve-manual');
+const MAP_PATH = join(ROOT, 'src/data/questionObjectiveMap.json');
 
 const questions = JSON.parse(readFileSync(join(ROOT, 'src/data/questions.json'), 'utf-8'));
 const etsData = JSON.parse(readFileSync(join(ROOT, 'src/data/ets-content-topics.json'), 'utf-8'));
+
+// ─── Preserve human-verified tags (Pack 1) ──────────────────────────────────────
+// With --preserve-manual, re-read the existing map and keep any entry a human has reviewed
+// (method:"manual"), so a re-run after manual edits never clobbers that work. Keyed by
+// UNIQUEID; a kept entry whose question has since been retired is dropped below (and logged),
+// preserving id-parity with questions.json. No flag → empty map → clean machine re-seed.
+const preservedManual = new Map();
+if (PRESERVE_MANUAL) {
+  try {
+    const prev = JSON.parse(readFileSync(MAP_PATH, 'utf-8'));
+    for (const [id, e] of Object.entries(prev.questions || {})) {
+      if (e && (e.method === 'manual' || e.verified === true)) preservedManual.set(id, e);
+    }
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err; // no existing map yet → nothing to preserve
+  }
+}
 
 // ─── ETS topic lookup: code → { keywords[], textTokens[] } ──────────────────────
 const STOP = new Set(
@@ -118,16 +145,27 @@ function assign(q) {
 const sorted = [...questions].sort((a, b) => (a.UNIQUEID < b.UNIQUEID ? -1 : 1));
 const out = {};
 const report = {
-  seededAt: SEEDED_AT, total: 0, seededCount: 0, fallbackCount: 0, multiTaggedCount: 0,
+  seededAt: SEEDED_AT, total: 0, seededCount: 0, fallbackCount: 0, manualCount: 0,
+  verifiedCount: 0, multiTaggedCount: 0, preservedCount: 0, orphanedManual: [],
   // seeded breakdown: 'sole' = certain-by-construction (1-objective skill); 'keyword' = keyword-matched
-  reasonCounts: { sole: 0, keyword: 0, unmatched: 0 },
+  reasonCounts: { sole: 0, keyword: 0, unmatched: 0, manual: 0 },
   invalidCodes: [], fallbackBySkill: {}, fallbackByDomain: { 1: 0, 2: 0, 3: 0, 4: 0 },
   topFallbackSkills: [], topicDistribution: {}, sample: [],
 };
 const perSkillTotal = {};
 
 for (const q of sorted) {
-  const { reason, ...entry } = assign(q);
+  let entry, reason;
+  const kept = preservedManual.get(q.UNIQUEID);
+  if (kept) {
+    // keep the reviewer's tags verbatim; normalize shape (a hand-edit may omit `verified`)
+    entry = { ets_topics: kept.ets_topics, method: 'manual', verified: kept.verified !== false };
+    reason = 'manual';
+    report.preservedCount++;
+    preservedManual.delete(q.UNIQUEID); // consumed → leftovers are orphaned (question retired)
+  } else {
+    ({ reason, ...entry } = assign(q));
+  }
   out[q.UNIQUEID] = entry; // stored map carries only { ets_topics, method, verified }
   report.reasonCounts[reason] = (report.reasonCounts[reason] || 0) + 1;
   report.total++;
@@ -141,11 +179,15 @@ for (const q of sorted) {
     report.fallbackCount++;
     report.fallbackBySkill[skill] = (report.fallbackBySkill[skill] || 0) + 1;
     report.fallbackByDomain[skillDomain(skill)]++;
+  } else if (entry.method === 'manual') {
+    report.manualCount++;
   } else {
     report.seededCount++;
   }
+  if (entry.verified === true) report.verifiedCount++;
   if (entry.ets_topics.length > 1) report.multiTaggedCount++;
 }
+report.orphanedManual = [...preservedManual.keys()]; // manual entries whose question is gone
 
 // top fallback skills by rate (min 5 questions), then a per-domain sample
 report.topFallbackSkills = Object.entries(report.fallbackBySkill)
@@ -170,16 +212,23 @@ const mapDoc = {
     totalMapped: report.total,
     seededCount: report.seededCount,
     fallbackCount: report.fallbackCount,
-    verifiedCount: 0,
-    note: 'Provisional machine-seeded objective tags. method:"fallback" = low-confidence (human review queue). Never read by scoring.',
+    manualCount: report.manualCount,
+    verifiedCount: report.verifiedCount,
+    note: 'Provisional machine-seeded objective tags. method:"fallback" = low-confidence (human review queue); method:"manual" = human-verified (Pack 1), preserved by --preserve-manual. Never read by scoring.',
   },
   questions: out,
 };
 
-writeFileSync(join(ROOT, 'src/data/questionObjectiveMap.json'), JSON.stringify(mapDoc, null, 2) + '\n');
+writeFileSync(MAP_PATH, JSON.stringify(mapDoc, null, 2) + '\n');
 writeFileSync(join(ROOT, 'scripts/ets-seed-report.json'), JSON.stringify(report, null, 2) + '\n');
 
-console.log(`seeded ${report.total} questions: ${report.seededCount} seeded, ${report.fallbackCount} fallback, ${report.multiTaggedCount} multi-tagged`);
+console.log(`seeded ${report.total} questions: ${report.seededCount} seeded, ${report.fallbackCount} fallback, ${report.manualCount} manual (${report.verifiedCount} verified), ${report.multiTaggedCount} multi-tagged`);
 console.log(`invalid codes: ${report.invalidCodes.length}`);
+if (PRESERVE_MANUAL) {
+  const orphans = report.orphanedManual;
+  console.log(`preserve-manual: kept ${report.preservedCount} manual entr${report.preservedCount === 1 ? 'y' : 'ies'}; orphaned (retired question, dropped): ${orphans.length}${orphans.length ? ' → ' + orphans.join(', ') : ''}`);
+} else {
+  console.log('mode: full re-seed (no --preserve-manual) — any existing manual tags were overwritten');
+}
 console.log('fallback by domain:', JSON.stringify(report.fallbackByDomain));
 console.log('top fallback skills:', report.topFallbackSkills.slice(0, 6).map((s) => `${s.skill} ${Math.round(s.rate * 100)}%`).join(', '));
