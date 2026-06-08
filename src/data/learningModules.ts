@@ -30,6 +30,10 @@
 //   PraxisVisualPlan v2.docx         — visual / activity specifications (future)
 // ──────────────────────────────────────────────────────────────────────────────
 
+// Pack 4: derived ETS objective ids per module (generated, provisional). Kept in a separate
+// file so re-derivation never churns the module literals below. See derive-module-ets-topics.mjs.
+import moduleEtsTopicMap from './moduleEtsTopicMap.json';
+
 export type ModuleSectionType = 'paragraph' | 'anchor' | 'comparison' | 'list' | 'interactive' | 'visual';
 
 export interface ComparisonRow {
@@ -131,8 +135,10 @@ export interface LearningModule {
    */
   primarySkillId: string;
   /**
-   * Reserved for Phase 2: the ETS objectives this module teaches (to be derived from the
-   * questionObjectiveMap of the questions it routes). Unpopulated in this phase.
+   * The ETS objectives this module teaches (Pack 4). Derived from the verified
+   * questionObjectiveMap of the questions it routes (skill-question fallback when a module has
+   * no routed questions) and attached from moduleEtsTopicMap.json below. Provisional + SME-
+   * confirmable; descriptive only — never read by scoring. ⊆ skillObjectiveMap[primarySkillId].
    */
   etsTopicIds?: string[];
   /** Full rich sections rendered inside the lesson viewer. */
@@ -1572,6 +1578,18 @@ export const LEARNING_MODULES: LearningModule[] = [
   },
 
 ];
+
+// ─── Pack 4: attach derived ETS objective ids ─────────────────────────────────
+// Each module's `etsTopicIds` comes from moduleEtsTopicMap.json (derived from the verified
+// questionObjectiveMap + primaryModuleId routing; regenerate with derive-module-ets-topics.mjs).
+// Provisional + SME-confirmable; descriptive only — never read by scoring (objectiveBoundaryGuard).
+{
+  const derived = (moduleEtsTopicMap as { modules: Record<string, { etsTopicIds: string[] }> }).modules;
+  for (const m of LEARNING_MODULES) {
+    const ids = derived[m.id]?.etsTopicIds;
+    if (ids?.length) m.etsTopicIds = ids;
+  }
+}
 
 // ─── Module Lookup Map ─────────────────────────────────────────────────────────
 

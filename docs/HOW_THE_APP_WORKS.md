@@ -56,12 +56,13 @@ Domain (4)  →  Skill (45, the measured/scored unit)  →  Objective  →  cont
 - The **Vocabulary Fluency Drill** reads the canonical 396-term map (`skill-vocabulary-map.json`), so **all 45 skills are drillable** (it previously reached ~20).
 - **5 cold-start skills** (ACA-09, DBD-10, DIV-01, DIV-05, FAM-03) now carry foundational anchor items, so the adaptive engine can seed them on first contact.
 - **`skillObjectiveMap.ts`** links all 45 skills → their ETS objectives (with an explicit primary per skill).
-- **`questionObjectiveMap.json`** tags all 1,150 questions with 1–2 objectives. **These tags are provisional and machine-seeded** — every entry is `verified: false`, and entries marked `method: "fallback"` are the prioritized **human-review queue** (genuinely ambiguous, multi-objective skills). They are stored separately from `questions.json` so they stay reviewable and reversible.
-- **`primarySkillId`** on all 58 modules fixes domain attribution; `SKILL_MODULE_MAP` remains the authoritative many-to-many index.
+- **`questionObjectiveMap.json`** tags all 1,150 questions with 1–2 objectives. The **human-review queue is cleared**: all **210** genuinely-ambiguous items (139 fallback + 71 multi-tag) have been SME-verified (`method: "manual"`, `verified: true`); the remaining ~940 are high-confidence machine matches (`method: "seeded"`, left `verified: false` because nothing needed disambiguation). Tags live separately from `questions.json`; the seeder preserves manual edits (`--preserve-manual`) and refuses to clobber them otherwise.
+- **`primarySkillId`** on all **67 modules** fixes domain attribution, and **every one of the 45 skills now owns a dedicated lesson** (9 previously-unowned skills got their own module). `SKILL_MODULE_MAP` remains the authoritative many-to-many index.
+- **`etsTopicIds`** on every module (`moduleEtsTopicMap.json`, derived from the verified tags) declares which objectives each lesson teaches — closing the question→objective→lesson loop for routing.
 
-> **Do not add objective-level mastery or scoring** until the objective tags are human-reviewed and promoted to `verified: true`. A boundary-guard test (`tests/objectiveBoundaryGuard.test.ts`) fails the build if any scoring/mastery/selection file imports the objective maps.
+> **The skill stays the scored unit; objectives are descriptive only** (routing and diagnosis, not mastery math) — by design, even now that tags are verified. A boundary-guard test (`tests/objectiveBoundaryGuard.test.ts`) fails the build if any scoring/mastery/selection file imports the objective maps.
 
-**Future attachment points (Phase 2+, reserved, not yet wired):** modules declare their objectives (`etsTopicIds`) · one consolidated vocabulary registry (the study-plan vocab still reads `skill-metadata-v1`) · misconception→question links · objective→exam-weight rollup · prerequisite graph repair · framework/law registry · reusable case bank.
+**Future attachment points (reserved, not yet wired):** one consolidated vocabulary registry (the study-plan vocab still reads `skill-metadata-v1`) · misconception→question links · objective→exam-weight rollup · prerequisite graph repair · framework/law registry · reusable case bank.
 
 > **Full plan:** the ideal model, connectivity rules, gap analysis, and authoring spec live in **`docs/CONTENT_ARCHITECTURE_AND_GAPS_2026-06-07.md`**; module-specific coverage in `docs/MODULE_CONTENT_GAP_2026-06-07.md`. Keep both in sync with this section as more wiring lands.
 
@@ -361,7 +362,7 @@ Practice on a specific skill — any of the 45 individual competency areas. The 
 ---
 
 ### Learning Path — Module Browser
-A **student-friendly module browser** (`ModulesBrowser`, replacing the older deficit-sorted "node map"). It presents the 58 learning modules as a readable catalog so students always know what to study next.
+A **student-friendly module browser** (`ModulesBrowser`, replacing the older deficit-sorted "node map"). It presents the 67 learning modules as a readable catalog so students always know what to study next.
 
 **Views (toggle):**
 - **Regular** — all modules. **Adaptive** — only "gap-closing" modules (skills not yet Demonstrating); modules for mastered skills are hidden, and progress is shown for the *recommended bucket* (e.g. "3 / 11 recommended modules completed · 27%", "N mastered hidden").

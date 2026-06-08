@@ -1,0 +1,530 @@
+{
+  "meta": {
+    "generatedBy": "scripts/migrations/derive-module-ets-topics.mjs",
+    "source": "questionObjectiveMap.json (verified tags) + questions.json primaryModuleId routing",
+    "totalModules": 67,
+    "fromRouted": 45,
+    "fromSkillFallback": 22,
+    "fromPrimaryFallback": 0,
+    "note": "Provisional, derived. etsTopicIds ⊆ skillObjectiveMap[primarySkillId]; top 1–3 by routed-question frequency (skill-question fallback when a module has no routed signal). SME should confirm each list against the lesson. Never read by scoring."
+  },
+  "modules": {
+    "MOD-D1-01": {
+      "etsTopicIds": [
+        "IV.C.2.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 8
+    },
+    "MOD-D1-02": {
+      "etsTopicIds": [
+        "I.A.2.g"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 6
+    },
+    "MOD-D1-03": {
+      "etsTopicIds": [
+        "I.A.2.e"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 12
+    },
+    "MOD-D1-04": {
+      "etsTopicIds": [
+        "I.A.2.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 10
+    },
+    "MOD-D1-05": {
+      "etsTopicIds": [
+        "I.A.2.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 3
+    },
+    "MOD-D1-06": {
+      "etsTopicIds": [
+        "I.A.3.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 21
+    },
+    "MOD-D1-07": {
+      "etsTopicIds": [
+        "I.A.2.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 32
+    },
+    "MOD-D1-08": {
+      "etsTopicIds": [
+        "I.A.3.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 1
+    },
+    "MOD-D1-09": {
+      "etsTopicIds": [
+        "I.A.1.a",
+        "I.A.1.c",
+        "I.A.2.i"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D1-10": {
+      "etsTopicIds": [
+        "II.A.2.c",
+        "II.A.1.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 39
+    },
+    "MOD-D1-11": {
+      "etsTopicIds": [
+        "I.A.2.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 3
+    },
+    "MOD-D1-12": {
+      "etsTopicIds": [
+        "I.A.2.c",
+        "I.A.2.b",
+        "I.A.4.a"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D1-13": {
+      "etsTopicIds": [
+        "I.A.1.b"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D1-14": {
+      "etsTopicIds": [
+        "I.A.2.h"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D1-15": {
+      "etsTopicIds": [
+        "I.A.3.b"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D10-01": {
+      "etsTopicIds": [
+        "IV.C.2.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 58
+    },
+    "MOD-D10-02": {
+      "etsTopicIds": [
+        "IV.C.2.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 1
+    },
+    "MOD-D10-03": {
+      "etsTopicIds": [
+        "IV.C.1.b",
+        "IV.C.1.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 34
+    },
+    "MOD-D10-04": {
+      "etsTopicIds": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 39
+    },
+    "MOD-D10-05": {
+      "etsTopicIds": [
+        "IV.C.2.a",
+        "IV.C.2.c"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D10-06": {
+      "etsTopicIds": [
+        "IV.C.2.a"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D10-07": {
+      "etsTopicIds": [
+        "IV.C.3.b",
+        "IV.C.3.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 47
+    },
+    "MOD-D10-08": {
+      "etsTopicIds": [
+        "IV.C.2.c",
+        "IV.C.2.b"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 24
+    },
+    "MOD-D10-09": {
+      "etsTopicIds": [
+        "IV.C.2.d",
+        "IV.C.3.c"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D10-10": {
+      "etsTopicIds": [
+        "IV.C.2.a"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D2-01": {
+      "etsTopicIds": [
+        "I.B.1.b",
+        "I.B.1.a",
+        "I.B.1.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 34
+    },
+    "MOD-D2-02": {
+      "etsTopicIds": [
+        "I.B.1.b",
+        "I.B.1.a",
+        "I.B.1.c"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D2-03": {
+      "etsTopicIds": [
+        "I.B.1.b",
+        "I.B.1.a",
+        "I.B.1.c"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D2-04": {
+      "etsTopicIds": [
+        "III.C.1.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 20
+    },
+    "MOD-D3-01": {
+      "etsTopicIds": [
+        "II.A.1.a",
+        "II.A.2.a",
+        "II.B.1.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 26
+    },
+    "MOD-D3-02": {
+      "etsTopicIds": [
+        "II.A.2.b"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 24
+    },
+    "MOD-D3-03": {
+      "etsTopicIds": [
+        "III.A.1.b"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 23
+    },
+    "MOD-D3-04": {
+      "etsTopicIds": [
+        "II.A.1.b"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 23
+    },
+    "MOD-D3-05": {
+      "etsTopicIds": [
+        "II.A.2.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 9
+    },
+    "MOD-D3-06": {
+      "etsTopicIds": [
+        "II.A.1.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 23
+    },
+    "MOD-D4-01": {
+      "etsTopicIds": [
+        "II.B.2.c",
+        "II.B.2.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 42
+    },
+    "MOD-D4-02": {
+      "etsTopicIds": [
+        "II.B.2.c",
+        "II.B.2.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 41
+    },
+    "MOD-D4-03": {
+      "etsTopicIds": [
+        "II.B.2.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 3
+    },
+    "MOD-D4-04": {
+      "etsTopicIds": [
+        "II.B.2.d",
+        "II.B.2.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 8
+    },
+    "MOD-D4-05": {
+      "etsTopicIds": [
+        "II.B.3.a",
+        "II.B.2.e"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 21
+    },
+    "MOD-D4-06": {
+      "etsTopicIds": [
+        "II.B.3.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 55
+    },
+    "MOD-D4-07": {
+      "etsTopicIds": [
+        "III.B.1.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 2
+    },
+    "MOD-D4-08": {
+      "etsTopicIds": [
+        "III.B.1.c"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D4-09": {
+      "etsTopicIds": [
+        "II.B.3.c",
+        "II.B.2.b"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 27
+    },
+    "MOD-D4-10": {
+      "etsTopicIds": [
+        "II.B.1.c",
+        "II.B.1.d",
+        "II.B.3.b"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D4-11": {
+      "etsTopicIds": [
+        "II.B.2.a",
+        "II.B.1.b"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D5-01": {
+      "etsTopicIds": [
+        "III.B.1.a",
+        "III.B.1.b",
+        "III.B.1.e"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 50
+    },
+    "MOD-D5-02": {
+      "etsTopicIds": [
+        "III.A.1.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 29
+    },
+    "MOD-D5-03": {
+      "etsTopicIds": [
+        "III.B.1.a",
+        "III.B.1.b",
+        "III.B.1.e"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D5-04": {
+      "etsTopicIds": [
+        "IV.A.1.c",
+        "IV.A.1.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 25
+    },
+    "MOD-D5-05": {
+      "etsTopicIds": [
+        "III.A.1.c",
+        "III.A.1.a"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D6-01": {
+      "etsTopicIds": [
+        "III.B.1.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 27
+    },
+    "MOD-D6-02": {
+      "etsTopicIds": [
+        "III.B.1.d"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D6-03": {
+      "etsTopicIds": [
+        "III.B.1.c"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 31
+    },
+    "MOD-D6-04": {
+      "etsTopicIds": [
+        "III.B.1.a",
+        "III.B.1.b",
+        "III.B.1.e"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D7-01": {
+      "etsTopicIds": [
+        "III.C.1.a",
+        "III.C.1.b"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 16
+    },
+    "MOD-D7-02": {
+      "etsTopicIds": [
+        "III.C.1.b",
+        "III.C.1.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 6
+    },
+    "MOD-D8-01": {
+      "etsTopicIds": [
+        "I.A.4.b",
+        "I.A.3.e",
+        "I.A.3.f"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 44
+    },
+    "MOD-D8-02": {
+      "etsTopicIds": [
+        "I.A.2.a"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D8-03": {
+      "etsTopicIds": [
+        "I.A.4.b",
+        "I.A.3.e",
+        "I.A.3.f"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 24
+    },
+    "MOD-D8-04": {
+      "etsTopicIds": [
+        "IV.A.1.e"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 36
+    },
+    "MOD-D8-05": {
+      "etsTopicIds": [
+        "IV.A.1.a",
+        "IV.A.1.b"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 0
+    },
+    "MOD-D9-01": {
+      "etsTopicIds": [
+        "IV.B.1.c",
+        "IV.B.1.a"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 24
+    },
+    "MOD-D9-02": {
+      "etsTopicIds": [
+        "IV.B.1.c",
+        "IV.B.1.a"
+      ],
+      "derivedFrom": "skill-fallback",
+      "routedQuestionCount": 21
+    },
+    "MOD-D9-03": {
+      "etsTopicIds": [
+        "I.A.3.d"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 23
+    },
+    "MOD-D9-04": {
+      "etsTopicIds": [
+        "I.A.1.a",
+        "I.A.1.c",
+        "I.A.2.i"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 50
+    },
+    "MOD-D9-05": {
+      "etsTopicIds": [
+        "IV.B.1.b",
+        "IV.B.1.d",
+        "IV.B.1.f"
+      ],
+      "derivedFrom": "routed",
+      "routedQuestionCount": 25
+    }
+  }
+}
