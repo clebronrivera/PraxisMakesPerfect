@@ -3,9 +3,11 @@
 // Source of truth: skill-metadata-v1.ts commonMisconceptions (human-authored).
 // ETH-01 bridge: legacy P3 skill maps to 5 v1 skills — LEG-S03 / LEG-S04 / LEG-S06 / LEG-S07 / NEW-10-EthicalProblemSolving
 // SAF-03 bridge: legacy P3 skill maps to PC-S01 (threat assessment)
-// All questionIds[] are empty pending distractor content authoring (0% valid coverage confirmed).
+// questionIds are backfilled below from misconceptionQuestionMap.json (distractor-belief overlap,
+// derive-misconception-questions.mjs) — provisional + SME-confirmable; entries with no match stay [].
 
 import { MisconceptionEntry, MisconceptionId, PatternId } from '../types/misconception';
+import misconceptionQuestionMap from './misconceptionQuestionMap.json';
 
 export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   // DBDM-S01: Reliability Types
@@ -912,3 +914,14 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   // Note: LEG-03 and DIV-05 both map to NEW-10-EducationLaw metadata.
   // Entries already added above under DIV-05. No duplication needed.
 ];
+
+// Backfill questionIds from the derived map (distractor-belief overlap; regenerate with
+// scripts/migrations/derive-misconception-questions.mjs). Kept in a separate file so re-derivation
+// never churns the entry literals above. Provisional + SME-confirmable; never read by scoring.
+{
+  const linked = (misconceptionQuestionMap as { misconceptions: Record<string, { questionIds: string[] }> }).misconceptions;
+  for (const entry of MISCONCEPTION_TAXONOMY) {
+    const ids = linked[entry.id]?.questionIds;
+    if (ids?.length) entry.questionIds = ids;
+  }
+}

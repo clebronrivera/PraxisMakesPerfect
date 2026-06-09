@@ -1,0 +1,513 @@
+{
+  "meta": {
+    "generatedBy": "scripts/migrations/derive-misconception-questions.mjs",
+    "source": "questions.json distractor_misconception beliefs ↔ misconception-taxonomy text (token overlap, skill-scoped)",
+    "method": "distractor-belief-overlap",
+    "threshold": 0.3,
+    "cap": 12,
+    "totalMisconceptions": 98,
+    "unmappableSkillMisconceptions": 10,
+    "covered": 59,
+    "questionsLinked": 191,
+    "note": "Provisional. Links a misconception to questions whose distractor beliefs express it (skill-matched). questionIds ordered by overlap score. SME-confirmable; never read by scoring."
+  },
+  "misconceptions": {
+    "MC-DBDM-S01-001": {
+      "questionIds": [
+        "PQ_PSY-02_13",
+        "PQ_PSY-02_19"
+      ],
+      "topScore": 0.5
+    },
+    "MC-DBDM-S01-002": {
+      "questionIds": [
+        "PQ_PSY-02_7",
+        "PQ_PSY-02_14",
+        "PQ_PSY-02_2",
+        "PQ_PSY-02_1",
+        "PQ_PSY-02_11",
+        "PQ_PSY-02_15",
+        "PQ_PSY-02_12",
+        "PQ_PSY-02_20",
+        "PQ_PSY-02_3",
+        "PQ_PSY-02_5",
+        "item_246"
+      ],
+      "topScore": 0.857
+    },
+    "MC-DBDM-S03-001": {
+      "questionIds": [
+        "PQ_PSY-01_1",
+        "PQ_PSY-01_15",
+        "PQ_PSY-01_2"
+      ],
+      "topScore": 0.667
+    },
+    "MC-DBDM-S03-003": {
+      "questionIds": [
+        "PQ_PSY-01_1",
+        "item_074",
+        "item_233",
+        "PQ_PSY-01_12",
+        "PQ_PSY-01_14",
+        "PQ_PSY-01_19",
+        "PQ_PSY-01_2",
+        "PQ_PSY-01_3",
+        "PQ_PSY-01_4",
+        "PQ_PSY-01_5",
+        "PQ_PSY-01_9"
+      ],
+      "topScore": 0.75
+    },
+    "MC-CC-S01-001": {
+      "questionIds": [
+        "PQ_CON-01_11",
+        "PQ_CON-01_18",
+        "item_204",
+        "item_205"
+      ],
+      "topScore": 0.333
+    },
+    "MC-CC-S01-002": {
+      "questionIds": [
+        "PQ_CON-01_9",
+        "PQ_CON-01_18",
+        "PQ_CON-01_3",
+        "item_003",
+        "item_205"
+      ],
+      "topScore": 0.5
+    },
+    "MC-LEG-S06-001": {
+      "questionIds": [
+        "PQ_ETH-02_20",
+        "item_213"
+      ],
+      "topScore": 0.375
+    },
+    "MC-LEG-S06-002": {
+      "questionIds": [
+        "item_010"
+      ],
+      "topScore": 0.375
+    },
+    "MC-NEW-10-EthicalProblemSolving-001": {
+      "questionIds": [
+        "PQ_ETH-01_7",
+        "item_212",
+        "PQ_ETH-01_1",
+        "PQ_ETH-01_16",
+        "PQ_ETH-01_20",
+        "item_044",
+        "item_215"
+      ],
+      "topScore": 0.5
+    },
+    "MC-NEW-10-EthicalProblemSolving-002": {
+      "questionIds": [
+        "PQ_ETH-01_15"
+      ],
+      "topScore": 0.375
+    },
+    "MC-PC-S01-001": {
+      "questionIds": [
+        "PQ_SAF-03_1",
+        "PQ_SAF-03_14",
+        "PQ_SAF-03_3",
+        "PQ_SAF-03_6",
+        "PQ_SAF-03_9"
+      ],
+      "topScore": 0.375
+    },
+    "MC-PC-S01-002": {
+      "questionIds": [
+        "PQ_SAF-03_1",
+        "PQ_SAF-03_16",
+        "PQ_SAF-03_18",
+        "PQ_SAF-03_8"
+      ],
+      "topScore": 0.429
+    },
+    "MC-NEW-3-AccommodationsModifications-001": {
+      "questionIds": [
+        "PQ_ACA-02_1",
+        "PQ_ACA-02_13",
+        "PQ_ACA-02_15",
+        "PQ_ACA-02_16",
+        "PQ_ACA-02_17",
+        "PQ_ACA-02_19"
+      ],
+      "topScore": 0.6
+    },
+    "MC-NEW-3-AccommodationsModifications-002": {
+      "questionIds": [
+        "PQ_ACA-02_14",
+        "PQ_ACA-02_3",
+        "PQ_ACA-02_8",
+        "item_009",
+        "item_199"
+      ],
+      "topScore": 0.5
+    },
+    "MC-NEW-3-MetacognitiveStrategies-002": {
+      "questionIds": [
+        "PQ_ACA-03_1",
+        "PQ_ACA-03_14",
+        "PQ_ACA-03_18",
+        "item_065"
+      ],
+      "topScore": 0.333
+    },
+    "MC-NEW-3-InstructionalHierarchy-001": {
+      "questionIds": [
+        "PQ_ACA-04_4"
+      ],
+      "topScore": 0.429
+    },
+    "MC-ACAD-S02-001": {
+      "questionIds": [
+        "PQ_ACA-07_13",
+        "PQ_ACA-07_3",
+        "PQ_ACA-07_4",
+        "PQ_ACA-07_5",
+        "PQ_ACA-07_6"
+      ],
+      "topScore": 0.333
+    },
+    "MC-ACAD-S02-002": {
+      "questionIds": [
+        "item_099"
+      ],
+      "topScore": 0.625
+    },
+    "MC-ACAD-S03-002": {
+      "questionIds": [
+        "PQ_ACA-08_20",
+        "PQ_ACA-08_4"
+      ],
+      "topScore": 0.5
+    },
+    "MC-NEW-3-AcademicProgressFactors-001": {
+      "questionIds": [
+        "PQ_ACA-09_17"
+      ],
+      "topScore": 0.429
+    },
+    "MC-DBDM-S10-001": {
+      "questionIds": [
+        "PQ_DBD-01_11",
+        "PQ_DBD-01_14",
+        "PQ_DBD-01_19",
+        "PQ_DBD-01_3",
+        "PQ_DBD-01_8"
+      ],
+      "topScore": 0.3
+    },
+    "MC-DBDM-S10-002": {
+      "questionIds": [
+        "item_133"
+      ],
+      "topScore": 0.375
+    },
+    "MC-NEW-1-IQvsAchievement-001": {
+      "questionIds": [
+        "item_043"
+      ],
+      "topScore": 0.6
+    },
+    "MC-NEW-1-IQvsAchievement-002": {
+      "questionIds": [
+        "item_043"
+      ],
+      "topScore": 0.667
+    },
+    "MC-MBH-S01-002": {
+      "questionIds": [
+        "item_146",
+        "PQ_DBD-06_10",
+        "PQ_DBD-06_14",
+        "PQ_DBD-06_18"
+      ],
+      "topScore": 0.571
+    },
+    "MC-MBH-S02-001": {
+      "questionIds": [
+        "PQ_DBD-07_12"
+      ],
+      "topScore": 0.4
+    },
+    "MC-DBDM-S08-002": {
+      "questionIds": [
+        "PQ_DBD-08_13",
+        "PQ_DBD-08_17",
+        "PQ_DBD-08_10",
+        "PQ_DBD-08_2",
+        "PQ_DBD-08_4",
+        "item_102"
+      ],
+      "topScore": 0.667
+    },
+    "MC-NEW-1-BackgroundInformation-001": {
+      "questionIds": [
+        "PQ_DBD-10_16"
+      ],
+      "topScore": 0.429
+    },
+    "MC-NEW-1-BackgroundInformation-002": {
+      "questionIds": [
+        "PQ_DBD-10_7",
+        "PQ_DBD-10_1",
+        "PQ_DBD-10_12",
+        "PQ_DBD-10_18",
+        "PQ_DBD-10_20",
+        "PQ_DBD-10_4",
+        "PQ_DBD-10_5"
+      ],
+      "topScore": 0.5
+    },
+    "MC-NEW-3-BioCulturalInfluences-001": {
+      "questionIds": [
+        "PQ_DIV-01_20",
+        "PQ_DIV-01_14",
+        "PQ_DIV-01_15",
+        "PQ_DIV-01_2",
+        "PQ_DIV-01_3"
+      ],
+      "topScore": 0.5
+    },
+    "MC-DIV-S01-002": {
+      "questionIds": [
+        "PQ_DIV-03_5"
+      ],
+      "topScore": 0.5
+    },
+    "MC-NEW-10-EducationLaw-001": {
+      "questionIds": [
+        "PQ_LEG-03_2",
+        "PQ_LEG-03_8"
+      ],
+      "topScore": 0.714
+    },
+    "MC-NEW-10-EducationLaw-002": {
+      "questionIds": [
+        "item_115"
+      ],
+      "topScore": 0.375
+    },
+    "MC-NEW-10-ProfessionalGrowth-001": {
+      "questionIds": [
+        "PQ_ETH-03_18",
+        "PQ_ETH-03_17",
+        "PQ_ETH-03_16",
+        "PQ_ETH-03_2",
+        "PQ_ETH-03_20",
+        "PQ_ETH-03_9"
+      ],
+      "topScore": 0.714
+    },
+    "MC-NEW-10-ProfessionalGrowth-002": {
+      "questionIds": [
+        "PQ_ETH-03_2",
+        "PQ_ETH-03_20",
+        "PQ_ETH-03_14"
+      ],
+      "topScore": 0.5
+    },
+    "MC-NEW-2-FamilyCollaboration-001": {
+      "questionIds": [
+        "PQ_FAM-02_19"
+      ],
+      "topScore": 0.429
+    },
+    "MC-NEW-7-InteragencyCollaboration-001": {
+      "questionIds": [
+        "PQ_FAM-03_11",
+        "PQ_FAM-03_19"
+      ],
+      "topScore": 0.375
+    },
+    "MC-NEW-7-InteragencyCollaboration-002": {
+      "questionIds": [
+        "PQ_FAM-03_11",
+        "PQ_FAM-03_12",
+        "PQ_FAM-03_15",
+        "PQ_FAM-03_2",
+        "PQ_FAM-03_7"
+      ],
+      "topScore": 0.429
+    },
+    "MC-NEW-10-RecordKeeping-001": {
+      "questionIds": [
+        "PQ_LEG-01_5",
+        "PQ_LEG-01_6",
+        "PQ_LEG-01_12",
+        "PQ_LEG-01_20",
+        "PQ_LEG-01_13",
+        "item_045",
+        "item_063",
+        "item_064"
+      ],
+      "topScore": 0.625
+    },
+    "MC-NEW-10-RecordKeeping-002": {
+      "questionIds": [
+        "PQ_LEG-01_18",
+        "PQ_LEG-01_3",
+        "item_209",
+        "PQ_LEG-01_12",
+        "PQ_LEG-01_2",
+        "PQ_LEG-01_4",
+        "PQ_LEG-01_9",
+        "item_012",
+        "PQ_LEG-01_1",
+        "PQ_LEG-01_10",
+        "PQ_LEG-01_11",
+        "PQ_LEG-01_13"
+      ],
+      "topScore": 0.625
+    },
+    "MC-LEG-S01-001": {
+      "questionIds": [
+        "PQ_LEG-04_8"
+      ],
+      "topScore": 0.333
+    },
+    "MC-LEG-S01-002": {
+      "questionIds": [
+        "PQ_LEG-04_6",
+        "PQ_LEG-04_15",
+        "PQ_LEG-04_7",
+        "item_226"
+      ],
+      "topScore": 1
+    },
+    "MC-NEW-4-GroupCounseling-001": {
+      "questionIds": [
+        "PQ_MBH-02_19",
+        "PQ_MBH-02_7",
+        "PQ_MBH-02_8"
+      ],
+      "topScore": 0.333
+    },
+    "MC-NEW-4-GroupCounseling-002": {
+      "questionIds": [
+        "PQ_MBH-02_6"
+      ],
+      "topScore": 0.333
+    },
+    "MC-NEW-4-Psychopathology-001": {
+      "questionIds": [
+        "item_161"
+      ],
+      "topScore": 0.333
+    },
+    "MC-NEW-4-MentalHealthImpact-002": {
+      "questionIds": [
+        "PQ_MBH-05_19"
+      ],
+      "topScore": 0.333
+    },
+    "MC-NEW-1-ProblemSolvingFramework-002": {
+      "questionIds": [
+        "PQ_PSY-03_19"
+      ],
+      "topScore": 0.333
+    },
+    "MC-DIV-S02-001": {
+      "questionIds": [
+        "PQ_PSY-04_4",
+        "PQ_PSY-04_2"
+      ],
+      "topScore": 0.444
+    },
+    "MC-DIV-S02-002": {
+      "questionIds": [
+        "PQ_PSY-04_17",
+        "PQ_PSY-04_6",
+        "item_026"
+      ],
+      "topScore": 0.333
+    },
+    "MC-NEW-9-ProgramEvaluation-002": {
+      "questionIds": [
+        "PQ_RES-02_10",
+        "PQ_RES-02_2",
+        "PQ_RES-02_20"
+      ],
+      "topScore": 0.429
+    },
+    "MC-RES-S01-002": {
+      "questionIds": [
+        "PQ_RES-03_6"
+      ],
+      "topScore": 0.375
+    },
+    "MC-SWP-S02-001": {
+      "questionIds": [
+        "PQ_SAF-01_1"
+      ],
+      "topScore": 0.5
+    },
+    "MC-SWP-S02-002": {
+      "questionIds": [
+        "PQ_SAF-01_13",
+        "PQ_SAF-01_11",
+        "PQ_SAF-01_15",
+        "PQ_SAF-01_18",
+        "item_027",
+        "item_150",
+        "item_181"
+      ],
+      "topScore": 0.5
+    },
+    "MC-PC-S02-002": {
+      "questionIds": [
+        "PQ_SAF-04_10",
+        "PQ_SAF-04_2",
+        "item_160",
+        "item_163"
+      ],
+      "topScore": 0.429
+    },
+    "MC-NEW-5-EducationalPolicies-001": {
+      "questionIds": [
+        "PQ_SWP-02_19",
+        "PQ_SWP-02_2",
+        "PQ_SWP-02_5",
+        "item_033",
+        "PQ_SWP-02_12",
+        "item_128",
+        "PQ_SWP-02_1",
+        "PQ_SWP-02_11",
+        "PQ_SWP-02_4",
+        "item_193"
+      ],
+      "topScore": 0.667
+    },
+    "MC-NEW-5-EducationalPolicies-002": {
+      "questionIds": [
+        "PQ_SWP-02_6"
+      ],
+      "topScore": 0.429
+    },
+    "MC-NEW-5-EBPImportance-001": {
+      "questionIds": [
+        "PQ_SWP-03_11",
+        "item_153"
+      ],
+      "topScore": 0.333
+    },
+    "MC-MBH-S05-002": {
+      "questionIds": [
+        "PQ_MBH-03_9"
+      ],
+      "topScore": 0.333
+    },
+    "MC-SWP-S01-001": {
+      "questionIds": [
+        "item_234"
+      ],
+      "topScore": 0.333
+    }
+  }
+}
