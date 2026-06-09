@@ -61,10 +61,11 @@ Domain (4)  →  Skill (45, the measured/scored unit)  →  Objective  →  cont
 - **`etsTopicIds`** on every module (`moduleEtsTopicMap.json`, derived from the verified tags) declares which objectives each lesson teaches — closing the question→objective→lesson loop for routing.
 - **`skillPrereqGraph.ts`** is re-keyed to the canonical 45 skills (16 phantom keys from the old taxonomy removed, 16 missing skills added, dangling edges repaired) and validated as an acyclic DAG. It orders the learning path (`getPrereqDepth`) and drives the "Do X first" unblocker. Edges are a provisional, SME-confirmable first pass.
 - **Misconception→question links** (`misconceptionQuestionMap.json`) backfill each misconception's `questionIds` (was 0%) by matching distractor beliefs to the misconception text, skill-scoped — 59/98 misconceptions now linked. Provisional, SME-confirmable.
+- **Exam-weight rollup** (`skillExamWeights.json`) gives each skill a blueprint-anchored exam weight — its official Praxis 5403 content-category weight (I 32% / II 23% / III 20% / IV 25%) split equally among the category's skills, normalized to mean 1. This drives `moduleCatalog` `priorityScore` (= examWeight × gap × learnability), replacing the old `SKILL_BLUEPRINT.slots` proxy.
 
 > **The skill stays the scored unit; objectives are descriptive only** (routing and diagnosis, not mastery math) — by design, even now that tags are verified. A boundary-guard test (`tests/objectiveBoundaryGuard.test.ts`) fails the build if any scoring/mastery/selection file imports the objective maps.
 
-**Future attachment points (reserved, not yet wired):** one consolidated vocabulary registry (the study-plan vocab still reads `skill-metadata-v1`) · objective→exam-weight rollup · framework/law registry · reusable case bank.
+**Future attachment points (reserved, not yet wired):** one consolidated vocabulary registry (the study-plan vocab still reads `skill-metadata-v1`) · framework/law registry · reusable case bank.
 
 > **Full plan:** the ideal model, connectivity rules, gap analysis, and authoring spec live in **`docs/CONTENT_ARCHITECTURE_AND_GAPS_2026-06-07.md`**; module-specific coverage in `docs/MODULE_CONTENT_GAP_2026-06-07.md`. Keep both in sync with this section as more wiring lands.
 

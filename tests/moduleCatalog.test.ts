@@ -11,9 +11,11 @@ import {
   type ModulePriorityConfig,
 } from '../src/utils/moduleCatalog';
 import { LEARNING_MODULES, getSkillForModule } from '../src/data/learningModules';
-import { SKILL_BLUEPRINT } from '../src/utils/assessment-builder';
+import skillExamWeights from '../src/data/skillExamWeights.json';
 
-// Use a real module so getSkillForModule resolves to a real skill in SKILL_BLUEPRINT.
+const SKILL_EXAM_WEIGHTS = (skillExamWeights as { skills: Record<string, { examWeight: number }> }).skills;
+
+// Use a real module so getSkillForModule resolves to a real skill.
 const MOD = LEARNING_MODULES.find(m => m.id === 'MOD-D2-01')!;
 const SKILL = getSkillForModule('MOD-D2-01')!; // 'CON-01'
 const cfg = DEFAULT_MODULE_PRIORITY_CONFIG;
@@ -64,10 +66,10 @@ describe('moduleCatalog — INVARIANT 2: learnability composite is clamped', () 
   });
 });
 
-describe('moduleCatalog — INVARIANT 3: examWeight === SKILL_BLUEPRINT slots (provisional)', () => {
-  it('uses slots for a known skill', () => {
+describe('moduleCatalog — INVARIANT 3: examWeight is the blueprint-anchored weight', () => {
+  it('uses skillExamWeights for a known skill', () => {
     const entry = buildModuleCatalog({ modules: [MOD], skillSignals: { [SKILL]: sig() } })[0];
-    expect(entry.examWeight).toBe(SKILL_BLUEPRINT[SKILL]!.slots);
+    expect(entry.examWeight).toBe(SKILL_EXAM_WEIGHTS[SKILL]!.examWeight);
   });
 
   it('falls back to defaultExamWeight for an unknown skill', () => {

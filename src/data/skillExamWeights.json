@@ -1,0 +1,293 @@
+{
+  "meta": {
+    "generatedBy": "scripts/migrations/derive-skill-exam-weights.mjs",
+    "source": "ETS Praxis 5403 Study Companion — Test at a Glance content-category weights (I 32%, II 23%, III 20%, IV 25%)",
+    "method": "category weight ÷ #skills-in-category, normalized to mean 1 across the 45 skills",
+    "categoryWeights": {
+      "I": 0.32,
+      "II": 0.23,
+      "III": 0.2,
+      "IV": 0.25
+    },
+    "skillsInCategory": {
+      "I": 13,
+      "II": 12,
+      "III": 8,
+      "IV": 12
+    },
+    "totalSkills": 45,
+    "note": "Blueprint-anchored relative exam weight per skill. Feeds moduleCatalog priorityScore (examWeight × gap × learnability) — ranking only, never mastery scoring. ETS does not publish below-category weights, so within a category skills are weighted equally."
+  },
+  "skills": {
+    "ACA-02": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "ACA-03": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "ACA-04": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "ACA-06": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "ACA-07": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "ACA-08": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "ACA-09": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "CON-01": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-01": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-03": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-05": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-06": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-07": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-08": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-09": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DBD-10": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "DEV-01": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "DIV-01": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "DIV-03": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "DIV-05": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "ETH-01": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "ETH-02": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "ETH-03": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "FAM-02": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    },
+    "FAM-03": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    },
+    "LEG-01": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "LEG-02": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "LEG-03": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "LEG-04": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "MBH-02": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "MBH-03": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "MBH-04": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "MBH-05": {
+      "examWeight": 0.863,
+      "category": "II",
+      "categoryWeightPct": 23,
+      "skillsInCategory": 12
+    },
+    "PSY-01": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "PSY-02": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "PSY-03": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "PSY-04": {
+      "examWeight": 1.108,
+      "category": "I",
+      "categoryWeightPct": 32,
+      "skillsInCategory": 13
+    },
+    "RES-02": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "RES-03": {
+      "examWeight": 0.937,
+      "category": "IV",
+      "categoryWeightPct": 25,
+      "skillsInCategory": 12
+    },
+    "SAF-01": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    },
+    "SAF-03": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    },
+    "SAF-04": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    },
+    "SWP-02": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    },
+    "SWP-03": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    },
+    "SWP-04": {
+      "examWeight": 1.125,
+      "category": "III",
+      "categoryWeightPct": 20,
+      "skillsInCategory": 8
+    }
+  }
+}

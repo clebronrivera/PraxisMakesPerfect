@@ -10,14 +10,16 @@
 //      `examWeight` and `learnability` must be independent of `score`.
 //   2. `learnability` is the CLAMPED composite [min,max] — it reorders within priority
 //      clusters but can never overpower `examWeight × gap`.
-//   3. `examWeight === SKILL_BLUEPRINT[skill].slots` — PROVISIONAL proxy, NOT a validated
-//      blueprint weight (plan §10: slots underweights e.g. Mental/Behavioral Health).
+//   3. `examWeight` is the blueprint-anchored weight from skillExamWeights.json (official
+//      Praxis 5403 content-category weights ÷ skills-in-category, mean 1) — NOT slots.
 //   4. All tuning constants live in `ModulePriorityConfig` — no inline magic numbers.
 
 import { getSkillForModule, getPrimaryModuleForSkill, type LearningModule } from '../data/learningModules';
 import { getSkillProficiency, type SkillProficiencyLevel } from './skillProficiency';
-import { SKILL_BLUEPRINT } from './assessment-builder';
+import skillExamWeights from '../data/skillExamWeights.json';
 import { getProgressSkillDefinition, getProgressDomainDefinition } from './progressTaxonomy';
+
+const SKILL_EXAM_WEIGHTS = (skillExamWeights as { skills: Record<string, { examWeight: number }> }).skills;
 
 export const DEMONSTRATING_THRESHOLD = 0.8;
 
@@ -86,7 +88,7 @@ export interface ModuleCatalogEntry {
   eligible: boolean; // gate (= !mastered), NOT the recommendation
   flagged: boolean;
   status: ModuleStatus;
-  examWeight: number; // = SKILL_BLUEPRINT slots (provisional)
+  examWeight: number; // blueprint-anchored (skillExamWeights.json), mean 1
   gapToThreshold: number; // the ONLY gap term
   learnability: number; // clamped composite
   priorityScore: number; // examWeight × gapToThreshold × learnability (0 if ineligible)
@@ -99,10 +101,12 @@ function clamp(x: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, x));
 }
 
-/** examWeight = per-skill blueprint slots. PROVISIONAL proxy (plan §10) — not validated
- *  as faithful to the exam blueprint; it underweights some high-stakes domains. */
+/** examWeight = blueprint-anchored relative exam weight (src/data/skillExamWeights.json):
+ *  the skill's official Praxis 5403 content-category weight (I 32% / II 23% / III 20% / IV 25%)
+ *  divided equally among that category's skills, normalized to mean 1. Replaces the old
+ *  SKILL_BLUEPRINT.slots proxy (slots = diagnostic question budget, not an exam weight). */
 export function examWeightForSkill(skillId: string, cfg: ModulePriorityConfig = DEFAULT_MODULE_PRIORITY_CONFIG): number {
-  return SKILL_BLUEPRINT[skillId]?.slots ?? cfg.defaultExamWeight;
+  return SKILL_EXAM_WEIGHTS[skillId]?.examWeight ?? cfg.defaultExamWeight;
 }
 
 /** The ONLY place gap/proficiency enters priorityScore. */
