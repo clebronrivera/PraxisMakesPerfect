@@ -18,6 +18,7 @@ intentionally **batched** (see Call 5).
 | Prereq DAG repair | `9cf8b89` | `skillPrereqGraph.ts` re-keyed to the 45 (phantoms removed, missing added, acyclic). **Edges provisional** → review (Call 1). |
 | Misconception `questionIds` | `2f2d3f0` | `misconceptionQuestionMap.json`; **59/98** misconceptions linked, 191 questions (distractor-belief overlap). |
 | Exam-weight rollup | `181e352` | `skillExamWeights.json`; blueprint-anchored (official ETS 5403 category weights). **Changes LIVE ranking** (Call 2). |
+| Pack 6 — anchor sign-off | TBD | All **10** cold-start anchors (`PQ_ACA-09_7/_1`, `PQ_DBD-10_1/_3`, `PQ_DIV-01_7/_1`, `PQ_DIV-05_6/_7`, `PQ_FAM-03_6/_1`) reviewed and `is_human_verified:true`. Bank: 250→**260** verified. |
 
 All four derive scripts regenerate their committed outputs **byte-identically** (verified 2026-06-09).
 Gate (types · colors · lint · 250 tests · build · runtime) green. Local == remote.
@@ -72,7 +73,7 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
 | **Pack 4 `etsTopicIds`** | 22/67 modules used the skill-fallback (no routed questions) — confirm against lesson content | SME |
 | **Misconception links** | 59/98 linked; spot-check precision of the distractor-overlap matches | SME |
 | **Exam weights** | LIVE ranking change; confirm blueprint-faithful is acceptable (Call 2) | Product |
-| **Pack 6 anchors** | 10 cold-start items still `is_human_verified:false` | SME |
+| ~~Pack 6 anchors~~ | ✅ Done (2026-06-10) | — |
 
 ---
 
@@ -84,13 +85,17 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
   re-key them to the 45, or accept as dead taxonomy rows.
 - **39/98 misconceptions still have no questions** (the 10 above + 29 whose belief text didn't surface
   in any distractor). A lower overlap threshold or SME tagging would raise this.
+- **Bank-wide key-placement bias** — 759/1150 items (66%) have B as the correct answer; DBD-10 is
+  100% B (20/20). Students who learn this pattern gain ~66% baseline regardless of knowledge. Needs
+  a key-rotation pass (shuffle options per item, update `correct_answers`) before any public release.
+  **Not a Pack 6 gate-blocker** (the 10 anchors are conceptually correct); fix in a separate pass.
 
 ---
 
 ## ⬜ Remaining work
 
 - **Content / SME (Coworker):** Pack 3 (deepen the 51-of-67 thin stubs), Pack 5 (framework registry —
-  shape locked above), Pack 6 (anchor sign-off). Updated coworker prompt below.
+  shape locked above). Pack 6 ✅ done. Updated coworker prompt below.
 - **Engineering (deferred):** vocab-registry consolidation (Call 4).
 - **Phase 3 (later, design doc):** exclusive modules for the 30 skills without one, question
   verification pass over machine-generated items, reusable case bank.
@@ -118,10 +123,7 @@ DO NOT re-run any seeder/derive script after hand-editing without checking PHASE
 first — the objective seeder refuses to clobber verified tags unless you pass --preserve-manual.
 
 YOUR PACKS (priority order):
-- Pack 6 (quick): sign off the 10 cold-start anchors in questions.json — PQ_ACA-09_7/_1,
-  PQ_DBD-10_1/_3, PQ_DIV-01_7/_1, PQ_DIV-05_6/_7, PQ_FAM-03_6/_1. Confirm each is a clear, fair,
-  entry-level item with one unambiguous answer; set is_human_verified:true (or swap to a better
-  item in the same skill, keeping >=2 foundational per skill).
+- Pack 6: ✅ DONE — all 10 cold-start anchors verified (is_human_verified:true). Skip.
 - Pack 5: author src/data/frameworkRegistry.ts using the EXACT schema in PHASE2_REVIEW_BACKLOG
   (Call 3). ~30-40 rows; seed SAF-03 (Tarasoff) and ACA-09 (504/ADA/IDEA-OHI) first. Tag each row
   to skillIds[] + etsTopicIds[]. Do NOT wire it into any scoring path. Flag the engineering session
