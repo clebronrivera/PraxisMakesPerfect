@@ -11,6 +11,7 @@ import {
   getQuestionChoiceText,
   getQuestionCorrectAnswers
 } from '../brain/question-analyzer';
+import { withShuffledOptions } from '../utils/optionShuffle';
 import { matchDistractorPattern } from '../brain/distractor-matcher';
 import { useEngine } from '../hooks/useEngine';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
@@ -164,6 +165,12 @@ export default function AdaptiveDiagnostic({
   });
 
   const currentQuestion = queue[currentIndex];
+  // Display-only: shuffle option order deterministically to defeat the bank's
+  // key-placement bias. All scoring/persistence still uses `currentQuestion`.
+  const displayQuestion = useMemo(
+    () => (currentQuestion ? withShuffledOptions(currentQuestion) : currentQuestion),
+    [currentQuestion]
+  );
   const [isSubmitted, setIsSubmitted] = useState(
     isResuming && savedSession!.responses.some(r => r.questionId === currentQuestion?.id)
   );
@@ -562,7 +569,7 @@ export default function AdaptiveDiagnostic({
       {!isPaused && (
         <div className={isSubmitted ? "opacity-50 pointer-events-none" : ""}>
           <QuestionCard
-            question={currentQuestion}
+            question={displayQuestion}
             selectedAnswers={selectedAnswers}
             onSelectAnswer={toggleAnswer}
             onSubmit={submitAnswer}
