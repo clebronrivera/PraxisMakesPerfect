@@ -1030,10 +1030,16 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'SAF-03',
     title: 'Confidentiality Limits: When to Breach and When Not To',
     sections: [
-      { type: 'paragraph', text: 'Confidentiality in counseling has specific, defined exceptions. A psychologist must breach confidentiality when there is a risk of harm to the student or others. The exceptions include:' },
-      { type: 'list', items: ['Suicidal ideation or self-harm with intent', 'Threats of violence toward a specific, identifiable person (duty to warn)', 'Disclosure of abuse (mandated reporting)', 'A court order'] },
-      { type: 'paragraph', text: "Confidentiality is NOT breached because a student reveals their sexual orientation, discusses interpersonal conflicts with no violence threat, or shares information that is uncomfortable but not dangerous. Always explain confidentiality limits at the very first meeting." },
-      { type: 'anchor', label: 'Exam rule', text: 'Disclosing that a student is gay is NOT a breach situation. Thoughts of minor self-harm (scratching) may require clinical judgment. A specific threat of physical violence against another student IS a breach situation.' },
+      { type: 'anchor', label: 'The four breach conditions', text: 'Breach confidentiality ONLY for: (1) imminent danger to self, (2) specific credible threat to an identifiable other (duty to warn), (3) abuse or neglect disclosure, (4) court order. Sexual orientation, interpersonal conflict, embarrassing disclosures — NOT breach situations.' },
+      { type: 'paragraph', text: 'Confidentiality in counseling has specific, defined exceptions. A psychologist must breach confidentiality when there is a risk of harm to the student or others. The exceptions include: suicidal ideation or self-harm with intent; threats of violence toward a specific, identifiable person (duty to warn); disclosure of abuse (mandated reporting); and a court order. Confidentiality is NOT breached because a student reveals their sexual orientation, discusses interpersonal conflicts with no violence threat, or shares information that is uncomfortable but not dangerous. Always explain confidentiality limits at the very first meeting — not after rapport is established, not when a concerning topic arises.' },
+      { type: 'paragraph', text: "Worked example: A 10th grader tells the school psychologist three things in a session: (1) 'I've been cutting myself to relieve stress — small cuts, no intention to die.' (2) 'I think I might be gay and I don't know how to tell my parents.' (3) 'I'm so angry at James that I want to punch him in the face.' Analysis: Disclosure 1 requires clinical assessment of intent and lethality — if the cutting is a coping behavior with no suicidal intent, it may not trigger a mandatory breach, but the psychologist documents a safety plan. Disclosure 2 — sexual orientation — is private information; breach here would be an ethical violation. Disclosure 3 is frustration-language, not a specific, credible threat to an identifiable person; no breach indicated, but the psychologist explores the conflict. Now change disclosure 3 to: 'I know where James lives and I'm going to hurt him tonight.' That crosses into specific, credible, and imminent — now duty-to-warn applies." },
+      { type: 'comparison', leftHeader: 'Situation', rightHeader: 'Action', rows: [
+        { left: 'Student expresses suicidal ideation with a plan and intent', right: 'Breach — imminent danger to self; conduct safety assessment; involve parents/guardians and administrator' },
+        { left: 'Student says "I feel like killing myself" in frustration with no intent', right: 'Assess carefully; document; no automatic breach — clinical judgment required' },
+        { left: 'Student threatens a specific identifiable person with a credible plan', right: 'Breach — duty to warn; notify the target, parents, and administration; document' },
+        { left: 'Student discloses sexual orientation, substance use, or family conflict (no violence)', right: 'Maintain confidentiality; address clinically; no breach' },
+        { left: 'Student discloses abuse or neglect by a caregiver', right: 'Mandated report — breach confidentiality and report to CPS/law enforcement immediately' },
+      ] },
     ],
   },
 
@@ -1132,8 +1138,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'SAF-01',
     title: 'PBIS: The NASP-Endorsed System-Wide Practice',
     sections: [
-      { type: 'paragraph', text: 'Positive Behavioral Interventions and Supports is the system-wide framework endorsed by NASP for promoting positive student behavior across an entire school. PBIS is proactive, data-driven, and tiered — it matches the intensity of support to the level of student need.' },
-      { type: 'paragraph', text: 'PBIS is explicitly endorsed by NASP. Tracking (grouping students by ability), zero tolerance (automatic severe punishment), and retention are not endorsed. When the question asks which school-wide practice NASP supports, PBIS is the answer.' },
+      { type: 'anchor', label: 'NASP endorsement — and what it excludes', text: "PBIS = NASP-endorsed. Zero tolerance, ability tracking, and retention = NOT endorsed. When a question asks which school-wide practice aligns with NASP's position, PBIS is the answer." },
+      { type: 'paragraph', text: 'Positive Behavioral Interventions and Supports is the system-wide framework endorsed by NASP for promoting positive student behavior across an entire school. PBIS is proactive, data-driven, and tiered — it matches the intensity of support to the level of student need. The three tiers mirror the MTSS model: Tier 1 (universal, all students), Tier 2 (targeted, ~15% of students), Tier 3 (intensive, ~5%). Interventions at every tier are selected using data, implemented with fidelity, and monitored for effectiveness.' },
+      { type: 'paragraph', text: "Worked example: Jefferson Elementary is implementing Tier 1 PBIS. The school psychologist leads the staff in identifying three positively stated school-wide expectations (Be Safe, Be Responsible, Be Kind). Staff are trained to notice and immediately acknowledge when students meet these expectations using specific verbal praise and a token system. Office discipline referrals (ODRs) are reviewed monthly by the PBIS team; when ODRs spike in the cafeteria, the team adds explicit teaching of cafeteria expectations and increases supervision in that setting. This is PBIS in action: positive, proactive, data-driven, and systemic." },
+      { type: 'comparison', leftHeader: 'PBIS (NASP-Endorsed)', rightHeader: 'Zero-Tolerance / Punitive Approaches', rows: [
+        { left: 'Proactively teaches behavioral expectations to ALL students', right: 'Reacts to misbehavior after it occurs; no universal skill-building' },
+        { left: 'Uses data (ODRs, suspension rates) to identify patterns and adjust the system', right: 'Relies on administrator judgment; inconsistent application across student groups' },
+        { left: 'Tiered response matches support intensity to need; students are not excluded', right: 'Automatic consequences regardless of function, severity, or student circumstances' },
+        { left: 'Shown to reduce discipline disparities and improve school climate', right: 'Associated with increased discipline disparities for minority and disabled students' },
+      ] },
       { type: 'anchor', label: 'PBIS core features (exam targets)', text: 'Clear, positively stated expectations • Consistent staff acknowledgment of expected behavior • Data used to make decisions • Tiered support system. Note: parent volunteering is a benefit but is NOT a core PBIS feature on the exam.' },
     ],
   },
@@ -1187,9 +1200,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DIV-03',
     title: 'Disproportionality: Group Membership and Unequal Outcomes',
     sections: [
-      { type: 'paragraph', text: 'Disproportionality refers to group differences in specific educational outcomes or in individuals\' risk for those outcomes based on group membership (race, ethnicity, socioeconomic status, language background, etc.). This is not about individual unfairness — it is about systemic patterns that affect entire groups at higher or lower rates than their proportion of the population.' },
-      { type: 'paragraph', text: 'The most common example in school psychology is disproportionate representation of minority students in special education, discipline, and gifted programs. NASP considers addressing disproportionality a core social justice obligation.' },
-      { type: 'anchor', label: 'Key distinction', text: "Disproportionality is not the same as 'racial privilege' (a sociological concept) or simply 'socioeconomic status.' It specifically refers to differential group outcomes or risk levels based on group membership. Know the definition precisely." },
+      { type: 'anchor', label: 'Precise definition', text: "Disproportionality = group differences in educational outcomes or risk levels based on group membership. It is NOT about individual bias, SES alone, or 'racial privilege' (a different concept). Know the definition as written." },
+      { type: 'paragraph', text: 'Disproportionality refers to group differences in specific educational outcomes or in individuals\' risk for those outcomes based on group membership (race, ethnicity, socioeconomic status, language background, etc.). This is not about individual unfairness — it is about systemic patterns that affect entire groups at higher or lower rates than their proportion of the population. The most common example in school psychology is disproportionate representation of minority students in special education, discipline, and gifted programs. NASP considers addressing disproportionality a core social justice obligation.' },
+      { type: 'paragraph', text: "Worked example: A district's student population is 20% Black students. If Black students represent 38% of all students placed in restrictive special-education settings, that is overrepresentation — disproportionality. If Black students represent only 7% of the district's gifted program despite being 20% of the student population, that is underrepresentation — also disproportionality. Neither pattern requires any single teacher or administrator to be intentionally racist. The pattern is systemic: it shows up in the data regardless of any individual's conscious intent. The school psychologist's role is to identify these patterns through data, surface them to the team, and advocate for systemic change." },
+      { type: 'comparison', leftHeader: 'Disproportionality', rightHeader: 'Related but distinct concepts', rows: [
+        { left: 'Group differences in outcomes or risk based on group membership (e.g., race, ethnicity)', right: 'Systemic racism: the structural policies and norms producing those inequitable outcomes' },
+        { left: 'Measured as a ratio: group % in a category vs. group % in the population', right: 'Implicit bias: unconscious attitudes affecting individual decisions' },
+        { left: 'Applies to special ed placement, discipline, gifted identification', right: 'Socioeconomic status: correlated with disproportionality but not the same concept' },
+        { left: 'A NASP social justice obligation to identify, name, and address', right: "Individual discrimination: a single person's prejudiced act; disproportionality is aggregate and systemic" },
+      ] },
     ],
   },
 
@@ -1325,9 +1344,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'FAM-02',
     title: 'Mandated Reporting: Your Personal Duty Cannot Be Delegated',
     sections: [
-      { type: 'paragraph', text: 'As a school psychologist, you are a mandated reporter. When you have reasonable suspicion of child abuse or neglect, you have a personal, non-delegable legal duty to report to police or child protective services (social services). Telling the principal or the school social worker is not sufficient to discharge your legal obligation.' },
-      { type: 'paragraph', text: 'You do not need proof — reasonable suspicion is enough. You do not need to investigate — that is the job of child protective services. You report; investigators investigate.' },
-      { type: 'anchor', label: 'Common misconception', text: 'Many new practitioners believe that reporting to their principal or school social worker fulfills the mandated reporter obligation. It does not. You must personally ensure a report is made to the appropriate legal authority (police or CPS), even if a colleague is also reporting.' },
+      { type: 'anchor', label: 'The non-delegable duty', text: 'Mandated reporting is PERSONAL. Telling the principal or school social worker does NOT discharge your legal obligation. You must personally ensure a report reaches police or CPS. Reasonable suspicion is enough — you do not investigate.' },
+      { type: 'paragraph', text: 'As a school psychologist, you are a mandated reporter. When you have reasonable suspicion of child abuse or neglect, you have a personal, non-delegable legal duty to report to police or child protective services (social services). Telling the principal or the school social worker is not sufficient to discharge your legal obligation. You do not need proof — reasonable suspicion is enough. You do not need to investigate — that is the job of child protective services. You report; investigators investigate.' },
+      { type: 'paragraph', text: "Worked example: During a counseling session, an 8-year-old student shows the school psychologist unexplained bruising on her arm and says her stepfather hit her with a belt. The psychologist immediately notifies the principal — who says she will handle it. Is the psychologist's legal duty fulfilled? No. The psychologist must personally call CPS and/or the police to report the suspected abuse. If the principal follows through and reports, the duty may be satisfied — but the psychologist cannot assume that without confirming. Best practice: the psychologist makes the report directly, informs the principal that a report was made, and documents the date, time, agency name, and report number. Many practitioners err by stopping at the principal's office and trusting the chain of command. The law does not share that trust: the duty is yours personally." },
+      { type: 'comparison', leftHeader: 'Mandated Reporting', rightHeader: 'What it is NOT', rows: [
+        { left: 'A personal, non-delegable legal duty', right: 'A duty that transfers to your supervisor or principal when you tell them' },
+        { left: 'Triggered by reasonable suspicion — no proof required', right: 'Dependent on certainty, investigation, or confirmation from multiple sources' },
+        { left: 'Report goes to police or CPS directly', right: 'Satisfied by telling a colleague, social worker, or administrator' },
+        { left: 'The psychologist documents the report: date, agency, report number', right: 'Optional or informal — documentation matters both legally and professionally' },
+      ] },
     ],
   },
 
@@ -1338,9 +1363,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'PSY-04',
     title: 'Testing ELL and Diverse Students: Caution and Cultural Humility',
     sections: [
-      { type: 'paragraph', text: 'When assessing students from diverse cultural backgrounds, standardized tests may underrepresent their true abilities due to cultural loading in test content, language demands, and norming samples that may not reflect the student\'s background.' },
-      { type: 'paragraph', text: "The correct approach is not to refuse to use standardized tests entirely — it is to interpret results cautiously and to supplement formal measures with informal, culturally responsive data. Use both formal and informal measures, use assessments normed on appropriate populations when available, and never make high-stakes decisions based on a single test score." },
-      { type: 'anchor', label: 'For English Language Learners specifically', text: "Use informal measures alongside appropriately normed standardized assessments. Interpreters should be proficient in both languages. Consider the student's developmental history, teacher data, and parent interviews. Use nonverbal tests as supplements when language is a confounding factor." },
+      { type: 'anchor', label: 'Core assessment principles', text: "Use both formal AND informal measures. Never make high-stakes decisions from a single test. For ELL students: supplement with nonverbal tests, use interpreters fluent in both languages, consider language history and developmental context." },
+      { type: 'paragraph', text: 'When assessing students from diverse cultural backgrounds, standardized tests may underrepresent their true abilities due to cultural loading in test content, language demands, and norming samples that may not reflect the student\'s background. The correct approach is not to refuse to use standardized tests entirely — it is to interpret results cautiously and to supplement formal measures with informal, culturally responsive data. Use both formal and informal measures, use assessments normed on appropriate populations when available, and never make high-stakes decisions based on a single test score.' },
+      { type: 'paragraph', text: "Worked example: A school psychologist is asked to evaluate Mei-Lin, a 9-year-old who immigrated from China two years ago and is now in 3rd grade. Teachers report she struggles academically. The psychologist cannot simply administer the standard WISC in English and interpret the scores at face value: Mei-Lin's English proficiency may confound the results, making cognitive scores an artifact of language acquisition rather than true cognitive ability. The evaluation plan should include: a nonverbal cognitive measure (e.g., UNIT) to assess intellectual functioning with minimal language demands; an English language proficiency assessment to understand where she is in second-language acquisition; a teacher interview gathering functional observations in both academic and social settings; and a parent interview (with an interpreter who is fluent in Mandarin, not just a bilingual aide) to gather developmental, school, and home-language history. The resulting report interprets test scores in the context of language acquisition and cultural background, and avoids conclusions about intellectual disability based solely on performance on a language-loaded English-language instrument." },
+      { type: 'comparison', leftHeader: 'Appropriate practice', rightHeader: 'Inappropriate practice', rows: [
+        { left: 'Multiple data sources: formal + informal + teacher + parent', right: 'Single standardized test score used as the primary basis for placement or diagnosis' },
+        { left: 'Nonverbal cognitive measures as supplements for ELL students', right: 'Standard verbal WISC administered and interpreted without accounting for language proficiency' },
+        { left: 'Interpreter fluent in the student\'s home language and English', right: 'Bilingual classroom aide used as an informal interpreter during testing' },
+        { left: 'Scores interpreted in the context of language development and cultural background', right: 'Scores compared to norms without considering that the student may not resemble the norming sample' },
+      ] },
     ],
   },
 
@@ -1371,9 +1402,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DIV-05',
     title: 'Intellectual Disability Evaluation: WISC + Vineland Required',
     sections: [
-      { type: 'paragraph', text: 'To identify an intellectual disability, school psychologists must gather two types of formal data: a cognitive assessment (measuring intellectual functioning) AND an adaptive behavior assessment (measuring practical, real-world functioning). Both domains must show significant deficits.' },
-      { type: 'paragraph', text: 'The most common assessment pairing is the WISC (cognitive) and the Vineland Adaptive Behavior Scales (adaptive functioning). The threshold for intellectual disability is typically a standard score at least 2 standard deviations below the mean on both instruments — approximately SS 69 or below on cognitive measures, with corresponding adaptive deficits.' },
-      { type: 'anchor', label: 'Legal and best-practice note', text: 'An ID determination requires deficits in BOTH cognitive functioning AND adaptive behavior. A low IQ score alone is insufficient. An adaptive behavior deficit alone is insufficient. Both must be present.' },
+      { type: 'anchor', label: 'The two-domain requirement', text: 'ID diagnosis requires significant deficits in BOTH intellectual functioning (e.g., WISC) AND adaptive behavior (e.g., Vineland). Low IQ alone is not sufficient. Adaptive deficits alone are not sufficient. Both must be present.' },
+      { type: 'paragraph', text: 'To identify an intellectual disability, school psychologists must gather two types of formal data: a cognitive assessment (measuring intellectual functioning) AND an adaptive behavior assessment (measuring practical, real-world functioning). Both domains must show significant deficits. The most common assessment pairing is the WISC (cognitive) and the Vineland Adaptive Behavior Scales (adaptive functioning). The threshold for intellectual disability is typically a standard score at least 2 standard deviations below the mean on both instruments — approximately SS 69 or below on cognitive measures, with corresponding adaptive deficits.' },
+      { type: 'paragraph', text: "Worked example: A school psychologist evaluates a 9-year-old referred for possible intellectual disability. The WISC Full Scale IQ is 65 (more than 2 SD below the mean of 100). The Vineland-3 Adaptive Behavior Composite is 85 — within normal limits. This student does NOT meet the criteria for intellectual disability: cognitive functioning is significantly impaired, but adaptive behavior is not. The psychologist considers other explanations: learning disability, specific cognitive profile, or language or environmental factors. Now reverse the picture: if the Vineland composite is 62 and the WISC is 105, that is also not ID. Adaptive deficits with intact cognitive ability point toward autism, trauma, or another diagnosis entirely." },
+      { type: 'comparison', leftHeader: 'Score pattern', rightHeader: 'Interpretation', rows: [
+        { left: 'WISC FSIQ ≤ 69 AND Vineland ≤ 69 (both ≥ 2 SD below mean)', right: 'Meets criteria for ID — both required domains show significant deficits' },
+        { left: 'WISC FSIQ ≤ 69, Vineland within normal limits', right: 'Does NOT meet ID criteria — explore LD, cognitive processing disorder, or environmental factors' },
+        { left: 'WISC FSIQ within normal limits, Vineland ≤ 69', right: 'Does NOT meet ID criteria — consider autism, trauma, or other adaptive impairment etiology' },
+        { left: 'Both scores borderline (70–75 range)', right: 'Clinical judgment required — look at confidence intervals, all composites, and real-world functioning' },
+      ] },
     ],
   },
 
@@ -1413,9 +1450,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'RES-03',
     title: 'Research Design Vocabulary: Experimental and Control Groups',
     sections: [
-      { type: 'paragraph', text: 'Research design questions are a consistent source of confusion. Here are the precise definitions:' },
-      { type: 'list', items: ['Experimental group: The group that receives the experimental treatment or condition being studied. They ARE exposed to the independent variable.', 'Control group: The group that does NOT receive the experimental treatment. They provide a comparison baseline.', "Independent variable: The variable the researcher manipulates (the treatment, intervention, or condition). It is NOT called the 'experimental variable.'", 'Dependent variable: The outcome that is measured — the effect of the independent variable.'] },
-      { type: 'anchor', label: 'Common confusion', text: "'Experimental group' and 'independent variable' are the terms that most often trip up test-takers. The experimental group is the one that gets the treatment. The independent variable is what the researcher changes. These are different things." },
+      { type: 'anchor', label: 'The most commonly confused terms', text: "Experimental group = gets the treatment. Control group = does not. Independent variable = what the researcher changes. Dependent variable = what is measured. The independent variable is NOT called the 'experimental variable.'" },
+      { type: 'paragraph', text: 'Research design questions are a consistent source of confusion because the same words mean different things in everyday speech and in research terminology. Here are the precise definitions: Experimental group — the group that receives the experimental treatment or condition being studied; they ARE exposed to the independent variable. Control group — the group that does NOT receive the experimental treatment; they provide a comparison baseline. Independent variable — the variable the researcher manipulates (the treatment, intervention, or condition). Dependent variable — the outcome that is measured, the effect of the independent variable.' },
+      { type: 'paragraph', text: "Worked example: A researcher wants to test whether a phonemic awareness intervention improves reading scores. She randomly assigns 30 first graders to two groups: 15 receive the phonemic awareness program 3 times per week for 8 weeks; 15 receive their regular reading instruction only. After 8 weeks, all students take a standardized reading assessment. In this study: the experimental group is the 15 students who received the phonemic awareness program; the control group is the 15 students who received only regular instruction; the independent variable is the phonemic awareness program (what the researcher changed); the dependent variable is the reading assessment score (what was measured). If asked on the exam, 'What is the independent variable in this study?' — the correct answer is the intervention, not 'the experimental group' (that's the group, not the variable)." },
+      { type: 'comparison', leftHeader: 'Term', rightHeader: 'Precise meaning', rows: [
+        { left: 'Experimental group', right: 'Receives the treatment; exposed to the independent variable' },
+        { left: 'Control group', right: 'No treatment; provides the baseline comparison' },
+        { left: 'Independent variable (IV)', right: 'What the researcher manipulates — the intervention, treatment, or condition' },
+        { left: 'Dependent variable (DV)', right: "What the researcher measures — the outcome; 'depends on' the IV" },
+      ] },
     ],
   },
 
@@ -1424,9 +1467,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'RES-03',
     title: 'Correlations: Negative Can Be Stronger Than Positive',
     sections: [
-      { type: 'paragraph', text: 'A correlation coefficient ranges from -1.00 to +1.00. The strength of a correlation is determined by its absolute value — how far from zero it is — not by its sign. A correlation of -0.98 indicates a nearly perfect relationship between two variables (as one increases, the other decreases almost perfectly).' },
-      { type: 'paragraph', text: 'This is a stronger correlation than +0.60, even though 0.60 is a positive number. Negative does not mean weak. In fact, -0.98 is one of the strongest possible correlations.' },
-      { type: 'comparison', leftHeader: 'Interpreting Correlations', rightHeader: 'Sign Meaning', rows: [{ left: 'Strong: |r| ≥ 0.70 • Moderate: 0.40–0.69 • Weak: < 0.40', right: "Positive: both variables move in the same direction. Negative: variables move in opposite directions. Neither is inherently 'better.'" }] },
+      { type: 'anchor', label: 'The core rule', text: 'Correlation strength = absolute value. A correlation of -0.82 is stronger than +0.45 because |-0.82| > |+0.45|. The sign tells you direction; the number tells you strength.' },
+      { type: 'paragraph', text: 'A correlation coefficient ranges from -1.00 to +1.00. The strength of a correlation is determined by its absolute value — how far from zero it is — not by its sign. A correlation of -0.98 indicates a nearly perfect relationship between two variables (as one increases, the other decreases almost perfectly). This is a stronger correlation than +0.60, even though 0.60 is a positive number. Negative does not mean weak. In fact, -0.98 is one of the strongest possible correlations.' },
+      { type: 'paragraph', text: "Worked example: A researcher studies elementary students and finds r = -0.82 between average nightly sleep and next-day discipline referrals — the more students sleep, the fewer referrals. A separate study finds r = +0.35 between attendance rate and end-of-year GPA. On an exam question asking 'which finding reflects a stronger relationship,' the answer is the sleep/referral finding. |-0.82| = 0.82; |+0.35| = 0.35. The negative correlation is the stronger one by a wide margin. When a test-taker crosses out the negative sign because 'negative means less,' they get the question wrong." },
+      { type: 'comparison', leftHeader: 'Strength (absolute value)', rightHeader: 'Direction (sign)', rows: [
+        { left: 'Strong: |r| ≥ 0.70', right: 'Positive (+): both variables increase together' },
+        { left: 'Moderate: |r| = 0.40–0.69', right: 'Negative (−): as one increases, the other decreases' },
+        { left: 'Weak: |r| < 0.40', right: "Neither sign is 'better' — direction is just information about the relationship" },
+        { left: 'Perfect: |r| = 1.00; Zero: r = 0.00 (no linear relationship)', right: 'Sign is independent of strength — a -0.95 and a +0.95 are equally strong' },
+      ] },
     ],
   },
 
@@ -1491,9 +1540,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'LEG-02',
     title: 'The Stay-Put Rule: Triggered by Due Process',
     sections: [
-      { type: 'paragraph', text: "The 'stay-put' rule (also called the educational placement protection) prevents a school from unilaterally changing a special education student's placement once a due process proceeding has been initiated. The student must remain in their current educational placement until the legal process is resolved." },
-      { type: 'paragraph', text: 'This rule is triggered by the initiation of due process — not by its completion, not by a suspension, and not by a manifestation determination. The moment due process begins, the student stays put.' },
-      { type: 'anchor', label: 'Honig v. Doe (1988)', text: 'This landmark Supreme Court case affirmed the stay-put rule and clarified that schools cannot unilaterally exclude special education students from school during disciplinary proceedings. It prevented a school district from excluding a student with a disability during ongoing disputes.' },
+      { type: 'anchor', label: 'The trigger', text: 'Stay-put activates the moment due process is FILED — not when it is resolved, not after a suspension, not after a manifestation determination. Filing = freeze placement.' },
+      { type: 'paragraph', text: "The 'stay-put' rule (also called educational placement protection) prevents a school from unilaterally changing a special education student's placement once a due process proceeding has been initiated. The student must remain in their current educational placement until the legal process is resolved. This rule is triggered by the initiation of due process — not by its completion, not by a suspension, and not by a manifestation determination. The moment due process begins, the student stays put." },
+      { type: 'paragraph', text: "Worked example: Marcus is a 7th grader with autism and an IEP placing him in a resource room for three periods per day. His parents disagree with the district's proposal to move him to a self-contained classroom. The parents file for due process on a Monday. On Tuesday, the district cannot implement the placement change — stay-put is now in effect. Marcus remains in the resource room placement until either (a) the parents agree to a change, or (b) the due process hearing officer or a court orders otherwise. The district may be frustrated; the rule still applies. This principle was affirmed in Honig v. Doe (1988), which extended it explicitly to disciplinary exclusions." },
+      { type: 'comparison', leftHeader: 'Stay-Put Rule', rightHeader: 'Manifestation Determination', rows: [
+        { left: 'Triggered by: filing for due process', right: 'Triggered by: a proposed disciplinary removal exceeding 10 school days' },
+        { left: 'Purpose: freezes the current educational placement while legal dispute is pending', right: 'Purpose: determines whether the conduct was caused by or related to the disability' },
+        { left: "Result: student remains in 'current educational placement' until dispute resolves", right: 'Result: if yes → return to IEP setting; if no → discipline as non-disabled peer (with FAPE continuing)' },
+        { left: 'Key case: Honig v. Doe (1988)', right: 'Legal basis: IDEA 2004, Section 615(k)' },
+      ] },
     ],
   },
 
@@ -1538,9 +1593,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'LEG-01',
     title: 'Parental Consent for Regular Education Students',
     sections: [
-      { type: 'paragraph', text: "When a school psychologist is asked to provide counseling or assessment services to a regular education student (one not currently identified for special education), written parental consent must be obtained before beginning. This is best practice and protects both the student's rights and the psychologist's professional standing." },
-      { type: 'paragraph', text: "The exception is a genuine crisis situation — when a student's immediate safety is at risk, a brief stabilizing intervention may be provided without prior consent. This exception is narrow and does not extend to ongoing counseling." },
-      { type: 'anchor', label: 'Confidentiality disclosure timing', text: 'The limitations of confidentiality must be explained to the student at the very first meeting — not after rapport is established, not near the end of sessions, and not only when providing informed consent to parents. First meeting, every time.' },
+      { type: 'anchor', label: 'The consent rule', text: 'Regular-ed student (no IEP): written parental consent BEFORE any assessment or ongoing counseling. Crisis exception is narrow — brief stabilization only, not ongoing services. Confidentiality limits: disclose at the FIRST meeting.' },
+      { type: 'paragraph', text: "When a school psychologist is asked to provide counseling or assessment services to a regular education student (one not currently identified for special education), written parental consent must be obtained before beginning. This is best practice and protects both the student's rights and the psychologist's professional standing. The exception is a genuine crisis situation — when a student's immediate safety is at risk, a brief stabilizing intervention may be provided without prior consent. This exception is narrow and does not extend to ongoing counseling." },
+      { type: 'paragraph', text: "Worked example: A 7th-grade teacher refers a student, Priya, to the school psychologist because she has been crying in class and seems withdrawn. Priya has no IEP or 504 plan. The school psychologist meets with Priya briefly to assess immediate safety — this is an initial check, not ongoing counseling, and no consent issue arises yet. The psychologist determines Priya is not in crisis; she is struggling with parental divorce and wants to talk to someone regularly. Before scheduling weekly counseling sessions, the psychologist sends home a parental consent form explaining the nature of the services, their purpose, and the limits of confidentiality. Only after receiving signed consent does the counseling series begin. At the first actual counseling session, the psychologist explains what is and is not confidential — again, to Priya directly." },
+      { type: 'comparison', leftHeader: 'Service type', rightHeader: 'Consent requirement', rows: [
+        { left: 'Ongoing counseling for a regular-ed student', right: 'Written parental consent required before services begin' },
+        { left: 'Brief crisis stabilization (immediate safety risk)', right: 'Crisis exception applies — brief stabilization can precede consent; consent obtained as soon as practicable' },
+        { left: 'Assessment of a regular-ed student', right: 'Written parental consent required before the evaluation begins' },
+        { left: 'Services for a student with an IEP (special ed)', right: 'Governed by IDEA consent procedures; different framework than regular-ed consent' },
+      ] },
     ],
   },
 
