@@ -271,8 +271,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DBD-06',
     title: 'Starting Broad: Why the BASC Comes First',
     sections: [
-      { type: 'paragraph', text: 'When a student presents with multiple concerns — withdrawal, sadness, AND anxiety — the correct starting tool is a broad-spectrum behavioral and emotional assessment. The Behavior Assessment System for Children (BASC) is the gold-standard choice because it captures a wide range of internalizing and externalizing concerns across multiple raters.' },
-      { type: 'paragraph', text: 'Narrow-band tools like the Beck Depression Inventory or the CDI-2 are valuable supplements, but they only measure one thing. Starting narrow risks missing the larger picture. The BASC opens the case; targeted tools deepen it.' },
+      { type: 'anchor', label: 'Start broad, then narrow', text: 'Multiple symptoms = BASC (or Conners, BRIEF) first — broad-spectrum tools capture internalizing AND externalizing across multiple raters. Single symptom = narrow-band tool is appropriate (CDI for depression, MASC for anxiety). Never start narrow when multiple concerns are present.' },
+      { type: 'paragraph', text: "When a student presents with multiple concerns — withdrawal, sadness, AND anxiety — the correct starting tool is a broad-spectrum behavioral and emotional assessment. The Behavior Assessment System for Children (BASC) is the gold-standard choice because it captures a wide range of internalizing and externalizing concerns across multiple raters (parent, teacher, and self-report). Narrow-band tools like the Beck Depression Inventory or the CDI-2 are valuable supplements, but they only measure one thing. Starting narrow risks missing the larger picture: a student who appears primarily anxious may also have significant depression that goes unassessed if only an anxiety scale is administered. The BASC opens the case; targeted tools deepen it." },
+      { type: 'paragraph', text: "Worked example: A middle school teacher refers a student who is 'just shutting down.' She cries sometimes, refuses to come to school on test days, and has been eating alone at lunch. The school psychologist designs the evaluation battery. Starting with the CDI (depression scale only) would miss the anxiety component. Starting with a social skills scale would miss both mood and anxiety. Starting with the BASC-3 (parent form, teacher form, and self-report) captures: internalizing concerns (anxiety, depression, withdrawal, somatization), externalizing concerns (conduct, aggression, attention problems), school problems, and functional communication. The BASC results show elevated Anxiety, Depression, and Withdrawal scores — and notably low Social Skills. Now the psychologist knows where to drill: she follows up with the MASC-2 (anxiety) and CDI-2 (depression) for diagnostic precision. The BASC told her what to look for next." },
+      { type: 'comparison', leftHeader: 'Broad-Spectrum Tool (BASC)', rightHeader: 'Narrow-Band Tool (CDI, MASC)', rows: [
+        { left: 'Captures wide range: internalizing, externalizing, adaptive behavior', right: 'Measures one domain in depth (e.g., depression only, anxiety only)' },
+        { left: 'Multiple rater forms: parent, teacher, self-report', right: 'Typically self-report or parent only; fewer rater perspectives' },
+        { left: 'Best when: multiple concerns, unknown profile, initial evaluation', right: 'Best when: single symptom focus, follow-up to broad screening, treatment monitoring' },
+        { left: 'Starting narrow risks missing comorbid conditions', right: 'Provides diagnostic precision but misses what it does not measure' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'click-selector',
@@ -284,7 +291,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           { id: 'beck-narrow', label: 'Beck Inventory (Narrow - Anxiety)', explanation: 'Useful for: Deep dive on one symptom, but starts too narrow when multiple concerns exist.' },
         ],
       },
-      { type: 'anchor', label: 'Clinical logic', text: 'Multiple symptoms = broad tool first. Single symptom = narrow tool may be appropriate. If a question lists anxiety AND depression AND withdrawal together, the answer is almost always the BASC.' },
     ],
   },
 
@@ -315,9 +321,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'PSY-03',
     title: 'MTSS Tiers: What Belongs at Tier 1 vs. Tier 3',
     sections: [
-      { type: 'paragraph', text: 'Tier 1 of the Multi-Tiered System of Supports is universal — it applies to ALL students. It emphasizes clear expectations, explicit and direct instruction, and corrective feedback for the entire school population. The defining feature of Tier 1 is its universal, preventive nature.' },
-      { type: 'paragraph', text: 'Tier 3 is intensive and individualized. When you see the word "intensive" or "specific students" in an answer choice about MTSS, that is a Tier 3 signal — it does not belong at Tier 1.' },
-      { type: 'comparison', leftHeader: 'Tier 1 (Universal)', rightHeader: 'Tier 3 (Intensive)', rows: [{ left: 'Clear learning expectations • Explicit/direct instruction • Corrective feedback • Evidence-based for all students', right: 'Evidence-based interventions aligned to intensive needs of specific students • Individualized plans • Frequent progress monitoring' }] },
+      { type: 'anchor', label: 'Tier 1 vs. Tier 3 signal words', text: "Tier 1 = UNIVERSAL (all students, preventive). Tier 2 = TARGETED (small groups at risk). Tier 3 = INTENSIVE (specific individual students). 'Intensive' or 'specific students' in an answer → Tier 3. 'All students' or 'school-wide' → Tier 1." },
+      { type: 'paragraph', text: "Tier 1 of the Multi-Tiered System of Supports is universal — it applies to ALL students. It emphasizes clear expectations, explicit and direct instruction, and corrective feedback for the entire school population. The defining feature of Tier 1 is its universal, preventive nature: it does not target particular students or address specific deficits. Tier 3 is intensive and individualized — it involves specialized, individualized intervention plans with frequent progress monitoring for students who have not responded adequately to Tier 1 and Tier 2 supports. When you see the word 'intensive' or 'specific students' in an answer choice about MTSS, that is a Tier 3 signal — it does not belong at Tier 1." },
+      { type: 'paragraph', text: "Worked example: An exam question presents four options for what should be included in a school's Tier 1 MTSS plan: (a) clear school-wide behavioral expectations and explicit reading instruction for all students, (b) weekly individual progress monitoring for students below benchmark, (c) intensive individualized intervention plans for students with chronic behavior issues, and (d) a data-based process for identifying students who need Tier 2 support. Option (a) is correct — universal, applies to all. Option (b) is Tier 2 territory (targeted, for at-risk students). Option (c) is Tier 3 (intensive, individualized). Option (d) is a cross-tier process, not a Tier 1 element. The exam frequently includes distractor options that sound school-wide but are actually about specific student populations." },
+      { type: 'comparison', leftHeader: 'Tier 1 (Universal)', rightHeader: 'Tier 3 (Intensive)', rows: [
+        { left: 'Applies to ALL students in the school', right: 'Applies to SPECIFIC students with the most significant needs (typically 1–5%)' },
+        { left: 'Core curriculum with explicit/direct instruction and corrective feedback', right: 'Individualized, evidence-based interventions matched to intensive needs' },
+        { left: 'Universal screening 3× per year to identify who needs more', right: 'Frequent (weekly or biweekly) progress monitoring per individual student' },
+        { left: 'Preventive — reduces number who need higher tiers', right: 'Responsive — intensive support for students Tiers 1 and 2 did not help adequately' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'scenario-sorter',
@@ -364,9 +376,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'PSY-02',
     title: 'Reliability and Validity: What the Numbers Mean',
     sections: [
-      { type: 'paragraph', text: 'Psychometric adequacy is judged by specific coefficient benchmarks. Test-retest reliability of 0.79 is acceptable but on the lower end of convention — most experts prefer 0.80 or higher. A convergent validity coefficient of 0.58 indicates only moderate association between the new test and the established one.' },
-      { type: 'paragraph', text: 'When validity is only moderate (below 0.70), practitioners should be cautious about recommending a new test solely on that basis. The correct answer frames this as a moderate relationship that is not strong enough to endorse the new test.' },
-      { type: 'comparison', leftHeader: 'Reliability (consistency)', rightHeader: 'Validity (accuracy)', rows: [{ left: 'Coefficient should be ≥0.80 ideally. A coefficient of 0.79 is acceptable but marginal. Measures whether the test gives consistent scores.', right: 'Coefficient of 0.70+ preferred. A coefficient of 0.58 is moderate — the new test is correlated with the old one, but not strongly enough to confidently replace it.' }] },
+      { type: 'anchor', label: 'The coefficient thresholds', text: 'Reliability preferred: ≥ 0.80. A coefficient of 0.79 = acceptable but marginal. Validity (convergent) preferred: ≥ 0.70. A coefficient of 0.58 = moderate — not strong enough to endorse the new test as a replacement.' },
+      { type: 'paragraph', text: "Psychometric adequacy is judged by specific coefficient benchmarks. Test-retest reliability of 0.79 is acceptable but on the lower end of convention — most experts prefer 0.80 or higher. A convergent validity coefficient of 0.58 indicates only moderate association between the new test and the established one. When validity is only moderate (below 0.70), practitioners should be cautious about recommending a new test solely on that basis. The correct answer frames this as a moderate relationship that is not strong enough to endorse the new test as a replacement for an established measure." },
+      { type: 'paragraph', text: "Worked example: A research team develops a new brief behavioral screening tool (BAS-3) and reports the following psychometric data: test-retest reliability = 0.79; convergent validity with the BASC-3 = 0.58. An exam question asks: 'What should a school psychologist conclude about the BAS-3?' The answer: the reliability is acceptable but on the lower end of the preferred range (0.80+), and the validity coefficient is moderate — it correlates with the BASC-3, but not strongly enough to replace it. The psychologist would be cautious about using the BAS-3 as a standalone diagnostic tool. If the question asks 'Is this test reliable?' — yes, marginally. 'Is this test valid enough to replace the BASC-3?' — no. 'Is this test worthless?' — no. The precise language matters on the exam." },
+      { type: 'comparison', leftHeader: 'Reliability (consistency)', rightHeader: 'Validity (accuracy)', rows: [
+        { left: 'Preferred: ≥ 0.80. Acceptable: 0.70–0.79. Below 0.70: questionable.', right: 'Convergent validity preferred: ≥ 0.70. Below 0.70: moderate, use cautiously.' },
+        { left: 'A coefficient of 0.79 = acceptable but marginal; most experts prefer higher', right: 'A coefficient of 0.58 = moderate — correlated, but not strongly enough to endorse or replace' },
+        { left: 'Measures consistency of scores across time or across items', right: 'Measures whether the test is actually capturing the construct it claims to measure' },
+        { left: 'Necessary but not sufficient for validity', right: 'Requires adequate reliability as a prerequisite' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'click-selector',
@@ -386,8 +404,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DBD-01',
     title: 'Curriculum-Based Measurement (CBM): Progress Tracking, Not Replacement',
     sections: [
-      { type: 'paragraph', text: 'A Curriculum-Based Measurement is a brief, repeatable assessment taken directly from a student\'s own curriculum materials. It measures how a student is progressing in basic academic skills over time — reading fluency, math computation, spelling.' },
-      { type: 'paragraph', text: 'CBMs supplement standardized testing; they do not replace it. They are local-norm referenced (compared to classmates or grade peers), not national norm referenced. A CBM reading probe uses a passage from the classroom\'s own reading program — not a nationally standardized passage.' },
+      { type: 'anchor', label: 'CBM supplements — never replaces', text: "CBM = brief, repeatable, curriculum-sourced probes that measure rate of improvement (ROI) over time using LOCAL norms (grade-level peers). Standardized testing measures status at a single point using NATIONAL norms. On the exam: if the question involves weekly probes, progress monitoring, or instructional decision-making mid-year, the answer involves CBM." },
+      { type: 'paragraph', text: "A Curriculum-Based Measurement is a brief, repeatable assessment taken directly from a student's own curriculum materials. It measures how a student is progressing in basic academic skills over time — reading fluency, math computation, spelling. CBMs supplement standardized testing; they do not replace it. They are local-norm referenced (compared to classmates or grade peers), not national norm referenced. A CBM reading probe uses a passage from the classroom's own reading program — not a nationally standardized passage. The defining feature of CBM is the rate of improvement — measured by giving the same type of probe every one to two weeks and graphing the slope of progress. If the slope is flat or declining, the intervention is changed." },
+      { type: 'paragraph', text: "Worked example: Marcus is a 2nd grader receiving Tier 2 reading intervention. His school psychologist administers one-minute oral reading fluency (ORF) probes from 2nd-grade passages every Wednesday. At Week 1 Marcus reads 42 words correct per minute (WCPM); by Week 8 he reads 61 WCPM — a slope of approximately 2.4 WCPM per week. The district benchmark for 2nd-grade mid-year is 72 WCPM. The psychologist plots Marcus's trajectory against the aimline from his baseline to the end-of-year goal (90 WCPM). Because his actual slope falls slightly below the aimline, the team adjusts the intervention intensity. This is CBM in action: not a snapshot of where Marcus is, but a live tracking tool that drives instructional decisions every two weeks." },
+      { type: 'comparison', leftHeader: 'CBM', rightHeader: 'Standardized Norm-Referenced Test', rows: [
+        { left: 'Brief (1–3 min), repeated weekly or biweekly', right: 'Long (45–90 min), administered once or twice per year' },
+        { left: 'Local norms — compared to grade peers in the same curriculum', right: 'National norms — compared to a standardization sample' },
+        { left: 'Measures rate of improvement (ROI) — slope over time matters', right: 'Measures status at one point in time' },
+        { left: 'Drives instructional decisions mid-intervention', right: 'Determines eligibility and diagnostic classification' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'scenario-sorter',
@@ -453,8 +478,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DBD-03',
     title: 'Matrices Subtests = Nonverbal / Fluid Reasoning',
     sections: [
-      { type: 'paragraph', text: 'Matrix Reasoning subtests (found on the WISC, DAS, and other cognitive batteries) require the student to identify a missing piece of a visual pattern — rows and columns of shapes, designs, or objects with a piece removed. The student must reason by induction and analogy to solve the pattern.' },
-      { type: 'paragraph', text: 'This is considered a measure of fluid reasoning (Gf) — the ability to solve novel problems without relying on previously learned facts. It is primarily a nonverbal task, though some verbal mediation may occur internally.' },
+      { type: 'anchor', label: 'The exam mapping', text: "Matrices = fluid reasoning (Gf) = nonverbal. 'Novel problem-solving without prior knowledge' → Gf → matrices. Found on WISC, DAS, Raven's Progressive Matrices, Stanford-Binet. No reading or language required." },
+      { type: 'paragraph', text: "Matrix Reasoning subtests require the student to identify a missing piece of a visual pattern — rows and columns of shapes, designs, or objects with a piece removed. The student must reason by induction and analogy to solve the pattern. This is considered a measure of fluid reasoning (Gf) — the ability to solve novel problems without relying on previously learned facts. It is primarily a nonverbal task, though some verbal mediation may occur internally. Fluid reasoning is distinguished from crystallized intelligence (Gc), which reflects accumulated knowledge and vocabulary. A student who has been under-schooled may have strong fluid reasoning but lower crystallized knowledge scores — matrices can reveal that hidden capacity." },
+      { type: 'paragraph', text: "Worked example: A school psychologist evaluates a 10-year-old who was recently resettled as a refugee and has had inconsistent schooling. Her WISC Verbal Comprehension Index (heavily language and knowledge dependent) is 72, but her Visual Spatial and Fluid Reasoning indexes are 105 and 108. The Matrix Reasoning subtest is one of the strongest scores in the battery. This profile is consistent with a student who has strong problem-solving capacity (high fluid reasoning, high matrices) but limited accumulated academic knowledge due to interrupted schooling — not a cognitive disability. Without the fluid reasoning data, the low verbal scores could be misinterpreted as indicating intellectual disability. Matrices are especially informative for students with limited English, inconsistent schooling, or cultural factors that may depress knowledge-based scores." },
+      { type: 'comparison', leftHeader: 'Fluid Reasoning (Gf) — Matrices', rightHeader: 'Crystallized Intelligence (Gc) — Vocabulary, Similarities', rows: [
+        { left: 'Solving novel visual patterns by induction and analogy', right: 'Retrieving and applying learned knowledge, vocabulary, and concepts' },
+        { left: 'Not dependent on prior learning; reflects raw problem-solving capacity', right: 'Reflects educational opportunity, language exposure, and cultural experience' },
+        { left: 'Less susceptible to educational disadvantage or language barriers', right: 'May underperform in ELL students or those with limited schooling' },
+        { left: 'Example tests: Matrix Reasoning (WISC), Raven\'s Progressive Matrices', right: 'Example tests: Vocabulary (WISC), Similarities (WISC), General Information (WJ)' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'card-flip',
@@ -483,7 +515,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           },
         ],
       },
-      { type: 'anchor', label: 'Memory anchor', text: "Matrices = patterns = nonverbal/fluid reasoning. If you see the word 'novel problem-solving,' think right hemisphere of the brain, fluid reasoning, and nonverbal." },
     ],
   },
 
@@ -655,9 +686,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'CON-01',
     title: 'Consultee-Centered Consultation: Building the Teacher, Not Solving the Problem',
     sections: [
-      { type: 'paragraph', text: "In a consultee-centered model, the goal is not just to fix one student's problem — it is to develop the consultee's (usually the teacher's) own skills and capacities so they can address similar situations independently in the future." },
-      { type: 'paragraph', text: 'This is different from a student-centered model (focused on the individual child) or a systems-level model (focused on the organization). When the question mentions building a teacher\'s skills or reducing dependence on the psychologist, consultee-centered is the answer.' },
-      { type: 'comparison', leftHeader: 'Consultee-Centered', rightHeader: 'Student-Centered', rows: [{ left: "Goal: build the teacher's capacity. Psychologist teaches skills and frameworks so the teacher can handle future cases independently.", right: "Goal: solve this specific student's problem. The psychologist focuses directly on assessment and intervention for the individual." }] },
+      { type: 'anchor', label: 'The capacity-building model', text: "Consultee-centered consultation = build the TEACHER'S skills, not just fix this student. Goal: teacher handles similar cases independently in the future, reducing dependence on the psychologist. Cue word: 'independence,' 'capacity,' 'reduce future dependence.'" },
+      { type: 'paragraph', text: "In a consultee-centered model, the goal is not just to fix one student's problem — it is to develop the consultee's (usually the teacher's) own skills and capacities so they can address similar situations independently in the future. This is different from a student-centered model (focused on the individual child) or a systems-level model (focused on the organization). When the question mentions building a teacher's skills or reducing dependence on the psychologist, consultee-centered is the answer." },
+      { type: 'paragraph', text: "Worked example: Mr. Torres has referred a student with anxiety-related school refusal. In a student-centered consultation, the school psychologist would assess the student, design an intervention, and track outcomes — the teacher's role is to implement the plan, not to develop new skills. In a consultee-centered consultation, the psychologist spends time teaching Mr. Torres: what school refusal anxiety looks like, how graduated exposure works, how to respond calmly to avoidance behaviors, and how to communicate with the family. After 3 sessions, Mr. Torres can recognize anxiety-driven avoidance in future students and apply the framework without calling the psychologist. One case became a professional development experience. The outcome: reduced future dependence and a more capable teacher." },
+      { type: 'comparison', leftHeader: 'Consultee-Centered', rightHeader: 'Student-Centered', rows: [
+        { left: "Primary beneficiary: the teacher (consultee) — builds their skills and conceptual framework", right: "Primary beneficiary: the specific student — the psychologist addresses the student's needs directly" },
+        { left: 'Goal: teacher can handle similar cases independently; lasting capacity gain', right: 'Goal: solve this student\'s immediate problem; does not necessarily build teacher capacity' },
+        { left: 'Cue: "reduce dependence," "build teacher capacity," "handle future cases independently"', right: 'Cue: "assess the student," "develop an intervention plan," "individual student outcomes"' },
+        { left: 'Psychologist teaches frameworks, not just prescriptions', right: 'Psychologist is the expert; teacher implements the prescriptions' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'click-selector',
@@ -730,8 +767,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'ACA-04',
     title: 'Evidence-Based Teaching: Explicit and Systematic Instruction',
     sections: [
-      { type: 'paragraph', text: 'Explicit and systematic instruction is the gold standard for teaching foundational academic skills, particularly reading and math. Explicit means skills are taught directly and clearly — nothing is left to be discovered by the student. Systematic means the instruction follows a deliberate sequence, building from simpler to more complex skills.' },
-      { type: 'paragraph', text: "'Drill and practice' has a place, but it is not a complete instructional approach. 'Implicit and direct' is not a valid educational term. 'Analysis and synthesis' describes thinking skills, not an instructional delivery method." },
+      { type: 'anchor', label: 'The two components', text: "Explicit = skills taught DIRECTLY and clearly (nothing discovered by accident). Systematic = follows a deliberate sequence from simpler to more complex. Together = the gold-standard for foundational reading and math. 'Drill and practice' alone is NOT explicit-and-systematic." },
+      { type: 'paragraph', text: "Explicit and systematic instruction is the gold standard for teaching foundational academic skills, particularly reading and math. Explicit means skills are taught directly and clearly — nothing is left to be discovered by the student. The teacher models, uses guided practice, provides immediate feedback, and confirms understanding before moving on. Systematic means the instruction follows a deliberate sequence, building from simpler to more complex skills — easier phonemes before harder ones, single-digit addition before multi-digit. 'Drill and practice' has a place, but it is not a complete instructional approach. 'Implicit and direct' is not a valid educational term. 'Analysis and synthesis' describes thinking skills, not an instructional delivery method." },
+      { type: 'paragraph', text: "Worked example: A 1st-grade teacher is introducing phonics. Under an explicit-and-systematic approach: she explicitly teaches that the letter 'b' makes the /b/ sound, models it, has students repeat it chorally, then provides guided practice with decodable words containing 'b' before asking students to practice independently. She does not ask students to 'notice' or 'discover' letter patterns in authentic text — that is an implicit approach that fails many beginning readers. The sequence is deliberate: consonants → short vowels → CVC words → blends → digraphs — always building on prior mastered skills. When a student is still struggling after this explicit, systematic instruction, that gap in response is meaningful data for an MTSS referral." },
+      { type: 'comparison', leftHeader: 'Explicit and Systematic', rightHeader: 'Implicit / Discovery-Based', rows: [
+        { left: 'Teacher directly models the target skill; nothing left to discover', right: 'Students infer rules through exposure to authentic text and patterns' },
+        { left: 'Deliberate scope and sequence: simpler skills taught before complex ones', right: 'Skills introduced as encountered in context; no predetermined sequence' },
+        { left: 'Strong evidence base, especially for at-risk readers and dyslexia', right: 'Less effective for foundational skills without explicit decoding instruction' },
+        { left: 'Immediate corrective feedback; guided practice before independent practice', right: 'Fewer structured error-correction routines; relies on self-discovery' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'click-selector',
@@ -744,7 +788,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           { id: 'analysis', label: 'Analysis and synthesis of complex texts', explanation: 'Describes higher-order thinking, not foundational instruction method.' },
         ],
       },
-      { type: 'anchor', label: 'Key terms to recognize', text: 'Direct instruction, explicit instruction, systematic instruction — these terms are interchangeable in this context and always represent the correct answer when asked about evidence-based teaching.' },
     ],
   },
 
@@ -1621,10 +1664,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'LEG-02',
     title: 'IDEA and Child Find: The Identification Mandate',
     sections: [
-      { type: 'paragraph', text: "The Individuals with Disabilities Education Act (IDEA) is the federal law that governs special education in the United States. Among its core provisions is Child Find — a mandate requiring all school districts to actively seek out and identify children with potential disabilities, even before a referral is made." },
-      { type: 'paragraph', text: 'IDEA also establishes the eligibility categories for special education, guarantees a free and appropriate public education (FAPE) to all eligible students, and requires placement in the least restrictive environment (LRE).' },
-      { type: 'comparison', leftHeader: 'IDEA', rightHeader: 'Section 504', rows: [{ left: 'Governs special education • Mandates Child Find (active identification) • Requires FAPE and LRE • Establishes 13 eligibility categories • Includes IEP requirements', right: 'Part of the Rehabilitation Act and ADA • Governs accommodations for disability • Parental complaints go to the Office for Civil Rights (OCR) • Does not require special education eligibility' }] },
-      { type: 'anchor', label: 'Section 504 and ADA supplement', text: '504 = civil rights law (access). IEP = special education law (specially designed instruction). A student can qualify for a 504 Plan without qualifying for special education. The ADAAA (2008) expanded the definition of disability — minor conditions may now qualify for 504 but NOT IDEA.' },
+      { type: 'anchor', label: 'Child Find is proactive', text: "IDEA's Child Find mandate requires districts to ACTIVELY SEEK OUT children with potential disabilities — not just wait for referrals. IDEA governs special education (FAPE + LRE + IEP). Section 504 governs accommodations (broader definition, no special ed required, complaints to OCR)." },
+      { type: 'paragraph', text: "The Individuals with Disabilities Education Act (IDEA) is the federal law that governs special education in the United States. Among its core provisions is Child Find — a mandate requiring all school districts to actively seek out and identify children with potential disabilities, even before a referral is made. IDEA also establishes the eligibility categories for special education (13 categories including SLD, OHI, autism, EBD, ID, and others), guarantees a free and appropriate public education (FAPE) to all eligible students, and requires placement in the least restrictive environment (LRE). FAPE was originally interpreted as 'some educational benefit' (Rowley, 1982), then raised to 'meaningful, appropriate progress' (Endrew F., 2017)." },
+      { type: 'paragraph', text: "Worked example: A school psychologist notices that a 7-year-old in a general-education classroom shows significant language delays and limited literacy progress after two months of Tier 2 intervention. No one has referred this child. Under IDEA's Child Find mandate, the district is obligated to initiate an evaluation — the obligation is not contingent on a parent request or a formal teacher referral. The psychologist brings the case to the student support team. A second scenario: the same student does not qualify for IDEA services (does not meet eligibility criteria under any of the 13 categories) but has ADHD that substantially limits the ability to concentrate and learn. That student may still qualify for a Section 504 accommodation plan, which requires a lower threshold (any physical or mental impairment that substantially limits a major life activity) and does not require special education eligibility." },
+      { type: 'comparison', leftHeader: 'IDEA', rightHeader: 'Section 504', rows: [
+        { left: 'Governs special education — specially designed instruction', right: 'Governs access and accommodations — not special education' },
+        { left: 'Mandates Child Find: district must proactively identify potential disabilities', right: 'No separate Child Find mandate; triggered by student need or parent request' },
+        { left: 'Requires FAPE, LRE, and an IEP for eligible students', right: 'Requires accommodations plan (504 plan); no IEP required' },
+        { left: '13 specific eligibility categories; stricter threshold', right: 'Broader disability definition; minor conditions may qualify (ADAAA 2008)' },
+      ] },
     ],
   },
 
@@ -1720,11 +1768,16 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'ETH-03',
     title: "NCSP Credential and NASP's Role",
     sections: [
-      { type: 'paragraph', text: 'The National Association of School Psychologists (NASP) is the primary professional organization for school psychologists in the United States. NASP is also the primary accreditation body for the Nationally Certified School Psychologist (NCSP) credential.' },
-      { type: 'paragraph', text: 'NASP sets professional standards, publishes ethical guidelines (Principles for Professional Ethics), advocates for the field, and provides professional development. The NCSP is a portable national credential recognized across states that do not have reciprocity agreements for state licensure.' },
+      { type: 'anchor', label: 'NASP and NCSP fast facts', text: "NASP = primary professional organization AND NCSP accreditor. NCSP = portable national credential (granted by NASP). State license = required to practice in that state. NASP supervision ratio = max 2 interns per supervisor. These are exam-tested facts." },
+      { type: 'paragraph', text: "The National Association of School Psychologists (NASP) is the primary professional organization for school psychologists in the United States. NASP is also the primary accreditation body for the Nationally Certified School Psychologist (NCSP) credential. NASP sets professional standards, publishes ethical guidelines (Principles for Professional Ethics), advocates for the field, and provides professional development. The NCSP is a portable national credential recognized across states that do not have reciprocity agreements for state licensure. Key distinction: the NCSP is granted by NASP (a professional organization); the state license or credential is granted by the state department of education or a licensing board. A practitioner may hold both, and holding the NCSP without a state credential does not authorize practice in a specific state." },
+      { type: 'paragraph', text: "Worked example: A school psychologist who earned the NCSP in Virginia accepts a position in Colorado, which does not have a reciprocity agreement with Virginia. The NCSP demonstrates a nationally recognized standard of preparation — but the psychologist still needs to apply for a Colorado state credential before practicing. The NCSP is not a substitute for the state license; it is a portable signal of competence that can support the application for state licensure and may allow practice under supervision while the application is processed. A second scenario: an exam question asks who grants the NCSP. The answer is NASP — not the state board, not the U.S. Department of Education." },
       { type: 'list', label: 'What NASP provides', items: ['The Principles for Professional Ethics — the field\'s ethical code', 'The NASP Practice Model — the framework of professional practice domains', 'Standards for Graduate Preparation of School Psychologists', 'The NCSP credential — a portable national certification', 'Advocacy, research, and continuing professional development'] },
-      { type: 'comparison', leftHeader: 'NCSP (national credential)', rightHeader: 'State credential / license', rows: [{ left: 'Granted by NASP', right: 'Granted by the state department of education or licensing board' }, { left: 'Portable — recognized across many states, useful where there is no reciprocity', right: 'Required to actually practice within that specific state' }, { left: 'Signals a nationally consistent standard of preparation', right: 'Requirements vary state to state' }] },
-      { type: 'anchor', label: 'Supervision ratio', text: 'NASP recommends that a qualified school psychologist supervise no more than two interns at one time. This is a specific, testable detail.' },
+      { type: 'comparison', leftHeader: 'NCSP (national credential)', rightHeader: 'State credential / license', rows: [
+        { left: 'Granted by NASP (the professional organization)', right: 'Granted by the state department of education or licensing board' },
+        { left: 'Portable — recognized across many states; useful where there is no state reciprocity', right: 'Required to actually practice within that specific state' },
+        { left: 'Demonstrates nationally consistent preparation standard', right: 'Requirements vary from state to state' },
+        { left: 'Does not substitute for state licensure', right: 'State license supersedes NCSP for authorization to practice' },
+      ] },
     ],
   },
 
