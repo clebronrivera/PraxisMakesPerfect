@@ -1,8 +1,12 @@
 // Stage 1: P3 skills — 8 of 8 P3 skills implemented, 26 entries.
-// Stage 2: Extended to all 45 progress skills — 98 entries across 48 unique metadata skills.
+// Stage 2: Extended to all 45 progress skills — 98 entries across 43 unique metadata skills.
 // Source of truth: skill-metadata-v1.ts commonMisconceptions (human-authored).
 // ETH-01 bridge: legacy P3 skill maps to 5 v1 skills — LEG-S03 / LEG-S04 / LEG-S06 / LEG-S07 / NEW-10-EthicalProblemSolving
 // SAF-03 bridge: legacy P3 skill maps to PC-S01 (threat assessment)
+// 2026-06-10 re-key: 10 entries sat on 5 metadata skills with no canonical progress-skill mapping
+//   (could never link questions). Re-keyed to mappable metadata ids so the skill-scoped derive can
+//   reach them: LEG-S03/S04/S07 → NEW-10-EthicalProblemSolving (ETH-01, per the bridge above);
+//   MBH-S03 → MBH-S02 (DBD-07, FBA); SWP-S04 → NEW-5-EBPImportance (SWP-03). Unique metadata skills 48→43.
 // questionIds are backfilled below from misconceptionQuestionMap.json (distractor-belief overlap,
 // derive-misconception-questions.mjs) — provisional + SME-confirmable; entries with no match stay [].
 
@@ -83,7 +87,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   // MBH-S03: Replacement Behaviors
   {
     id: 'MC-MBH-S03-001' as MisconceptionId,
-    skillId: 'MBH-S03',
+    skillId: 'MBH-S02', // re-keyed 2026-06-10 from orphan MBH-S03 → mappable to DBD-07 (FBA; replacement behavior matches function)
     text: 'Any socially appropriate behavior can replace a problem behavior regardless of its function',
     family: 'behavioral-science-reasoning',
     relatedPatternIds: ['function-mismatch' as PatternId, 'function-confusion' as PatternId],
@@ -91,7 +95,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   },
   {
     id: 'MC-MBH-S03-002' as MisconceptionId,
-    skillId: 'MBH-S03',
+    skillId: 'MBH-S02', // re-keyed 2026-06-10 from orphan MBH-S03 → mappable to DBD-07 (FBA; replacement behavior matches function)
     text: 'Replacement behaviors must look completely different from the problem behavior',
     family: 'behavioral-science-reasoning',
     relatedPatternIds: ['function-confusion' as PatternId, 'definition-error' as PatternId],
@@ -101,7 +105,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   // SWP-S04: Implementation Fidelity
   {
     id: 'MC-SWP-S04-001' as MisconceptionId,
-    skillId: 'SWP-S04',
+    skillId: 'NEW-5-EBPImportance', // re-keyed 2026-06-10 from orphan SWP-S04 → mappable to SWP-03 (implementation fidelity ∈ EBP)
     text: 'Implementation fidelity means teachers cannot make any adaptations to programs',
     family: 'instructional-procedural',
     relatedPatternIds: ['absolute-rules' as PatternId, 'definition-error' as PatternId],
@@ -109,7 +113,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   },
   {
     id: 'MC-SWP-S04-002' as MisconceptionId,
-    skillId: 'SWP-S04',
+    skillId: 'NEW-5-EBPImportance', // re-keyed 2026-06-10 from orphan SWP-S04 → mappable to SWP-03 (implementation fidelity ∈ EBP)
     text: 'Fidelity can be assumed if teachers completed initial training',
     family: 'instructional-procedural',
     relatedPatternIds: ['data-ignorance' as PatternId, 'incomplete-response' as PatternId],
@@ -139,7 +143,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   // LEG-S03: Confidentiality and Privilege
   {
     id: 'MC-LEG-S03-001' as MisconceptionId,
-    skillId: 'LEG-S03',
+    skillId: 'NEW-10-EthicalProblemSolving', // re-keyed 2026-06-10 from orphan LEG-S03 (ETH-01 bridge) → mappable to ETH-01
     text: 'Confidentiality must always be maintained regardless of safety risk',
     family: 'legal-ethical-boundary',
     relatedPatternIds: ['absolute-rules' as PatternId, 'legal-overreach' as PatternId],
@@ -147,7 +151,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   },
   {
     id: 'MC-LEG-S03-002' as MisconceptionId,
-    skillId: 'LEG-S03',
+    skillId: 'NEW-10-EthicalProblemSolving', // re-keyed 2026-06-10 from orphan LEG-S03 (ETH-01 bridge) → mappable to ETH-01
     text: 'Everything a student shares in a counseling session is automatically legally privileged',
     family: 'legal-ethical-boundary',
     relatedPatternIds: ['law-confusion' as PatternId, 'definition-error' as PatternId],
@@ -157,7 +161,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   // LEG-S04: Mandated Reporting
   {
     id: 'MC-LEG-S04-001' as MisconceptionId,
-    skillId: 'LEG-S04',
+    skillId: 'NEW-10-EthicalProblemSolving', // re-keyed 2026-06-10 from orphan LEG-S04 (ETH-01 bridge) → mappable to ETH-01
     text: 'Mandated reporters must be certain abuse has occurred before filing a report',
     family: 'legal-ethical-boundary',
     relatedPatternIds: ['absolute-rules' as PatternId, 'law-confusion' as PatternId],
@@ -165,7 +169,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   },
   {
     id: 'MC-LEG-S04-002' as MisconceptionId,
-    skillId: 'LEG-S04',
+    skillId: 'NEW-10-EthicalProblemSolving', // re-keyed 2026-06-10 from orphan LEG-S04 (ETH-01 bridge) → mappable to ETH-01
     text: 'School psychologists should investigate suspected abuse before reporting',
     family: 'legal-ethical-boundary',
     relatedPatternIds: ['sequence-error' as PatternId, 'role-confusion' as PatternId],
@@ -193,7 +197,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   // LEG-S07: Informed Consent and Minor Assent
   {
     id: 'MC-LEG-S07-001' as MisconceptionId,
-    skillId: 'LEG-S07',
+    skillId: 'NEW-10-EthicalProblemSolving', // re-keyed 2026-06-10 from orphan LEG-S07 (ETH-01 bridge) → mappable to ETH-01
     text: 'Any counseling interaction — including a brief safety check — requires formal parental consent',
     family: 'legal-ethical-boundary',
     relatedPatternIds: ['absolute-rules' as PatternId, 'law-confusion' as PatternId],
@@ -201,7 +205,7 @@ export const MISCONCEPTION_TAXONOMY: MisconceptionEntry[] = [
   },
   {
     id: 'MC-LEG-S07-002' as MisconceptionId,
-    skillId: 'LEG-S07',
+    skillId: 'NEW-10-EthicalProblemSolving', // re-keyed 2026-06-10 from orphan LEG-S07 (ETH-01 bridge) → mappable to ETH-01
     text: 'Students under 18 have no rights regarding their own mental health services',
     family: 'legal-ethical-boundary',
     relatedPatternIds: ['adult-criteria' as PatternId, 'law-confusion' as PatternId],

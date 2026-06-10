@@ -6,9 +6,9 @@
     "threshold": 0.3,
     "cap": 12,
     "totalMisconceptions": 98,
-    "unmappableSkillMisconceptions": 10,
-    "covered": 59,
-    "questionsLinked": 191,
+    "unmappableSkillMisconceptions": 0,
+    "covered": 66,
+    "questionsLinked": 206,
     "note": "Provisional. Links a misconception to questions whose distractor beliefs express it (skill-matched). questionIds ordered by overlap score. SME-confirmable; never read by scoring."
   },
   "misconceptions": {
@@ -59,6 +59,35 @@
       ],
       "topScore": 0.75
     },
+    "MC-MBH-S03-001": {
+      "questionIds": [
+        "PQ_DBD-07_2"
+      ],
+      "topScore": 0.375
+    },
+    "MC-MBH-S03-002": {
+      "questionIds": [
+        "PQ_DBD-07_14",
+        "PQ_DBD-07_4",
+        "PQ_DBD-07_20"
+      ],
+      "topScore": 0.444
+    },
+    "MC-SWP-S04-001": {
+      "questionIds": [
+        "PQ_SWP-03_12",
+        "PQ_SWP-03_18",
+        "PQ_SWP-03_5"
+      ],
+      "topScore": 0.333
+    },
+    "MC-SWP-S04-002": {
+      "questionIds": [
+        "PQ_SWP-03_9",
+        "PQ_SWP-03_18"
+      ],
+      "topScore": 0.5
+    },
     "MC-CC-S01-001": {
       "questionIds": [
         "PQ_CON-01_11",
@@ -78,6 +107,16 @@
       ],
       "topScore": 0.5
     },
+    "MC-LEG-S04-002": {
+      "questionIds": [
+        "item_079",
+        "item_084",
+        "PQ_ETH-01_1",
+        "item_044",
+        "item_081"
+      ],
+      "topScore": 0.667
+    },
     "MC-LEG-S06-001": {
       "questionIds": [
         "PQ_ETH-02_20",
@@ -91,11 +130,25 @@
       ],
       "topScore": 0.375
     },
+    "MC-LEG-S07-001": {
+      "questionIds": [
+        "PQ_ETH-01_10",
+        "item_047"
+      ],
+      "topScore": 0.455
+    },
+    "MC-LEG-S07-002": {
+      "questionIds": [
+        "PQ_ETH-01_16",
+        "item_031",
+        "item_154"
+      ],
+      "topScore": 0.375
+    },
     "MC-NEW-10-EthicalProblemSolving-001": {
       "questionIds": [
         "PQ_ETH-01_7",
         "item_212",
-        "PQ_ETH-01_1",
         "PQ_ETH-01_16",
         "PQ_ETH-01_20",
         "item_044",
