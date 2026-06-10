@@ -97,7 +97,7 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
 
 - ~~**Content / SME (Coworker):** Pack 3~~ ✅ done (2026-06-10) — all 67 modules deepened to ~400+ words, 6 batches, commits `6247253`→`e727eac`. Pack 6 ✅ done. Pack 5 ✅ done.
 - ~~**Engineering (follow-up):** Add `tests/frameworkRegistry.test.ts`~~ ✅ done (258 tests).
-- **Content review (SME):** `frameworkRegistry.ts` entries are accurate — spot-check the 8 case law citations and 6 statute entries before deploy.
+- ~~**Content review (SME):** `frameworkRegistry.ts` citations~~ ✅ done (2026-06-10, commit `65424ee`) — citation-accuracy pass over all 32 entries (8 case law + 16 statute/reg/ethics). Two objective errors fixed: FW-parc name ("Citizens"→"Children"), FW-pbis statute (`§1415(k)(5)`→`§1414(d)(3)(B)(i)`). All other citations verified accurate. **Substantive holdings/applicability text still merits an SME read**, but the citations themselves are now correct.
 - Updated coworker prompt below.
 - **Engineering (deferred):** vocab-registry consolidation (Call 4).
 - **Phase 3 (later, design doc):** exclusive modules for the 30 skills without one, question
