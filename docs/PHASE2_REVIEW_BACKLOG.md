@@ -19,7 +19,7 @@ intentionally **batched** (see Call 5).
 | Misconception `questionIds` | `2f2d3f0` | `misconceptionQuestionMap.json`; **59/98** misconceptions linked, 191 questions (distractor-belief overlap). |
 | Exam-weight rollup | `181e352` | `skillExamWeights.json`; blueprint-anchored (official ETS 5403 category weights). **Changes LIVE ranking** (Call 2). |
 | Pack 6 — anchor sign-off | `4a79cc0` | All **10** cold-start anchors (`PQ_ACA-09_7/_1`, `PQ_DBD-10_1/_3`, `PQ_DIV-01_7/_1`, `PQ_DIV-05_6/_7`, `PQ_FAM-03_6/_1`) reviewed and `is_human_verified:true`. Bank: 250→**260** verified. |
-| Pack 5 — framework registry | TBD | `src/data/frameworkRegistry.ts` — **32 entries**, **29/45** skills covered. Case law (Tarasoff, Rowley, Endrew F., Larry P., Diana, Honig, PARC, Florence County), statutes (IDEA×6, 504, ADA, FERPA, HIPAA/FERPA, McKinney-Vento, ESSA), ethics standards (confidentiality, consent, dual relationships, mandated reporting, records, beneficence), practice frameworks (MTSS, PBIS, FBA, NASP model, Child Find, 504-vs-IDEA, ED eligibility, placement continuum). Not wired to scoring. **TODO: add `tests/frameworkRegistry.test.ts`** (id uniqueness, canonical skillIds, etsTopicIds subset check). |
+| Pack 5 — framework registry | TBD | `src/data/frameworkRegistry.ts` — **32 entries**, **29/45** skills covered. Case law (Tarasoff, Rowley, Endrew F., Larry P., Diana, Honig, PARC, Florence County), statutes (IDEA×6, 504, ADA, FERPA, HIPAA/FERPA, McKinney-Vento, ESSA), ethics standards (confidentiality, consent, dual relationships, mandated reporting, records, beneficence), practice frameworks (MTSS, PBIS, FBA, NASP model, Child Find, 504-vs-IDEA, ED eligibility, placement continuum). Not wired to scoring. `tests/frameworkRegistry.test.ts` added (8 tests; 250→**258** total). |
 
 All four derive scripts regenerate their committed outputs **byte-identically** (verified 2026-06-09).
 Gate (types · colors · lint · 250 tests · build · runtime) green. Local == remote.
@@ -96,7 +96,7 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
 ## ⬜ Remaining work
 
 - **Content / SME (Coworker):** Pack 3 (deepen the 51-of-67 thin stubs). Pack 6 ✅ done. Pack 5 ✅ done.
-- **Engineering (follow-up):** Add `tests/frameworkRegistry.test.ts` (id uniqueness, canonical skillIds, etsTopicIds subset check).
+- ~~**Engineering (follow-up):** Add `tests/frameworkRegistry.test.ts`~~ ✅ done (258 tests).
 - **Content review (SME):** `frameworkRegistry.ts` entries are accurate — spot-check the 8 case law citations and 6 statute entries before deploy.
 - Updated coworker prompt below.
 - **Engineering (deferred):** vocab-registry consolidation (Call 4).
