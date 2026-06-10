@@ -62,13 +62,12 @@ item that tests it). Verdicts: **15 pass · 30 minor · 22 needs-fix.**
 **Verification caught 2 false alarms** (reviewer misreads; refuted): MOD-D1-07 percentile "doesn't
 exist" (it did — fixed above) and MOD-D9-02 correlation-table layout (facts are correct).
 
-### 🟡 Surfaced by the pass — not yet actioned
-- **Completeness gaps vs the Pack 3 spec** (the "all 67 ~400+ words" claim is optimistic):
-  - **Missing `interactive` block (28):** D4-03/06/07/08, D5-01/03/04, D6-01/02/04, D7-01/02,
-    D8-01/02/03/04, D9-01/02/03/04/05, D10-01/02/03/04/05/06/07 (domains 4–10 skew bare).
-  - **Missing `comparison` (4):** D1-07, D3-04, D4-10, D10-09.
-  - **Missing worked example (1):** D10-08.
-  - **Under ~380 words (16):** D5-01/02/03/04, D6-04, D7-01/02, D8-01/02/03/04, D9-01/02/04, D10-04/05.
+### 🟡 Surfaced by the pass
+- ~~**Completeness gaps vs the Pack 3 spec**~~ ✅ **CLOSED 2026-06-10 (commit `01545da`).** Parallel-
+  authored **49 sections across 34 modules** (28 interactive blocks, 4 comparisons, 1 worked example,
+  16 depth paragraphs), applied deterministically with a schema validator (0 warnings) + correctness
+  spot-checks of every keyed interactive. All 67 modules now carry an interactive + comparison + worked
+  example. 67 modules unchanged structurally (parity tests intact); gate green at 267 tests.
 - **Question-bank items to review (out of Pack-3 scope — touches answer keys):**
   - `item_062` (ETH-03): keyed answer calls NASP the "accreditation body for the NCSP credential" —
     real-world-imprecise (NCSP is *administered* via the NSPCB; *programs* are accredited).
