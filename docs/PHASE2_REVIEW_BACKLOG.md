@@ -86,11 +86,21 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
   re-key them to the 45, or accept as dead taxonomy rows.
 - **39/98 misconceptions still have no questions** (the 10 above + 29 whose belief text didn't surface
   in any distractor). A lower overlap threshold or SME tagging would raise this.
-- **Bank-wide key-placement bias** — 759/1150 items (66%) have B as the correct answer (A 9%, C 19%,
-  D 6%; **0 multi-select**, all A–D). Worst domains: DIV 84%, ETH 79%, SWP 73%. Students who learn
-  this pattern gain ~66% baseline regardless of knowledge. Needs correction before any public release.
-  **Not a Phase-2 deploy-gate** (conceptual content is correct); fix in a separate pass.
-  - **⚠️ Coupling re-scoped 2026-06-10 (this is NOT a clean shuffle).** A naive positional option-shuffle
+- ~~**Bank-wide key-placement bias**~~ ✅ **FIXED 2026-06-10 (render-time shuffle, commit `decef8e`).**
+  759/1150 items (66%) had B keyed-correct (DIV 84%, ETH 79%, SWP 73%; 0 multi-select, all A–D). The
+  three **assessment** surfaces (AdaptiveDiagnostic — primary new-user path — + Screener + Full)
+  rendered options in stored order, so the "always pick B" exploit was fully live there (practice
+  surfaces already shuffled). Fix = approach (b), render-only, **zero questions.json mutation**:
+  `src/utils/optionShuffle.ts` deterministically permutes display order per question id (FNV-1a →
+  mulberry32 → Fisher–Yates, rotate-on-identity guard); wired into the 3 surfaces via a memoized
+  `displayQuestion` passed only to `<QuestionCard>`. Canonical letters drive all scoring / `selected_answer`
+  / distractor lookup (unaffected); explanations already render content-first (`sanitizeFeedbackText`).
+  Result: displayed correct-answer slot is now **A 25.2 / B 22.5 / C 21.8 / D 23.5%** (E/F ~3%), down
+  from 66% B. `tests/optionShuffle.test.ts` (9 tests) locks it in. Gate green at 267 tests.
+  - **Optional consistency follow-up (not required):** PracticeSession + LearningPathModulePage +
+    Redemption still shuffle via `Math.random()` (non-deterministic, not reproducible for audit). They
+    already defeat the exploit, so this is cosmetic — could later be unified onto `optionShuffle.ts`.
+  - **Historical coupling analysis (why approach (a) was rejected):** A naive positional option-shuffle
     would silently corrupt three coupled layers: (1) **880** `CORRECT_Explanation` + **76** `rationale`
     fields contain literal letter references ("Option A", "answer C") that must be remapped — and a
     blind remap risks false positives ("Type A", "Plan B", "Tier B"); (2) per-option distractor metadata
