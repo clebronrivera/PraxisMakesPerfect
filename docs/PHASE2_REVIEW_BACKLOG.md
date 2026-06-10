@@ -86,10 +86,24 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
   re-key them to the 45, or accept as dead taxonomy rows.
 - **39/98 misconceptions still have no questions** (the 10 above + 29 whose belief text didn't surface
   in any distractor). A lower overlap threshold or SME tagging would raise this.
-- **Bank-wide key-placement bias** — 759/1150 items (66%) have B as the correct answer; DBD-10 is
-  100% B (20/20). Students who learn this pattern gain ~66% baseline regardless of knowledge. Needs
-  a key-rotation pass (shuffle options per item, update `correct_answers`) before any public release.
-  **Not a Pack 6 gate-blocker** (the 10 anchors are conceptually correct); fix in a separate pass.
+- **Bank-wide key-placement bias** — 759/1150 items (66%) have B as the correct answer (A 9%, C 19%,
+  D 6%; **0 multi-select**, all A–D). Worst domains: DIV 84%, ETH 79%, SWP 73%. Students who learn
+  this pattern gain ~66% baseline regardless of knowledge. Needs correction before any public release.
+  **Not a Phase-2 deploy-gate** (conceptual content is correct); fix in a separate pass.
+  - **⚠️ Coupling re-scoped 2026-06-10 (this is NOT a clean shuffle).** A naive positional option-shuffle
+    would silently corrupt three coupled layers: (1) **880** `CORRECT_Explanation` + **76** `rationale`
+    fields contain literal letter references ("Option A", "answer C") that must be remapped — and a
+    blind remap risks false positives ("Type A", "Plan B", "Tier B"); (2) per-option distractor metadata
+    (`distractor_tier_*`, `_error_type_*`, `_misconception_*`, `_skill_deficit_*` × A–F) must move in
+    lockstep with the option text; (3) `misconceptionQuestionMap.json` is questionId-keyed (NOT
+    letter-keyed) so it survives, but re-verify. **Three viable approaches — pick before building:**
+    (a) **mutate data + rewrite explanations** (highest risk; needs per-item verification or LLM rewrite
+    of the 880 explanations); (b) **randomize option order at render time**, keep stored letters fixed
+    (no data mutation, but the UI must display explanations by content not letter — touches render/
+    explanation logic); (c) **regenerate explanations** alongside the shuffle. Safety invariant for (a):
+    for each item the *set* of `(option_text, tier, error_type, misconception, skill_deficit)` tuples
+    must be identical before/after — only the letter assignment changes — and the correct answer's *text*
+    must be unchanged. Decision is the user's; do not start the mutation without an approach greenlight.
 
 ---
 
