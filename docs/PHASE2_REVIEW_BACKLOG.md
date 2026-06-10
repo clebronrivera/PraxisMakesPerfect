@@ -16,7 +16,7 @@ intentionally **batched** (see Call 5).
 | Seeder guard | `f86ddcb`,`a9283b2`,`829a6a2` | `--preserve-manual` keeps manual tags; a no-flag re-run now **refuses** when manual tags exist (`--force` to override). Pack-1 review queue emitted in the seed report. |
 | Pack 4 — module `etsTopicIds` | `1c29b32` | `moduleEtsTopicMap.json` (67 modules; 45 routed, 22 skill-fallback). |
 | Prereq DAG repair | `9cf8b89` | `skillPrereqGraph.ts` re-keyed to the 45 (phantoms removed, missing added, acyclic). **Edges provisional** → review (Call 1). |
-| Misconception `questionIds` | `2f2d3f0` | `misconceptionQuestionMap.json`; **59/98** misconceptions linked, 191 questions (distractor-belief overlap). |
+| Misconception `questionIds` | `2f2d3f0`, `d300ba7` | `misconceptionQuestionMap.json`; **66/98** misconceptions linked, 206 questions (distractor-belief overlap). Up from 59/98 after the 2026-06-10 orphan re-key (0 unmappable-skill). |
 | Exam-weight rollup | `181e352` | `skillExamWeights.json`; blueprint-anchored (official ETS 5403 category weights). **Changes LIVE ranking** (Call 2). |
 | Pack 6 — anchor sign-off | `4a79cc0` | All **10** cold-start anchors (`PQ_ACA-09_7/_1`, `PQ_DBD-10_1/_3`, `PQ_DIV-01_7/_1`, `PQ_DIV-05_6/_7`, `PQ_FAM-03_6/_1`) reviewed and `is_human_verified:true`. Bank: 250→**260** verified. |
 | Pack 5 — framework registry | TBD | `src/data/frameworkRegistry.ts` — **32 entries**, **29/45** skills covered. Case law (Tarasoff, Rowley, Endrew F., Larry P., Diana, Honig, PARC, Florence County), statutes (IDEA×6, 504, ADA, FERPA, HIPAA/FERPA, McKinney-Vento, ESSA), ethics standards (confidentiality, consent, dual relationships, mandated reporting, records, beneficence), practice frameworks (MTSS, PBIS, FBA, NASP model, Child Find, 504-vs-IDEA, ED eligibility, placement continuum). Not wired to scoring. `tests/frameworkRegistry.test.ts` added (8 tests; 250→**258** total). |
@@ -72,7 +72,7 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
 |---|---|---|
 | **Prereq edges** (`skillPrereqGraph.ts`) | provisional first pass; drives "Do X first" routing | SME |
 | **Pack 4 `etsTopicIds`** | 22/67 modules used the skill-fallback (no routed questions) — confirm against lesson content | SME |
-| **Misconception links** | 59/98 linked; spot-check precision of the distractor-overlap matches | SME |
+| **Misconception links** | 66/98 linked (post re-key); spot-check precision of the distractor-overlap matches + the LEG-S04→ETH-01 re-key home | SME |
 | **Exam weights** | LIVE ranking change; confirm blueprint-faithful is acceptable (Call 2) | Product |
 | ~~Pack 6 anchors~~ | ✅ Done (2026-06-10) | — |
 
@@ -80,12 +80,16 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
 
 ## 🧹 Data-hygiene residue (small, surfaced — not yet fixed)
 
-- **10 misconception entries are unmappable** — their metadata `skillId` (e.g. `MBH-S03`, legacy
-  `LEG-S0x` bridges) has no canonical progress-skill equivalent via `skillIdMap`, so they can never
-  link questions. Residue of the metadata↔progress ID fragmentation (design-doc theme). Decide:
-  re-key them to the 45, or accept as dead taxonomy rows.
-- **39/98 misconceptions still have no questions** (the 10 above + 29 whose belief text didn't surface
-  in any distractor). A lower overlap threshold or SME tagging would raise this.
+- ~~**10 misconception entries are unmappable**~~ ✅ **RE-KEYED 2026-06-10 (commit `d300ba7`).** The 5
+  orphan metadata skills (`LEG-S03/S04/S07`, `MBH-S03`, `SWP-S04`) were re-keyed to mappable ids —
+  LEG-S0x → `NEW-10-EthicalProblemSolving` (ETH-01, per the file's own "ETH-01 bridge" note), MBH-S03 →
+  `MBH-S02` (DBD-07/FBA), SWP-S04 → `NEW-5-EBPImportance` (SWP-03). Derive re-run: **0 unmappable-skill**.
+  **SME spot-check welcome** on the LEG-S04 (mandated reporting) home in particular — it followed the
+  documented ETH-01 bridge, but SAF-04/ETH-02 are also defensible.
+- ~~**39/98 misconceptions still have no questions**~~ → **now 32/98** after the re-key (coverage
+  59→**66/98**, 191→**206** question links). 7 of the 10 re-keyed entries recovered links; the
+  remaining gap is belief text that didn't surface in any distractor. A lower overlap threshold or SME
+  tagging would raise this further.
 - ~~**Bank-wide key-placement bias**~~ ✅ **FIXED 2026-06-10 (render-time shuffle, commit `decef8e`).**
   759/1150 items (66%) had B keyed-correct (DIV 84%, ETH 79%, SWP 73%; 0 multi-select, all A–D). The
   three **assessment** surfaces (AdaptiveDiagnostic — primary new-user path — + Screener + Full)
