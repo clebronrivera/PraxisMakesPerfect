@@ -152,7 +152,7 @@ export const frameworkRegistry: FrameworkEntry[] = [
 
   {
     id: 'FW-parc',
-    name: 'Pennsylvania Association for Retarded Citizens (PARC) v. Commonwealth of Pennsylvania',
+    name: 'Pennsylvania Association for Retarded Children (PARC) v. Commonwealth of Pennsylvania',
     citation: 'PARC v. Pennsylvania, 334 F. Supp. 1257 (E.D. Pa. 1971)',
     summary:
       'Established that children with intellectual disabilities have a constitutional right to a free public education. Schools cannot exclude students with intellectual disabilities from public schooling.',
@@ -423,7 +423,7 @@ export const frameworkRegistry: FrameworkEntry[] = [
     id: 'FW-pbis',
     name: 'Positive Behavioral Interventions and Supports (PBIS)',
     citation:
-      'IDEA 1997 and 2004, 20 U.S.C. § 1415(k)(5) (PBIS mandate for IEPs); ESSA 2015 (school climate provisions)',
+      'IDEA 1997 and 2004, 20 U.S.C. § 1414(d)(3)(B)(i) (IEP "special factors" — consider PBIS when behavior impedes learning); ESSA 2015 (school climate provisions)',
     summary:
       'PBIS is an evidence-based, tiered framework for improving school climate and reducing problem behavior through systematic teaching of prosocial behaviors, clear expectations, and data-driven decision-making.',
     keyHolding:
