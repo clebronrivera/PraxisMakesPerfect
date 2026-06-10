@@ -30,6 +30,55 @@ derive script. So Pack 3 (content-only edits) is safe; adding modules/skills req
 
 ---
 
+## 🔬 Pack 3 verification pass — 2026-06-10 (commit `e6cfc7b`)
+
+Multi-agent review of **all 67 modules** (17 reviewers + adversarial fact-check of every flagged
+claim; **every finding re-checked against `questions.json`** so a module is never desynced from the
+item that tests it). Verdicts: **15 pass · 30 minor · 22 needs-fix.**
+
+**8 factual errors fixed** (`e6cfc7b`, content-only, gate green at 267 tests):
+
+| Module | Sev | Fix |
+|---|---|---|
+| MOD-D1-04 | **critical** | "Beck Inventory (Narrow - Anxiety)" → **MASC-2**. BDI measures depression; module prose + `item_006` both key Beck=depression. |
+| MOD-D1-01 | major | FERPA anchor "Records Protected Always" → **"Rights and Privacy Act"** (matched its own prose). |
+| MOD-D1-01 | major | scenario s2 "test protocols & answer sheets → ALLOWED" (bank's NEW-10-TestSecurity keys inspect-yes/copy-no) → unambiguous inspect-and-review example. |
+| MOD-D1-07 | major | SS list "(85th–15th percentile)" → **"(16th–84th)"** (anchor/example were already right). |
+| MOD-D1-03 | minor | FBA trigger re-tied to the **manifestation determination** (IDEA §1415(k)(1)(F)). |
+| MOD-D2-03 | minor | DuFour PLC is **four** questions, not three (its own example already used Q4). Added Q4 to title/anchor/prose/comparison/interactive. |
+| MOD-D5-05 | major | **NREPP** discontinued 2018 → SAMHSA Evidence-Based Practices Resource Center (0 bank refs). |
+| MOD-D8-04 | major | "approximately SS 69" mislabeled the 2-SD point (=70) → **SS 70** + clinical-judgment qualifier. |
+| MOD-D10-07 | minor | "supervision ratio = max 2 interns" → **"NASP recommends no more than 2"** (matches `item_211`). |
+
+**2 flags left unchanged on purpose — validated against the bank (changing the module would desync it):**
+- **MOD-D9-05** "Dissemination → Adoption → Initial → Full" stages: matches the app's **cited source
+  (Forman & Tripptree, 2014)** and an item whose keyed explanation says *"Dissemination is the first
+  stage … linked to goodness of fit."* The reviewer's "should be NIRN/Exploration" was a framework
+  assumption, not an error.
+- **MOD-D10-07** NCSP "primary accreditation body" phrasing: matches `item_062`'s **keyed-correct
+  answer**. Real-world-imprecise (NCSP is administered by the NSPCB, not "accredited"), but fixing it
+  requires editing the **item**, not just the module → see surfaced items below.
+
+**Verification caught 2 false alarms** (reviewer misreads; refuted): MOD-D1-07 percentile "doesn't
+exist" (it did — fixed above) and MOD-D9-02 correlation-table layout (facts are correct).
+
+### 🟡 Surfaced by the pass — not yet actioned
+- **Completeness gaps vs the Pack 3 spec** (the "all 67 ~400+ words" claim is optimistic):
+  - **Missing `interactive` block (28):** D4-03/06/07/08, D5-01/03/04, D6-01/02/04, D7-01/02,
+    D8-01/02/03/04, D9-01/02/03/04/05, D10-01/02/03/04/05/06/07 (domains 4–10 skew bare).
+  - **Missing `comparison` (4):** D1-07, D3-04, D4-10, D10-09.
+  - **Missing worked example (1):** D10-08.
+  - **Under ~380 words (16):** D5-01/02/03/04, D6-04, D7-01/02, D8-01/02/03/04, D9-01/02/04, D10-04/05.
+- **Question-bank items to review (out of Pack-3 scope — touches answer keys):**
+  - `item_062` (ETH-03): keyed answer calls NASP the "accreditation body for the NCSP credential" —
+    real-world-imprecise (NCSP is *administered* via the NSPCB; *programs* are accredited).
+  - Implementation-stage framework is **internally mixed**: most items + MOD-D9-05 use Forman
+    "Dissemination," but a few items use NIRN "Exploration/Installation." Pick one framework bank-wide.
+- **~30 modules carry minor imprecision notes** (not fixed; low-severity wording). Full per-module
+  detail in the workflow output (`tasks/wr6c92y0v.output`).
+
+---
+
 ## 🟦 The five "calls" — decisions
 
 | # | Call | **Decision** | Why |
