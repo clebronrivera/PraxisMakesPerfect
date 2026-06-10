@@ -202,8 +202,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DBD-08',
     title: 'RTI Data: Universal Screening vs. Progress Monitoring',
     sections: [
-      { type: 'paragraph', text: 'Response to Intervention (RTI) runs on two specific data engines. Get these terms exactly right — the exam uses both and will offer plausible-sounding alternatives.' },
-      { type: 'comparison', leftHeader: 'Universal Screening', rightHeader: 'Progress Monitoring', rows: [{ left: 'A brief, low-cost assessment given to all students at the same time. Purpose: identify who may be at risk before problems become serious.', right: 'Frequent, repeated assessments on a specific skill for students already receiving intervention. Purpose: track whether the intervention is working.' }] },
+      { type: 'anchor', label: 'Critical distinction', text: "Universal screening = all students, one point in time, identifies risk. Progress monitoring = one student (or small group), repeated over time, tracks intervention response. 'Universal Monitoring' and 'Progress Screening' are not valid terms — eliminate them if you see them." },
+      { type: 'paragraph', text: "Response to Intervention (RTI) runs on two specific data engines. Universal screening is a brief, low-cost assessment given to all students at the same time — its purpose is to identify who may be at risk before problems become serious. Progress monitoring is a different tool entirely: frequent, repeated assessments on a specific skill for students already receiving intervention, used to track whether the intervention is working. Both are essential but they serve completely different functions." },
+      { type: 'paragraph', text: "Worked example: Lincoln Elementary screens all 3rd graders in September using a one-minute oral reading fluency (ORF) probe. The 14 students who score below the benchmark are flagged for Tier 2 support — this is universal screening in action. Three weeks later, those 14 students begin a small-group reading intervention. Every two weeks, each student completes a new ORF probe to track their rate of improvement against the aim line — this is progress monitoring. The screening told the team who needs help. The progress monitoring tells them whether the help is working." },
+      { type: 'comparison', leftHeader: 'Universal Screening', rightHeader: 'Progress Monitoring', rows: [
+        { left: 'Given to: ALL students simultaneously', right: 'Given to: individual students receiving intervention (or small groups)' },
+        { left: 'Frequency: 3 times per year (fall, winter, spring)', right: 'Frequency: every 1–2 weeks continuously' },
+        { left: 'Purpose: identify students at risk before problems escalate', right: 'Purpose: determine whether the intervention is producing expected growth' },
+        { left: 'Data use: populate Tier 2/3 intervention groups', right: 'Data use: inform intervention decisions (continue, intensify, or change)' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'term-matcher',
@@ -228,7 +235,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           },
         ],
       },
-      { type: 'anchor', label: 'The trap', text: 'Answer choices like "Universal Monitoring" or "Progress Screening" sound real but are not valid RTI terms. If you see either of those, eliminate them immediately.' },
     ],
   },
 
@@ -237,8 +243,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DBD-07',
     title: 'Functional Behavioral Assessment (FBA): Required First Step',
     sections: [
-      { type: 'paragraph', text: 'Before writing any formal behavior support plan, a school psychologist must conduct a Functional Behavioral Assessment. This is not optional — it is the legally expected and best-practice foundation for any individualized behavior plan.' },
-      { type: 'paragraph', text: 'An FBA identifies the ABCs of behavior: Antecedent (what triggers the behavior), Behavior (the specific observable action), and Consequence (what follows and may be maintaining it). Without understanding function, any intervention is a guess.' },
+      { type: 'anchor', label: 'The gatekeeping rule', text: 'FBA must come BEFORE any Behavior Intervention Plan (BIP). IDEA requires an FBA when a student with a disability has repeated discipline removals or is facing a change of placement for behavior. No FBA = no BIP.' },
+      { type: 'paragraph', text: 'Before writing any formal behavior support plan, a school psychologist must conduct a Functional Behavioral Assessment. This is not optional — it is the legally expected and best-practice foundation for any individualized behavior plan. An FBA identifies the ABCs of behavior: Antecedent (what triggers the behavior), Behavior (the specific observable action), and Consequence (what follows and may be maintaining it). Without understanding function, any intervention is a guess. A student may be disrupting class to escape difficult work (escape function) or to get peer attention (attention function) — these look identical on the surface but require completely different interventions.' },
+      { type: 'paragraph', text: "Worked example: Devon, a 5th grader with an IEP, frequently shouts out in math class and refuses to complete worksheets. The team wants to write a behavior plan. Before any plan can be written, the school psychologist conducts an FBA. She observes that Devon's outbursts cluster around multi-digit multiplication tasks (antecedent: academically demanding task beyond current skill level), the behavior is calling out and shoving worksheets away (behavior), and the consequence is that the teacher sends Devon to work alone at the back table — away from the task (consequence: task escape). Function = escape from academic frustration. The BIP built from this FBA targets the function directly: adjust the academic demand, pre-teach skills, provide a structured break request system. A generic 'be quiet' plan would have failed because it ignores the escape function." },
+      { type: 'comparison', leftHeader: 'FBA Component', rightHeader: 'Practical question it answers', rows: [
+        { left: 'Antecedent (A)', right: 'What happens immediately before the behavior? (time, task, setting, person, demand)' },
+        { left: 'Behavior (B)', right: 'What exactly does the student do? (observable, measurable, specific)' },
+        { left: 'Consequence (C)', right: 'What follows the behavior that may be reinforcing or maintaining it?' },
+        { left: 'Behavioral function (escape/attention/tangible/sensory)', right: 'Why is the student engaging in this behavior? What need does it serve?' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'drag-to-order',
@@ -250,7 +263,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           'Consequence: Determine what follows the behavior and maintains it',
         ],
       },
-      { type: 'anchor', label: 'Why the other answers fail', text: '"Social-emotional assessment" describes a different domain. "Executive function assessment" is a cognitive measure. "School psychology behavior evaluation" is not a standard term. Only FBA directly answers the question of behavioral function.' },
     ],
   },
 
@@ -724,8 +736,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'ACA-07',
     title: 'Reading Programs: Phonological Processing Comes First',
     sections: [
-      { type: 'paragraph', text: 'For beginning readers, the most research-supported foundation is phonological processing — the ability to hear, identify, and manipulate the sound structure of language. Phonemic awareness (awareness of individual sounds/phonemes) is the most critical early reading skill.' },
-      { type: 'paragraph', text: 'Programs that emphasize phonological processes outperform whole-language or meaning-based approaches in early reading development, particularly for students at risk for dyslexia.' },
+      { type: 'anchor', label: 'The foundation', text: 'Phonological processing is the bedrock of reading. Programs that build phonological awareness + phonics outperform whole-language or meaning-first approaches, especially for students at risk for dyslexia.' },
+      { type: 'paragraph', text: 'For beginning readers, the most research-supported foundation is phonological processing — the ability to hear, identify, and manipulate the sound structure of language. Phonemic awareness (awareness of individual sounds/phonemes) is the most critical early reading skill. Programs that emphasize phonological processes outperform whole-language or meaning-based approaches in early reading development, particularly for students at risk for dyslexia. The National Reading Panel (2000) identified five essential components of effective reading instruction: phonological awareness, phonics, fluency, vocabulary, and comprehension. Phonological awareness and phonics come first because reading is, at its core, a code-cracking system — students must learn that letters represent sounds before comprehension can develop.' },
+      { type: 'paragraph', text: "Worked example: A school is reviewing its Tier 1 reading curriculum after third-grade reading scores remain consistently below benchmark. The school psychologist consults the What Works Clearinghouse and the reading literature and finds that the current program is a balanced-literacy approach that emphasizes meaning-making and whole-text reading from the start. The evidence suggests this is insufficient for students who have not yet mastered phonological awareness. The psychologist recommends adding structured phonics instruction with explicit phoneme-grapheme mapping for all K-2 students, and intensive phonological awareness training as a Tier 2 support for students already at risk. For the student suspected of dyslexia specifically, a structured literacy program (e.g., Orton-Gillingham based) is recommended over a meaning-first approach." },
+      { type: 'comparison', leftHeader: 'Phonological/Structured Literacy Approach', rightHeader: 'Whole-Language / Balanced Literacy', rows: [
+        { left: 'Explicitly teaches phoneme-grapheme correspondence (letter-sound mapping)', right: 'Relies on exposure to text and context clues for decoding' },
+        { left: 'Systematic and sequential; builds from sounds → letters → words → text', right: 'Meaning-first; uses real books and context from the start' },
+        { left: 'Strong evidence base for at-risk and dyslexic readers (What Works Clearinghouse)', right: 'Less effective for students who lack phonological foundations' },
+        { left: 'NASP and IDA endorse structured literacy for struggling readers', right: 'Criticized by reading researchers for insufficient phonics focus' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'drag-to-order',
@@ -738,7 +757,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           'Comprehension: Understand and derive meaning from text (advanced)',
         ],
       },
-      { type: 'anchor', label: 'Dyslexia connection', text: 'The hallmark of dyslexia is a phonological processing deficit. Reading programs that target phonological awareness and phoneme-grapheme correspondence are the evidence-based first choice for struggling readers.' },
     ],
   },
 
@@ -1267,9 +1285,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'SAF-04',
     title: 'Suicide Contagion: The First Priority After a Student Death',
     sections: [
-      { type: 'paragraph', text: 'When a student dies by suicide, the immediate priority for school staff is planning to prevent contagion effects — the risk that other vulnerable students may be influenced toward suicidal behavior by exposure to news of the death. Before making announcements or providing direct support to classmates, key staff must be briefed to identify at-risk students.' },
-      { type: 'paragraph', text: 'A school-wide assembly about the suicide is strongly contraindicated. It glamorizes the event, increases exposure for sensitive students, and can inadvertently increase contagion risk. Instead, targeted support spaces and individual counseling are provided.' },
-      { type: 'comparison', leftHeader: 'Do', rightHeader: 'Do NOT', rows: [{ left: 'Discuss contagion risk with key staff first • Identify at-risk students • Provide in-school counseling spaces • Give verifiable facts without sensationalizing', right: 'Hold a school-wide assembly • Announce details over the intercom • Share extensive details about the method • Memorialize in ways that glamorize' }] },
+      { type: 'anchor', label: 'First priority = contagion prevention', text: 'After a student suicide, the FIRST action is briefing key staff on contagion risk and identifying vulnerable students — not making a school-wide announcement. A school-wide assembly is contraindicated.' },
+      { type: 'paragraph', text: 'When a student dies by suicide, the immediate priority for school staff is planning to prevent contagion effects — the risk that other vulnerable students may be influenced toward suicidal behavior by exposure to news of the death. Before making announcements or providing direct support to classmates, key staff must be briefed to identify at-risk students. A school-wide assembly about the suicide is strongly contraindicated: it glamorizes the event, increases exposure for sensitive students, and can inadvertently increase contagion risk. Instead, targeted support spaces and individual counseling are provided to students who are identified as potentially at-risk.' },
+      { type: 'paragraph', text: "Worked example: On a Monday morning, the school learns that a 10th-grade student died by suicide over the weekend. The principal's first instinct is to call an all-school assembly to announce the news and offer support. The school psychologist advises against this. Instead: the crisis team convenes before the school day begins; they identify students who were close to the deceased, students with known mental health risk factors, and students who are visibly distressed; they designate a quiet counseling room with trained staff; they prepare a brief factual statement to be read by homeroom teachers (not over the intercom); and they contact the student's family. The school does not share the method of suicide, does not hold a large memorial assembly, and does not post about the student on the school's social media. These safe-messaging practices reduce contagion risk." },
+      { type: 'comparison', leftHeader: 'Safe Messaging (Do)', rightHeader: 'Contraindicated Practices (Do NOT)', rows: [
+        { left: 'Brief key staff first; identify at-risk students before the school day', right: 'Hold a school-wide assembly that exposes all students simultaneously' },
+        { left: 'Provide a quiet, staffed counseling space for identified students', right: 'Announce details over the intercom to the full school population' },
+        { left: 'Release a factual, neutral statement through teachers (no method details)', right: 'Share method, location, or details that could enable imitation' },
+        { left: 'Contact the student\'s family; coordinate with mental health providers', right: 'Create social media posts or memorials that glamorize or romanticize the death' },
+      ] },
     ],
   },
 
@@ -1380,9 +1404,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DBD-03',
     title: 'The Universal Nonverbal Intelligence Test (UNIT) for Special Populations',
     sections: [
-      { type: 'paragraph', text: 'When assessing a student who is deaf, hard of hearing, or a non-English speaker, standard verbal cognitive batteries are inappropriate as primary tools because they conflate language ability with intelligence. The Universal Nonverbal Intelligence Test (UNIT) was designed specifically for these populations.' },
-      { type: 'paragraph', text: 'The UNIT uses entirely nonverbal administration (no oral language required for instructions or responses) and is normed on diverse populations. When combined with other measures, it provides the most valid cognitive assessment for students who cannot be fairly assessed with verbal-heavy batteries.' },
-      { type: 'comparison', leftHeader: 'Best for deaf / ELL students', rightHeader: 'Less appropriate as primary tools', rows: [{ left: 'Universal Nonverbal Intelligence Test (UNIT) • Nonverbal scales of the DAS • Leiter International Performance Scale', right: 'WISC with an interpreter (language still confounds) • Stanford-Binet (verbally loaded) • Standard WISC full scale' }] },
+      { type: 'anchor', label: 'The instrument of choice', text: "For deaf, hard-of-hearing, or non-English-speaking students: UNIT (or Leiter) is the appropriate primary cognitive tool. The WISC administered 'with an interpreter' still confounds language ability with intelligence — using it as the primary measure risks an invalid and discriminatory evaluation." },
+      { type: 'paragraph', text: 'When assessing a student who is deaf, hard of hearing, or a non-English speaker, standard verbal cognitive batteries are inappropriate as primary tools because they conflate language ability with intelligence. The Universal Nonverbal Intelligence Test (UNIT) was designed specifically for these populations. The UNIT uses entirely nonverbal administration — no oral language is required for either instructions or responses — and is normed on diverse populations including students with hearing impairments and language differences. When combined with other measures, it provides the most valid cognitive assessment for students who cannot be fairly assessed with verbal-heavy batteries.' },
+      { type: 'paragraph', text: "Worked example: Kenji is a 7-year-old who was born deaf and uses American Sign Language as his primary language. He has been referred for a cognitive evaluation because his academic progress in a school-for-the-deaf setting has been significantly below his grade-level cohort. The school psychologist selects the UNIT as the primary cognitive measure — it requires no spoken language for instructions or responses, and its norms include children with hearing impairments. Using the WISC as the primary measure, even with a sign interpreter, would confound two things: Kenji's cognitive processing ability and his specific ASL vocabulary and linguistic conventions, which differ from spoken English. The UNIT separates those factors out. Additional measures include teacher rating scales, portfolio samples, and observations — all interpreted in the context of Kenji's language background and educational history." },
+      { type: 'comparison', leftHeader: 'Appropriate primary tools for deaf / ELL students', rightHeader: 'Less appropriate as the primary cognitive tool', rows: [
+        { left: 'Universal Nonverbal Intelligence Test (UNIT)', right: 'WISC with an interpreter (language still confounds results)' },
+        { left: 'Leiter International Performance Scale (nonverbal, cross-cultural)', right: 'Stanford-Binet (highly verbally loaded)' },
+        { left: 'Nonverbal Index of the DAS-II or RIAS-2', right: 'Standard WISC Full Scale IQ as the sole data point' },
+        { left: 'Combined with informal, teacher, and parent data in a comprehensive evaluation', right: 'Any single test score without contextual interpretation' },
+      ] },
     ],
   },
 
@@ -1391,9 +1421,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'PSY-04',
     title: 'Systemic Racism and Disproportionality: Know the Vocabulary',
     sections: [
-      { type: 'paragraph', text: 'NASP and the broader school psychology field use specific terminology to discuss equity and justice. These terms appear on the exam with their precise meanings:' },
-      { type: 'list', items: ['Systemic racism: Structural and institutional policies, practices, and norms that produce racially inequitable outcomes, regardless of individual intent.', 'Disproportionality: Group differences in educational outcomes or risk levels based on group membership. The most studied form is the overrepresentation of Black and Indigenous students in special education and school discipline.', 'Implicit bias: Unconscious attitudes or stereotypes that affect decisions and behaviors without conscious awareness.', 'Explicit bias: Conscious and deliberate prejudice.'] },
-      { type: 'anchor', label: 'Exam targeting', text: "When a question uses the word 'injustice' in the context of school-based disparities, systemic racism is the most aligned term. When a question describes unequal group outcomes in special education or discipline, disproportionality is the target answer." },
+      { type: 'anchor', label: 'Exam vocabulary map', text: "School-based injustice or structural inequity → systemic racism. Unequal group outcomes in special ed or discipline → disproportionality. Unconscious attitudes affecting behavior → implicit bias. Deliberate prejudice → explicit bias. Precise definitions are tested." },
+      { type: 'paragraph', text: 'NASP and the broader school psychology field use specific terminology to discuss equity and justice. These terms appear on the exam with their precise meanings: Systemic racism — structural and institutional policies, practices, and norms that produce racially inequitable outcomes, regardless of individual intent. Disproportionality — group differences in educational outcomes or risk levels based on group membership; the most studied form is the overrepresentation of Black and Indigenous students in special education and school discipline. Implicit bias — unconscious attitudes or stereotypes that affect decisions and behaviors without conscious awareness. Explicit bias — conscious and deliberate prejudice. These terms are not interchangeable: a system can produce racially inequitable outcomes (systemic racism) without any individual holding conscious prejudice (explicit bias).' },
+      { type: 'paragraph', text: "Worked example: A school psychologist reviews suspension data and finds that Black male students are suspended at 3 times the rate of white students for the same category of offense — even though individual teachers report trying to be fair to all students. This pattern reflects systemic racism (a structural outcome) and disproportionality (group differences in disciplinary outcomes based on race). It is not primarily a story of explicit bias — there is no evidence the teachers are consciously trying to discriminate. It may involve implicit bias — unconscious associations that subtly affect how behavior is perceived and labeled. The school psychologist's role is to name these patterns accurately using the right vocabulary, present the data to the team, and recommend systemic interventions (restorative practices, staff training on implicit bias, examination of school-wide policies)." },
+      { type: 'comparison', leftHeader: 'Term', rightHeader: 'Precise definition and exam cue', rows: [
+        { left: 'Systemic racism', right: 'Structural policies and norms that produce racial inequity — regardless of individual intent; cue: "injustice," "structural," "institutional"' },
+        { left: 'Disproportionality', right: 'Group differences in outcomes or risk based on group membership; cue: unequal special-ed, discipline, or gifted rates across racial/ethnic groups' },
+        { left: 'Implicit bias', right: 'Unconscious attitudes affecting behavior without awareness; cue: "unintentional," "automatic," "without knowing"' },
+        { left: 'Explicit bias', right: 'Conscious, deliberate prejudice; cue: intentional discrimination, overt statements of prejudice' },
+      ] },
     ],
   },
 
@@ -1484,10 +1520,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'PSY-02',
     title: 'Validity vs. Reliability: A Critical Distinction',
     sections: [
-      { type: 'paragraph', text: 'Reliability is about consistency — does the test give the same results when repeated under the same conditions? It is measured over time (test-retest) or within the test itself (internal consistency).' },
-      { type: 'paragraph', text: 'Validity is about accuracy — does the test actually measure what it claims to measure? One way to establish validity is to correlate a new test with an established gold-standard test that measures the same construct. This is convergent validity.' },
-      { type: 'paragraph', text: 'A test can be reliable without being valid (a broken scale that consistently reads 10 pounds too heavy is reliable but not valid). A test cannot be valid without being reliable.' },
-      { type: 'anchor', label: 'Exam question pattern', text: 'When a question gives you a correlation between a new test and an old test, it is asking about VALIDITY (specifically convergent validity), not reliability. Reliability is established within the test itself or over repeated administrations.' },
+      { type: 'anchor', label: 'The asymmetric relationship', text: "Reliability = consistency. Validity = accuracy. A test CAN be reliable without being valid (consistently wrong). A test CANNOT be valid without being reliable. Reliable is necessary but NOT sufficient for valid." },
+      { type: 'paragraph', text: 'Reliability is about consistency — does the test give the same results when repeated under the same conditions? It is measured over time (test-retest) or within the test itself (internal consistency). Validity is about accuracy — does the test actually measure what it claims to measure? One way to establish validity is to correlate a new test with an established gold-standard test that measures the same construct — this is convergent validity. A test can be reliable without being valid: a broken thermometer that consistently reads 2 degrees too high is reliable (same wrong answer every time) but not valid (not accurately measuring temperature). A test cannot be valid without being reliable — you cannot accurately measure something if your instrument gives different results each time.' },
+      { type: 'paragraph', text: "Worked example: A researcher develops a new measure of math anxiety called the MAQ. To establish reliability, she administers it to 100 students, waits two weeks, and administers it again — the test-retest correlation is r = 0.88 (high reliability). To establish convergent validity, she correlates MAQ scores with a well-validated existing measure of math anxiety — the correlation is r = 0.82, suggesting the MAQ is measuring the same construct. Now the exam question: 'A researcher gives a new anxiety scale to students and compares the results to a well-established anxiety measure. What does this demonstrate?' The answer is VALIDITY (specifically convergent validity) — not reliability. Reliability is established by comparing the same instrument to itself over time, not by comparing two different instruments." },
+      { type: 'comparison', leftHeader: 'Reliability', rightHeader: 'Validity', rows: [
+        { left: 'Consistency — same results under same conditions', right: 'Accuracy — measures what it claims to measure' },
+        { left: 'Types: test-retest, internal consistency (alpha), inter-rater', right: 'Types: content, construct, criterion (concurrent + predictive), convergent, discriminant' },
+        { left: 'Established by: correlating same test with itself across time or raters', right: 'Established by: correlating with other validated measures, expert review, factor analysis' },
+        { left: 'Can be high even when validity is low (consistently wrong)', right: 'Cannot be high if reliability is low (random noise prevents accuracy)' },
+      ] },
     ],
   },
 
@@ -1515,9 +1556,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'RES-02',
     title: 'Implementation Science: Dissemination Comes First',
     sections: [
-      { type: 'paragraph', text: "When a school is deciding whether to adopt a new program or practice, the first stage of implementation is Dissemination — exploring the fit between the program and the school's context, capacity, and needs. This is when questions like 'Does this fit our culture?' and 'Do our staff have the skills to implement this?' are asked." },
-      { type: 'paragraph', text: 'The stages of implementation, in order, are: Dissemination → Adoption → Initial Implementation → Full Implementation. The "goodness of fit" concept belongs to the Dissemination stage.' },
-      { type: 'anchor', label: 'ESSA Evidence Tiers (bonus content)', text: 'ESSA defines four evidence tiers: Tier 1 (Strong — RCT), Tier 2 (Moderate — quasi-experimental), Tier 3 (Promising — correlational), Tier 4 (Rationale only). The What Works Clearinghouse (WWC) is where to verify evidence ratings. MEMORY ANCHOR: ESSA tiers evaluate PROGRAMS; MTSS tiers organize STUDENTS.' },
+      { type: 'anchor', label: 'Stage sequence + ESSA anchor', text: "Implementation stages: Dissemination → Adoption → Initial Implementation → Full Implementation. 'Goodness of fit' belongs to Dissemination. ESSA evidence tiers evaluate PROGRAMS (Tier 1 = RCT). MTSS tiers organize STUDENTS." },
+      { type: 'paragraph', text: "When a school is deciding whether to adopt a new program or practice, the first stage of implementation is Dissemination — exploring the fit between the program and the school's context, capacity, and needs. This is when questions like 'Does this fit our culture?' and 'Do our staff have the skills to implement this?' are asked. The stages of implementation, in order, are: Dissemination → Adoption → Initial Implementation → Full Implementation. The 'goodness of fit' concept belongs to the Dissemination stage. A school that skips Dissemination — jumping straight to purchasing a program and training staff — risks poor implementation fidelity because no one assessed whether the school had the infrastructure, values alignment, or staff capacity to deliver it correctly." },
+      { type: 'paragraph', text: "Worked example: A middle school principal reads about a promising social-emotional learning (SEL) curriculum and wants to implement it next semester. The school psychologist explains that the team should begin with Dissemination: reviewing the program's evidence base, assessing whether it fits the school's population and presenting needs (which a universal screening would reveal), evaluating whether teachers have the training and scheduling support to implement it with fidelity, and deciding whether the school's values and leadership support the approach. Only after this fit analysis does it make sense to Adopt the program. Once adopted, Initial Implementation begins — small-scale pilots, coaching, early data collection. Full Implementation follows after fidelity and outcomes are confirmed. Jumping from 'this looks good' to school-wide training skips the stages that predict long-term success." },
+      { type: 'comparison', leftHeader: 'Implementation Stage', rightHeader: 'Key question answered', rows: [
+        { left: 'Dissemination: exploring the program', right: '"Is this a good fit for our school? Do we have the capacity to implement it?"' },
+        { left: 'Adoption: committing to the program', right: '"We will implement this — what resources, training, and infrastructure do we need?"' },
+        { left: 'Initial Implementation: small-scale rollout', right: '"Are we implementing it with fidelity? What early data do we see?"' },
+        { left: 'Full Implementation: school-wide, sustained delivery', right: '"Is it producing expected outcomes consistently at scale?"' },
+      ] },
     ],
   },
 
@@ -1610,9 +1657,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'LEG-02',
     title: "LRE and 'Reasonable Educational Progress'",
     sections: [
-      { type: 'paragraph', text: "The least restrictive environment (LRE) principle requires that students with disabilities be educated alongside their non-disabled peers to the maximum extent appropriate. A student should only be placed in a more restrictive setting if the nature or severity of the disability is such that education in general education classes — even with supplementary aids and services — cannot be achieved satisfactorily." },
-      { type: 'paragraph', text: "Critically, 'reasonable educational progress' — not perfect or maximum performance — is the legal standard. A student making Cs is making reasonable academic progress. The school does not have an obligation to ensure the student achieves their maximum potential, only to provide an appropriate education." },
-      { type: 'anchor', label: 'Case law anchor: Endrew F. v. Douglas County (2017)', text: "The Supreme Court ruled that an IEP must be reasonably calculated to enable a child to make progress appropriate in light of the child's circumstances — raising the bar slightly above the prior 'de minimis' standard from Rowley, but not requiring maximum achievement." },
+      { type: 'anchor', label: 'The legal standard', text: "LRE = educate with non-disabled peers to the MAXIMUM EXTENT APPROPRIATE. The FAPE standard = REASONABLE progress (Endrew F., 2017), not maximum achievement. A C average = reasonable progress. The school is not obligated to maximize potential." },
+      { type: 'paragraph', text: "The least restrictive environment (LRE) principle requires that students with disabilities be educated alongside their non-disabled peers to the maximum extent appropriate. A student should only be placed in a more restrictive setting if the nature or severity of the disability is such that education in general education classes — even with supplementary aids and services — cannot be achieved satisfactorily. Critically, 'reasonable educational progress' — not perfect or maximum performance — is the legal standard. A student making Cs is making reasonable academic progress. The school does not have an obligation to ensure the student achieves their maximum potential, only to provide an appropriate education." },
+      { type: 'paragraph', text: "Worked example: A parent argues at an IEP meeting that the district must move their child with autism to a private therapeutic school because the child is capable of performing at a higher level with more intensive instruction. The district's position: the child is currently making meaningful progress in a resource-room setting (improving on IEP goals, passing grade-level coursework with modifications). Under Endrew F. (2017), the IEP must be 'reasonably calculated to enable a child to make progress appropriate in light of the child's circumstances' — not maximum progress. Unless the child is regressing or making no progress, the district's program can satisfy FAPE without providing the most intensive or most expensive option available. LRE also weighs in: the more restrictive private placement is appropriate only if the public setting cannot provide a satisfactory education with supplementary aids and services." },
+      { type: 'comparison', leftHeader: 'LRE Principle', rightHeader: 'FAPE Standard (post-Endrew F.)', rows: [
+        { left: 'Students with disabilities must be educated with non-disabled peers to the maximum extent appropriate', right: 'IEP must be reasonably calculated to enable progress appropriate to the child\'s circumstances' },
+        { left: 'More restrictive settings permitted only when general education (with aids/services) is not satisfactory', right: "Standard is meaningful, not maximum — 'de minimis' progress is insufficient (Endrew F. raised the bar from Rowley)" },
+        { left: 'Placement decision is a team judgment; presumption favors inclusion', right: 'Progress must be real and documented; IEP goals and services must reflect the student\'s actual needs' },
+        { left: 'Key case: Oberti v. Clementon (1993) — strong LRE presumption', right: 'Key cases: Rowley (1982) original standard → Endrew F. (2017) raised standard' },
+      ] },
     ],
   },
 
