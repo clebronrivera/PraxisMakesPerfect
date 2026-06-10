@@ -1,5 +1,10 @@
 # Module Content Gap & Question↔Module Alignment — 2026-06-07
 
+> **⏱ STATUS UPDATE 2026-06-09** — the module-ownership gap below is CLOSED: **58→67 modules**, and
+> **all 45 skills now own a dedicated lesson** (the 9 previously-unowned skills got their own module in
+> Pack 2). Modules also now declare `etsTopicIds` (Pack 4). Counts in the body are the original
+> 2026-06-07 audit. Current state → `docs/PHASE2_REVIEW_BACKLOG.md`.
+
 > Auto-generated audit to scope module/learning-content authoring so each **skill** the diagnostic measures aligns to dedicated module content. Source: `SKILL_MODULE_MAP`, `questions.json` (`current_skill_id`, `primaryModuleId`), `progressTaxonomy`.
 
 **Totals:** 45 skills · 58 modules · 1150 questions.

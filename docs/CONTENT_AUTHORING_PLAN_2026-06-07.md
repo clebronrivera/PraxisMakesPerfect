@@ -1,5 +1,13 @@
 # Content Authoring Plan — Phase 2 (coworker task pack) — 2026-06-07
 
+> **⏱ STATUS UPDATE 2026-06-09** — **Packs 1, 2, 4 are DONE** (branch `claude/hopeful-benz-866a30`):
+> Pack 1 (210 tags verified `manual`), Pack 2 (9 owned modules; 58→**67**), Pack 4 (module `etsTopicIds`
+> derived). The "Snapshot" table and per-pack acceptance below are the ORIGINAL pre-work state — kept for
+> reference. **Still open (content/SME):** Pack 3 (deepen the now-51-of-67 thin stubs), Pack 5 (framework
+> registry — shape now locked, see `docs/PHASE2_REVIEW_BACKLOG.md`), Pack 6 (anchor sign-off). The
+> updated coworker prompt for the remaining packs + the full current state live in
+> `docs/PHASE2_REVIEW_BACKLOG.md`.
+
 > **Read first:** `docs/CONTENT_ARCHITECTURE_AND_GAPS_2026-06-07.md` (the model) and the
 > "Content Architecture & Connectivity" section of `docs/HOW_THE_APP_WORKS.md` (what's live).
 >

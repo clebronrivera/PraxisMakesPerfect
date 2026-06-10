@@ -1,5 +1,13 @@
 # Content Architecture & Cross-Content Gap Analysis — 2026-06-07
 
+> **⏱ STATUS UPDATE 2026-06-09** — much of the gap below is now CLOSED (branch `claude/hopeful-benz-866a30`).
+> Done: objective tags **human-verified** (210 review items → `manual`); **all 45 skills own a module**
+> (58→**67**); module `etsTopicIds` derived; misconception `questionIds` backfilled (59/98); prereq DAG
+> re-keyed to the 45; objective→exam-weight rollup shipped (blueprint-anchored). The gap counts in the
+> body below are the ORIGINAL 2026-06-07 analysis — preserved for history, not current. Current state +
+> what's left → `docs/PHASE2_REVIEW_BACKLOG.md` and the latest handoff. Still open: Pack 3 (deepen stubs),
+> Pack 5 (framework registry), Pack 6 (anchor sign-off), vocab-registry consolidation, Phase 3.
+
 > **Purpose.** The single source of truth for how PASS's content *should* connect end-to-end — domains, skills, **learning objectives**, questions, lessons/modules, vocabulary, cases, misconceptions, frameworks — so the same spine drives the questions, the exam weights, and the adaptive engine. Plus a cross-content gap analysis and a prioritized authoring spec.
 >
 > Supersedes the modules-only framing: `docs/MODULE_CONTENT_GAP_2026-06-07.md` is now the **modules slice** (§3.3 / Appendix). Derived from a 10-dimension audit (verified against the repo, 2026-06-07).

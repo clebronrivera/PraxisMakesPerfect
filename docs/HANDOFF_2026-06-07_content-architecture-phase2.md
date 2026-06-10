@@ -1,5 +1,9 @@
 # Handoff — Content Architecture: Phase 0/1 done, Phase 2 pending — 2026-06-07
 
+> **⏱ SUPERSEDED 2026-06-09** by `docs/HANDOFF_2026-06-09_phase2-stretch.md` +
+> `docs/PHASE2_REVIEW_BACKLOG.md`. Since this was written, Packs 1/2/4 and the prereq + misconception
+> + exam-weight engineering all landed. Use the newer docs for current state; this one is history.
+
 **Branch:** `claude/hopeful-benz-866a30` (pushed to origin; **7 commits** `daa0440..5c1f5b4`).
 **Not deployed** — Netlify `stop_builds=true`; deploys are manual (`netlify deploy --build --prod`).
 **Worktree used this session:** `/Users/lebron/Documents/PMP-hopeful-benz` (the main repo at
