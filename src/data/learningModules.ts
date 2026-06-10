@@ -341,9 +341,10 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'DBD-03',
     title: 'Reading Standard Scores on Cognitive Assessments',
     sections: [
-      { type: 'paragraph', text: 'On most mainstream cognitive assessments, the normative mean is 100 with a standard deviation of 15. Here is how key benchmark scores translate:' },
-      { type: 'list', items: ['SS 130+ = Very Superior (2 SDs above mean)', 'SS 115–129 = Above Average / High Average', 'SS 85–115 = Average range', 'SS 70–84 = Below Average / Borderline', 'SS 69 and below = Intellectual Disability range (2+ SDs below mean)'] },
-      { type: 'paragraph', text: 'A score of 61 sits firmly in the intellectual disability range. A score of 85 is at the 16th percentile — low average, but not a disability range score. These distinctions matter enormously on the exam.' },
+      { type: 'anchor', label: 'The number system', text: 'Mean = 100, SD = 15. Two SDs below = 70 (ID threshold). SS 85 = 16th percentile (low average, NOT disability range). SS 61 = 2.6 SDs below mean = firmly ID range. Know these numbers cold.' },
+      { type: 'paragraph', text: 'On most mainstream cognitive assessments (WISC, WJ, RIAS, DAS), the normative mean is 100 with a standard deviation of 15. Scores from 85 to 115 fall within the average range (the middle 68% of the population). Scores below 70 fall more than two standard deviations below the mean — the intellectual disability range. Key benchmark scores: SS 130+ = Very Superior; SS 115–129 = Above Average / High Average; SS 85–115 = Average range; SS 70–84 = Below Average / Borderline; SS 69 and below = Intellectual Disability range. A score of 61 sits firmly in the ID range (2.6 SDs below). A score of 85 is at the 16th percentile — low average, but not a disability range score.' },
+      { type: 'paragraph', text: "Worked example: A school psychologist evaluates three students and receives the following WISC Full Scale IQ scores: Student A = 115, Student B = 85, Student C = 68. Student A (SS 115) is in the high end of the average range — exactly at the 84th percentile. Student B (SS 85) is at the 16th percentile, which is the low end of average; this is below average but definitively NOT in the borderline or ID range. A common exam trap is assuming that anything below 100 is a problem — it is not; anything between 85 and 115 is average. Student C (SS 68) is below the 70 threshold — in the intellectual disability range. However, an IQ of 68 alone is not sufficient for an ID determination; adaptive behavior must also show significant deficits (see MOD-D8-04)." },
+      { type: 'list', items: ['SS 130+ = Very Superior (2 SDs above mean)', 'SS 115–129 = Above Average / High Average', 'SS 85–115 = Average range (85th–15th percentile)', 'SS 70–84 = Below Average / Borderline', 'SS 69 and below = Intellectual Disability range (2+ SDs below mean)'] },
       {
         type: 'interactive',
         interactiveType: 'click-selector',
@@ -355,7 +356,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           { id: 'borderline', label: 'Borderline range', explanation: 'Borderline is SS 70-84. A score of 61 falls below borderline into ID range.' },
         ],
       },
-      { type: 'anchor', label: 'Memory anchor', text: 'The mean is 100. Every 15 points is one standard deviation. Two SDs below = 70. That is the ID threshold. Know these numbers cold.' },
     ],
   },
 
@@ -412,8 +412,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'ACA-08',
     title: "Working Memory: Keeping Information 'Online'",
     sections: [
-      { type: 'paragraph', text: 'Working memory is the cognitive ability to hold and manipulate information in an active mental workspace while simultaneously completing a task. It is distinct from short-term memory (passive holding) and long-term memory (stored information).' },
-      { type: 'paragraph', text: 'On cognitive assessments like the WISC or WJ, working memory tasks might ask a student to hear a string of numbers, then repeat them backward — holding the information while mentally reorganizing it. This is the classic working memory demand.' },
+      { type: 'anchor', label: 'Working memory vs. processing speed', text: "Working memory = hold AND manipulate (digits backward, mental math). Processing speed = complete simple tasks quickly. Both are separate WISC/WJ factors. Both are commonly impaired in ADHD and learning disabilities. Do not conflate them." },
+      { type: 'paragraph', text: "Working memory is the cognitive ability to hold and manipulate information in an active mental workspace while simultaneously completing a task. It is distinct from short-term memory (passive holding — digits forward) and long-term memory (stored information retrieved from the past). On cognitive assessments like the WISC or WJ, working memory tasks might ask a student to hear a string of numbers and repeat them backward — holding the information while mentally reorganizing it. This is the classic working memory demand. A student with strong short-term memory but impaired working memory can hold information momentarily but loses it the moment they try to do something else at the same time. This directly impairs multi-step math, reading comprehension, writing, and following multi-part instructions." },
+      { type: 'paragraph', text: "Worked example: A 4th grader, Tomás, scores in the average range on vocabulary and reasoning tasks but consistently fails on math calculation — he understands the concept of long division but forgets the steps while executing them. His WISC Working Memory Index is 78 (borderline range). This profile fits: he understands the content (intact reasoning) but cannot hold intermediate steps in mind while executing the algorithm (impaired working memory). Instructional accommodations for working memory deficits include: written step-by-step procedures the student can reference, reducing the number of steps held in memory at once, using graph paper or whiteboards to externalize intermediate steps, and breaking multi-step instructions into single steps delivered one at a time." },
+      { type: 'comparison', leftHeader: 'Working Memory', rightHeader: 'Processing Speed', rows: [
+        { left: 'Holds and manipulates information while completing a task', right: 'Executes simple, familiar tasks quickly and efficiently' },
+        { left: 'WISC example: digits backward, letter-number sequencing', right: 'WISC example: coding (symbol-copying), symbol search' },
+        { left: 'Impacts: multi-step math, reading comprehension, following multi-part instructions', right: 'Impacts: timed assessments, writing fluency, test completion' },
+        { left: 'Intervention: externalize steps, reduce load, chunking', right: 'Intervention: extended time, reduce clerical demands, fluency practice' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'term-matcher',
@@ -438,7 +445,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           },
         ],
       },
-      { type: 'anchor', label: 'Common confusion', text: 'Processing speed measures how fast a student completes simple tasks. Working memory measures how much information a student can hold while doing something with it. These are separate cognitive factors that are often both impaired in students with ADHD or learning disabilities.' },
     ],
   },
 
@@ -621,8 +627,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'CON-01',
     title: 'The Nonhierarchical Collaborative Consultation Model',
     sections: [
-      { type: 'paragraph', text: 'When a school psychologist begins a professional consultation with a teacher, the recommended starting framework is nonhierarchical and collaborative. This means both the psychologist and the consultee (teacher) are treated as equal experts — the psychologist brings psychological knowledge; the teacher brings knowledge of the student and classroom context.' },
-      { type: 'paragraph', text: 'This model promotes shared problem ownership, which makes intervention follow-through far more likely than a top-down expert model.' },
+      { type: 'anchor', label: 'The default model', text: "School psychology consultation is NONHIERARCHICAL and COLLABORATIVE by default. Both psychologist and teacher are equal experts. The psychologist brings psychological knowledge; the teacher brings student and classroom knowledge. Shared ownership = better follow-through." },
+      { type: 'paragraph', text: 'When a school psychologist begins a professional consultation with a teacher, the recommended starting framework is nonhierarchical and collaborative. This means both the psychologist and the consultee (teacher) are treated as equal experts — the psychologist brings psychological knowledge; the teacher brings knowledge of the student and classroom context. This model promotes shared problem ownership, which makes intervention follow-through far more likely than a top-down expert model where the psychologist prescribes and the teacher implements. In the expert model, the teacher may comply while the psychologist is present but does not internalize ownership of the plan — so fidelity suffers as soon as the psychologist steps back.' },
+      { type: 'paragraph', text: "Worked example: A 4th-grade teacher refers a student for help with behavior. In an expert/hierarchical consultation, the psychologist observes, interprets data, and prescribes a token economy — then hands over a behavior plan for the teacher to implement. In a nonhierarchical collaborative consultation, the psychologist and teacher work together from the start: the teacher describes the context, both review the data together, they jointly brainstorm hypotheses about the function of behavior, and they co-design an intervention that fits the classroom's existing routines. When the teacher helped design the plan, she is far more likely to implement it with fidelity — because it is partly hers. The collaborative model produces better outcomes not because the plan is cleverer, but because the person implementing it believes in it." },
+      { type: 'comparison', leftHeader: 'Nonhierarchical Collaborative Model', rightHeader: 'Expert / Hierarchical Model', rows: [
+        { left: 'Psychologist and teacher are equal partners with complementary expertise', right: 'Psychologist is the authority; teacher is the implementer' },
+        { left: 'Shared problem definition and shared solution design', right: 'Psychologist defines the problem and prescribes the solution' },
+        { left: 'Higher fidelity: the teacher owns the plan', right: 'Lower fidelity when psychologist is absent — teacher did not help design it' },
+        { left: 'Builds teacher capacity for future cases', right: 'Creates dependency on the psychologist for each new case' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'click-selector',
@@ -634,7 +647,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           { id: 'directive', label: 'Directive Instruction Model', explanation: 'Not a consultation model; this describes a teaching approach.' },
         ],
       },
-      { type: 'anchor', label: 'The exam cue word', text: "When you see 'collaboration' or 'collaborative' in an answer choice about consultation, that is almost always the correct direction. The nonhierarchical collaborative model is the go-to starting framework." },
     ],
   },
 
@@ -665,9 +677,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'CON-01',
     title: 'Professional Learning Communities (PLCs): The Three Driving Questions',
     sections: [
-      { type: 'paragraph', text: 'PLCs are collaborative professional development structures in which staff meet regularly to examine data and improve student outcomes. They are driven by three specific questions:' },
-      { type: 'list', items: ['What do we want each student to learn?', 'How will we know when each student has learned it?', 'How will we respond when a student experiences difficulty in learning?'] },
-      { type: 'paragraph', text: 'PLCs are not prescriptive about data collection methods or presentation formats — they set goals and let professionals determine how to get there. A question about how data will be collected and presented is not one of the three driving questions.' },
+      { type: 'anchor', label: 'The three questions', text: 'PLCs are driven by: (1) What do we want each student to learn? (2) How will we know when each student has learned it? (3) How will we respond when a student experiences difficulty? Data collection METHODS are not one of the three questions — that is a common distractor.' },
+      { type: 'paragraph', text: 'PLCs are collaborative professional development structures in which staff meet regularly to examine data and improve student outcomes. They are driven by three specific questions: (1) What do we want each student to learn? — clarifying the shared learning goals and standards. (2) How will we know when each student has learned it? — establishing common assessments and evidence of learning. (3) How will we respond when a student experiences difficulty in learning? — creating systematic support structures. PLCs are not prescriptive about data collection methods or presentation formats — they set goals and let professionals determine how to get there.' },
+      { type: 'paragraph', text: "Worked example: A 3rd-grade team at Riverside Elementary meets weekly in a PLC. They begin by reviewing their common formative assessment data from the past week's fractions unit (question 1 was answered before instruction: the team agreed that all students would understand equivalent fractions and fraction comparison). The assessment reveals that 9 of 24 students scored below 75% (question 2 answered: they know who hasn't yet learned it). The team now discusses question 3: those 9 students will attend a small-group re-teaching session on Thursday while the rest of the class does an extension activity. The fourth-grade teacher who attended this cycle mentions she can join Thursday to help. This collaborative data cycle — aligned goals, common evidence, shared response — is the PLC model in practice." },
+      { type: 'comparison', leftHeader: 'PLC Driving Question', rightHeader: 'What it addresses', rows: [
+        { left: 'Q1: What do we want each student to learn?', right: 'Shared learning goals; clarity about expected standards and outcomes for this unit/grade' },
+        { left: 'Q2: How will we know when each student has learned it?', right: 'Common assessment; evidence of mastery; who is meeting the goal and who is not' },
+        { left: 'Q3: How will we respond when a student experiences difficulty?', right: 'Systematic intervention plan; what the team does — not just the individual teacher' },
+        { left: 'NOT a PLC question: How will we collect and present our data?', right: 'A data management decision, not a collaborative learning question — a common exam distractor' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'drag-to-order',
@@ -679,7 +697,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           'Question 3: How will we respond when a student experiences difficulty in learning? (Intervene)',
         ],
       },
-      { type: 'anchor', label: 'Memory anchor', text: 'The three PLC questions focus on WHAT students learn, HOW we know they learned it, and WHAT we do when they struggle. Anything about data mechanics or presentation format is outside these three.' },
     ],
   },
 
@@ -765,8 +782,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'SWP-02',
     title: 'Grade Retention: NASP Does Not Endorse It',
     sections: [
-      { type: 'paragraph', text: 'The National Association of School Psychologists does not endorse grade retention as an effective intervention. Research consistently shows that retention does not produce lasting academic gains and carries significant social-emotional costs for students.' },
-      { type: 'paragraph', text: "When a parent asks whether to hold a child back, the psychologist's role is to advocate for evidence-based interventions first and to document whether those interventions are working before any retention decision is considered." },
+      { type: 'anchor', label: 'NASP position', text: "NASP does NOT endorse grade retention. Research shows it does not produce lasting academic gains and increases dropout risk. Always advocate for evidence-based interventions FIRST and document their effectiveness before any retention decision is considered." },
+      { type: 'paragraph', text: "The National Association of School Psychologists does not endorse grade retention as an effective intervention. Research consistently shows that retention does not produce lasting academic gains and carries significant social-emotional costs for students — reduced self-esteem, increased dropout risk, and peer relationship strain. Any initial gains from retention (a child being bigger or more mature than classmates) typically disappear by 3rd grade. When a parent asks whether to hold a child back, the psychologist's role is to advocate for evidence-based interventions first and to document whether those interventions are working before any retention decision is considered." },
+      { type: 'paragraph', text: "Worked example: A parent of a struggling 1st grader requests a meeting to discuss holding her daughter back. The school psychologist explains NASP's position: retention is not supported by research as a lasting academic fix, and the social-emotional costs (being a year older than peers, being perceived as 'held back') can be significant. Instead, the psychologist recommends an intensive reading intervention (with weekly progress monitoring), a review of the universal screening data, and a referral to evaluate for a possible learning disability if the intervention does not produce growth within 8 weeks. If, after documented evidence-based intervention with fidelity, the student is still not making progress and a team decision is made to retain, the decision should be informed by that data — not a default assumption that 'she just needs more time.'" },
+      { type: 'comparison', leftHeader: 'NASP-Endorsed Approach', rightHeader: 'What NASP Does NOT Endorse', rows: [
+        { left: 'Evidence-based intervention with progress monitoring before any retention decision', right: 'Retention as a primary or early response to academic struggles' },
+        { left: 'Evaluation for learning disability or other factors that may explain the difficulty', right: 'Assuming a student will "catch up" by repeating a grade' },
+        { left: 'Documenting intervention effectiveness and team review of data', right: 'Retention as a consequence for low test scores or missing benchmarks' },
+        { left: 'Social-emotional support and early intensive support at Tier 2', right: 'Retention as a substitute for identifying and addressing underlying learning needs' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'card-flip',
@@ -795,7 +819,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           },
         ],
       },
-      { type: 'anchor', label: 'Exam rule of thumb', text: "Any answer choice that endorses retention as a primary or recommended strategy is almost certainly wrong. NASP's position is to try interventions first and document their effectiveness." },
     ],
   },
 
@@ -830,9 +853,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'ACA-06',
     title: 'Intrinsic Motivation: Why Choice Beats Candy',
     sections: [
-      { type: 'paragraph', text: 'Research on motivation shows that tangible rewards (stickers, candy, prizes) can actually undermine intrinsic motivation by shifting a student\'s focus from the activity itself to the external reward. When the reward disappears, motivation often collapses.' },
-      { type: 'paragraph', text: 'Cognitive approaches — particularly giving students choice — are more effective for building lasting intrinsic motivation. Choice gives students a sense of autonomy and control, which is one of the three core components of self-determination theory (autonomy, competence, relatedness).' },
-      { type: 'comparison', leftHeader: 'Builds Intrinsic Motivation', rightHeader: 'Can Undermine Intrinsic Motivation', rows: [{ left: 'Choice • Autonomy • Mastery-oriented feedback • Self-regulation strategies', right: 'Tangible rewards • Token economies (when overused) • Praise that is controlling rather than informational' }] },
+      { type: 'anchor', label: 'The overjustification effect', text: "Tangible rewards (candy, stickers) undermine intrinsic motivation through the overjustification effect — the student's focus shifts from the activity to the reward. When the reward disappears, motivation collapses. Choice and autonomy are the evidence-based alternatives." },
+      { type: 'paragraph', text: "Research on motivation shows that tangible rewards (stickers, candy, prizes) can actually undermine intrinsic motivation by shifting a student's focus from the activity itself to the external reward. When the reward disappears, motivation often collapses. This is called the overjustification effect: the external reward retroactively 'explains' the student's behavior in terms of the reward rather than genuine interest, reducing the degree to which they attribute their engagement to the activity itself. Cognitive approaches — particularly giving students choice — are more effective for building lasting intrinsic motivation. Choice gives students a sense of autonomy and control, which is one of the three core components of Self-Determination Theory (autonomy, competence, relatedness). When students feel autonomous, competent, and connected, intrinsic motivation is sustained without external props." },
+      { type: 'paragraph', text: "Worked example: Two classrooms use different approaches for a reading assignment. Classroom A: students complete the assigned reading and receive a sticker for each chapter finished. After a month, when the sticker chart is removed, reading rates drop below baseline — the sticker was the reason they were reading, not interest in the book. Classroom B: students choose from a menu of three books at their reading level, select their own corner of the room to read in, and set a personal reading goal each week. After a month, reading continues at the same rate when the structure is reduced — because the autonomy and competence experience were the motivation. When an exam question asks what approach best builds lasting academic engagement, the answer involves choice, student voice, or goal-setting — not external rewards." },
+      { type: 'comparison', leftHeader: 'Builds Intrinsic Motivation', rightHeader: 'Can Undermine Intrinsic Motivation', rows: [
+        { left: 'Choice among learning tasks or formats', right: 'Tangible rewards (candy, prizes, stickers) for completing tasks' },
+        { left: 'Autonomy support: student input into goals and approaches', right: 'Token economies used as the primary or permanent system' },
+        { left: 'Mastery-oriented feedback: "You worked hard and improved your strategy"', right: 'Controlling praise: "You did that to get the reward"' },
+        { left: 'Self-regulation strategies: goal-setting, monitoring, reflection', right: 'Performance-contingent rewards that redirect attention from task to outcome' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'scenario-sorter',
@@ -856,8 +885,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'ACA-03',
     title: 'Chunking: The Memory Strategy for Long Lists',
     sections: [
-      { type: 'paragraph', text: 'Chunking is a well-researched memory strategy in which information is grouped into meaningful clusters to reduce the burden on working memory. The classic example is a phone number: rather than remembering ten individual digits, we remember three chunks (area code, prefix, number).' },
-      { type: 'paragraph', text: 'When students need to memorize a long sequence of information, chunking is the most evidence-supported strategy because it aligns with how working memory actually operates — in units, not in endless individual pieces.' },
+      { type: 'anchor', label: 'Chunking = the long-list strategy', text: "Chunking groups information into meaningful clusters, reducing working memory burden. A phone number (555-867-5309) is not 10 digits — it is 3 chunks. When a student needs to memorize a long sequence, chunking is the evidence-based answer." },
+      { type: 'paragraph', text: 'Chunking is a well-researched memory strategy in which information is grouped into meaningful clusters to reduce the burden on working memory. The classic example is a phone number: rather than remembering ten individual digits, we remember three chunks (area code, prefix, number). When students need to memorize a long sequence of information, chunking is the most evidence-supported strategy because it aligns with how working memory actually operates — in units, not in endless individual pieces. Working memory can hold roughly 4±1 chunks at once; it cannot hold 10 isolated digits. Grouping transforms the memory problem from "hold 10 things" into "hold 3 things."' },
+      { type: 'paragraph', text: "Worked example: A high school student needs to memorize the steps of the FBA process for an exam: (1) Define the behavior, (2) Collect baseline data, (3) Identify antecedents, (4) Identify consequences, (5) Hypothesize the function, (6) Design the intervention, (7) Evaluate. Memorizing seven isolated steps is hard. Chunked into three phases — ASSESS (steps 1–3: define, baseline, antecedents), ANALYZE (steps 4–5: consequences, function hypothesis), ACT (steps 6–7: design, evaluate) — the memory burden drops from 7 items to 3 chunks, and the structure of the process becomes easier to recall on demand. This is chunking applied to academic content." },
+      { type: 'comparison', leftHeader: 'Memory Strategy', rightHeader: 'Best Use', rows: [
+        { left: 'Chunking: group items into meaningful clusters', right: 'Long sequences, numbered steps, lists that can be organized into categories' },
+        { left: 'Mnemonic device: acronym, rhyme, or word-image link', right: 'Fixed-order lists where initial letters or sounds can carry the structure (e.g., PEMDAS)' },
+        { left: 'Rehearsal: repeat to strengthen encoding', right: 'Simple facts and definitions; less effective for complex multi-step content' },
+        { left: 'Elaboration: connect new to known', right: 'Conceptual learning where the student has prior knowledge to link to' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'term-matcher',
@@ -882,7 +918,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           },
         ],
       },
-      { type: 'anchor', label: 'Memory anchor', text: 'Think of a phone number: 555-867-5309. Not ten digits — three chunks. That is chunking. The exam will ask about memory strategies and this is the answer for long series of information.' },
     ],
   },
 
@@ -893,9 +928,14 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'MBH-03',
     title: 'CBT: The Most Supported School-Based Counseling Approach',
     sections: [
-      { type: 'paragraph', text: 'Cognitive Behavioral Therapy is the most extensively researched and widely adopted psychotherapy approach in school psychology. It is grounded in the principle that thoughts, feelings, and behaviors are interconnected — changing maladaptive thought patterns leads to changes in both emotional states and behavior.' },
-      { type: 'paragraph', text: 'CBT is short-term, goal-oriented, and skills-focused. It emphasizes active practice, homework, and building coping strategies the student can use independently after treatment ends.' },
-      { type: 'comparison', leftHeader: 'CBT Is Best For', rightHeader: 'What CBT Is Not', rows: [{ left: 'Anxiety • Depression • Social skill deficits • Phobias • Assertiveness training • Selective mutism (with behavioral components)', right: 'It is not psychodynamic (unconscious drives). It is not purely behavioral (consequences only). It is not person-centered (unconditional positive regard).' }] },
+      { type: 'anchor', label: 'CBT = gold standard', text: 'CBT is the most evidence-based school counseling approach for anxiety, depression, OCD, and phobias. It targets the thought-feeling-behavior connection. Short-term, skills-focused, teaches independence. Not psychodynamic. Not purely behavioral.' },
+      { type: 'paragraph', text: "Cognitive Behavioral Therapy is the most extensively researched and widely adopted psychotherapy approach in school psychology. It is grounded in the principle that thoughts, feelings, and behaviors are interconnected — changing maladaptive thought patterns leads to changes in both emotional states and behavior. CBT is short-term, goal-oriented, and skills-focused. It emphasizes active practice, homework, and building coping strategies the student can use independently after treatment ends. Unlike psychodynamic therapy (which focuses on unconscious motivations and past conflicts) or pure behavioral therapy (which focuses exclusively on observable behavior and consequences), CBT targets the cognitive layer: how a student interprets situations, what automatic thoughts arise, and how those thoughts drive emotional and behavioral responses." },
+      { type: 'paragraph', text: "Worked example: A 9th grader named Sofia has generalized anxiety that is interfering with academic performance — she ruminates about failing before every test and avoids class presentations. A CBT approach would include: identifying Sofia's automatic thoughts ('I'm going to fail this test and everyone will think I'm stupid'), examining the evidence for and against those thoughts (cognitive restructuring), practicing graduated exposure to the feared situation (presenting in front of progressively larger groups), and building a personal coping toolkit (deep breathing, positive self-talk, preparation routines). By session 8, Sofia has the skills to manage her anxiety independently. The same approach would not work as well with a purely psychodynamic model, which would explore the developmental roots of anxiety but not directly teach coping skills Sofia can use before Thursday's test." },
+      { type: 'comparison', leftHeader: 'CBT Is Best For', rightHeader: 'What CBT Is Not', rows: [
+        { left: 'Anxiety, depression, phobias, OCD, social skill deficits', right: 'Not psychodynamic — does not focus on unconscious drives or childhood conflicts' },
+        { left: 'Short-term, structured, skills-focused interventions', right: 'Not purely behavioral — thoughts and interpretations are the direct target' },
+        { left: 'Internalizing disorders with cognitive components', right: 'Not person-centered — CBT is directive and structured, not non-directive' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'click-selector',
@@ -960,8 +1000,15 @@ export const LEARNING_MODULES: LearningModule[] = [
     primarySkillId: 'MBH-03',
     title: 'Reinforcement Fading: Teaching Independence',
     sections: [
-      { type: 'paragraph', text: 'A hallmark of effective behavioral intervention is a planned exit strategy. After a new behavior is established using prompts and reinforcers, those supports must be systematically removed (faded) so the student can perform the behavior independently without external scaffolding.' },
-      { type: 'paragraph', text: 'The correct sequence is: teach with prompts and reinforcers → confirm the behavior is stable → gradually fade prompts and reinforcers → confirm independent performance. Skipping the fading step creates dependency on the support system.' },
+      { type: 'anchor', label: 'The fading imperative', text: 'A behavior plan without a fading plan creates permanent dependency on external support. Goal: establish the behavior with prompts/reinforcement → confirm stability → systematically withdraw support → transfer to natural reinforcers.' },
+      { type: 'paragraph', text: 'A hallmark of effective behavioral intervention is a planned exit strategy. After a new behavior is established using prompts and reinforcers, those supports must be systematically removed (faded) so the student can perform the behavior independently without external scaffolding. The correct sequence is: teach with prompts and reinforcers → confirm the behavior is stable → gradually fade prompts and reinforcers → confirm independent performance. Skipping the fading step creates dependency on the support system. Removing reinforcement too quickly triggers extinction — the behavior collapses because the payoff disappeared before natural reinforcers (peer approval, intrinsic satisfaction, task completion) had time to take over.' },
+      { type: 'paragraph', text: "Worked example: A 2nd grader, Jaylen, is learning to raise his hand instead of blurting out. The school psychologist designs an ABA-based program: every time Jaylen raises his hand, he immediately receives a token (continuous reinforcement). After two weeks, he is raising his hand reliably. The team now thins the schedule — Jaylen earns a token for every third hand-raise (intermittent reinforcement). Over the next two weeks, tokens become less frequent and are eventually replaced with specific verbal praise. By week six, Jaylen raises his hand consistently with no token system — natural reinforcement (teacher attention, being called on) maintains the behavior. The fading plan was essential: if tokens were removed abruptly after week 2, the behavior would likely have extinguished." },
+      { type: 'comparison', leftHeader: 'Fading Stage', rightHeader: 'Purpose', rows: [
+        { left: 'Continuous reinforcement (CRF): reward every correct response', right: 'Build the new behavior quickly — highest rate of reinforcement while learning' },
+        { left: 'Intermittent reinforcement: reward some responses (fixed ratio, variable ratio)', right: 'Make the behavior more resistant to extinction — unpredictable rewards maintain behavior longer' },
+        { left: 'Thin to natural reinforcers: praise, attention, task completion', right: 'Transfer maintenance to the natural environment — behavior persists without artificial supports' },
+        { left: 'Prompt fading (physical → gestural → verbal → independent)', right: 'Remove instructional scaffolding as performance stabilizes; avoid prompt dependency' },
+      ] },
       {
         type: 'interactive',
         interactiveType: 'drag-to-order',
@@ -975,7 +1022,6 @@ export const LEARNING_MODULES: LearningModule[] = [
           'Confirm independent performance maintained by natural reinforcers',
         ],
       },
-      { type: 'anchor', label: 'Memory anchor', text: 'Fade gradually, never abruptly. Removing reinforcement too quickly triggers extinction and regression. Move from continuous to intermittent reinforcement as the behavior stabilizes, then transfer to naturally occurring reinforcers.' },
     ],
   },
 
