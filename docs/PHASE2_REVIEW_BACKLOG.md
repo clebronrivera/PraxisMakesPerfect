@@ -18,7 +18,8 @@ intentionally **batched** (see Call 5).
 | Prereq DAG repair | `9cf8b89` | `skillPrereqGraph.ts` re-keyed to the 45 (phantoms removed, missing added, acyclic). **Edges provisional** → review (Call 1). |
 | Misconception `questionIds` | `2f2d3f0` | `misconceptionQuestionMap.json`; **59/98** misconceptions linked, 191 questions (distractor-belief overlap). |
 | Exam-weight rollup | `181e352` | `skillExamWeights.json`; blueprint-anchored (official ETS 5403 category weights). **Changes LIVE ranking** (Call 2). |
-| Pack 6 — anchor sign-off | TBD | All **10** cold-start anchors (`PQ_ACA-09_7/_1`, `PQ_DBD-10_1/_3`, `PQ_DIV-01_7/_1`, `PQ_DIV-05_6/_7`, `PQ_FAM-03_6/_1`) reviewed and `is_human_verified:true`. Bank: 250→**260** verified. |
+| Pack 6 — anchor sign-off | `4a79cc0` | All **10** cold-start anchors (`PQ_ACA-09_7/_1`, `PQ_DBD-10_1/_3`, `PQ_DIV-01_7/_1`, `PQ_DIV-05_6/_7`, `PQ_FAM-03_6/_1`) reviewed and `is_human_verified:true`. Bank: 250→**260** verified. |
+| Pack 5 — framework registry | TBD | `src/data/frameworkRegistry.ts` — **32 entries**, **29/45** skills covered. Case law (Tarasoff, Rowley, Endrew F., Larry P., Diana, Honig, PARC, Florence County), statutes (IDEA×6, 504, ADA, FERPA, HIPAA/FERPA, McKinney-Vento, ESSA), ethics standards (confidentiality, consent, dual relationships, mandated reporting, records, beneficence), practice frameworks (MTSS, PBIS, FBA, NASP model, Child Find, 504-vs-IDEA, ED eligibility, placement continuum). Not wired to scoring. **TODO: add `tests/frameworkRegistry.test.ts`** (id uniqueness, canonical skillIds, etsTopicIds subset check). |
 
 All four derive scripts regenerate their committed outputs **byte-identically** (verified 2026-06-09).
 Gate (types · colors · lint · 250 tests · build · runtime) green. Local == remote.
@@ -94,8 +95,10 @@ first: **SAF-03** (Tarasoff/duty-to-warn), **ACA-09** (504/ADA/IDEA-OHI); 24/45 
 
 ## ⬜ Remaining work
 
-- **Content / SME (Coworker):** Pack 3 (deepen the 51-of-67 thin stubs), Pack 5 (framework registry —
-  shape locked above). Pack 6 ✅ done. Updated coworker prompt below.
+- **Content / SME (Coworker):** Pack 3 (deepen the 51-of-67 thin stubs). Pack 6 ✅ done. Pack 5 ✅ done.
+- **Engineering (follow-up):** Add `tests/frameworkRegistry.test.ts` (id uniqueness, canonical skillIds, etsTopicIds subset check).
+- **Content review (SME):** `frameworkRegistry.ts` entries are accurate — spot-check the 8 case law citations and 6 statute entries before deploy.
+- Updated coworker prompt below.
 - **Engineering (deferred):** vocab-registry consolidation (Call 4).
 - **Phase 3 (later, design doc):** exclusive modules for the 30 skills without one, question
   verification pass over machine-generated items, reusable case bank.
@@ -124,11 +127,8 @@ first — the objective seeder refuses to clobber verified tags unless you pass 
 
 YOUR PACKS (priority order):
 - Pack 6: ✅ DONE — all 10 cold-start anchors verified (is_human_verified:true). Skip.
-- Pack 5: author src/data/frameworkRegistry.ts using the EXACT schema in PHASE2_REVIEW_BACKLOG
-  (Call 3). ~30-40 rows; seed SAF-03 (Tarasoff) and ACA-09 (504/ADA/IDEA-OHI) first. Tag each row
-  to skillIds[] + etsTopicIds[]. Do NOT wire it into any scoring path. Flag the engineering session
-  to add a parity/validation test.
-- Pack 3 (ongoing): deepen the thinnest module stubs in src/data/learningModules.ts (51 of 67 are
+- Pack 5: ✅ DONE — 32-entry frameworkRegistry.ts authored; 29/45 skills covered. Skip.
+- Pack 3 (your only remaining task): deepen the thinnest module stubs in src/data/learningModules.ts (51 of 67 are
   <220 words; thinnest first). Per module add an objective header, a worked example, a `comparison`,
   and an `interactive` if missing; target ~400 words. Editing section CONTENT only is safe; do NOT
   add/rename modules or change primarySkillId without telling the engineering session (it must
