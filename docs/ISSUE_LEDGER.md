@@ -177,7 +177,7 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
   **P3 — Nice-to-Have (still open):**
   - Regenerate `question-skill-map.json` to cover all 1,150 questions (currently maps only the old 466).
-  - Decide multi-select question strategy: add 27 MS questions or formally retire that requirement.
+  - ~~Decide multi-select question strategy: add 27 MS questions or formally retire that requirement.~~ **RETIRED (2026-06-11, A11):** The bank has 0 multi-select items. ETS Praxis 5403 is single-select only; the "27 MS questions" framing was aspirational and never acted on. UI support code (`isMultiSelect` in `QuizQuestionBubble`, `assessment-builder.ts`) remains in place but is never triggered. No action needed unless the exam format changes.
   - Populate `.cursor/rules/mistake_registry.mdc` with recurring patterns (domain-count drift, Firebase naming, ghost fields).
   - Address health check content warnings (Generation Capacity, Distractor Audit, Blueprint Alignment).
 

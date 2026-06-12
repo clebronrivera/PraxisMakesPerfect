@@ -5,6 +5,7 @@ import { UserResponse } from '../brain/weakness-detector';
 import { clearSession } from '../utils/sessionStorage';
 import { deleteUserSession, loadUserSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
 import { AnalyzedQuestion, getQuestionCorrectAnswers } from '../brain/question-analyzer';
+import { withShuffledOptions } from '../utils/optionShuffle';
 import { useElapsedTimer } from '../hooks/useElapsedTimer';
 import type { ResponseAssessmentType, SessionMode } from '../types/assessment';
 import type { SkillId } from '../brain/skill-map';
@@ -77,6 +78,12 @@ export default function ScreenerAssessment({
   const [responses, setResponses] = useState<UserResponse[]>(isResuming ? savedSession!.responses : []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const currentQuestion = questions[currentIndex];
+  // Display-only: shuffle option order deterministically to defeat the bank's
+  // key-placement bias. All scoring/persistence still uses `currentQuestion`.
+  const displayQuestion = useMemo(
+    () => (currentQuestion ? withShuffledOptions(currentQuestion) : currentQuestion),
+    [currentQuestion]
+  );
 
   const [isSubmitted, setIsSubmitted] = useState(isResuming && savedSession!.responses.some(r => r.questionId === currentQuestion?.id));
 
@@ -375,7 +382,7 @@ export default function ScreenerAssessment({
       {!isPaused && (
         <div className={isSubmitted ? "opacity-50 pointer-events-none" : ""}>
           <QuestionCard
-            question={currentQuestion}
+            question={displayQuestion}
             selectedAnswers={selectedAnswers}
             onSelectAnswer={toggleAnswer}
             onSubmit={submitAnswer}

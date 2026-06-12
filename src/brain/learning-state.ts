@@ -101,6 +101,10 @@ export function computeRapidGuessCount(attemptHistory: SkillAttempt[]): number {
 
 export type LearningState = 'emerging' | 'developing' | 'proficient' | 'mastery';
 
+/** Where a skill attempt came from. Used to distinguish Learning Path module
+ *  mini-quiz attempts from regular practice attempts (analytics + dedup). */
+export type AttemptSource = 'practice' | 'module' | 'screener' | 'diagnostic';
+
 export interface SkillAttempt {
   questionId: string;
   correct: boolean;
@@ -109,6 +113,8 @@ export interface SkillAttempt {
   timeSpent: number; // Stored per-attempt from time_on_item_seconds. Value 0 = not recorded (sentinel). See computeRapidGuessCount() for usage.
   /** The answer letter the student chose (e.g. "B"). Populated for wrong answers; may be absent on older records. Not yet used in adaptive routing — data-model prep for distractor-based priority boosting. */
   selectedLetter?: string;
+  /** Origin of this attempt (module mini-quiz vs practice etc.). Absent on records created before source tracking. */
+  source?: AttemptSource;
 }
 
 export interface SkillPerformance {
@@ -120,6 +126,14 @@ export interface SkillPerformance {
   learningState: LearningState;
   masteryDate?: number;       // Timestamp when mastery was first reached
   attemptHistory?: SkillAttempt[]; // Raw attempt history (bounded to last 20)
+  /** Per-question latest outcome (questionId -> isCorrect). Dedupes a question
+   *  answered more than once (e.g. the same item in the LP mini-quiz AND in
+   *  practice) so it counts once toward proficiency. Absent on pre-dedup records. */
+  questionOutcomes?: Record<string, boolean>;
+  /** Pre-dedup attempt/correct totals, frozen when dedup was introduced so existing
+   *  progress is not lost. attempts/correct = legacy* + (deduped questionOutcomes). */
+  legacyAttempts?: number;
+  legacyCorrect?: number;
   weightedAccuracy?: number;  // Confidence-weighted accuracy
   confidenceFlags?: number;   // Count of high+wrong (misconceptions)
   recentHighConfidenceWrongCount?: number; // Rolling 10-attempt window count of confidence === 'high' AND correct === false
@@ -127,6 +141,79 @@ export interface SkillPerformance {
   srsBox?: number;            // Leitner box 0-4
   nextReviewDate?: string;    // ISO date-only "YYYY-MM-DD"
   lastReviewDate?: string;    // ISO date-only "YYYY-MM-DD"
+}
+
+/** A single answer event fed to {@link applySkillAttemptDedup}. */
+export interface SkillAttemptInput {
+  isCorrect: boolean;
+  questionId?: string;
+  confidence: 'low' | 'medium' | 'high';
+  timeSpent?: number;
+  source?: AttemptSource;
+  /** Timestamp + fallback id seed (defaults to Date.now()). Pass for deterministic tests. */
+  now?: number;
+}
+
+/** Deduped counter + history output of {@link applySkillAttemptDedup}. */
+export interface DedupedSkillCounters {
+  questionOutcomes: Record<string, boolean>;
+  legacyAttempts: number;
+  legacyCorrect: number;
+  attempts: number;
+  correct: number;
+  score: number;
+  attemptHistory: SkillAttempt[];
+}
+
+/**
+ * Apply one answer to a skill's counters, deduping by `question_id` (latest attempt
+ * wins). The same question can be answered in the Learning Path module mini-quiz AND
+ * in regular practice (both pull from the same per-skill pool); without dedup each
+ * answer would inflate `attempts`/`correct` and distort proficiency + readiness.
+ *
+ * Pre-dedup totals (records created before `questionOutcomes` existed) are frozen as a
+ * `legacy*` baseline so existing progress is never lost: `attempts = legacyAttempts +
+ * uniqueQuestionsAnswered`. Answers with no `questionId` (e.g. manual nudges) get a
+ * unique synthetic key and always count, preserving prior behavior.
+ *
+ * Pure and side-effect free so it can be unit-tested in isolation.
+ */
+export function applySkillAttemptDedup(
+  baseSkill: Pick<SkillPerformance, 'attempts' | 'correct' | 'questionOutcomes' | 'legacyAttempts' | 'legacyCorrect' | 'attemptHistory'>,
+  input: SkillAttemptInput
+): DedupedSkillCounters {
+  const now = input.now ?? Date.now();
+  const qKey = input.questionId || `unknown-${now}`;
+
+  // Freeze pre-dedup totals as a legacy baseline the first time we see this skill.
+  const hasOutcomeMap = baseSkill.questionOutcomes !== undefined;
+  const legacyAttempts = hasOutcomeMap ? (baseSkill.legacyAttempts ?? 0) : baseSkill.attempts;
+  const legacyCorrect = hasOutcomeMap ? (baseSkill.legacyCorrect ?? 0) : baseSkill.correct;
+
+  const questionOutcomes = { ...(baseSkill.questionOutcomes ?? {}) };
+  questionOutcomes[qKey] = input.isCorrect; // latest attempt wins
+
+  const dedupedAttempts = Object.keys(questionOutcomes).length;
+  const dedupedCorrect = Object.values(questionOutcomes).filter(Boolean).length;
+  const attempts = legacyAttempts + dedupedAttempts;
+  const correct = legacyCorrect + dedupedCorrect;
+  const score = attempts > 0 ? correct / attempts : 0;
+
+  const newAttempt: SkillAttempt = {
+    questionId: qKey,
+    correct: input.isCorrect,
+    confidence: input.confidence,
+    timestamp: now,
+    timeSpent: input.timeSpent || 0,
+    source: input.source,
+  };
+  // Dedup the recency window by question_id too (latest wins) so confidence-weighted
+  // accuracy and recent-wrong signals don't double-count a repeated question either.
+  const prev = baseSkill.attemptHistory ?? [];
+  const dedupedPrev = input.questionId ? prev.filter(a => a.questionId !== input.questionId) : prev;
+  const attemptHistory = [...dedupedPrev, newAttempt].slice(-20);
+
+  return { questionOutcomes, legacyAttempts, legacyCorrect, attempts, correct, score, attemptHistory };
 }
 
 /**

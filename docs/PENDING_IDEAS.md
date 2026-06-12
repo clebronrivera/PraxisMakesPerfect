@@ -87,6 +87,15 @@ metadata. Net-new; scope later.
 Fold `vocab_attempts` into `globalScoreCalculator` so vocab nudges survive a global recompute; optional
 `weight` param on `updateSkillProgress`. (Removes the v1 fade-on-recompute limitation above.)
 
+### Post-diagnostic skill-tile color map  ·  *captured 2026-06-11*
+A map of color tiles — one per test skill (45) — that, **after the diagnostic completes**, colors each
+tile by the learner's proficiency (Emerging / Approaching / Demonstrating) so the whole skill landscape
+is legible at a glance. **Check first what already exists before building:** `LearningPathNodeMap.tsx`
+already renders a snake-grid of skill tiles with proficiency color, and `ResultsDashboard` shows domain
+bars — this idea may be a *dedicated, more prominent post-diagnostic "map" view* rather than net-new.
+Mockup-first. Relates to [[project_modules_redesign]] (the student-friendly module browser that replaced
+the deficit snake-map) — confirm this isn't the same surface before scoping.
+
 ---
 
 ## COWORKER TASKS (spawned, parallel)

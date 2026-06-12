@@ -9,6 +9,12 @@
  *   - Weekly schedule frame (structure only — model writes narrative)
  *
  * Nothing in this file calls an AI model.
+ *
+ * Scoring boundary: urgency/status here is computed from skill-level performance only. This
+ * file MUST NOT import the objective maps (skillObjectiveMap / questionObjectiveMap) — ETS
+ * objectives are descriptive only (tests/objectiveBoundaryGuard.test.ts). Note: this file
+ * reads skill-metadata-v1 vocabulary for the study plan, which is a separate concern from the
+ * fluency drill's vocab source; one consolidated vocab registry is Phase 2.
  */
 
 import {

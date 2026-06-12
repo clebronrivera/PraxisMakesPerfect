@@ -1,3 +1,6 @@
+// Scoring/selection boundary: this file decides the next question and skill priority. It MUST
+// NOT import the objective maps (skillObjectiveMap / questionObjectiveMap) — ETS objectives are
+// descriptive only and never influence scoring or selection (tests/objectiveBoundaryGuard.test.ts).
 import { useCallback } from 'react';
 import type { SkillPerformance } from '../brain/learning-state';
 import { computeFragilityFlag } from '../brain/learning-state';

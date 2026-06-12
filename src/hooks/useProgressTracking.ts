@@ -10,8 +10,9 @@ import { notifyError } from '../utils/toast';
 import { SkillId } from '../brain/skill-map';
 import {
   LearningState,
+  AttemptSource,
   SkillPerformance,
-  SkillAttempt,
+  applySkillAttemptDedup,
   calculateLearningState,
   calculateWeightedAccuracy,
   countConfidenceFlags,
@@ -20,6 +21,7 @@ import {
 import { UserResponse } from '../brain/weakness-detector';
 import type { PatternId } from '../brain/template-schema';
 import { calculateAndSaveGlobalScores } from '../utils/globalScoreCalculator';
+import type { GlobalScoreResult } from '../utils/globalScoreCalculator';
 import { calculateSrsUpdate } from '../utils/srsEngine';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import type {
@@ -117,6 +119,11 @@ export interface UserProfile {
 
   // Consent tracking
   consentAcceptedAt?: string;
+
+  // Third-assessment (reassessment / retake) state
+  retakeComplete?: boolean;
+  retakeCompletedAt?: string;
+  globalScores?: GlobalScoreResult;
 }
 
 export interface ResponseLog {
@@ -345,6 +352,11 @@ export function useProgressTracking() {
 
           // Consent tracking
           consentAcceptedAt: data.consent_accepted_at ?? undefined,
+
+          // Third-assessment (reassessment / retake) state
+          retakeComplete: data.retake_complete ?? false,
+          retakeCompletedAt: data.retake_completed_at ?? undefined,
+          globalScores: data.global_scores ?? undefined,
         });
       } else {
         setProfileState(defaultProfile);
@@ -408,6 +420,10 @@ export function useProgressTracking() {
 
         // Consent tracking
         consent_accepted_at: newProfile.consentAcceptedAt ?? null,
+
+        // Third-assessment state
+        retake_complete: newProfile.retakeComplete ?? false,
+        retake_completed_at: newProfile.retakeCompletedAt ?? null,
 
         updated_at: new Date().toISOString()
       };
@@ -621,7 +637,8 @@ export function useProgressTracking() {
     isCorrect: boolean,
     confidence: 'low' | 'medium' | 'high' = 'medium',
     questionId?: string,
-    timeSpent?: number
+    timeSpent?: number,
+    source: AttemptSource = 'practice'
   ) => {
     const latestProfile = profileRef.current;
     const currentSkill = latestProfile.skillScores[skillId];
@@ -638,22 +655,22 @@ export function useProgressTracking() {
       confidenceFlags: 0
     };
     
-    const newAttempts = baseSkill.attempts + 1;
-    const newCorrect = baseSkill.correct + (isCorrect ? 1 : 0);
-    const newScore = newAttempts > 0 ? newCorrect / newAttempts : 0;
+    // Dedup by question_id (latest attempt wins) so the same item answered in the LP
+    // mini-quiz and in regular practice counts once toward proficiency/readiness.
+    // Pre-dedup totals are preserved as a legacy baseline. See applySkillAttemptDedup.
+    const {
+      questionOutcomes,
+      legacyAttempts,
+      legacyCorrect,
+      attempts: newAttempts,
+      correct: newCorrect,
+      score: newScore,
+      attemptHistory: newAttemptHistory,
+    } = applySkillAttemptDedup(baseSkill, { isCorrect, questionId, confidence, timeSpent, source });
+
+    // Streak + last-5 history reflect raw answering behavior (gamification), not dedup.
     const newConsecutiveCorrect = isCorrect ? baseSkill.consecutiveCorrect + 1 : 0;
     const newHistory = [...baseSkill.history, isCorrect].slice(-5);
-    
-    // Append a real attempt with this answer's actual confidence/timestamp (cap at 20)
-    const newAttempt: SkillAttempt = {
-      questionId: questionId || `unknown-${Date.now()}`,
-      correct: isCorrect,
-      confidence,
-      timestamp: Date.now(),
-      timeSpent: timeSpent || 0,
-    };
-    const prevAttemptHistory = baseSkill.attemptHistory ?? [];
-    const newAttemptHistory = [...prevAttemptHistory, newAttempt].slice(-20);
 
     const weightedAccuracy = calculateWeightedAccuracy(newAttemptHistory);
     const confidenceFlags = countConfidenceFlags(newAttemptHistory);
@@ -667,6 +684,9 @@ export function useProgressTracking() {
       consecutiveCorrect: newConsecutiveCorrect,
       history: newHistory,
       attemptHistory: newAttemptHistory,
+      questionOutcomes,
+      legacyAttempts,
+      legacyCorrect,
       weightedAccuracy,
       confidenceFlags,
       recentHighConfidenceWrongCount

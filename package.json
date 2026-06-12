@@ -14,6 +14,7 @@
     "test:runtime": "npx tsx tests/adaptive-coaching.test.ts && npx tsx tests/code-health.test.ts",
     "verify:health": "npm run test:runtime && npm run diagnostics && npm run build",
     "scan:types": "tsc -p tsconfig.json --noEmit",
+    "scan:colors": "node scripts/check-colors.mjs",
     "scan:knip": "knip --config knip.json --include files,exports,dependencies --no-config-hints",
     "scan:cycles": "dpdm 'App.tsx' 'src/main.tsx' 'api/**/*.ts' 'scripts/**/*.{ts,cjs}' 'src/scripts/**/*.ts' 'tests/**/*.ts' --tsconfig tsconfig.json --tree false --warning false -T",
     "diagnostics": "npx tsx src/scripts/run-all-diagnostics.ts",
@@ -23,7 +24,7 @@
     "audit:answers": "npx tsx scripts/audit-answer-distribution.ts",
     "lint": "eslint . --max-warnings 0",
     "lint:security": "eslint . --config eslint.security.config.js",
-    "check": "npm run scan:types && npm run lint && npm run test",
+    "check": "npm run scan:types && npm run scan:colors && npm run lint && npm run test",
     "prepare": "husky"
   },
   "dependencies": {
@@ -57,5 +58,8 @@
     "typescript-eslint": "^8.58.1",
     "vite": "^6.4.2",
     "vitest": "^4.1.2"
+  },
+  "overrides": {
+    "ws": "^8.20.1"
   }
 }

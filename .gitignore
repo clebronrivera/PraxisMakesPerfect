@@ -163,3 +163,6 @@ playwright-report/
 test-results/
 e2e/**/*.json
 reports/
+
+# one-off migration review aid (regenerate via scripts/migrations/seed-question-ets-topics.mjs)
+scripts/ets-seed-report.json

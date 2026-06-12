@@ -11,6 +11,7 @@
  */
 
 import { skillMetadataV1 } from '../data/skill-metadata-v1';
+import { toProgressId } from '../data/skillIdMap';
 import { CONTENT_CLUSTER_LABELS, type ContentCluster } from '../types/studyPlanTypes';
 import { getSkillProficiency } from './skillProficiency';
 import { termsForSkills, allDrillSkillIds } from './vocabSkillIndex';
@@ -79,10 +80,15 @@ export function buildDrillScopes(
   });
 
   // One scope per content area (cluster) that has enough terms.
+  // The drill is keyed by progress skill IDs (e.g. ACA-09), so translate each metadata
+  // skill ID (e.g. NEW-3-…) to its progress ID before counting terms. Unmapped legacy
+  // metadata entries (no progress counterpart) are skipped.
   const byCluster = new Map<ContentCluster, string[]>();
   for (const meta of Object.values(skillMetadataV1)) {
+    const progressId = toProgressId(meta.skillId);
+    if (!progressId) continue;
     const arr = byCluster.get(meta.contentCluster) ?? [];
-    arr.push(meta.skillId);
+    arr.push(progressId);
     byCluster.set(meta.contentCluster, arr);
   }
 

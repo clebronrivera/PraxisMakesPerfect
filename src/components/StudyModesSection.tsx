@@ -44,7 +44,7 @@ import {
   getPrimaryModuleForSkill,
 } from '../data/learningModules';
 import SkillHelpDrawer from './SkillHelpDrawer';
-import LearningPathNodeMap from './LearningPathNodeMap';
+import ModulesBrowser from './ModulesBrowser';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
 import type { UserProfile } from '../hooks/useProgressTracking';
 
@@ -549,7 +549,7 @@ function LearningPathPanel({
   }
 
   return (
-    <LearningPathNodeMap
+    <ModulesBrowser
       profile={profile}
       lpProgress={lpProgress}
       onNodeClick={onNodeClick}

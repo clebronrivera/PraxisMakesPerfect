@@ -29,6 +29,50 @@ Within those 4 domains there are **45 distinct skills** — specific competency 
 
 ---
 
+## Content Architecture & Connectivity
+
+Everything in the app hangs off one spine, so the questions, the exam weights, and the adaptive engine all speak the same language:
+
+```
+Domain (4)  →  Skill (45, the measured/scored unit)  →  Objective  →  content
+```
+
+**Four terms, kept distinct:**
+
+| Term | What it is | Where it lives |
+|---|---|---|
+| **Scored skill** | One of the 45 skills — the **measured/mastery unit**. The diagnostic and all proficiency/readiness math run at this level. | `progressTaxonomy.ts` |
+| **Descriptive objective** | An **ETS topic code** (e.g. `I.A.1.a`), the granular learning target *below* a skill. Descriptive/routing only — **never scored**. | the 79 topics in `ets-content-topics.json` |
+| **Content tag** | The objective code(s) attached to a piece of content (e.g. a question's `ets_topics`). | `questionObjectiveMap.json` |
+| **Module owner** | The single canonical skill a lesson primarily teaches (`primarySkillId`); the full many-to-many lives in `SKILL_MODULE_MAP`. | `learningModules.ts` |
+
+- **Domain → Skill** is the measured spine. Each skill carries an exam weight and knowledge type, and the diagnostic scores you at the **skill** level.
+- **Objective** is sourced from the **79 official ETS content topics**. The skill→objective map is curated within each app domain (`skillObjectiveMap.ts`); every skill owns ≥ 1 objective and every one of the 79 objectives is owned by ≥ 1 skill.
+- Diagnosis can go *below* the skill ("strong on screening, weak on record-review" inside one skill) **without changing how scoring works** — the skill stays the scored unit; the objective is a descriptive facet.
+
+**Connectivity uses one shared key — the ETS topic code — reused across questions, modules, and vocab.** It is *not* a separate ID scheme.
+
+**What's wired today:**
+- The **Vocabulary Fluency Drill** reads the canonical 396-term map (`skill-vocabulary-map.json`), so **all 45 skills are drillable** (it previously reached ~20).
+- **5 cold-start skills** (ACA-09, DBD-10, DIV-01, DIV-05, FAM-03) now carry foundational anchor items, so the adaptive engine can seed them on first contact.
+- **`skillObjectiveMap.ts`** links all 45 skills → their ETS objectives (with an explicit primary per skill).
+- **`questionObjectiveMap.json`** tags all 1,000+ questions with 1–2 objectives (the 50 newest C4 expansion items carry provisional `method:"manual"`, `verified:false` tags, queued for the next SME review pass). The **human-review queue is cleared**: all **210** genuinely-ambiguous items (139 fallback + 71 multi-tag) have been SME-verified (`method: "manual"`, `verified: true`); the remaining ~940 are high-confidence machine matches (`method: "seeded"`, left `verified: false` because nothing needed disambiguation). Tags live separately from `questions.json`; the seeder preserves manual edits (`--preserve-manual`) and refuses to clobber them otherwise.
+- **`primarySkillId`** on all **67 modules** fixes domain attribution, and **every one of the 45 skills now owns a dedicated lesson** (9 previously-unowned skills got their own module). `SKILL_MODULE_MAP` remains the authoritative many-to-many index.
+- **`etsTopicIds`** on every module (`moduleEtsTopicMap.json`, derived from the verified tags) declares which objectives each lesson teaches — closing the question→objective→lesson loop for routing.
+- **`skillPrereqGraph.ts`** is re-keyed to the canonical 45 skills (16 phantom keys from the old taxonomy removed, 16 missing skills added, dangling edges repaired) and validated as an acyclic DAG. It orders the learning path (`getPrereqDepth`) and drives the "Do X first" unblocker. Edges are a provisional, SME-confirmable first pass.
+- **Misconception→question links** (`misconceptionQuestionMap.json`) backfill each misconception's `questionIds` (was 0%) by matching distractor beliefs to the misconception text, skill-scoped — 59/98 misconceptions now linked. Provisional, SME-confirmable.
+- **Exam-weight rollup** (`skillExamWeights.json`) gives each skill a blueprint-anchored exam weight — its official Praxis 5403 content-category weight (I 32% / II 23% / III 20% / IV 25%) split equally among the category's skills, normalized to mean 1. This drives `moduleCatalog` `priorityScore` (= examWeight × gap × learnability), replacing the old `SKILL_BLUEPRINT.slots` proxy.
+
+> **The skill stays the scored unit; objectives are descriptive only** (routing and diagnosis, not mastery math) — by design, even now that tags are verified. A boundary-guard test (`tests/objectiveBoundaryGuard.test.ts`) fails the build if any scoring/mastery/selection file imports the objective maps.
+
+> **Dual-model note (45 scored skills vs. content library):** The runtime tracks exactly **45 scored skills** defined in `PROGRESS_SKILLS` (`progressTaxonomy.ts`). The study-plan content library (`skill-metadata-v1.ts`) is intentionally broader — it was authored with an older naming scheme (`DBDM-S01`-style IDs) and bridged to the runtime taxonomy via `skillIdMap.ts`. Only the 45 PROGRESS_SKILLS are ever scored, tracked in `user_progress`, or fed into proficiency/readiness math. The content-library extras are an authored reserve for study-plan narrative; they are never surfaced to users as distinct skills.
+
+**Future attachment points (reserved, not yet wired):** one consolidated vocabulary registry (the study-plan vocab still reads `skill-metadata-v1`) · framework/law registry · reusable case bank.
+
+> **Full plan:** the ideal model, connectivity rules, gap analysis, and authoring spec live in **`docs/CONTENT_ARCHITECTURE_AND_GAPS_2026-06-07.md`**; module-specific coverage in `docs/MODULE_CONTENT_GAP_2026-06-07.md`. Keep both in sync with this section as more wiring lands.
+
+---
+
 ## The User Journey — Step by Step
 
 ### Step 1: Create an Account
@@ -38,7 +82,7 @@ Sign in with an email and password. All data lives in the cloud, so you can pick
 
 Before sign-in, the public entry page is a multi-section **PASS marketing landing** on a dark twilight (violet/fuchsia) background. PASS branding sits in a sticky top bar with anchor links (How it works · The method · Features) and a "Take your baseline" CTA. The sections, in order, are: a **hero** (headline **"Find the exact skills holding you back."** with a live product-dashboard preview and a floating "micro-skill pinpointed" card), **How it works** (baseline → pinpoint → target), **Micro-skill precision**, **The method** (grounded in MTSS), **Why it's faster** (qualitative time framing), **Your plan**, a **founder's note** ("Why I built PASS" by Carlos Lebron Rivera), a closing CTA, and a footer.
 
-The landing intentionally does **not** show question-bank size, calibration/IRT claims, or fixed exam counts (for example, "4 domains" / "45 skills" / "1,150 items"). It leads with the adaptive baseline and granular **micro-skill** diagnosis, frames time saved qualitatively (no fabricated hours), and credits an educator with "almost two decades" of classroom/MTSS experience.
+The landing intentionally does **not** show question-bank size, calibration/IRT claims, or fixed exam counts (for example, "4 domains" / "45 skills" / exact question counts). It leads with the adaptive baseline and granular **micro-skill** diagnosis, frames time saved qualitatively (no fabricated hours), and credits an educator with "almost two decades" of classroom/MTSS experience.
 
 Calls to action ("Take your adaptive baseline →" → sign-up, "I have an account" / "Sign in" → login) open the **sign-in form as a modal overlay** over the landing — email + password with toggles for Sign up and Forgot password. The footer shows a beta disclaimer: "Currently in beta. Not responsible for loss of data during the beta period."
 
@@ -114,6 +158,8 @@ After completing the diagnostic, you get a **Score Report** — a breakdown of w
 > **Assessment timing:** The assessment is not timed — there is no per-question or total time limit. Time per question is tracked internally for analytics purposes only. Your score is determined by accuracy, not speed.
 
 > **Legacy assessment path:** The app also supports a legacy two-step assessment flow (Skills Screener + Full Assessment) for users who started before the adaptive diagnostic was introduced. Legacy users are shown a "Baseline recorded" state on the dashboard and prompted to take the adaptive diagnostic to unlock all features. New users always see the adaptive diagnostic directly.
+
+> **Third assessment — Reassessment (Retake):** After completing the adaptive diagnostic, users who improve their deficit skills through practice can take a one-time reassessment. Unlock condition: every skill that scored below 60% in the original diagnostic must now score ≥ 60% in the current blended skill scores. The reassessment is another 45-question adaptive session that **prefers questions not seen before** (unseen questions sorted first within each skill tier; falls back to seen questions when the pool runs thin). Its scores **replace** the original diagnostic scores for the skills it covers (latest-wins semantics); practice scores continue to blend at their normal 30% weight. The dashboard shows a progress tracker while deficit skills are clearing, and a highlighted "Reassessment Available" unlock card once all deficit skills clear. After completion, a score-comparison card shows the before/after readiness and skill count. One reassessment per user.
 
 ### Step 4: Study, Practice, and Track
 From this point on, every session and every question feeds back into your profile. The system keeps learning about you as you go.
@@ -322,20 +368,22 @@ Practice on a specific skill — any of the 45 individual competency areas. The 
 
 ---
 
-### Learning Path
-A personalized **visual node map** — a winding road of skill nodes ordered from the user's lowest-performing skill to highest, styled like a game progression path.
+### Learning Path — Module Browser
+A **student-friendly module browser** (`ModulesBrowser`, replacing the older deficit-sorted "node map"). It presents the 67 learning modules as a readable catalog so students always know what to study next.
 
-**Visual design:** Nodes alternate left and right along a central dotted SVG connector line, creating an S-curve "road" effect. Each node is a circular card showing the skill name, status badge, accuracy %, and a lock icon on mastered skills.
+**Views (toggle):**
+- **Regular** — all modules. **Adaptive** — only "gap-closing" modules (skills not yet Demonstrating); modules for mastered skills are hidden, and progress is shown for the *recommended bucket* (e.g. "3 / 11 recommended modules completed · 27%", "N mastered hidden").
 
-**Node color rules:**
-- Rose (red) — Emerging skills (< 60%)
-- Amber — Approaching skills (60–79%)
-- Emerald (green) — Demonstrating / Mastered skills
-- Slate (grey) — Not started
+**Grouping (toggle):**
+- **By domain** — modules grouped under the 4 app domains (each with its color + a "reviewed / total" bar). **By weakness** — a single list ranked weakest/highest-impact first, with each skill's proficiency %.
 
-**Ordering:** Nodes are sorted by accuracy ascending (lowest = top = first priority). Mastered skills sink to the bottom and are inactive (non-clickable).
+**"Close these first"** surfaces the highest-impact modules — ranked by `priorityScore = examWeight × gapToThreshold × learnability` (exam-blueprint-weighted, not raw lowest-score) — capped at 3 and **unpadded** (shrinks honestly as you near mastery). Ranking lives in `src/utils/moduleCatalog.ts` (pure, unit-tested invariants); live data is adapted in `src/hooks/useModuleCatalog.ts`.
 
-**Clicking a node** opens the **Learning Path Module Page** — a full-screen experience for that skill with three sequential sections:
+**Module card** shows: domain-colored icon, title, "what you'll learn" line, `⏱ time` + `✦ activities`, and a status pill — **Not started / In progress / Reviewed** (status conveyed by text + icon, not color alone). A module blocked by an unmet prerequisite surfaces a "do a prerequisite first" affordance.
+
+> Status note (2026-06-07): module status is currently a per-*skill* proxy (Reviewed = the skill is Demonstrating/mastered; In progress = lesson viewed). True per-*module* completion from `section_interactions` is a pending refinement. View choice persists via localStorage (server-side per-user prefs pending).
+
+**Clicking a module** opens the **Learning Path Module Page** — a full-screen experience for that skill with three sequential sections:
 
 ---
 
@@ -592,7 +640,7 @@ The **Fluency Drill** is a timed, rapid-fire vocabulary game, launched from the 
 2. **Direction**: **Definition → Term**, **Term → Definition**, or **Mixed**.
 3. **Pace** (seconds per card, def→term / term→def): **Relaxed** 10/12 · **Standard** 7/10 (default) · **Fast** 5/7.
 
-**How it works:** Up to 20 multiple-choice cards, one term each, against a countdown. Answer before the timer runs out — a timeout counts as a miss. Distractors are drawn from the same skill neighborhood for plausibility. A streak counter and running score show during play.
+**How it works:** Up to 20 multiple-choice cards, one term each, against a countdown. Answer before the timer runs out — a timeout counts as a miss. Distractors are drawn from the same skill neighborhood for plausibility. A streak counter and running score show during play. Terms come from the canonical 396-term map (`skill-vocabulary-map.json`) — the same source the Vocab Quiz uses — so **every one of the 45 skills is drillable** (22–67 terms each).
 
 **Data feedback (this is the key difference from Quiz Mode):**
 - **Skill priority** — if you miss terms for the same skill **twice or more** in one drill, that skill gets a low-confidence nudge through the existing adaptive engine, so it resurfaces in practice. A single slip never moves a skill.
@@ -662,10 +710,10 @@ Every loop tightens the picture. The more questions you answer, the more accurat
 |------|--------|
 | Exam domains | 4 |
 | Tracked skills | 45 |
-| Question bank size | 1,150 questions |
+| Question bank size | 1,000+ questions |
 | Wrong-answer options with distractor classification | 3,587 (98.7% of slots) |
-| Questions with complexity rationale | 1,150 (100%) |
-| Questions with construct classification | 1,142 (99.3%) |
+| Questions with complexity rationale | 1,000+ (100%) |
+| Questions with construct classification | ~99% |
 | Adaptive diagnostic length | 45–90 questions (adaptive follow-ups) |
 | Legacy screener length | 50 questions |
 | Legacy full assessment length | 125 questions |

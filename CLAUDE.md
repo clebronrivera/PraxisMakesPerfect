@@ -375,6 +375,9 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0021_post_assessment_snapshot.sql` | Post-assessment proficiency snapshots for comparison |
 | `0022_diagnostic_wrong_count.sql` | `wrong_count` tracking on diagnostic responses |
 | `0023_selected_answer.sql` | `selected_answer TEXT` on `responses` — plain-string selected letter for distractor metadata lookup |
+| `0024_vocab_attempts.sql` | `vocab_attempts` table + `user_glossary_terms.miss_count` + `increment_glossary_miss()` RPC — vocabulary fluency drill audit log and glossary miss alerting |
+| `0025_account_deletion_request.sql` | `user_progress.deletion_requested_at` — self-service "delete my account" request flag (admin purges flagged rows) |
+| `0026_retake_complete.sql` | `user_progress.retake_complete` + `retake_completed_at` — third-assessment (reassessment) completion tracking |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 

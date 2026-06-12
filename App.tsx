@@ -42,6 +42,8 @@ const AdaptiveDiagnostic = lazy(() => import('./src/components/AdaptiveDiagnosti
 import {
   isScreenerQuestionCount
 } from './src/utils/assessmentConstants';
+import { buildAdaptiveDiagnostic } from './src/utils/assessment-builder';
+import type { AdaptiveDiagnosticResult } from './src/utils/assessment-builder';
 import { getSkillById } from './src/brain/skill-map';
 import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progressTaxonomy';
 
@@ -200,13 +202,13 @@ function StudyGuideTabWrapper({
 // ============================================
 
 function PraxisStudyAppContent() {
-  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'fluency-drill' | 'account' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
+  type AppMode = 'home' | 'screener' | 'fullassessment' | 'adaptive-diagnostic' | 'retake-assessment' | 'results' | 'score-report' | 'practice' | 'practice-hub' | 'review' | 'admin' | 'study-guide' | 'study-notebook' | 'glossary' | 'fluency-drill' | 'account' | 'learning-path-module' | 'redemption-round' | 'help' | 'tutor';
   type NonAdminAppMode = Exclude<AppMode, 'admin'>;
 
   // Use hooks for profile and adaptive learning
   const { user, loading: authLoading, logout } = useAuth();
   const { questions: fetchedQuestions, isLoading: contentLoading, domains: fetchedDomains, skills: fetchedSkills } = useContent();
-  const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, isLoaded } = useProgressTracking();
+  const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, recalculateGlobalScores, isLoaded } = useProgressTracking();
   const { selectNextQuestion } = useAdaptiveLearning();
   const [canonicalQuestions, setCanonicalQuestions] = useState<RawQuestion[]>([]);
   const [canonicalLoading, setCanonicalLoading] = useState(true);
@@ -421,6 +423,12 @@ function PraxisStudyAppContent() {
   const [redemptionQuestions, setRedemptionQuestions] = useState<AnalyzedQuestion[]>([]);
   const [redemptionMissedRows, setRedemptionMissedRows] = useState<MissedQuestion[]>([]);
 
+  // ── Retake (third-assessment) state ──────────────────────────────────────────
+  const [retakeAssessmentData, setRetakeAssessmentData] = useState<AdaptiveDiagnosticResult | null>(null);
+  const [retakeJustCompleted, setRetakeJustCompleted] = useState(false);
+  const [retakePreSnapshot, setRetakePreSnapshot] = useState<{ readiness: number; demonstratingCount: number } | null>(null);
+  const [retakePostSnapshot, setRetakePostSnapshot] = useState<{ readiness: number; demonstratingCount: number } | null>(null);
+
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
   const [profileEditorOpen, setProfileEditorOpen] = useState(false);
@@ -470,6 +478,55 @@ function PraxisStudyAppContent() {
     );
     return buildDiagnosticSummary(report, profile);
   }, [lastAssessmentResponses, fullAssessmentQuestions, fetchedDomains, fetchedSkills, profile, lastAssessmentType]);
+
+  // ── Retake unlock gate (A4/D8) ────────────────────────────────────────────────
+  // Deficit skills: those that scored < 60 in diagnosticSkillScores (screener+diagnostic only).
+  // Gate opens when every deficit skill has reached >= 60 in current blended skillScores.
+  const { hasRetakeUnlocked, deficitSkillIds, clearedDeficitCount } = useMemo(() => {
+    const diagScores = profile.globalScores?.diagnosticSkillScores;
+    if (!profile.adaptiveDiagnosticComplete || profile.retakeComplete || !diagScores) {
+      return { hasRetakeUnlocked: false, deficitSkillIds: [] as string[], clearedDeficitCount: 0 };
+    }
+    const deficit = Object.entries(diagScores)
+      .filter(([, score]) => score < 60)
+      .map(([id]) => id);
+    if (deficit.length === 0) {
+      return { hasRetakeUnlocked: false, deficitSkillIds: [] as string[], clearedDeficitCount: 0 };
+    }
+    // Use globalScores.skillScores (0-100 scale) for consistency with diagnosticSkillScores
+    const currentScores = profile.globalScores?.skillScores ?? {};
+    const cleared = deficit.filter(id => (currentScores[id] ?? 0) >= 60).length;
+    return { hasRetakeUnlocked: cleared === deficit.length, deficitSkillIds: deficit, clearedDeficitCount: cleared };
+  }, [profile.adaptiveDiagnosticComplete, profile.retakeComplete, profile.globalScores, profile.skillScores]);
+
+  const startRetakeAssessment = useCallback(() => {
+    if (!profile.adaptiveDiagnosticComplete || profile.retakeComplete) return;
+    // Capture pre-retake snapshot for the results card
+    const preDemonstrating = progressSummary.skills.filter(s => s.colorState === 'green').length;
+    setRetakePreSnapshot({ readiness: profile.globalScores?.globalReadiness ?? 0, demonstratingCount: preDemonstrating });
+    setRetakeJustCompleted(false);
+    setRetakePostSnapshot(null);
+    // All prior question IDs become the "prefer unseen" list (soft preference, fall back on thin pools)
+    const seenIds = [
+      ...(profile.preAssessmentQuestionIds ?? []),
+      ...(profile.screenerItemIds ?? []),
+      ...(profile.fullAssessmentQuestionIds ?? []),
+      ...(profile.diagnosticQuestionIds ?? []),
+    ];
+    const data = buildAdaptiveDiagnostic(analyzedQuestions, [], seenIds);
+    setRetakeAssessmentData(data);
+    setMode('retake-assessment');
+  }, [profile, analyzedQuestions, progressSummary.skills]);
+
+  const handleRetakeComplete = useCallback(async () => {
+    await updateProfile({ retakeComplete: true, retakeCompletedAt: new Date().toISOString(), lastSession: null });
+    const newGlobal = await recalculateGlobalScores();
+    const postDemonstrating = Object.values(newGlobal?.skillScores ?? {}).filter(s => s >= 80).length;
+    setRetakePostSnapshot({ readiness: newGlobal?.globalReadiness ?? 0, demonstratingCount: postDemonstrating });
+    setRetakeJustCompleted(true);
+    setRetakeAssessmentData(null);
+    setMode('home');
+  }, [updateProfile, recalculateGlobalScores]);
 
   // Tutor page context — passed to FloatingTutorWidget so it knows what the user is viewing
   const tutorPageContext = useMemo(() => ({
@@ -1477,6 +1534,94 @@ function PraxisStudyAppContent() {
                   </div>
                 )}
 
+                {/* Retake results card — shown immediately after completing a reassessment */}
+                {isFullyUnlocked && retakeJustCompleted && retakePreSnapshot && retakePostSnapshot && (
+                  <div className="editorial-surface p-6 lg:p-7">
+                    <p className="editorial-overline text-violet-600">Reassessment Complete</p>
+                    <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">Updated baseline</h2>
+                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                      <div className="editorial-surface-soft p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Original Diagnostic</p>
+                        <p className="mt-2 text-4xl font-extrabold text-slate-400">{retakePreSnapshot.readiness}<span className="text-2xl">%</span> <span className="text-base font-medium">overall</span></p>
+                        <p className="mt-1 text-sm text-slate-500">{retakePreSnapshot.demonstratingCount} of 45 skills at Demonstrating</p>
+                      </div>
+                      <div className="rounded-[1.5rem] border border-violet-200 bg-violet-50/60 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-violet-600">Reassessment Score</p>
+                        <p className="mt-2 text-4xl font-extrabold text-violet-700">{retakePostSnapshot.readiness}<span className="text-2xl">%</span> <span className="text-base font-medium">overall</span></p>
+                        <p className="mt-1 text-sm text-slate-600">{retakePostSnapshot.demonstratingCount} of 45 skills at Demonstrating
+                          {retakePostSnapshot.demonstratingCount > retakePreSnapshot.demonstratingCount && (
+                            <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                              +{retakePostSnapshot.demonstratingCount - retakePreSnapshot.demonstratingCount} skills
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-5 flex gap-3">
+                      <button onClick={() => startPractice()} className="editorial-button-primary">Continue Practice →</button>
+                      <button onClick={() => setRetakeJustCompleted(false)} className="editorial-button-ghost">Dismiss</button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Retake unlock card — State 2 (all deficit skills cleared) or State 1 (tracker) */}
+                {isFullyUnlocked && !retakeJustCompleted && deficitSkillIds.length > 0 && !profile.retakeComplete && (
+                  hasRetakeUnlocked ? (
+                    <div className="rounded-[1.5rem] border-2 border-indigo-400 bg-white p-6 shadow-[0_0_0_4px_rgba(99,102,241,0.12)]">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-sm">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-indigo-700">New</span>
+                            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">Ready to unlock</span>
+                          </div>
+                          <h3 className="text-xl font-bold text-slate-900">Reassessment Available</h3>
+                          <p className="mt-1 text-sm leading-relaxed text-slate-500">You&apos;ve brought your deficit skills up. A fresh 45-question reassessment will update your baseline — using questions you haven&apos;t seen before where possible. Your new scores will replace your original diagnostic for the skills it covers.</p>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">📝 45 questions, adaptive</span>
+                            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">🔄 Prefer fresh questions</span>
+                            <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">✓ Replaces diagnostic scores</span>
+                          </div>
+                          <div className="mt-4 flex flex-wrap items-center gap-3">
+                            <button onClick={startRetakeAssessment} className="editorial-button-primary">Start Reassessment →</button>
+                            <button onClick={() => {}} className="text-sm text-slate-500 hover:text-slate-700">Maybe later</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
+                        All {deficitSkillIds.length} deficit skills cleared — each skill that was below 60% at your baseline is now at 60%+.
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="editorial-surface p-5">
+                      <p className="editorial-overline text-indigo-600">Reassessment Progress</p>
+                      <h3 className="mt-2 text-lg font-bold text-slate-900">Deficit Skill Remediation</h3>
+                      <p className="mt-1 text-sm text-slate-500">
+                        Bring all {deficitSkillIds.length} deficit skills to 60%+ in practice to unlock a reassessment.
+                        <span className="ml-2 font-semibold text-indigo-600">{clearedDeficitCount} of {deficitSkillIds.length} cleared</span>
+                      </p>
+                      <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-500" style={{ width: `${deficitSkillIds.length > 0 ? Math.round((clearedDeficitCount / deficitSkillIds.length) * 100) : 0}%` }} />
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {deficitSkillIds.slice(0, 12).map(id => {
+                          const cleared = ((profile.globalScores?.skillScores ?? {})[id] ?? 0) >= 60;
+                          const name = getSkillById(id as Parameters<typeof getSkillById>[0])?.name ?? id;
+                          return (
+                            <span key={id} className={`rounded-full px-2.5 py-1 text-xs font-medium ${cleared ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+                              {cleared ? '✓ ' : ''}{name}
+                            </span>
+                          );
+                        })}
+                        {deficitSkillIds.length > 12 && <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">+{deficitSkillIds.length - 12} more</span>}
+                      </div>
+                    </div>
+                  )
+                )}
+
                 {isFullyUnlocked && (
                   <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading dashboard...</div>}>
                     <DashboardHome
@@ -1553,8 +1698,10 @@ function PraxisStudyAppContent() {
                 userId={user?.id ?? null}
                 profile={profile}
                 analyzedQuestions={analyzedQuestions}
-                onSkillProgressUpdate={(skillId, isCorrect) => {
-                  updateSkillProgress(skillId, isCorrect, 'medium');
+                onSkillProgressUpdate={(skillId, isCorrect, questionId) => {
+                  // Tag as 'module' and pass questionId so a question answered in
+                  // both the mini-quiz and practice is deduped, not double-counted.
+                  updateSkillProgress(skillId, isCorrect, 'medium', questionId, undefined, 'module');
                 }}
                 onBack={() => {
                   setLearningPathSkillId(null);
@@ -1681,6 +1828,22 @@ function PraxisStudyAppContent() {
             updateSkillProgress={updateSkillProgress}
             updateLastSession={updateLastSession}
             recordDiagnosticMiss={redemption.recordDiagnosticMiss}
+          />
+        )}
+
+        {/* RETAKE / REASSESSMENT MODE */}
+        {mode === 'retake-assessment' && retakeAssessmentData && (
+          <AdaptiveDiagnostic
+            initialQueue={retakeAssessmentData.initialQueue}
+            followUpPool={retakeAssessmentData.followUpPool}
+            assessmentTypeOverride="retake"
+            onComplete={handleRetakeComplete}
+            onPauseExit={() => { setRetakeAssessmentData(null); setMode('home'); }}
+            sessionId={undefined}
+            currentUserName={currentUserName}
+            logResponse={logResponse}
+            updateSkillProgress={updateSkillProgress}
+            updateLastSession={updateLastSession}
           />
         )}
 
