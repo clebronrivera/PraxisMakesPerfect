@@ -336,7 +336,7 @@ export const frameworkRegistry: FrameworkEntry[] = [
     id: 'FW-nasp-ethics-confidentiality',
     name: 'NASP Ethics — Confidentiality and Its Limits',
     citation:
-      'NASP Principles for Professional Ethics (2020), Standard II.3 (Responsibility to Clients); Standard IV.3.4 (Reporting)',
+      'NASP Principles for Professional Ethics (2020), Principle I.2: Privacy and Confidentiality (Standards I.2.3 boundaries of confidentiality at the outset, I.2.4 disclosure to prevent danger or as required by law)',
     summary:
       'School psychologists maintain confidentiality of student information but must break confidentiality when there is a clear and immediate danger to the client or others, or when required by law (e.g., mandated reporting).',
     keyHolding:
@@ -353,7 +353,7 @@ export const frameworkRegistry: FrameworkEntry[] = [
     id: 'FW-nasp-ethics-informed-consent',
     name: 'NASP Ethics — Informed Consent and Assent',
     citation:
-      'NASP Principles for Professional Ethics (2020), Standard II.1 (Informed Consent/Assent)',
+      'NASP Principles for Professional Ethics (2020), Principle I.1: Autonomy and Self-Determination (Consent and Assent)',
     summary:
       'School psychologists obtain informed consent from parents or guardians before conducting evaluations or providing services. They also seek the assent of students at a developmentally appropriate level. Consent must be informed, voluntary, and documented.',
     keyHolding:
@@ -370,7 +370,7 @@ export const frameworkRegistry: FrameworkEntry[] = [
     id: 'FW-nasp-ethics-dual-relationships',
     name: 'NASP Ethics — Avoiding Dual Relationships',
     citation:
-      'NASP Principles for Professional Ethics (2020), Standard II.3.4 (Multiple Relationships)',
+      'NASP Principles for Professional Ethics (2020), Principle III.4: Multiple Relationships and Conflicts of Interest',
     summary:
       'School psychologists avoid relationships that could impair objectivity or create conflicts of interest — for example, providing therapy to a family member or conducting a formal evaluation of a student they are tutoring privately.',
     keyHolding:
@@ -523,7 +523,7 @@ export const frameworkRegistry: FrameworkEntry[] = [
     id: 'FW-nasp-ethics-beneficence',
     name: 'NASP Ethics — Beneficence and Non-Maleficence',
     citation:
-      'NASP Principles for Professional Ethics (2020), Standard I.1 (Respecting the Dignity and Rights of All Persons)',
+      'NASP Principles for Professional Ethics (2020), Principle II: Professional Competence and Responsibility (beneficence and responsible caring)',
     summary:
       'School psychologists act to benefit those they serve and protect them from harm. Competing ethical principles (beneficence, non-maleficence, autonomy, justice, fidelity) must be balanced using a systematic ethical decision-making process when they conflict.',
     keyHolding:

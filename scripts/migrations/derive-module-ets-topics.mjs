@@ -43,6 +43,27 @@ for (const d of etsData.domains) for (const s of d.sections) for (const t of s.t
 const TOP_N = 3;
 const inc = (m, k) => m.set(k, (m.get(k) || 0) + 1);
 
+// ─── SME overrides (C-B2, 2026-06-12) ────────────────────────────────────────────
+// The frequency derive falls back to a skill's full objective set for modules with no
+// routed-question signal. The Content/SME track hand-tightened 11 of those skill-fallback
+// modules to the 1–3 objectives the lesson actually teaches (descriptive-only, never scored).
+// Source + rationale: docs/C-B2_etsTopicId_proposals_2026-06-12.md. Each set is validated
+// below (⊆ skillObjectiveMap[ownerSkill], valid ETS, 1–3 codes) exactly like a derived set,
+// so a bad override fails the derive loudly. Persist here so future re-derives keep them.
+const SME_OVERRIDES = {
+  'MOD-D1-09': ['I.A.1.c'],            // DBD-01 — CBM = screening/progress monitoring
+  'MOD-D1-12': ['I.A.2.c'],            // DBD-05 — projective = supplementary diagnostic
+  'MOD-D10-05': ['IV.C.2.c'],          // LEG-01 — informed consent / confidentiality rights
+  'MOD-D2-02': ['I.B.1.b'],            // CON-01 — consultee-centered = consultation model
+  'MOD-D2-03': ['I.B.1.c'],            // CON-01 — PLCs = stakeholder communication/collaboration
+  'MOD-D4-11': ['II.B.2.a', 'II.B.2.f'], // MBH-02 — counseling methods + measuring MH outcomes
+  'MOD-D5-03': ['III.B.1.a'],          // SAF-01 — CASEL/SEL = prevention practice
+  'MOD-D6-04': ['III.B.1.a', 'III.B.1.b'], // SAF-01 — bullying prevention + risk/protective factors
+  'MOD-D8-03': ['I.A.3.e', 'I.A.3.f'], // PSY-04 — racial/cultural factors + test fairness/bias
+  'MOD-D8-05': ['IV.A.1.a'],           // DIV-01 — cultural fit of interventions
+  'MOD-D9-02': ['IV.B.1.c'],           // RES-03 — correlation interpretation
+};
+
 // ─── Tally objective frequencies, by routed module and by skill (fallback) ───────
 const routedByModule = new Map(); // moduleId → Map<code, count>
 const routedQCount = new Map();   // moduleId → #questions routing here (primaryModuleId)
@@ -72,7 +93,7 @@ const topCodes = (counts, allowed) =>
 // ─── Per module: routed signal → skill fallback → primary objective ──────────────
 const sorted = [...LEARNING_MODULES].sort((a, b) => (a.id < b.id ? -1 : 1));
 const out = {};
-const report = { total: 0, routed: 0, skillFallback: 0, primaryFallback: 0, invalid: [] };
+const report = { total: 0, routed: 0, skillFallback: 0, primaryFallback: 0, smeOverride: 0, invalid: [] };
 
 for (const m of sorted) {
   const skill = m.primarySkillId;
@@ -88,13 +109,22 @@ for (const m of sorted) {
     ids = fb ? [fb] : [];
     derivedFrom = 'primary-fallback';
   }
+  // SME override wins over the computed set (validated below like any other).
+  if (SME_OVERRIDES[m.id]) {
+    ids = SME_OVERRIDES[m.id];
+    derivedFrom = 'sme-override';
+  }
   for (const code of ids) {
     if (!ALL_ETS.has(code)) report.invalid.push(`${m.id}:${code} (invalid ETS code)`);
     if (!allowed.has(code)) report.invalid.push(`${m.id}:${code} (outside ${skill} objective set)`);
   }
   out[m.id] = { etsTopicIds: ids, derivedFrom, routedQuestionCount: routedQCount.get(m.id) || 0 };
   report.total++;
-  report[derivedFrom === 'routed' ? 'routed' : derivedFrom === 'skill-fallback' ? 'skillFallback' : 'primaryFallback']++;
+  const bucket = derivedFrom === 'routed' ? 'routed'
+    : derivedFrom === 'skill-fallback' ? 'skillFallback'
+    : derivedFrom === 'sme-override' ? 'smeOverride'
+    : 'primaryFallback';
+  report[bucket]++;
 }
 
 const doc = {
@@ -105,11 +135,16 @@ const doc = {
     fromRouted: report.routed,
     fromSkillFallback: report.skillFallback,
     fromPrimaryFallback: report.primaryFallback,
-    note: 'Provisional, derived. etsTopicIds ⊆ skillObjectiveMap[primarySkillId]; top 1–3 by routed-question frequency (skill-question fallback when a module has no routed signal). SME should confirm each list against the lesson. Never read by scoring.',
+    fromSmeOverride: report.smeOverride,
+    note: 'Provisional, derived. etsTopicIds ⊆ skillObjectiveMap[primarySkillId]; top 1–3 by routed-question frequency (skill-question fallback when a module has no routed signal; sme-override = hand-tightened per docs/C-B2_etsTopicId_proposals_2026-06-12.md). SME should confirm each list against the lesson. Never read by scoring.',
   },
   modules: out,
 };
 
 writeFileSync(join(ROOT, 'src/data/moduleEtsTopicMap.json'), JSON.stringify(doc, null, 2) + '\n');
-console.log(`derived etsTopicIds for ${report.total} modules: ${report.routed} routed, ${report.skillFallback} skill-fallback, ${report.primaryFallback} primary-fallback`);
+console.log(`derived etsTopicIds for ${report.total} modules: ${report.routed} routed, ${report.skillFallback} skill-fallback, ${report.primaryFallback} primary-fallback, ${report.smeOverride} sme-override`);
 console.log(`invalid: ${report.invalid.length}${report.invalid.length ? ' → ' + report.invalid.join(', ') : ''}`);
+if (report.invalid.length) {
+  console.error('✖ refusing to ship: invalid etsTopicIds above (not ⊆ skillObjectiveMap or unknown ETS code)');
+  process.exit(1);
+}

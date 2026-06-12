@@ -68,9 +68,10 @@ describe('moduleEtsTopicMap (Pack 4 — derived module objectives)', () => {
     const routed = all.filter((e) => e.derivedFrom === 'routed').length;
     const skillFallback = all.filter((e) => e.derivedFrom === 'skill-fallback').length;
     const primaryFallback = all.filter((e) => e.derivedFrom === 'primary-fallback').length;
+    const smeOverride = all.filter((e) => e.derivedFrom === 'sme-override').length;
     console.info(
-      `  ℹ moduleEtsTopicMap: ${all.length} modules — ${routed} routed, ${skillFallback} skill-fallback, ${primaryFallback} primary-fallback`,
+      `  ℹ moduleEtsTopicMap: ${all.length} modules — ${routed} routed, ${skillFallback} skill-fallback, ${primaryFallback} primary-fallback, ${smeOverride} sme-override`,
     );
-    expect(routed + skillFallback + primaryFallback).toBe(all.length);
+    expect(routed + skillFallback + primaryFallback + smeOverride).toBe(all.length);
   });
 });

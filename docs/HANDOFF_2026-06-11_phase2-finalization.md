@@ -77,8 +77,8 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 | **E0** | E6: document the 45-scored-skills dual model in `HOW_THE_APP_WORKS.md` | — | ☐ |
 | **E0** | A2 (optional): add a normalization-regression assertion to `derive-skill-exam-weights.mjs` | — | ☐ |
 | **E1** | **A4/D8 retake build** per §2 — (a) latest-wins replace logic for assessment buckets in `globalScoreCalculator.ts`; (b) prefer-unseen selection in the assessment builder; (c) the third-assessment builder + unlock wiring + UI entry. Mockup-first for any new UI. | — | ☐ |
-| **E1** | B2 re-derive: after Coworker proposes tighter etsTopicIds (C-side), re-run `derive-module-ets-topics.mjs` + parity test | ⛔ C-B2 | ☐ |
-| **E1** | Expansion re-derive: after Coworker adds new questions, re-run the misconception + objective derives + parity | ⛔ C4 | ☐ |
+| **E1** | B2 re-derive: after Coworker proposes tighter etsTopicIds (C-side), re-run `derive-module-ets-topics.mjs` + parity test | ⛔ C-B2 | ✅ |
+| **E1** | Expansion re-derive: after Coworker adds new questions, re-run the misconception + objective derives + parity | ⛔ C4 | ✅ |
 | **E2** | Apply migrations `0024_vocab_attempts` + `0025_account_deletion_request` to Supabase; triage Dependabot vuln #11 | — | ☐ |
 | **E3** | Branch reconciliation (`hopeful-benz` ↔ `explore/dashboard-redesign` ↔ `main`) **then** the batched content-only deploy (A1) | ⛔ E1, C-track | ☐ |
 
@@ -119,6 +119,24 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 > - **FLAG for engineering/SME:** `item_056` has a construct/stem mismatch — stem asks about *fostering intrinsic
 >   motivation* (answer: choice/autonomy) but `construct_actually_tested` describes *fixed-ratio reinforcement /
 >   token economy*. Left as-is (outside the C1 consistency scope); flagging for a separate construct-accuracy fix.
+
+> **E1 re-derive landing note (Engineering, 2026-06-12)** — Track C content bundle applied to
+> `claude/hopeful-benz-866a30` (commits `770cf9c`…`16e671e`). Engineering work this pass:
+> - **C4 expansion re-derive:** re-ran `derive-misconception-questions.mjs` (misconceptionQuestionMap +28/-7,
+>   the 50 new items now linked) and `seed-question-ets-topics.mjs --preserve-manual` (260 manual entries kept,
+>   0 verified tags wiped). objMap/moduleEtsTopicMap confirmed canonical (a stray 380-line reorder churn + 1
+>   regression were reverted, keeping the Coworker's authored objMap).
+> - **C-B2 re-derive:** added a persistent `SME_OVERRIDES` map to `derive-module-ets-topics.mjs` (+ fail-loud guard
+>   on invalid codes). All 11 TIGHTEN proposals applied → `moduleEtsTopicMap.json` now 45 routed / 11 skill-fallback /
+>   11 sme-override, 0 invalid; parity test extended to count `sme-override`. (The 11 KEEP modules were already optimal.)
+> - **Flags fixed:** `item_056` construct rewritten to match the intrinsic-motivation stem; `FW-nasp-ethics-beneficence`
+>   citation → NASP Principle II.
+> - **Adversarial content review** (5 per-skill reviewers over the 50 new items + citation sweep + eng-fix check,
+>   each finding default-refute verified): the 50 C4 items and all engineering fixes passed clean. The sweep caught
+>   **3 more NASP miscitations** the C3 pass missed — `FW-nasp-ethics-confidentiality` (→ Principle I.2),
+>   `-informed-consent` (→ Principle I.1), `-dual-relationships` (→ Principle III.4) — all corrected and verified
+>   against the official NASP Principles. (`-records` → II.4 and `-practice-model` were already correct.)
+> - Gate green (types, colors, lint, 267 tests, build). **C4 remainder:** 5 skills (~41 items) still queued (Track C).
 
 ## 4 · Parallelization, file lanes & branch strategy
 

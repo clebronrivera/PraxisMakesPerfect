@@ -7,8 +7,8 @@
     "cap": 12,
     "totalMisconceptions": 98,
     "unmappableSkillMisconceptions": 0,
-    "covered": 66,
-    "questionsLinked": 206,
+    "covered": 67,
+    "questionsLinked": 222,
     "note": "Provisional. Links a misconception to questions whose distractor beliefs express it (skill-matched). questionIds ordered by overlap score. SME-confirmable; never read by scoring."
   },
   "misconceptions": {
@@ -206,6 +206,7 @@
       "questionIds": [
         "PQ_ACA-03_1",
         "PQ_ACA-03_14",
+        "PQ_ACA-03_16",
         "PQ_ACA-03_18",
         "item_065"
       ],
@@ -242,9 +243,18 @@
     },
     "MC-NEW-3-AcademicProgressFactors-001": {
       "questionIds": [
-        "PQ_ACA-09_17"
+        "PQ_ACA-09_24",
+        "PQ_ACA-09_17",
+        "PQ_ACA-09_26"
       ],
-      "topScore": 0.429
+      "topScore": 0.571
+    },
+    "MC-NEW-3-AcademicProgressFactors-002": {
+      "questionIds": [
+        "PQ_ACA-09_25",
+        "PQ_ACA-09_30"
+      ],
+      "topScore": 0.333
     },
     "MC-DBDM-S10-001": {
       "questionIds": [
@@ -308,15 +318,20 @@
     },
     "MC-NEW-1-BackgroundInformation-002": {
       "questionIds": [
+        "PQ_DBD-10_24",
         "PQ_DBD-10_7",
         "PQ_DBD-10_1",
         "PQ_DBD-10_12",
         "PQ_DBD-10_18",
         "PQ_DBD-10_20",
+        "PQ_DBD-10_21",
+        "PQ_DBD-10_25",
+        "PQ_DBD-10_26",
+        "PQ_DBD-10_29",
         "PQ_DBD-10_4",
         "PQ_DBD-10_5"
       ],
-      "topScore": 0.5
+      "topScore": 0.667
     },
     "MC-NEW-3-BioCulturalInfluences-001": {
       "questionIds": [
@@ -324,6 +339,8 @@
         "PQ_DIV-01_14",
         "PQ_DIV-01_15",
         "PQ_DIV-01_2",
+        "PQ_DIV-01_21",
+        "PQ_DIV-01_27",
         "PQ_DIV-01_3"
       ],
       "topScore": 0.5
@@ -374,20 +391,24 @@
     },
     "MC-NEW-7-InteragencyCollaboration-001": {
       "questionIds": [
+        "PQ_FAM-03_23",
         "PQ_FAM-03_11",
         "PQ_FAM-03_19"
       ],
-      "topScore": 0.375
+      "topScore": 0.5
     },
     "MC-NEW-7-InteragencyCollaboration-002": {
       "questionIds": [
+        "PQ_FAM-03_25",
         "PQ_FAM-03_11",
         "PQ_FAM-03_12",
         "PQ_FAM-03_15",
         "PQ_FAM-03_2",
+        "PQ_FAM-03_22",
+        "PQ_FAM-03_28",
         "PQ_FAM-03_7"
       ],
-      "topScore": 0.429
+      "topScore": 0.571
     },
     "MC-NEW-10-RecordKeeping-001": {
       "questionIds": [

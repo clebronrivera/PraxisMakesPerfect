@@ -4,9 +4,10 @@
     "source": "questionObjectiveMap.json (verified tags) + questions.json primaryModuleId routing",
     "totalModules": 67,
     "fromRouted": 45,
-    "fromSkillFallback": 22,
+    "fromSkillFallback": 11,
     "fromPrimaryFallback": 0,
-    "note": "Provisional, derived. etsTopicIds ⊆ skillObjectiveMap[primarySkillId]; top 1–3 by routed-question frequency (skill-question fallback when a module has no routed signal). SME should confirm each list against the lesson. Never read by scoring."
+    "fromSmeOverride": 11,
+    "note": "Provisional, derived. etsTopicIds ⊆ skillObjectiveMap[primarySkillId]; top 1–3 by routed-question frequency (skill-question fallback when a module has no routed signal; sme-override = hand-tightened per docs/C-B2_etsTopicId_proposals_2026-06-12.md). SME should confirm each list against the lesson. Never read by scoring."
   },
   "modules": {
     "MOD-D1-01": {
@@ -67,11 +68,9 @@
     },
     "MOD-D1-09": {
       "etsTopicIds": [
-        "I.A.1.a",
-        "I.A.1.c",
-        "I.A.2.i"
+        "I.A.1.c"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D1-10": {
@@ -91,11 +90,9 @@
     },
     "MOD-D1-12": {
       "etsTopicIds": [
-        "I.A.2.c",
-        "I.A.2.b",
-        "I.A.4.a"
+        "I.A.2.c"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D1-13": {
@@ -151,10 +148,9 @@
     },
     "MOD-D10-05": {
       "etsTopicIds": [
-        "IV.C.2.a",
         "IV.C.2.c"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D10-06": {
@@ -206,20 +202,16 @@
     },
     "MOD-D2-02": {
       "etsTopicIds": [
-        "I.B.1.b",
-        "I.B.1.a",
-        "I.B.1.c"
+        "I.B.1.b"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D2-03": {
       "etsTopicIds": [
-        "I.B.1.b",
-        "I.B.1.a",
         "I.B.1.c"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D2-04": {
@@ -353,9 +345,9 @@
     "MOD-D4-11": {
       "etsTopicIds": [
         "II.B.2.a",
-        "II.B.1.b"
+        "II.B.2.f"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D5-01": {
@@ -376,11 +368,9 @@
     },
     "MOD-D5-03": {
       "etsTopicIds": [
-        "III.B.1.a",
-        "III.B.1.b",
-        "III.B.1.e"
+        "III.B.1.a"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D5-04": {
@@ -423,10 +413,9 @@
     "MOD-D6-04": {
       "etsTopicIds": [
         "III.B.1.a",
-        "III.B.1.b",
-        "III.B.1.e"
+        "III.B.1.b"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D7-01": {
@@ -463,11 +452,10 @@
     },
     "MOD-D8-03": {
       "etsTopicIds": [
-        "I.A.4.b",
         "I.A.3.e",
         "I.A.3.f"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 24
     },
     "MOD-D8-04": {
@@ -479,10 +467,9 @@
     },
     "MOD-D8-05": {
       "etsTopicIds": [
-        "IV.A.1.a",
-        "IV.A.1.b"
+        "IV.A.1.a"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 0
     },
     "MOD-D9-01": {
@@ -495,10 +482,9 @@
     },
     "MOD-D9-02": {
       "etsTopicIds": [
-        "IV.B.1.c",
-        "IV.B.1.a"
+        "IV.B.1.c"
       ],
-      "derivedFrom": "skill-fallback",
+      "derivedFrom": "sme-override",
       "routedQuestionCount": 21
     },
     "MOD-D9-03": {
