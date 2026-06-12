@@ -80,7 +80,18 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 | **E1** | B2 re-derive: after Coworker proposes tighter etsTopicIds (C-side), re-run `derive-module-ets-topics.mjs` + parity test | ⛔ C-B2 | ✅ |
 | **E1** | Expansion re-derive: after Coworker adds new questions, re-run the misconception + objective derives + parity | ⛔ C4 | ✅ |
 | **E2** | Apply migrations `0024_vocab_attempts` + `0025_account_deletion_request` to Supabase; triage Dependabot vuln #11 | — | ✅ |
-| **E3** | Branch reconciliation (`hopeful-benz` ↔ `explore/dashboard-redesign` ↔ `main`) **then** the batched content-only deploy (A1) | ⛔ E1, C-track | ☐ |
+| **E3** | Branch reconciliation (`hopeful-benz` ↔ `explore/dashboard-redesign` ↔ `main`) **then** the batched content-only deploy (A1) | ⛔ E1, C-track | ✅ |
+
+> **E3 release note (2026-06-12):** `explore/dashboard-redesign` was already fully absorbed into
+> `hopeful-benz` (0 unique commits) — no merge needed. `feat/phase2-finalization` (engineering: retake
+> build, E2 `ws` fix, migration 0026) merged into `hopeful-benz` (2 doc conflicts resolved). PR
+> [#37](https://github.com/clebronrivera/PraxisMakesPerfect/pull/37) (`hopeful-benz` → `main`, 81 commits,
+> clean ff) merged after CI `check` green → merge commit `4fdf27d`. **Netlify auto-deploy is ON**
+> (`stop_builds:false`, `production_branch:main` — the older "auto-deploy OFF" note was stale), so the
+> merge **auto-deployed Phase 2 to production** (deploy `4fdf27d`, state `ready`,
+> https://praxismakesperfect.netlify.app, HTTP 200). Dependabot #11 (`ws`) closes now that the fix is on
+> the default branch. **Phase 2 shipped.** Remaining future work (not blocking): the 5 queued C4 skills
+> (~41 items, Track C) and the optional Supabase `search_path` hardening (spawn-task chip).
 
 > **E2 completion note (2026-06-12):** Project `ypsownmsoyljlqhcnrwa` (PraxisMakesPerfect).
 > `0024_vocab_attempts` + `0025_account_deletion_request` were **already applied** in a prior
