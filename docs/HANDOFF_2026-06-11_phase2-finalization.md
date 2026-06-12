@@ -86,13 +86,22 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 
 | Phase | Task | Dep | Status |
 |---|---|---|---|
-| **C1** | **692-question `construct_actually_tested` regen** across the 29 "collapsed" skills (the biggest content debt). Workflow + batch script ready: `content-authoring/phase-B/PHASE-B-REGEN-WORKFLOW.md`. Variety ≥80% before apply. | — | ☐ |
+| **C1** | **692-question `construct_actually_tested` / `complexity_rationale`** — regen was already applied (commit 459442f, 2026-04-02): 100% unique, 0 templating, properly formatted. Remaining work was a **targeted cleanup**: rewrote 13 construct formatting outliers (5 banned-lead, 8 short) + resolved 148 `cognitive_complexity`↔rationale level disagreements (107 tags corrected, 45 rationales rewritten). Bank now 0 mismatches, 100% unique constructs. | — | ✅ |
 | **C2** | 47 misconception-text framing fixes + 3 duplicate-distractor items (`questions.json` `distractor_misconception_*`) | ⛔ C1 (same file) | ☐ |
 | **C3** | `frameworkRegistry.ts` holdings/applicability SME read (32 entries; citations already verified) | — | ☐ |
 | **C-B2** | Propose tighter etsTopicIds for the 22 skill-fallback modules (hand-off the proposals to Track E to re-derive — **do NOT run the derive yourself**) | — | ☐ |
 | **C4** | **Bank expansion** — lift the 5–11 thinnest skills (§5) to ~30 Q each (~99 new verified items), full tagging, balanced keys | ⛔ C1 | ☐ |
 
 ---
+
+> **Track C progress log (Coworker)**
+> - **C1 ✅ (2026-06-12)** — Reality check: the 692-question regen was already applied and high quality;
+>   C1 reduced to a targeted consistency cleanup (Carlos-approved). Two commits on `claude/hopeful-benz-866a30`:
+>   `770cf9c` (13 construct formatting fixes) + `1fda02a` (148 cognitive_complexity↔rationale level alignments).
+>   Net: bank Recall/Application tags 376/774 → 449/701; 0 remaining cc↔rationale mismatches. Gate green.
+> - **FLAG for engineering/SME:** `item_056` has a construct/stem mismatch — stem asks about *fostering intrinsic
+>   motivation* (answer: choice/autonomy) but `construct_actually_tested` describes *fixed-ratio reinforcement /
+>   token economy*. Left as-is (outside the C1 consistency scope); flagging for a separate construct-accuracy fix.
 
 ## 4 · Parallelization, file lanes & branch strategy
 
