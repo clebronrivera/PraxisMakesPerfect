@@ -8134,6 +8134,76 @@
       ],
       "method": "manual",
       "verified": false
+    },
+    "PQ_ACA-09_21": {
+      "ets_topics": [
+        "II.B.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_22": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_23": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_24": {
+      "ets_topics": [
+        "II.B.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_25": {
+      "ets_topics": [
+        "II.B.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_26": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_27": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_28": {
+      "ets_topics": [
+        "II.B.1.d"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_29": {
+      "ets_topics": [
+        "II.B.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_ACA-09_30": {
+      "ets_topics": [
+        "II.B.1.c"
+      ],
+      "method": "manual",
+      "verified": false
     }
   }
 }
