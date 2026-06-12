@@ -95,7 +95,10 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 > clone and must not be mutated from this worktree.) **Out-of-scope advisories surfaced** (not E2):
 > Supabase security linter flags `function_search_path_mutable` + anon-executable SECURITY DEFINER on
 > `increment_glossary_miss` (mitigated by its `auth.uid()` owner-guard) — candidate for a follow-up
-> hardening pass, tracked separately.
+> hardening pass, tracked separately. **✅ RESOLVED (2026-06-12):** migrations `0027` (pin search_path
+> on 5 fns) + `0028` (SECURITY DEFINER→INVOKER on 4 fns, closes the increment_*_count IDOR) were applied
+> to the live DB; advisor `function_search_path_mutable` is cleared. The files were missing from the
+> repo (DB↔repo drift) — checked in verbatim from the remote migration history (commit `9f4559f`).
 
 ### TRACK C — Content / SME (run on **Claude Coworker**, in parallel)
 
