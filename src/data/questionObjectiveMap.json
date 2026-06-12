@@ -8344,6 +8344,76 @@
       ],
       "method": "manual",
       "verified": false
+    },
+    "PQ_DIV-05_21": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_22": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_23": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_24": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_25": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_26": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_27": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_28": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_29": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-05_30": {
+      "ets_topics": [
+        "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
     }
   }
 }
