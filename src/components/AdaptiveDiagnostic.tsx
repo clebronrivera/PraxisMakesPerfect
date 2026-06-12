@@ -28,11 +28,12 @@ interface AdaptiveDiagnosticProps {
   onPauseExit: () => void;
   sessionId?: string;
   currentUserName?: string | null;
+  assessmentTypeOverride?: 'retake';
   logResponse?: (response: {
     questionId: string;
     skillId?: string;
     domainIds?: number[];
-    assessmentType: 'adaptive';
+    assessmentType: 'adaptive' | 'retake';
     sessionId: string;
     isCorrect: boolean;
     confidence: 'low' | 'medium' | 'high';
@@ -64,6 +65,7 @@ export default function AdaptiveDiagnostic({
   onPauseExit,
   sessionId,
   currentUserName,
+  assessmentTypeOverride,
   logResponse,
   updateSkillProgress,
   updateLastSession,
@@ -330,7 +332,7 @@ export default function AdaptiveDiagnostic({
           questionId: currentQuestion.id,
           skillId,
           domainIds: currentQuestion.domains || [],
-          assessmentType: 'adaptive',
+          assessmentType: assessmentTypeOverride ?? 'adaptive',
           sessionId,
           isCorrect,
           confidence,

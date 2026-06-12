@@ -76,7 +76,7 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 | **E0** | A10: add a 1-line note to MOD-D9-05 in `learningModules.ts` acknowledging both implementation frameworks (Forman/Dissemination here; Fixsen/NIRN/Exploration elsewhere) | — | ✅ |
 | **E0** | E6: document the 45-scored-skills dual model in `HOW_THE_APP_WORKS.md` | — | ✅ |
 | **E0** | A2 (optional): add a normalization-regression assertion to `derive-skill-exam-weights.mjs` | — | ✅ |
-| **E1** | **A4/D8 retake build** per §2 — (a) latest-wins replace logic for assessment buckets in `globalScoreCalculator.ts`; (b) prefer-unseen selection in the assessment builder; (c) the third-assessment builder + unlock wiring + UI entry. Mockup-first for any new UI. | — | ☐ |
+| **E1** | **A4/D8 retake build** per §2 — (a) latest-wins replace logic for assessment buckets in `globalScoreCalculator.ts`; (b) prefer-unseen selection in the assessment builder; (c) the third-assessment builder + unlock wiring + UI entry. Mockup-first for any new UI. | — | ✅ |
 | **E1** | B2 re-derive: after Coworker proposes tighter etsTopicIds (C-side), re-run `derive-module-ets-topics.mjs` + parity test | ⛔ C-B2 | ☐ |
 | **E1** | Expansion re-derive: after Coworker adds new questions, re-run the misconception + objective derives + parity | ⛔ C4 | ☐ |
 | **E2** | Apply migrations `0024_vocab_attempts` + `0025_account_deletion_request` to Supabase; triage Dependabot vuln #11 | — | ☐ |

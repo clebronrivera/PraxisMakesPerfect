@@ -21,6 +21,7 @@ import {
 import { UserResponse } from '../brain/weakness-detector';
 import type { PatternId } from '../brain/template-schema';
 import { calculateAndSaveGlobalScores } from '../utils/globalScoreCalculator';
+import type { GlobalScoreResult } from '../utils/globalScoreCalculator';
 import { calculateSrsUpdate } from '../utils/srsEngine';
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 import type {
@@ -118,6 +119,11 @@ export interface UserProfile {
 
   // Consent tracking
   consentAcceptedAt?: string;
+
+  // Third-assessment (reassessment / retake) state
+  retakeComplete?: boolean;
+  retakeCompletedAt?: string;
+  globalScores?: GlobalScoreResult;
 }
 
 export interface ResponseLog {
@@ -346,6 +352,11 @@ export function useProgressTracking() {
 
           // Consent tracking
           consentAcceptedAt: data.consent_accepted_at ?? undefined,
+
+          // Third-assessment (reassessment / retake) state
+          retakeComplete: data.retake_complete ?? false,
+          retakeCompletedAt: data.retake_completed_at ?? undefined,
+          globalScores: data.global_scores ?? undefined,
         });
       } else {
         setProfileState(defaultProfile);
@@ -409,6 +420,10 @@ export function useProgressTracking() {
 
         // Consent tracking
         consent_accepted_at: newProfile.consentAcceptedAt ?? null,
+
+        // Third-assessment state
+        retake_complete: newProfile.retakeComplete ?? false,
+        retake_completed_at: newProfile.retakeCompletedAt ?? null,
 
         updated_at: new Date().toISOString()
       };

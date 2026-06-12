@@ -159,6 +159,8 @@ After completing the diagnostic, you get a **Score Report** — a breakdown of w
 
 > **Legacy assessment path:** The app also supports a legacy two-step assessment flow (Skills Screener + Full Assessment) for users who started before the adaptive diagnostic was introduced. Legacy users are shown a "Baseline recorded" state on the dashboard and prompted to take the adaptive diagnostic to unlock all features. New users always see the adaptive diagnostic directly.
 
+> **Third assessment — Reassessment (Retake):** After completing the adaptive diagnostic, users who improve their deficit skills through practice can take a one-time reassessment. Unlock condition: every skill that scored below 60% in the original diagnostic must now score ≥ 60% in the current blended skill scores. The reassessment is another 45-question adaptive session that **prefers questions not seen before** (unseen questions sorted first within each skill tier; falls back to seen questions when the pool runs thin). Its scores **replace** the original diagnostic scores for the skills it covers (latest-wins semantics); practice scores continue to blend at their normal 30% weight. The dashboard shows a progress tracker while deficit skills are clearing, and a highlighted "Reassessment Available" unlock card once all deficit skills clear. After completion, a score-comparison card shows the before/after readiness and skill count. One reassessment per user.
+
 ### Step 4: Study, Practice, and Track
 From this point on, every session and every question feeds back into your profile. The system keeps learning about you as you go.
 
