@@ -93,7 +93,7 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | Beta Feedback | All user feedback with status management |
 | Question Reports | Per-question issue reports with severity triage |
 | Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
-| Item Analysis | Psychometric quality metrics for the 1,150-question bank (p-value, discrimination, distractor analysis) |
+| Item Analysis | Psychometric quality metrics for the 1,200+-question bank (p-value, discrimination, distractor analysis) |
 | AI Tutor | AI Tutor chat sessions — session list with user/type/message count/artifacts, drill into full conversation with intent badges and inline artifact cards, CSV export |
 
 ### Student Detail Drawer

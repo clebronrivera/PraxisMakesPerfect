@@ -108,11 +108,19 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 | **C2** | misconception framing + duplicate distractors — **already resolved in live data** (verified 2026-06-12): all 3,430 real `distractor_misconception_*` fields use compliant "The student…" framing (100%), 0 within-question duplicates (item_039/item_221/item_072 differentiated), 0 generic filler. Fixed the one remaining sub-9-word item (`PQ_DBD-07_5` C). | ⛔ C1 (same file) | ✅ |
 | **C3** | `frameworkRegistry.ts` holdings/applicability SME read (32 entries) — **done**. Legal content accurate across all 32; corrected one substantive holding (Endrew F. now leads with the controlling "progress appropriate in light of the child's circumstances" standard, rejecting "merely more than de minimis"). Flagged one citation issue (see log). | — | ✅ |
 | **C-B2** | Tighter etsTopicId proposals for the 22 skill-fallback modules — **proposals delivered** (`docs/C-B2_etsTopicId_proposals_2026-06-12.md`): 11 tighten, 11 already optimal. All ⊆ `skillObjectiveMap[skill]`, 1–3 codes. **Awaiting Track E re-derive** (`derive-module-ets-topics.mjs` + `moduleEtsTopics` parity test). Coworker did not run the derive. | — | ✅ |
-| **C4** | **Bank expansion** — Floor-5 **DONE** (2026-06-12): DBD-10, ACA-09, FAM-03, DIV-01, DIV-05 each 20→30 (+50 verified items, full tagging, manual objective entries, keys placed off-B). **Queued (next session):** DIV-03(21→30), DBD-09(22→30), PSY-01(22→30), PSY-04(22→30), FAM-02(22→30) ≈ +41 items. | ⛔ C1 | 🔄 |
+| **C4** | **Bank expansion — DONE** (2026-06-12). Floor-5: DBD-10, ACA-09, FAM-03, DIV-01, DIV-05 each 20→30 (+50). Remaining 5: DIV-03(21→30, +9), DBD-09(22→30, +8), PSY-01(22→30, +8), PSY-04(22→30, +8), FAM-02(22→30, +8) = **+41**. Bank **1,200→1,241**. Full tagging, manual objective entries (`verified:false`), keys off-B, adversarial-reviewed (5 per-skill refuters; 6 dup/precision fixes applied). Re-derives run (`--preserve-manual` + misconception). All 11 ≤22-Q skills now at 30. | ⛔ C1 | ✅ |
 
 ---
 
 > **Track C progress log (Coworker)**
+> - **C4 ✅ COMPLETE (2026-06-12, engineering session)** — the 5 queued skills authored: DIV-03/DBD-09/PSY-01/PSY-04/FAM-02
+>   each lifted to 30 (+41 items, `PQ_<skill>_21..`). Bank **1,200→1,241**; all 11 ≤22-Q skills now at 30. Authored via
+>   the append-only generator `scripts/content/c4-expand-five-skills.mjs` (off-B keys, ≥9-word misconceptions, manual
+>   `verified:false` objective tags — 301 manual entries kept by `--preserve-manual`, 0 orphaned). Adversarial content
+>   review (5 per-skill refuters): **0 keyed-answer/factual/multiple-correct errors**; 6 duplication/precision findings
+>   fixed in the spec and regenerated (DIV-03_27 retargeted off eligibility, DIV-03_25 equity phrasing, DBD-09_26
+>   "exosystem"→community label, PSY-04_25→language-of-administration, PSY-04_26→IDEA no-single-measure, FAM-02_22→
+>   schoolwide-systems framing). Misconception derive re-run (227 linked). Gate green (271 tests, build).
 > - **C-B2 ✅ proposals delivered (2026-06-12)**
 > - **C4 🔄 Floor-5 done (2026-06-12)** — +50 verified items across DBD-10/ACA-09/FAM-03/DIV-01/DIV-05 (each 20→30),
 >   bank 1,150→1,200. Full distractor/misconception/objective tagging; new-item keys placed off-B (≈4A/3C/3D each).
