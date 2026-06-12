@@ -456,12 +456,18 @@ export interface AdaptiveDiagnosticResult {
  * - Maximum 3 questions per skill (1 initial + 2 follow-ups).
  *
  * Result range: 45 (all correct) → ~90 max (all wrong with 2 follow-ups each).
+ *
+ * @param preferUnseenIds — IDs from prior assessments to prefer NOT to reuse (retake mode).
+ *   Within each skill, unseen questions are tried first; seen questions are the fallback.
+ *   Defaults to [] (no preference = original diagnostic behaviour).
  */
 export function buildAdaptiveDiagnostic(
   analyzedQuestions: AnalyzedQuestion[],
-  excludeQuestionIds: string[] = []
+  excludeQuestionIds: string[] = [],
+  preferUnseenIds: string[] = []
 ): AdaptiveDiagnosticResult {
   const excludeSet = new Set(excludeQuestionIds);
+  const seenSet = new Set(preferUnseenIds);
 
   // 1. Filter and group by skill
   const filtered = analyzedQuestions.filter(q => !excludeSet.has(q.id));
@@ -483,12 +489,21 @@ export function buildAdaptiveDiagnostic(
       continue;
     }
 
-    // Prioritize single-select, shuffle
+    // Prefer-unseen (retake mode): unseen questions first, seen as fallback within each tier.
+    const toUnseenTier = (qs: AnalyzedQuestion[]) =>
+      seenSet.size > 0
+        ? [
+            ...qs.filter(q => !seenSet.has(q.id)).sort(() => Math.random() - 0.5),
+            ...qs.filter(q =>  seenSet.has(q.id)).sort(() => Math.random() - 0.5),
+          ]
+        : [...qs].sort(() => Math.random() - 0.5);
+
+    // Prioritize single-select, shuffle within unseen/seen tiers
     const singleSelect = skillPool.filter(q => q.isMultiSelect !== true);
     const multiSelect = skillPool.filter(q => q.isMultiSelect === true);
     const shuffled = [
-      ...singleSelect.sort(() => Math.random() - 0.5),
-      ...multiSelect.sort(() => Math.random() - 0.5),
+      ...toUnseenTier(singleSelect),
+      ...toUnseenTier(multiSelect),
     ];
 
     // Take the first question as the initial

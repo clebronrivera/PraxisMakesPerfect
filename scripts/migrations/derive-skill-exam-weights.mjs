@@ -85,5 +85,10 @@ const doc = {
 
 writeFileSync(join(ROOT, 'src/data/skillExamWeights.json'), JSON.stringify(doc, null, 2) + '\n');
 const vals = Object.values(out).map((o) => o.examWeight).sort((a, b) => a - b);
+const actualMean = +(vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(6);
+if (Math.abs(actualMean - 1.0) > 0.0001) {
+  console.error(`✖ normalization failed: mean examWeight is ${actualMean}, expected 1.0`);
+  process.exit(1);
+}
 console.log(`derived exam weights for ${skills.length} skills | category sizes ${JSON.stringify(skillsInCategory)}`);
-console.log(`examWeight range ${vals[0]}–${vals[vals.length - 1]} (mean 1.0 by construction)`);
+console.log(`examWeight range ${vals[0]}–${vals[vals.length - 1]} (mean ${actualMean} ✓)`);

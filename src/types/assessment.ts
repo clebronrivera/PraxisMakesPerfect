@@ -4,7 +4,7 @@
 // compatibility with pre-existing response rows; new code should not emit them.
 
 // `diagnostic` remains in these unions only for archived response/session compatibility.
-export type ResponseAssessmentType = 'screener' | 'diagnostic' | 'full' | 'adaptive' | 'practice';
+export type ResponseAssessmentType = 'screener' | 'diagnostic' | 'full' | 'adaptive' | 'practice' | 'retake';
 
 export type AssessmentReportType = 'screener' | 'diagnostic' | 'full' | 'adaptive';
 
