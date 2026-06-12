@@ -8064,6 +8064,76 @@
       ],
       "method": "seeded",
       "verified": false
+    },
+    "PQ_DBD-10_21": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_22": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_23": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_24": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_25": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_26": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_27": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_28": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_29": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-10_30": {
+      "ets_topics": [
+        "I.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
     }
   }
 }
