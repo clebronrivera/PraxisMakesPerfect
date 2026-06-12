@@ -11,7 +11,7 @@ context is needed.
 Praxis Makes Perfect is a study app for the Praxis 5403 (School Psychology) exam.
 It uses React 18 + TypeScript + Vite + Tailwind on the frontend, Supabase (Postgres)
 for auth and data, Anthropic Claude for AI features (study plans, tutoring), and
-Netlify for hosting and serverless functions. The question bank has ~1,150 questions
+Netlify for hosting and serverless functions. The question bank has 1,000+ questions
 across 45 skills in 4 Praxis domains.
 
 ---
@@ -26,7 +26,7 @@ across 45 skills in 4 Praxis domains.
 | `docs/` | Permanent documentation |
 | `docs/decisions/` | Architecture Decision Records (ADRs) |
 | `scratch/` | Temporary workspace — gitignored contents, never committed |
-| `src/data/questions.json` | Question bank (~1,150 questions) |
+| `src/data/questions.json` | Question bank (1,000+ questions) |
 | `src/data/question-skill-map.json` | Skill-to-question mapping |
 | `src/brain/` | Assessment logic, distractor patterns, question generation |
 | `src/utils/progressTaxonomy.ts` | Canonical 4-domain Praxis 5403 model |
