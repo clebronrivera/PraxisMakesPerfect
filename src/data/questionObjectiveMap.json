@@ -8274,6 +8274,76 @@
       ],
       "method": "manual",
       "verified": false
+    },
+    "PQ_DIV-01_21": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_22": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_23": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_24": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_25": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_26": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_27": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_28": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_29": {
+      "ets_topics": [
+        "IV.A.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-01_30": {
+      "ets_topics": [
+        "IV.A.1.a"
+      ],
+      "method": "manual",
+      "verified": false
     }
   }
 }
