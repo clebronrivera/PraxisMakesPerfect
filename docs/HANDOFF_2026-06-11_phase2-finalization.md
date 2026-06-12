@@ -89,12 +89,15 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 | **C1** | **692-question `construct_actually_tested` / `complexity_rationale`** — regen was already applied (commit 459442f, 2026-04-02): 100% unique, 0 templating, properly formatted. Remaining work was a **targeted cleanup**: rewrote 13 construct formatting outliers (5 banned-lead, 8 short) + resolved 148 `cognitive_complexity`↔rationale level disagreements (107 tags corrected, 45 rationales rewritten). Bank now 0 mismatches, 100% unique constructs. | — | ✅ |
 | **C2** | misconception framing + duplicate distractors — **already resolved in live data** (verified 2026-06-12): all 3,430 real `distractor_misconception_*` fields use compliant "The student…" framing (100%), 0 within-question duplicates (item_039/item_221/item_072 differentiated), 0 generic filler. Fixed the one remaining sub-9-word item (`PQ_DBD-07_5` C). | ⛔ C1 (same file) | ✅ |
 | **C3** | `frameworkRegistry.ts` holdings/applicability SME read (32 entries) — **done**. Legal content accurate across all 32; corrected one substantive holding (Endrew F. now leads with the controlling "progress appropriate in light of the child's circumstances" standard, rejecting "merely more than de minimis"). Flagged one citation issue (see log). | — | ✅ |
-| **C-B2** | Propose tighter etsTopicIds for the 22 skill-fallback modules (hand-off the proposals to Track E to re-derive — **do NOT run the derive yourself**) | — | ☐ |
+| **C-B2** | Tighter etsTopicId proposals for the 22 skill-fallback modules — **proposals delivered** (`docs/C-B2_etsTopicId_proposals_2026-06-12.md`): 11 tighten, 11 already optimal. All ⊆ `skillObjectiveMap[skill]`, 1–3 codes. **Awaiting Track E re-derive** (`derive-module-ets-topics.mjs` + `moduleEtsTopics` parity test). Coworker did not run the derive. | — | ✅ |
 | **C4** | **Bank expansion** — lift the 5–11 thinnest skills (§5) to ~30 Q each (~99 new verified items), full tagging, balanced keys | ⛔ C1 | ☐ |
 
 ---
 
 > **Track C progress log (Coworker)**
+> - **C-B2 ✅ proposals delivered (2026-06-12)** — `docs/C-B2_etsTopicId_proposals_2026-06-12.md`. 11 modules tightened
+>   (incl. differentiating the two CON-01 modules MOD-D2-02→I.B.1.b vs MOD-D2-03→I.B.1.c, and recovering II.B.2.f for
+>   MOD-D4-11). **Engineering action (E1):** apply these as manual overrides + re-run derive-module-ets-topics + parity.
 > - **C3 ✅ (2026-06-12)** — SME-reviewed all 32 framework holdings/applicability; legally accurate. Fixed Endrew F.
 >   keyHolding to lead with the controlling standard. **FLAG (citations are out of C3 scope, marked verified):**
 >   `FW-nasp-ethics-beneficence` cites NASP "Standard I.1 (Respecting the Dignity and Rights of All Persons)", but
