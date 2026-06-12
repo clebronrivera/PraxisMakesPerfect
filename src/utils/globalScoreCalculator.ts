@@ -1,6 +1,8 @@
 // src/utils/globalScoreCalculator.ts
 // Computes and persists weighted domain / skill scores to Supabase after each
 // answered question.  Weights: screener 20 %, full-assessment 50 %, practice 30 %.
+// Retake (assessment_type='retake') uses REPLACE/latest-wins: it supersedes the
+// screener+diagnostic score for the skills it covers — see Phase 2 Decision A4.
 // A skill is flagged when high-confidence wrong answers exceed 30 % of attempts.
 
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -10,6 +12,9 @@ import { supabase } from '../config/supabase';
 const SCREENER_WEIGHT = 0.20;
 const DIAGNOSTIC_WEIGHT = 0.50;
 const PRACTICE_WEIGHT = 0.30;
+// Retake replaces the entire screener+diagnostic portion (latest-wins).
+// Its weight equals the combined assessment weight so the scale stays identical.
+const RETAKE_WEIGHT = SCREENER_WEIGHT + DIAGNOSTIC_WEIGHT; // 0.70
 const HIGH_CONFIDENCE_WRONG_THRESHOLD = 0.30;
 
 export interface GlobalScoreResult {
@@ -17,6 +22,9 @@ export interface GlobalScoreResult {
   skillScores: Record<string, number>;
   globalReadiness: number;
   flaggedSkills: string[];
+  /** Per-skill accuracy from diagnostic era (screener+diagnostic only, no practice/retake).
+   *  Stored so the retake-unlock gate can identify which skills were deficit at baseline. */
+  diagnosticSkillScores: Record<string, number>;
 }
 
 export interface ScreenerScoreInput {
@@ -29,7 +37,7 @@ export interface ScreenerScoreInput {
 }
 
 export interface ResponseScoreInput {
-  assessmentType?: 'screener' | 'diagnostic' | 'full' | 'practice' | string;
+  assessmentType?: 'screener' | 'diagnostic' | 'full' | 'practice' | 'retake' | string;
   domainIds?: Array<number | string>;
   domainId?: number | string;
   skillId?: string;
@@ -156,9 +164,10 @@ export function calculateGlobalScoresFromData({
 
   // Group by skill, domain, and type
   const stats = {
-    screener: { domains: {} as Record<number, { correct: number, total: number }>, skills: {} as Record<string, { correct: number, total: number }> },
-    diagnostic: { domains: {} as Record<number, { correct: number, total: number }>, skills: {} as Record<string, { correct: number, total: number }> },
-    practice: { domains: {} as Record<number, { correct: number, total: number }>, skills: {} as Record<string, { correct: number, total: number }> }
+    screener:    { domains: {} as Record<number, { correct: number, total: number }>, skills: {} as Record<string, { correct: number, total: number }> },
+    diagnostic:  { domains: {} as Record<number, { correct: number, total: number }>, skills: {} as Record<string, { correct: number, total: number }> },
+    retake:      { domains: {} as Record<number, { correct: number, total: number }>, skills: {} as Record<string, { correct: number, total: number }> },
+    practice:    { domains: {} as Record<number, { correct: number, total: number }>, skills: {} as Record<string, { correct: number, total: number }> },
   };
 
   // For high-confidence-wrong mismatch
@@ -191,8 +200,10 @@ export function calculateGlobalScoresFromData({
 
   // Process other docs
   otherDocs.forEach(r => {
-    // Determine type: it's in assessmentType property
-    const type = r.assessmentType === 'diagnostic' || r.assessmentType === 'full' ? 'diagnostic' : 'practice';
+    // Determine type — retake uses latest-wins replace (A4); diagnostic/full go to diagnostic bucket.
+    const type = r.assessmentType === 'retake'
+      ? 'retake'
+      : (r.assessmentType === 'diagnostic' || r.assessmentType === 'full' ? 'diagnostic' : 'practice');
 
     // Some logs might have multiple domains or a single domain.
     const rawDomainIds = Array.isArray(r.domainIds)
@@ -230,12 +241,14 @@ export function calculateGlobalScoresFromData({
     }
   }
 
-  // Calculate weighted domain scores and global readiness
+  // Calculate weighted domain scores and global readiness.
+  // Retake replace logic (A4): for any domain that has retake data, skip screener+diagnostic.
   const domainScores: Record<number, number> = {};
   const allDomainIds = new Set<number>([
     ...Object.keys(stats.screener.domains).map(Number),
     ...Object.keys(stats.diagnostic.domains).map(Number),
-    ...Object.keys(stats.practice.domains).map(Number)
+    ...Object.keys(stats.retake.domains).map(Number),
+    ...Object.keys(stats.practice.domains).map(Number),
   ]);
 
   let totalNumDomainsEvaluated = 0;
@@ -245,16 +258,22 @@ export function calculateGlobalScoresFromData({
     let score = 0;
     let weight = 0;
 
-    const sStats = stats.screener.domains[domainId];
-    if (sStats && sStats.total > 0) {
-      score += (sStats.correct / sStats.total) * SCREENER_WEIGHT;
-      weight += SCREENER_WEIGHT;
-    }
-
-    const dStats = stats.diagnostic.domains[domainId];
-    if (dStats && dStats.total > 0) {
-      score += (dStats.correct / dStats.total) * DIAGNOSTIC_WEIGHT;
-      weight += DIAGNOSTIC_WEIGHT;
+    const rStats = stats.retake.domains[domainId];
+    if (rStats && rStats.total > 0) {
+      // Retake supersedes screener+diagnostic for this domain.
+      score += (rStats.correct / rStats.total) * RETAKE_WEIGHT;
+      weight += RETAKE_WEIGHT;
+    } else {
+      const sStats = stats.screener.domains[domainId];
+      if (sStats && sStats.total > 0) {
+        score += (sStats.correct / sStats.total) * SCREENER_WEIGHT;
+        weight += SCREENER_WEIGHT;
+      }
+      const dStats = stats.diagnostic.domains[domainId];
+      if (dStats && dStats.total > 0) {
+        score += (dStats.correct / dStats.total) * DIAGNOSTIC_WEIGHT;
+        weight += DIAGNOSTIC_WEIGHT;
+      }
     }
 
     const pStats = stats.practice.domains[domainId];
@@ -275,28 +294,39 @@ export function calculateGlobalScoresFromData({
     ? Math.round(sumOfDomainScores / totalNumDomainsEvaluated) 
     : 0;
 
-  // Calculate weighted skill scores
+  // Calculate weighted skill scores.
+  // Retake replace logic (A4): for any skill that has retake data, skip screener+diagnostic.
   const skillScores: Record<string, number> = {};
+  // diagnosticSkillScores: screener+diagnostic only, no practice/retake — used for retake-unlock gate.
+  const diagnosticSkillScores: Record<string, number> = {};
+
   const allSkillIds = new Set<string>([
     ...Object.keys(stats.screener.skills),
     ...Object.keys(stats.diagnostic.skills),
-    ...Object.keys(stats.practice.skills)
+    ...Object.keys(stats.retake.skills),
+    ...Object.keys(stats.practice.skills),
   ]);
 
   allSkillIds.forEach(skillId => {
     let score = 0;
     let weight = 0;
 
-    const sStats = stats.screener.skills[skillId];
-    if (sStats && sStats.total > 0) {
-      score += (sStats.correct / sStats.total) * SCREENER_WEIGHT;
-      weight += SCREENER_WEIGHT;
-    }
-
-    const dStats = stats.diagnostic.skills[skillId];
-    if (dStats && dStats.total > 0) {
-      score += (dStats.correct / dStats.total) * DIAGNOSTIC_WEIGHT;
-      weight += DIAGNOSTIC_WEIGHT;
+    const rStats = stats.retake.skills[skillId];
+    if (rStats && rStats.total > 0) {
+      // Retake supersedes screener+diagnostic for this skill (latest-wins).
+      score += (rStats.correct / rStats.total) * RETAKE_WEIGHT;
+      weight += RETAKE_WEIGHT;
+    } else {
+      const sStats = stats.screener.skills[skillId];
+      if (sStats && sStats.total > 0) {
+        score += (sStats.correct / sStats.total) * SCREENER_WEIGHT;
+        weight += SCREENER_WEIGHT;
+      }
+      const dStats = stats.diagnostic.skills[skillId];
+      if (dStats && dStats.total > 0) {
+        score += (dStats.correct / dStats.total) * DIAGNOSTIC_WEIGHT;
+        weight += DIAGNOSTIC_WEIGHT;
+      }
     }
 
     const pStats = stats.practice.skills[skillId];
@@ -308,13 +338,27 @@ export function calculateGlobalScoresFromData({
     if (weight > 0) {
       skillScores[skillId] = Math.round((score / weight) * 100);
     }
+
+    // Diagnostic-era score (screener+diagnostic only — never retake or practice).
+    const diagScore = (() => {
+      let ds = 0, dw = 0;
+      const s2 = stats.screener.skills[skillId];
+      if (s2 && s2.total > 0) { ds += (s2.correct / s2.total) * SCREENER_WEIGHT; dw += SCREENER_WEIGHT; }
+      const d2 = stats.diagnostic.skills[skillId];
+      if (d2 && d2.total > 0) { ds += (d2.correct / d2.total) * DIAGNOSTIC_WEIGHT; dw += DIAGNOSTIC_WEIGHT; }
+      return dw > 0 ? Math.round((ds / dw) * 100) : 0;
+    })();
+    if (diagScore > 0 || (stats.screener.skills[skillId]?.total ?? 0) + (stats.diagnostic.skills[skillId]?.total ?? 0) > 0) {
+      diagnosticSkillScores[skillId] = diagScore;
+    }
   });
 
   const result: GlobalScoreResult = {
     domainScores,
     skillScores,
     globalReadiness,
-    flaggedSkills
+    flaggedSkills,
+    diagnosticSkillScores,
   };
 
   return result;
