@@ -87,7 +87,7 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 | Phase | Task | Dep | Status |
 |---|---|---|---|
 | **C1** | **692-question `construct_actually_tested` / `complexity_rationale`** — regen was already applied (commit 459442f, 2026-04-02): 100% unique, 0 templating, properly formatted. Remaining work was a **targeted cleanup**: rewrote 13 construct formatting outliers (5 banned-lead, 8 short) + resolved 148 `cognitive_complexity`↔rationale level disagreements (107 tags corrected, 45 rationales rewritten). Bank now 0 mismatches, 100% unique constructs. | — | ✅ |
-| **C2** | 47 misconception-text framing fixes + 3 duplicate-distractor items (`questions.json` `distractor_misconception_*`) | ⛔ C1 (same file) | ☐ |
+| **C2** | misconception framing + duplicate distractors — **already resolved in live data** (verified 2026-06-12): all 3,430 real `distractor_misconception_*` fields use compliant "The student…" framing (100%), 0 within-question duplicates (item_039/item_221/item_072 differentiated), 0 generic filler. Fixed the one remaining sub-9-word item (`PQ_DBD-07_5` C). | ⛔ C1 (same file) | ✅ |
 | **C3** | `frameworkRegistry.ts` holdings/applicability SME read (32 entries; citations already verified) | — | ☐ |
 | **C-B2** | Propose tighter etsTopicIds for the 22 skill-fallback modules (hand-off the proposals to Track E to re-derive — **do NOT run the derive yourself**) | — | ☐ |
 | **C4** | **Bank expansion** — lift the 5–11 thinnest skills (§5) to ~30 Q each (~99 new verified items), full tagging, balanced keys | ⛔ C1 | ☐ |
@@ -95,6 +95,9 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 ---
 
 > **Track C progress log (Coworker)**
+> - **C2 ✅ (2026-06-12)** — The 47-framing + 3-duplicate debt was already applied; verified live data is 100%
+>   compliant with 0 duplicates/filler. Only residual was one 8-word misconception (`PQ_DBD-07_5` C), now expanded
+>   to a ≥9-word belief statement. Commit on `claude/hopeful-benz-866a30`.
 > - **C1 ✅ (2026-06-12)** — Reality check: the 692-question regen was already applied and high quality;
 >   C1 reduced to a targeted consistency cleanup (Carlos-approved). Two commits on `claude/hopeful-benz-866a30`:
 >   `770cf9c` (13 construct formatting fixes) + `1fda02a` (148 cognitive_complexity↔rationale level alignments).
