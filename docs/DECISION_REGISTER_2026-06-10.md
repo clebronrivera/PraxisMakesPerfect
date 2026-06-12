@@ -1,5 +1,12 @@
 # Decision & Review Register — 2026-06-10
 
+> ✅ **DECISIONS FINALIZED 2026-06-11.** All §A/§B calls are stamped and phased for execution in
+> **[HANDOFF_2026-06-11_phase2-finalization.md](HANDOFF_2026-06-11_phase2-finalization.md)** — the live
+> execution plan (two parallel tracks: Engineering + Coworker). This register is now the *record of why*;
+> work the handoff for *what to do next*. Notable: A3 → durable descriptive copy (not "1,150"); A4 →
+> replace/latest-wins + prefer-unseen (averaging parked as a future thought); A11 → retire (0 MS items);
+> bank-expansion of the thinnest skills added as a Phase-3 Coworker task.
+
 **Purpose:** one consolidated list of everything that needs a **decision**, a **review/sign-off**, or
 **routing to Claude Coworker** — pulled from `PHASE2_REVIEW_BACKLOG.md`, `PENDING_IDEAS.md`,
 `PRODUCT_ROADMAP_2026-06-02.md`, the `HANDOFF_*` docs, and `ISSUE_LEDGER.md` so items stop hiding in
