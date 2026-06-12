@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>PASS · Developer Handoff (Cosmos)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    /* Document surface — cream paper for the handoff itself */
+    --paper:  #f5f3ee;
+    --ink:    #1a1612;
+    --dim:    #5a544c;
+    --hair:   rgba(26, 22, 18, 0.10);
+    --hair-2: rgba(26, 22, 18, 0.18);
+    --accent: #c96442;
+    --redline:#d62828;
+
+    /* Echo of the product palette (referenced from the document) */
+    --cosmos-navy:   #060d1a;
+    --cosmos-navy-3: #0f1e38;
+    --cosmos-ink:    #f1f5f9;
+    --d1: #fcd5b4; --d2: #b8f2d8; --d3: #cde9f5; --d4: #d8d5fc;
+    --cta-gradient: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+
+    --serif: 'Fraunces', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper); color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 64px 56px 96px;
+  }
+
+  /* ─── Cover ─────────────────────────────────────────── */
+  .cover {
+    border-bottom: 1px solid var(--hair-2);
+    padding-bottom: 40px; margin-bottom: 56px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 48px; align-items: flex-end;
+  }
+  .doc-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .doc-title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(48px, 6vw, 84px);
+    line-height: 0.95; letter-spacing: -0.03em;
+    margin: 18px 0 0;
+  }
+  .doc-title em { font-style: italic; color: var(--accent); }
+  .doc-sub {
+    font-size: 16px; color: var(--dim);
+    margin-top: 18px; max-width: 560px;
+  }
+  .meta {
+    text-align: right; font-family: var(--mono);
+    font-size: 11px; color: var(--dim);
+    line-height: 1.8; letter-spacing: 0.02em;
+  }
+  .meta strong { color: var(--ink); font-weight: 600; }
+
+  /* ─── Section header ────────────────────────────────── */
+  .sec { margin-top: 80px; }
+  .sec-num {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; color: var(--accent);
+  }
+  .sec-title {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 40px; letter-spacing: -0.02em;
+    line-height: 1.1; margin: 6px 0 8px;
+  }
+  .sec-sub {
+    font-size: 14px; color: var(--dim);
+    max-width: 720px; margin: 0 0 32px;
+  }
+
+  /* ─── Tokens grid ───────────────────────────────────── */
+  .tokens {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 18px; margin-bottom: 24px;
+  }
+  .tok {
+    background: #fff; border: 1px solid var(--hair);
+    border-radius: 10px; padding: 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .tok-swatch {
+    width: 100%; height: 56px; border-radius: 6px;
+    border: 1px solid var(--hair);
+  }
+  .tok-name { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--ink); }
+  .tok-hex  { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.04em; }
+  .tok-use  { font-size: 11px; color: var(--dim); line-height: 1.4; margin-top: 4px; }
+
+  /* ─── Type stack ────────────────────────────────────── */
+  .type-stack {
+    display: grid; grid-template-columns: 220px 1fr;
+    gap: 0 32px;
+  }
+  .type-meta, .type-sample {
+    padding: 18px 0;
+    border-bottom: 1px dashed var(--hair);
+  }
+  .type-meta { font-family: var(--mono); font-size: 10px; color: var(--dim); line-height: 1.65; }
+  .type-meta strong { color: var(--ink); font-weight: 600; }
+
+  /* ─── Frame block (annotated screen) ────────────────── */
+  .frame-block {
+    background: #fff; border: 1px solid var(--hair);
+    border-radius: 14px; padding: 24px; margin-bottom: 32px;
+  }
+  .frame-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 1px dashed var(--hair);
+    padding-bottom: 14px; margin-bottom: 24px;
+  }
+  .frame-head h3 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 22px; letter-spacing: -0.01em; margin: 0;
+  }
+  .frame-head .frame-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--dim);
+  }
+
+  .frame-stage {
+    position: relative;
+    background: var(--cosmos-navy);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+  .frame-stage iframe {
+    display: block; border: 0; border-radius: 10px;
+    pointer-events: none;
+  }
+
+  /* Pin — annotation marker overlaid on the iframe */
+  .pin {
+    position: absolute;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--redline); color: #fff;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 5;
+    box-shadow: 0 0 0 3px #fff, 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  .pin::after {
+    content: ''; position: absolute; inset: -6px;
+    border: 1px solid var(--redline); border-radius: 50%;
+    opacity: 0.4;
+  }
+
+  /* Annotation list */
+  .annos {
+    margin-top: 24px;
+    display: grid; grid-template-columns: 32px 1fr 1fr;
+    gap: 14px 18px;
+    font-size: 12px; line-height: 1.5;
+  }
+  .annos > .ah {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.18em; color: var(--accent);
+    text-transform: uppercase;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .anno-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--redline); color: #fff;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .anno-what { font-weight: 600; color: var(--ink); }
+  .anno-what code, .anno-spec code {
+    font-family: var(--mono); font-size: 11px;
+    background: rgba(201, 100, 66, 0.10);
+    color: var(--accent);
+    padding: 1px 5px; border-radius: 3px;
+  }
+  .anno-spec { color: var(--dim); }
+  .anno-spec code { background: var(--paper); color: var(--ink); }
+  .anno-row { display: contents; }
+  .anno-row > * { padding: 12px 0; border-bottom: 1px dashed var(--hair); }
+
+  /* ─── Behavior section ──────────────────────────────── */
+  .behavior {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 32px; margin-top: 24px;
+  }
+  .behavior h4 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 18px; margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .behavior ul { padding-left: 18px; margin: 0; color: var(--dim); }
+  .behavior li { margin-bottom: 8px; line-height: 1.55; }
+  .behavior li strong { color: var(--ink); font-weight: 600; }
+  .behavior code {
+    font-family: var(--mono); font-size: 11px;
+    background: var(--paper); padding: 1px 5px;
+    border-radius: 3px; color: var(--ink);
+  }
+
+  /* ─── Flow diagram ──────────────────────────────────── */
+  .flow {
+    background: #fff; border: 1px solid var(--hair);
+    border-radius: 14px; padding: 32px; margin: 32px 0;
+    display: grid; grid-template-columns: 1fr 80px 1fr;
+    align-items: center; gap: 24px;
+  }
+  .flow-step {
+    border: 1.5px solid var(--ink); border-radius: 10px;
+    padding: 16px 20px; background: var(--paper);
+  }
+  .flow-step .step-eyebrow {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.22em; color: var(--accent); text-transform: uppercase;
+  }
+  .flow-step h5 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 20px; margin: 6px 0 4px; letter-spacing: -0.01em;
+  }
+  .flow-step p { font-size: 12px; color: var(--dim); margin: 0; line-height: 1.5; }
+  .flow-arrow {
+    text-align: center; font-family: var(--mono);
+    font-size: 12px; color: var(--accent); font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  .flow-arrow .ar { font-size: 24px; line-height: 1; display: block; margin-bottom: 6px; }
+
+  /* ─── States grid ───────────────────────────────────── */
+  .states-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .state-card {
+    background: #fff; border: 1px solid var(--hair);
+    border-radius: 10px; padding: 18px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .state-card .label {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase;
+  }
+  .state-card .demo {
+    background: var(--cosmos-navy); border-radius: 8px;
+    padding: 16px;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 64px;
+  }
+  .state-card .desc { font-size: 11px; color: var(--dim); line-height: 1.5; }
+  .state-card .desc code {
+    font-family: var(--mono); font-size: 10px;
+    background: var(--paper); padding: 1px 5px;
+    border-radius: 3px; color: var(--ink);
+  }
+
+  /* ─── Footer ────────────────────────────────────────── */
+  .footer {
+    margin-top: 96px; padding-top: 32px;
+    border-top: 1px solid var(--hair-2);
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: var(--mono); font-size: 10px; color: var(--dim);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .footer .stamp {
+    font-family: var(--serif); font-style: italic; font-size: 14px;
+    color: var(--ink); letter-spacing: 0; text-transform: none;
+  }
+
+  /* ─── Responsive ────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .page { padding: 48px 32px 80px; }
+    .tokens { grid-template-columns: repeat(3, 1fr); }
+    .behavior { grid-template-columns: 1fr; }
+    .frame-stage { width: 100% !important; height: auto !important; aspect-ratio: 4 / 3; }
+    .frame-stage iframe { width: 100% !important; height: 100% !important; transform: none !important; }
+    .pin { display: none; } /* pins repositioned under wider only — list still authoritative */
+  }
+  @media (max-width: 768px) {
+    .page { padding: 32px 20px 64px; }
+    .cover { grid-template-columns: 1fr; gap: 24px; }
+    .meta { text-align: left; }
+    .tokens { grid-template-columns: repeat(2, 1fr); }
+    .type-stack { grid-template-columns: 1fr; gap: 0; }
+    .type-meta, .type-sample { padding: 12px 0; }
+    .annos { grid-template-columns: 28px 1fr; }
+    .annos > .ah:nth-child(3) { display: none; }
+    .anno-row > .anno-spec { grid-column: 1 / -1; padding-top: 0; padding-left: 32px; }
+    .flow { grid-template-columns: 1fr; gap: 16px; }
+    .flow-arrow { transform: rotate(90deg); }
+    .states-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 375px) {
+    .tokens { grid-template-columns: 1fr; }
+    .states-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Print friendliness */
+  @media print {
+    body { background: #fff; }
+    .page { padding: 24px; max-width: none; }
+    .frame-block, .tok, .flow, .state-card { break-inside: avoid; }
+  }
+
+  /* Reduced motion — no animations in this document */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ─── COVER ─────────────────────────────────────────── -->
+  <header class="cover">
+    <div>
+      <div class="doc-eyebrow">PASS Platform · Developer handoff · v0.1 · Cosmos</div>
+      <h1 class="doc-title">From <em>landing</em><br/>to <em>resume study.</em></h1>
+      <p class="doc-sub">
+        Two screens, one motion. The marketing site brings the user in;
+        the login screen hands them off to the engine. This sheet is the
+        contract between design and engineering — tokens, redlines, behavior,
+        and edge cases. Implementing files: <code style="font-family:var(--mono);">mockup-pass-landing-cosmos.html</code>
+        and <code style="font-family:var(--mono);">mockup-pass-login-cosmos.html</code>.
+      </p>
+    </div>
+    <div class="meta">
+      Direction · <strong>Atelier Cosmos</strong><br/>
+      Surfaces · <strong>2 of N</strong><br/>
+      Owner · <strong>M. Rivera (design)</strong><br/>
+      Build · <strong>Web · 1440 baseline</strong><br/>
+      Updated · <strong>Apr 25, 2026</strong>
+    </div>
+  </header>
+
+  <!-- ─── 1 · TOKENS ────────────────────────────────────── -->
+  <section class="sec">
+    <div class="sec-num">01 · FOUNDATION</div>
+    <h2 class="sec-title">Design tokens</h2>
+    <p class="sec-sub">
+      One palette, four domain colors, one CTA gradient. Light cream is reserved
+      for documents (this sheet, exports, reports); the product itself lives on
+      navy. All tokens reference the Cosmos system.
+    </p>
+
+    <h3 style="font-family:var(--serif);font-weight:500;font-size:18px;letter-spacing:-0.01em;margin:24px 0 12px;">Color</h3>
+    <div class="tokens">
+      <div class="tok">
+        <div class="tok-swatch" style="background:#060d1a;"></div>
+        <div class="tok-name">--cosmos-navy</div>
+        <div class="tok-hex">#060D1A</div>
+        <div class="tok-use">Page background. The "engine" surface.</div>
+      </div>
+      <div class="tok">
+        <div class="tok-swatch" style="background:#0f1e38;"></div>
+        <div class="tok-name">--cosmos-navy-3</div>
+        <div class="tok-hex">#0F1E38</div>
+        <div class="tok-use">Card / input field surfaces on navy.</div>
+      </div>
+      <div class="tok">
+        <div class="tok-swatch" style="background:#f1f5f9;"></div>
+        <div class="tok-name">--cosmos-ink</div>
+        <div class="tok-hex">#F1F5F9</div>
+        <div class="tok-use">Primary text on navy.</div>
+      </div>
+      <div class="tok">
+        <div class="tok-swatch" style="background:linear-gradient(135deg,#fde4c1 0%,#fbcfe8 50%,#d8d5fc 100%);"></div>
+        <div class="tok-name">--cosmos-cta</div>
+        <div class="tok-hex">peach → pink → lavender</div>
+        <div class="tok-use">Primary CTAs only. Never on body text fills.</div>
+      </div>
+      <div class="tok">
+        <div class="tok-swatch" style="background:#fcd5b4;"></div>
+        <div class="tok-name">--cosmos-d1 · peach</div>
+        <div class="tok-hex">#FCD5B4</div>
+        <div class="tok-use">Domain 1 · Professional Practices.</div>
+      </div>
+      <div class="tok">
+        <div class="tok-swatch" style="background:#b8f2d8;"></div>
+        <div class="tok-name">--cosmos-d2 · mint</div>
+        <div class="tok-hex">#B8F2D8</div>
+        <div class="tok-use">Domain 2 · Student-Level Services.</div>
+      </div>
+      <div class="tok">
+        <div class="tok-swatch" style="background:#cde9f5;"></div>
+        <div class="tok-name">--cosmos-d3 · ice</div>
+        <div class="tok-hex">#CDE9F5</div>
+        <div class="tok-use">Domain 3 · Systems-Level Services.</div>
+      </div>
+      <div class="tok">
+        <div class="tok-swatch" style="background:#d8d5fc;"></div>
+        <div class="tok-name">--cosmos-d4 · lavender</div>
+        <div class="tok-hex">#D8D5FC</div>
+        <div class="tok-use">Domain 4 · Foundations.</div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-weight:500;font-size:18px;letter-spacing:-0.01em;margin:32px 0 12px;">Typography</h3>
+    <div class="type-stack">
+      <div class="type-meta"><strong>Display · Fraunces</strong><br/>72 / 0.95 / -0.02em<br/>weight 400, italic for accent</div>
+      <div class="type-sample" style="font-family:var(--serif);font-weight:400;font-size:56px;line-height:0.95;letter-spacing:-0.02em;">
+        23 days <em style="color:var(--accent)">until the line.</em>
+      </div>
+
+      <div class="type-meta"><strong>H2 · Fraunces</strong><br/>36 / 1.15 / -0.02em<br/>weight 500</div>
+      <div class="type-sample" style="font-family:var(--serif);font-weight:500;font-size:36px;line-height:1.15;letter-spacing:-0.02em;">
+        Resume your study.
+      </div>
+
+      <div class="type-meta"><strong>Body · Inter</strong><br/>15 / 1.55<br/>weight 400</div>
+      <div class="type-sample" style="font-size:15px;line-height:1.55;">
+        We'll back-plan from your test date and pick the queue up where the engine left off.
+      </div>
+
+      <div class="type-meta"><strong>Eyebrow · Inter</strong><br/>10 / — / 0.24em<br/>weight 700, uppercase</div>
+      <div class="type-sample" style="font-size:10px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--accent);">
+        ◐ The engine remembers
+      </div>
+
+      <div class="type-meta"><strong>Mono · JetBrains Mono</strong><br/>11 / 1.5 / 0.04em<br/>weight 500</div>
+      <div class="type-sample" style="font-family:var(--mono);font-size:11px;letter-spacing:0.04em;">
+        /auth/session · POST · 200 OK · 142ms
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-weight:500;font-size:18px;letter-spacing:-0.01em;margin:32px 0 12px;">Spacing &amp; radii</h3>
+    <div class="tokens">
+      <div class="tok"><div class="tok-name">--space-3</div><div class="tok-hex">12 px</div><div class="tok-use">Tight controls, dense lists.</div></div>
+      <div class="tok"><div class="tok-name">--space-4</div><div class="tok-hex">16 px</div><div class="tok-use">Default field padding-x.</div></div>
+      <div class="tok"><div class="tok-name">--space-6</div><div class="tok-hex">24 px</div><div class="tok-use">Card padding, section gap.</div></div>
+      <div class="tok"><div class="tok-name">--space-12</div><div class="tok-hex">48 px</div><div class="tok-use">Major vertical rhythm.</div></div>
+      <div class="tok"><div class="tok-name">--radius-md</div><div class="tok-hex">10 px</div><div class="tok-use">Inputs, secondary buttons.</div></div>
+      <div class="tok"><div class="tok-name">--radius-lg</div><div class="tok-hex">14 px</div><div class="tok-use">Cards.</div></div>
+      <div class="tok"><div class="tok-name">--radius-pill</div><div class="tok-hex">999 px</div><div class="tok-use">Primary CTA only.</div></div>
+      <div class="tok"><div class="tok-name">--hair</div><div class="tok-hex">rgba(241,245,249,.10)</div><div class="tok-use">Borders on navy.</div></div>
+    </div>
+  </section>
+
+  <!-- ─── 2 · FLOW ──────────────────────────────────────── -->
+  <section class="sec">
+    <div class="sec-num">02 · MOTION</div>
+    <h2 class="sec-title">The handoff, in two beats</h2>
+    <p class="sec-sub">The path the user takes from anonymous to authenticated — and the one piece of state we carry across.</p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-eyebrow">Beat 01 · Landing</div>
+        <h5>Pass the Praxis. Become the psychologist.</h5>
+        <p>Boot sequence (root → domains → skills) plays once per session. Hero CTA "Begin diagnostic" routes new users; "Sign in" routes returning users to /auth.</p>
+      </div>
+      <div class="flow-arrow"><span class="ar">→</span>/auth</div>
+      <div class="flow-step">
+        <div class="step-eyebrow">Beat 02 · Login</div>
+        <h5>Resume your study.</h5>
+        <p>Reads <code>localStorage.lastQueueState</code> if present and surfaces it on the left panel. Successful auth → /today.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 3 · LANDING REDLINES ──────────────────────────── -->
+  <section class="sec">
+    <div class="sec-num">03 · SCREEN A</div>
+    <h2 class="sec-title">Landing page</h2>
+    <p class="sec-sub">
+      File · <code style="font-family:var(--mono);">mockup-pass-landing-cosmos.html</code>.
+      Atelier Cosmos variation. The full page is ~1840 px tall (compact density);
+      annotations below cover the hero — the rest of the page (movements, domains, pricing) follows the same token system.
+    </p>
+
+    <div class="frame-block">
+      <div class="frame-head">
+        <h3>Hero · above the fold</h3>
+        <div class="frame-meta">1280 × 900 · /</div>
+      </div>
+      <div class="frame-stage" style="width: 1080px; height: 760px;">
+        <iframe src="mockup-pass-landing-cosmos.html#noboot"
+                style="width: 1280px; height: 900px; transform: scale(0.844); transform-origin: top left;"></iframe>
+        <!-- Pins positioned in the visible 1080×760 region -->
+        <div class="pin" style="top: 32px;  left: 60px;">1</div>
+        <div class="pin" style="top: 110px; left: 80px;">2</div>
+        <div class="pin" style="top: 240px; left: 80px;">3</div>
+        <div class="pin" style="top: 460px; left: 90px;">4</div>
+        <div class="pin" style="top: 280px; left: 720px;">5</div>
+        <div class="pin" style="top: 32px;  left: 940px;">6</div>
+      </div>
+
+      <div class="annos">
+        <div class="ah">№</div>
+        <div class="ah">What</div>
+        <div class="ah">Spec</div>
+
+        <div class="anno-row">
+          <div class="anno-num">1</div>
+          <div class="anno-what">Brand mark · <code>&lt;PassStamp/&gt;</code></div>
+          <div class="anno-spec">56 × 56 px wax-stamp seal. Animated 4 s pulse. Wordmark "PASS Platform" in Fraunces 600 / 18 px / -0.01em. Sub-tag "Praxis 5403 · School Psychology" in Inter 700 / 9 px / 0.22em.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">2</div>
+          <div class="anno-what">Eyebrow · "Pass it. Past it."</div>
+          <div class="anno-spec">Inter 700 / 11 px / 0.24em / uppercase. Color <code>--cosmos-d1</code> (peach). 24 px gap to H1 below.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">3</div>
+          <div class="anno-what">H1 hero</div>
+          <div class="anno-spec">Fraunces 400 / 96 px / 0.95 line / -0.02em / <code>text-wrap: balance</code>. Italic accent on "psychologist" with CTA gradient via <code>background-clip: text</code>.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">4</div>
+          <div class="anno-what">Primary CTA · "Begin diagnostic"</div>
+          <div class="anno-spec">Pill 999 r · 14 / 28 padding · CTA gradient · ink <code>#1E1B3A</code> · Inter 600 / 14 px. Hover: lift 1 px, brightness 1.05.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">5</div>
+          <div class="anno-what">Hero figure · <code>&lt;BrainActivation/&gt;</code></div>
+          <div class="anno-spec">560 × 560 px SVG. 4 lobes pulse in domain order (peach → mint → ice → lavender) every 8 s. Synapse sparks travel along edges. <code>prefers-reduced-motion</code> halts.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">6</div>
+          <div class="anno-what">Nav · "Sign in" link</div>
+          <div class="anno-spec">Inter 500 / 13 px / <code>--cosmos-dim</code>. Hover → <code>--cosmos-ink</code>. Routes to <code>/auth</code>. This is the only entry to screen B.</div>
+        </div>
+      </div>
+
+      <div class="behavior">
+        <div>
+          <h4>Behavior</h4>
+          <ul>
+            <li><strong>Boot sequence</strong> plays once per session (gated on <code>sessionStorage.pass-boot-seen</code>). Skip button always visible bottom-right.</li>
+            <li><strong>Starfield</strong> drifts at 30 px / 30 s; pauses on tab blur via <code>visibilitychange</code>.</li>
+            <li><strong>Reduced motion</strong> · halts boot, brain pulse, starfield. CTA gradient becomes solid peach.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Edge cases</h4>
+          <ul>
+            <li><strong>Returning user</strong> · if a valid session cookie exists, replace "Begin diagnostic" with "Resume your study →" and route to /today.</li>
+            <li><strong>Slow font load</strong> · Fraunces falls back to <code>Georgia, serif</code> with -2 % letter-spacing offset to prevent reflow.</li>
+            <li><strong>≤ 768 px</strong> · brain figure stacks above H1; H1 drops to 56 px.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 4 · LOGIN REDLINES ────────────────────────────── -->
+  <section class="sec">
+    <div class="sec-num">04 · SCREEN B</div>
+    <h2 class="sec-title">Login</h2>
+    <p class="sec-sub">
+      File · <code style="font-family:var(--mono);">mockup-pass-login-cosmos.html</code> · 1440 × 900. Two-column.
+      Left = the engine talking. Right = the form. No marketing copy — the user has already crossed that threshold.
+    </p>
+
+    <div class="frame-block">
+      <div class="frame-head">
+        <h3>/auth</h3>
+        <div class="frame-meta">1440 × 900 · authenticated session lands at /today</div>
+      </div>
+      <div class="frame-stage" style="width: 1152px; height: 720px;">
+        <iframe src="mockup-pass-login-cosmos.html"
+                style="width: 1440px; height: 900px; transform: scale(0.8); transform-origin: top left;"></iframe>
+        <div class="pin" style="top: 36px;  left: 50px;">1</div>
+        <div class="pin" style="top: 220px; left: 90px;">2</div>
+        <div class="pin" style="top: 480px; left: 110px;">3</div>
+        <div class="pin" style="top: 70px;  left: 720px;">4</div>
+        <div class="pin" style="top: 240px; left: 760px;">5</div>
+        <div class="pin" style="top: 380px; left: 780px;">6</div>
+        <div class="pin" style="top: 480px; left: 760px;">7</div>
+        <div class="pin" style="top: 590px; left: 800px;">8</div>
+      </div>
+
+      <div class="annos">
+        <div class="ah">№</div>
+        <div class="ah">What</div>
+        <div class="ah">Spec</div>
+
+        <div class="anno-row">
+          <div class="anno-num">1</div>
+          <div class="anno-what">Brand cluster (left)</div>
+          <div class="anno-spec"><code>&lt;PassStamp size=48/&gt;</code> + wordmark + sub-tag "Praxis 5403 · School Psychology". Inter 700 / 9 px / 0.22em.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">2</div>
+          <div class="anno-what">Engine voice · welcome line</div>
+          <div class="anno-spec">Eyebrow "◐ The engine remembers" / peach. H1 Fraunces 400 / 56 px / -0.02em. The number "23 days" gets the CTA gradient via background-clip. Personalization: <code>{user.daysToTest}</code> · <code>{user.firstName}</code>.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">3</div>
+          <div class="anno-what">Continuity stat strip</div>
+          <div class="anno-spec">3 columns · streak / mastery / today's dose. Each is eyebrow + Fraunces 36 px figure + Inter 11 px sub. Numbers from <code>/api/user/state</code>; if 401, render skeleton then hide on form-focus.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">4</div>
+          <div class="anno-what">Form header</div>
+          <div class="anno-spec">Eyebrow "Sign in" · H2 Fraunces 500 / 36 px "Resume your study." · sub Inter 14 px / dim.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">5</div>
+          <div class="anno-what">Google sign-in button</div>
+          <div class="anno-spec">Width 100 % · 13 / 16 padding · radius 10 · bg <code>rgba(241,245,249,.05)</code> · border hair. Provider glyph 18 × 18 / radius 4. No university SSO option in this flow.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">6</div>
+          <div class="anno-what">Email field</div>
+          <div class="anno-spec">Field bg <code>rgba(15,30,56,.6)</code> · radius 10 · 13 / 16 padding · Inter 14 px ink. Label Inter 700 / 9 px / 0.22em / dim. Validate on blur · accept <code>.edu</code> or any RFC-5322 address.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">7</div>
+          <div class="anno-what">Password field + "Forgot?"</div>
+          <div class="anno-spec">Same field shell. "SHOW" affordance right-aligned · Inter 500 / 11 px / 0.16em / very-dim. "Forgot?" inline with label · peach · routes to <code>/auth/recover</code>.</div>
+        </div>
+        <div class="anno-row">
+          <div class="anno-num">8</div>
+          <div class="anno-what">Primary CTA · "Resume study →"</div>
+          <div class="anno-spec">Pill · CTA gradient · ink <code>#1E1B3A</code> · Inter 600 / 14 px. Disabled until both fields valid. Loading state: replace label with 3-dot pulse, lock width.</div>
+        </div>
+      </div>
+
+      <div class="behavior">
+        <div>
+          <h4>States to build</h4>
+          <ul>
+            <li><strong>Idle</strong> · CTA disabled, fields empty.</li>
+            <li><strong>Validating</strong> · CTA enabled, full-strength gradient.</li>
+            <li><strong>Submitting</strong> · CTA shows pulse dots, fields lock.</li>
+            <li><strong>Error</strong> · 1 px peach border on offending field; inline message Inter 12 px / peach below.</li>
+            <li><strong>Locked</strong> · 5 failed attempts → CTA replaced by "Try again in 5:00", countdown live.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Edge cases &amp; A11y</h4>
+          <ul>
+            <li><strong>Google redirect</strong> · open in same tab; on return, hydrate from server-set cookie before rendering.</li>
+            <li><strong>Autofill</strong> · respect; do not animate field state changes during autofill.</li>
+            <li><strong>Tab order</strong> · Email → Password → Show → Keep-signed → Submit → Forgot → Diagnostic.</li>
+            <li><strong>Contrast</strong> · all text on navy passes WCAG AA at 14 px+. Dim text (<code>rgba(203,213,225,.7)</code>) is for ≥ 14 px only.</li>
+            <li><strong>1280 px</strong> · stat strip becomes 2-across. ≤ 768 px stacks columns.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 4.5 · HERO COMPONENT · BrainActivation ──────────── -->
+  <section class="sec">
+    <div class="sec-num">04.5 · HERO COMPONENT</div>
+    <h2 class="sec-title">BrainActivation · live neural map</h2>
+    <p class="sec-sub">
+      The single most-remembered element of the landing page. This is not a static
+      illustration — it's a 4-lobe SVG that pulses in domain order and runs synapse
+      sparks along its edges. It also doubles as the engine's live readout in product surfaces.
+    </p>
+
+    <div class="frame-block">
+      <div class="frame-head">
+        <h3>Component · &lt;BrainActivation/&gt;</h3>
+        <div class="frame-meta">brain-activation.tsx · 560 × 560 default · scales</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: stretch;">
+        <!-- Live demo: deep-link the landing mockup to #brain so it scrolls to the hero figure -->
+        <div class="frame-stage" style="height: 560px; padding: 0; display:flex; align-items:center; justify-content:center;">
+          <iframe src="mockup-pass-landing-cosmos.html#brain"
+                  style="width: 1280px; height: 700px; transform: scale(0.44); transform-origin: top left; pointer-events: none; margin-top:-40px;"></iframe>
+          <div class="pin" style="top:  72px; left: 220px;">A</div>
+          <div class="pin" style="top: 220px; left:  80px;">B</div>
+          <div class="pin" style="top: 360px; left: 180px;">C</div>
+          <div class="pin" style="top: 240px; left: 380px;">D</div>
+          <div class="pin" style="top: 470px; left: 250px;">E</div>
+        </div>
+
+        <!-- Spec column -->
+        <div>
+          <div style="display:grid; grid-template-columns: 24px 1fr; gap: 10px 14px; font-size: 12px; line-height: 1.5;">
+            <div class="anno-num">A</div>
+            <div><strong>Lobe · Domain 1 · peach</strong> · fill <code style="font-family:var(--mono);font-size:11px;">#FCD5B4</code> at 0.35 → 0.95 alpha. Pulse phase 0.</div>
+            <div class="anno-num">B</div>
+            <div><strong>Lobe · Domain 2 · mint</strong> · <code style="font-family:var(--mono);font-size:11px;">#B8F2D8</code>. Pulse phase 0.25 (2 s offset).</div>
+            <div class="anno-num">C</div>
+            <div><strong>Lobe · Domain 3 · ice</strong> · <code style="font-family:var(--mono);font-size:11px;">#CDE9F5</code>. Pulse phase 0.50.</div>
+            <div class="anno-num">D</div>
+            <div><strong>Lobe · Domain 4 · lavender</strong> · <code style="font-family:var(--mono);font-size:11px;">#D8D5FC</code>. Pulse phase 0.75.</div>
+            <div class="anno-num">E</div>
+            <div><strong>Synapse spark</strong> · 2 px peach particle traveling along bezier paths between adjacent lobes. 1 spark per 1.6 s, randomized origin.</div>
+          </div>
+
+          <h4 style="font-family:var(--serif);font-weight:500;font-size:16px;margin:24px 0 8px;">Animation timeline · 8 s loop</h4>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);background:var(--paper);border:1px solid var(--hair);border-radius:8px;padding:14px;line-height:1.8;">
+            <div><span style="color:var(--accent);">0.0 s</span> → D1 ramp-up · 600 ms ease-out</div>
+            <div><span style="color:var(--accent);">2.0 s</span> → D2 ramp-up · spark D1 → D2</div>
+            <div><span style="color:var(--accent);">4.0 s</span> → D3 ramp-up · spark D2 → D3</div>
+            <div><span style="color:var(--accent);">6.0 s</span> → D4 ramp-up · spark D3 → D4</div>
+            <div><span style="color:var(--accent);">8.0 s</span> → loop · cross-fade trailing lobe to 0.35</div>
+          </div>
+
+          <h4 style="font-family:var(--serif);font-weight:500;font-size:16px;margin:24px 0 8px;">Props</h4>
+          <div style="font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--dim);">
+            <div><span style="color:var(--ink);font-weight:600;">size</span> · number · default 560</div>
+            <div><span style="color:var(--ink);font-weight:600;">motion</span> · bool · halts loop at <code>prefers-reduced-motion</code></div>
+            <div><span style="color:var(--ink);font-weight:600;">live</span> · bool · binds lobe alpha to current per-domain mastery</div>
+            <div><span style="color:var(--ink);font-weight:600;">onLobeHover</span> · (domainId) ⇒ void · used for product-surface tooltips</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="behavior" style="margin-top: 28px;">
+        <div>
+          <h4>Implementation notes</h4>
+          <ul>
+            <li><strong>SVG only</strong> · no canvas, no images. Bezier paths defined in <code>brain-activation.tsx</code>.</li>
+            <li><strong>Glow</strong> · radial gradient + 6 px Gaussian blur filter on a duplicate path; not a CSS <code>box-shadow</code>.</li>
+            <li><strong>Sparks · production component</strong> · single <code>&lt;circle&gt;</code> animated along path via SVG <code>animateMotion</code>. One sprite per spark, recycled.</li>
+            <li><strong>Sparks · this static mockup</strong> · uses CSS <code>offset-path</code> as a visual equivalent — declarative and well-supported in modern browsers, but lacks the recycled-sprite efficiency the React version should have.</li>
+            <li><strong>Reduced motion</strong> · all 4 lobes hold at <strong>0.7 alpha</strong>; sparks suppressed.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Where it appears</h4>
+          <ul>
+            <li><strong>Landing</strong> · hero, decorative · 560 px · <code>live=false</code>.</li>
+            <li><strong>Today / Home</strong> · sidebar · 96 px · <code>live=true</code> (lobes glow brighter when that domain's mastery is up).</li>
+            <li><strong>Diagnostic results</strong> · alongside the per-skill grid · 280 px · <code>live=true</code> with <code>onLobeHover</code> filtering the table.</li>
+            <li><strong>Login left panel (optional)</strong> · 200 px static · used as a watermark behind the engine voice <em>only if marketing wants it</em>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 5 · BUTTON STATES ─────────────────────────────── -->
+  <section class="sec">
+    <div class="sec-num">05 · COMPONENT</div>
+    <h2 class="sec-title">Primary CTA · states</h2>
+    <p class="sec-sub">The pill button is the only place the CTA gradient appears as a fill. Six states; spec applies to both screens.</p>
+
+    <div class="states-grid">
+      <div class="state-card">
+        <div class="label">Idle</div>
+        <div class="demo">
+          <button style="padding:14px 24px;border-radius:999px;background:linear-gradient(135deg,#fde4c1,#fbcfe8,#d8d5fc);color:#1e1b3a;font-family:Inter;font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,0.3);cursor:default;">Resume study →</button>
+        </div>
+        <div class="desc">Default. 14 / 24 padding · pill 999 · gradient at full strength. Inter 600 / 14 px ink <code>#1E1B3A</code>.</div>
+      </div>
+      <div class="state-card">
+        <div class="label">Hover</div>
+        <div class="demo">
+          <button style="padding:14px 24px;border-radius:999px;background:linear-gradient(135deg,#fde4c1,#fbcfe8,#d8d5fc);color:#1e1b3a;font-family:Inter;font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,0.45);cursor:default;transform:translateY(-1px);box-shadow:0 8px 28px rgba(252,213,180,0.25);filter:brightness(1.04);">Resume study →</button>
+        </div>
+        <div class="desc">Lift 1 px · brightness 1.04 · halo shadow <code>0 8 28 rgba(252,213,180,.25)</code>. 120 ms ease-out.</div>
+      </div>
+      <div class="state-card">
+        <div class="label">Disabled</div>
+        <div class="demo">
+          <button style="padding:14px 24px;border-radius:999px;background:rgba(241,245,249,0.08);color:rgba(241,245,249,0.4);font-family:Inter;font-weight:600;font-size:14px;border:1px solid rgba(241,245,249,0.10);cursor:not-allowed;">Resume study →</button>
+        </div>
+        <div class="desc">Drop gradient. Hair fill. Ink at 40 % opacity. Cursor not-allowed.</div>
+      </div>
+      <div class="state-card">
+        <div class="label">Loading</div>
+        <div class="demo">
+          <button style="padding:14px 24px;border-radius:999px;background:linear-gradient(135deg,#fde4c1,#fbcfe8,#d8d5fc);color:#1e1b3a;font-family:Inter;font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,0.3);cursor:default;letter-spacing:0.4em;width:200px;text-align:center;">• • •</button>
+        </div>
+        <div class="desc">Lock width to idle measurement; replace label with three dots pulsing 0.8 s. Field inputs disabled.</div>
+      </div>
+      <div class="state-card">
+        <div class="label">Error retry</div>
+        <div class="demo">
+          <button style="padding:14px 24px;border-radius:999px;background:rgba(252,165,165,0.15);color:#fca5a5;font-family:Inter;font-weight:600;font-size:14px;border:1px solid rgba(252,165,165,0.4);cursor:default;">Try again →</button>
+        </div>
+        <div class="desc">Tinted miss-color background. Border <code>rgba(252,165,165,.4)</code>. Used after auth failure.</div>
+      </div>
+      <div class="state-card">
+        <div class="label">Locked</div>
+        <div class="demo">
+          <button style="padding:14px 24px;border-radius:999px;background:rgba(241,245,249,0.05);color:rgba(241,245,249,0.6);font-family:JetBrains Mono;font-weight:500;font-size:13px;border:1px dashed rgba(241,245,249,0.18);cursor:not-allowed;letter-spacing:0.04em;">Try again in 4:32</button>
+        </div>
+        <div class="desc">After 5 failed attempts. Mono 13 px · countdown live. Fields read-only.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 6 · IMPLEMENTATION NOTES ─────────────────────── -->
+  <section class="sec">
+    <div class="sec-num">06 · ENGINEERING</div>
+    <h2 class="sec-title">Implementation notes</h2>
+
+    <div class="behavior">
+      <div>
+        <h4>Endpoints expected</h4>
+        <ul>
+          <li><code>POST /api/auth/session</code> · email + password → 200 + cookie, 401 invalid, 423 locked.</li>
+          <li><code>GET /api/auth/sso/{provider}</code> · 302 to provider; on return, server sets cookie.</li>
+          <li><code>GET /api/user/state</code> · returns <code>{ firstName, daysToTest, streak, mastery, dailyDoseMinutes }</code> for the left-panel stat strip.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Analytics events</h4>
+        <ul>
+          <li><code>landing.cta.diagnostic.click</code></li>
+          <li><code>landing.nav.signin.click</code></li>
+          <li><code>login.sso.click</code> · <code>{provider}</code></li>
+          <li><code>login.submit</code> · <code>{success:bool, errorCode?:string}</code></li>
+          <li><code>login.locked</code> · after 5th failure</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="behavior" style="margin-top: 24px;">
+      <div>
+        <h4>Mockup files</h4>
+        <ul>
+          <li><code>public/mockup-pass-landing-cosmos.html</code> · landing screen</li>
+          <li><code>public/mockup-pass-login-cosmos.html</code> · login screen</li>
+          <li><code>public/mockup-pass-handoff-cosmos.html</code> · this document (canonical handoff)</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Tokens already in code</h4>
+        <ul>
+          <li><code>tailwind.config.js</code> · navy-950 → 600 palette · d1/d2/d3/d4 · serif (Fraunces) + sans (Inter)</li>
+          <li>JetBrains Mono is loaded by font link only · not yet a Tailwind family</li>
+          <li>Reduced-motion classes still TBD in app code · respect at component level</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>PASS · Praxis 5403 · Cosmos · Handoff v0.1</div>
+    <div class="stamp">Designed with the engine in mind.</div>
+    <div>Apr 25, 2026</div>
+  </footer>
+
+</div>
+</body>
+</html>

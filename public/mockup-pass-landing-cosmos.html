@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PASS · Pass the Praxis. Become the psychologist.</title>
+<meta name="description" content="PASS · Platform for Adaptive Study Sessions. Praxis 5403 · School Psychology." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Cosmos tokens — see PASS Handoff §01 */
+    --cosmos-navy:   #060d1a;
+    --cosmos-navy-2: #0a1628;
+    --cosmos-navy-3: #0f1e38;
+    --cosmos-ink:    #f1f5f9;
+    --cosmos-dim:    rgba(203, 213, 225, 0.72);
+    --cosmos-very-dim: rgba(148, 163, 184, 0.55);
+    --cosmos-hair:   rgba(241, 245, 249, 0.10);
+    --cosmos-hair-2: rgba(241, 245, 249, 0.18);
+
+    /* Domain accents */
+    --d1: #fcd5b4;  /* peach    · Professional Practices */
+    --d2: #b8f2d8;  /* mint     · Student-Level Services */
+    --d3: #cde9f5;  /* ice      · Systems-Level Services */
+    --d4: #d8d5fc;  /* lavender · Foundations */
+
+    --d1-rgb: 252, 213, 180;
+    --d2-rgb: 184, 242, 216;
+    --d3-rgb: 205, 233, 245;
+    --d4-rgb: 216, 213, 252;
+
+    /* CTA gradient — only ever used on the primary pill */
+    --cta-gradient: linear-gradient(135deg, #fde4c1 0%, #fbcfe8 50%, #d8d5fc 100%);
+    --cta-ink:      #1e1b3a;
+
+    /* Type */
+    --serif: 'Fraunces', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    /* Spacing & radii */
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-6:  24px;
+    --space-12: 48px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cosmos-navy);
+    color: var(--cosmos-ink);
+    font-family: var(--sans);
+    font-size: 15px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Typography utilities ───────────────────────────── */
+  .h1-display {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(56px, 7.4vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .h1-display em {
+    font-style: italic;
+    background: var(--cta-gradient);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--d1);
+  }
+  .mono-tag {
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--cosmos-very-dim);
+  }
+
+  /* ─── Starfield background ───────────────────────────── */
+  .starfield {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(252, 213, 180, 0.55), transparent 40%),
+      radial-gradient(1px 1px at 82% 15%, rgba(216, 213, 252, 0.50), transparent 40%),
+      radial-gradient(1px 1px at 55% 65%, rgba(187, 247, 208, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 30% 80%, rgba(254, 243, 199, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 92% 55%, rgba(251, 207, 232, 0.55), transparent 40%),
+      radial-gradient(1px 1px at 8%  55%, rgba(216, 213, 252, 0.45), transparent 40%),
+      radial-gradient(1px 1px at 48% 12%, rgba(255, 243, 222, 0.50), transparent 40%),
+      radial-gradient(1px 1px at 70% 90%, rgba(252, 213, 180, 0.45), transparent 40%);
+    animation: starfield-drift 30s linear infinite;
+  }
+  @keyframes starfield-drift {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-30px); }
+  }
+
+  /* ─── Wax-stamp brand mark ───────────────────────────── */
+  .pass-stamp {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255, 243, 222, 1)   0%,
+      rgba(252, 213, 180, 0.85) 25%,
+      rgba(251, 207, 232, 0.55) 55%,
+      rgba(216, 213, 252, 0.25) 100%);
+    box-shadow: 0 0 24px rgba(252, 213, 180, 0.45),
+                0 0 48px rgba(216, 213, 252, 0.28);
+    animation: stamp-pulse 4s ease-in-out infinite;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .pass-stamp::after {
+    content: ''; position: absolute; inset: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%,
+      rgba(255,255,255,0.55) 0%, transparent 55%);
+    filter: blur(2px);
+  }
+  @keyframes stamp-pulse {
+    0%, 100% { transform: scale(1);    opacity: 0.96; }
+    50%      { transform: scale(1.04); opacity: 1; }
+  }
+  .pass-stamp.sm { width: 40px; height: 40px; }
+
+  /* ─── BrainActivation hero figure ──────────────────────
+       Organic neural map from /Downloads/brain-activation.jsx.
+       4 domains pulse in order, with concentric calibration rings,
+       leader labels, sparks, and EEG traces.
+       ───────────────────────────────────────────────────── */
+  .brain-stage {
+    position: relative;
+    width: 100%;
+    max-width: 820px;
+    aspect-ratio: 1.18 / 1;
+    margin: 0 auto;
+  }
+  .brain-svg {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    overflow: visible;
+  }
+  /* Handoff §04.5 — 8 s loop, 4 lobes phase-offset 0 / 0.25 / 0.50 / 0.75.
+     Ramp 0.35 → 0.95 (ease-out, 0.6 s) · hold bright until next lobe at 25 % ·
+     slow cross-fade back to 0.35 by next cycle. Static fill is solid hex; the
+     animation drives total alpha via element opacity. */
+  .lobe {
+    transform-origin: center;
+    animation: lobe-pulse 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px var(--lobe-glow));
+    opacity: 0.35;
+  }
+  .lobe[data-domain="d1"] { --lobe-glow: rgba(252, 213, 180, 0.55); animation-delay:  0s; fill: #fcd5b4; }
+  .lobe[data-domain="d2"] { --lobe-glow: rgba(184, 242, 216, 0.55); animation-delay: -2s; fill: #b8f2d8; }
+  .lobe[data-domain="d3"] { --lobe-glow: rgba(205, 233, 245, 0.55); animation-delay: -4s; fill: #cde9f5; }
+  .lobe[data-domain="d4"] { --lobe-glow: rgba(216, 213, 252, 0.55); animation-delay: -6s; fill: #d8d5fc; }
+  @keyframes lobe-pulse {
+    0%   { opacity: 0.35; }
+    7.5% { opacity: 0.95; }   /* ramp-up complete (≈ 0.6 s of 8 s) */
+    25%  { opacity: 0.95; }   /* hold bright through the next lobe's ramp */
+    100% { opacity: 0.35; }   /* slow cross-fade back to baseline */
+  }
+  .activation-lobe {
+    animation: lobe-pulse 8s ease-in-out infinite;
+    opacity: 0.35;
+  }
+  .activation-lobe.d1 { animation-delay:  0s; }
+  .activation-lobe.d2 { animation-delay: -2s; }
+  .activation-lobe.d3 { animation-delay: -4s; }
+  .activation-lobe.d4 { animation-delay: -6s; }
+  .activation-node-ring {
+    transform-origin: center;
+    animation: node-ring 3.2s ease-out infinite;
+  }
+  .activation-node-ring.d1 { animation-delay:  0s; }
+  .activation-node-ring.d2 { animation-delay: -2s; }
+  .activation-node-ring.d3 { animation-delay: -4s; }
+  .activation-node-ring.d4 { animation-delay: -6s; }
+  @keyframes node-ring {
+    0%   { r: 2.6; opacity: 0.8; }
+    70%  { r: 14;  opacity: 0; }
+    100% { r: 14;  opacity: 0; }
+  }
+  .calibration-ring {
+    fill: none;
+    stroke: rgba(252, 213, 180, 0.18);
+    stroke-width: 0.4;
+  }
+  .brain-outline {
+    fill: url(#brain-core);
+    opacity: 0.85;
+    stroke: rgba(252, 213, 180, 0.72);
+    stroke-width: 0.9;
+  }
+  .synapse {
+    stroke-linecap: round;
+    fill: none;
+    stroke-dasharray: 2 4;
+    opacity: 0.5;
+    animation: synapse-breathe 5s ease-in-out infinite;
+  }
+  @keyframes synapse-breathe {
+    0%, 100% { stroke-width: 0.7; opacity: 0.25; }
+    50%      { stroke-width: 1.6; opacity: 0.65; }
+  }
+  .spark {
+    fill: rgba(255, 243, 222, 0.96);
+    animation: spark-travel 6s linear infinite;
+  }
+  @keyframes spark-travel {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+
+  /* ─── Buttons ─────────────────────────────────────────── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 999px;
+    font-family: var(--sans); font-weight: 600; font-size: 14px;
+    color: var(--cta-ink);
+    background: var(--cta-gradient);
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    box-shadow: 0 0 30px rgba(252, 213, 180, 0.30),
+                0 8px 24px -6px rgba(0, 0, 0, 0.4);
+    transition: transform 120ms ease-out, box-shadow 120ms ease-out, filter 120ms ease-out;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 0 40px rgba(252, 213, 180, 0.45),
+                0 12px 30px -6px rgba(0, 0, 0, 0.5);
+  }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px; border-radius: 999px;
+    font-family: var(--sans); font-weight: 500; font-size: 14px;
+    color: var(--cosmos-dim);
+    background: transparent;
+    border: 1px solid var(--cosmos-hair-2);
+    transition: color 120ms ease, border-color 120ms ease;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-ghost:hover { color: var(--cosmos-ink); border-color: rgba(252, 213, 180, 0.45); }
+
+  /* ─── Boot sequence (terminal cassette) ───────────────── */
+  .boot-cassette {
+    position: fixed; inset: 0;
+    z-index: 100;
+    background: var(--cosmos-navy);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 600ms ease;
+  }
+  .boot-cassette.dismissed { opacity: 0; pointer-events: none; }
+  .boot-stack {
+    width: min(640px, 88vw);
+    font-family: var(--mono); font-size: 12px;
+    color: var(--cosmos-dim); letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+  .boot-line { opacity: 0; transform: translateY(4px); }
+  .boot-line.visible { animation: boot-in 320ms ease-out forwards; }
+  @keyframes boot-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .boot-line .dot { color: var(--d1); }
+  .boot-line .ok  { color: var(--d2); }
+  .boot-skip {
+    position: fixed; bottom: 24px; right: 28px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+    color: var(--cosmos-very-dim); text-transform: uppercase;
+    cursor: pointer; background: transparent; border: 0;
+    padding: 8px 12px; border-radius: 6px;
+  }
+  .boot-skip:hover { color: var(--cosmos-ink); }
+
+  /* ─── Reference landing sections ──────────────────────── */
+  .section {
+    border-top: 1px solid var(--cosmos-hair);
+    padding: 92px 0;
+  }
+  .section-kicker {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--d2);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4.4vw, 54px);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    max-width: 640px;
+    margin: 0;
+  }
+  .section-title em {
+    font-style: italic;
+    color: #f3d7eb;
+  }
+  .section-copy {
+    color: var(--cosmos-dim);
+    font-size: 15px;
+    line-height: 1.65;
+    max-width: 420px;
+    margin: 24px 0 0;
+  }
+  .engine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .engine-card {
+    min-height: 170px;
+    border: 1px solid var(--cosmos-hair-2);
+    border-radius: 16px;
+    background: rgba(10, 22, 40, 0.58);
+    padding: 30px;
+  }
+  .engine-card .num {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--d1);
+    margin-bottom: 24px;
+  }
+  .engine-card:nth-child(2) .num { color: #f3c7e7; }
+  .engine-card:nth-child(3) .num { color: var(--d4); }
+  .engine-card .num::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(241, 245, 249, 0.18);
+  }
+  .engine-card h3,
+  .science-cell h3 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+  }
+  .engine-card p,
+  .science-cell p {
+    color: var(--cosmos-dim);
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .science-layout {
+    display: grid;
+    grid-template-columns: 0.9fr 1.55fr;
+    gap: 96px;
+    align-items: start;
+  }
+  .science-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 1px solid var(--cosmos-hair);
+    border-radius: 18px;
+    background: rgba(10, 22, 40, 0.68);
+    overflow: hidden;
+  }
+  .science-cell {
+    min-height: 156px;
+    padding: 28px;
+    border-right: 1px solid var(--cosmos-hair);
+    border-bottom: 1px solid var(--cosmos-hair);
+  }
+  .science-cell:nth-child(even) { border-right: 0; }
+  .science-cell:nth-last-child(-n + 2) { border-bottom: 0; }
+  .science-cell .num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cosmos-very-dim);
+    letter-spacing: 0.16em;
+    margin-bottom: 18px;
+  }
+  .author-layout {
+    display: grid;
+    grid-template-columns: 0.72fr 1.3fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .portrait-card {
+    width: min(340px, 100%);
+    aspect-ratio: 0.78 / 1;
+    border-radius: 18px;
+    border: 1px solid rgba(216, 213, 252, 0.20);
+    background:
+      linear-gradient(180deg, rgba(216, 213, 252, 0.10), transparent 35%),
+      linear-gradient(135deg, rgba(15, 30, 56, 0.92), rgba(241, 245, 249, 0.16));
+    box-shadow: inset 0 0 0 18px rgba(216, 213, 252, 0.08);
+  }
+  .author-copy .section-kicker { color: var(--cosmos-ink); }
+  .author-copy .quote {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4.6vw, 58px);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    max-width: 660px;
+    margin: 0;
+  }
+  .author-copy .quote em {
+    color: #f3d7eb;
+    font-style: italic;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 42px;
+    justify-items: center;
+    margin: 22px auto 0;
+    width: min(540px, 100%);
+  }
+  .stat-row div {
+    display: flex; flex-direction: column; gap: 6px;
+    align-items: center;
+  }
+  .stat-row span:first-child {
+    width: 1px;
+    height: 20px;
+    background: rgba(252, 213, 180, 0.24);
+  }
+  .stat-row span:last-child {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+  }
+
+  /* ─── Footer ──────────────────────────────────────────── */
+  footer {
+    margin-top: 96px; padding: 32px 0;
+    border-top: 1px solid var(--cosmos-hair);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cosmos-very-dim);
+  }
+
+  /* ─── Layout shell ────────────────────────────────────── */
+  .shell {
+    position: relative; z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .shell > nav,
+  .shell > .hero,
+  .shell > .movements,
+  .shell > section[style],
+  .shell > .pricing {
+    display: none;
+  }
+  .reference-landing ~ nav,
+  .reference-landing ~ .hero,
+  .reference-landing ~ .movements,
+  .reference-landing ~ section,
+  .reference-landing ~ footer {
+    display: none !important;
+  }
+  .legacy-landing {
+    display: none !important;
+  }
+  .nav {
+    padding: 28px 0 18px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-size: 11px;
+    color: var(--cosmos-dim);
+  }
+  .nav-links a,
+  .nav-right a { color: inherit; text-decoration: none; }
+  .nav-links a:hover,
+  .nav-right a:hover { color: var(--cosmos-ink); }
+  .nav-right { display: flex; align-items: center; gap: 22px; }
+  .nav a.signin {
+    font-size: 12px; font-weight: 500; color: var(--cosmos-dim);
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+  .nav a.signin:hover { color: var(--cosmos-ink); }
+
+  .hero {
+    padding-top: 48px;
+    padding-bottom: 76px;
+    text-align: center;
+  }
+  .hero .copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin: 0 auto;
+  }
+  .hero .copy .sub {
+    font-size: 14px; color: var(--cosmos-dim); max-width: 640px; line-height: 1.65;
+  }
+  .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; justify-content: center; }
+  .hero-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(252, 213, 180, 0.24);
+    background: rgba(252, 213, 180, 0.05);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cosmos-ink);
+  }
+  .hero-map {
+    margin-top: 48px;
+    position: relative;
+  }
+
+  /* ─── Responsive ──────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .shell { padding: 0 40px; }
+    .engine-grid, .science-layout, .author-layout { grid-template-columns: 1fr; }
+    .science-layout { gap: 42px; }
+  }
+  @media (max-width: 768px) {
+    .shell { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero { padding-top: 32px; padding-bottom: 48px; }
+    .h1-display { font-size: 56px; }
+    .brain-stage { max-width: 560px; }
+    .engine-grid, .science-grid { grid-template-columns: 1fr; }
+    .science-cell,
+    .science-cell:nth-child(even),
+    .science-cell:nth-last-child(-n + 2) {
+      border-right: 0;
+      border-bottom: 1px solid var(--cosmos-hair);
+    }
+    .science-cell:last-child { border-bottom: 0; }
+  }
+  @media (max-width: 375px) {
+    .shell { padding: 0 16px; }
+    .nav { padding: 20px 0; }
+    .pass-stamp { width: 44px; height: 44px; }
+    .h1-display { font-size: 44px; }
+    .nav-right .signin { display: none; }
+  }
+
+  /* ─── Reduced motion ──────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .starfield, .pass-stamp, .activation-lobe, .activation-node-ring, .synapse, .spark { animation: none !important; }
+    /* Handoff §04.5 — all four lobes hold at 0.7 alpha; sparks suppressed. */
+    .activation-lobe  { opacity: 0.7 !important; }
+    .spark { opacity: 0   !important; }
+    .h1-display em { background: var(--d1); -webkit-background-clip: text; background-clip: text; }
+    .btn-primary { background: var(--d1); color: var(--cta-ink); }
+    .boot-line.visible { animation-duration: 0ms; opacity: 1; transform: none; }
+    .boot-cassette { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     Starfield (drifting; tab-blur pause via JS)
+     ══════════════════════════════════════════════════════ -->
+<div class="starfield" id="starfield"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     Boot sequence — plays once per session
+     Gated on sessionStorage.pass-boot-seen
+     ══════════════════════════════════════════════════════ -->
+<div class="boot-cassette" id="boot" aria-hidden="true">
+  <div class="boot-stack">
+    <div class="boot-line"><span class="dot">▸</span> root :: pass.engine.boot</div>
+    <div class="boot-line">  <span class="ok">✓</span> domains <span class="mono-tag">[d1·d2·d3·d4]</span> — loaded</div>
+    <div class="boot-line">  <span class="ok">✓</span> blueprint skill map — calibrated</div>
+    <div class="boot-line">  <span class="ok">✓</span> queue · resume cursor — ready</div>
+    <div class="boot-line">  <span class="dot">▸</span> the engine listens.</div>
+  </div>
+  <button class="boot-skip" id="boot-skip">skip ⏎</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     Page shell
+     ══════════════════════════════════════════════════════ -->
+<div class="shell">
+
+  <div class="reference-landing">
+    <nav class="nav">
+      <a href="#" style="display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit;">
+        <div class="pass-stamp" aria-hidden="true"></div>
+        <div>
+          <div style="font-family: var(--serif); font-weight:600; font-size:18px; letter-spacing:-0.01em;">PASS Platform</div>
+          <div class="mono-tag" style="margin-top:2px;">Praxis 5403</div>
+        </div>
+      </a>
+      <div class="nav-links" aria-label="Landing navigation">
+        <a href="#blueprint">The Blueprint</a>
+        <a href="#engine">Engine</a>
+        <a href="#science">Science</a>
+        <a href="#pricing">Pricing</a>
+        <a href="mockup-pass-login-cosmos.html">Sign in</a>
+      </div>
+      <div class="nav-right">
+        <a href="mockup-pass-login-cosmos.html" class="btn-primary" style="padding:10px 18px; font-size:12px;">Start free diagnostic →</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="copy">
+        <div class="hero-chip">◐ Built for Praxis 5403 · School Psychology</div>
+        <h1 class="h1-display">Pass the Praxis.<br/><em>Become the psychologist.</em></h1>
+        <p class="sub">
+          One adaptive engine, mapped to every skill on the Praxis 5403 blueprint
+          — nothing extra. Calibrated to your edge until the math says you're ready.
+        </p>
+        <div class="actions">
+          <a href="mockup-pass-login-cosmos.html" class="btn-primary">Start free diagnostic →</a>
+          <a href="#brain" class="btn-ghost">↻ Replay intro</a>
+        </div>
+      </div>
+
+      <div id="brain" class="hero-map" aria-hidden="true">
+        <div class="hero-chip" style="position:absolute; left:50%; top:-22px; transform:translateX(-50%); z-index:2;">Engine · Live neural map</div>
+        <div class="brain-stage">
+          <svg class="brain-svg" viewBox="-30 -30 260 260" role="presentation">
+            <defs>
+              <radialGradient id="brain-halo" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fde4c1" stop-opacity="0.32"/>
+                <stop offset="40%" stop-color="#fbcfe8" stop-opacity="0.18"/>
+                <stop offset="80%" stop-color="#d8d5fc" stop-opacity="0.06"/>
+                <stop offset="100%" stop-color="#060d1a" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="brain-core" cx="50%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#fff3de" stop-opacity="0.7"/>
+                <stop offset="35%" stop-color="#fcd5b4" stop-opacity="0.42"/>
+                <stop offset="70%" stop-color="#fbcfe8" stop-opacity="0.22"/>
+                <stop offset="100%" stop-color="#060d1a" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="glow-d1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fcd5b4" stop-opacity="0.72"/><stop offset="60%" stop-color="#fcd5b4" stop-opacity="0.22"/><stop offset="100%" stop-color="#fcd5b4" stop-opacity="0"/></radialGradient>
+              <radialGradient id="glow-d2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#b8f2d8" stop-opacity="0.72"/><stop offset="60%" stop-color="#b8f2d8" stop-opacity="0.22"/><stop offset="100%" stop-color="#b8f2d8" stop-opacity="0"/></radialGradient>
+              <radialGradient id="glow-d3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#cde9f5" stop-opacity="0.72"/><stop offset="60%" stop-color="#cde9f5" stop-opacity="0.22"/><stop offset="100%" stop-color="#cde9f5" stop-opacity="0"/></radialGradient>
+              <radialGradient id="glow-d4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#d8d5fc" stop-opacity="0.72"/><stop offset="60%" stop-color="#d8d5fc" stop-opacity="0.22"/><stop offset="100%" stop-color="#d8d5fc" stop-opacity="0"/></radialGradient>
+              <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2"/></filter>
+            </defs>
+
+            <circle cx="100" cy="100" r="135" fill="url(#brain-halo)"><animate attributeName="r" values="130;142;130" dur="7s" repeatCount="indefinite"/></circle>
+            <circle class="calibration-ring" cx="100" cy="100" r="118" stroke-dasharray="2 4"/>
+            <circle class="calibration-ring" cx="100" cy="100" r="132" stroke-dasharray="1 5"/>
+            <circle class="calibration-ring" cx="100" cy="100" r="148" stroke-dasharray="0.5 7"/>
+            <g stroke="rgba(252,213,180,0.35)" stroke-width="0.5">
+              <line x1="252" y1="100" x2="258" y2="100"/><line x1="231.6" y1="176" x2="236.8" y2="179"/><line x1="176" y1="231.6" x2="179" y2="236.8"/><line x1="100" y1="252" x2="100" y2="258"/>
+              <line x1="24" y1="231.6" x2="21" y2="236.8"/><line x1="-31.6" y1="176" x2="-36.8" y2="179"/><line x1="-52" y1="100" x2="-58" y2="100"/><line x1="-31.6" y1="24" x2="-36.8" y2="21"/>
+              <line x1="24" y1="-31.6" x2="21" y2="-36.8"/><line x1="100" y1="-52" x2="100" y2="-58"/><line x1="176" y1="-31.6" x2="179" y2="-36.8"/><line x1="231.6" y1="24" x2="236.8" y2="21"/>
+            </g>
+
+            <ellipse class="activation-lobe d1" cx="60" cy="70" rx="32" ry="26" fill="url(#glow-d1)" filter="url(#soft)"/>
+            <ellipse class="activation-lobe d2" cx="140" cy="64" rx="32" ry="26" fill="url(#glow-d2)" filter="url(#soft)"/>
+            <ellipse class="activation-lobe d3" cx="150" cy="138" rx="30" ry="24" fill="url(#glow-d3)" filter="url(#soft)"/>
+            <ellipse class="activation-lobe d4" cx="56" cy="134" rx="30" ry="24" fill="url(#glow-d4)" filter="url(#soft)"/>
+
+            <path class="brain-outline" d="M100 22 C70 22,44 36,36 60 C22 70,16 92,24 110 C18 128,30 150,54 158 C64 174,88 184,100 178 C112 184,136 174,146 158 C170 150,182 128,176 110 C184 92,178 70,164 60 C156 36,130 22,100 22 Z"/>
+            <path d="M100 28 C96 60,104 90,100 120 C96 150,104 170,100 178" fill="none" stroke="rgba(252,213,180,0.4)" stroke-width="0.6"/>
+            <g fill="none" stroke="rgba(216,213,252,0.4)" stroke-width="0.55">
+              <path d="M50 60 C64 70,80 64,92 76"/><path d="M150 60 C136 70,120 64,108 76"/><path d="M40 100 C60 96,76 108,92 104"/>
+              <path d="M160 100 C140 96,124 108,108 104"/><path d="M52 138 C70 132,86 144,100 140"/><path d="M148 138 C130 132,114 144,100 140"/>
+            </g>
+
+            <path class="synapse" d="M 60 70 Q 100 50 140 64" stroke="#fcd5b4" stroke-width="0.5"/>
+            <path class="synapse" d="M 140 64 Q 158 100 150 138" stroke="#b8f2d8" stroke-width="0.5"/>
+            <path class="synapse" d="M 150 138 Q 100 152 56 134" stroke="#cde9f5" stroke-width="0.5"/>
+            <path class="synapse" d="M 56 134 Q 42 100 60 70" stroke="#d8d5fc" stroke-width="0.5"/>
+            <path class="synapse" d="M 60 70 Q 100 100 150 138" stroke="#fcd5b4" stroke-width="0.5" opacity="0.36"/>
+            <path class="synapse" d="M 140 64 Q 100 100 56 134" stroke="#d8d5fc" stroke-width="0.5" opacity="0.36"/>
+            <circle class="spark" r="1.6" fill="#fcd5b4"><animateMotion dur="3.2s" begin="0.3s" repeatCount="indefinite" path="M 60 70 Q 100 50 140 64"/><animate attributeName="opacity" values="0;1;1;0" dur="3.2s" begin="0.3s" repeatCount="indefinite"/></circle>
+            <circle class="spark" r="1.6" fill="#b8f2d8"><animateMotion dur="3.6s" begin="1s" repeatCount="indefinite" path="M 140 64 Q 158 100 150 138"/><animate attributeName="opacity" values="0;1;1;0" dur="3.6s" begin="1s" repeatCount="indefinite"/></circle>
+            <circle class="spark" r="1.6" fill="#cde9f5"><animateMotion dur="4s" begin="1.7s" repeatCount="indefinite" path="M 150 138 Q 100 152 56 134"/><animate attributeName="opacity" values="0;1;1;0" dur="4s" begin="1.7s" repeatCount="indefinite"/></circle>
+            <circle class="spark" r="1.6" fill="#d8d5fc"><animateMotion dur="4.4s" begin="2.4s" repeatCount="indefinite" path="M 56 134 Q 42 100 60 70"/><animate attributeName="opacity" values="0;1;1;0" dur="4.4s" begin="2.4s" repeatCount="indefinite"/></circle>
+
+            <g>
+              <circle cx="60" cy="70" r="2.6" fill="#fcd5b4"/><circle class="activation-node-ring d1" cx="60" cy="70" r="2.6" fill="none" stroke="#fcd5b4" stroke-width="0.6"/>
+              <circle cx="140" cy="64" r="2.6" fill="#b8f2d8"/><circle class="activation-node-ring d2" cx="140" cy="64" r="2.6" fill="none" stroke="#b8f2d8" stroke-width="0.6"/>
+              <circle cx="150" cy="138" r="2.6" fill="#cde9f5"/><circle class="activation-node-ring d3" cx="150" cy="138" r="2.6" fill="none" stroke="#cde9f5" stroke-width="0.6"/>
+              <circle cx="56" cy="134" r="2.6" fill="#d8d5fc"/><circle class="activation-node-ring d4" cx="56" cy="134" r="2.6" fill="none" stroke="#d8d5fc" stroke-width="0.6"/>
+            </g>
+
+            <g font-family="Inter, system-ui, sans-serif">
+              <line x1="60" y1="70" x2="-8" y2="70" stroke="#fcd5b4" stroke-opacity="0.4" stroke-width="0.5"/><circle cx="-8" cy="70" r="1.4" fill="#fcd5b4"/>
+              <text x="-24" y="67" font-size="6" font-weight="700" fill="#fcd5b4" letter-spacing="0.18em">PROFESSIONAL</text><text x="-24" y="75" font-size="5" font-weight="500" fill="rgba(203,213,225,0.65)">Ethics · law · advocacy</text>
+              <line x1="140" y1="64" x2="208" y2="64" stroke="#b8f2d8" stroke-opacity="0.4" stroke-width="0.5"/><circle cx="208" cy="64" r="1.4" fill="#b8f2d8"/>
+              <text x="214" y="61" font-size="6" font-weight="700" fill="#b8f2d8" letter-spacing="0.18em">STUDENT</text><text x="214" y="69" font-size="5" font-weight="500" fill="rgba(203,213,225,0.65)">Assessment · intervention</text>
+              <line x1="150" y1="138" x2="208" y2="138" stroke="#cde9f5" stroke-opacity="0.4" stroke-width="0.5"/><circle cx="208" cy="138" r="1.4" fill="#cde9f5"/>
+              <text x="214" y="135" font-size="6" font-weight="700" fill="#cde9f5" letter-spacing="0.18em">SYSTEMS</text><text x="214" y="143" font-size="5" font-weight="500" fill="rgba(203,213,225,0.65)">Consultation · MTSS</text>
+              <line x1="56" y1="134" x2="-8" y2="134" stroke="#d8d5fc" stroke-opacity="0.4" stroke-width="0.5"/><circle cx="-8" cy="134" r="1.4" fill="#d8d5fc"/>
+              <text x="-24" y="131" font-size="6" font-weight="700" fill="#d8d5fc" letter-spacing="0.18em">FOUNDATIONS</text><text x="-24" y="139" font-size="5" font-weight="500" fill="rgba(203,213,225,0.65)">Research · theory</text>
+            </g>
+
+            <circle cx="100" cy="100" r="3" fill="#fde4c1"><animate attributeName="r" values="2.5;4;2.5" dur="1.4s" repeatCount="indefinite"/></circle>
+            <circle cx="100" cy="100" r="3" fill="none" stroke="#fde4c1" stroke-width="0.6"><animate attributeName="r" values="3;18;3" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.9;0;0.9" dur="2.6s" repeatCount="indefinite"/></circle>
+            <g opacity="0.55" transform="translate(0, 88)">
+              <path d="M -20 100 L -16 98.0 L -12 96.5 L -8 95.7 L -4 95.7 L 0 96.5 L 4 98.0 L 8 99.7 L 12 101.2 L 16 102.1 L 20 102.1 L 24 101.3 L 28 100.0 L 32 98.7 L 36 97.8 L 40 97.6 L 44 98.1 L 48 99.2 L 52 100.5 L 56 101.6 L 60 102.0 L 64 101.6 L 68 100.5 L 72 99.2 L 76 98.1 L 80 97.6 L 84 97.8 L 88 98.7 L 92 100.0 L 96 101.3 L 100 102.1 L 104 102.1 L 108 101.2 L 112 99.7 L 116 98.0 L 120 96.5 L 124 95.7 L 128 95.7 L 132 96.5 L 136 98.0 L 140 99.7 L 144 101.2 L 148 102.1 L 152 102.1 L 156 101.3 L 160 100.0 L 164 98.7 L 168 97.8 L 172 97.6 L 176 98.1 L 180 99.2 L 184 100.5 L 188 101.6 L 192 102.0 L 196 101.6 L 200 100.5 L 204 99.2 L 208 98.1 L 212 97.6 L 216 97.8 L 220 98.7" fill="none" stroke="#b8f2d8" stroke-width="0.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="stat-row">
+          <div><span></span><span>1 exam</span></div>
+          <div><span></span><span>4 content areas</span></div>
+          <div><span></span><span>blueprint skills</span></div>
+          <div><span></span><span>0 filler</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="engine" class="section">
+      <div class="section-kicker">The engine</div>
+      <h2 class="section-title">Three loops. One reads you,<br/><em>one builds you, one proves it.</em></h2>
+      <div class="engine-grid">
+        <article class="engine-card"><div class="num">01</div><h3>Diagnose</h3><p>An adaptive diagnostic places you on every skill on the blueprint. Bayesian updating; no wasted questions.</p></article>
+        <article class="engine-card"><div class="num">02</div><h3>Practice</h3><p>Spaced repetition + interleaving. Items return right before you would forget — across content areas, not blocked.</p></article>
+        <article class="engine-card"><div class="num">03</div><h3>Master</h3><p>Mastery is a probability. We hold the line until the model says ≥ 0.85 — then we move on, not before.</p></article>
+      </div>
+    </section>
+
+    <section id="science" class="section">
+      <div class="science-layout">
+        <div>
+          <div class="section-kicker">The science</div>
+          <h2 class="section-title">Six principles<br/><em>borrowed from cognitive science.</em></h2>
+          <p class="section-copy">Most prep apps gamify. PASS engineers — every interaction is grounded in decades of replicated findings on how durable knowledge forms.</p>
+        </div>
+        <div class="science-grid">
+          <article class="science-cell"><div class="num">01</div><h3>Retrieval Practice</h3><p>Pulling answers out, not pushing them in. We replace re-reading with active recall — the single biggest lever in cognitive science.</p></article>
+          <article class="science-cell"><div class="num">02</div><h3>Spaced Repetition</h3><p>Items resurface right before you forget them. Each successful retrieval bumps the interval; each miss tightens it.</p></article>
+          <article class="science-cell"><div class="num">03</div><h3>Interleaving</h3><p>Skills are mixed across domains, not blocked. Harder in the moment, far more durable on test day.</p></article>
+          <article class="science-cell"><div class="num">04</div><h3>Desirable Difficulty</h3><p>Friction that helps. We tune item difficulty to your edge — hard enough to learn, easy enough to keep going.</p></article>
+          <article class="science-cell"><div class="num">05</div><h3>Confidence Calibration</h3><p>Every answer asks how sure you are. Miscalibration is the silent test killer; we surface it.</p></article>
+          <article class="science-cell"><div class="num">06</div><h3>Mastery Modeling</h3><p>A Bayesian skill model tracks the blueprint beneath the exam. We don't move on until the math says you're ready.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="blueprint" class="section">
+      <div class="author-layout">
+        <div class="portrait-card" aria-hidden="true"></div>
+        <div class="author-copy">
+          <div class="section-kicker">Built by a learning expert</div>
+          <h2 class="quote">"I rewrote the prep<br/><em>I wished I had.</em>"</h2>
+          <p class="section-copy">PASS was designed by a school psychologist with deep training in educational measurement and the science of how high-stakes learners actually learn. Every interaction in this app — from the distractor patterns to the daily dose — is an opinionated, evidence-based call.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section" style="display:flex; justify-content:space-between; gap:32px; align-items:end;">
+      <div>
+        <div class="section-kicker" style="color:var(--cosmos-very-dim);">Private beta</div>
+        <h2 class="section-title">Free for the spring cohort.</h2>
+        <p class="section-copy">Sign up now and keep your access through the May 2026 sitting at no cost.</p>
+      </div>
+      <a href="mockup-pass-login-cosmos.html" class="btn-primary">Start free diagnostic →</a>
+    </section>
+  </div>
+
+  <div class="legacy-landing" aria-hidden="true">
+  <!-- 1 · Top nav -->
+  <nav class="nav">
+    <a href="#" style="display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit;">
+      <div class="pass-stamp"></div>
+      <div>
+        <div style="font-family: var(--serif); font-weight:600; font-size:18px; letter-spacing:-0.01em;">PASS Platform</div>
+        <div class="mono-tag" style="margin-top:2px;">Praxis 5403 · School Psychology</div>
+      </div>
+    </a>
+    <div class="nav-right">
+      <span class="mono-tag hidden md:inline">spring · 2026 · private beta</span>
+      <a href="mockup-pass-login-cosmos.html" class="signin">Sign in →</a>
+    </div>
+  </nav>
+
+  <!-- 2 · Hero -->
+  <section class="hero">
+    <div class="copy">
+      <div class="eyebrow">Pass it. Past it.</div>
+
+      <h1 class="h1-display">
+        Pass the Praxis.<br/>
+        Become the <em>psychologist.</em>
+      </h1>
+
+      <p class="sub">
+        An adaptive diagnostic that begins where you are — and a study engine
+        that rewrites itself with every answer. Built for Praxis 5403 (5404 next).
+      </p>
+
+      <div class="actions">
+        <a href="mockup-pass-login-cosmos.html" class="btn-primary">
+          Begin diagnostic
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="mockup-pass-login-cosmos.html" class="btn-ghost">I have an account</a>
+      </div>
+
+      <div class="mono-tag" style="margin-top:8px;">
+        ◐ no credit card · blueprint mapped · live cohort: <span style="color:var(--d2);">7 online</span>
+      </div>
+    </div>
+
+    <!-- Hero figure: BrainActivation (handoff §04.5) -->
+    <div id="brain" class="brain-stage" aria-hidden="true">
+      <div class="brain-halo"></div>
+      <svg class="brain-svg" viewBox="0 0 560 560" role="presentation">
+        <!-- Synapse edges (drawn first so lobes overlay) -->
+        <g stroke-linecap="round">
+          <path class="synapse" d="M 180 180 Q 280 120 380 180" stroke="rgba(252,213,180,0.55)" />
+          <path class="synapse" d="M 380 180 Q 440 280 380 380" stroke="rgba(184,242,216,0.55)" />
+          <path class="synapse" d="M 380 380 Q 280 440 180 380" stroke="rgba(205,233,245,0.55)" />
+          <path class="synapse" d="M 180 380 Q 120 280 180 180" stroke="rgba(216,213,252,0.55)" />
+          <path class="synapse" d="M 180 180 Q 280 280 380 380" stroke="rgba(252,213,180,0.30)" />
+          <path class="synapse" d="M 380 180 Q 280 280 180 380" stroke="rgba(216,213,252,0.30)" />
+        </g>
+
+        <!-- Four lobes (peach → mint → ice → lavender) -->
+        <g>
+          <ellipse class="lobe" data-domain="d1" cx="180" cy="180" rx="78" ry="60" />
+          <ellipse class="lobe" data-domain="d2" cx="380" cy="180" rx="78" ry="60" />
+          <ellipse class="lobe" data-domain="d3" cx="380" cy="380" rx="78" ry="60" />
+          <ellipse class="lobe" data-domain="d4" cx="180" cy="380" rx="78" ry="60" />
+        </g>
+
+        <!-- Center node -->
+        <circle cx="280" cy="280" r="18" fill="rgba(255,243,222,0.85)" filter="url(#glow)" />
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Lobe labels (mono) -->
+        <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="rgba(241,245,249,0.55)" text-anchor="middle">
+          <text x="180" y="106">D1 · PEACH</text>
+          <text x="380" y="106">D2 · MINT</text>
+          <text x="380" y="468">D3 · ICE</text>
+          <text x="180" y="468">D4 · LAVENDER</text>
+        </g>
+
+        <!-- Sparks travel along synapse paths -->
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 180 180 Q 280 120 380 180'); animation-delay: 0s;" />
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 380 180 Q 440 280 380 380'); animation-delay: -1.5s;" />
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 380 380 Q 280 440 180 380'); animation-delay: -3s;" />
+        <circle class="spark" r="2.4"
+                style="offset-path: path('M 180 380 Q 120 280 180 180'); animation-delay: -4.5s;" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- 3 · The Five Movements -->
+  <section class="movements" aria-label="The five movements">
+    <div class="move">
+      <div class="num">I</div>
+      <div class="label">Adaptive diagnostic</div>
+      <div class="sub">A focused diagnostic calibrates you to the blueprint.</div>
+    </div>
+    <div class="move">
+      <div class="num">II</div>
+      <div class="label">Platform calibration</div>
+      <div class="sub">The engine fits to your prior knowledge, not a curriculum.</div>
+    </div>
+    <div class="move">
+      <div class="num">III</div>
+      <div class="label">Targeted practice</div>
+      <div class="sub">Domains and skills you actually need — not the ones you're already past.</div>
+    </div>
+    <div class="move">
+      <div class="num">IV</div>
+      <div class="label">Readiness threshold</div>
+      <div class="sub">70 % of skills demonstrating, before the engine says you're ready.</div>
+    </div>
+    <div class="move">
+      <div class="num">V</div>
+      <div class="label">Reassess · take praxis</div>
+      <div class="sub">A second diagnostic, then the test itself.</div>
+    </div>
+  </section>
+
+  <!-- 4 · Domains tree -->
+  <section style="margin-top: 80px;">
+    <div class="eyebrow" style="color: var(--cosmos-very-dim);">Four domains · blueprint skills</div>
+    <h2 style="font-family: var(--serif); font-weight: 500; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 0;">
+      What the engine learns about you.
+    </h2>
+    <p style="color: var(--cosmos-dim); margin-top: 12px; max-width: 640px;">
+      Every Praxis 5403 skill maps to one of four domains. Each is a separate
+      colour the engine can speak in.
+    </p>
+
+    <div class="domains-strip">
+      <div class="dom-card" data-d="d1">
+        <div class="swatch"></div>
+        <div class="meta">D1 · Peach</div>
+        <div class="name">Professional<br/>Practices</div>
+        <div class="skills"><strong>9</strong> skills · ethics, identity, role boundaries</div>
+      </div>
+      <div class="dom-card" data-d="d2">
+        <div class="swatch"></div>
+        <div class="meta">D2 · Mint</div>
+        <div class="name">Student-Level<br/>Services</div>
+        <div class="skills"><strong>15</strong> skills · assessment, intervention, eligibility</div>
+      </div>
+      <div class="dom-card" data-d="d3">
+        <div class="swatch"></div>
+        <div class="meta">D3 · Ice</div>
+        <div class="name">Systems-Level<br/>Services</div>
+        <div class="skills"><strong>11</strong> skills · MTSS, consultation, school-wide data</div>
+      </div>
+      <div class="dom-card" data-d="d4">
+        <div class="swatch"></div>
+        <div class="meta">D4 · Lavender</div>
+        <div class="name">Foundations</div>
+        <div class="skills"><strong>10</strong> skills · law, equity, research methods</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Pricing teaser -->
+  <section class="pricing">
+    <div>
+      <div class="eyebrow" style="color: var(--cosmos-very-dim);">Private beta</div>
+      <h2>Free for the spring cohort.</h2>
+      <p>
+        We're calibrating with the people who'll use it most. Sign up now,
+        keep your access through the May 2026 sitting at no cost.
+      </p>
+    </div>
+    <div class="actions" style="display:flex; gap:12px;">
+      <a href="mockup-pass-login-cosmos.html" class="btn-primary">Begin diagnostic →</a>
+    </div>
+  </section>
+
+  <!-- 6 · Footer -->
+  <footer>
+    <div>PASS · Praxis 5403 · Cosmos · v0.1</div>
+    <div style="font-family: var(--serif); font-style: italic; font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--cosmos-ink);">
+      The engine remembers.
+    </div>
+    <div>Apr · 2026</div>
+  </footer>
+
+  </div>
+
+</div>
+
+<script>
+  // ─── Boot sequence ─────────────────────────────────────
+  // Plays once per session, gated by sessionStorage.
+  // Skip button always visible bottom-right; reduced-motion bypasses entirely.
+  (function bootCassette() {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const seen = sessionStorage.getItem('pass-boot-seen') === '1';
+    const cassette = document.getElementById('boot');
+    const skip = document.getElementById('boot-skip');
+    const lines = cassette.querySelectorAll('.boot-line');
+
+    function dismiss() {
+      cassette.classList.add('dismissed');
+      sessionStorage.setItem('pass-boot-seen', '1');
+      setTimeout(() => cassette.style.display = 'none', 700);
+    }
+
+    if (reducedMotion || seen) {
+      cassette.style.display = 'none';
+      return;
+    }
+
+    skip.addEventListener('click', dismiss);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === 'Escape') dismiss();
+    }, { once: true });
+
+    lines.forEach((line, i) => {
+      setTimeout(() => line.classList.add('visible'), 320 + i * 380);
+    });
+
+    setTimeout(dismiss, 320 + lines.length * 380 + 800);
+  })();
+
+  // ─── Starfield: pause on tab blur ──────────────────────
+  (function starfieldPause() {
+    const sf = document.getElementById('starfield');
+    document.addEventListener('visibilitychange', () => {
+      sf.style.animationPlayState = document.hidden ? 'paused' : 'running';
+    });
+  })();
+</script>
+</body>
+</html>
