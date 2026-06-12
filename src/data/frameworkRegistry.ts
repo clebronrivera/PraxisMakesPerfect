@@ -93,7 +93,7 @@ export const frameworkRegistry: FrameworkEntry[] = [
     summary:
       'Clarified and raised the Rowley FAPE standard. Schools must offer an IEP reasonably calculated to enable a child to make progress appropriate in light of the child\'s circumstances — more than merely "more than de minimis."',
     keyHolding:
-      'A child with more severe impairments may have different (but equally demanding) FAPE expectations. The IEP must be sufficiently ambitious; token progress does not satisfy FAPE.',
+      'FAPE requires an IEP reasonably calculated to enable a child to make progress appropriate in light of the child\'s circumstances. Endrew F. rejected the "merely more than de minimis" standard: an IEP must be appropriately ambitious given the child\'s circumstances, and every child should have the chance to meet challenging objectives. Token progress does not satisfy FAPE.',
     applicability:
       'Used when evaluating whether an IEP offers sufficient challenge. School psychologists should set measurable, ambitious goals that reflect the student\'s capacity for growth.',
     guardedMisconception:
