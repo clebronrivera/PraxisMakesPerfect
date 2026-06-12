@@ -79,8 +79,23 @@ Status: ☐ not started · 🔄 in progress · ✅ done
 | **E1** | **A4/D8 retake build** per §2 — (a) latest-wins replace logic for assessment buckets in `globalScoreCalculator.ts`; (b) prefer-unseen selection in the assessment builder; (c) the third-assessment builder + unlock wiring + UI entry. Mockup-first for any new UI. | — | ✅ |
 | **E1** | B2 re-derive: after Coworker proposes tighter etsTopicIds (C-side), re-run `derive-module-ets-topics.mjs` + parity test | ⛔ C-B2 | ☐ |
 | **E1** | Expansion re-derive: after Coworker adds new questions, re-run the misconception + objective derives + parity | ⛔ C4 | ☐ |
-| **E2** | Apply migrations `0024_vocab_attempts` + `0025_account_deletion_request` to Supabase; triage Dependabot vuln #11 | — | ☐ |
+| **E2** | Apply migrations `0024_vocab_attempts` + `0025_account_deletion_request` to Supabase; triage Dependabot vuln #11 | — | ✅ |
 | **E3** | Branch reconciliation (`hopeful-benz` ↔ `explore/dashboard-redesign` ↔ `main`) **then** the batched content-only deploy (A1) | ⛔ E1, C-track | ☐ |
+
+> **E2 completion note (2026-06-12):** Project `ypsownmsoyljlqhcnrwa` (PraxisMakesPerfect).
+> `0024_vocab_attempts` + `0025_account_deletion_request` were **already applied** in a prior
+> session (remote history versions `20260602192231` / `20260602192247`; `vocab_attempts` table +
+> `miss_count` col + `increment_glossary_miss` fn + `deletion_requested_at` col all verified present).
+> `0026_retake_complete` (from E1) **applied this session** and verified (`retake_complete bool default
+> false`, `retake_completed_at timestamptz`). **Dependabot #11** (`ws` CVE-2026-45736, "uninitialized
+> memory disclosure", medium, vulnerable `<8.20.1`): `ws@8.19.0` was a transitive dep of
+> `@supabase/realtime-js` + `openai` (the latter used only by `scripts/generate-practice.ts`, kept).
+> Fixed via `overrides: { "ws": "^8.20.1" }` → lockfile now resolves `ws@8.21.0`; closes on merge to
+> default branch. (Used `npm install --package-lock-only` — node_modules is symlinked to a sibling
+> clone and must not be mutated from this worktree.) **Out-of-scope advisories surfaced** (not E2):
+> Supabase security linter flags `function_search_path_mutable` + anon-executable SECURITY DEFINER on
+> `increment_glossary_miss` (mitigated by its `auth.uid()` owner-guard) — candidate for a follow-up
+> hardening pass, tracked separately.
 
 ### TRACK C — Content / SME (run on **Claude Coworker**, in parallel)
 
