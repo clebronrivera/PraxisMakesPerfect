@@ -22,82 +22,60 @@ export interface HowItWorksStep {
 
 export const HOW_IT_WORKS_STEPS: HowItWorksStep[] = [
   {
-    step: 'Step 1',
+    step: '01',
     iconGradient: 'from-cyan-500 to-blue-600',
     glyph: '◎',
     accentText: 'text-cyan-300',
-    title: 'Take an adaptive baseline',
-    body: 'An adaptive set that grows with you — one question per skill, plus targeted follow-ups exactly where you slip. No fixed-length slog.',
+    title: 'Baseline',
+    body: 'One adaptive sitting. Every answer — right, wrong, and how long it took — becomes diagnostic signal.',
   },
   {
-    step: 'Step 2',
+    step: '02',
     iconGradient: 'from-violet-500 to-fuchsia-600',
     glyph: '⌖',
     accentText: 'text-fuchsia-300',
-    title: 'See your micro-skill map',
-    body: 'The algorithm isolates the precise micro-skills and error patterns behind your misses — not "weak in assessment," but the actual gap.',
+    title: 'Diagnose',
+    body: 'Your responses are broken down across the four Praxis 5403 domains, then into the micro-skills underneath each one.',
   },
   {
-    step: 'Step 3',
+    step: '03',
+    iconGradient: 'from-amber-500 to-orange-600',
+    glyph: '◉',
+    accentText: 'text-amber-300',
+    title: 'Target',
+    body: "Gaps are ranked by how much they're costing you. Your plan starts where the payoff is highest — not at chapter one.",
+  },
+  {
+    step: '04',
     iconGradient: 'from-emerald-500 to-teal-600',
     glyph: '↗',
     accentText: 'text-emerald-300',
-    title: 'Study what moves readiness',
-    body: 'A personalized plan + adaptive practice, sequenced by what raises your readiness fastest and spaced so it actually sticks.',
+    title: 'Monitor',
+    body: 'Every practice session updates the map. Skills you master retire from your plan; weak spots stay in rotation until they don’t.',
   },
 ];
 
-export interface WeakMicroSkill {
+export interface MethodPractice {
+  glyph: string;
+  accentText: string; // tailwind text color for the icon
   title: string;
-  context: string;
-  barGradient: string; // tailwind `from-… to-…`
-  tier: string;
-  tierClass: string; // tailwind bg/text for the tier pill
+  body: string;
 }
 
-export const WEAK_MICRO_SKILLS: WeakMicroSkill[] = [
-  {
-    title: 'Norm- vs. criterion-referenced interpretation',
-    context: 'Assessment & Data Use · 28%',
-    barGradient: 'from-rose-500 to-pink-600',
-    tier: 'Tier 2',
-    tierClass: 'bg-rose-500/20 text-rose-200',
-  },
-  {
-    title: 'Function vs. topography in FBA',
-    context: 'Behavioral Assessment · 33%',
-    barGradient: 'from-rose-500 to-pink-600',
-    tier: 'Tier 2',
-    tierClass: 'bg-rose-500/20 text-rose-200',
-  },
-  {
-    title: 'Screening vs. evaluation consent',
-    context: 'Ethics & Law · 55%',
-    barGradient: 'from-amber-500 to-orange-600',
-    tier: 'Tier 1',
-    tierClass: 'bg-amber-500/20 text-amber-200',
-  },
+/** The founder's diagnostic practice — what the engine is built on (not "MTSS"). */
+export const METHOD_PRACTICES: MethodPractice[] = [
+  { glyph: '▦', accentText: 'text-indigo-300', title: 'Analyze performance data', body: 'Fifteen-plus years of decisions that had to be justified by data — not instinct.' },
+  { glyph: '⌕', accentText: 'text-teal-300', title: 'Isolate the root cause', body: 'Finding why performance breaks down — not just where the score is low.' },
+  { glyph: '⚖', accentText: 'text-amber-300', title: 'Match the smallest fix', body: 'Pairing each gap with the lightest intervention that actually closes it.' },
+  { glyph: '↗', accentText: 'text-emerald-300', title: 'Monitor & adjust', body: 'Re-measuring response and regrouping until outcomes — not feelings — say it worked.' },
 ];
 
-export interface MethodStep {
-  n: string;
-  iconGradient: string;
-  title: string;
-  detail: string;
-}
+/** The diagnostic loop the engine runs (Adjust closes it). */
+export const METHOD_LOOP: string[] = ['Baseline', 'Diagnose', 'Target', 'Monitor', 'Adjust'];
 
-export const METHOD_WORKFLOW: MethodStep[] = [
-  { n: '1', iconGradient: 'from-cyan-500 to-blue-600', title: 'Baseline', detail: '— adaptive diagnostic' },
-  { n: '2', iconGradient: 'from-violet-500 to-fuchsia-600', title: 'Pinpoint', detail: '— micro-skill + error analysis' },
-  { n: '3', iconGradient: 'from-rose-500 to-pink-600', title: 'Target', detail: '— tiered, sequenced practice' },
-  { n: '4', iconGradient: 'from-emerald-500 to-teal-600', title: 'Progress-monitor', detail: '— spaced review + re-check' },
-];
-
-export const METHOD_CHIPS: string[] = [
-  '~2 decades educator · MTSS',
-  'Spacing',
-  'Retrieval practice',
-  'Interleaving',
+/** Roles behind the engine — credibility, the differentiator over "worked in MTSS". */
+export const METHOD_ROLES: string[] = [
+  'Teacher', 'Interventionist', 'Instructional Coach', 'Behavior Specialist', 'Educational Assessor', 'Special Education Advocate',
 ];
 
 export interface PlanStat {
