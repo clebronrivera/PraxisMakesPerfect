@@ -11,9 +11,10 @@ export default function HowItWorksSection() {
         From "study everything" to "study <span className="pl-gtxt">this.</span>"
       </h2>
       <p className="text-center text-white/60 max-w-2xl mx-auto mb-12">
-        Three steps that mirror how strong practitioners actually move: baseline, pinpoint, then target.
+        Four steps — the same loop a strong diagnostician runs, now pointed at your prep. Here's what the
+        engine is about to do.
       </p>
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {HOW_IT_WORKS_STEPS.map((s) => (
           <div key={s.step} className="pl-glass rounded-2xl p-6">
             <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.iconGradient} grid place-items-center text-white text-lg mb-4`}>

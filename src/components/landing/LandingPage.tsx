@@ -5,6 +5,7 @@ import AuthModal from './AuthModal';
 import LandingNav from './sections/LandingNav';
 import HeroSection from './sections/HeroSection';
 import HowItWorksSection from './sections/HowItWorksSection';
+import EngineSection from './sections/EngineSection';
 import MicroSkillSection from './sections/MicroSkillSection';
 import MethodSection from './sections/MethodSection';
 import WhyFasterSection from './sections/WhyFasterSection';
@@ -60,6 +61,7 @@ export default function LandingPage({ showAdminEntry }: LandingPageProps) {
       <main>
         <HeroSection onOpenAuth={openAuth} />
         <HowItWorksSection />
+        <EngineSection onOpenAuth={openAuth} />
         <MicroSkillSection />
         <MethodSection />
         <WhyFasterSection />
