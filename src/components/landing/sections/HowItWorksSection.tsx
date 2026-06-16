@@ -11,7 +11,8 @@ export default function HowItWorksSection() {
         From "study everything" to "study <span className="pl-gtxt">this.</span>"
       </h2>
       <p className="text-center text-white/60 max-w-2xl mx-auto mb-12">
-        The engine you just watched isn't decoration — it's the actual loop your study plan runs on.
+        Four steps — the same loop a strong diagnostician runs, now pointed at your prep. Here's what the
+        engine is about to do.
       </p>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {HOW_IT_WORKS_STEPS.map((s) => (
