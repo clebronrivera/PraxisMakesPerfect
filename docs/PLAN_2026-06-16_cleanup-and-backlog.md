@@ -47,30 +47,32 @@ migrations through `0026`, C4 Floor-5 (bank 1,150→1,200). What remains:
 
 | # | Task | Dep | Status |
 |---|---|---|---|
-| [4] | **Update PR #38 against main + gate** — merge `main` into `cool-lalande` (clean; main only moved landing files), run full gate green. | — | ☐ |
-| [5] | **Merge PR #38 → main** ⚠️ **PRODUCTION DEPLOY — confirm with Carlos.** Lands C4 final 5, retake test, 0027/0028. | ⛔[4] | ☐ |
-| [6] | **Bump bank size** 1,200→1,241 in `HOW_THE_APP_WORKS.md` (prefer durable "1,200+"). Mandatory per CLAUDE.md. | ⛔[5] | ☐ |
+| [4] | **Update PR #38 against main + gate** — merge `main` into `cool-lalande` (clean; main only moved landing files), run full gate green. | — | ✅ merged main → `ef8e329`; CI `check` green (1m10s) + deploy-preview pass |
+| [5] | **Merge PR #38 → main** ⚠️ **PRODUCTION DEPLOY.** Lands C4 final 5, retake test, 0027/0028. | ⛔[4] | ✅ **MERGED** `f02a20b` (Carlos-approved); remote branch auto-deleted; Netlify deploying. 0027/0028 already applied to live DB (repo↔DB reconcile — no DB action). |
+| [6] | **Bump bank size** in `HOW_THE_APP_WORKS.md` (prefer durable "1,200+"). Mandatory per CLAUDE.md. | ⛔[5] | ✅ done inside PR #38 ("1,150" → durable "1,200+") |
 
 ## PHASE 3 — Triage the other 3 open PRs
 
 | # | Task | Status |
 |---|---|---|
-| [7] | **PR #35** (centralize proficiency thresholds, CONFLICTING) — small refactor aligned w/ `skillProficiency.ts` SoT. Rebase+merge **or** close. Decide w/ Carlos. | ☐ |
-| [8] | **PR #28** (CC clarity a11y, CONFLICTING) — aesthetic superseded by indigo/violet + PASS landing. Salvage live a11y bits (focus rings, aria) or close. | ☐ |
-| [9] | **PR #18** (Cosmos mockup, DRAFT) — superseded by shipped PASS landing (#31) + landing v5/v6 (#39). Close with note. | ☐ |
+| [7] | **PR #35** (centralize proficiency thresholds) — Rebase+merge or close. | ✅ **CLOSED.** Rebase attempt showed it's 143-commit stale + reintroduces deleted UI (`DashboardHome` "Four Domains"); main already centralized most consumers. Residual = 4 literals → see "Residual follow-up" below. |
+| [8] | **PR #28** (CC clarity a11y) — superseded by indigo/violet + PASS landing. | ✅ **CLOSED** with note; conflicting + aesthetic no longer exists. Any live a11y wins → fresh scoped PR. |
+| [9] | **PR #18** (Cosmos mockup, DRAFT) — superseded by shipped PASS landing (#31) + landing v5/v6 (#39). | ✅ **CLOSED** with note. |
+
+**→ 0 open PRs remaining.**
 
 ## PHASE 4 — Branch & worktree cleanup
 
 | # | Task | Dep | Status |
 |---|---|---|---|
 | [10] | **Remove clean stale worktrees** — 7 abandoned @ f1b5075 + infallible-tharp + xenodochial. Keep current (ecstatic-gagarin). | ⛔[2] | ✅ **14 worktrees → 4** (kept: main, PMP-hopeful-benz, ecstatic-gagarin, quirky-kirch/PR#35) |
-| [11] | **Delete merged/superseded branches** — local (merged into main): 16 throwaway claude/* + feat/indigo-violet-retheme + feat/phase2-finalization + feat/landing-hero-v5. Kept `explore/dashboard-redesign` (memory anchor) + all PR branches. Remote after PR closures. Confirm remote deletes. | ⛔[7][8][9] | 🔄 **28 local branches → 13** (local done); remote deletes + squash-merged `claude/quirky-kirch` pending confirm |
+| [11] | **Delete merged/superseded branches** — local merged: 16 throwaway claude/* + 3 feat. Kept `explore/dashboard-redesign` (memory anchor). | ⛔[7][8][9] | 🔄 **local: 28 → 12 branches** done; quirky-kirch worktree removed → **3 worktrees**. **Pending (needs confirm, archive-first per convention):** delete remote branches of closed PRs — `origin/chore/centralize-proficiency-thresholds`, `origin/fix/cc-clarity-missed-components`, `origin/feat/mockup-pass-cosmos-handoff`, `origin/feat/restore-cognitive-clarity`, `origin/claude/quirky-kirch-eaf...`/test-coverage-analysis. |
 
 ## PHASE 5 — Reconcile stale tracking docs
 
 | # | Task | Status |
 |---|---|---|
-| [12] | **Reconcile docs** — ISSUE_LEDGER: close A4-resolved items (final-assessment unlock flow; practice-repeat policy now prefer-unseen). PHASE2_REVIEW_BACKLOG: update post-C3/C-B2. PENDING_IDEAS: fix migration-number conflict (glossary overhaul = **0029**, not 0026 — 0026=retake_complete, 0027/0028=hardening). | ☐ |
+| [12] | **Reconcile docs** — ISSUE_LEDGER: close A4-resolved items (final-assessment unlock flow; practice-repeat policy now prefer-unseen). PHASE2_REVIEW_BACKLOG: update post-C3/C-B2. PENDING_IDEAS: migration-number conflict. | 🔄 PENDING_IDEAS migration-number fix ✅ done (`21144ac`). ISSUE_LEDGER + PHASE2_REVIEW_BACKLOG status reconcile still ☐. |
 
 ## PHASE 6 — Forward feature work  ·  *mockup-first, in priority order*
 
@@ -81,6 +83,20 @@ migrations through `0026`, C4 Floor-5 (bank 1,150→1,200). What remains:
 | [15] | **Fluency Drill follow-ups** — select-all-by-skill variant; vocab feedback v2 (fold `vocab_attempts` into `globalScoreCalculator`); per-skill display-name map for "By skill" scope. | — | ☐ |
 
 ---
+
+## Residual follow-ups surfaced during cleanup (low priority, tracked so not lost)
+
+- **Dependabot #12 (NEW, 1 high)** on the default branch — surfaced on push 2026-06-16
+  (https://github.com/clebronrivera/PraxisMakesPerfect/security/dependabot/12). Triage like #11 was
+  (override/transitive bump). Not yet addressed.
+- **PR #35 residual** — route the 4 still-hardcoded proficiency literals through the canonical
+  `APPROACHING_THRESHOLD`/`DEMONSTRATING_THRESHOLD`: `App.tsx:606`, `App.tsx:1165` (both `score < 0.6`),
+  `useAdaptiveLearning.ts:27-28` (`< 0.6 → +3`, `< 0.8 → +2`). ⚠️ `App.tsx` is a protected file — get an
+  explicit go. Behavior-preserving. Tiny fresh PR off current main (do NOT revive the stale #35 branch).
+- **2 leftover stashes (user call)** — `stash@{0}` playwright e2e-harness seed (`@playwright/test` not on
+  main); `stash@{1}` phase-2a/hero (Sentry already on main; stale CLAUDE.md governance text refs "1,150").
+  Both re-creatable/stale — drop or keep, Carlos's call.
+- **Archive-then-delete the closed-PR remote branches** (per repo convention) — see [11].
 
 ## Deferred / parked (captured, not scheduled)
 
