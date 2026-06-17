@@ -13,8 +13,8 @@ export default function LandingNav({ onOpenAuth }: LandingAuthProps) {
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/65 font-medium">
           <a href="#how" className="hover:text-white transition">How it works</a>
-          <a href="#method" className="hover:text-white transition">The method</a>
-          <a href="#features" className="hover:text-white transition">Features</a>
+          <a href="#features" className="hover:text-white transition">Micro-skills</a>
+          <a href="#method" className="hover:text-white transition">Our method</a>
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <button

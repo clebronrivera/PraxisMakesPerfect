@@ -1,28 +1,29 @@
 import type { LandingAuthProps } from '../landingData';
-import DashboardPreview from '../DashboardPreview';
 
-/** Landing hero — headline + CTAs on the left, live dashboard preview on the right. */
+/**
+ * Landing hero (v6 structure) — benefit-first copy + CTAs on the left, a simple
+ * 3-step schematic on the right. The full diagnostic engine lives in its own
+ * section below (EngineSection), after the "how it works" bridge, so the visitor
+ * has context before meeting the complex visual. Copy leads with the user benefit;
+ * the founder credibility sits in the trust line.
+ */
 export default function HeroSection({ onOpenAuth }: LandingAuthProps) {
   return (
-    <section
-      className="relative max-w-7xl mx-auto px-6 md:px-10 grid lg:grid-cols-[0.92fr_1.08fr] gap-8 items-center pt-12 pb-20"
-      style={{ minHeight: '86vh' }}
-    >
+    <section id="hero" className="max-w-7xl mx-auto px-6 md:px-10 grid lg:grid-cols-[0.95fr_1.05fr] gap-10 lg:gap-12 items-center pt-12 pb-16">
       {/* Left — copy + CTAs */}
       <div className="relative z-10">
         <div className="pl-chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-semibold text-white/85 mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" /> Praxis 5403 · School Psychology
         </div>
         <h1 className="text-5xl md:text-[58px] font-extrabold leading-[1.03] tracking-tight mb-5">
-          Find the exact skills<br />
-          <span className="pl-gtxt">holding you back.</span>
+          Find the <span className="pl-gtxt">exact skills</span><br />
+          holding you back.
         </h1>
         <p className="text-[16.5px] leading-relaxed text-white/75 max-w-xl mb-7">
-          Take an adaptive baseline. A diagnostic algorithm — built by an educator with almost two decades of
-          experience across classroom instruction, <span className="text-white font-semibold">MTSS</span>, and student
-          support, grounded in the science of how we learn — pinpoints the exact{' '}
-          <span className="text-white font-semibold">micro-skills</span> you're missing across the entire exam
-          blueprint, then builds your plan around them.
+          Take an adaptive baseline and PASS pinpoints the exact{' '}
+          <span className="text-white font-semibold">micro-skills</span> standing between you and your
+          license — then builds your study plan around them. You'll see where you really stand in one
+          sitting.
         </p>
         <div className="flex flex-wrap gap-3 mb-6">
           <button
@@ -40,43 +41,50 @@ export default function HeroSection({ onOpenAuth }: LandingAuthProps) {
             I have an account
           </button>
         </div>
-        <p className="text-[12.5px] text-white/45">Built by an educator — not a test-prep mill.</p>
+        <p className="text-[12.5px] text-white/45">
+          Built by an educator with 15+ years of diagnostic experience — not a test-prep mill.
+        </p>
       </div>
 
-      {/* Right — live product window (hidden on small screens to avoid tilt overflow) */}
-      <div className="pl-stage relative h-[520px] hidden lg:block">
-        <div className="pl-window absolute right-0 top-1/2 -translate-y-1/2 w-[600px] rounded-2xl overflow-hidden border border-white/15">
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-[#15122a] border-b border-white/10">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-400/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/70" />
-            <span className="ml-3 text-[10px] text-white/40 font-medium rounded-md bg-white/5 px-3 py-0.5">app.pass.study/dashboard</span>
-            <span className="ml-auto flex items-center gap-1 text-[9px] font-bold text-emerald-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />LIVE
-            </span>
-          </div>
-          {/* Scaled dashboard replica (1360px base × 0.44 ≈ 598px wide) */}
-          <div className="relative overflow-hidden" style={{ height: 360, background: '#f7f6f8' }}>
-            <div style={{ position: 'absolute', top: -22, left: 0, transform: 'scale(0.44)', transformOrigin: 'top left' }}>
-              <DashboardPreview />
+      {/* Right — simple 3-step schematic (the full engine is the section below) */}
+      <div className="relative z-10">
+        <div className="pl-glass rounded-3xl p-6 sm:p-7">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-white/40 font-semibold mb-4">How PASS works</div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
+              <span className="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-400/30 grid place-items-center text-indigo-200 font-bold text-sm shrink-0">1</span>
+              <div>
+                <div className="font-semibold text-white text-[14px]">Answer an adaptive baseline</div>
+                <div className="text-[12.5px] text-white/45">One sitting — it adapts to you as you go.</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
+              <span className="w-9 h-9 rounded-xl bg-violet-500/20 border border-violet-400/30 grid place-items-center text-violet-200 font-bold text-sm shrink-0">2</span>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-white text-[14px]">Get your micro-skill map</div>
+                <div className="text-[12.5px] text-white/45">See which skills are solid, shaky, or critical.</div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                <span className="w-3 h-3 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.8)]" />
+              </div>
+            </div>
+            <div className="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
+              <span className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/30 grid place-items-center text-emerald-200 font-bold text-sm shrink-0">3</span>
+              <div>
+                <div className="font-semibold text-white text-[14px]">Study only what moves your score</div>
+                <div className="text-[12.5px] text-white/45">A plan built from your gaps — not a template.</div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Floating: micro-skill pinpointed */}
-        <div className="pl-float pl-bob absolute left-1 bottom-2 w-[300px] rounded-2xl bg-white text-slate-900 p-4 z-20">
-          <div className="flex items-center gap-1.5 mb-2">
-            <span className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-600 grid place-items-center text-white text-[10px]">✦</span>
-            <span className="text-[10px] font-black uppercase tracking-wide text-violet-700">Micro-skill pinpointed</span>
+          <div className="flex items-center justify-center gap-4 mt-5 pt-4 border-t border-white/10 text-[11.5px] text-white/50">
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400" /> Mastered</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-400" /> Developing</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-400" /> Critical gap</span>
           </div>
-          <p className="text-[15px] font-bold leading-snug mb-1">Norm- vs. criterion-referenced interpretation</p>
-          <p className="text-[11.5px] text-slate-500 mb-3">
-            a micro-skill inside <b className="text-slate-700">Assessment &amp; Data Use</b> · not the whole topic
-          </p>
-          <div className="flex items-center gap-2">
-            <span className="rounded-full bg-rose-100 text-rose-700 px-2 py-0.5 text-[10px] font-bold">Tier 2 · targeted</span>
-            <span className="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-[10px] font-bold">drives 3 recent misses</span>
-          </div>
+          <a href="#engine" className="block text-center mt-4 text-[12px] text-indigo-300 font-medium hover:text-indigo-200 transition">↓ Watch the engine do it live</a>
         </div>
       </div>
     </section>
