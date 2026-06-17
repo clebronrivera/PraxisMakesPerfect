@@ -8,7 +8,7 @@
     "totalMisconceptions": 98,
     "unmappableSkillMisconceptions": 0,
     "covered": 67,
-    "questionsLinked": 222,
+    "questionsLinked": 227,
     "note": "Provisional. Links a misconception to questions whose distractor beliefs express it (skill-matched). questionIds ordered by overlap score. SME-confirmable; never read by scoring."
   },
   "misconceptions": {
@@ -46,16 +46,17 @@
     "MC-DBDM-S03-003": {
       "questionIds": [
         "PQ_PSY-01_1",
+        "PQ_PSY-01_22",
         "item_074",
         "item_233",
         "PQ_PSY-01_12",
         "PQ_PSY-01_14",
         "PQ_PSY-01_19",
         "PQ_PSY-01_2",
+        "PQ_PSY-01_24",
+        "PQ_PSY-01_28",
         "PQ_PSY-01_3",
-        "PQ_PSY-01_4",
-        "PQ_PSY-01_5",
-        "PQ_PSY-01_9"
+        "PQ_PSY-01_4"
       ],
       "topScore": 0.75
     },
@@ -496,11 +497,15 @@
     },
     "MC-DIV-S02-002": {
       "questionIds": [
+        "PQ_PSY-04_22",
         "PQ_PSY-04_17",
+        "PQ_PSY-04_21",
+        "PQ_PSY-04_23",
+        "PQ_PSY-04_28",
         "PQ_PSY-04_6",
         "item_026"
       ],
-      "topScore": 0.333
+      "topScore": 0.444
     },
     "MC-NEW-9-ProgramEvaluation-002": {
       "questionIds": [

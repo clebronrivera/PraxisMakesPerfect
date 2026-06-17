@@ -93,7 +93,7 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 | Beta Feedback | All user feedback with status management |
 | Question Reports | Per-question issue reports with severity triage |
 | Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
-| Item Analysis | Psychometric quality metrics for the 1,150-question bank (p-value, discrimination, distractor analysis) |
+| Item Analysis | Psychometric quality metrics for the 1,200+-question bank (p-value, discrimination, distractor analysis) |
 | AI Tutor | AI Tutor chat sessions — session list with user/type/message count/artifacts, drill into full conversation with intent badges and inline artifact cards, CSV export |
 
 ### Student Detail Drawer
@@ -378,6 +378,8 @@ All migrations live in `supabase/migrations/`. Applied via `supabase db push`.
 | `0024_vocab_attempts.sql` | `vocab_attempts` table + `user_glossary_terms.miss_count` + `increment_glossary_miss()` RPC — vocabulary fluency drill audit log and glossary miss alerting |
 | `0025_account_deletion_request.sql` | `user_progress.deletion_requested_at` — self-service "delete my account" request flag (admin purges flagged rows) |
 | `0026_retake_complete.sql` | `user_progress.retake_complete` + `retake_completed_at` — third-assessment (reassessment) completion tracking |
+| `0027_harden_function_search_path.sql` | Pins an immutable `search_path` on 5 functions (`is_admin_email`, `update_user_glossary_terms_updated_at`, `increment_glossary_miss`, `increment_wrong_count`, `record_diagnostic_miss`) — clears the `function_search_path_mutable` advisor. ALTER-only, no body/signature change. |
+| `0028_security_definer_to_invoker.sql` | Flips `is_admin_email`, `increment_glossary_miss`, `increment_wrong_count`, `record_diagnostic_miss` from `SECURITY DEFINER` → `SECURITY INVOKER` — clears the `*_security_definer_function_executable` lints and closes the increment_*_count IDOR (RLS now enforces `auth.uid() = user_id` on writes). |
 
 **UUID function:** Use `gen_random_uuid()` (built into Postgres 13+), NOT `uuid_generate_v4()` (requires pgcrypto extension, not enabled by default in Supabase).
 
