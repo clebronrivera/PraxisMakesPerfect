@@ -53,7 +53,8 @@ function readinessTheme(level: StudyPlanDocumentV2['readinessSnapshot']['readine
   }
 }
 
-const pct = (score: number | null): number => (score == null ? 0 : Math.round(score * 100));
+// domainScore is already on a 0–100 scale (see useProgressTracking / StudyPlanViewer).
+const pct = (score: number | null): number => (score == null ? 0 : Math.round(score));
 
 export default function StagedStudyGuide({
   plan,
@@ -71,7 +72,7 @@ export default function StagedStudyGuide({
   // Overall readiness % — average of available domain scores, else the level's nominal pct.
   const scored = plan.domainStudyMaps.filter(d => d.domainScore != null);
   const overallPct = scored.length
-    ? Math.round((scored.reduce((s, d) => s + (d.domainScore ?? 0), 0) / scored.length) * 100)
+    ? Math.round(scored.reduce((s, d) => s + (d.domainScore ?? 0), 0) / scored.length)
     : rt.pct;
 
   // Domain cards, worst-first ("start with the red ones").
@@ -157,7 +158,8 @@ export default function StagedStudyGuide({
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
             {domains.map(d => {
               const t = domainTheme(d.domainId);
-              const prof = getSkillProficiency(d.domainScore ?? 0, d.domainScore == null ? 0 : 1);
+              // domainScore is 0–100; getSkillProficiency expects a 0–1 score.
+              const prof = getSkillProficiency((d.domainScore ?? 0) / 100, d.domainScore == null ? 0 : 1);
               const watch = d.commonTraps[0] ?? d.keyVocabulary[0] ?? d.masteryIndicator;
               const isWeakest = d.domainId === weakestId;
               const isStrongest = d.domainId === strongestId && !isWeakest;
