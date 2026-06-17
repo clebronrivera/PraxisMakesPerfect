@@ -33,7 +33,10 @@ overwhelming). **Pure presentation/IA refactor — no study-plan regeneration, n
   `weeklyStudyPlan`, `tacticalInstructions`, `checkpointLogic`, `studyConstraints.weeksToTest`).
 - Only genuinely new plumbing: thread the existing `startSkillPractice` / `startPractice` /
   `handleStartRedemption` launchers into Stage-1 buttons.
-- **Status:** mockup not yet built → `public/mockup-study-guide-staged.html` is the next artifact.
+- **Status (updated 2026-06-16):** mockup **IS built + committed** (`public/mockup-study-guide-staged.html`,
+  on main since `44065b7`) and verified rendering 2026-06-16 — Stage 1 per-area cards + Stage 2
+  Bare-minimum/Intentional toggle, cool palette. **Next:** user sign-off → React implementation (do NOT
+  start React before explicit visual approval, per CLAUDE.md).
 - **Plan:** Part 1 of `.claude/plans/mighty-conjuring-hummingbird.md`.
 
 ---
@@ -48,7 +51,9 @@ and the embedded Quiz Mode tab (Fluency Drill becomes the single vocab path — 
 **Absorbs** the PARKED "Glossary → pure-reference refactor." Data layer first, then mockup-first UI.
 - Full design + build order: `docs/PRODUCT_ROADMAP_2026-06-02.md` §B and
   `.claude/plans/okay-currently-uh-currently-reactive-lantern.md`.
-- ⚠ Apply migration `0024_vocab_attempts.sql` to Supabase **before** the new `0026` (it extends `0024`).
+- ⚠ **Migration number:** the glossary overhaul's new migration must be **`0029`**, NOT `0026`. As of
+  2026-06-16 `0026` = `retake_complete` and `0027`/`0028` = search_path hardening (in PR #38). `0024_vocab_attempts`
+  is already applied (it's the base this extends).
 
 ### Retire the embedded glossary vocab quiz (partial) — *folded into the Glossary overhaul above*
 `VocabularyQuizMode.tsx` (the "Quiz Mode" tab inside `GlossaryPage`) still exists. The Dashboard vocab
@@ -115,8 +120,8 @@ Timed rapid-fire vocab game, resurrected + extended from commit `35db028`. Ateli
 - `src/components/FluencyDrillPage.tsx` — setup → drill → results orchestrator
 - `src/services/vocabDrillService.ts` — Option B1 feedback (vocab_attempts log, glossary flags, skill
   nudges on ≥2 misses). +tests
-- `supabase/migrations/0024_vocab_attempts.sql` — **⚠ NOT YET APPLIED to Supabase** (run `supabase db push`
-  or apply via dashboard before the feedback writes work in prod).
+- `supabase/migrations/0024_vocab_attempts.sql` — ✅ **applied to Supabase** (remote history `20260602192231`,
+  verified 2026-06-12 per Phase 2 finalization E2 note).
 - `App.tsx` routing (`'fluency-drill'` mode) + Dashboard tiles repointed.
 - Docs: `docs/HOW_THE_APP_WORKS.md` "Vocabulary Fluency Drill" section.
 - Dropped from v1: select-all variant (see Next). `npm run check` green (168 tests).
