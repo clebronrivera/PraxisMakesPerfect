@@ -33,7 +33,10 @@ overwhelming). **Pure presentation/IA refactor — no study-plan regeneration, n
   `weeklyStudyPlan`, `tacticalInstructions`, `checkpointLogic`, `studyConstraints.weeksToTest`).
 - Only genuinely new plumbing: thread the existing `startSkillPractice` / `startPractice` /
   `handleStartRedemption` launchers into Stage-1 buttons.
-- **Status:** mockup not yet built → `public/mockup-study-guide-staged.html` is the next artifact.
+- **Status (updated 2026-06-16):** mockup **IS built + committed** (`public/mockup-study-guide-staged.html`,
+  on main since `44065b7`) and verified rendering 2026-06-16 — Stage 1 per-area cards + Stage 2
+  Bare-minimum/Intentional toggle, cool palette. **Next:** user sign-off → React implementation (do NOT
+  start React before explicit visual approval, per CLAUDE.md).
 - **Plan:** Part 1 of `.claude/plans/mighty-conjuring-hummingbird.md`.
 
 ---
