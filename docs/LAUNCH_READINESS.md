@@ -2,7 +2,7 @@
 
 > Status: Active. Canonical source for where Praxis Makes Perfect stands against launch criteria and what is left to do before inviting real users, before advertising, and after launch.
 >
-> Last updated: 2026-04-17 (post-PR #6 merge + verification pass)
+> Last updated: 2026-06-17 (added Acquisition/SEO deferral + beta `noindex` decision)
 
 This document consolidates the 2026-04-15 launch-readiness audit and tracks remaining work. Update it whenever a launch-gate item is resolved or a new one is discovered.
 
@@ -56,6 +56,33 @@ This document consolidates the 2026-04-15 launch-readiness audit and tracks rema
 ---
 
 ## Must fix before advertising / public launch
+
+### Acquisition / SEO — deliberately deferred (decision 2026-06-17)
+The site is intentionally kept **out of search** during invite-only beta: `index.html`
+ships `<meta name="robots" content="noindex,nofollow">` and `public/robots.txt` is
+`Disallow: /`. Rationale: a half-built beta on the `*.netlify.app` URL must not get
+indexed (a weak first listing would poison the eventual launch on a real domain), and
+acquisition can't even be measured yet (no product analytics — see "can wait" below).
+
+Done now (cheap, correct on any timeline): off-brand `<title>` fixed to PASS-led;
+default Vite favicon replaced with a branded one; Open Graph / Twitter tags added so
+invite links shared in texts/chats/email render a proper preview (the beta's actual
+distribution channel). OG card source: `public/og-card.html` → `public/og-image.png`.
+
+Before advertising, in order:
+1. **Buy a custom domain first** — never build search authority on `*.netlify.app` and
+   then discard it. Note: "PASS" has ~no organic search value (nobody searches a generic
+   acronym); demand sits on **"Praxis 5403 / school psychologist"** keywords, so
+   acquisition content must be keyword/topic-led, not brand-led.
+2. **Then** decide crawlability — the SPA currently ships an empty shell to crawlers, so
+   either prerender the React landing or add static content pages.
+3. **Then** keyword-targeted content (free 5403 diagnostic, study guide, exam format,
+   passing-score-by-state, FAQ), `sitemap.xml`, Google Search Console + Bing Webmaster.
+4. Honor the brand-honesty constraints: no IRT/calibration claims, durable copy ("1,000+")
+   over exact counts.
+
+**To flip the site live in search:** remove the `robots` meta from `index.html` AND change
+`public/robots.txt` to allow crawling (add a `Sitemap:` line). Both, or it stays dark.
 
 ### Sentry alerting — UI configuration
 Code is ready (SDK init, release tagging via git SHA in [vite.config.ts](../vite.config.ts)). Still required in sentry.io UI:

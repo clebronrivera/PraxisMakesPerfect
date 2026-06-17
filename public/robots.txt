@@ -1,0 +1,11 @@
+# PASS is in private invite-only beta. Keep the whole site out of search until
+# public launch so a half-built beta on this netlify.app URL never gets indexed
+# and can't poison the eventual launch on a real domain.
+#
+# TO GO LIVE IN SEARCH: change "Disallow: /" to "Allow: /" (or remove the rule),
+# AND remove the <meta name="robots" content="noindex,nofollow"> from index.html.
+# Both, or the site stays dark. Add a Sitemap: line at that time.
+# See docs/LAUNCH_READINESS.md → "Acquisition / SEO".
+
+User-agent: *
+Disallow: /
