@@ -78,7 +78,7 @@ migrations through `0026`, C4 Floor-5 (bank 1,150→1,200). What remains:
 
 | # | Task | Dep | Status |
 |---|---|---|---|
-| [13] | **Staged / simplified Study Guide** (ACTIVE / first-focus) — per-area cards (score chip + plain meaning + example + Practice/Review/Test). Pure presentation refactor of `StudyPlanViewer`, reuses `StudyPlanDocumentV2`. Mockup `public/mockup-study-guide-staged.html` first. | — | ☐ |
+| [13] | **Staged / simplified Study Guide** (ACTIVE / first-focus) — per-area cards (score chip + plain meaning + example + Practice/Review/Test). Pure presentation refactor of `StudyPlanViewer`, reuses `StudyPlanDocumentV2`. Mockup-first. | — | ✅ **Built → PR #41** (`feat/staged-study-guide`, CI green). Mockup already existed+verified; ported to `StagedStudyGuide.tsx`, integrated in `StudyPlanCard` (Detailed-view escape hatch) + `App.tsx` launcher threading. **Live verify on deploy-preview-41** (auth-gated). Follow-up: Test button → no dedicated timed mode yet. |
 | [14] | **Glossary overhaul** (#1 product priority) — 396-term filterable/searchable, per-term smart-weight, weak-areas filter, `getWeakTermsForTutor()` seam. Removes write-your-def flow + VocabularyQuizMode tab. Absorbs [1]. Migration 0029. Data layer → mockup-first UI. | ⛔[1] | ☐ |
 | [15] | **Fluency Drill follow-ups** — select-all-by-skill variant; vocab feedback v2 (fold `vocab_attempts` into `globalScoreCalculator`); per-skill display-name map for "By skill" scope. | — | ☐ |
 
