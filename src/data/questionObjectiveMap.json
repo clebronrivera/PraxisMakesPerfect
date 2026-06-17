@@ -3,10 +3,10 @@
     "seededAt": "2026-06-07",
     "generator": "scripts/migrations/seed-question-ets-topics.mjs",
     "source": "skillObjectiveMap.ts + ets-content-topics.json (keyword + text-token match)",
-    "totalMapped": 1150,
+    "totalMapped": 1241,
     "seededCount": 940,
     "fallbackCount": 0,
-    "manualCount": 210,
+    "manualCount": 301,
     "verifiedCount": 210,
     "note": "Provisional machine-seeded objective tags. method:\"fallback\" = low-confidence (human review queue); method:\"manual\" = human-verified (Pack 1), preserved by --preserve-manual. Never read by scoring."
   },
@@ -8411,6 +8411,296 @@
     "PQ_DIV-05_30": {
       "ets_topics": [
         "IV.A.1.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_21": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_22": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_23": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_24": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_25": {
+      "ets_topics": [
+        "IV.A.1.d"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_26": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_27": {
+      "ets_topics": [
+        "IV.A.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_28": {
+      "ets_topics": [
+        "IV.A.1.d"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DIV-03_29": {
+      "ets_topics": [
+        "IV.A.1.d",
+        "IV.A.1.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_21": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_22": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_23": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_24": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_25": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_26": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_27": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_DBD-09_28": {
+      "ets_topics": [
+        "I.A.2.h"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_21": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_22": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_23": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_24": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_25": {
+      "ets_topics": [
+        "I.A.3.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_26": {
+      "ets_topics": [
+        "I.A.3.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_27": {
+      "ets_topics": [
+        "I.A.3.c"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-01_28": {
+      "ets_topics": [
+        "I.A.3.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_21": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_22": {
+      "ets_topics": [
+        "I.A.4.b",
+        "I.A.3.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_23": {
+      "ets_topics": [
+        "I.A.3.f"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_24": {
+      "ets_topics": [
+        "I.A.3.e"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_25": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_26": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_27": {
+      "ets_topics": [
+        "I.A.3.f"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_PSY-04_28": {
+      "ets_topics": [
+        "I.A.4.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_21": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_22": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_23": {
+      "ets_topics": [
+        "III.C.1.b"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_24": {
+      "ets_topics": [
+        "III.C.1.d"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_25": {
+      "ets_topics": [
+        "III.C.1.d"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_26": {
+      "ets_topics": [
+        "III.C.1.a"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_27": {
+      "ets_topics": [
+        "III.C.1.a",
+        "III.C.1.d"
+      ],
+      "method": "manual",
+      "verified": false
+    },
+    "PQ_FAM-02_28": {
+      "ets_topics": [
+        "III.C.1.a"
       ],
       "method": "manual",
       "verified": false

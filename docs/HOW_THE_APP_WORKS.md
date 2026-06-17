@@ -56,7 +56,7 @@ Domain (4)  →  Skill (45, the measured/scored unit)  →  Objective  →  cont
 - The **Vocabulary Fluency Drill** reads the canonical 396-term map (`skill-vocabulary-map.json`), so **all 45 skills are drillable** (it previously reached ~20).
 - **5 cold-start skills** (ACA-09, DBD-10, DIV-01, DIV-05, FAM-03) now carry foundational anchor items, so the adaptive engine can seed them on first contact.
 - **`skillObjectiveMap.ts`** links all 45 skills → their ETS objectives (with an explicit primary per skill).
-- **`questionObjectiveMap.json`** tags all 1,000+ questions with 1–2 objectives (the 50 newest C4 expansion items carry provisional `method:"manual"`, `verified:false` tags, queued for the next SME review pass). The **human-review queue is cleared**: all **210** genuinely-ambiguous items (139 fallback + 71 multi-tag) have been SME-verified (`method: "manual"`, `verified: true`); the remaining ~940 are high-confidence machine matches (`method: "seeded"`, left `verified: false` because nothing needed disambiguation). Tags live separately from `questions.json`; the seeder preserves manual edits (`--preserve-manual`) and refuses to clobber them otherwise.
+- **`questionObjectiveMap.json`** tags all 1,000+ questions with 1–2 objectives (the 91 newest C4 expansion items carry provisional `method:"manual"`, `verified:false` tags, queued for the next SME review pass). The original **human-review queue is cleared**: all **210** genuinely-ambiguous items (139 fallback + 71 multi-tag) have been SME-verified (`method: "manual"`, `verified: true`); the remaining high-confidence machine matches (`method: "seeded"`, left `verified: false` because nothing needed disambiguation). Tags live separately from `questions.json`; the seeder preserves manual edits (`--preserve-manual`) and refuses to clobber them otherwise.
 - **`primarySkillId`** on all **67 modules** fixes domain attribution, and **every one of the 45 skills now owns a dedicated lesson** (9 previously-unowned skills got their own module). `SKILL_MODULE_MAP` remains the authoritative many-to-many index.
 - **`etsTopicIds`** on every module (`moduleEtsTopicMap.json`, derived from the verified tags) declares which objectives each lesson teaches — closing the question→objective→lesson loop for routing.
 - **`skillPrereqGraph.ts`** is re-keyed to the canonical 45 skills (16 phantom keys from the old taxonomy removed, 16 missing skills added, dangling edges repaired) and validated as an acyclic DAG. It orders the learning path (`getPrereqDepth`) and drives the "Do X first" unblocker. Edges are a provisional, SME-confirmable first pass.
@@ -474,10 +474,19 @@ Generation runs as a background process and typically completes within about a m
 
 The study guide is wrapped in a 3-tab layout:
 - **Tab 1: "Platform Guide"** — static how-to cards explaining all 6 features (Adaptive Diagnostic, Learning Path, Term Sprint, Spaced Review, Redemption Rounds, AI Tutor). Shown by default if no plan exists.
-- **Tab 2: "Your Study Plan"** — the AI-generated study plan (default tab when a plan exists). Contains the 6 inner tabs described below.
+- **Tab 2: "Your Study Plan"** — the AI-generated study plan (default tab when a plan exists). Opens in a lighter **staged view** by default (below); a **"Detailed view"** link switches to the full 6-inner-tab viewer.
 - **Tab 3: "Vocabulary"** — link to the glossary page and Term Sprint CTA.
 
-#### Inner Tabs (inside "Your Study Plan")
+#### Staged view (default presentation of "Your Study Plan")
+
+A lighter, less-overwhelming reframe of the **same** plan data — no regeneration, no new fields. Two stages, switched by a toggle:
+
+- **Stage 1 · "Where you stand"** — a readiness-snapshot banner (overall %, readiness level, test date, next best move, strongest area) followed by **one card per domain**, sorted worst-first ("start with the red ones"). Each card shows a score chip with proficiency label, a plain-English "What this means" interpretation, "One thing to watch" (a common trap or key term), and three actions: **Practice** (adaptive practice for that domain), **Review** (revisit missed questions via Redemption Rounds), and **Test** (a short practice check).
+- **Stage 2 · "Your plan"** — a **Bare minimum vs Intentional** depth toggle. *Bare minimum* lists the plan's immediate actions plus a "don't waste time on" avoid-list. *Intentional* (available when ≥ 3 weeks to test) shows the week-by-week schedule with goals and checkpoints.
+
+A **"Detailed view"** link opens the full viewer below.
+
+#### Inner Tabs (inside "Your Study Plan" — Detailed view)
 
 **Overview tab**
 Your readiness level with a plain-language summary of where you stand, key insights pulled from your data, and patterns the system observed in your answer history.
