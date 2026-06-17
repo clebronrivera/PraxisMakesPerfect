@@ -57,7 +57,7 @@ import { ACTIVE_LAUNCH_FEATURES } from './src/utils/launchConfig';
 import { useTutorialState } from './src/hooks/useTutorialState';
 const TutorialWalkthrough = lazy(() => import('./src/components/TutorialWalkthrough'));
 import { buildProgressSummary } from './src/utils/progressSummaries';
-import { PROFICIENCY_META } from './src/utils/skillProficiency';
+import { PROFICIENCY_META, APPROACHING_THRESHOLD } from './src/utils/skillProficiency';
 import { buildAssessmentReportModel } from './src/utils/assessmentReport';
 import { buildDiagnosticSummary } from './src/utils/diagnosticSelectors';
 import { onboardingFormToSavePayload } from './src/utils/onboardingFormToSavePayload';
@@ -610,7 +610,7 @@ function PraxisStudyAppContent() {
       ? Object.entries(profile.skillScores ?? {})
           .filter(([sid, p]) => {
             const pd = getProgressSkillDefinition(sid);
-            return pd?.domainId === domainId && p.attempts >= 1 && p.score < 0.6;
+            return pd?.domainId === domainId && p.attempts >= 1 && p.score < APPROACHING_THRESHOLD;
           }).length
       : 0;
     return {
@@ -1169,7 +1169,7 @@ function PraxisStudyAppContent() {
                 userId={user.id}
                 diagnosticComplete={Boolean(profile.adaptiveDiagnosticComplete)}
                 emergingSkills={Object.entries(profile.skillScores ?? {})
-                  .filter(([, p]) => p.attempts >= 3 && (p.score ?? 0) < 0.6)
+                  .filter(([, p]) => p.attempts >= 3 && (p.score ?? 0) < APPROACHING_THRESHOLD)
                   .map(([skillId, p]) => {
                     const def = getProgressSkillDefinition(skillId);
                     return {

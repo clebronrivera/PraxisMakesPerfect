@@ -34,6 +34,15 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-06-16 - Dependabot #12: esbuild build-time RCE (dev dep; needs vite major upgrade)
+
+- Status: open
+- Area: build tooling / dependencies
+- Summary: Dependabot alert #12 (high) — esbuild < 0.28.1 "Missing binary integrity verification in Deno module enables RCE via NPM_CONFIG_REGISTRY". Dev-only, build-time; low real-world risk for the Netlify CI build (requires a malicious registry env during a Deno install). Not exploitable by app users.
+- Source of truth: GitHub Dependabot alert #12.
+- Blocker: esbuild is pinned transitively by vite@6.4.2 (`esbuild ^0.25.0`); even vite@7 only reaches `^0.27.0` — both below the patched 0.28.1. The fix needs a **vite 6 → 8 major upgrade** (build-config breaking-change risk), so it was deliberately NOT force-bumped during the 2026-06-16 deploy pass.
+- Resolution / next step: Dedicated vite-8 upgrade PR; verify `npm run build` + dev server before merging.
+
 ## 2026-04-01 - Phase B construct_actually_tested: 29 collapsed skills need regeneration
 
 - Status: open
@@ -528,7 +537,7 @@ All four were diagnosed in one session using live Supabase data for Carlos River
 
 ## 2026-03-14 - Final full assessment unlock flow is defined but not yet implemented
 
-- Status: open
+- Status: resolved (2026-06-16)
 - Area: assessment progression / study guide
 - Summary: Product direction now includes a third, final full assessment that should unlock only after the learner raises all currently tracked deficit skills to at least 60%, but that assessment flow is not yet built in the live app.
 - Source of truth: current product direction plus the new study-guide readiness gate
@@ -536,7 +545,7 @@ All four were diagnosed in one session using live Supabase data for Carlos River
   [src/services/studyPlanService.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/services/studyPlanService.ts)
   [src/components/StudyPlanViewer.tsx](/Users/lebron/Documents/PraxisMakesPerfect/src/components/StudyPlanViewer.tsx)
   [src/utils/globalScoreCalculator.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/utils/globalScoreCalculator.ts)
-- Resolution / next step: The live study guide now surfaces a deterministic mastery checklist and gate progress using the 60% threshold. The actual third full-assessment builder, unlock wiring, and UI entry point still need implementation.
+- Resolution: RESOLVED (2026-06-16). The A4/D8 retake shipped via PR #37 (2026-06-12): third-assessment builder, ≥60% unlock gate, replace/latest-wins scoring, prefer-unseen selection, migration `0026_retake_complete`, plus a verification test (`tests/globalScoreCalculator.test.ts`, locked in PR #38).
 
 ## 2026-03-14 - AI study guide needed stronger grounding for resources, vocabulary, and foundational review
 
@@ -575,14 +584,14 @@ All four were diagnosed in one session using live Supabase data for Carlos River
 
 ## 2026-03-14 - Practice repeat policy is still implicit rather than formalized
 
-- Status: open
+- Status: resolved (2026-06-16)
 - Area: adaptive practice selection
 - Summary: Recent discussions established that practice should avoid unnecessary repeats and likely expose unseen items before recycling questions, but the durable rule has not been fully pinned down or documented in one place.
 - Source of truth: intended product workflow plus adaptive selector behavior
 - Code anchors:
   [src/hooks/useAdaptiveLearning.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useAdaptiveLearning.ts)
   [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
-- Resolution / next step: Define the official repeat policy in durable terms, then update the selector and grounding doc together.
+- Resolution: RESOLVED (2026-06-16). Formalized via Track B/B3 + A4: assessments and practice prefer UNSEEN items, falling back to reuse (reframed) only when a thin skill's pool is exhausted, with dedupe preventing score inflation. Documented in `docs/HANDOFF_2026-06-11_phase2-finalization.md` §2.
 
 ## 2026-03-14 - Screener report is current-attempt based, while home readiness is not yet clearly scoped
 
