@@ -1,20 +1,25 @@
 {
   "meta": {
     "totalTerms": 396,
-    "description": "Master glossary of all vocabulary terms across all 45 skills in Praxis Makes Perfect (Praxis 5403). Deduplicated and sorted alphabetically. These are the key concepts, jargon, and technical terms students must know for the exam."
+    "description": "Master glossary of all vocabulary terms across all 45 skills in Praxis Makes Perfect (Praxis 5403). Deduplicated and sorted alphabetically. These are the key concepts, jargon, and technical terms students must know for the exam.",
+    "citationSchema": "Each term may include an optional 'citation' string naming the governing statute/regulation or an authoritative source (legal citations, named frameworks, assessment instruments, and measurement standards). General pedagogical terms are intentionally left uncited rather than assigned an invented source. Legal/regulatory citations verified against the eCFR and U.S. Reports, June 2026.",
+    "termsCited": 270
   },
   "terms": [
     {
       "term": "504 plan",
-      "definition": "A written plan under Section 504 of the Rehabilitation Act providing accommodations (e.g., extended time, seating) for students whose disability substantially limits a major life activity; does not require special education eligibility."
+      "definition": "A written plan under Section 504 of the Rehabilitation Act providing accommodations (e.g., extended time, seating) for students whose disability substantially limits a major life activity; does not require special education eligibility.",
+      "citation": "Section 504 of the Rehabilitation Act of 1973, 29 U.S.C. \u00a7 794; 34 C.F.R. Part 104."
     },
     {
       "term": "ABA",
-      "definition": "Applied Behavior Analysis; a systematic, data-driven approach to understanding and changing behavior using reinforcement, extinction, and environmental modification; foundational to behavioral interventions in schools."
+      "definition": "Applied Behavior Analysis; a systematic, data-driven approach to understanding and changing behavior using reinforcement, extinction, and environmental modification; foundational to behavioral interventions in schools.",
+      "citation": "Baer, D. M., Wolf, M. M., & Risley, T. R. (1968), 'Some current dimensions of applied behavior analysis,' Journal of Applied Behavior Analysis, 1(1), 91\u201397; Cooper, Heron, & Heward (2020), Applied Behavior Analysis (3rd ed.)."
     },
     {
       "term": "ABAB",
-      "definition": "A single-subject research design that alternates baseline (A) and intervention (B) phases to demonstrate experimental control; behavior should change when intervention is applied and return to baseline when withdrawn."
+      "definition": "A single-subject research design that alternates baseline (A) and intervention (B) phases to demonstrate experimental control; behavior should change when intervention is applied and return to baseline when withdrawn.",
+      "citation": "Single-case experimental design; Cooper, Heron, & Heward (2020), Applied Behavior Analysis (3rd ed.); Kazdin, A. E. (2011), Single-Case Research Designs (2nd ed.)."
     },
     {
       "term": "academic achievement",
@@ -30,7 +35,8 @@
     },
     {
       "term": "ACEs",
-      "definition": "Adverse Childhood Experiences; traumatic events (abuse, neglect, household dysfunction) occurring before age 18 that are linked to long-term negative health, behavioral, and educational outcomes."
+      "definition": "Adverse Childhood Experiences; traumatic events (abuse, neglect, household dysfunction) occurring before age 18 that are linked to long-term negative health, behavioral, and educational outcomes.",
+      "citation": "Felitti, V. J., et al. (1998), 'Relationship of childhood abuse and household dysfunction to many of the leading causes of death in adults: The ACE Study,' American Journal of Preventive Medicine, 14(4), 245\u2013258."
     },
     {
       "term": "achievement test",
@@ -38,47 +44,58 @@
     },
     {
       "term": "acquisition",
-      "definition": "The first stage of the instructional hierarchy in which the learner is initially learning a skill and accuracy is prioritized over speed; appropriate instructional focus is modeling and feedback."
+      "definition": "The first stage of the instructional hierarchy in which the learner is initially learning a skill and accuracy is prioritized over speed; appropriate instructional focus is modeling and feedback.",
+      "citation": "Instructional hierarchy; Haring, N. G., Lovitt, T. C., Eaton, M. D., & Hansen, C. L. (1978). The Fourth R: Research in the Classroom. Merrill."
     },
     {
       "term": "ADA",
-      "definition": "Americans with Disabilities Act; a civil rights law prohibiting discrimination against individuals with disabilities in employment, public accommodations, and education; broader than Section 504."
+      "definition": "Americans with Disabilities Act; a civil rights law prohibiting discrimination against individuals with disabilities in employment, public accommodations, and education; broader than Section 504.",
+      "citation": "Americans with Disabilities Act of 1990, 42 U.S.C. \u00a7 12101 et seq."
     },
     {
       "term": "adaptation",
-      "definition": "The final stage of the instructional hierarchy in which a student applies a learned skill in novel contexts beyond the original training setting; the most advanced level of skill mastery."
+      "definition": "The final stage of the instructional hierarchy in which a student applies a learned skill in novel contexts beyond the original training setting; the most advanced level of skill mastery.",
+      "citation": "Instructional hierarchy; Haring, N. G., Lovitt, T. C., Eaton, M. D., & Hansen, C. L. (1978). The Fourth R: Research in the Classroom. Merrill."
     },
     {
       "term": "adaptive behavior",
-      "definition": "Skills needed for daily living (communication, self-care, social skills, community use); significantly impaired adaptive behavior is required\u2014along with low IQ\u2014for an intellectual disability diagnosis."
+      "definition": "Skills needed for daily living (communication, self-care, social skills, community use); significantly impaired adaptive behavior is required\u2014along with low IQ\u2014for an intellectual disability diagnosis.",
+      "citation": "American Association on Intellectual and Developmental Disabilities (AAIDD) (2021), Intellectual Disability: Definition, Classification, and Systems of Supports (12th ed.). See also Vineland Adaptive Behavior Scales (Pearson)."
     },
     {
       "term": "ADHD",
-      "definition": "Attention-Deficit/Hyperactivity Disorder; a neurodevelopmental disorder characterized by persistent, impairing patterns of inattention, hyperactivity, and/or impulsivity present across at least two settings."
+      "definition": "Attention-Deficit/Hyperactivity Disorder; a neurodevelopmental disorder characterized by persistent, impairing patterns of inattention, hyperactivity, and/or impulsivity present across at least two settings.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "advocacy",
-      "definition": "Actions taken by school psychologists on behalf of students, families, or the profession to promote equitable access, appropriate services, and systemic change."
+      "definition": "Actions taken by school psychologists on behalf of students, families, or the profession to promote equitable access, appropriate services, and systemic change.",
+      "citation": "National Association of School Psychologists (NASP), Model for Comprehensive and Integrated School Psychological Services (2020)."
     },
     {
       "term": "age equivalent",
-      "definition": "A derived test score indicating the average age of students who earned the same raw score; easily misinterpreted and generally less informative than standard scores."
+      "definition": "A derived test score indicating the average age of students who earned the same raw score; easily misinterpreted and generally less informative than standard scores.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "aim line",
-      "definition": "A line on a progress monitoring graph connecting the student's baseline score to their goal score; used to evaluate whether the rate of improvement is sufficient to reach the goal."
+      "definition": "A line on a progress monitoring graph connecting the student's baseline score to their goal score; used to evaluate whether the rate of improvement is sufficient to reach the goal.",
+      "citation": "CBM progress monitoring; Deno, S. L. (1985), 'Curriculum-based measurement: The emerging alternative,' Exceptional Children, 52(3), 219\u2013232. National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research."
     },
     {
       "term": "annual review",
-      "definition": "The legally required yearly IEP team meeting to review a student's progress, revise goals, and update services; mandated under IDEA."
+      "definition": "The legally required yearly IEP team meeting to review a student's progress, revise goals, and update services; mandated under IDEA.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.324(b)(1)."
     },
     {
       "term": "antecedent",
-      "definition": "Any stimulus, event, or condition occurring immediately before a behavior that may trigger or set the occasion for that behavior; the 'A' in the three-term ABC contingency."
+      "definition": "Any stimulus, event, or condition occurring immediately before a behavior that may trigger or set the occasion for that behavior; the 'A' in the three-term ABC contingency.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "antecedent conditions",
-      "definition": "Environmental or contextual factors present before a behavior occurs; identifying and modifying antecedents is often the most efficient first step in behavioral intervention."
+      "definition": "Environmental or contextual factors present before a behavior occurs; identifying and modifying antecedents is often the most efficient first step in behavioral intervention.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "anxiety",
@@ -86,27 +103,33 @@
     },
     {
       "term": "anxiety disorder",
-      "definition": "A DSM-5 category of clinical disorders (e.g., Generalized Anxiety, Social Anxiety, Separation Anxiety) in which anxiety symptoms are excessive, persistent, and significantly impair daily functioning."
+      "definition": "A DSM-5 category of clinical disorders (e.g., Generalized Anxiety, Social Anxiety, Separation Anxiety) in which anxiety symptoms are excessive, persistent, and significantly impair daily functioning.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "applied behavior analysis",
-      "definition": "See ABA; a science applying learning principles\u2014especially reinforcement\u2014to systematically analyze and improve socially significant behavior in real-world settings."
+      "definition": "See ABA; a science applying learning principles\u2014especially reinforcement\u2014to systematically analyze and improve socially significant behavior in real-world settings.",
+      "citation": "Baer, D. M., Wolf, M. M., & Risley, T. R. (1968), 'Some current dimensions of applied behavior analysis,' Journal of Applied Behavior Analysis, 1(1), 91\u201397; Cooper, Heron, & Heward (2020), Applied Behavior Analysis (3rd ed.)."
     },
     {
       "term": "ASD",
-      "definition": "Autism Spectrum Disorder; a neurodevelopmental condition characterized by deficits in social communication/interaction and restricted, repetitive behaviors; severity and support needs vary widely."
+      "definition": "Autism Spectrum Disorder; a neurodevelopmental condition characterized by deficits in social communication/interaction and restricted, repetitive behaviors; severity and support needs vary widely.",
+      "citation": "American Psychiatric Association, DSM-5-TR (2022); IDEA special education category 'autism,' 34 C.F.R. \u00a7 300.8(c)(1)."
     },
     {
       "term": "assent",
-      "definition": "A child's or adolescent's agreement to participate in an evaluation or intervention; ethically required alongside parental consent for minors, though not legally binding independent of parental consent."
+      "definition": "A child's or adolescent's agreement to participate in an evaluation or intervention; ethically required alongside parental consent for minors, though not legally binding independent of parental consent.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "attachment",
-      "definition": "The emotional bond between a child and primary caregiver; secure attachment supports healthy social-emotional development, while insecure patterns are linked to later social, emotional, and academic difficulties."
+      "definition": "The emotional bond between a child and primary caregiver; secure attachment supports healthy social-emotional development, while insecure patterns are linked to later social, emotional, and academic difficulties.",
+      "citation": "Bowlby, J. (1969). Attachment and Loss, Vol. 1. Basic Books; Ainsworth, M. D. S., et al. (1978). Patterns of Attachment."
     },
     {
       "term": "attention-deficit",
-      "definition": "The inattentive dimension of ADHD, characterized by difficulty sustaining attention, organizing tasks, and following through; may present without hyperactivity in some individuals."
+      "definition": "The inattentive dimension of ADHD, characterized by difficulty sustaining attention, organizing tasks, and following through; may present without hyperactivity in some individuals.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "auditory processing",
@@ -118,11 +141,13 @@
     },
     {
       "term": "autism spectrum",
-      "definition": "A range of neurodevelopmental conditions defined by social communication deficits and restricted/repetitive behaviors; see autism spectrum disorder (ASD)."
+      "definition": "A range of neurodevelopmental conditions defined by social communication deficits and restricted/repetitive behaviors; see autism spectrum disorder (ASD).",
+      "citation": "American Psychiatric Association, DSM-5-TR (2022); IDEA special education category 'autism,' 34 C.F.R. \u00a7 300.8(c)(1)."
     },
     {
       "term": "autism spectrum disorder",
-      "definition": "A DSM-5 neurodevelopmental disorder requiring persistent deficits in social communication/interaction across multiple contexts and restricted, repetitive behaviors; diagnosed based on severity of support needs."
+      "definition": "A DSM-5 neurodevelopmental disorder requiring persistent deficits in social communication/interaction across multiple contexts and restricted, repetitive behaviors; diagnosed based on severity of support needs.",
+      "citation": "American Psychiatric Association, DSM-5-TR (2022); IDEA special education category 'autism,' 34 C.F.R. \u00a7 300.8(c)(1)."
     },
     {
       "term": "background information",
@@ -130,15 +155,18 @@
     },
     {
       "term": "BASC",
-      "definition": "Behavior Assessment System for Children; a widely used multi-informant rating scale measuring adaptive and problem behaviors (e.g., anxiety, aggression, leadership) across home, school, and clinical settings."
+      "definition": "Behavior Assessment System for Children; a widely used multi-informant rating scale measuring adaptive and problem behaviors (e.g., anxiety, aggression, leadership) across home, school, and clinical settings.",
+      "citation": "Reynolds, C. R., & Kamphaus, R. W., Behavior Assessment System for Children (BASC-3, 2015). Pearson."
     },
     {
       "term": "base rate",
-      "definition": "The prevalence of a condition in a given population; a low base rate increases the likelihood of false positives even with a highly sensitive screening tool."
+      "definition": "The prevalence of a condition in a given population; a low base rate increases the likelihood of false positives even with a highly sensitive screening tool.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "behavior",
-      "definition": "Any observable and measurable action of an organism; must be defined operationally (in specific, observable terms) for meaningful behavioral assessment and intervention planning."
+      "definition": "Any observable and measurable action of an organism; must be defined operationally (in specific, observable terms) for meaningful behavioral assessment and intervention planning.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "behavior rating scale",
@@ -146,19 +174,23 @@
     },
     {
       "term": "behavioral consultation",
-      "definition": "Bergan's structured consultation model using operationally defined problems, data collection, and reinforcement-based plans; organized into problem identification, problem analysis, plan implementation, and plan evaluation phases."
+      "definition": "Bergan's structured consultation model using operationally defined problems, data collection, and reinforcement-based plans; organized into problem identification, problem analysis, plan implementation, and plan evaluation phases.",
+      "citation": "Bergan, J. R., & Kratochwill, T. R. (1990). Behavioral Consultation and Therapy. Plenum Press."
     },
     {
       "term": "behavioral contract",
-      "definition": "A written agreement specifying target behaviors, performance criteria, and contingent reinforcers or consequences; involves the student and promotes shared accountability."
+      "definition": "A written agreement specifying target behaviors, performance criteria, and contingent reinforcers or consequences; involves the student and promotes shared accountability.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "behaviorism",
-      "definition": "A psychological school of thought holding that behavior is shaped by environmental contingencies (classical and operant conditioning); emphasizes observable, measurable behavior over internal mental events."
+      "definition": "A psychological school of thought holding that behavior is shaped by environmental contingencies (classical and operant conditioning); emphasizes observable, measurable behavior over internal mental events.",
+      "citation": "Watson, J. B. (1913), 'Psychology as the behaviorist views it,' Psychological Review, 20(2), 158\u2013177; Skinner, B. F. (1953), Science and Human Behavior."
     },
     {
       "term": "benchmark",
-      "definition": "A performance standard at a specific point in time (e.g., end of first grade oral reading fluency of 60 wpm) indicating whether a student is on track to meet year-end goals."
+      "definition": "A performance standard at a specific point in time (e.g., end of first grade oral reading fluency of 60 wpm) indicating whether a student is on track to meet year-end goals.",
+      "citation": "National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research. CBM benchmarking (Deno, 1985)."
     },
     {
       "term": "bilingual",
@@ -166,19 +198,23 @@
     },
     {
       "term": "bilingual evaluation",
-      "definition": "A psychoeducational evaluation conducted in both the student's primary language and English to distinguish between a language difference and a true disability."
+      "definition": "A psychoeducational evaluation conducted in both the student's primary language and English to distinguish between a language difference and a true disability.",
+      "citation": "Cummins, J. (1984). Bilingualism and Special Education: Issues in Assessment and Pedagogy. Multilingual Matters."
     },
     {
       "term": "BIP",
-      "definition": "Behavior Intervention Plan; a formal, written plan derived from an FBA that specifies proactive strategies, replacement behaviors, and consequence strategies to address challenging behavior."
+      "definition": "Behavior Intervention Plan; a formal, written plan derived from an FBA that specifies proactive strategies, replacement behaviors, and consequence strategies to address challenging behavior.",
+      "citation": "IDEA discipline provisions, 34 C.F.R. \u00a7 300.530(f); see also positive behavior support literature (Center on PBIS)."
     },
     {
       "term": "Bloom's taxonomy",
-      "definition": "A hierarchical framework of cognitive learning objectives ranging from lower-order (remembering, understanding, applying) to higher-order (analyzing, evaluating, creating); used in instruction and assessment design."
+      "definition": "A hierarchical framework of cognitive learning objectives ranging from lower-order (remembering, understanding, applying) to higher-order (analyzing, evaluating, creating); used in instruction and assessment design.",
+      "citation": "Bloom, B. S. (Ed.) (1956). Taxonomy of Educational Objectives: Handbook I. Longmans; revised by Anderson, L. W., & Krathwohl, D. R. (2001)."
     },
     {
       "term": "BRIEF",
-      "definition": "Behavior Rating Inventory of Executive Function; a rating scale measuring observable behaviors associated with executive function (working memory, inhibition, flexibility) in home and school settings."
+      "definition": "Behavior Rating Inventory of Executive Function; a rating scale measuring observable behaviors associated with executive function (working memory, inhibition, flexibility) in home and school settings.",
+      "citation": "Gioia, G. A., Isquith, P. K., Guy, S. C., & Kenworthy, L., Behavior Rating Inventory of Executive Function (BRIEF-2, 2015). PAR (Psychological Assessment Resources)."
     },
     {
       "term": "brief intervention",
@@ -186,35 +222,43 @@
     },
     {
       "term": "Bronfenbrenner",
-      "definition": "Urie Bronfenbrenner; developmental psychologist who proposed the Ecological Systems Theory describing how nested environmental systems (microsystem through chronosystem) shape development."
+      "definition": "Urie Bronfenbrenner; developmental psychologist who proposed the Ecological Systems Theory describing how nested environmental systems (microsystem through chronosystem) shape development.",
+      "citation": "Bronfenbrenner, U. (1979). The Ecology of Human Development. Harvard University Press."
     },
     {
       "term": "bullying prevention",
-      "definition": "Schoolwide programs and strategies aimed at reducing peer victimization, including direct, relational, and cyberbullying; effective programs involve multi-component approaches and school climate improvement."
+      "definition": "Schoolwide programs and strategies aimed at reducing peer victimization, including direct, relational, and cyberbullying; effective programs involve multi-component approaches and school climate improvement.",
+      "citation": "Olweus, D. (1993). Bullying at School: What We Know and What We Can Do. Blackwell; Olweus Bullying Prevention Program."
     },
     {
       "term": "Caplan",
-      "definition": "Gerald Caplan; psychiatrist who developed the mental health consultation model focusing on consultee-centered consultation, in which the goal is building the consultee's own capacity to address future similar cases."
+      "definition": "Gerald Caplan; psychiatrist who developed the mental health consultation model focusing on consultee-centered consultation, in which the goal is building the consultee's own capacity to address future similar cases.",
+      "citation": "Caplan, G. (1970). The Theory and Practice of Mental Health Consultation. Basic Books."
     },
     {
       "term": "CBM",
-      "definition": "Curriculum-Based Measurement; brief, standardized, repeated academic probes (e.g., oral reading fluency) used for universal screening, progress monitoring, and data-based decision making within MTSS."
+      "definition": "Curriculum-Based Measurement; brief, standardized, repeated academic probes (e.g., oral reading fluency) used for universal screening, progress monitoring, and data-based decision making within MTSS.",
+      "citation": "Deno, S. L. (1985), 'Curriculum-based measurement: The emerging alternative,' Exceptional Children, 52(3), 219\u2013232."
     },
     {
       "term": "CBT",
-      "definition": "Cognitive-Behavioral Therapy; a structured, evidence-based therapeutic approach targeting maladaptive thoughts and behaviors; highly effective for anxiety, depression, and other internalizing disorders in youth."
+      "definition": "Cognitive-Behavioral Therapy; a structured, evidence-based therapeutic approach targeting maladaptive thoughts and behaviors; highly effective for anxiety, depression, and other internalizing disorders in youth.",
+      "citation": "Beck, A. T., Rush, A. J., Shaw, B. F., & Emery, G. (1979). Cognitive Therapy of Depression. Guilford Press."
     },
     {
       "term": "ceiling effect",
-      "definition": "Occurs when a test is too easy for a student, producing scores clustered at the top of the scale and limiting the ability to differentiate among high performers."
+      "definition": "Occurs when a test is too easy for a student, producing scores clustered at the top of the scale and limiting the ability to differentiate among high performers.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "chaining",
-      "definition": "A behavioral technique for teaching complex sequences of behavior by reinforcing successive links in a chain; can be taught forward (first step first) or backward (last step first)."
+      "definition": "A behavioral technique for teaching complex sequences of behavior by reinforcing successive links in a chain; can be taught forward (first step first) or backward (last step first).",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "classical conditioning",
-      "definition": "Pavlov's model in which a neutral stimulus is repeatedly paired with an unconditioned stimulus until it alone elicits a conditioned response; explains acquisition of anxiety and phobias."
+      "definition": "Pavlov's model in which a neutral stimulus is repeatedly paired with an unconditioned stimulus until it alone elicits a conditioned response; explains acquisition of anxiety and phobias.",
+      "citation": "Pavlov, I. P. (1927). Conditioned Reflexes (G. V. Anrep, Trans.). Oxford University Press."
     },
     {
       "term": "CLD",
@@ -222,7 +266,8 @@
     },
     {
       "term": "client-centered consultation",
-      "definition": "In Caplan's model, consultation focused on the needs of the identified client (the student) rather than on developing the consultee's professional capacities."
+      "definition": "In Caplan's model, consultation focused on the needs of the identified client (the student) rather than on developing the consultee's professional capacities.",
+      "citation": "Caplan, G. (1970). The Theory and Practice of Mental Health Consultation. Basic Books."
     },
     {
       "term": "cognitive ability",
@@ -234,15 +279,18 @@
     },
     {
       "term": "cognitive development",
-      "definition": "The progression of thinking, reasoning, language, and problem-solving abilities; Piaget described four stages: sensorimotor, preoperational, concrete operational, and formal operational."
+      "definition": "The progression of thinking, reasoning, language, and problem-solving abilities; Piaget described four stages: sensorimotor, preoperational, concrete operational, and formal operational.",
+      "citation": "Piaget's theory of cognitive development; Piaget, J. (1952). The Origins of Intelligence in Children. International Universities Press."
     },
     {
       "term": "cognitive-behavioral therapy",
-      "definition": "See CBT; a structured therapy integrating cognitive restructuring and behavioral strategies to treat internalizing and externalizing disorders."
+      "definition": "See CBT; a structured therapy integrating cognitive restructuring and behavioral strategies to treat internalizing and externalizing disorders.",
+      "citation": "Beck, A. T., Rush, A. J., Shaw, B. F., & Emery, G. (1979). Cognitive Therapy of Depression. Guilford Press."
     },
     {
       "term": "Cohen's d",
-      "definition": "A standardized measure of effect size representing the difference between two means in standard deviation units; d = 0.2 small, 0.5 medium, 0.8 large; helps evaluate practical significance."
+      "definition": "A standardized measure of effect size representing the difference between two means in standard deviation units; d = 0.2 small, 0.5 medium, 0.8 large; helps evaluate practical significance.",
+      "citation": "Cohen, J. (1988). Statistical Power Analysis for the Behavioral Sciences (2nd ed.). Lawrence Erlbaum."
     },
     {
       "term": "collaborative consultation",
@@ -266,19 +314,23 @@
     },
     {
       "term": "concrete operational",
-      "definition": "Piaget's third cognitive stage (ages 7\u201311) in which children develop logical thinking about concrete objects and events but cannot yet reason abstractly or systematically."
+      "definition": "Piaget's third cognitive stage (ages 7\u201311) in which children develop logical thinking about concrete objects and events but cannot yet reason abstractly or systematically.",
+      "citation": "Piaget's theory of cognitive development; Piaget, J. (1952). The Origins of Intelligence in Children. International Universities Press."
     },
     {
       "term": "conduct disorder",
-      "definition": "A DSM-5 diagnosis involving a persistent pattern of violating others' rights or major social norms (aggression, property destruction, deceitfulness, theft); often precedes adult antisocial behavior."
+      "definition": "A DSM-5 diagnosis involving a persistent pattern of violating others' rights or major social norms (aggression, property destruction, deceitfulness, theft); often precedes adult antisocial behavior.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "confidence interval",
-      "definition": "A range of values (usually 95%) that likely contains the student's true score; preferred over reporting a single point score because it communicates measurement uncertainty."
+      "definition": "A range of values (usually 95%) that likely contains the student's true score; preferred over reporting a single point score because it communicates measurement uncertainty.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "confidentiality",
-      "definition": "The ethical and legal obligation to protect student information from unauthorized disclosure; bounded by mandatory reporting obligations, safety concerns, and FERPA regulations."
+      "definition": "The ethical and legal obligation to protect student information from unauthorized disclosure; bounded by mandatory reporting obligations, safety concerns, and FERPA regulations.",
+      "citation": "NASP Principles for Professional Ethics (2020); FERPA, 20 U.S.C. \u00a7 1232g."
     },
     {
       "term": "confound",
@@ -290,27 +342,33 @@
     },
     {
       "term": "conjoint",
-      "definition": "Involving both home and school systems simultaneously; as in conjoint behavioral consultation, which engages parents and teachers as collaborative partners in problem-solving."
+      "definition": "Involving both home and school systems simultaneously; as in conjoint behavioral consultation, which engages parents and teachers as collaborative partners in problem-solving.",
+      "citation": "Sheridan, S. M., & Kratochwill, T. R. (2008). Conjoint Behavioral Consultation (2nd ed.). Springer."
     },
     {
       "term": "conjoint behavioral consultation",
-      "definition": "Susan Sheridan's consultation model engaging parents and teachers as co-equal partners across home and school settings; strengthens generalization and home-school communication."
+      "definition": "Susan Sheridan's consultation model engaging parents and teachers as co-equal partners across home and school settings; strengthens generalization and home-school communication.",
+      "citation": "Sheridan, S. M., & Kratochwill, T. R. (2008). Conjoint Behavioral Consultation: Promoting Family-School Connections and Interventions (2nd ed.). Springer."
     },
     {
       "term": "Conners",
-      "definition": "A widely used rating scale for assessing ADHD symptoms and related problems; available in parent, teacher, and self-report versions and normed for children and adolescents."
+      "definition": "A widely used rating scale for assessing ADHD symptoms and related problems; available in parent, teacher, and self-report versions and normed for children and adolescents.",
+      "citation": "Conners, C. K., Conners (3rd ed.) / Conners CBRS. Multi-Health Systems (MHS)."
     },
     {
       "term": "consequence",
-      "definition": "Any stimulus or event occurring immediately after a behavior that influences its future likelihood; reinforcing consequences increase behavior, punishing consequences decrease it."
+      "definition": "Any stimulus or event occurring immediately after a behavior that influences its future likelihood; reinforcing consequences increase behavior, punishing consequences decrease it.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "construct validity",
-      "definition": "The degree to which a test measures the theoretical construct it purports to measure (e.g., whether an 'intelligence' test actually measures intelligence vs. test-taking familiarity)."
+      "definition": "The degree to which a test measures the theoretical construct it purports to measure (e.g., whether an 'intelligence' test actually measures intelligence vs. test-taking familiarity).",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "constructivism",
-      "definition": "A learning theory proposing that learners actively construct knowledge through experience and reflection; associated with Piaget and Vygotsky; informs discovery-based instructional approaches."
+      "definition": "A learning theory proposing that learners actively construct knowledge through experience and reflection; associated with Piaget and Vygotsky; informs discovery-based instructional approaches.",
+      "citation": "Associated with Piaget (1952) and Vygotsky (1978); see also Bruner, J. S. (1966)."
     },
     {
       "term": "consultant",
@@ -318,7 +376,8 @@
     },
     {
       "term": "consultation process",
-      "definition": "A structured problem-solving interaction typically organized into four phases: problem identification, problem analysis, plan implementation, and plan evaluation."
+      "definition": "A structured problem-solving interaction typically organized into four phases: problem identification, problem analysis, plan implementation, and plan evaluation.",
+      "citation": "Bergan, J. R., & Kratochwill, T. R. (1990). Behavioral Consultation and Therapy. Plenum Press."
     },
     {
       "term": "consultee",
@@ -326,15 +385,18 @@
     },
     {
       "term": "consultee-centered",
-      "definition": "A focus in consultation on improving the consultee's professional skills, objectivity, or confidence rather than solving the presenting problem directly."
+      "definition": "A focus in consultation on improving the consultee's professional skills, objectivity, or confidence rather than solving the presenting problem directly.",
+      "citation": "Caplan, G. (1970). The Theory and Practice of Mental Health Consultation. Basic Books."
     },
     {
       "term": "consultee-centered consultation",
-      "definition": "Caplan's model in which the primary goal is improving the consultee's professional functioning (knowledge, skill, confidence, objectivity) so they can serve future clients more effectively."
+      "definition": "Caplan's model in which the primary goal is improving the consultee's professional functioning (knowledge, skill, confidence, objectivity) so they can serve future clients more effectively.",
+      "citation": "Caplan, G. (1970). The Theory and Practice of Mental Health Consultation. Basic Books."
     },
     {
       "term": "content validity",
-      "definition": "The extent to which test items adequately and representatively sample the full domain of the construct being assessed; typically established through expert review and systematic item development."
+      "definition": "The extent to which test items adequately and representatively sample the full domain of the construct being assessed; typically established through expert review and systematic item development.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "control group",
@@ -354,27 +416,33 @@
     },
     {
       "term": "crisis intervention",
-      "definition": "Immediate, short-term psychological support for individuals in acute distress to restore safety and pre-crisis functioning; school psychologists often follow structured protocols (e.g., PREPaRE)."
+      "definition": "Immediate, short-term psychological support for individuals in acute distress to restore safety and pre-crisis functioning; school psychologists often follow structured protocols (e.g., PREPaRE).",
+      "citation": "NASP PREPaRE model; Brock, S. E., et al. (2016). School Crisis Prevention and Intervention: The PREPaRE Model (2nd ed.). NASP."
     },
     {
       "term": "criterion-referenced",
-      "definition": "An assessment approach comparing a student's performance to a fixed performance standard or mastery level rather than to the performance of other students."
+      "definition": "An assessment approach comparing a student's performance to a fixed performance standard or mastery level rather than to the performance of other students.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "Cronbach's alpha",
-      "definition": "A coefficient measuring internal consistency reliability, indicating how strongly test items correlate with each other; values above .70 are generally considered adequate."
+      "definition": "A coefficient measuring internal consistency reliability, indicating how strongly test items correlate with each other; values above .70 are generally considered adequate.",
+      "citation": "Cronbach, L. J. (1951), 'Coefficient alpha and the internal structure of tests,' Psychometrika, 16(3), 297\u2013334; see also Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "crystallized intelligence",
-      "definition": "Gc; accumulated verbal knowledge and language-based skills acquired through education and experience; tends to be stable or increase with age."
+      "definition": "Gc; accumulated verbal knowledge and language-based skills acquired through education and experience; tends to be stable or increase with age.",
+      "citation": "Cattell\u2013Horn\u2013Carroll (CHC) theory of cognitive abilities; McGrew, K. S. (2009), Intelligence, 37(1), 1\u201310."
     },
     {
       "term": "cultural competence",
-      "definition": "The ability to work effectively with people from diverse cultural backgrounds; requires self-awareness, knowledge of cultural differences, and adaptation of professional practices."
+      "definition": "The ability to work effectively with people from diverse cultural backgrounds; requires self-awareness, knowledge of cultural differences, and adaptation of professional practices.",
+      "citation": "Sue, D. W., Arredondo, P., & McDavis, R. J. (1992), 'Multicultural counseling competencies and standards,' Journal of Counseling & Development; NASP Model for Comprehensive and Integrated School Psychological Services (2020)."
     },
     {
       "term": "cultural responsiveness",
-      "definition": "Integrating respect for and knowledge of students' cultural backgrounds into professional practice; required for valid assessment and effective intervention with diverse populations."
+      "definition": "Integrating respect for and knowledge of students' cultural backgrounds into professional practice; required for valid assessment and effective intervention with diverse populations.",
+      "citation": "Gay, G. (2018). Culturally Responsive Teaching: Theory, Research, and Practice (3rd ed.). Teachers College Press."
     },
     {
       "term": "culturally and linguistically diverse",
@@ -382,27 +450,33 @@
     },
     {
       "term": "culturally responsive",
-      "definition": "Approaches that honor and incorporate students' cultural backgrounds, values, and communication styles into instruction, assessment, and intervention to improve relevance and outcomes."
+      "definition": "Approaches that honor and incorporate students' cultural backgrounds, values, and communication styles into instruction, assessment, and intervention to improve relevance and outcomes.",
+      "citation": "Gay, G. (2018). Culturally Responsive Teaching: Theory, Research, and Practice (3rd ed.). Teachers College Press."
     },
     {
       "term": "curriculum-based measurement",
-      "definition": "See CBM; brief, standardized academic probes yielding repeated, comparable measures of a student's skill growth over time within the instructional curriculum."
+      "definition": "See CBM; brief, standardized academic probes yielding repeated, comparable measures of a student's skill growth over time within the instructional curriculum.",
+      "citation": "Deno, S. L. (1985), 'Curriculum-based measurement: The emerging alternative,' Exceptional Children, 52(3), 219\u2013232."
     },
     {
       "term": "cyberbullying",
-      "definition": "Bullying conducted through digital platforms (social media, texting, online games); can be especially harmful due to its pervasive reach and potential for large audiences."
+      "definition": "Bullying conducted through digital platforms (social media, texting, online games); can be especially harmful due to its pervasive reach and potential for large audiences.",
+      "citation": "Hinduja, S., & Patchin, J. W., Cyberbullying Research Center (cyberbullying.org)."
     },
     {
       "term": "data-based decision making",
-      "definition": "Using systematically collected, objective data to guide instructional and intervention decisions rather than relying on intuition; a core principle of MTSS and school psychology practice."
+      "definition": "Using systematically collected, objective data to guide instructional and intervention decisions rather than relying on intuition; a core principle of MTSS and school psychology practice.",
+      "citation": "National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research. NASP Model for Comprehensive and Integrated School Psychological Services (2020)."
     },
     {
       "term": "decision rule",
-      "definition": "A pre-established criterion for making data-based decisions; for example, if a student's scores fall below the aim line for 3 consecutive probes, the intervention should be modified."
+      "definition": "A pre-established criterion for making data-based decisions; for example, if a student's scores fall below the aim line for 3 consecutive probes, the intervention should be modified.",
+      "citation": "Data-based decision making in MTSS; National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research."
     },
     {
       "term": "decoding",
-      "definition": "Applying phoneme-grapheme correspondence rules to identify unfamiliar printed words; a foundational reading skill frequently assessed in evaluations for reading disabilities."
+      "definition": "Applying phoneme-grapheme correspondence rules to identify unfamiliar printed words; a foundational reading skill frequently assessed in evaluations for reading disabilities.",
+      "citation": "National Reading Panel (2000), Teaching Children to Read. National Institute of Child Health and Human Development (NICHD)."
     },
     {
       "term": "dependent variable",
@@ -414,7 +488,8 @@
     },
     {
       "term": "depressive disorder",
-      "definition": "A DSM-5 category including Major Depressive Disorder and Persistent Depressive Disorder, defined by prolonged low mood, loss of interest, and significant functional impairment."
+      "definition": "A DSM-5 category including Major Depressive Disorder and Persistent Depressive Disorder, defined by prolonged low mood, loss of interest, and significant functional impairment.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "descriptive statistics",
@@ -430,23 +505,28 @@
     },
     {
       "term": "diagnostic criteria",
-      "definition": "The specific signs, symptoms, duration, and impairment thresholds listed in DSM-5 that must be met for a clinical diagnosis; ensure standardized, consistent identification."
+      "definition": "The specific signs, symptoms, duration, and impairment thresholds listed in DSM-5 that must be met for a clinical diagnosis; ensure standardized, consistent identification.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "differentiated instruction",
-      "definition": "Tailoring instruction to meet individual students' readiness, interests, and learning profiles by varying content, process, product, or environment within the same classroom."
+      "definition": "Tailoring instruction to meet individual students' readiness, interests, and learning profiles by varying content, process, product, or environment within the same classroom.",
+      "citation": "Tomlinson, C. A. (2014). The Differentiated Classroom: Responding to the Needs of All Learners (2nd ed.). ASCD."
     },
     {
       "term": "direct instruction",
-      "definition": "An explicit, structured teaching method characterized by clear modeling, high rates of academic engagement, guided practice with immediate feedback, and mastery-based progression; evidence-based for basic skills."
+      "definition": "An explicit, structured teaching method characterized by clear modeling, high rates of academic engagement, guided practice with immediate feedback, and mastery-based progression; evidence-based for basic skills.",
+      "citation": "Engelmann, S., & Carnine, D. (1991). Theory of Instruction: Principles and Applications (rev. ed.). NIFDI Press."
     },
     {
       "term": "disability eligibility",
-      "definition": "The determination by a multidisciplinary team that a student meets IDEA criteria for a specific disability category, qualifying them for special education and related services."
+      "definition": "The determination by a multidisciplinary team that a student meets IDEA criteria for a specific disability category, qualifying them for special education and related services.",
+      "citation": "IDEA, 34 C.F.R. \u00a7\u00a7 300.8, 300.306."
     },
     {
       "term": "disproportionality",
-      "definition": "The overrepresentation or underrepresentation of students from specific racial or ethnic groups in special education categories, gifted programs, or disciplinary actions."
+      "definition": "The overrepresentation or underrepresentation of students from specific racial or ethnic groups in special education categories, gifted programs, or disciplinary actions.",
+      "citation": "IDEA disproportionality provisions, 34 C.F.R. \u00a7\u00a7 300.646\u2013300.647; National Research Council, Donovan & Cross (Eds.) (2002), Minority Students in Special and Gifted Education."
     },
     {
       "term": "diversity",
@@ -454,51 +534,63 @@
     },
     {
       "term": "DRA",
-      "definition": "Differential Reinforcement of Alternative Behavior; a behavioral procedure that reinforces a specific, acceptable alternative behavior to replace a problem behavior."
+      "definition": "Differential Reinforcement of Alternative Behavior; a behavioral procedure that reinforces a specific, acceptable alternative behavior to replace a problem behavior.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "DRI",
-      "definition": "Differential Reinforcement of Incompatible Behavior; reinforcing a behavior that is physically impossible to perform simultaneously with the problem behavior."
+      "definition": "Differential Reinforcement of Incompatible Behavior; reinforcing a behavior that is physically impossible to perform simultaneously with the problem behavior.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "DRO",
-      "definition": "Differential Reinforcement of Other Behavior; providing reinforcement after a specified interval during which the problem behavior did NOT occur; reduces problem behavior without selecting a replacement."
+      "definition": "Differential Reinforcement of Other Behavior; providing reinforcement after a specified interval during which the problem behavior did NOT occur; reduces problem behavior without selecting a replacement.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "DSM-5",
-      "definition": "Diagnostic and Statistical Manual of Mental Disorders, Fifth Edition; the American Psychiatric Association's classification system for mental disorders; used to diagnose conditions like ADHD, ASD, and mood disorders."
+      "definition": "Diagnostic and Statistical Manual of Mental Disorders, Fifth Edition; the American Psychiatric Association's classification system for mental disorders; used to diagnose conditions like ADHD, ASD, and mood disorders.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "dual relationship",
-      "definition": "A situation in which a school psychologist has both a professional role and another type of relationship (personal, financial, supervisory) with a student or family; ethically problematic."
+      "definition": "A situation in which a school psychologist has both a professional role and another type of relationship (personal, financial, supervisory) with a student or family; ethically problematic.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "due process",
-      "definition": "Formal IDEA dispute resolution procedures protecting parents' rights to challenge eligibility, placement, or services through an impartial hearing; a last resort after less formal options."
+      "definition": "Formal IDEA dispute resolution procedures protecting parents' rights to challenge eligibility, placement, or services through an impartial hearing; a last resort after less formal options.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1415(f); 34 C.F.R. \u00a7\u00a7 300.507\u2013300.516."
     },
     {
       "term": "duty to warn",
-      "definition": "The ethical and legal obligation to take reasonable steps to protect identifiable potential victims from credible, serious threats; derived from the Tarasoff ruling."
+      "definition": "The ethical and legal obligation to take reasonable steps to protect identifiable potential victims from credible, serious threats; derived from the Tarasoff ruling.",
+      "citation": "Derived from Tarasoff v. Regents of the University of California, 17 Cal. 3d 425 (1976)."
     },
     {
       "term": "dynamic assessment",
-      "definition": "An assessment approach using a test-teach-retest format to evaluate a student's responsiveness to instruction and learning potential, rather than measuring only current knowledge."
+      "definition": "An assessment approach using a test-teach-retest format to evaluate a student's responsiveness to instruction and learning potential, rather than measuring only current knowledge.",
+      "citation": "Lidz, C. S. (1987). Dynamic Assessment: An Interactional Approach to Evaluating Learning Potential. Guilford Press; Feuerstein, R., et al."
     },
     {
       "term": "dyscalculia",
-      "definition": "A specific learning disability affecting the acquisition of mathematical skills (number sense, arithmetic facts, math reasoning); analogous to dyslexia in reading."
+      "definition": "A specific learning disability affecting the acquisition of mathematical skills (number sense, arithmetic facts, math reasoning); analogous to dyslexia in reading.",
+      "citation": "DSM-5 specific learning disorder with impairment in mathematics (APA, 2013); IDEA SLD category, 34 C.F.R. \u00a7 300.8(c)(10)."
     },
     {
       "term": "dysgraphia",
-      "definition": "A specific learning disability affecting written expression, including handwriting, spelling, and composition; not simply poor penmanship but a deficit in the writing process itself."
+      "definition": "A specific learning disability affecting written expression, including handwriting, spelling, and composition; not simply poor penmanship but a deficit in the writing process itself.",
+      "citation": "DSM-5 specific learning disorder with impairment in written expression (APA, 2013); IDEA SLD category, 34 C.F.R. \u00a7 300.8(c)(10)."
     },
     {
       "term": "dyslexia",
-      "definition": "A specific learning disability characterized by difficulties with accurate and/or fluent word recognition, poor decoding, and poor spelling; neurobiological in origin and responsive to explicit reading instruction."
+      "definition": "A specific learning disability characterized by difficulties with accurate and/or fluent word recognition, poor decoding, and poor spelling; neurobiological in origin and responsive to explicit reading instruction.",
+      "citation": "International Dyslexia Association (IDA) definition (2002); IDEA SLD category, 34 C.F.R. \u00a7 300.8(c)(10)."
     },
     {
       "term": "EBP",
-      "definition": "Evidence-Based Practice; professional decision-making integrating the best available research evidence, clinical expertise, and client characteristics; school psychologists are expected to use EBPs."
+      "definition": "Evidence-Based Practice; professional decision-making integrating the best available research evidence, clinical expertise, and client characteristics; school psychologists are expected to use EBPs.",
+      "citation": "American Psychological Association (2006), 'Evidence-based practice in psychology,' American Psychologist, 61(4), 271\u2013285; What Works Clearinghouse (IES)."
     },
     {
       "term": "ecological assessment",
@@ -506,15 +598,18 @@
     },
     {
       "term": "ED",
-      "definition": "Emotional Disturbance; an IDEA special education eligibility category for students with serious emotional/behavioral difficulties that adversely affect educational performance and are not due to other conditions."
+      "definition": "Emotional Disturbance; an IDEA special education eligibility category for students with serious emotional/behavioral difficulties that adversely affect educational performance and are not due to other conditions.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.8(c)(4)."
     },
     {
       "term": "educational records",
-      "definition": "Documents and data about a student maintained by a school; protected under FERPA with parents having rights to access, review, and request amendments."
+      "definition": "Documents and data about a student maintained by a school; protected under FERPA with parents having rights to access, review, and request amendments.",
+      "citation": "FERPA, 20 U.S.C. \u00a7 1232g; 34 C.F.R. Part 99; IDEA confidentiality provisions, 34 C.F.R. \u00a7\u00a7 300.611\u2013300.625."
     },
     {
       "term": "effect size",
-      "definition": "A quantitative measure of the magnitude of an intervention's impact; used alongside statistical significance to evaluate practical importance (e.g., Cohen's d, odds ratio)."
+      "definition": "A quantitative measure of the magnitude of an intervention's impact; used alongside statistical significance to evaluate practical importance (e.g., Cohen's d, odds ratio).",
+      "citation": "Cohen, J. (1988). Statistical Power Analysis for the Behavioral Sciences (2nd ed.). Lawrence Erlbaum."
     },
     {
       "term": "EL",
@@ -522,7 +617,8 @@
     },
     {
       "term": "eligibility determination",
-      "definition": "The multidisciplinary team's data-based decision about whether a student meets IDEA criteria for a specific disability category and qualifies for special education."
+      "definition": "The multidisciplinary team's data-based decision about whether a student meets IDEA criteria for a specific disability category and qualifies for special education.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.306."
     },
     {
       "term": "ELL",
@@ -530,11 +626,13 @@
     },
     {
       "term": "emotional disturbance",
-      "definition": "See ED; an IDEA eligibility category covering students with significant, chronic emotional or behavioral problems that impair educational performance."
+      "definition": "See ED; an IDEA eligibility category covering students with significant, chronic emotional or behavioral problems that impair educational performance.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.8(c)(4)."
     },
     {
       "term": "Endrew F.",
-      "definition": "Endrew F. v. Douglas County School District (2017); Supreme Court ruling clarifying that IDEA requires IEPs to be sufficiently ambitious\u2014students must have a realistic chance to make meaningful progress."
+      "definition": "Endrew F. v. Douglas County School District (2017); Supreme Court ruling clarifying that IDEA requires IEPs to be sufficiently ambitious\u2014students must have a realistic chance to make meaningful progress.",
+      "citation": "Endrew F. v. Douglas County School District RE-1, 580 U.S. 386 (2017)."
     },
     {
       "term": "engagement barriers",
@@ -554,27 +652,33 @@
     },
     {
       "term": "Erikson",
-      "definition": "Erik Erikson; developmental psychologist known for his eight-stage psychosocial theory (e.g., trust vs. mistrust, industry vs. inferiority, identity vs. role confusion)."
+      "definition": "Erik Erikson; developmental psychologist known for his eight-stage psychosocial theory (e.g., trust vs. mistrust, industry vs. inferiority, identity vs. role confusion).",
+      "citation": "Erikson, E. H. (1950). Childhood and Society. Norton."
     },
     {
       "term": "ethical decision-making",
-      "definition": "A systematic process for resolving ethical dilemmas by applying ethical principles, professional standards, relevant laws, and consideration of all stakeholders' interests."
+      "definition": "A systematic process for resolving ethical dilemmas by applying ethical principles, professional standards, relevant laws, and consideration of all stakeholders' interests.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "evidence-based intervention",
-      "definition": "An intervention supported by rigorous peer-reviewed research demonstrating effectiveness for a specific population and problem; preferred in all MTSS tiers."
+      "definition": "An intervention supported by rigorous peer-reviewed research demonstrating effectiveness for a specific population and problem; preferred in all MTSS tiers.",
+      "citation": "What Works Clearinghouse (WWC), Institute of Education Sciences, U.S. Department of Education."
     },
     {
       "term": "evidence-based practice",
-      "definition": "Integration of the best available research, clinical expertise, and client preferences/characteristics when making professional decisions; the gold standard for school psychology practice."
+      "definition": "Integration of the best available research, clinical expertise, and client preferences/characteristics when making professional decisions; the gold standard for school psychology practice.",
+      "citation": "American Psychological Association (2006), 'Evidence-based practice in psychology,' American Psychologist, 61(4), 271\u2013285; What Works Clearinghouse (IES)."
     },
     {
       "term": "exclusionary discipline",
-      "definition": "Disciplinary practices (suspension, expulsion) that remove students from educational settings; associated with disproportionality, reduced academic engagement, and negative long-term outcomes."
+      "definition": "Disciplinary practices (suspension, expulsion) that remove students from educational settings; associated with disproportionality, reduced academic engagement, and negative long-term outcomes.",
+      "citation": "IDEA discipline procedures, 34 C.F.R. \u00a7\u00a7 300.530\u2013300.536."
     },
     {
       "term": "executive function",
-      "definition": "A set of higher-order cognitive processes (working memory, inhibitory control, cognitive flexibility, planning) that regulate goal-directed behavior; frequently impaired in ADHD and LD."
+      "definition": "A set of higher-order cognitive processes (working memory, inhibitory control, cognitive flexibility, planning) that regulate goal-directed behavior; frequently impaired in ADHD and LD.",
+      "citation": "Diamond, A. (2013), 'Executive functions,' Annual Review of Psychology, 64, 135\u2013168."
     },
     {
       "term": "experimental design",
@@ -590,11 +694,13 @@
     },
     {
       "term": "explicit instruction",
-      "definition": "A systematic, structured teaching approach involving clear modeling, adequate guided practice with feedback, and independent practice; highly effective for basic academic skills."
+      "definition": "A systematic, structured teaching approach involving clear modeling, adequate guided practice with feedback, and independent practice; highly effective for basic academic skills.",
+      "citation": "Archer, A. L., & Hughes, C. A. (2011). Explicit Instruction: Effective and Efficient Teaching. Guilford Press."
     },
     {
       "term": "expulsion",
-      "definition": "The most severe exclusionary discipline, removing a student from school for an extended period; students with disabilities are entitled to procedural protections under IDEA."
+      "definition": "The most severe exclusionary discipline, removing a student from school for an extended period; students with disabilities are entitled to procedural protections under IDEA.",
+      "citation": "IDEA discipline procedures, 34 C.F.R. \u00a7\u00a7 300.530\u2013300.536."
     },
     {
       "term": "extended time",
@@ -606,19 +712,23 @@
     },
     {
       "term": "externalizing",
-      "definition": "Behavioral and emotional problems directed outward (aggression, defiance, conduct problems, hyperactivity); contrasted with internalizing problems."
+      "definition": "Behavioral and emotional problems directed outward (aggression, defiance, conduct problems, hyperactivity); contrasted with internalizing problems.",
+      "citation": "Achenbach, T. M. (1991). Manual for the Child Behavior Checklist/4-18. University of Vermont."
     },
     {
       "term": "extinction",
-      "definition": "The removal of reinforcement for a previously reinforced behavior, resulting in a gradual decrease in that behavior; may initially cause a temporary extinction burst."
+      "definition": "The removal of reinforcement for a previously reinforced behavior, resulting in a gradual decrease in that behavior; may initially cause a temporary extinction burst.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "false negative",
-      "definition": "A screening result indicating the condition is absent when it is actually present; a missed case; particularly harmful when early identification is critical."
+      "definition": "A screening result indicating the condition is absent when it is actually present; a missed case; particularly harmful when early identification is critical.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "false positive",
-      "definition": "A screening result indicating the condition is present when it is actually absent; leads to unnecessary referrals or over-identification; especially costly with low base rates."
+      "definition": "A screening result indicating the condition is present when it is actually absent; leads to unnecessary referrals or over-identification; especially costly with low base rates.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "family engagement",
@@ -626,19 +736,23 @@
     },
     {
       "term": "family systems",
-      "definition": "A theoretical framework viewing the family as an interconnected system where changes in any member affect all others; guides family-centered assessment and intervention."
+      "definition": "A theoretical framework viewing the family as an interconnected system where changes in any member affect all others; guides family-centered assessment and intervention.",
+      "citation": "Bowen, M. (1978). Family Therapy in Clinical Practice. Jason Aronson; Minuchin, S. (1974). Families and Family Therapy."
     },
     {
       "term": "FAPE",
-      "definition": "Free Appropriate Public Education; IDEA's core guarantee that students with disabilities receive special education and related services at no cost to parents, tailored to their unique needs."
+      "definition": "Free Appropriate Public Education; IDEA's core guarantee that students with disabilities receive special education and related services at no cost to parents, tailored to their unique needs.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1401(9); 34 C.F.R. \u00a7 300.17."
     },
     {
       "term": "FBA",
-      "definition": "Functional Behavioral Assessment; a process identifying the function (purpose) of a behavior by analyzing antecedents, behaviors, and consequences to develop a function-based BIP."
+      "definition": "Functional Behavioral Assessment; a process identifying the function (purpose) of a behavior by analyzing antecedents, behaviors, and consequences to develop a function-based BIP.",
+      "citation": "Referenced in IDEA discipline provisions, 34 C.F.R. \u00a7 300.530(d)\u2013(f); methodology: Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "FERPA",
-      "definition": "Family Educational Rights and Privacy Act; federal law granting parents (and students 18+) rights to access educational records and restricting disclosure without consent."
+      "definition": "Family Educational Rights and Privacy Act; federal law granting parents (and students 18+) rights to access educational records and restricting disclosure without consent.",
+      "citation": "Family Educational Rights and Privacy Act (FERPA), 20 U.S.C. \u00a7 1232g; 34 C.F.R. Part 99."
     },
     {
       "term": "fidelity",
@@ -650,39 +764,48 @@
     },
     {
       "term": "fluency",
-      "definition": "A stage of the instructional hierarchy between acquisition and generalization, characterized by performing a skill both accurately and at an adequate rate."
+      "definition": "A stage of the instructional hierarchy between acquisition and generalization, characterized by performing a skill both accurately and at an adequate rate.",
+      "citation": "Instructional hierarchy; Haring, N. G., Lovitt, T. C., Eaton, M. D., & Hansen, C. L. (1978). The Fourth R: Research in the Classroom. Merrill."
     },
     {
       "term": "fluid reasoning",
-      "definition": "Gf; the capacity to solve novel problems and think logically independent of previously acquired knowledge; assessed by nonverbal reasoning and inductive/deductive reasoning tasks."
+      "definition": "Gf; the capacity to solve novel problems and think logically independent of previously acquired knowledge; assessed by nonverbal reasoning and inductive/deductive reasoning tasks.",
+      "citation": "Cattell\u2013Horn\u2013Carroll (CHC) theory of cognitive abilities; McGrew, K. S. (2009), Intelligence, 37(1), 1\u201310."
     },
     {
       "term": "formal operational",
-      "definition": "Piaget's fourth and final cognitive stage (emerging around age 12), characterized by abstract reasoning, hypothetical-deductive thinking, and systematic problem-solving."
+      "definition": "Piaget's fourth and final cognitive stage (emerging around age 12), characterized by abstract reasoning, hypothetical-deductive thinking, and systematic problem-solving.",
+      "citation": "Piaget's theory of cognitive development; Piaget, J. (1952). The Origins of Intelligence in Children. International Universities Press."
     },
     {
       "term": "formative assessment",
-      "definition": "Ongoing assessment during instruction used to monitor learning, provide feedback, and adjust teaching; examples include CBM probes, exit tickets, and teacher observation."
+      "definition": "Ongoing assessment during instruction used to monitor learning, provide feedback, and adjust teaching; examples include CBM probes, exit tickets, and teacher observation.",
+      "citation": "Black, P., & Wiliam, D. (1998), 'Assessment and classroom learning,' Assessment in Education, 5(1), 7\u201374."
     },
     {
       "term": "free appropriate public education",
-      "definition": "See FAPE; the IDEA entitlement ensuring students with disabilities receive special education at public expense that is appropriate for their individual needs."
+      "definition": "See FAPE; the IDEA entitlement ensuring students with disabilities receive special education at public expense that is appropriate for their individual needs.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1401(9); 34 C.F.R. \u00a7 300.17."
     },
     {
       "term": "functional behavioral assessment",
-      "definition": "See FBA; a comprehensive, systematic process identifying why a behavior occurs by examining the antecedent-behavior-consequence sequence to guide intervention."
+      "definition": "See FBA; a comprehensive, systematic process identifying why a behavior occurs by examining the antecedent-behavior-consequence sequence to guide intervention.",
+      "citation": "Referenced in IDEA discipline provisions, 34 C.F.R. \u00a7 300.530(d)\u2013(f); methodology: Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "generalization",
-      "definition": "Transfer of a learned skill to different people, settings, or materials beyond the original training context; often the most difficult stage of the instructional hierarchy to achieve."
+      "definition": "Transfer of a learned skill to different people, settings, or materials beyond the original training context; often the most difficult stage of the instructional hierarchy to achieve.",
+      "citation": "Stokes, T. F., & Baer, D. M. (1977), 'An implicit technology of generalization,' Journal of Applied Behavior Analysis, 10(2), 349\u2013367; instructional hierarchy (Haring et al., 1978)."
     },
     {
       "term": "grade equivalent",
-      "definition": "A derived score indicating the grade level of students who on average earned the same raw score; often misinterpreted and generally less preferred than standard scores."
+      "definition": "A derived score indicating the grade level of students who on average earned the same raw score; often misinterpreted and generally less preferred than standard scores.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "grade retention",
-      "definition": "Requiring a student to repeat a grade level; research generally does not support retention as an effective long-term academic intervention and may harm social-emotional outcomes."
+      "definition": "Requiring a student to repeat a grade level; research generally does not support retention as an effective long-term academic intervention and may harm social-emotional outcomes.",
+      "citation": "Jimerson, S. R. (2001), 'Meta-analysis of grade retention research: Implications for practice,' School Psychology Review, 30(3), 420\u2013437."
     },
     {
       "term": "graphic organizer",
@@ -702,7 +825,8 @@
     },
     {
       "term": "HIPAA",
-      "definition": "Health Insurance Portability and Accountability Act; federal law protecting the privacy of health information held by healthcare providers; applies to school-based mental health providers."
+      "definition": "Health Insurance Portability and Accountability Act; federal law protecting the privacy of health information held by healthcare providers; applies to school-based mental health providers.",
+      "citation": "Health Insurance Portability and Accountability Act of 1996, Pub. L. No. 104-191; HIPAA Privacy Rule, 45 C.F.R. Parts 160 and 164."
     },
     {
       "term": "history threat",
@@ -714,27 +838,33 @@
     },
     {
       "term": "hyperactivity",
-      "definition": "Excessive, persistent motor activity (fidgeting, leaving seat, running/climbing inappropriately); one of the two core ADHD symptom dimensions; must be impairing across settings."
+      "definition": "Excessive, persistent motor activity (fidgeting, leaving seat, running/climbing inappropriately); one of the two core ADHD symptom dimensions; must be impairing across settings.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "ID",
-      "definition": "Intellectual Disability; a disability characterized by significant limitations in both intellectual functioning (IQ \u2264 ~70) and adaptive behavior, originating before age 18."
+      "definition": "Intellectual Disability; a disability characterized by significant limitations in both intellectual functioning (IQ \u2264 ~70) and adaptive behavior, originating before age 18.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.8(c)(6); American Association on Intellectual and Developmental Disabilities (AAIDD) (2021), Intellectual Disability: Definition, Classification, and Systems of Supports (12th ed.)."
     },
     {
       "term": "IDEA",
-      "definition": "Individuals with Disabilities Education Act; the federal law mandating free appropriate public education for eligible students with disabilities and governing special education services."
+      "definition": "Individuals with Disabilities Education Act; the federal law mandating free appropriate public education for eligible students with disabilities and governing special education services.",
+      "citation": "Individuals with Disabilities Education Act (IDEA), 20 U.S.C. \u00a7 1400 et seq.; 34 C.F.R. Part 300."
     },
     {
       "term": "IEP",
-      "definition": "Individualized Education Program; a legally required written document for each student with a disability specifying present levels, annual goals, special education services, and placement."
+      "definition": "Individualized Education Program; a legally required written document for each student with a disability specifying present levels, annual goals, special education services, and placement.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1414(d); 34 C.F.R. \u00a7\u00a7 300.320\u2013300.324."
     },
     {
       "term": "IEP meeting",
-      "definition": "The required meeting of the IEP team to develop, review, or revise a student's IEP; parents have the right to participate and must receive prior written notice."
+      "definition": "The required meeting of the IEP team to develop, review, or revise a student's IEP; parents have the right to participate and must receive prior written notice.",
+      "citation": "IDEA, 34 C.F.R. \u00a7\u00a7 300.322, 300.324."
     },
     {
       "term": "IEP team",
-      "definition": "The multidisciplinary group legally required to develop and monitor the IEP; must include parents, a general education teacher, a special education teacher, and an LEA representative."
+      "definition": "The multidisciplinary group legally required to develop and monitor the IEP; must include parents, a general education teacher, a special education teacher, and an LEA representative.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.321."
     },
     {
       "term": "implementation fidelity",
@@ -742,19 +872,23 @@
     },
     {
       "term": "implicit bias",
-      "definition": "Unconscious attitudes or stereotypes about social groups that affect judgments and behavior below conscious awareness; contributes to disproportionality in special education referrals."
+      "definition": "Unconscious attitudes or stereotypes about social groups that affect judgments and behavior below conscious awareness; contributes to disproportionality in special education referrals.",
+      "citation": "Greenwald, A. G., & Banaji, M. R. (1995), 'Implicit social cognition: Attitudes, self-esteem, and stereotypes,' Psychological Review, 102(1), 4\u201327."
     },
     {
       "term": "impulsivity",
-      "definition": "Acting without adequate forethought or self-control; a core dimension of ADHD that impairs social relationships, academic performance, and safety."
+      "definition": "Acting without adequate forethought or self-control; a core dimension of ADHD that impairs social relationships, academic performance, and safety.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "inattention",
-      "definition": "Difficulty sustaining focus, following directions, and organizing tasks; one of the two core ADHD symptom dimensions; may present without prominent hyperactivity."
+      "definition": "Difficulty sustaining focus, following directions, and organizing tasks; one of the two core ADHD symptom dimensions; may present without prominent hyperactivity.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "inclusion",
-      "definition": "Educating students with disabilities alongside non-disabled peers in general education settings with appropriate supports; aligned with IDEA's least restrictive environment mandate."
+      "definition": "Educating students with disabilities alongside non-disabled peers in general education settings with appropriate supports; aligned with IDEA's least restrictive environment mandate.",
+      "citation": "Rooted in IDEA's least restrictive environment requirement, 20 U.S.C. \u00a7 1412(a)(5); 34 C.F.R. \u00a7 300.114."
     },
     {
       "term": "independent variable",
@@ -766,27 +900,33 @@
     },
     {
       "term": "individualized education program",
-      "definition": "See IEP; the cornerstone legal document for special education services, individualized for each eligible student with a disability."
+      "definition": "See IEP; the cornerstone legal document for special education services, individualized for each eligible student with a disability.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1414(d); 34 C.F.R. \u00a7\u00a7 300.320\u2013300.324."
     },
     {
       "term": "Individuals with Disabilities Education Act",
-      "definition": "See IDEA; the federal special education law guaranteeing FAPE and procedural safeguards for students with disabilities."
+      "definition": "See IDEA; the federal special education law guaranteeing FAPE and procedural safeguards for students with disabilities.",
+      "citation": "Individuals with Disabilities Education Act (IDEA), 20 U.S.C. \u00a7 1400 et seq.; 34 C.F.R. Part 300."
     },
     {
       "term": "informed consent",
-      "definition": "Voluntary, knowledgeable agreement to participate in an evaluation or service following full disclosure of procedures, risks, benefits, and the right to withdraw."
+      "definition": "Voluntary, knowledgeable agreement to participate in an evaluation or service following full disclosure of procedures, risks, benefits, and the right to withdraw.",
+      "citation": "IDEA definition of consent, 34 C.F.R. \u00a7\u00a7 300.9, 300.300; see also NASP Principles for Professional Ethics (2020)."
     },
     {
       "term": "inhibitory control",
-      "definition": "The ability to suppress prepotent but irrelevant responses and distracting stimuli; a core executive function that is often impaired in ADHD and associated disorders."
+      "definition": "The ability to suppress prepotent but irrelevant responses and distracting stimuli; a core executive function that is often impaired in ADHD and associated disorders.",
+      "citation": "Diamond, A. (2013), 'Executive functions,' Annual Review of Psychology, 64, 135\u2013168."
     },
     {
       "term": "intellectual disability",
-      "definition": "A disability with onset before age 18 characterized by significant limitations in intellectual functioning (IQ \u2264 ~70) and adaptive behavior across conceptual, social, and practical domains."
+      "definition": "A disability with onset before age 18 characterized by significant limitations in intellectual functioning (IQ \u2264 ~70) and adaptive behavior across conceptual, social, and practical domains.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.8(c)(6); American Association on Intellectual and Developmental Disabilities (AAIDD) (2021), Intellectual Disability: Definition, Classification, and Systems of Supports (12th ed.)."
     },
     {
       "term": "intensive intervention",
-      "definition": "Tier 3 support; the most individualized, data-driven instruction for students who do not respond adequately to Tier 1 or Tier 2 interventions; may lead to special education referral."
+      "definition": "Tier 3 support; the most individualized, data-driven instruction for students who do not respond adequately to Tier 1 or Tier 2 interventions; may lead to special education referral.",
+      "citation": "MTSS Tier 3; National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research."
     },
     {
       "term": "interagency collaboration",
@@ -794,7 +934,8 @@
     },
     {
       "term": "internal consistency",
-      "definition": "A reliability estimate measuring how strongly all items on a test correlate with each other, indicating they assess the same underlying construct; typically measured with Cronbach's alpha."
+      "definition": "A reliability estimate measuring how strongly all items on a test correlate with each other, indicating they assess the same underlying construct; typically measured with Cronbach's alpha.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "internal validity",
@@ -802,11 +943,13 @@
     },
     {
       "term": "internalizing",
-      "definition": "Behavioral and emotional problems directed inward (anxiety, depression, somatic complaints, withdrawal); contrasted with externalizing problems."
+      "definition": "Behavioral and emotional problems directed inward (anxiety, depression, somatic complaints, withdrawal); contrasted with externalizing problems.",
+      "citation": "Achenbach, T. M. (1991). Manual for the Child Behavior Checklist/4-18. University of Vermont."
     },
     {
       "term": "interrater reliability",
-      "definition": "The degree to which two or more independent raters assign identical scores or classifications; especially critical for behavioral observation and scoring subjective responses."
+      "definition": "The degree to which two or more independent raters assign identical scores or classifications; especially critical for behavioral observation and scoring subjective responses.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "interview",
@@ -826,35 +969,43 @@
     },
     {
       "term": "language proficiency",
-      "definition": "The degree to which an individual has mastered a language's components (listening, speaking, reading, writing); must be assessed to conduct valid evaluations of ELL students."
+      "definition": "The degree to which an individual has mastered a language's components (listening, speaking, reading, writing); must be assessed to conduct valid evaluations of ELL students.",
+      "citation": "Cummins, J. (1984). Bilingualism and Special Education: Issues in Assessment and Pedagogy. Multilingual Matters (BICS/CALP distinction)."
     },
     {
       "term": "Larry P. v. Riles",
-      "definition": "A 1979 federal ruling finding that IQ tests were culturally biased against African American students; restricted IQ test use for Black students' special education placement in California."
+      "definition": "A 1979 federal ruling finding that IQ tests were culturally biased against African American students; restricted IQ test use for Black students' special education placement in California.",
+      "citation": "Larry P. v. Riles, 793 F.2d 969 (9th Cir. 1984), aff'g 495 F. Supp. 926 (N.D. Cal. 1979)."
     },
     {
       "term": "learning disability",
-      "definition": "See specific learning disability (SLD); an IDEA category involving unexpected academic difficulty in one or more areas despite adequate intelligence and appropriate instruction."
+      "definition": "See specific learning disability (SLD); an IDEA category involving unexpected academic difficulty in one or more areas despite adequate intelligence and appropriate instruction.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.8(c)(10); SLD identification procedures, \u00a7\u00a7 300.307\u2013300.311."
     },
     {
       "term": "least restrictive environment",
-      "definition": "See LRE; the IDEA requirement that students with disabilities be educated alongside non-disabled peers to the maximum extent appropriate."
+      "definition": "See LRE; the IDEA requirement that students with disabilities be educated alongside non-disabled peers to the maximum extent appropriate.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1412(a)(5); 34 C.F.R. \u00a7 300.114."
     },
     {
       "term": "lifelong learning",
-      "definition": "An ongoing commitment to professional growth, skill development, and staying current with research throughout one's career; an ethical obligation under NASP standards."
+      "definition": "An ongoing commitment to professional growth, skill development, and staying current with research throughout one's career; an ethical obligation under NASP standards.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "LRE",
-      "definition": "Least Restrictive Environment; the IDEA principle that students with disabilities must be educated with non-disabled peers to the maximum extent appropriate given their needs."
+      "definition": "Least Restrictive Environment; the IDEA principle that students with disabilities must be educated with non-disabled peers to the maximum extent appropriate given their needs.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1412(a)(5); 34 C.F.R. \u00a7 300.114."
     },
     {
       "term": "mandatory reporting",
-      "definition": "The legal obligation of school professionals to report known or suspected child abuse or neglect to designated authorities; overrides confidentiality obligations."
+      "definition": "The legal obligation of school professionals to report known or suspected child abuse or neglect to designated authorities; overrides confidentiality obligations.",
+      "citation": "Child Abuse Prevention and Treatment Act (CAPTA), 42 U.S.C. \u00a7 5101 et seq.; specific mandated-reporter duties are defined by state statute."
     },
     {
       "term": "manifestation determination",
-      "definition": "A required IDEA review when a student with a disability faces a disciplinary change of placement; determines whether the behavior was caused by or related to the disability or its implementation."
+      "definition": "A required IDEA review when a student with a disability faces a disciplinary change of placement; determines whether the behavior was caused by or related to the disability or its implementation.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.530(e)."
     },
     {
       "term": "mean",
@@ -866,7 +1017,8 @@
     },
     {
       "term": "mediation",
-      "definition": "An IDEA dispute resolution option in which a neutral third party helps parents and school reach voluntary agreement; less adversarial than due process hearings."
+      "definition": "An IDEA dispute resolution option in which a neutral third party helps parents and school reach voluntary agreement; less adversarial than due process hearings.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1415(e); 34 C.F.R. \u00a7 300.506."
     },
     {
       "term": "mental health",
@@ -874,23 +1026,28 @@
     },
     {
       "term": "mental health consultation",
-      "definition": "Caplan's model addressing the mental health needs of clients through the consultee; includes consultee-centered and client-centered forms, and focuses on building consultee capacity."
+      "definition": "Caplan's model addressing the mental health needs of clients through the consultee; includes consultee-centered and client-centered forms, and focuses on building consultee capacity.",
+      "citation": "Caplan, G. (1970). The Theory and Practice of Mental Health Consultation. Basic Books."
     },
     {
       "term": "meta-analysis",
-      "definition": "A statistical method combining results from multiple independent studies to produce a single overall estimate of an intervention's effect; provides stronger evidence than any individual study."
+      "definition": "A statistical method combining results from multiple independent studies to produce a single overall estimate of an intervention's effect; provides stronger evidence than any individual study.",
+      "citation": "Borenstein, M., Hedges, L. V., Higgins, J. P. T., & Rothstein, H. R. (2009). Introduction to Meta-Analysis. Wiley."
     },
     {
       "term": "metacognition",
-      "definition": "Awareness and regulation of one's own thinking and learning processes, including planning, monitoring comprehension, and evaluating strategy effectiveness; strongly linked to academic success."
+      "definition": "Awareness and regulation of one's own thinking and learning processes, including planning, monitoring comprehension, and evaluating strategy effectiveness; strongly linked to academic success.",
+      "citation": "Flavell, J. H. (1979), 'Metacognition and cognitive monitoring,' American Psychologist, 34(10), 906\u2013911."
     },
     {
       "term": "MI",
-      "definition": "Motivational Interviewing; a collaborative, person-centered counseling approach that elicits behavior change by exploring and resolving ambivalence through reflective listening and open-ended questions."
+      "definition": "Motivational Interviewing; a collaborative, person-centered counseling approach that elicits behavior change by exploring and resolving ambivalence through reflective listening and open-ended questions.",
+      "citation": "Miller, W. R., & Rollnick, S. (2013). Motivational Interviewing: Helping People Change (3rd ed.). Guilford Press."
     },
     {
       "term": "Mills v. Board",
-      "definition": "A 1972 federal case establishing that all children with disabilities are entitled to a free public education regardless of the severity of disability or cost to the school district."
+      "definition": "A 1972 federal case establishing that all children with disabilities are entitled to a free public education regardless of the severity of disability or cost to the school district.",
+      "citation": "Mills v. Board of Education of District of Columbia, 348 F. Supp. 866 (D.D.C. 1972)."
     },
     {
       "term": "mnemonic",
@@ -906,19 +1063,23 @@
     },
     {
       "term": "mood disorder",
-      "definition": "A DSM-5 category of disorders characterized by persistent disturbances in emotional tone, including depressive disorders and bipolar and related disorders."
+      "definition": "A DSM-5 category of disorders characterized by persistent disturbances in emotional tone, including depressive disorders and bipolar and related disorders.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "moral development",
-      "definition": "The progression of understanding right, wrong, and ethical reasoning; Kohlberg described three levels: preconventional, conventional, and postconventional reasoning."
+      "definition": "The progression of understanding right, wrong, and ethical reasoning; Kohlberg described three levels: preconventional, conventional, and postconventional reasoning.",
+      "citation": "Kohlberg, L. (1984). The Psychology of Moral Development. Harper & Row."
     },
     {
       "term": "motivational interviewing",
-      "definition": "See MI; a client-centered, directive method using reflective listening, affirmation, and open-ended questions to strengthen an individual's intrinsic motivation for change."
+      "definition": "See MI; a client-centered, directive method using reflective listening, affirmation, and open-ended questions to strengthen an individual's intrinsic motivation for change.",
+      "citation": "Miller, W. R., & Rollnick, S. (2013). Motivational Interviewing: Helping People Change (3rd ed.). Guilford Press."
     },
     {
       "term": "MTSS",
-      "definition": "Multi-Tiered System of Supports; a prevention-oriented framework delivering increasingly intensive levels of instruction and support (Tier 1, 2, 3) based on ongoing student data."
+      "definition": "Multi-Tiered System of Supports; a prevention-oriented framework delivering increasingly intensive levels of instruction and support (Tier 1, 2, 3) based on ongoing student data.",
+      "citation": "Center on Multi-Tiered System of Supports (mtss4success.org), American Institutes for Research, funded by U.S. Dept. of Education OSEP."
     },
     {
       "term": "multi-informant",
@@ -930,7 +1091,8 @@
     },
     {
       "term": "multi-tiered system of supports",
-      "definition": "See MTSS; a framework aligning resources across all students using universal screening, evidence-based instruction, and data-based decision making."
+      "definition": "See MTSS; a framework aligning resources across all students using universal screening, evidence-based instruction, and data-based decision making.",
+      "citation": "Center on Multi-Tiered System of Supports (mtss4success.org), American Institutes for Research, funded by U.S. Dept. of Education OSEP."
     },
     {
       "term": "multicultural",
@@ -946,11 +1108,13 @@
     },
     {
       "term": "NASP ethics",
-      "definition": "The ethical guidelines and professional standards set by the National Association of School Psychologists; govern all aspects of school psychology practice."
+      "definition": "The ethical guidelines and professional standards set by the National Association of School Psychologists; govern all aspects of school psychology practice.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "NASP Principles for Professional Ethics",
-      "definition": "NASP's official ethical code organized around four themes: Responsibility to Students, Responsibility to Schools and Communities, Professional Competency, and Responsibility to the Profession."
+      "definition": "NASP's official ethical code organized around four themes: Responsibility to Students, Responsibility to Schools and Communities, Professional Competency, and Responsibility to the Profession.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "needs assessment",
@@ -958,7 +1122,8 @@
     },
     {
       "term": "negative reinforcement",
-      "definition": "The removal of an aversive stimulus following a behavior, increasing the future probability of that behavior; negative reinforcement is not punishment\u2014it increases behavior."
+      "definition": "The removal of an aversive stimulus following a behavior, increasing the future probability of that behavior; negative reinforcement is not punishment\u2014it increases behavior.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "neurodevelopmental",
@@ -970,7 +1135,8 @@
     },
     {
       "term": "norm-referenced",
-      "definition": "An assessment approach comparing an individual's performance to a standardization sample; yields scores (standard scores, percentile ranks) indicating relative standing."
+      "definition": "An assessment approach comparing an individual's performance to a standardization sample; yields scores (standard scores, percentile ranks) indicating relative standing.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "normal distribution",
@@ -986,15 +1152,18 @@
     },
     {
       "term": "ODD",
-      "definition": "Oppositional Defiant Disorder; a DSM-5 disorder characterized by a persistent pattern of irritable/angry mood, argumentative/defiant behavior, and/or vindictiveness toward authority figures."
+      "definition": "Oppositional Defiant Disorder; a DSM-5 disorder characterized by a persistent pattern of irritable/angry mood, argumentative/defiant behavior, and/or vindictiveness toward authority figures.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "operant conditioning",
-      "definition": "Skinner's model of learning in which behavior is shaped by its consequences; reinforcement increases behavior and punishment decreases it; foundational to behavioral interventions."
+      "definition": "Skinner's model of learning in which behavior is shaped by its consequences; reinforcement increases behavior and punishment decreases it; foundational to behavioral interventions.",
+      "citation": "Skinner, B. F. (1938). The Behavior of Organisms. Appleton-Century-Crofts."
     },
     {
       "term": "oppositional defiant",
-      "definition": "See ODD; characterized by persistent noncompliance, defiance, and hostility directed at authority figures; often co-occurs with ADHD."
+      "definition": "See ODD; characterized by persistent noncompliance, defiance, and hostility directed at authority figures; often co-occurs with ADHD.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "organizational consultation",
@@ -1002,7 +1171,8 @@
     },
     {
       "term": "overrepresentation",
-      "definition": "A disproportionately high percentage of students from a specific demographic group (often racial minorities) in special education or disciplinary categories relative to their share of the school population."
+      "definition": "A disproportionately high percentage of students from a specific demographic group (often racial minorities) in special education or disciplinary categories relative to their share of the school population.",
+      "citation": "IDEA disproportionality provisions, 34 C.F.R. \u00a7\u00a7 300.646\u2013300.647; National Research Council, Donovan & Cross (Eds.) (2002), Minority Students in Special and Gifted Education."
     },
     {
       "term": "p-value",
@@ -1014,7 +1184,8 @@
     },
     {
       "term": "parent rights",
-      "definition": "Legal rights guaranteed to parents under IDEA and FERPA, including rights to consent, access records, participate in IEP meetings, and pursue dispute resolution."
+      "definition": "Legal rights guaranteed to parents under IDEA and FERPA, including rights to consent, access records, participate in IEP meetings, and pursue dispute resolution.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1415; 34 C.F.R. \u00a7\u00a7 300.500\u2013300.520; FERPA, 20 U.S.C. \u00a7 1232g."
     },
     {
       "term": "parent training",
@@ -1022,35 +1193,43 @@
     },
     {
       "term": "PBIS",
-      "definition": "Positive Behavioral Interventions and Supports; a tiered, data-driven framework applying behavioral principles schoolwide to promote positive behavior and prevent problem behavior."
+      "definition": "Positive Behavioral Interventions and Supports; a tiered, data-driven framework applying behavioral principles schoolwide to promote positive behavior and prevent problem behavior.",
+      "citation": "Center on Positive Behavioral Interventions and Supports (pbis.org), U.S. Department of Education, Office of Special Education Programs (OSEP). Referenced in IDEA, 34 C.F.R. \u00a7 300.324(a)(2)(i)."
     },
     {
       "term": "percentile rank",
-      "definition": "A derived score indicating the percentage of the norm group that scored at or below a given raw score; a score at the 75th percentile means the student outperformed 75% of peers."
+      "definition": "A derived score indicating the percentage of the norm group that scored at or below a given raw score; a score at the 75th percentile means the student outperformed 75% of peers.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "phonemic awareness",
-      "definition": "The ability to hear, identify, and manipulate individual phonemes (smallest sound units) in spoken words; the most critical phonological awareness skill for reading acquisition."
+      "definition": "The ability to hear, identify, and manipulate individual phonemes (smallest sound units) in spoken words; the most critical phonological awareness skill for reading acquisition.",
+      "citation": "National Reading Panel (2000), Teaching Children to Read. National Institute of Child Health and Human Development (NICHD)."
     },
     {
       "term": "phonics",
-      "definition": "Instruction explicitly teaching the systematic relationships between letters (graphemes) and sounds (phonemes) to develop word decoding and spelling skills."
+      "definition": "Instruction explicitly teaching the systematic relationships between letters (graphemes) and sounds (phonemes) to develop word decoding and spelling skills.",
+      "citation": "National Reading Panel (2000), Teaching Children to Read. National Institute of Child Health and Human Development (NICHD)."
     },
     {
       "term": "phonological awareness",
-      "definition": "The ability to recognize and manipulate sound structures of language at multiple levels (words, syllables, rhymes, phonemes); a strong predictor of reading success."
+      "definition": "The ability to recognize and manipulate sound structures of language at multiple levels (words, syllables, rhymes, phonemes); a strong predictor of reading success.",
+      "citation": "National Reading Panel (2000), Teaching Children to Read. National Institute of Child Health and Human Development (NICHD)."
     },
     {
       "term": "phonological processing",
-      "definition": "Using sound-based information to process language; includes phonological awareness, phonological working memory (digit span), and rapid automatized naming."
+      "definition": "Using sound-based information to process language; includes phonological awareness, phonological working memory (digit span), and rapid automatized naming.",
+      "citation": "Wagner, R. K., & Torgesen, J. K. (1987), 'The nature of phonological processing and its causal role in the acquisition of reading skills,' Psychological Bulletin, 101(2), 192\u2013212."
     },
     {
       "term": "Piaget",
-      "definition": "Jean Piaget; Swiss developmental psychologist who proposed the four-stage theory of cognitive development: sensorimotor, preoperational, concrete operational, and formal operational."
+      "definition": "Jean Piaget; Swiss developmental psychologist who proposed the four-stage theory of cognitive development: sensorimotor, preoperational, concrete operational, and formal operational.",
+      "citation": "Piaget, J. (1952). The Origins of Intelligence in Children. International Universities Press."
     },
     {
       "term": "play therapy",
-      "definition": "A therapeutic approach using play as the primary medium for communication with children; helps children express feelings, process trauma, and develop adaptive coping strategies."
+      "definition": "A therapeutic approach using play as the primary medium for communication with children; helps children express feelings, process trauma, and develop adaptive coping strategies.",
+      "citation": "Axline, V. M. (1947). Play Therapy. Houghton Mifflin; Landreth, G. L. (2012). Play Therapy: The Art of the Relationship (3rd ed.)."
     },
     {
       "term": "PLC",
@@ -1062,15 +1241,18 @@
     },
     {
       "term": "positive behavior support",
-      "definition": "An evidence-based, function-based approach using proactive, positive strategies and environmental modifications to promote appropriate behavior and prevent problem behavior."
+      "definition": "An evidence-based, function-based approach using proactive, positive strategies and environmental modifications to promote appropriate behavior and prevent problem behavior.",
+      "citation": "Center on Positive Behavioral Interventions and Supports (pbis.org), U.S. Dept. of Education OSEP; Sugai, G., & Horner, R. H. (2009)."
     },
     {
       "term": "positive reinforcement",
-      "definition": "Providing a desired stimulus following a behavior to increase the future probability of that behavior; the most consistently effective strategy for building new behaviors."
+      "definition": "Providing a desired stimulus following a behavior to increase the future probability of that behavior; the most consistently effective strategy for building new behaviors.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "post-traumatic stress",
-      "definition": "Psychological symptoms following exposure to a traumatic event, including intrusive re-experiencing, avoidance, hyperarousal, and negative changes in cognition/mood; see PTSD."
+      "definition": "Psychological symptoms following exposure to a traumatic event, including intrusive re-experiencing, avoidance, hyperarousal, and negative changes in cognition/mood; see PTSD.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "practical significance",
@@ -1082,55 +1264,68 @@
     },
     {
       "term": "pre-referral",
-      "definition": "Interventions and problem-solving efforts implemented before formally referring a student for a special education evaluation; ensures learning difficulties aren't due to lack of instruction."
+      "definition": "Interventions and problem-solving efforts implemented before formally referring a student for a special education evaluation; ensures learning difficulties aren't due to lack of instruction.",
+      "citation": "IDEA child find, 34 C.F.R. \u00a7 300.111; see also RTI/SLD identification, \u00a7\u00a7 300.307\u2013300.311."
     },
     {
       "term": "predictive validity",
-      "definition": "A type of criterion validity in which test scores correlate with a future criterion outcome (e.g., a kindergarten screening predicting first-grade reading achievement)."
+      "definition": "A type of criterion validity in which test scores correlate with a future criterion outcome (e.g., a kindergarten screening predicting first-grade reading achievement).",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "preoperational",
-      "definition": "Piaget's second cognitive stage (ages 2\u20137), characterized by symbolic thinking and language use but limited by egocentrism, centration, and irreversibility."
+      "definition": "Piaget's second cognitive stage (ages 2\u20137), characterized by symbolic thinking and language use but limited by egocentrism, centration, and irreversibility.",
+      "citation": "Piaget's theory of cognitive development; Piaget, J. (1952). The Origins of Intelligence in Children. International Universities Press."
     },
     {
       "term": "prior written notice",
-      "definition": "A written document schools must send to parents before proposing or refusing any change in identification, evaluation, educational placement, or provision of FAPE."
+      "definition": "A written document schools must send to parents before proposing or refusing any change in identification, evaluation, educational placement, or provision of FAPE.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.503."
     },
     {
       "term": "probe",
-      "definition": "A brief, standardized sample used in CBM to quickly measure a student's academic skill (e.g., a 1-minute oral reading fluency passage); administered repeatedly to track growth."
+      "definition": "A brief, standardized sample used in CBM to quickly measure a student's academic skill (e.g., a 1-minute oral reading fluency passage); administered repeatedly to track growth.",
+      "citation": "Curriculum-based measurement; Deno, S. L. (1985), 'Curriculum-based measurement: The emerging alternative,' Exceptional Children, 52(3), 219\u2013232."
     },
     {
       "term": "problem analysis",
-      "definition": "The second phase of the consultation process; identifying why the problem is occurring by analyzing data, generating hypotheses about contributing factors, and selecting an intervention."
+      "definition": "The second phase of the consultation process; identifying why the problem is occurring by analyzing data, generating hypotheses about contributing factors, and selecting an intervention.",
+      "citation": "Bergan, J. R., & Kratochwill, T. R. (1990). Behavioral Consultation and Therapy. Plenum Press."
     },
     {
       "term": "problem identification",
-      "definition": "The first phase of the consultation process; operationally defining the problem, gathering baseline data, and specifying a measurable goal."
+      "definition": "The first phase of the consultation process; operationally defining the problem, gathering baseline data, and specifying a measurable goal.",
+      "citation": "Bergan, J. R., & Kratochwill, T. R. (1990). Behavioral Consultation and Therapy. Plenum Press."
     },
     {
       "term": "problem-solving model",
-      "definition": "A systematic, data-based framework for identifying student needs, analyzing causes, selecting and implementing interventions, and evaluating outcomes; the foundation of MTSS."
+      "definition": "A systematic, data-based framework for identifying student needs, analyzing causes, selecting and implementing interventions, and evaluating outcomes; the foundation of MTSS.",
+      "citation": "Data-based problem-solving model; NASP Model for Comprehensive and Integrated School Psychological Services (2020); Bergan & Kratochwill (1990)."
     },
     {
       "term": "procedural safeguards",
-      "definition": "Legal protections under IDEA ensuring parents' rights throughout the special education process, including notification, consent, records access, and dispute resolution options."
+      "definition": "Legal protections under IDEA ensuring parents' rights throughout the special education process, including notification, consent, records access, and dispute resolution options.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1415; 34 C.F.R. \u00a7\u00a7 300.500\u2013300.536 (safeguards notice at \u00a7 300.504)."
     },
     {
       "term": "processing speed",
-      "definition": "The rate at which a person can perform simple, repetitive cognitive tasks; assessed by subtests like Coding and Symbol Search; slower processing often co-occurs with ADHD and LD."
+      "definition": "The rate at which a person can perform simple, repetitive cognitive tasks; assessed by subtests like Coding and Symbol Search; slower processing often co-occurs with ADHD and LD.",
+      "citation": "Cattell\u2013Horn\u2013Carroll (CHC) theory of cognitive abilities; McGrew, K. S. (2009), Intelligence, 37(1), 1\u201310."
     },
     {
       "term": "professional advocacy",
-      "definition": "Actions by school psychologists to promote the interests of students, families, and the profession at policy, systems, and community levels."
+      "definition": "Actions by school psychologists to promote the interests of students, families, and the profession at policy, systems, and community levels.",
+      "citation": "National Association of School Psychologists (NASP), Model for Comprehensive and Integrated School Psychological Services (2020)."
     },
     {
       "term": "professional boundaries",
-      "definition": "Clearly defined limits protecting the professional relationship; appropriate boundaries prevent dual relationships and maintain the integrity of professional services."
+      "definition": "Clearly defined limits protecting the professional relationship; appropriate boundaries prevent dual relationships and maintain the integrity of professional services.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "professional development",
-      "definition": "Ongoing training, education, and learning activities undertaken to maintain and improve professional competence; an ethical obligation for school psychologists."
+      "definition": "Ongoing training, education, and learning activities undertaken to maintain and improve professional competence; an ethical obligation for school psychologists.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "program evaluation",
@@ -1138,7 +1333,8 @@
     },
     {
       "term": "progress monitoring",
-      "definition": "Frequent, repeated assessment of academic or behavioral performance using validated tools (e.g., CBM) to determine whether an intervention is producing sufficient growth."
+      "definition": "Frequent, repeated assessment of academic or behavioral performance using validated tools (e.g., CBM) to determine whether an intervention is producing sufficient growth.",
+      "citation": "National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research. Deno, S. L. (1985), 'Curriculum-based measurement: The emerging alternative,' Exceptional Children, 52(3), 219\u2013232."
     },
     {
       "term": "psychoeducation",
@@ -1150,15 +1346,18 @@
     },
     {
       "term": "PTSD",
-      "definition": "Post-Traumatic Stress Disorder; a DSM-5 diagnosis following trauma exposure, characterized by intrusive re-experiencing, avoidance, hyperarousal, and negative cognition/mood persisting over a month."
+      "definition": "Post-Traumatic Stress Disorder; a DSM-5 diagnosis following trauma exposure, characterized by intrusive re-experiencing, avoidance, hyperarousal, and negative cognition/mood persisting over a month.",
+      "citation": "American Psychiatric Association, Diagnostic and Statistical Manual of Mental Disorders (5th ed., 2013; text revision DSM-5-TR, 2022)."
     },
     {
       "term": "punishment",
-      "definition": "Any consequence reducing the future probability of a behavior; can be positive (adding aversive stimulus) or negative (removing desired stimulus); generally less preferable than reinforcement-based approaches."
+      "definition": "Any consequence reducing the future probability of a behavior; can be positive (adding aversive stimulus) or negative (removing desired stimulus); generally less preferable than reinforcement-based approaches.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "racial disproportionality",
-      "definition": "The overrepresentation of students from racial minority groups in special education, gifted programs, or disciplinary actions beyond their proportion of the general school population."
+      "definition": "The overrepresentation of students from racial minority groups in special education, gifted programs, or disciplinary actions beyond their proportion of the general school population.",
+      "citation": "IDEA disproportionality provisions, 34 C.F.R. \u00a7\u00a7 300.646\u2013300.647; National Research Council, Donovan & Cross (Eds.) (2002), Minority Students in Special and Gifted Education."
     },
     {
       "term": "random assignment",
@@ -1182,11 +1381,13 @@
     },
     {
       "term": "reading comprehension",
-      "definition": "The ability to understand, interpret, and integrate the meaning of written text; dependent on decoding fluency, vocabulary knowledge, and background knowledge."
+      "definition": "The ability to understand, interpret, and integrate the meaning of written text; dependent on decoding fluency, vocabulary knowledge, and background knowledge.",
+      "citation": "National Reading Panel (2000), Teaching Children to Read. National Institute of Child Health and Human Development (NICHD)."
     },
     {
       "term": "reading fluency",
-      "definition": "The ability to read accurately, at an adequate rate, and with appropriate expression; bridges word-level decoding and text-level comprehension."
+      "definition": "The ability to read accurately, at an adequate rate, and with appropriate expression; bridges word-level decoding and text-level comprehension.",
+      "citation": "National Reading Panel (2000), Teaching Children to Read. National Institute of Child Health and Human Development (NICHD)."
     },
     {
       "term": "records review",
@@ -1194,7 +1395,8 @@
     },
     {
       "term": "reevaluation",
-      "definition": "IDEA-required comprehensive re-evaluation of a student with a disability at least every three years to determine continued eligibility and current educational needs."
+      "definition": "IDEA-required comprehensive re-evaluation of a student with a disability at least every three years to determine continued eligibility and current educational needs.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.303."
     },
     {
       "term": "reflective listening",
@@ -1210,19 +1412,23 @@
     },
     {
       "term": "reinforcement",
-      "definition": "Any consequence that increases the future probability of the behavior it follows; can be positive (adding a desired stimulus) or negative (removing an aversive stimulus)."
+      "definition": "Any consequence that increases the future probability of the behavior it follows; can be positive (adding a desired stimulus) or negative (removing an aversive stimulus).",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "related services",
-      "definition": "Supportive services (speech-language therapy, counseling, transportation, occupational therapy) required to help a student with a disability benefit from special education."
+      "definition": "Supportive services (speech-language therapy, counseling, transportation, occupational therapy) required to help a student with a disability benefit from special education.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1401(26); 34 C.F.R. \u00a7 300.34."
     },
     {
       "term": "reliability",
-      "definition": "The consistency and stability of test scores; a prerequisite for validity; includes test-retest (temporal), internal consistency, and interrater forms."
+      "definition": "The consistency and stability of test scores; a prerequisite for validity; includes test-retest (temporal), internal consistency, and interrater forms.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "reliability coefficient",
-      "definition": "A numerical index (0 to 1.0) expressing the degree of reliability; values of .80 or above are generally considered adequate for high-stakes decisions."
+      "definition": "A numerical index (0 to 1.0) expressing the degree of reliability; values of .80 or above are generally considered adequate for high-stakes decisions.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "resistance",
@@ -1230,19 +1436,23 @@
     },
     {
       "term": "response to intervention",
-      "definition": "See RTI; an early intervention model using tiered instruction and frequent progress monitoring to identify students with learning disabilities; evolved into the broader MTSS framework."
+      "definition": "See RTI; an early intervention model using tiered instruction and frequent progress monitoring to identify students with learning disabilities; evolved into the broader MTSS framework.",
+      "citation": "IDEA, 34 C.F.R. \u00a7\u00a7 300.307\u2013300.311 (permitting RTI in SLD identification); National Center on Response to Intervention (AIR)."
     },
     {
       "term": "restorative justice",
-      "definition": "A disciplinary philosophy focusing on repairing harm, restoring relationships, and rebuilding community rather than punitive consequences for rule violations."
+      "definition": "A disciplinary philosophy focusing on repairing harm, restoring relationships, and rebuilding community rather than punitive consequences for rule violations.",
+      "citation": "International Institute for Restorative Practices (IIRP); Zehr, H. (2002). The Little Book of Restorative Justice. Good Books."
     },
     {
       "term": "restorative practices",
-      "definition": "Proactive and responsive strategies (community-building circles, conferences) that build positive relationships and address conflict by involving affected parties in finding solutions."
+      "definition": "Proactive and responsive strategies (community-building circles, conferences) that build positive relationships and address conflict by involving affected parties in finding solutions.",
+      "citation": "International Institute for Restorative Practices (IIRP)."
     },
     {
       "term": "retention",
-      "definition": "See grade retention; holding a student back a grade level due to insufficient academic progress; generally not supported by research as an effective long-term strategy."
+      "definition": "See grade retention; holding a student back a grade level due to insufficient academic progress; generally not supported by research as an effective long-term strategy.",
+      "citation": "Jimerson, S. R. (2001), 'Meta-analysis of grade retention research,' School Psychology Review, 30(3), 420\u2013437."
     },
     {
       "term": "review",
@@ -1254,19 +1464,23 @@
     },
     {
       "term": "RTI",
-      "definition": "Response to Intervention; a problem-solving model using tiered, data-driven instruction to identify students at risk, provide early intervention, and determine eligibility for special education."
+      "definition": "Response to Intervention; a problem-solving model using tiered, data-driven instruction to identify students at risk, provide early intervention, and determine eligibility for special education.",
+      "citation": "IDEA, 34 C.F.R. \u00a7\u00a7 300.307\u2013300.311 (permitting RTI in SLD identification); National Center on Response to Intervention (AIR)."
     },
     {
       "term": "safety planning",
-      "definition": "A collaborative process creating a concrete plan for individuals at risk of suicide or self-harm, including warning signs, coping strategies, support contacts, and means restriction."
+      "definition": "A collaborative process creating a concrete plan for individuals at risk of suicide or self-harm, including warning signs, coping strategies, support contacts, and means restriction.",
+      "citation": "Stanley, B., & Brown, G. K. (2012), 'Safety Planning Intervention,' Cognitive and Behavioral Practice, 19(2), 256\u2013264."
     },
     {
       "term": "scaffolding",
-      "definition": "Vygotsky's concept of temporary, adjustable support (hints, modeling, prompting) provided by a more capable person to help a learner accomplish tasks within the ZPD; gradually faded as skill grows."
+      "definition": "Vygotsky's concept of temporary, adjustable support (hints, modeling, prompting) provided by a more capable person to help a learner accomplish tasks within the ZPD; gradually faded as skill grows.",
+      "citation": "Term introduced by Wood, D., Bruner, J. S., & Ross, G. (1976), 'The role of tutoring in problem solving,' Journal of Child Psychology and Psychiatry, 17(2), 89\u2013100; grounded in Vygotsky's ZPD (1978)."
     },
     {
       "term": "scaled score",
-      "definition": "A derived score with a mean of 10 and standard deviation of 3, commonly used for cognitive and achievement test subtests; allows comparison across different subtests."
+      "definition": "A derived score with a mean of 10 and standard deviation of 3, commonly used for cognitive and achievement test subtests; allows comparison across different subtests.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "scatter plot",
@@ -1274,7 +1488,8 @@
     },
     {
       "term": "school climate",
-      "definition": "The social, physical, and emotional quality of the school environment; positive school climate is linked to better academic achievement, attendance, and social-emotional wellbeing."
+      "definition": "The social, physical, and emotional quality of the school environment; positive school climate is linked to better academic achievement, attendance, and social-emotional wellbeing.",
+      "citation": "National School Climate Center; Thapa, A., et al. (2013), 'A review of school climate research,' Review of Educational Research, 83(3), 357\u2013385."
     },
     {
       "term": "school safety",
@@ -1282,23 +1497,28 @@
     },
     {
       "term": "scope of competence",
-      "definition": "The range of professional activities for which a practitioner has adequate training and supervised experience; ethical practice requires staying within this boundary."
+      "definition": "The range of professional activities for which a practitioner has adequate training and supervised experience; ethical practice requires staying within this boundary.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "scope of practice",
-      "definition": "The range of professional activities a practitioner is authorized to perform based on training, licensure, certification, and role definition."
+      "definition": "The range of professional activities a practitioner is authorized to perform based on training, licensure, certification, and role definition.",
+      "citation": "NASP Principles for Professional Ethics (2020); state licensure and certification statutes."
     },
     {
       "term": "score interpretation",
-      "definition": "Giving meaning to assessment scores by comparing them to norms, applying confidence intervals, considering test reliability, and integrating with all available data."
+      "definition": "Giving meaning to assessment scores by comparing them to norms, applying confidence intervals, considering test reliability, and integrating with all available data.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "Section 504",
-      "definition": "A civil rights law (Rehabilitation Act) prohibiting discrimination based on disability in programs receiving federal funds; provides accommodations without requiring IDEA eligibility."
+      "definition": "A civil rights law (Rehabilitation Act) prohibiting discrimination based on disability in programs receiving federal funds; provides accommodations without requiring IDEA eligibility.",
+      "citation": "Section 504 of the Rehabilitation Act of 1973, 29 U.S.C. \u00a7 794; 34 C.F.R. Part 104."
     },
     {
       "term": "SEL",
-      "definition": "Social-Emotional Learning; evidence-based approaches to developing self-awareness, self-management, social awareness, relationship skills, and responsible decision-making."
+      "definition": "Social-Emotional Learning; evidence-based approaches to developing self-awareness, self-management, social awareness, relationship skills, and responsible decision-making.",
+      "citation": "Collaborative for Academic, Social, and Emotional Learning (CASEL), CASEL Framework (casel.org)."
     },
     {
       "term": "self-harm",
@@ -1306,15 +1526,18 @@
     },
     {
       "term": "self-management",
-      "definition": "A set of behavioral strategies (self-monitoring, self-evaluation, self-reinforcement) enabling students to regulate their own behavior with decreasing external support."
+      "definition": "A set of behavioral strategies (self-monitoring, self-evaluation, self-reinforcement) enabling students to regulate their own behavior with decreasing external support.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "self-monitoring",
-      "definition": "A self-management strategy where students observe and record their own behavior or attention; increases awareness and has been shown to improve on-task behavior."
+      "definition": "A self-management strategy where students observe and record their own behavior or attention; increases awareness and has been shown to improve on-task behavior.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "self-regulated learning",
-      "definition": "The metacognitive ability to plan, monitor, and evaluate one's own learning strategies; students who self-regulate learn more effectively and independently."
+      "definition": "The metacognitive ability to plan, monitor, and evaluate one's own learning strategies; students who self-regulate learn more effectively and independently.",
+      "citation": "Zimmerman, B. J. (2002), 'Becoming a self-regulated learner: An overview,' Theory Into Practice, 41(2), 64\u201370."
     },
     {
       "term": "self-regulation",
@@ -1322,27 +1545,33 @@
     },
     {
       "term": "SEM",
-      "definition": "Standard Error of Measurement; an estimate of the typical amount of random error in a test score; used to construct confidence intervals and interpret score differences."
+      "definition": "Standard Error of Measurement; an estimate of the typical amount of random error in a test score; used to construct confidence intervals and interpret score differences.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "sensitivity",
-      "definition": "A psychometric property of a screening tool; the proportion of individuals with the condition correctly identified as positive (true positive rate); high sensitivity minimizes false negatives."
+      "definition": "A psychometric property of a screening tool; the proportion of individuals with the condition correctly identified as positive (true positive rate); high sensitivity minimizes false negatives.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "sensorimotor",
-      "definition": "Piaget's first cognitive stage (birth to age 2) in which infants develop knowledge through sensory experiences and motor actions; culminates in object permanence."
+      "definition": "Piaget's first cognitive stage (birth to age 2) in which infants develop knowledge through sensory experiences and motor actions; culminates in object permanence.",
+      "citation": "Piaget's theory of cognitive development; Piaget, J. (1952). The Origins of Intelligence in Children. International Universities Press."
     },
     {
       "term": "SFBT",
-      "definition": "Solution-Focused Brief Therapy; a strengths-based, short-term approach focused on building solutions and future goals rather than analyzing problems and their origins."
+      "definition": "Solution-Focused Brief Therapy; a strengths-based, short-term approach focused on building solutions and future goals rather than analyzing problems and their origins.",
+      "citation": "de Shazer, S. (1985). Keys to Solution in Brief Therapy. Norton; de Shazer & Berg."
     },
     {
       "term": "shaping",
-      "definition": "A behavioral technique for building new, complex behaviors by reinforcing successive approximations to the target behavior; useful when the full behavior is not yet in the learner's repertoire."
+      "definition": "A behavioral technique for building new, complex behaviors by reinforcing successive approximations to the target behavior; useful when the full behavior is not yet in the learner's repertoire.",
+      "citation": "Cooper, J. O., Heron, T. E., & Heward, W. L. (2020). Applied Behavior Analysis (3rd ed.). Pearson."
     },
     {
       "term": "SLD",
-      "definition": "Specific Learning Disability; an IDEA eligibility category covering disorders in one or more basic psychological processes affecting academic achievement in reading, math, or written expression."
+      "definition": "Specific Learning Disability; an IDEA eligibility category covering disorders in one or more basic psychological processes affecting academic achievement in reading, math, or written expression.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.8(c)(10); SLD identification procedures, \u00a7\u00a7 300.307\u2013300.311."
     },
     {
       "term": "social communication",
@@ -1354,11 +1583,13 @@
     },
     {
       "term": "social justice",
-      "definition": "The pursuit of equitable access to rights, resources, and opportunities, particularly for historically marginalized groups; an increasingly central value in school psychology ethics."
+      "definition": "The pursuit of equitable access to rights, resources, and opportunities, particularly for historically marginalized groups; an increasingly central value in school psychology ethics.",
+      "citation": "NASP Principles for Professional Ethics (2020); NASP position statements on social justice."
     },
     {
       "term": "social promotion",
-      "definition": "Advancing a student to the next grade level despite inadequate academic performance to avoid retention's social stigma; may perpetuate academic gaps if needs go unaddressed."
+      "definition": "Advancing a student to the next grade level despite inadequate academic performance to avoid retention's social stigma; may perpetuate academic gaps if needs go unaddressed.",
+      "citation": "Jimerson, S. R. (2001), School Psychology Review, 30(3), 420\u2013437 (research on retention and promotion)."
     },
     {
       "term": "social skills training",
@@ -1370,23 +1601,28 @@
     },
     {
       "term": "social-emotional learning",
-      "definition": "See SEL; a framework for explicitly teaching self-awareness, empathy, responsible decision-making, and relationship skills to improve student outcomes."
+      "definition": "See SEL; a framework for explicitly teaching self-awareness, empathy, responsible decision-making, and relationship skills to improve student outcomes.",
+      "citation": "Collaborative for Academic, Social, and Emotional Learning (CASEL), CASEL Framework (casel.org)."
     },
     {
       "term": "solution-focused brief therapy",
-      "definition": "See SFBT; a brief therapeutic model emphasizing client strengths, exceptions to problems, and concrete, achievable goals."
+      "definition": "See SFBT; a brief therapeutic model emphasizing client strengths, exceptions to problems, and concrete, achievable goals.",
+      "citation": "de Shazer, S. (1985). Keys to Solution in Brief Therapy. Norton; de Shazer & Berg."
     },
     {
       "term": "special education referral",
-      "definition": "The formal request initiating a comprehensive evaluation to determine whether a student qualifies for special education under IDEA; must be followed by evaluation within required timelines."
+      "definition": "The formal request initiating a comprehensive evaluation to determine whether a student qualifies for special education under IDEA; must be followed by evaluation within required timelines.",
+      "citation": "IDEA child find and evaluation provisions, 34 C.F.R. \u00a7\u00a7 300.111, 300.301."
     },
     {
       "term": "specific learning disability",
-      "definition": "See SLD; an IDEA disability category involving unexpected academic difficulty in reading, math, or written expression despite adequate intelligence and appropriate instruction."
+      "definition": "See SLD; an IDEA disability category involving unexpected academic difficulty in reading, math, or written expression despite adequate intelligence and appropriate instruction.",
+      "citation": "IDEA, 34 C.F.R. \u00a7 300.8(c)(10); SLD identification procedures, \u00a7\u00a7 300.307\u2013300.311."
     },
     {
       "term": "specificity",
-      "definition": "A psychometric property of a screening tool; the proportion of individuals without the condition correctly identified as negative (true negative rate); high specificity minimizes false positives."
+      "definition": "A psychometric property of a screening tool; the proportion of individuals without the condition correctly identified as negative (true negative rate); high specificity minimizes false positives.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "speech-language",
@@ -1398,11 +1634,13 @@
     },
     {
       "term": "standard error of measurement",
-      "definition": "See SEM; an index of score reliability indicating the typical random error in any single obtained score."
+      "definition": "See SEM; an index of score reliability indicating the typical random error in any single obtained score.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "standard score",
-      "definition": "A derived score with a fixed mean (typically 100) and standard deviation (typically 15) that places performance in context of the norm group."
+      "definition": "A derived score with a fixed mean (typically 100) and standard deviation (typically 15) that places performance in context of the norm group.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "statistical significance",
@@ -1410,19 +1648,23 @@
     },
     {
       "term": "stereotype threat",
-      "definition": "A situational phenomenon where awareness of a negative stereotype about one's group harms performance; relevant to standardized testing with students from stigmatized groups."
+      "definition": "A situational phenomenon where awareness of a negative stereotype about one's group harms performance; relevant to standardized testing with students from stigmatized groups.",
+      "citation": "Steele, C. M., & Aronson, J. (1995), 'Stereotype threat and the intellectual test performance of African Americans,' Journal of Personality and Social Psychology, 69(5), 797\u2013811."
     },
     {
       "term": "suicidality",
-      "definition": "The continuum of suicidal thoughts, communications, plans, and behaviors; requires prompt, structured risk assessment and safety planning."
+      "definition": "The continuum of suicidal thoughts, communications, plans, and behaviors; requires prompt, structured risk assessment and safety planning.",
+      "citation": "Columbia-Suicide Severity Rating Scale (C-SSRS); Posner, K., et al. (2011), American Journal of Psychiatry, 168(12), 1266\u20131277."
     },
     {
       "term": "suicide prevention",
-      "definition": "Proactive schoolwide strategies including gatekeeper training, universal screening, means restriction, and crisis response planning to reduce student suicide risk."
+      "definition": "Proactive schoolwide strategies including gatekeeper training, universal screening, means restriction, and crisis response planning to reduce student suicide risk.",
+      "citation": "SAMHSA Suicide Prevention Resource Center; American Foundation for Suicide Prevention."
     },
     {
       "term": "suicide risk",
-      "definition": "The likelihood that an individual will engage in suicidal behavior; assessed through structured interviews examining ideation, plan, intent, means, and protective factors."
+      "definition": "The likelihood that an individual will engage in suicidal behavior; assessed through structured interviews examining ideation, plan, intent, means, and protective factors.",
+      "citation": "Columbia-Suicide Severity Rating Scale (C-SSRS); Posner, K., et al. (2011), American Journal of Psychiatry, 168(12), 1266\u20131277."
     },
     {
       "term": "summarizing",
@@ -1434,15 +1676,18 @@
     },
     {
       "term": "supervisory relationship",
-      "definition": "A professional relationship in which a more experienced practitioner provides oversight, guidance, and feedback to a supervisee; governed by ethical standards in school psychology."
+      "definition": "A professional relationship in which a more experienced practitioner provides oversight, guidance, and feedback to a supervisee; governed by ethical standards in school psychology.",
+      "citation": "National Association of School Psychologists (NASP), Principles for Professional Ethics (2020)."
     },
     {
       "term": "supplementary aids",
-      "definition": "Supports and services provided in general education settings to enable students with disabilities to be educated with non-disabled peers; part of the LRE continuum."
+      "definition": "Supports and services provided in general education settings to enable students with disabilities to be educated with non-disabled peers; part of the LRE continuum.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1401(33); 34 C.F.R. \u00a7 300.42."
     },
     {
       "term": "suspension",
-      "definition": "Temporary exclusion from school as a disciplinary consequence; subject to special protections under IDEA for students with disabilities, particularly beyond 10 cumulative days."
+      "definition": "Temporary exclusion from school as a disciplinary consequence; subject to special protections under IDEA for students with disabilities, particularly beyond 10 cumulative days.",
+      "citation": "IDEA discipline procedures, 34 C.F.R. \u00a7\u00a7 300.530\u2013300.536."
     },
     {
       "term": "systematic review",
@@ -1458,15 +1703,18 @@
     },
     {
       "term": "T-score",
-      "definition": "A derived score with a mean of 50 and standard deviation of 10; commonly used on behavior rating scales (e.g., BASC-3); scores \u2265 60\u201370 typically indicate clinical concern."
+      "definition": "A derived score with a mean of 50 and standard deviation of 10; commonly used on behavior rating scales (e.g., BASC-3); scores \u2265 60\u201370 typically indicate clinical concern.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "Tarasoff",
-      "definition": "Tarasoff v. Regents of the University of California (1976); established the 'duty to warn' \u2014 therapists must take reasonable steps to protect identifiable potential victims of credible threats."
+      "definition": "Tarasoff v. Regents of the University of California (1976); established the 'duty to warn' \u2014 therapists must take reasonable steps to protect identifiable potential victims of credible threats.",
+      "citation": "Tarasoff v. Regents of the University of California, 17 Cal. 3d 425, 551 P.2d 334 (1976)."
     },
     {
       "term": "targeted intervention",
-      "definition": "Tier 2 support; supplemental, evidence-based instruction for students not adequately responding to Tier 1; typically small group and more frequent than universal support."
+      "definition": "Tier 2 support; supplemental, evidence-based instruction for students not adequately responding to Tier 1; typically small group and more frequent than universal support.",
+      "citation": "MTSS Tier 2; Center on PBIS (pbis.org)."
     },
     {
       "term": "test",
@@ -1474,39 +1722,48 @@
     },
     {
       "term": "test-retest reliability",
-      "definition": "A reliability measure of temporal stability; the correlation between scores from two administrations of the same test at different times; important for progress monitoring tools."
+      "definition": "A reliability measure of temporal stability; the correlation between scores from two administrations of the same test at different times; important for progress monitoring tools.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "test-teach-retest",
-      "definition": "The dynamic assessment format in which a baseline is measured, brief mediated instruction is provided, and the student is re-assessed to measure responsiveness to instruction."
+      "definition": "The dynamic assessment format in which a baseline is measured, brief mediated instruction is provided, and the student is re-assessed to measure responsiveness to instruction.",
+      "citation": "Dynamic assessment; Lidz, C. S. (1987). Dynamic Assessment. Guilford Press."
     },
     {
       "term": "threat assessment",
-      "definition": "A structured, multidisciplinary process for evaluating the seriousness of a threat to determine the appropriate safety and supportive response."
+      "definition": "A structured, multidisciplinary process for evaluating the seriousness of a threat to determine the appropriate safety and supportive response.",
+      "citation": "U.S. Secret Service National Threat Assessment Center (NTAC); Cornell, D. G., Comprehensive School Threat Assessment Guidelines (CSTAG)."
     },
     {
       "term": "threat assessment team",
-      "definition": "A multidisciplinary school team (administrator, psychologist, counselor, law enforcement) trained to evaluate threats and coordinate appropriate safety and intervention responses."
+      "definition": "A multidisciplinary school team (administrator, psychologist, counselor, law enforcement) trained to evaluate threats and coordinate appropriate safety and intervention responses.",
+      "citation": "U.S. Secret Service National Threat Assessment Center (NTAC); Cornell, D. G., Comprehensive School Threat Assessment Guidelines (CSTAG)."
     },
     {
       "term": "Tier 1",
-      "definition": "Universal, whole-school or whole-class core instruction and supports provided to all students; the foundation of MTSS; approximately 80% of students should respond adequately."
+      "definition": "Universal, whole-school or whole-class core instruction and supports provided to all students; the foundation of MTSS; approximately 80% of students should respond adequately.",
+      "citation": "MTSS/PBIS framework; Center on PBIS (pbis.org)."
     },
     {
       "term": "Tier 2",
-      "definition": "Targeted, supplemental intervention for the approximately 15% of students who do not adequately respond to Tier 1; typically small-group, evidence-based, and more frequent."
+      "definition": "Targeted, supplemental intervention for the approximately 15% of students who do not adequately respond to Tier 1; typically small-group, evidence-based, and more frequent.",
+      "citation": "MTSS/PBIS framework; Center on PBIS (pbis.org)."
     },
     {
       "term": "Tier 3",
-      "definition": "Intensive, individualized intervention for the approximately 5% of students not responding to Tier 1 and 2 supports; most data-intensive level; may include special education referral."
+      "definition": "Intensive, individualized intervention for the approximately 5% of students not responding to Tier 1 and 2 supports; most data-intensive level; may include special education referral.",
+      "citation": "MTSS/PBIS framework; Center on PBIS (pbis.org); National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research."
     },
     {
       "term": "token economy",
-      "definition": "A behavioral system in which students earn tokens for target behaviors that are later exchanged for preferred backup reinforcers; effective for increasing appropriate classroom behavior."
+      "definition": "A behavioral system in which students earn tokens for target behaviors that are later exchanged for preferred backup reinforcers; effective for increasing appropriate classroom behavior.",
+      "citation": "Ayllon, T., & Azrin, N. H. (1968). The Token Economy: A Motivational System for Therapy and Rehabilitation. Appleton-Century-Crofts; Cooper, Heron, & Heward (2020)."
     },
     {
       "term": "transition planning",
-      "definition": "An IDEA-required IEP component for students aged 16+ (or younger per state) that coordinates services supporting post-secondary education, employment, and independent living goals."
+      "definition": "An IDEA-required IEP component for students aged 16+ (or younger per state) that coordinates services supporting post-secondary education, employment, and independent living goals.",
+      "citation": "IDEA, 20 U.S.C. \u00a7 1401(34); 34 C.F.R. \u00a7\u00a7 300.43, 300.320(b)."
     },
     {
       "term": "trauma",
@@ -1514,7 +1771,8 @@
     },
     {
       "term": "trauma-informed",
-      "definition": "A practice approach recognizing the pervasive effects of trauma and integrating this awareness into systems, policies, and services to prevent re-traumatization."
+      "definition": "A practice approach recognizing the pervasive effects of trauma and integrating this awareness into systems, policies, and services to prevent re-traumatization.",
+      "citation": "Substance Abuse and Mental Health Services Administration (SAMHSA) (2014). SAMHSA's Concept of Trauma and Guidance for a Trauma-Informed Approach."
     },
     {
       "term": "treatment integrity",
@@ -1522,27 +1780,33 @@
     },
     {
       "term": "true positive",
-      "definition": "A screening result correctly identifying someone who has the target condition; the desired outcome in early identification efforts."
+      "definition": "A screening result correctly identifying someone who has the target condition; the desired outcome in early identification efforts.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "UDL",
-      "definition": "Universal Design for Learning; a proactive instructional framework providing flexible means of representation, expression, and engagement to address diverse learner needs from the outset."
+      "definition": "Universal Design for Learning; a proactive instructional framework providing flexible means of representation, expression, and engagement to address diverse learner needs from the outset.",
+      "citation": "Universal design for learning, defined at 20 U.S.C. \u00a7 1003(24) (Higher Education Opportunity Act of 2008); CAST (cast.org), UDL Guidelines."
     },
     {
       "term": "universal design for learning",
-      "definition": "See UDL; a framework for designing instruction that is flexible and accessible for all learners, reducing the need for individual accommodations after the fact."
+      "definition": "See UDL; a framework for designing instruction that is flexible and accessible for all learners, reducing the need for individual accommodations after the fact.",
+      "citation": "Universal design for learning, defined at 20 U.S.C. \u00a7 1003(24) (Higher Education Opportunity Act of 2008); CAST (cast.org), UDL Guidelines."
     },
     {
       "term": "universal intervention",
-      "definition": "Tier 1 support; evidence-based instruction and prevention programs delivered to all students regardless of risk level."
+      "definition": "Tier 1 support; evidence-based instruction and prevention programs delivered to all students regardless of risk level.",
+      "citation": "MTSS Tier 1; Center on PBIS (pbis.org)."
     },
     {
       "term": "universal screening",
-      "definition": "Brief, low-cost assessments administered to all students at regular intervals to identify those at risk for academic or social-emotional difficulties before they become severe."
+      "definition": "Brief, low-cost assessments administered to all students at regular intervals to identify those at risk for academic or social-emotional difficulties before they become severe.",
+      "citation": "National Center on Intensive Intervention (intensiveintervention.org), American Institutes for Research."
     },
     {
       "term": "validity",
-      "definition": "The degree to which a test accurately measures what it claims to measure and supports appropriate interpretations; validity is the most fundamental characteristic of any assessment tool."
+      "definition": "The degree to which a test accurately measures what it claims to measure and supports appropriate interpretations; validity is the most fundamental characteristic of any assessment tool.",
+      "citation": "American Educational Research Association, American Psychological Association, & National Council on Measurement in Education, Standards for Educational and Psychological Testing (2014)."
     },
     {
       "term": "variance",
@@ -1550,7 +1814,8 @@
     },
     {
       "term": "Vineland",
-      "definition": "Vineland Adaptive Behavior Scales; a standardized, norm-referenced assessment of adaptive behavior across communication, daily living skills, socialization, and motor domains."
+      "definition": "Vineland Adaptive Behavior Scales; a standardized, norm-referenced assessment of adaptive behavior across communication, daily living skills, socialization, and motor domains.",
+      "citation": "Sparrow, S. S., Cicchetti, D. V., & Saulnier, C. A., Vineland Adaptive Behavior Scales (Vineland-3, 2016). Pearson."
     },
     {
       "term": "visual processing",
@@ -1558,27 +1823,33 @@
     },
     {
       "term": "Vygotsky",
-      "definition": "Lev Vygotsky; Russian psychologist emphasizing the social context of learning, the Zone of Proximal Development (ZPD), and scaffolding; influential in dynamic assessment and instruction."
+      "definition": "Lev Vygotsky; Russian psychologist emphasizing the social context of learning, the Zone of Proximal Development (ZPD), and scaffolding; influential in dynamic assessment and instruction.",
+      "citation": "Vygotsky, L. S. (1978). Mind in Society: The Development of Higher Psychological Processes. Harvard University Press."
     },
     {
       "term": "WISC",
-      "definition": "Wechsler Intelligence Scale for Children; one of the most widely used cognitive tests for children ages 6\u201316; yields a Full Scale IQ, Index scores, and subtest scores."
+      "definition": "Wechsler Intelligence Scale for Children; one of the most widely used cognitive tests for children ages 6\u201316; yields a Full Scale IQ, Index scores, and subtest scores.",
+      "citation": "Wechsler, D., Wechsler Intelligence Scale for Children (WISC-V, 2014). Pearson."
     },
     {
       "term": "WJ",
-      "definition": "Woodcock-Johnson Tests; a comprehensive battery of cognitive ability and academic achievement tests widely used in psychoeducational evaluations."
+      "definition": "Woodcock-Johnson Tests; a comprehensive battery of cognitive ability and academic achievement tests widely used in psychoeducational evaluations.",
+      "citation": "Schrank, F. A., McGrew, K. S., & Mather, N., Woodcock-Johnson IV (2014). Riverside Insights."
     },
     {
       "term": "working memory",
-      "definition": "The ability to temporarily hold and manipulate information while performing a cognitive task; a core executive function strongly predictive of academic performance."
+      "definition": "The ability to temporarily hold and manipulate information while performing a cognitive task; a core executive function strongly predictive of academic performance.",
+      "citation": "Baddeley, A. D., & Hitch, G. (1974), 'Working memory,' in The Psychology of Learning and Motivation; Baddeley, A. (2000)."
     },
     {
       "term": "wraparound",
-      "definition": "An individualized, collaborative planning process for students with complex needs that coordinates services across family, school, and community systems."
+      "definition": "An individualized, collaborative planning process for students with complex needs that coordinates services across family, school, and community systems.",
+      "citation": "National Wraparound Initiative; Bruns, E. J., & Walker, J. S. (2010). The Resource Guide to Wraparound."
     },
     {
       "term": "wraparound services",
-      "definition": "Comprehensive, coordinated services provided across multiple systems (school, mental health, social services, juvenile justice) for students and families with complex or multiple needs."
+      "definition": "Comprehensive, coordinated services provided across multiple systems (school, mental health, social services, juvenile justice) for students and families with complex or multiple needs.",
+      "citation": "National Wraparound Initiative; Bruns, E. J., & Walker, J. S. (2010). The Resource Guide to Wraparound."
     },
     {
       "term": "z-score",
@@ -1586,7 +1857,8 @@
     },
     {
       "term": "zone of proximal development",
-      "definition": "Vygotsky's concept describing the range of tasks a learner can perform with guidance but not independently; the optimal instructional target, addressed through scaffolding."
+      "definition": "Vygotsky's concept describing the range of tasks a learner can perform with guidance but not independently; the optimal instructional target, addressed through scaffolding.",
+      "citation": "Vygotsky, L. S. (1978). Mind in Society: The Development of Higher Psychological Processes. Harvard University Press."
     }
   ]
 }
