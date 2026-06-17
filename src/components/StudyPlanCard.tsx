@@ -3,6 +3,7 @@ import { AlertTriangle, BookOpen, ChevronDown, ChevronRight, ChevronUp, Clock, R
 import { StudyPlanDocumentV2, StudyConstraints, StudyPlanHistoryEntry } from '../services/studyPlanService';
 import StudyConstraintsForm from './StudyConstraintsForm';
 import StudyPlanViewer from './StudyPlanViewer';
+import StagedStudyGuide from './StagedStudyGuide';
 
 interface StudyPlanCardProps {
   history: StudyPlanHistoryEntry[];
@@ -11,6 +12,10 @@ interface StudyPlanCardProps {
   error: string | null;
   canGenerate: boolean;
   onGenerate: (constraints: StudyConstraints) => void;
+  /** Optional practice launchers wired into the staged view's Practice/Review/Test buttons. */
+  onPracticeDomain?: (domainId: number) => void;
+  onReviewDomain?: (domainId: number) => void;
+  onTestDomain?: (domainId: number) => void;
 }
 
 function readinessLabel(level: StudyPlanDocumentV2['readinessSnapshot']['readinessLevel']): string {
@@ -38,6 +43,9 @@ export default function StudyPlanCard({
   error,
   canGenerate,
   onGenerate,
+  onPracticeDomain,
+  onReviewDomain,
+  onTestDomain,
 }: StudyPlanCardProps) {
   const [constraints, setConstraints] = useState<StudyConstraints>({
     studyDaysPerWeek:  5,
@@ -48,6 +56,8 @@ export default function StudyPlanCard({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(true);
+  // Staged (lighter) view is the default; users can drop into the full 6-tab viewer.
+  const [planView, setPlanView] = useState<'staged' | 'detailed'>('staged');
 
   const activePlan = history.find(e => e.id === selectedId)?.plan ?? history[0]?.plan ?? null;
 
@@ -222,7 +232,27 @@ export default function StudyPlanCard({
             </button>
           </div>
 
-          {planOpen && <StudyPlanViewer plan={activePlan} />}
+          {planOpen && (
+            planView === 'staged' ? (
+              <StagedStudyGuide
+                plan={activePlan}
+                onPractice={onPracticeDomain}
+                onReview={onReviewDomain}
+                onTest={onTestDomain}
+                onOpenDetailed={() => setPlanView('detailed')}
+              />
+            ) : (
+              <div>
+                <button
+                  onClick={() => setPlanView('staged')}
+                  className="text-xs font-semibold text-slate-400 hover:text-indigo-600 transition mb-3"
+                >
+                  ← Back to simple view
+                </button>
+                <StudyPlanViewer plan={activePlan} />
+              </div>
+            )
+          )}
         </div>
       )}
     </section>

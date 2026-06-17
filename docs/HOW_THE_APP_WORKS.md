@@ -474,10 +474,19 @@ Generation runs as a background process and typically completes within about a m
 
 The study guide is wrapped in a 3-tab layout:
 - **Tab 1: "Platform Guide"** — static how-to cards explaining all 6 features (Adaptive Diagnostic, Learning Path, Term Sprint, Spaced Review, Redemption Rounds, AI Tutor). Shown by default if no plan exists.
-- **Tab 2: "Your Study Plan"** — the AI-generated study plan (default tab when a plan exists). Contains the 6 inner tabs described below.
+- **Tab 2: "Your Study Plan"** — the AI-generated study plan (default tab when a plan exists). Opens in a lighter **staged view** by default (below); a **"Detailed view"** link switches to the full 6-inner-tab viewer.
 - **Tab 3: "Vocabulary"** — link to the glossary page and Term Sprint CTA.
 
-#### Inner Tabs (inside "Your Study Plan")
+#### Staged view (default presentation of "Your Study Plan")
+
+A lighter, less-overwhelming reframe of the **same** plan data — no regeneration, no new fields. Two stages, switched by a toggle:
+
+- **Stage 1 · "Where you stand"** — a readiness-snapshot banner (overall %, readiness level, test date, next best move, strongest area) followed by **one card per domain**, sorted worst-first ("start with the red ones"). Each card shows a score chip with proficiency label, a plain-English "What this means" interpretation, "One thing to watch" (a common trap or key term), and three actions: **Practice** (adaptive practice for that domain), **Review** (revisit missed questions via Redemption Rounds), and **Test** (a short practice check).
+- **Stage 2 · "Your plan"** — a **Bare minimum vs Intentional** depth toggle. *Bare minimum* lists the plan's immediate actions plus a "don't waste time on" avoid-list. *Intentional* (available when ≥ 3 weeks to test) shows the week-by-week schedule with goals and checkpoints.
+
+A **"Detailed view"** link opens the full viewer below.
+
+#### Inner Tabs (inside "Your Study Plan" — Detailed view)
 
 **Overview tab**
 Your readiness level with a plain-language summary of where you stand, key insights pulled from your data, and patterns the system observed in your answer history.
