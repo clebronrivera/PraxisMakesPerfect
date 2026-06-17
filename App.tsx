@@ -82,6 +82,7 @@ type StudyGuideTab = 'platform' | 'plan' | 'vocabulary';
 function StudyGuideTabWrapper({
   studyPlanHistory, studyPlanGenerating, studyPlanLoading, studyPlanError,
   canGenerateStudyPlan, handleGenerateStudyPlan, onNavigateToGlossary,
+  onPracticeDomain, onReviewDomain, onTestDomain,
 }: {
   studyPlanHistory: StudyPlanHistoryEntry[];
   studyPlanGenerating: boolean;
@@ -90,6 +91,9 @@ function StudyGuideTabWrapper({
   canGenerateStudyPlan: boolean;
   handleGenerateStudyPlan: () => void;
   onNavigateToGlossary: () => void;
+  onPracticeDomain?: (domainId: number) => void;
+  onReviewDomain?: (domainId: number) => void;
+  onTestDomain?: (domainId: number) => void;
 }) {
   const [activeTab, setActiveTab] = useState<StudyGuideTab>(
     studyPlanHistory.length > 0 ? 'plan' : 'platform'
@@ -178,6 +182,9 @@ function StudyGuideTabWrapper({
             error={studyPlanError}
             canGenerate={canGenerateStudyPlan}
             onGenerate={handleGenerateStudyPlan}
+            onPracticeDomain={onPracticeDomain}
+            onReviewDomain={onReviewDomain}
+            onTestDomain={onTestDomain}
           />
         </Suspense>
       )}
@@ -1730,6 +1737,9 @@ function PraxisStudyAppContent() {
             canGenerateStudyPlan={canGenerateStudyPlan}
             handleGenerateStudyPlan={handleGenerateStudyPlan}
             onNavigateToGlossary={() => setMode('glossary')}
+            onPracticeDomain={(domainId) => startPractice(domainId)}
+            onReviewDomain={() => handleStartRedemption()}
+            onTestDomain={(domainId) => startPractice(domainId)}
           />
         )}
 
