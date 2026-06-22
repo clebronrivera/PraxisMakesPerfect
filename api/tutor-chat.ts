@@ -676,7 +676,6 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
     if (!anthropicKey) return json(500, { error: 'API key not configured' });
 
-    // ── DIAGNOSTIC LOGGING ─────────────────────────────────────────────────
     const claudeRequestPayload = {
       model: MODEL,
       max_tokens: remediationSkillId ? 2500 : MAX_TOKENS,
@@ -684,31 +683,6 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
       system: systemPrompt,
       messages: claudeMessages,
     };
-    console.log('[TutorChat] PRE-FLIGHT DIAGNOSTICS:');
-    console.log('  intent:', intent);
-    console.log('  model:', MODEL);
-    console.log('  max_tokens:', claudeRequestPayload.max_tokens);
-    console.log('  systemPrompt length (chars):', systemPrompt.length);
-    console.log('  message count (history + user):', claudeMessages.length);
-    console.log('  has prioritySkillId:', !!body.prioritySkillId, body.prioritySkillId ?? '(none)');
-    console.log('  has quizRetryContext:', !!body.quizRetryContext, JSON.stringify(body.quizRetryContext ?? null));
-    console.log('  remediationSkillId:', remediationSkillId ?? '(none)');
-    console.log('  quizEvaluation:', quizEvaluation ? JSON.stringify({ skillId: quizEvaluation.skillId, isCorrect: quizEvaluation.isCorrect }) : '(none)');
-    console.log('  message roles (must alternate):', claudeMessages.map(m => m.role).join(' → '));
-    console.log('  message content lengths:', claudeMessages.map(m => `${m.role}:${(m.content || '').length}`).join(', '));
-    // Check for consecutive same-role messages (Anthropic API rejects these)
-    for (let i = 1; i < claudeMessages.length; i++) {
-      if (claudeMessages[i].role === claudeMessages[i - 1].role) {
-        console.error(`[TutorChat] CONSECUTIVE SAME-ROLE MESSAGES at index ${i - 1} and ${i}: role="${claudeMessages[i].role}"`);
-      }
-    }
-    // Check for null/empty content
-    for (let i = 0; i < claudeMessages.length; i++) {
-      if (!claudeMessages[i].content) {
-        console.error(`[TutorChat] NULL/EMPTY content at message index ${i}: role="${claudeMessages[i].role}"`);
-      }
-    }
-    // ── END DIAGNOSTICS ────────────────────────────────────────────────────
 
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
