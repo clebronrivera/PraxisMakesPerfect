@@ -15,7 +15,8 @@ import {
   StudyPlanApiRequestSchema
 } from '../src/types/studyPlanApi';
 
-const MODEL = 'claude-sonnet-4-20250514';
+// Overridable via env so a retired/rotated model can be swapped without a code deploy.
+const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

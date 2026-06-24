@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
+import { captureError } from '../utils/sentry';
 import type {
   ChatMessage,
   ChatSessionSummary,
@@ -222,7 +223,22 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `Request failed (${res.status})`);
+        const err = new Error(errData.error || `Request failed (${res.status})`);
+        // Report server/AI failures to Sentry with the upstream debug fields the
+        // function attaches (e.g. a retired model → 502 "AI service error" carries
+        // debug_status: 404), so an outage pages us instead of silently surfacing
+        // a generic error to users.
+        captureError(err, {
+          userId: userId ?? undefined,
+          tags: { feature: 'tutor_chat', http_status: String(res.status) },
+          extra: {
+            debug_status: errData.debug_status,
+            debug_body: errData.debug_body,
+            debug_roles: errData.debug_roles,
+            session_type: sessionType,
+          },
+        });
+        throw err;
       }
 
       const data: TutorChatResponse = await res.json();
