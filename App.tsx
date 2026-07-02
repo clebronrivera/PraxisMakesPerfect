@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
 import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
-import { analyzeQuestion, type Question as RawQuestion, type AnalyzedQuestion } from './src/brain/question-analyzer';
+import { analyzeQuestion, type Question as RawQuestion } from './src/brain/question-analyzer';
 
 // Import components
 const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
@@ -42,8 +42,8 @@ import { getSkillById } from './src/brain/skill-map';
 import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progressTaxonomy';
 
 import { isAdminEmail } from './src/config/admin';
-import { useRedemptionRounds, type MissedQuestion } from './src/hooks/useRedemptionRounds';
-import { useLeaderboard } from './src/hooks/useLeaderboard';
+import { useRedemptionFlow } from './src/hooks/useRedemptionFlow';
+import { useSocialHub } from './src/hooks/useSocialHub';
 import type { LbMode } from './src/hooks/useLeaderboard';
 const RedemptionRoundSession = lazy(() => import('./src/components/RedemptionRoundSession'));
 import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
@@ -275,64 +275,8 @@ function PraxisStudyAppContent() {
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // ── Users online + Leaderboard ─────────────────────────────────────────────
-  function getHourRange(h: number): [number, number] {
-    const map: [number, number][] = [
-      [0, 2],  // 12am
-      [0, 1],  // 1am
-      [0, 0],  // 2am
-      [0, 0],  // 3am
-      [0, 1],  // 4am
-      [0, 1],  // 5am
-      [1, 2],  // 6am
-      [1, 3],  // 7am
-      [2, 5],  // 8am
-      [3, 6],  // 9am
-      [3, 7],  // 10am
-      [3, 7],  // 11am
-      [2, 6],  // 12pm
-      [2, 5],  // 1pm
-      [2, 5],  // 2pm
-      [3, 7],  // 3pm
-      [4, 8],  // 4pm
-      [4, 8],  // 5pm
-      [5, 9],  // 6pm
-      [5, 10], // 7pm
-      [5, 10], // 8pm
-      [4, 8],  // 9pm
-      [2, 6],  // 10pm
-      [1, 4],  // 11pm
-    ];
-    return map[h] ?? [0, 0];
-  }
-
-  const [usersOnline, setUsersOnline] = useState(() => {
-    const [min, max] = getHourRange(new Date().getHours());
-    return min === max ? min : Math.floor(Math.random() * (max - min + 1)) + min;
-  });
-
-  useEffect(() => {
-    const scheduleNext = () => {
-      const delay = Math.floor(Math.random() * 60000) + 90000; // 90–150s
-      return setTimeout(() => {
-        const [min, max] = getHourRange(new Date().getHours());
-        setUsersOnline(prev => {
-          const roll = Math.random();
-          let drift;
-          if (roll < 0.60) drift = Math.random() < 0.5 ? 1 : -1;
-          else if (roll < 0.75) drift = 0;
-          else drift = Math.random() < 0.5 ? 2 : -2;
-          return Math.min(max, Math.max(min, prev + drift));
-        });
-        timerId = scheduleNext();
-      }, delay);
-    };
-    let timerId = scheduleNext();
-    return () => clearTimeout(timerId);
-  }, []);
-
-  // Leaderboard — real data from /api/leaderboard
-  const { sortedEntries: lbEntries, callerUserId: lbCallerId, lbOpen, setLbOpen, lbMode, setLbMode, isLoading: lbLoading, error: lbError, getRank, formatLbTime } = useLeaderboard(user?.id ?? null);
+  // ── Users online + Leaderboard (social-proof header widgets) ───────────────
+  const { usersOnline, sortedEntries: lbEntries, callerUserId: lbCallerId, lbOpen, setLbOpen, lbMode, setLbMode, isLoading: lbLoading, error: lbError, getRank, formatLbTime } = useSocialHub(user?.id ?? null);
 
   // Tutorial walkthrough — auto-triggers after first onboarding completion
   const { showTutorial, dismissTutorial, replayTutorial } = useTutorialState(user?.id, !!profile.onboardingComplete);
@@ -437,14 +381,13 @@ function PraxisStudyAppContent() {
     onNavigate: (m: string) => setMode(m as AppMode),
   });
   // ── Redemption Rounds ──────────────────────────────────────────────────────
-  const redemption = useRedemptionRounds({
+  const redemption = useRedemptionFlow({
     userId: user?.id ?? null,
     profile,
     updateProfile,
+    analyzedQuestions,
+    onNavigate: (m: string) => setMode(m as AppMode),
   });
-  // Questions loaded for the active round (AnalyzedQuestion[])
-  const [redemptionQuestions, setRedemptionQuestions] = useState<AnalyzedQuestion[]>([]);
-  const [redemptionMissedRows, setRedemptionMissedRows] = useState<MissedQuestion[]>([]);
 
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
@@ -569,20 +512,6 @@ function PraxisStudyAppContent() {
     const totalC = entries.reduce((s, p) => s + p.correct, 0);
     return totalA > 0 ? Math.round((totalC / totalA) * 100) : null;
   }, [profile.skillScores]);
-
-  const handleStartRedemption = useCallback(async () => {
-    const rows = await redemption.startRound();
-    if (!rows || rows.length === 0) return;
-    const matched = rows
-      .map((row) => ({
-        q: analyzedQuestions.find(q => q.id === row.question_id),
-        row,
-      }))
-      .filter((item): item is { q: AnalyzedQuestion; row: MissedQuestion } => item.q != null);
-    setRedemptionQuestions(matched.map((item) => item.q));
-    setRedemptionMissedRows(matched.map((item) => item.row));
-    setMode('redemption-round');
-  }, [redemption, analyzedQuestions]);
 
   useEffect(() => {
     if (canonicalLoading || contentLoading || canonicalQuestions.length === 0 || fetchedQuestions.length === 0) {
@@ -1522,7 +1451,7 @@ function PraxisStudyAppContent() {
                       onStartPractice={startPractice}
                       onStartSkillPractice={startSkillPractice}
                       onOpenLearningPathModule={openLearningPathModule}
-                      onStartRedemption={handleStartRedemption}
+                      onStartRedemption={redemption.handleStartRedemption}
                       onNavigate={setMode as (mode: string) => void}
                     />
                   </Suspense>
@@ -1606,7 +1535,7 @@ function PraxisStudyAppContent() {
             handleGenerateStudyPlan={handleGenerateStudyPlan}
             onNavigateToGlossary={() => setMode('glossary')}
             onPracticeDomain={(domainId) => startPractice(domainId)}
-            onReviewDomain={() => handleStartRedemption()}
+            onReviewDomain={() => redemption.handleStartRedemption()}
             onTestDomain={(domainId) => startPractice(domainId)}
           />
         )}
@@ -1834,16 +1763,13 @@ function PraxisStudyAppContent() {
         )}
         
         {/* REDEMPTION ROUND */}
-        {mode === 'redemption-round' && redemptionQuestions.length > 0 && (
+        {mode === 'redemption-round' && redemption.redemptionQuestions.length > 0 && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading round…</div>}>
             <RedemptionRoundSession
-              questions={redemptionQuestions}
-              missedRows={redemptionMissedRows}
+              questions={redemption.redemptionQuestions}
+              missedRows={redemption.redemptionMissedRows}
               highScore={redemption.highScore}
-              onComplete={async (results) => {
-                await redemption.recordRoundResult(results);
-                setMode('home');
-              }}
+              onComplete={redemption.completeRound}
               onExit={() => setMode('home')}
             />
           </Suspense>
