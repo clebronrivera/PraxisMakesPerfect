@@ -48,7 +48,8 @@ public/mockup-question-bank-audit.html
 
 # Design mockups must never ship as public static assets — they are served
 # verbatim from public/ in production. Keep mockups local only.
-public/mockup-*.html
+# Covers mockup-*.html AND asset dirs like mockup-previews/.
+public/mockup-*
 /mockup-*.html
 
 # Tooling artifacts
