@@ -2,7 +2,6 @@
 // Netlify Function — AI Tutor Chat
 // Synchronous. Returns full response (not 202).
 
-import { createClient } from '@supabase/supabase-js';
 import type {
   TutorChatRequest,
   TutorChatResponse,
@@ -70,40 +69,22 @@ const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 const MAX_TOKENS = 1500;
 const PROMPT_VERSION = 'tutor_v1';
 
-// ─── Supabase helpers (verbatim from study-plan-background.ts) ───────────────
+// ─── Shared endpoint helpers ─────────────────────────────────────────────────
 
-function getAnonClient() {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) throw new Error('Supabase credentials not configured.');
-  return createClient(supabaseUrl, anonKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import {
+  DAY_MS,
+  TUTOR_RATE_LIMITS,
+  authenticateUser,
+  fetchWithTimeout,
+  getUserClient,
+  isAbortError,
+  jsonResponder,
+  preflightResponse,
+  tutorRateLimitVerdict,
+} from './_shared';
 
-function getUserClient(userJwt: string) {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) throw new Error('Supabase credentials not configured.');
-  return createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: `Bearer ${userJwt}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
-function getBearerToken(header?: string): string | null {
-  if (!header) return null;
-  const [scheme, token] = header.split(' ');
-  return scheme === 'Bearer' && token ? token : null;
-}
-
-function json(statusCode: number, body: unknown) {
-  return {
-    statusCode,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    body: JSON.stringify(body),
-  };
-}
+const METHODS = 'POST, OPTIONS';
+const CLAUDE_TIMEOUT_MS = 60_000;
 
 // parseClaudeResponse is imported from ./parseClaude
 
@@ -433,17 +414,11 @@ Be thorough — this student needs a deeper explanation, not just feedback on th
 // ─── Main handler ────────────────────────────────────────────────────────────
 
 export async function handler(event: { httpMethod: string; headers?: Record<string, string>; body?: string }) {
+  const json = jsonResponder(event, METHODS);
+
   // CORS preflight
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      },
-      body: '',
-    };
+    return preflightResponse(event, METHODS);
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
@@ -451,14 +426,39 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
 
   try {
     // 1. Auth
-    const idToken = getBearerToken(event.headers?.authorization || event.headers?.Authorization);
-    if (!idToken) return json(401, { error: 'Missing authorization token' });
+    const auth = await authenticateUser(event);
+    if (!auth.ok) return json(auth.status, { error: auth.error });
+    const user = auth.user;
 
-    const anonClient = getAnonClient();
-    const { data: { user }, error: authError } = await anonClient.auth.getUser(idToken);
-    if (authError || !user) return json(401, { error: 'Invalid token' });
+    const userClient = getUserClient(auth.token);
 
-    const userClient = getUserClient(idToken);
+    // 1b. Server-side rate limit — count this user's own recent messages via the
+    // RLS-scoped client (user-role rows only, so assistant replies don't count).
+    // Backstop against scripted JWT calls running up Claude spend.
+    const dayAgoIso = new Date(Date.now() - DAY_MS).toISOString();
+    const { data: recentUserMessages } = await userClient
+      .from('chat_messages')
+      .select('created_at')
+      .eq('user_id', user.id)
+      .eq('role', 'user')
+      .gte('created_at', dayAgoIso)
+      .order('created_at', { ascending: false })
+      .limit(TUTOR_RATE_LIMITS.perDay + 1);
+
+    const rateVerdict = tutorRateLimitVerdict(
+      Date.now(),
+      (recentUserMessages ?? []).map(m => new Date(m.created_at as string).getTime()),
+    );
+    if (rateVerdict.blocked) {
+      return json(
+        429,
+        {
+          error: "You've reached the tutor message limit for now — take a breather and come back soon.",
+          retryAfterSec: rateVerdict.retryAfterSec,
+        },
+        { 'Retry-After': String(rateVerdict.retryAfterSec) },
+      );
+    }
 
     // 2. Parse request
     const body: TutorChatRequest = JSON.parse(event.body || '{}');
@@ -684,15 +684,24 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
       messages: claudeMessages,
     };
 
-    const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify(claudeRequestPayload),
-    });
+    let claudeResponse: Response;
+    try {
+      claudeResponse = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify(claudeRequestPayload),
+      }, CLAUDE_TIMEOUT_MS);
+    } catch (fetchErr) {
+      if (isAbortError(fetchErr)) {
+        console.error('[TutorChat] Claude API timeout after', CLAUDE_TIMEOUT_MS, 'ms');
+        return json(504, { error: 'AI service timed out — please try again.' });
+      }
+      throw fetchErr;
+    }
 
     if (!claudeResponse.ok) {
       const errText = await claudeResponse.text();
