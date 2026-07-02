@@ -10,24 +10,13 @@
  * Requires STRIPE_WEBHOOK_SECRET for signature verification.
  * Uses SUPABASE_SERVICE_ROLE_KEY for cross-user writes.
  */
-import { createClient } from '@supabase/supabase-js';
+import { getServiceClient } from './_shared';
 
-const JSON_HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-};
+// Stripe webhooks are server-to-server — no CORS headers needed.
+const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
 function json(statusCode: number, body: unknown) {
   return { statusCode, headers: JSON_HEADERS, body: JSON.stringify(body) };
-}
-
-function getServiceClient() {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) throw new Error('Supabase service credentials not configured.');
-  return createClient(supabaseUrl, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
 }
 
 /** Minimal Stripe signature verification (timing-safe HMAC comparison). */
@@ -97,7 +86,7 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
     const eventType = stripeEvent.type;
     const data = stripeEvent.data?.object;
 
-    const svc = getServiceClient();
+    const svc = getServiceClient('stripe-webhook');
 
     if (eventType === 'checkout.session.completed') {
       const userId = data.client_reference_id || data.metadata?.user_id;

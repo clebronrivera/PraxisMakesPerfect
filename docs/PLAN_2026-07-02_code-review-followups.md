@@ -47,18 +47,18 @@ Companion docs: `docs/ISSUE_LEDGER.md`, `docs/PENDING_IDEAS.md`, `docs/PLAN_2026
 | # | Task | Status |
 |---|---|---|
 | [1] | `git rm --cached public/mockup-*.html` (and any tracked root `/mockup-*.html`). Files **stay on disk** — the mockup-first workflow is unaffected; they just stop deploying. Note in PR body: prod `mockup-*.html` URLs will 404 after deploy (intended, per `.gitignore:49-52`). | ✅ 24 html + 6 `mockup-previews/*.png` untracked (previews are mockup screenshots, same exposure class, referenced by zero app code); gitignore rule broadened to `public/mockup-*`; app refs to mockups are comments only |
-| [2] | Verify on the PR deploy preview: `/mockup-*.html` → 404, app + one real static asset still serve. Then merge ⚠️ **PRODUCTION DEPLOY** (Carlos confirm). | 🔄 **verified on deploy-preview-46** (note: SPA fallback `/*→index.html 200` means mockup URLs now serve the app shell, not a literal 404 — content gone either way; `mockup-previews/hero.png` also falls back; CI `check` green 1m12s). PR #46 open — **awaiting Carlos merge confirm** |
-| [3] | Post-merge: confirm production 404s the old mockup URLs. If any mockup is still wanted shareable, move it deliberately (e.g. Netlify Drop / separate site), not via `public/`. | ☐ ⛔[2] |
+| [2] | Verify on the PR deploy preview: `/mockup-*.html` → 404, app + one real static asset still serve. Then merge ⚠️ **PRODUCTION DEPLOY** (Carlos confirm). | ✅ verified on deploy-preview-46 (SPA fallback `/*→index.html 200` means mockup URLs serve the app shell, not a literal 404 — content gone either way); **merged as `622dd21`** (PR #46, squash) under Carlos's 2026-07-02 "proceed/apply work to end" authorization |
+| [3] | Post-merge: confirm production 404s the old mockup URLs. If any mockup is still wanted shareable, move it deliberately (e.g. Netlify Drop / separate site), not via `public/`. | ✅ prod verified ~60s post-merge: `/mockup-pass-landing.html` serves the 999-byte app shell (was the 24.6KB draft), `/mockup-previews/hero.png` falls back to index, app root 200 |
 
 ## PHASE 2 — API hardening  ·  **PR B** (one reviewable PR, commits per task)
 
 | # | Task | Status |
 |---|---|---|
-| [4] | **Shared helper `api/_shared.ts`** — extract `getAnonClient` / `getServiceClient` / `getUserClient` / bearer parsing / `json()` / CORS headers / `requireAdmin(event)` from the 8+ endpoints. Pure refactor, zero behavior change. Do this FIRST so [5]–[7] land on the shared seam. | ☐ |
-| [5] | **Rate-limit `tutor-chat`** — before the Claude call, count the user's `tutor_messages` rows in the trailing window; over limit → `429` + `Retry-After` + friendly client message. **Proposed defaults (Carlos may override): 40 messages/hour and 200/day per user.** No new table needed. Add a small unit test for the window math. | ☐ ⛔[4] + limit sign-off |
-| [6] | **Study-plan failure cooldown** — keep the 7-day success rule untouched; additionally block if the most recent **failed** row is < 15 min old (`429` + `Retry-After`). Closes F3 without re-introducing the week-long lockout on failure. Update the CLAUDE.md "Study Plan — Rate Limit" section in the same commit. | ☐ ⛔[4] |
-| [7] | **Hygiene sweep** on the shared seam: (a) admin endpoints log full error server-side, return generic message to client; (b) drop `Access-Control-Allow-Origin: *` — app calls `/api/*` same-origin so restrict to prod origin + `http://localhost:8888` (keep OPTIONS handling); (c) `AbortController` timeouts on Anthropic fetches — 60s tutor-chat, 10 min study-plan; (d) UUID-format check on `admin-student-detail` `userId` (mirror `admin-delete-user.ts:52`). | ☐ ⛔[4] |
-| [8] | Verify via `netlify dev` (port 8888): tutor chat works then 429s past limit; study plan happy path; one admin endpoint per changed header path. Merge ⚠️ **PRODUCTION DEPLOY** (Carlos confirm). | ☐ ⛔[5][6][7] |
+| [4] | **Shared helper `api/_shared.ts`** — extract `getAnonClient` / `getServiceClient` / `getUserClient` / bearer parsing / `json()` / CORS headers / `requireAdmin(event)` from the 8+ endpoints. Pure refactor, zero behavior change. Do this FIRST so [5]–[7] land on the shared seam. | ✅ `api/_shared.ts` (clients, `authenticateUser`/`authenticateAdmin`, `jsonResponder`/`preflightResponse`, `fetchWithTimeout`, `UUID_RE`, rate-limit math); all 10 endpoints refactored onto it. CLAUDE.md section added |
+| [5] | **Rate-limit `tutor-chat`** — before the Claude call, count the user's `tutor_messages` rows in the trailing window; over limit → `429` + `Retry-After` + friendly client message. **Proposed defaults (Carlos may override): 40 messages/hour and 200/day per user.** No new table needed. Add a small unit test for the window math. | ✅ 40/hr + 200/day (defaults accepted via Carlos's "apply recommendations" go); counts own `chat_messages` user-role rows via RLS client; 429 + Retry-After; client shows friendly message and skips Sentry on 429; `tests/apiRateLimits.test.ts` (10 tests). Docs: CLAUDE.md + HOW_THE_APP_WORKS |
+| [6] | **Study-plan failure cooldown** — keep the 7-day success rule untouched; additionally block if the most recent **failed** row is < 15 min old (`429` + `Retry-After`). Closes F3 without re-introducing the week-long lockout on failure. Update the CLAUDE.md "Study Plan — Rate Limit" section in the same commit. | ✅ 15-min gap after most recent failure row (`STUDY_PLAN_FAILURE_COOLDOWN_MS`); 7-day success rule untouched; CLAUDE.md + HOW_THE_APP_WORKS updated |
+| [7] | **Hygiene sweep** on the shared seam: (a) admin endpoints log full error server-side, return generic message to client; (b) drop `Access-Control-Allow-Origin: *` — app calls `/api/*` same-origin so restrict to prod origin + `http://localhost:8888` (keep OPTIONS handling); (c) `AbortController` timeouts on Anthropic fetches — 60s tutor-chat, 10 min study-plan; (d) UUID-format check on `admin-student-detail` `userId` (mirror `admin-delete-user.ts:52`). | ✅ all four: `logAndGenericError` replaced every `detail: err.message`; CORS reflects only prod/preview/branch Netlify origins + localhost (else omitted — same-origin needs none); 60s/10-min timeouts with 504 on abort; UUID check added. Bonus: Dependabot #13/14/15 cleared via `npm audit fix` (vite 6.4.3), audit clean — ISSUE_LEDGER reconciled (#12 withdrawn upstream) |
+| [8] | Verify via `netlify dev` (port 8888): tutor chat works then 429s past limit; study plan happy path; one admin endpoint per changed header path. Merge ⚠️ **PRODUCTION DEPLOY** (Carlos confirm). | 🔄 verified via `tests/apiEndpointGuards.test.ts` (17 handler-level tests: 401 guards, UUID 400, CORS reflect/deny incl. lookalike domain, preflight, dormant Stripe) — **`netlify dev` cannot exercise worktree code**: the CLI resolves repo root via the parent's `.git` directory and bundles the parent checkout's `api/` (confirmed via `.netlify/functions-serve` bundle paths). Full-stack check on the PR deploy preview; live 429 needs a real JWT (window math unit-tested). Merge awaiting Carlos |
 
 ## PHASE 3 — Doc rot cleanup  ·  *cheap, no code*  ·  **PR C**
 
@@ -96,7 +96,7 @@ Companion docs: `docs/ISSUE_LEDGER.md`, `docs/PENDING_IDEAS.md`, `docs/PLAN_2026
 
 | # | Item | Where tracked |
 |---|---|---|
-| [P1] | Vite 6→8 major (clears Dependabot #12 / esbuild) — own sprint, build-config risk. | `ISSUE_LEDGER.md` |
+| [P1] | ~~Vite 6→8 major (clears Dependabot #12 / esbuild)~~ — **no longer a security item** (2026-07-02): alert #12 withdrawn upstream, audit clean on vite 6.4.3. Optional freshness upgrade only. | `ISSUE_LEDGER.md` |
 | [P2] | Phase B content regen (29 skills / 692 questions, Coworker batching). | `ISSUE_LEDGER.md` |
 | [P3] | **Stripe re-enable checklist** (only when paywall goes live): remove `:79` early-return; timing-safe HMAC compare at `:62`; validate ALL env vars at handler entry (no `!` assertions, `:113`); Zod-validate webhook payload; check `userId` before the Stripe subscription fetch. | this doc |
 | [P4] | E2E harness (Playwright) for login → assessment → results. Note: a playwright seed stash existed at 2026-06-16 cleanup — check before starting fresh. | this doc |
@@ -105,7 +105,7 @@ Companion docs: `docs/ISSUE_LEDGER.md`, `docs/PENDING_IDEAS.md`, `docs/PLAN_2026
 
 ## Decisions needed from Carlos before the affected task starts
 
-1. **[5] Tutor rate limits** — proposed 40 msgs/hour + 200/day per user. OK or different numbers?
+1. **[5] Tutor rate limits** — ✅ resolved: defaults 40/hr + 200/day accepted (Carlos's 2026-07-02 "apply recommendations work to end" go). Tune in `TUTOR_RATE_LIMITS` (`api/_shared.ts`) if needed.
 2. **[9] Stale root docs** — archive to `archive/`, or deprecation banner at root?
 3. **[17] Question bank** — defer-fetch (a) or domain-chunk split (b)? Recommendation: (a).
 

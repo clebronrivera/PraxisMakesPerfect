@@ -9,51 +9,34 @@
  * The client (studyPlanService.ts) builds the prompt using the deterministic
  * preprocessing layer, then sends it here. Claude's job is synthesis only.
  */
-import { createClient } from '@supabase/supabase-js';
 import {
   STUDY_PLAN_API_VERSION,
   StudyPlanApiRequestSchema
 } from '../src/types/studyPlanApi';
+import {
+  STUDY_PLAN_FAILURE_COOLDOWN_MS,
+  authenticateUser,
+  fetchWithTimeout,
+  getUserClient,
+  isAbortError,
+  jsonResponder,
+  preflightResponse,
+  slidingWindowVerdict,
+} from './_shared';
 
 // Overridable via env so a retired/rotated model can be swapped without a code deploy.
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const METHODS = 'POST, OPTIONS';
 
-function json(statusCode: number, body: unknown) {
-  return {
-    statusCode,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    body: JSON.stringify(body),
-  };
-}
+// Generous — synthesis of a 12k-token plan takes minutes, but a hung upstream
+// must not pin the background function for its full 15-minute budget.
+const CLAUDE_TIMEOUT_MS = 10 * 60 * 1000;
 
 // Auth verification: uses the anon key — supabase.auth.getUser(jwt) just calls
 // /auth/v1/user with the user's Bearer token and does not require service role.
 // DB write: uses the user's own JWT so RLS (auth.uid() = user_id) is satisfied.
 // Service role key is NOT required for either operation.
-function getAnonClient() {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const anonKey     = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) throw new Error('Supabase credentials not configured.');
-  return createClient(supabaseUrl, anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
-}
-
-function getUserClient(userJwt: string) {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const anonKey     = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) throw new Error('Supabase credentials not configured.');
-  return createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: `Bearer ${userJwt}` } },
-    auth:   { persistSession: false, autoRefreshToken: false },
-  });
-}
-
-function getBearerToken(header?: string): string | null {
-  if (!header) return null;
-  const [scheme, token] = header.split(' ');
-  return scheme === 'Bearer' && token ? token : null;
-}
 
 // ─── Minimal v2 parser (validates enough to be safe, stores full document) ────
 // The full strict parser lives in studyPlanService.ts.
@@ -108,23 +91,19 @@ function parseAndValidateV2(rawContent: string): Record<string, unknown> {
 // ─── Background handler ───────────────────────────────────────────────────────
 
 export const handler = async (event: { httpMethod?: string; headers?: Record<string, string>; body?: string | Record<string, unknown> }) => {
+  const json = jsonResponder(event, METHODS);
+
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' };
+    return preflightResponse(event, METHODS);
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST only.' });
 
   try {
     // ── Auth ────────────────────────────────────────────────────────────────
-    const authHeader = event.headers?.['authorization'] || event.headers?.['Authorization'];
-    const idToken    = getBearerToken(authHeader);
-    if (!idToken) return json(401, { error: 'Missing authentication token.' });
-
-    const anonClient = getAnonClient();
-    const { data: { user }, error: authError } = await anonClient.auth.getUser(idToken);
-    if (authError || !user) {
-      console.error('[study-plan-background] Auth error:', authError);
-      return json(401, { error: 'Invalid authentication token.' });
-    }
+    const auth = await authenticateUser(event);
+    if (!auth.ok) return json(auth.status, { error: auth.error });
+    const user = auth.user;
+    const idToken = auth.token;
 
     // ── Parse request ────────────────────────────────────────────────────────
     const rawBody     = typeof event.body === 'string' ? event.body : JSON.stringify(event.body);
@@ -156,38 +135,61 @@ export const handler = async (event: { httpMethod?: string; headers?: Record<str
       const nextAvailableMs = new Date(recentSuccess.created_at as string).getTime()
         + 7 * 24 * 60 * 60 * 1000;
       const retryAfterSec = Math.max(1, Math.ceil((nextAvailableMs - Date.now()) / 1000));
-      return {
-        statusCode: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          'Retry-After': String(retryAfterSec),
-          'Access-Control-Allow-Origin': '*',
+      return json(
+        429,
+        { error: 'Study guide already generated this week.', retryAfterSec },
+        { 'Retry-After': String(retryAfterSec) },
+      );
+    }
+
+    // ── Failure cooldown: min 15 minutes between attempts after a failure ───
+    // Failed generations deliberately do NOT count toward the 7-day rule (a
+    // failure must not lock a user out for a week), which would otherwise
+    // leave failures completely unthrottled — each one still spends Claude
+    // tokens. Require a short gap after the most recent failure row instead.
+    const failureTimestamps = (recentRows ?? [])
+      .filter(row => (row.plan_document as Record<string, unknown> | null)?.error === true)
+      .map(row => new Date(row.created_at as string).getTime());
+
+    const cooldown = slidingWindowVerdict(Date.now(), failureTimestamps, 1, STUDY_PLAN_FAILURE_COOLDOWN_MS);
+    if (cooldown.blocked) {
+      return json(
+        429,
+        {
+          error: 'The last generation attempt failed a few minutes ago. Please wait a bit before retrying.',
+          retryAfterSec: cooldown.retryAfterSec,
         },
-        body: JSON.stringify({
-          error: 'Study guide already generated this week.',
-          retryAfterSec,
-        }),
-      };
+        { 'Retry-After': String(cooldown.retryAfterSec) },
+      );
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) throw new Error('ANTHROPIC_API_KEY not configured.');
 
     // ── Call Claude ──────────────────────────────────────────────────────────
-    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key':    apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model:      MODEL,
-        max_tokens: 12000,  // v2 schema is larger — raised from 8000
-        temperature: 0.2,
-        messages: [{ role: 'user', content: requestBody.prompt }],
-      }),
-    });
+    let anthropicRes: Response;
+    try {
+      anthropicRes = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key':    apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model:      MODEL,
+          max_tokens: 12000,  // v2 schema is larger — raised from 8000
+          temperature: 0.2,
+          messages: [{ role: 'user', content: requestBody.prompt }],
+        }),
+      }, CLAUDE_TIMEOUT_MS);
+    } catch (fetchErr) {
+      if (isAbortError(fetchErr)) {
+        console.error('[study-plan-background] Anthropic call timed out after', CLAUDE_TIMEOUT_MS, 'ms');
+        return json(504, { error: 'Upstream AI call timed out.' });
+      }
+      throw fetchErr;
+    }
 
     const anthropicBody = await anthropicRes.json().catch(() => null);
     if (!anthropicRes.ok) {

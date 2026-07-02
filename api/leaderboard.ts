@@ -9,47 +9,16 @@
  *
  * Returns { entries: LeaderboardEntry[], callerUserId: string }
  */
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import {
+  authenticateUser,
+  getServiceClient,
+  jsonResponder,
+  preflightResponse,
+} from './_shared';
 
 const TOTAL_SKILLS = 45;
 const MASTERY_THRESHOLD = 0.80;
-
-const JSON_HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS'
-};
-
-function json(statusCode: number, body: unknown) {
-  return { statusCode, headers: JSON_HEADERS, body: JSON.stringify(body) };
-}
-
-function getAnonClient(): SupabaseClient {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) throw new Error('Supabase anon credentials not configured.');
-  return createClient(supabaseUrl, anonKey, {
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
-
-function getServiceClient(): SupabaseClient {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for leaderboard.');
-  }
-  return createClient(supabaseUrl, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
-
-function getBearerToken(header?: string): string | null {
-  if (!header) return null;
-  const [scheme, token] = header.split(' ');
-  return scheme === 'Bearer' && token ? token : null;
-}
+const METHODS = 'GET, OPTIONS';
 
 /** Derive initials like "V.R." from a name or email. */
 function deriveInitials(displayName?: string | null, email?: string | null): string {
@@ -93,8 +62,10 @@ export const handler = async (event: {
   httpMethod?: string;
   headers?: Record<string, string>;
 }) => {
+  const json = jsonResponder(event, METHODS);
+
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: JSON_HEADERS, body: '' };
+    return preflightResponse(event, METHODS);
   }
 
   if (event.httpMethod !== 'GET') {
@@ -102,22 +73,12 @@ export const handler = async (event: {
   }
 
   try {
-    const token = getBearerToken(
-      event.headers?.authorization || event.headers?.Authorization
-    );
-    if (!token) {
-      return json(401, { error: 'Missing Authorization Bearer token.' });
-    }
-
     // Verify caller identity (any authenticated user, not admin-only)
-    const anon = getAnonClient();
-    const { data: userData, error: userErr } = await anon.auth.getUser(token);
-    if (userErr || !userData.user) {
-      return json(401, { error: 'Invalid session.' });
-    }
-    const callerUserId = userData.user.id;
+    const auth = await authenticateUser(event);
+    if (!auth.ok) return json(auth.status, { error: auth.error });
+    const callerUserId = auth.user.id;
 
-    const svc = getServiceClient();
+    const svc = getServiceClient('leaderboard');
 
     // 1) Fetch all users with activity
     const { data: usersData, error: usersError } = await svc

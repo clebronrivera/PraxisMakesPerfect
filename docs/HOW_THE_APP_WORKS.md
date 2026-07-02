@@ -456,6 +456,7 @@ Requires: adaptive diagnostic complete — OR — legacy screener complete + at 
 
 ### Generation Limit
 1 generation per 7 days. (Disabled during testing — see `CLAUDE.md` for the rate-limit toggle location.)
+If a generation attempt fails, the failure does not use up your weekly generation — but you must wait 15 minutes before retrying.
 
 ### How It Gets Generated (Three Phases)
 
@@ -589,6 +590,10 @@ When a student misses a quiz question, the tutor forces a same-skill follow-up b
 - Change any skill score or assessment result (all scoring is deterministic; Claude only writes prose)
 - Access ETS official materials or guarantee exam outcomes
 - Replace the personalized study guide (the guide has deeper structure: weekly plans, milestones, priority clusters)
+
+### Message Limit
+
+To keep the tutor available for everyone, each user can send up to 40 messages per hour and 200 per day. Past the limit the tutor asks you to take a short break and tells you when you can continue.
 
 ### Unlock Conditions
 

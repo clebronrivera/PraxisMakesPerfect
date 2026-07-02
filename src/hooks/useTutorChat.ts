@@ -224,6 +224,9 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         const err = new Error(errData.error || `Request failed (${res.status})`);
+        // 429 = the per-user message budget, working as designed — surface the
+        // friendly limit message to the user without paging Sentry.
+        if (res.status === 429) throw err;
         // Report server/AI failures to Sentry with the upstream debug fields the
         // function attaches (e.g. a retired model → 502 "AI service error" carries
         // debug_status: 404), so an outage pages us instead of silently surfacing
