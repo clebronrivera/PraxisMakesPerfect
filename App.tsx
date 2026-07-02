@@ -28,22 +28,16 @@ const FloatingTutorWidget = lazy(() => import('./src/components/FloatingTutorWid
 import { useProgressTracking } from './src/hooks/useProgressTracking';
 import { useAdaptiveLearning } from './src/hooks/useAdaptiveLearning';
 import { clearSession } from './src/utils/sessionStorage';
-import { getCurrentSession, loadUserSession } from './src/utils/userSessionStorage';
-import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
+import { getCurrentSession } from './src/utils/userSessionStorage';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import ToastHost from './src/components/ToastHost';
 import { useContent } from './src/contexts/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
 import { useStudyPlanManager } from './src/hooks/useStudyPlanManager';
 import type { StudyPlanHistoryEntry } from './src/services/studyPlanService';
-import { useAssessmentFlow } from './src/hooks/useAssessmentFlow';
+import { useAssessmentOrchestration } from './src/hooks/useAssessmentOrchestration';
 import { usePracticeFlow } from './src/hooks/usePracticeFlow';
 const AdaptiveDiagnostic = lazy(() => import('./src/components/AdaptiveDiagnostic'));
-import {
-  isScreenerQuestionCount
-} from './src/utils/assessmentConstants';
-import { buildAdaptiveDiagnostic } from './src/utils/assessment-builder';
-import type { AdaptiveDiagnosticResult } from './src/utils/assessment-builder';
 import { getSkillById } from './src/brain/skill-map';
 import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progressTaxonomy';
 
@@ -58,8 +52,6 @@ import { useTutorialState } from './src/hooks/useTutorialState';
 const TutorialWalkthrough = lazy(() => import('./src/components/TutorialWalkthrough'));
 import { buildProgressSummary } from './src/utils/progressSummaries';
 import { PROFICIENCY_META, APPROACHING_THRESHOLD } from './src/utils/skillProficiency';
-import { buildAssessmentReportModel } from './src/utils/assessmentReport';
-import { buildDiagnosticSummary } from './src/utils/diagnosticSelectors';
 import { onboardingFormToSavePayload } from './src/utils/onboardingFormToSavePayload';
 import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
@@ -276,7 +268,6 @@ function PraxisStudyAppContent() {
   // User management
   const currentUserName = user?.user_metadata?.full_name || user?.user_metadata?.displayName || user?.email || null;
   const savedSession = currentUserName ? getCurrentSession(currentUserName) : null;
-  const hasSession = Boolean(savedSession);
 
   // App-level navigation state (not owned by any sub-hook)
   const [mode, setMode] = useState<AppMode>('home');
@@ -386,7 +377,12 @@ function PraxisStudyAppContent() {
     onNavigate: (m: string) => setMode(m as AppMode),
   });
 
-  // ── Assessment flow state & handlers ──────────────────────────────────────
+  const progressSummary = useMemo(
+    () => buildProgressSummary(profile.skillScores, fetchedSkills),
+    [fetchedSkills, profile.skillScores]
+  );
+
+  // ── Assessment orchestration (screener / full / adaptive / retake) ─────────
   const {
     screenerQuestions,
     fullAssessmentQuestions,
@@ -402,22 +398,42 @@ function PraxisStudyAppContent() {
     handleScreenerComplete,
     handleFullAssessmentComplete,
     handleAdaptiveDiagnosticComplete,
-    handleResumeAssessment,
-    handleDiscardSession,
     handleViewReport,
     adaptiveResumeError,
     clearAdaptiveResumeError,
     retryAdaptiveRemoteResume,
     abandonAdaptiveResumeRemoteAndStartFresh,
-  } = useAssessmentFlow({
+    retakeAssessmentData,
+    retakeJustCompleted,
+    retakePreSnapshot,
+    retakePostSnapshot,
+    hasRetakeUnlocked,
+    deficitSkillIds,
+    clearedDeficitCount,
+    startRetakeAssessment,
+    handleRetakeComplete,
+    exitRetake,
+    dismissRetakeResults,
+    hasOrphanedAdaptive,
+    hasAssessmentInProgress,
+    hasPracticeInProgress,
+    resumeFromLastSession,
+    canDiscardSession,
+    discardInProgressSession,
+    diagnosticSummary,
+  } = useAssessmentOrchestration({
     analyzedQuestions,
     profile,
     updateProfile,
+    recalculateGlobalScores,
     currentUserName,
     isLoaded,
     savedSession,
     getAssessmentResponses,
     getLatestAssessmentResponses,
+    progressSummary,
+    fetchedDomains,
+    fetchedSkills,
     onNavigate: (m: string) => setMode(m as AppMode),
   });
   // ── Redemption Rounds ──────────────────────────────────────────────────────
@@ -429,12 +445,6 @@ function PraxisStudyAppContent() {
   // Questions loaded for the active round (AnalyzedQuestion[])
   const [redemptionQuestions, setRedemptionQuestions] = useState<AnalyzedQuestion[]>([]);
   const [redemptionMissedRows, setRedemptionMissedRows] = useState<MissedQuestion[]>([]);
-
-  // ── Retake (third-assessment) state ──────────────────────────────────────────
-  const [retakeAssessmentData, setRetakeAssessmentData] = useState<AdaptiveDiagnosticResult | null>(null);
-  const [retakeJustCompleted, setRetakeJustCompleted] = useState(false);
-  const [retakePreSnapshot, setRetakePreSnapshot] = useState<{ readiness: number; demonstratingCount: number } | null>(null);
-  const [retakePostSnapshot, setRetakePostSnapshot] = useState<{ readiness: number; demonstratingCount: number } | null>(null);
 
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
@@ -461,80 +471,6 @@ function PraxisStudyAppContent() {
     (hasArchivedShortAssessment && profile.lastPreAssessmentSessionId)
   );
   
-  const progressSummary = useMemo(
-    () => buildProgressSummary(profile.skillScores, fetchedSkills),
-    [fetchedSkills, profile.skillScores]
-  );
-
-  // Build unified DiagnosticSummary for ScoreReport after a full/adaptive assessment.
-  // Omits conceptAnalytics (App.tsx does not compute it at this level — ResultsDashboard
-  // runs it independently). conceptGaps/crossSkillConceptGaps/conceptSummary will be null.
-  const diagnosticSummary = useMemo(() => {
-    if (
-      lastAssessmentType === 'screener' ||
-      lastAssessmentResponses.length === 0 ||
-      fullAssessmentQuestions.length === 0
-    ) {
-      return undefined;
-    }
-    const report = buildAssessmentReportModel(
-      lastAssessmentResponses,
-      fullAssessmentQuestions,
-      fetchedDomains,
-      fetchedSkills,
-    );
-    return buildDiagnosticSummary(report, profile);
-  }, [lastAssessmentResponses, fullAssessmentQuestions, fetchedDomains, fetchedSkills, profile, lastAssessmentType]);
-
-  // ── Retake unlock gate (A4/D8) ────────────────────────────────────────────────
-  // Deficit skills: those that scored < 60 in diagnosticSkillScores (screener+diagnostic only).
-  // Gate opens when every deficit skill has reached >= 60 in current blended skillScores.
-  const { hasRetakeUnlocked, deficitSkillIds, clearedDeficitCount } = useMemo(() => {
-    const diagScores = profile.globalScores?.diagnosticSkillScores;
-    if (!profile.adaptiveDiagnosticComplete || profile.retakeComplete || !diagScores) {
-      return { hasRetakeUnlocked: false, deficitSkillIds: [] as string[], clearedDeficitCount: 0 };
-    }
-    const deficit = Object.entries(diagScores)
-      .filter(([, score]) => score < 60)
-      .map(([id]) => id);
-    if (deficit.length === 0) {
-      return { hasRetakeUnlocked: false, deficitSkillIds: [] as string[], clearedDeficitCount: 0 };
-    }
-    // Use globalScores.skillScores (0-100 scale) for consistency with diagnosticSkillScores
-    const currentScores = profile.globalScores?.skillScores ?? {};
-    const cleared = deficit.filter(id => (currentScores[id] ?? 0) >= 60).length;
-    return { hasRetakeUnlocked: cleared === deficit.length, deficitSkillIds: deficit, clearedDeficitCount: cleared };
-  }, [profile.adaptiveDiagnosticComplete, profile.retakeComplete, profile.globalScores, profile.skillScores]);
-
-  const startRetakeAssessment = useCallback(() => {
-    if (!profile.adaptiveDiagnosticComplete || profile.retakeComplete) return;
-    // Capture pre-retake snapshot for the results card
-    const preDemonstrating = progressSummary.skills.filter(s => s.colorState === 'green').length;
-    setRetakePreSnapshot({ readiness: profile.globalScores?.globalReadiness ?? 0, demonstratingCount: preDemonstrating });
-    setRetakeJustCompleted(false);
-    setRetakePostSnapshot(null);
-    // All prior question IDs become the "prefer unseen" list (soft preference, fall back on thin pools)
-    const seenIds = [
-      ...(profile.preAssessmentQuestionIds ?? []),
-      ...(profile.screenerItemIds ?? []),
-      ...(profile.fullAssessmentQuestionIds ?? []),
-      ...(profile.diagnosticQuestionIds ?? []),
-    ];
-    const data = buildAdaptiveDiagnostic(analyzedQuestions, [], seenIds);
-    setRetakeAssessmentData(data);
-    setMode('retake-assessment');
-  }, [profile, analyzedQuestions, progressSummary.skills]);
-
-  const handleRetakeComplete = useCallback(async () => {
-    await updateProfile({ retakeComplete: true, retakeCompletedAt: new Date().toISOString(), lastSession: null });
-    const newGlobal = await recalculateGlobalScores();
-    const postDemonstrating = Object.values(newGlobal?.skillScores ?? {}).filter(s => s >= 80).length;
-    setRetakePostSnapshot({ readiness: newGlobal?.globalReadiness ?? 0, demonstratingCount: postDemonstrating });
-    setRetakeJustCompleted(true);
-    setRetakeAssessmentData(null);
-    setMode('home');
-  }, [updateProfile, recalculateGlobalScores]);
-
   // Tutor page context — passed to FloatingTutorWidget so it knows what the user is viewing
   const tutorPageContext = useMemo(() => ({
     page: mode,
@@ -1228,28 +1164,8 @@ function PraxisStudyAppContent() {
               ? PROGRESS_DOMAINS.find(domain => domain.id === progressSummary.weakestDomainId) ?? null
               : null;
 
-            // "Orphaned adaptive progress": user has saved answers in Supabase
-            // but no `last_session` pointer and no localStorage session. Happens
-            // when a user starts the diagnostic, clears cache / switches device,
-            // and returns later. The startAdaptiveDiagnostic() Supabase-fallback
-            // path will reconstruct their session — we just need to surface a
-            // Resume CTA instead of the default "Begin Adaptive Diagnostic" one.
-            const hasOrphanedAdaptive =
-              !profile.lastSession &&
-              !savedSession &&
-              !profile.adaptiveDiagnosticComplete &&
-              (profile.adaptiveResponseCount ?? 0) > 0;
-
-            const hasAssessmentInProgress =
-              (profile.lastSession?.mode === 'screener' && !profile.screenerComplete) ||
-              (profile.lastSession?.mode === 'full' && !profile.fullAssessmentComplete) ||
-              (profile.lastSession?.mode === 'diagnostic' && !profile.diagnosticComplete) ||
-              profile.lastSession?.mode === 'adaptive' ||
-              (!profile.lastSession && hasSession && savedSession &&
-                !profile.screenerComplete && !profile.fullAssessmentComplete) ||
-              hasOrphanedAdaptive;
-            const hasPracticeInProgress = profile.lastSession?.mode === 'practice';
-
+            // In-progress detection (hasAssessmentInProgress / hasPracticeInProgress /
+            // hasOrphanedAdaptive) lives in useAssessmentOrchestration.
             const sessionResumeCard = (() => {
               if (!hasAssessmentInProgress && !hasPracticeInProgress) return null;
 
@@ -1300,49 +1216,7 @@ function PraxisStudyAppContent() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => {
-                        if (profile.lastSession) {
-                          const ls = profile.lastSession;
-                          if (ls.mode === 'adaptive') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (!saved) {
-                              // localStorage was cleared or this is a different browser/device.
-                              // Fall back to Supabase-backed reconstruction (startAdaptiveDiagnostic
-                              // with no args queries Supabase for prior responses and rebuilds the
-                              // session synthetically — do NOT clear lastSession here or the
-                              // resume card would disappear before reconstruction completes).
-                              void startAdaptiveDiagnostic();
-                              return;
-                            }
-                            startAdaptiveDiagnostic(saved);
-                          } else if (ls.mode === 'screener') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
-                            startScreener(saved);
-                          } else if (ls.mode === 'diagnostic') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (saved && isStoredScreenerSessionType(saved.type) && (saved.assessmentFlow === 'screener' || isScreenerQuestionCount(saved.questionIds.length))) {
-                              void updateProfile({ lastSession: { ...ls, mode: 'screener' } });
-                              startScreener(saved); return;
-                            }
-                            updateProfile({ lastSession: null });
-                            alert('That session can no longer be resumed. Start a new screener.');
-                          } else if (ls.mode === 'full') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
-                            startFullAssessment(saved);
-                          }
-                        } else if (savedSession) {
-                          handleResumeAssessment();
-                        } else if (hasOrphanedAdaptive) {
-                          // No lastSession, no localStorage — but Supabase has
-                          // saved adaptive responses for this user. Calling
-                          // startAdaptiveDiagnostic() with no args triggers the
-                          // Supabase reconstruction path which rebuilds a
-                          // synthetic session + writes lastSession.
-                          void startAdaptiveDiagnostic();
-                        }
-                      }}
+                      onClick={resumeFromLastSession}
                       className="editorial-button-primary"
                     >
                       Resume →
@@ -1351,12 +1225,9 @@ function PraxisStudyAppContent() {
                         no localStorage to clear and we never delete Supabase
                         responses. The Resume CTA already triggers Supabase
                         reconstruction; the user picks up where they left off. */}
-                    {(profile.lastSession || savedSession) && (
+                    {canDiscardSession && (
                       <button
-                        onClick={() => {
-                          if (profile.lastSession) updateProfile({ lastSession: null });
-                          if (savedSession) handleDiscardSession();
-                        }}
+                        onClick={discardInProgressSession}
                         className="editorial-button-secondary"
                       >
                         Discard
@@ -1366,9 +1237,6 @@ function PraxisStudyAppContent() {
                 </div>
               );
             })();
-
-            // Legacy session-in-progress checks (kept for backward compat)
-            void (profile.lastSession); // referenced above in hasAssessmentInProgress
 
             return (
               <div className="space-y-8 pb-12">
@@ -1566,7 +1434,7 @@ function PraxisStudyAppContent() {
                     </div>
                     <div className="mt-5 flex gap-3">
                       <button onClick={() => startPractice()} className="editorial-button-primary">Continue Practice →</button>
-                      <button onClick={() => setRetakeJustCompleted(false)} className="editorial-button-ghost">Dismiss</button>
+                      <button onClick={dismissRetakeResults} className="editorial-button-ghost">Dismiss</button>
                     </div>
                   </div>
                 )}
@@ -1848,7 +1716,7 @@ function PraxisStudyAppContent() {
             followUpPool={retakeAssessmentData.followUpPool}
             assessmentTypeOverride="retake"
             onComplete={handleRetakeComplete}
-            onPauseExit={() => { setRetakeAssessmentData(null); setMode('home'); }}
+            onPauseExit={exitRetake}
             sessionId={undefined}
             currentUserName={currentUserName}
             logResponse={logResponse}
