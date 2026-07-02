@@ -47,7 +47,7 @@ Companion docs: `docs/ISSUE_LEDGER.md`, `docs/PENDING_IDEAS.md`, `docs/PLAN_2026
 | # | Task | Status |
 |---|---|---|
 | [1] | `git rm --cached public/mockup-*.html` (and any tracked root `/mockup-*.html`). Files **stay on disk** — the mockup-first workflow is unaffected; they just stop deploying. Note in PR body: prod `mockup-*.html` URLs will 404 after deploy (intended, per `.gitignore:49-52`). | ✅ 24 html + 6 `mockup-previews/*.png` untracked (previews are mockup screenshots, same exposure class, referenced by zero app code); gitignore rule broadened to `public/mockup-*`; app refs to mockups are comments only |
-| [2] | Verify on the PR deploy preview: `/mockup-*.html` → 404, app + one real static asset still serve. Then merge ⚠️ **PRODUCTION DEPLOY** (Carlos confirm). | ☐ ⛔[1] |
+| [2] | Verify on the PR deploy preview: `/mockup-*.html` → 404, app + one real static asset still serve. Then merge ⚠️ **PRODUCTION DEPLOY** (Carlos confirm). | 🔄 **verified on deploy-preview-46** (note: SPA fallback `/*→index.html 200` means mockup URLs now serve the app shell, not a literal 404 — content gone either way; `mockup-previews/hero.png` also falls back; CI `check` green 1m12s). PR #46 open — **awaiting Carlos merge confirm** |
 | [3] | Post-merge: confirm production 404s the old mockup URLs. If any mockup is still wanted shareable, move it deliberately (e.g. Netlify Drop / separate site), not via `public/`. | ☐ ⛔[2] |
 
 ## PHASE 2 — API hardening  ·  **PR B** (one reviewable PR, commits per task)
