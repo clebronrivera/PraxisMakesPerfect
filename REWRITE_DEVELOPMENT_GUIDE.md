@@ -1,6 +1,6 @@
 # How to Build This App (Rewrite Development Guide)
 
-> Status: Canonical source. Reviewed during documentation consolidation on 2026-03-14. This remains the architectural authority when older docs conflict, especially on Praxis-first structure, taxonomy-driven classification, and `skillId`-based domain resolution.
+> ⚠️ **Status: STALE — last verified 2026-03-15; predates the Phase 2 landings (2026-06).** Its durable architectural principles (Praxis-first structure, taxonomy-driven classification, `skillId`-based domain resolution) still hold, but implementation-level details have drifted. **Defer to code**, `CLAUDE.md`, and `docs/HOW_THE_APP_WORKS.md` for current behavior. Kept at root per `docs/DOCS_SYSTEM.md`; refresh-or-archive tracked in `docs/PLAN_2026-07-02_code-review-followups.md` [9].
 
 This document is the single source for how to develop the Praxis study app from the ground up. It describes **what** to build, **in what order**, and **why**, using concepts and roles rather than existing file names. Follow it when rewriting the codebase so the result is stable, analytics-ready, and aligned with the app’s purpose and outcomes.
 

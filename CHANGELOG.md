@@ -7,6 +7,26 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-07-02
+
+### Code-review remediation (Phases 1–3 of `docs/PLAN_2026-07-02_code-review-followups.md`)
+
+- **[Fix — Stop shipping mockups]** Untracked all `public/mockup-*.html` design mockups and `public/mockup-previews/*.png` screenshots (committed before the gitignore rule existed; they shipped verbatim to production with pre-PASS branding and retracted claims). Files remain on disk for the mockup-first workflow; gitignore rule broadened to `public/mockup-*`. Production mockup URLs now fall back to the app shell. — PR #46
+- **[Feature — AI Tutor rate limit]** Per-user message budget enforced server-side before every Claude call (per-hour + per-day sliding windows); `429` + `Retry-After` with a friendly client message that skips Sentry. Closes the largest uncapped AI-spend surface. — `api/tutor-chat.ts`, `api/_shared.ts`, PR #47
+- **[Feature — Study-plan failure cooldown]** 15-minute gap required after a failed generation attempt (failures stay excluded from the 7-day success rule, so no week-long lockout — but failed attempts can no longer burn tokens in a loop). — `api/study-plan-background.ts`, PR #47
+- **[Refactor — Shared endpoint helpers]** New `api/_shared.ts` (client factories, auth guards, CORS/JSON responders, `fetchWithTimeout`, UUID validation, rate-limit window math); all 10 Netlify functions refactored onto it. — PR #47
+- **[Security — API hygiene]** Supabase error details now log server-side only (generic client messages); `Access-Control-Allow-Origin: *` replaced with an origin allowlist reflect; AbortController timeouts on Anthropic fetches; UUID validation on `admin-student-detail`. — PR #47
+- **[Security — Dependencies]** `npm audit fix` (vite 6.4.2 → 6.4.3) cleared Dependabot #13/#14/#15; audit at 0 vulnerabilities. Old esbuild alert #12 was withdrawn upstream — the vite 6→8 major is no longer a security requirement (ISSUE_LEDGER reconciled). — `package-lock.json`
+- **[Tests]** `tests/apiRateLimits.test.ts` (window math) and `tests/apiEndpointGuards.test.ts` (handler-level 401/400/CORS/preflight/dormant-Stripe guards — also the workaround for `netlify dev` not exercising worktree code).
+- **[Docs — Rot cleanup]** Stale banners + `DOCS_SYSTEM.md` staleness notes on `CODEBASE_OVERVIEW.md`, `REWRITE_DEVELOPMENT_GUIDE.md`, `ASSESSMENT_DATA_FLOW_ANALYSIS.md` (kept at root per docs system); `HANDOFF_2026-04-27.md` archived to `archive/docs-cleanup-2026-07/`; README repo-status note updated (repo is the active PASS codebase; auto-deploys from `main`) and dead root links repointed to `docs/`.
+
+## 2026-06-12 → 2026-06-16 (backfill)
+
+- **[Feature — Phase 2 assessment]** Retake/A4 logic, C4 skill floors, migrations `0024`–`0028` (vocab attempts, deletion requests, retake tracking, function `search_path` hardening, SECURITY INVOKER flip closing an increment-RPC IDOR). — PRs #37, #38
+- **[Feature — Staged Study Guide]** React implementation of the staged/simplified study guide. — PR #41
+- **[Chore — Backlog residuals]** Centralized proficiency literals; ISSUE_LEDGER reconciled. — PR #42
+- **[Fix — AI Tutor outage]** Retired model swapped, model env-configurable, Sentry alerting on tutor failures. — PRs #44, #45
+
 ## 2026-06-02
 
 ### docs/ cleanup — sheriff pass
