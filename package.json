@@ -11,6 +11,9 @@
     "preview": "vite preview",
     "generate:practice": "npx tsx scripts/generate-practice.ts",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
     "deploy:status": "node scripts/deploy-status.mjs",
     "test:runtime": "npx tsx tests/adaptive-coaching.test.ts && npx tsx tests/code-health.test.ts",
     "verify:health": "npm run test:runtime && npm run diagnostics && npm run build",
@@ -42,6 +45,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
