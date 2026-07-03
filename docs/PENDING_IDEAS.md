@@ -20,24 +20,20 @@ Last updated: 2026-06-01 · Branch: `explore/dashboard-redesign`
 
 ---
 
+## SHIPPED — verify against `docs/HOW_THE_APP_WORKS.md`
+
+### Staged / simplified Study Guide
+Shipped `2026-06-16` (`4333b25`, "staged/simplified study-guide view (mockup → React)"). `StagedStudyGuide.tsx`
+is wired into `StudyPlanCard.tsx` as the **default** "Your Study Plan" view (Stage 1 per-area cards, Stage 2
+Bare-minimum/Intentional toggle); a "Detailed view" link still reaches the old `StudyPlanViewer.tsx`. Reflected
+in `docs/HOW_THE_APP_WORKS.md` (§ "Staged view"). This entry was previously (and incorrectly) marked ACTIVE
+with React implementation still pending — corrected 2026-07-03.
+
+---
+
 ## ACTIVE — building now
 
-### Staged / simplified Study Guide  ·  *FIRST FOCUS*
-A lighter alternative to the current heavy 9-section / 6-tab `StudyPlanViewer.tsx` (user finds it
-overwhelming). **Pure presentation/IA refactor — no study-plan regeneration, no new data fields.**
-
-- **Stage 1** — per-area cards: score chip · plain-English meaning · one concrete example · three
-  buttons **Practice / Review / Test**.
-- **Stage 2** — toggle **Bare-minimum vs Intentional**, gated on ≥3 weeks to test.
-- Reuses existing `StudyPlanDocumentV2` fields (`priorityClusters`, `domainStudyMaps`,
-  `weeklyStudyPlan`, `tacticalInstructions`, `checkpointLogic`, `studyConstraints.weeksToTest`).
-- Only genuinely new plumbing: thread the existing `startSkillPractice` / `startPractice` /
-  `handleStartRedemption` launchers into Stage-1 buttons.
-- **Status (updated 2026-06-16):** mockup **IS built + committed** (`public/mockup-study-guide-staged.html`,
-  on main since `44065b7`) and verified rendering 2026-06-16 — Stage 1 per-area cards + Stage 2
-  Bare-minimum/Intentional toggle, cool palette. **Next:** user sign-off → React implementation (do NOT
-  start React before explicit visual approval, per CLAUDE.md).
-- **Plan:** Part 1 of `.claude/plans/mighty-conjuring-hummingbird.md`.
+(nothing currently active)
 
 ---
 
