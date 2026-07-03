@@ -34,6 +34,7 @@ import {
 import { getSkillMetadataV1 } from '../data/skill-metadata-v1';
 import { toMetadataId } from '../data/skillIdMap';
 import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
+import { loadRawQuestionBank } from '../data/questionBankLoader';
 import { findMisconceptionByText, getMisconceptionsByProgressSkill } from './misconceptionRegistry';
 import { resolveDistractorInfo } from './distractorResolver';
 import {
@@ -356,17 +357,18 @@ function retrieveSkillContent(skillIds: string[]): {
 // ─── Main: group skill states into precomputed clusters ───────────────────────
 
 // Lazy index for questions.json — keyed by UNIQUEID.
-// Loaded via dynamic import() so the 5.9 MB JSON is emitted as its own
-// chunk rather than being pulled into the main bundle. The in-flight
-// promise is cached so concurrent callers share a single load.
+// Loaded via the shared fetch-based loader (see questionBankLoader.ts) so the
+// bank is served as an asset the browser caches once across all consumers,
+// rather than a duplicate 5.9 MB JS chunk. The in-flight promise is cached so
+// concurrent callers share a single load.
 let _questionIndex: Map<string, Record<string, string>> | null = null;
 let _questionIndexPromise: Promise<Map<string, Record<string, string>>> | null = null;
 async function getQuestionIndex(): Promise<Map<string, Record<string, string>>> {
   if (_questionIndex) return _questionIndex;
   if (!_questionIndexPromise) {
-    _questionIndexPromise = import('../data/questions.json').then(mod => {
-      const raw = mod.default as Record<string, string>[];
-      _questionIndex = new Map(raw.map(q => [q.UNIQUEID, q]));
+    _questionIndexPromise = loadRawQuestionBank().then(raw => {
+      const list = raw as Record<string, string>[];
+      _questionIndex = new Map(list.map(q => [q.UNIQUEID, q]));
       return _questionIndex;
     });
   }
