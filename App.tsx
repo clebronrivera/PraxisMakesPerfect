@@ -1,7 +1,7 @@
-import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
+import { lazy, Suspense, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
-import { analyzeQuestion, type Question as RawQuestion } from './src/brain/question-analyzer';
+import { analyzeQuestion, type Question as RawQuestion, type AnalyzedQuestion } from './src/brain/question-analyzer';
 
 // Import components
 const StudyModesSection = lazy(() => import('./src/components/StudyModesSection'));
@@ -210,7 +210,15 @@ function PraxisStudyAppContent() {
   const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, recalculateGlobalScores, isLoaded } = useProgressTracking();
   const { selectNextQuestion } = useAdaptiveLearning();
   const [canonicalQuestions, setCanonicalQuestions] = useState<RawQuestion[]>([]);
-  const [canonicalLoading, setCanonicalLoading] = useState(true);
+  // The 6.3MB question bank is fetched LAZILY — only when the user enters an
+  // assessment/practice flow — not at startup. Login, onboarding, and the
+  // dashboard render without it. `canonicalLoading` is true only while an
+  // in-flight lazy fetch is running (false at startup and after it resolves).
+  const [canonicalLoading, setCanonicalLoading] = useState(false);
+  const [questionBankError, setQuestionBankError] = useState(false);
+  // Idempotent loader guard: holds the single in-flight/settled fetch promise so
+  // repeated triggers (multiple entry points, re-renders) share one download.
+  const bankPromiseRef = useRef<Promise<AnalyzedQuestion[]> | null>(null);
 
   // Hash routing for privacy/terms — must be declared before any early returns
   const [hashRoute, setHashRoute] = useState(window.location.hash.replace('#', ''));
@@ -228,11 +236,17 @@ function PraxisStudyAppContent() {
     [fetchedQuestions, canonicalQuestionIds]
   );
 
-  useEffect(() => {
-    let active = true;
-    const controller = new AbortController();
-
-    fetch(CANONICAL_QUESTION_BANK_URL, { signal: controller.signal })
+  // Lazy question-bank loader. Idempotent: the first call kicks off the fetch and
+  // caches its promise; later calls (other entry points, re-renders) await the
+  // same download. Resolves to the analyzed bank so callers that need questions
+  // synchronously-after-await (assessment/practice/redemption builders) don't
+  // depend on the `analyzedQuestions` memo having re-rendered yet. A failed load
+  // clears the cache so a later entry can retry.
+  const ensureQuestionBank = useCallback((): Promise<AnalyzedQuestion[]> => {
+    if (bankPromiseRef.current) return bankPromiseRef.current;
+    setCanonicalLoading(true);
+    setQuestionBankError(false);
+    const promise = fetch(CANONICAL_QUESTION_BANK_URL)
       .then(async response => {
         if (!response.ok) {
           throw new Error(`Failed to load question bank (${response.status})`);
@@ -240,27 +254,21 @@ function PraxisStudyAppContent() {
         return response.json() as Promise<RawQuestion[]>;
       })
       .then(loadedQuestions => {
-        if (!active) return;
         setCanonicalQuestions(loadedQuestions);
+        setCanonicalLoading(false);
+        return loadedQuestions.map(analyzeQuestion);
       })
       .catch(error => {
-        if (controller.signal.aborted) {
-          return;
-        }
         console.error('[QuestionBank] Failed to load canonical question bank:', error);
-      })
-      .finally(() => {
-        if (active) {
-          setCanonicalLoading(false);
-        }
+        setCanonicalLoading(false);
+        setQuestionBankError(true);
+        bankPromiseRef.current = null; // allow a later entry point to retry
+        return [] as AnalyzedQuestion[];
       });
-
-    return () => {
-      active = false;
-      controller.abort();
-    };
+    bankPromiseRef.current = promise;
+    return promise;
   }, []);
-  
+
   useEffect(() => {
     clearLegacyClientDataOnce();
   }, []);
@@ -274,6 +282,17 @@ function PraxisStudyAppContent() {
   const [lastNonAdminMode, setLastNonAdminMode] = useState<NonAdminAppMode>('home');
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Prefetch the question bank on entry to any question-consuming mode. The
+  // assessment/practice/redemption START handlers already await ensureQuestionBank
+  // before building; this covers modes reached by plain navigation (practice-hub,
+  // results, learning-path-module) so the bank is ready by the time they render.
+  useEffect(() => {
+    const QUESTION_MODES: AppMode[] = ['practice-hub', 'practice', 'results', 'learning-path-module'];
+    if (QUESTION_MODES.includes(mode)) {
+      void ensureQuestionBank();
+    }
+  }, [mode, ensureQuestionBank]);
 
   // ── Users online + Leaderboard (social-proof header widgets) ───────────────
   const { usersOnline, sortedEntries: lbEntries, callerUserId: lbCallerId, lbOpen, setLbOpen, lbMode, setLbMode, isLoading: lbLoading, error: lbError, getRank, formatLbTime } = useSocialHub(user?.id ?? null);
@@ -318,6 +337,7 @@ function PraxisStudyAppContent() {
   } = usePracticeFlow({
     analyzedQuestions,
     userId: user?.id,
+    ensureQuestionBank,
     onNavigate: (m: string) => setMode(m as AppMode),
   });
 
@@ -375,6 +395,7 @@ function PraxisStudyAppContent() {
     savedSession,
     getAssessmentResponses,
     getLatestAssessmentResponses,
+    ensureQuestionBank,
     progressSummary,
     fetchedDomains,
     fetchedSkills,
@@ -385,7 +406,7 @@ function PraxisStudyAppContent() {
     userId: user?.id ?? null,
     profile,
     updateProfile,
-    analyzedQuestions,
+    ensureQuestionBank,
     onNavigate: (m: string) => setMode(m as AppMode),
   });
 
@@ -583,8 +604,10 @@ function PraxisStudyAppContent() {
   // RENDER
   // ============================================
   
-  // Show loading while checking auth, loading profile, or fetching content
-  if (authLoading || !isLoaded || contentLoading || canonicalLoading || canonicalQuestions.length === 0) {
+  // Show loading while checking auth or loading profile. The question bank is
+  // NOT gated here — it loads lazily on first assessment/practice entry, so
+  // login, onboarding, and the dashboard render without waiting for 6.3MB.
+  if (authLoading || !isLoaded || contentLoading) {
     return (
       <div className="min-h-screen bg-[#f7f6f2] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
@@ -714,6 +737,37 @@ function PraxisStudyAppContent() {
       null
     );
   })();
+
+  // Question-bank readiness for modes reached by plain navigation (practice /
+  // results / learning-path-module). These render with the analyzed bank, which
+  // now loads lazily on entry — show a brief loading/error panel until it's ready
+  // instead of the components' own empty states.
+  const questionBankReady = canonicalQuestions.length > 0;
+  const renderQuestionBankStatus = () => (
+    <div className="editorial-surface mx-auto max-w-md p-12 text-center space-y-6">
+      {questionBankError ? (
+        <>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-rose-100">
+            <AlertTriangle className="h-8 w-8 text-rose-600" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-slate-900">Couldn&apos;t load questions</h3>
+            <p className="mt-2 text-slate-500">Check your connection and try again.</p>
+          </div>
+          <button onClick={() => { void ensureQuestionBank(); }} className="editorial-button-primary">
+            Retry
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] grad-chrome animate-pulse">
+            <Brain className="h-8 w-8 text-white" />
+          </div>
+          <p className="text-slate-500">Loading questions…</p>
+        </>
+      )}
+    </div>
+  );
 
   return (
     <div
@@ -1494,7 +1548,8 @@ function PraxisStudyAppContent() {
         )}
 
         {/* LEARNING PATH MODULE PAGE */}
-        {mode === 'learning-path-module' && learningPathSkillId && (
+        {mode === 'learning-path-module' && learningPathSkillId && !questionBankReady && renderQuestionBankStatus()}
+        {mode === 'learning-path-module' && learningPathSkillId && questionBankReady && (
           <div className="space-y-6 pb-16">
             <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading module…</div>}>
               <LearningPathModulePage
@@ -1716,7 +1771,8 @@ function PraxisStudyAppContent() {
         )}
         
         {/* PRACTICE MODE */}
-        {mode === 'practice' && (
+        {mode === 'practice' && !questionBankReady && renderQuestionBankStatus()}
+        {mode === 'practice' && questionBankReady && (
           <PracticeSession
             userProfile={profile}
             updateSkillProgress={updateSkillProgress}
@@ -1743,7 +1799,8 @@ function PraxisStudyAppContent() {
         )}
         
         {/* RESULTS SCREEN */}
-        {mode === 'results' && (
+        {mode === 'results' && !questionBankReady && renderQuestionBankStatus()}
+        {mode === 'results' && questionBankReady && (
           <ResultsDashboard
             userProfile={profile}
             skills={fetchedSkills}

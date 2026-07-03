@@ -29,7 +29,12 @@ export interface UseRedemptionFlowOptions {
   userId: string | null;
   profile: UserProfile;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
-  analyzedQuestions: AnalyzedQuestion[];
+  /**
+   * Lazily loads + analyzes the question bank (idempotent). Awaited before a
+   * round starts so the bank downloads on entry, then bank rows are matched
+   * against the resolved questions.
+   */
+  ensureQuestionBank: () => Promise<AnalyzedQuestion[]>;
   /** Called when a handler needs to transition the app to a new mode/route. */
   onNavigate: (mode: string) => void;
 }
@@ -38,7 +43,7 @@ export function useRedemptionFlow({
   userId,
   profile,
   updateProfile,
-  analyzedQuestions,
+  ensureQuestionBank,
   onNavigate,
 }: UseRedemptionFlowOptions) {
   const redemption = useRedemptionRounds({ userId, profile, updateProfile });
@@ -48,18 +53,21 @@ export function useRedemptionFlow({
   const [redemptionMissedRows, setRedemptionMissedRows] = useState<MissedQuestion[]>([]);
 
   const handleStartRedemption = useCallback(async () => {
+    // Lazily load the bank on entry (idempotent); match bank rows against the
+    // resolved questions rather than the analyzedQuestions memo.
+    const questions = await ensureQuestionBank();
     const rows = await redemption.startRound();
     if (!rows || rows.length === 0) return;
     const matched = rows
       .map((row) => ({
-        q: analyzedQuestions.find(q => q.id === row.question_id),
+        q: questions.find(q => q.id === row.question_id),
         row,
       }))
       .filter((item): item is { q: AnalyzedQuestion; row: MissedQuestion } => item.q != null);
     setRedemptionQuestions(matched.map((item) => item.q));
     setRedemptionMissedRows(matched.map((item) => item.row));
     onNavigate('redemption-round');
-  }, [redemption, analyzedQuestions, onNavigate]);
+  }, [redemption, ensureQuestionBank, onNavigate]);
 
   const completeRound = useCallback(async (results: RoundResult[]) => {
     await redemption.recordRoundResult(results);

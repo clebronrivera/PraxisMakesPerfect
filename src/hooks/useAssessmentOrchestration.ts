@@ -68,6 +68,10 @@ export interface UseAssessmentOrchestrationOptions {
     assessmentTypes: AssessmentReportType[],
     questions: AnalyzedQuestion[],
   ) => Promise<AssessmentResponseBundle>;
+  /** Lazily loads + analyzes the question bank (idempotent). Passed through to
+   *  useAssessmentFlow and awaited by the retake builder so the 6.3MB bank loads
+   *  on assessment entry, not at startup. */
+  ensureQuestionBank: () => Promise<AnalyzedQuestion[]>;
   /** Current blended skill summary — used for the retake pre-snapshot. */
   progressSummary: ProgressSummary;
   fetchedDomains: Domain[];
@@ -86,6 +90,7 @@ export function useAssessmentOrchestration({
   savedSession,
   getAssessmentResponses,
   getLatestAssessmentResponses,
+  ensureQuestionBank,
   progressSummary,
   fetchedDomains,
   fetchedSkills,
@@ -101,6 +106,7 @@ export function useAssessmentOrchestration({
     savedSession,
     getAssessmentResponses,
     getLatestAssessmentResponses,
+    ensureQuestionBank,
     onNavigate,
   });
 
@@ -142,8 +148,10 @@ export function useAssessmentOrchestration({
     return { hasRetakeUnlocked: cleared === deficit.length, deficitSkillIds: deficit, clearedDeficitCount: cleared };
   }, [profile.adaptiveDiagnosticComplete, profile.retakeComplete, profile.globalScores, profile.skillScores]);
 
-  const startRetakeAssessment = useCallback(() => {
+  const startRetakeAssessment = useCallback(async () => {
     if (!profile.adaptiveDiagnosticComplete || profile.retakeComplete) return;
+    // Lazily load the bank on entry (idempotent); build from the resolved array.
+    const questions = await ensureQuestionBank();
     // Capture pre-retake snapshot for the results card
     const preDemonstrating = progressSummary.skills.filter(s => s.colorState === 'green').length;
     setRetakePreSnapshot({ readiness: profile.globalScores?.globalReadiness ?? 0, demonstratingCount: preDemonstrating });
@@ -156,10 +164,10 @@ export function useAssessmentOrchestration({
       ...(profile.fullAssessmentQuestionIds ?? []),
       ...(profile.diagnosticQuestionIds ?? []),
     ];
-    const data = buildAdaptiveDiagnostic(analyzedQuestions, [], seenIds);
+    const data = buildAdaptiveDiagnostic(questions, [], seenIds);
     setRetakeAssessmentData(data);
     onNavigate('retake-assessment');
-  }, [profile, analyzedQuestions, progressSummary.skills, onNavigate]);
+  }, [profile, ensureQuestionBank, progressSummary.skills, onNavigate]);
 
   const handleRetakeComplete = useCallback(async () => {
     await updateProfile({ retakeComplete: true, retakeCompletedAt: new Date().toISOString(), lastSession: null });
