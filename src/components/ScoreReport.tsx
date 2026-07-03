@@ -220,7 +220,7 @@ export default function ScoreReport({
       </div>
 
       {/* Overall Score Card */}
-      <div className="editorial-panel-dark p-8 text-center">
+      <div className="editorial-surface p-8 text-center">
         <div className="space-y-4">
           <div>
             <p className="mb-2 text-sm text-slate-600">Overall Score</p>
