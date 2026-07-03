@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "generate:practice": "npx tsx scripts/generate-practice.ts",
     "test": "vitest run",
+    "deploy:status": "node scripts/deploy-status.mjs",
     "test:runtime": "npx tsx tests/adaptive-coaching.test.ts && npx tsx tests/code-health.test.ts",
     "verify:health": "npm run test:runtime && npm run diagnostics && npm run build",
     "scan:types": "tsc -p tsconfig.json --noEmit",
