@@ -4,7 +4,7 @@ import OnboardingFlow from './OnboardingFlow';
 import type { UserProfileData } from './OnboardingFlow';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
-import { Button } from './ui';
+import { Button, IconButton } from './ui';
 
 /**
  * Slide-over panel: review and edit saved onboarding answers (nickname, program, exam, goals).
@@ -65,14 +65,13 @@ export default function ProfileEditorPanel({
             </p>
             <p className="text-sm font-semibold text-slate-900">Profile &amp; onboarding</p>
           </div>
-          <button
-            type="button"
+          <IconButton
+            variant="neutral"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
             aria-label="Close profile editor"
           >
             <X className="h-5 w-5" />
-          </button>
+          </IconButton>
         </div>
 
         {/* Account info strip */}

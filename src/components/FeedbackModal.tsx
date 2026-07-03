@@ -5,7 +5,7 @@ import {
   useBetaFeedback
 } from '../hooks/useBetaFeedback';
 import { notifyToast } from '../utils/toast';
-import { Button } from './ui';
+import { Button, IconButton } from './ui';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -145,14 +145,13 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               </p>
             </div>
           </div>
-          <button
+          <IconButton
             onClick={handleClose}
-            className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             title="Close feedback form"
             aria-label="Close feedback form"
           >
             <X className="h-5 w-5" />
-          </button>
+          </IconButton>
         </div>
 
         <div className="space-y-6">

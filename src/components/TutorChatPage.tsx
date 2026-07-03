@@ -5,7 +5,7 @@
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Plus, Send, ChevronUp, Paperclip } from 'lucide-react';
-import { Button } from './ui';
+import { Button, IconButton } from './ui';
 import { useTutorChat } from '../hooks/useTutorChat';
 import { TutorMessageBubble } from './TutorMessageBubble';
 import { TutorEmptyState } from './TutorEmptyState';
@@ -86,14 +86,15 @@ export function TutorChatPage({
       <aside className="w-64 shrink-0 border-r border-slate-200 flex flex-col bg-[#ffffff] backdrop-blur-md">
         <div className="p-4 flex items-center justify-between">
           <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400">Sessions</p>
-          <button
+          <IconButton
+            variant="neutral"
+            size="sm"
             onClick={chat.startNewSession}
             title="New chat"
             aria-label="Start new chat session"
-            className="w-7 h-7 rounded-full border border-slate-300 text-slate-900 flex items-center justify-center hover:border-indigo-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
           >
             <Plus className="w-3.5 h-3.5" aria-hidden="true" />
-          </button>
+          </IconButton>
         </div>
 
         {/* Mode toggle */}
@@ -254,15 +255,14 @@ export function TutorChatPage({
               style={{ maxHeight: '180px', overflowY: 'auto' }}
             />
             <div className="flex items-center gap-2">
-              <button
-                type="button"
+              <IconButton
+                variant="neutral"
+                size="sm"
                 title="Attach context"
                 aria-label="Attach context"
-                className="editorial-button-secondary"
-                style={{ padding: '8px 10px' }}
               >
                 <Paperclip className="w-3.5 h-3.5" aria-hidden="true" />
-              </button>
+              </IconButton>
               <Button
                 variant="primary"
                 size="sm"

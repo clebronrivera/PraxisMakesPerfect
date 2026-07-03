@@ -4,6 +4,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Bot, X, Send, ChevronDown } from 'lucide-react';
+import { IconButton } from './ui';
 import { useTutorChat } from '../hooks/useTutorChat';
 import { TutorMessageBubble } from './TutorMessageBubble';
 import { TutorEmptyState } from './TutorEmptyState';
@@ -84,12 +85,13 @@ export function FloatingTutorWidget({
                 <p className="text-[10px] text-stone-500">AI Study Assistant</p>
               </div>
             </div>
-            <button
+            <IconButton
+              size="sm"
               onClick={() => setIsOpen(false)}
-              className="w-7 h-7 rounded-full hover:bg-stone-200 flex items-center justify-center transition-colors"
+              aria-label="Collapse chat"
             >
               <ChevronDown className="w-4 h-4 text-stone-500" />
-            </button>
+            </IconButton>
           </div>
 
           {/* Messages */}

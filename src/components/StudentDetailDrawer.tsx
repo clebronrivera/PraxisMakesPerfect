@@ -4,6 +4,7 @@ import { supabase } from '../config/supabase';
 import { PROGRESS_DOMAINS, PROGRESS_SKILL_LOOKUP } from '../utils/progressTaxonomy';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import DiagnosticStoryPanel from './DiagnosticStoryPanel';
+import { IconButton } from './ui';
 
 interface UserInfo {
   id: string;
@@ -261,13 +262,13 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
             <h2 id="student-detail-title" className="text-lg font-semibold text-slate-900">{displayName}</h2>
             <p className="text-sm text-slate-500">{user.authMetrics?.email || user.id}</p>
           </div>
-          <button
+          <IconButton
+            variant="neutral"
             onClick={onClose}
             aria-label="Close student detail"
-            className="rounded-xl border border-slate-200 p-2 text-slate-500 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
           >
             <X className="h-5 w-5" />
-          </button>
+          </IconButton>
         </div>
 
         {isLoading ? (

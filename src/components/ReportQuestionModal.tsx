@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import { useQuestionReports } from '../hooks/useQuestionReports';
-import { Button } from './ui';
+import { Button, IconButton } from './ui';
 
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 
@@ -167,14 +167,13 @@ export default function ReportQuestionModal({
             <AlertTriangle className="w-6 h-6 text-amber-500" aria-hidden="true" />
             <h3 id="report-question-title" className="text-xl font-semibold text-slate-700">Report Question</h3>
           </div>
-          <button
+          <IconButton
             onClick={handleCancel}
-            className="text-slate-500 hover:text-slate-600 transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             title="Close"
             aria-label="Close report dialog"
           >
             <X className="w-5 h-5" aria-hidden="true" />
-          </button>
+          </IconButton>
         </div>
 
         {/* Step 1: What are you reporting? */}

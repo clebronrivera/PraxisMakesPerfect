@@ -25,6 +25,7 @@ import {
   MODULE_LOOKUP,
   type LearningModule,
 } from '../data/learningModules';
+import { IconButton } from './ui';
 import { useLearningPathProgress } from '../hooks/useLearningPathProgress';
 import { useModuleVisitTracking } from '../hooks/useModuleVisitTracking';
 import { useSectionObserver } from '../hooks/useSectionObserver';
@@ -157,16 +158,18 @@ export default function SkillHelpDrawer({
         <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-3">
           <div className="flex items-center gap-2.5 min-w-0">
             {activeModule && activeModuleId !== primaryModule?.id && (
-              <button
+              <IconButton
+                size="sm"
                 onClick={() => {
                   if (activeModuleId) progress.onCloseModule(activeModuleId);
                   setActiveModuleId(primaryModule?.id ?? null);
                   if (primaryModule) progress.onOpenModule(primaryModule.id);
                 }}
-                className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
+                aria-label="Back to primary lesson"
+                className="shrink-0"
               >
                 <ChevronLeft className="w-4 h-4" />
-              </button>
+              </IconButton>
             )}
             <BookOpen className="h-4 w-4 shrink-0" style={{ color: '#d97706' }} />
             <div className="min-w-0">
@@ -178,12 +181,13 @@ export default function SkillHelpDrawer({
               </p>
             </div>
           </div>
-          <button
+          <IconButton
             onClick={onClose}
-            className="shrink-0 rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
+            aria-label="Close"
+            className="shrink-0"
           >
             <X className="w-4 h-4" />
-          </button>
+          </IconButton>
         </div>
 
         {modules.length > 1 && (

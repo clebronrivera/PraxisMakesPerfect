@@ -1,0 +1,4 @@
+{
+  "_note": "Debt ratchet for raw <button> tags outside src/components/ui/ (see scripts/check-buttons.mjs). Prefer <Button>/<IconButton>. Raise max ONLY for intentional raw buttons (answer tiles, nav, segmented controls, dark landing surface), with a reason. Lower max as more buttons migrate onto the primitives.",
+  "max": 166
+}
