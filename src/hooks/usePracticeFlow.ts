@@ -39,6 +39,12 @@ export interface PracticeContext {
 export interface UsePracticeFlowOptions {
   analyzedQuestions: AnalyzedQuestion[];
   userId: string | undefined;
+  /**
+   * Lazily loads the question bank (idempotent). Fired when a practice session
+   * starts so the 6.3MB bank downloads on entry rather than at app startup;
+   * `practiceQuestions` repopulates via `analyzedQuestions` once it resolves.
+   */
+  ensureQuestionBank: () => Promise<AnalyzedQuestion[]>;
   /** Called when the hook wants to navigate to the 'practice' route. */
   onNavigate: (mode: string) => void;
 }
@@ -64,6 +70,7 @@ export interface UsePracticeFlowReturn {
 export function usePracticeFlow({
   analyzedQuestions,
   userId,
+  ensureQuestionBank,
   onNavigate,
 }: UsePracticeFlowOptions): UsePracticeFlowReturn {
   const [practiceDomainFilter, setPracticeDomainFilter] = useState<number | null>(null);
@@ -110,23 +117,25 @@ export function usePracticeFlow({
   // ── startPractice ─────────────────────────────────────────────────────────
   const startPractice = useCallback(
     (domainId?: number) => {
+      void ensureQuestionBank();
       setPracticeSkillFilter(null);
       setPracticeDomainFilter(domainId ?? null);
       savePracticeContext(domainId ? { type: 'domain', domainId } : { type: 'general' });
       onNavigate('practice');
     },
-    [onNavigate, savePracticeContext],
+    [ensureQuestionBank, onNavigate, savePracticeContext],
   );
 
   // ── startSkillPractice ────────────────────────────────────────────────────
   const startSkillPractice = useCallback(
     (skillId: string) => {
+      void ensureQuestionBank();
       setPracticeDomainFilter(null);
       setPracticeSkillFilter(skillId);
       savePracticeContext({ type: 'skill', skillId });
       onNavigate('practice');
     },
-    [onNavigate, savePracticeContext],
+    [ensureQuestionBank, onNavigate, savePracticeContext],
   );
 
   // ── resetPracticeFilters ──────────────────────────────────────────────────
