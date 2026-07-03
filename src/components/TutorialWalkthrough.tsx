@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { TUTORIAL_SLIDES, DIAGNOSTIC_TUTORIAL_SLIDES } from '../data/tutorial-slides';
 import type { TutorialSlide } from '../data/tutorial-slides';
+import { Button } from './ui';
 
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   Sparkles, ClipboardCheck, LayoutDashboard, Dumbbell,
@@ -107,33 +108,31 @@ export default function TutorialWalkthrough({ onDismiss, variant = 'full' }: Tut
 
             {/* Navigation buttons */}
             <div className="mt-5 flex items-center justify-between">
-              <button
+              <Button
+                variant="subtle"
+                size="sm"
                 onClick={goPrev}
                 disabled={isFirst}
-                className={`flex items-center gap-1 rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
-                  isFirst
-                    ? 'cursor-not-allowed text-slate-600'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
               >
                 <ChevronLeft className="h-4 w-4" />
                 Back
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant="subtle"
+                size="sm"
                 onClick={onDismiss}
-                className="text-sm text-slate-400 hover:text-slate-600 transition-colors"
               >
                 Skip tour
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant="primary"
                 onClick={goNext}
-                className="flex items-center gap-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
               >
                 {isLast ? 'Get Started' : 'Next'}
                 {!isLast && <ChevronRight className="h-4 w-4" />}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

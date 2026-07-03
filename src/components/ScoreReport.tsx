@@ -9,6 +9,7 @@ import { useProgressTracking } from '../hooks/useProgressTracking';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
 import { loadSession, clearSession } from '../utils/sessionStorage';
+import { Button } from './ui';
 import type { DiagnosticSummary } from '../types/diagnosticSummary';
 
 interface ScoreReportProps {
@@ -85,23 +86,25 @@ export default function ScoreReport({
           </div>
 
           <div className="flex flex-col gap-3 pt-4">
-            <button
+            <Button
+              variant="primary"
+              fullWidth
               onClick={tryRecalculate}
-              className="editorial-button-primary w-full"
             >
               <RotateCcw className="w-4 h-4" />
               Try to Recalculate
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
+              fullWidth
               onClick={() => {
                 clearSession();
                 onGoHome();
               }}
-              className="editorial-button-secondary w-full"
             >
               <Home className="w-4 h-4" />
               Reset Attempt & Go Home
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -208,15 +211,16 @@ export default function ScoreReport({
         <p className="editorial-copy">
           {`You completed all ${totalQuestions} questions`}
         </p>
-        <button
+        <Button
+          variant="secondary"
+          className="mx-auto"
           onClick={() => {
             const { currentSkillScores } = detectWeaknesses(responses, questions);
             downloadScoreReport(responses, profile, currentSkillScores);
           }}
-          className="editorial-button-secondary mx-auto"
         >
           Download Detailed Report
-        </button>
+        </Button>
       </div>
 
       {/* Overall Score Card */}
@@ -460,31 +464,34 @@ export default function ScoreReport({
       {/* Action Buttons */}
       <div className="space-y-4">
         <div className="space-y-3">
-          <button
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
             onClick={() => onStartPractice(weakestDomains[0])}
-            className="editorial-button-primary w-full p-6"
           >
             <Zap className="w-5 h-5" />
             Start Domain Review in Weakest Domain
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           {!hideRetake && (
-            <button
+            <Button
+              variant="dark"
               onClick={onRetakeAssessment}
-              className="editorial-button-dark p-4"
             >
               Retake Assessment
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="secondary"
+            className={hideRetake ? 'col-span-2' : ''}
             onClick={onGoHome}
-            className={`editorial-button-secondary p-4 ${hideRetake ? 'col-span-2' : ''}`}
           >
             <Home className="w-4 h-4" />
             Home
-          </button>
+          </Button>
         </div>
       </div>
     </div>

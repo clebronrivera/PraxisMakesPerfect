@@ -32,6 +32,7 @@ import {
   removeGlossaryTerm,
   type GlossaryTerm,
 } from '../services/glossaryService';
+import { Button } from './ui';
 import glossaryData from '../data/master-glossary.json';
 
 const VocabularyQuizMode = lazy(() => import('./VocabularyQuizMode'));
@@ -197,19 +198,16 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
                   <EyeOff size={12} />
                   Hidden until you reveal it
                 </div>
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={handleReveal}
                   disabled={revealing}
-                  className="self-start inline-flex items-center gap-1.5 text-xs font-medium rounded-lg px-3 py-1.5 transition disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#4f46e5]"
-                  style={{
-                    color: '#4f46e5',
-                    background: 'color-mix(in srgb, #4f46e5 10%, transparent)',
-                    border: '1px solid color-mix(in srgb, #4f46e5 30%, transparent)',
-                  }}
+                  className="self-start"
                 >
                   {revealing ? <Loader2 size={12} className="animate-spin" /> : <Eye size={12} />}
                   Reveal Definition
-                </button>
+                </Button>
                 {hasDef && (
                   <p className="text-[10px] text-slate-500">Compare it to yours once you're ready.</p>
                 )}

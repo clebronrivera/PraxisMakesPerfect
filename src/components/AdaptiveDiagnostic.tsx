@@ -4,6 +4,7 @@ import QuestionCard from './QuestionCard';
 import { UserResponse } from '../brain/weakness-detector';
 import { clearSession } from '../utils/sessionStorage';
 import { deleteUserSession, loadUserSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
+import { Button } from './ui';
 
 const TutorialWalkthrough = lazy(() => import('./TutorialWalkthrough'));
 import {
@@ -508,13 +509,13 @@ export default function AdaptiveDiagnostic({
           </div>
         </div>
 
-        <button
+        <Button
+          variant="secondary"
           onClick={handlePauseToggle}
-          className="editorial-button-secondary"
         >
           {isPaused ? <Play className="w-4 h-4 text-emerald-600" /> : <Pause className="w-4 h-4" />}
           <span>{isPaused ? 'Resume' : 'Pause'}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Inactivity Warning */}
@@ -549,19 +550,23 @@ export default function AdaptiveDiagnostic({
               </p>
             </div>
             <div className="space-y-3 pt-4">
-              <button
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
                 onClick={resume}
-                className="editorial-button-primary w-full justify-center px-6 py-4"
               >
                 <Play className="w-5 h-5" />
                 Resume Diagnostic
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                fullWidth
                 onClick={handlePauseExit}
-                className="editorial-button-secondary w-full justify-center px-6 py-4"
               >
                 Save & Exit to Dashboard
-              </button>
+              </Button>
             </div>
           </div>
         </div>

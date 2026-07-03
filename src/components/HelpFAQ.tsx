@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, HelpCircle, PlayCircle } from 'lucide-react';
+import { Button } from './ui';
 
 interface FAQEntry {
   question: string;
@@ -83,18 +84,14 @@ export default function HelpFAQ({ onGoHome, onReplayTutorial }: { onGoHome: () =
 
       <div className="flex items-center justify-center gap-3 pt-2">
         {onReplayTutorial && (
-          <button
-            type="button"
-            onClick={onReplayTutorial}
-            className="editorial-button-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400/60"
-          >
+          <Button variant="secondary" onClick={onReplayTutorial}>
             <PlayCircle className="h-4 w-4" />
             Replay Tutorial
-          </button>
+          </Button>
         )}
-        <button type="button" onClick={onGoHome} className="editorial-button-secondary">
+        <Button variant="secondary" onClick={onGoHome}>
           Back to dashboard
-        </button>
+        </Button>
       </div>
     </div>
   );

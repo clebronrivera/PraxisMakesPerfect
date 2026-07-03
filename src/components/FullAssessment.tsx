@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 import QuestionCard from './QuestionCard';
+import { Button } from './ui';
 import { UserResponse } from '../brain/weakness-detector';
 import { clearSession } from '../utils/sessionStorage';
 import { deleteUserSession, loadUserSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
@@ -328,13 +329,13 @@ export default function FullAssessment({
           </div>
         </div>
         
-        <button
+        <Button
+          variant="secondary"
           onClick={handlePauseToggle}
-          className="editorial-button-secondary"
         >
           {isPaused ? <Play className="w-4 h-4 text-emerald-600" /> : <Pause className="w-4 h-4" />}
           <span>{isPaused ? 'Resume' : 'Pause'}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Inactivity Warning */}
@@ -367,19 +368,23 @@ export default function FullAssessment({
               </p>
             </div>
             <div className="space-y-3 pt-4">
-              <button
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
                 onClick={resume}
-                className="editorial-button-primary w-full justify-center px-6 py-4"
               >
                 <Play className="w-5 h-5" />
                 Resume Assessment
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                fullWidth
                 onClick={() => window.location.reload()} // Simple reload to go back to home/dashboard
-                className="editorial-button-secondary w-full justify-center px-6 py-4"
               >
                 Save & Exit to Home
-              </button>
+              </Button>
             </div>
           </div>
         </div>

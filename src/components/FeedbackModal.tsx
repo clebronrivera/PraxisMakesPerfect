@@ -5,6 +5,7 @@ import {
   useBetaFeedback
 } from '../hooks/useBetaFeedback';
 import { notifyToast } from '../utils/toast';
+import { Button } from './ui';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -225,21 +226,21 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           </label>
 
           <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
-            <button
+            <Button
               type="button"
+              variant="neutral"
               onClick={handleClose}
-              className="rounded-xl border border-slate-200 px-4 py-2.5 text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="primary"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="rounded-xl bg-cyan-500 px-4 py-2.5 font-medium text-slate-950 transition-colors hover:bg-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
             >
               {isSubmitting ? 'Submitting...' : 'Send feedback'}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

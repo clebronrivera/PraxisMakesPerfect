@@ -11,6 +11,7 @@ import {
   NASP_PROGRAM_STATE_OPTIONS,
   US_STATE_OPTIONS,
 } from '../data/naspSchoolPsychPrograms';
+import { Button } from './ui';
 
 const STATE_NAME_BY_CODE = Object.fromEntries(
   US_STATE_OPTIONS.map(({ code, name }) => [code, name])
@@ -940,10 +941,11 @@ export default function OnboardingFlow({
 
           {/* Footer nav */}
           <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between gap-4">
-            <button
+            <Button
               type="button"
+              variant="subtle"
+              size="sm"
               onClick={handleSkipOrBack}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-500 transition-colors hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               {isFirst ? (
                 mode === 'edit' && onCancel ? (
@@ -956,15 +958,15 @@ export default function OnboardingFlow({
                   <ChevronLeft className="h-4 w-4" /> Back
                 </>
               )}
-            </button>
+            </Button>
 
             <ProgressDots total={steps.length} current={stepIndex} />
 
-            <button
+            <Button
               type="button"
+              variant="primary"
               onClick={handleNext}
               disabled={!canAdvance() || saving}
-              className="flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
             >
               {saving ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
@@ -973,7 +975,7 @@ export default function OnboardingFlow({
               ) : (
                 <>Next <ChevronRight className="w-4 h-4" /></>
               )}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { enqueueResponse, getQueuedResponses, clearQueue } from '../utils/respon
 import { captureError } from '../utils/sentry';
 import ModuleSnippetCard from './ModuleSnippetCard';
 import SkillHelpDrawer from './SkillHelpDrawer';
+import { Button, Surface } from './ui';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import { getSkillForModule } from '../data/learningModules';
 import QuestionCard from './QuestionCard';
@@ -615,13 +616,14 @@ export default function PracticeSession({
             <h3 className="text-xl font-bold text-slate-900">No Questions Found</h3>
             <p className="mt-2 text-slate-500">We couldn&apos;t find any questions matching your filters. Try choosing a different domain or skill.</p>
           </div>
-          <button
+          <Button
+            variant="secondary"
+            fullWidth
             onClick={onExitPractice}
-            className="editorial-button-secondary w-full"
           >
             <Home className="w-4 h-4" />
             Back to Home
-          </button>
+          </Button>
         </div>
       );
     }
@@ -672,7 +674,7 @@ export default function PracticeSession({
       )}
 
       {/* ── Session Header ────────────────────────────────────────────────────── */}
-      <div className="editorial-surface flex items-center justify-between gap-4 p-5">
+      <Surface padding="sm" className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-accent" />
@@ -772,7 +774,7 @@ export default function PracticeSession({
             )}
           </button>
         </div>
-      </div>
+      </Surface>
 
       {/* ── Skill Help Drawer ─────────────────────────────────────────────────── */}
       {/* Rendered whenever a module link is clicked (skill or domain practice). */}
@@ -897,7 +899,7 @@ export default function PracticeSession({
 
       {/* ── Practice Context Box — always shows Domain + Skill ───────────────── */}
       {(domainInfo || skillInfo) && (
-        <div className="editorial-surface space-y-4 p-5">
+        <Surface padding="sm" className="space-y-4">
           {domainInfo && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
@@ -929,7 +931,7 @@ export default function PracticeSession({
               )}
             </div>
           )}
-        </div>
+        </Surface>
       )}
 
       {/* ── Response save warning ──────────────────────────────────────────── */}
@@ -1051,12 +1053,13 @@ export default function PracticeSession({
               <h3 className="text-xl font-bold text-slate-900">Session Paused</h3>
               <p className="mt-2 text-sm text-slate-500">Your progress is safely stored. Resume when you&apos;re ready.</p>
             </div>
-            <button
+            <Button
+              variant="primary"
+              fullWidth
               onClick={resume}
-              className="editorial-button-primary w-full"
             >
               Resume Session
-            </button>
+            </Button>
           </div>
         </div>
       )}

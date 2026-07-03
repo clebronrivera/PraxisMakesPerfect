@@ -16,6 +16,7 @@ import { PROGRESS_SKILLS, PROGRESS_DOMAINS } from '../utils/progressTaxonomy';
 import { formatStudyTime } from '../hooks/useDailyStudyTime';
 import { PROFICIENCY_META, TOTAL_SKILLS } from '../utils/skillProficiency';
 import type { ProgressSummary } from '../utils/progressSummaries';
+import { Surface } from './ui';
 
 // ─── Props ──────────────────────────────────────────────────────────────────
 
@@ -393,7 +394,7 @@ export default function DashboardHome({
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
         {/* Today's Focus (2/3) */}
-        <div className="lg:col-span-2 editorial-surface p-6">
+        <Surface padding="md" className="lg:col-span-2">
           <div className="flex items-baseline justify-between mb-4">
             <h3 className="text-[13px] font-bold text-slate-900 tracking-[0.02em]">Today's Focus</h3>
             <span className="eyebrow text-slate-400">Chained by priority</span>
@@ -466,11 +467,11 @@ export default function DashboardHome({
               <span className="text-slate-400 group-hover:text-indigo-600 text-sm">→</span>
             </button>
           </div>
-        </div>
+        </Surface>
 
         {/* This Week + Redemption (1/3) */}
         <div className="flex flex-col gap-5">
-          <div className="editorial-surface p-6">
+          <Surface padding="md">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-slate-900 tracking-wide">This Week</h3>
               <span className="text-[10px] text-slate-400">7D</span>
@@ -503,7 +504,7 @@ export default function DashboardHome({
                 />
               </div>
             </div>
-          </div>
+          </Surface>
 
           {redemptionBankCount > 0 && (
             <RedemptionCard

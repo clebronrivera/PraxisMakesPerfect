@@ -5,6 +5,7 @@
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Plus, Send, ChevronUp, Paperclip } from 'lucide-react';
+import { Button } from './ui';
 import { useTutorChat } from '../hooks/useTutorChat';
 import { TutorMessageBubble } from './TutorMessageBubble';
 import { TutorEmptyState } from './TutorEmptyState';
@@ -184,13 +185,15 @@ export function TutorChatPage({
           )}
 
           {chat.hasOlderMessages && !chat.isHydratingSession && (
-            <button
+            <Button
+              variant="subtle"
+              size="sm"
+              fullWidth
               onClick={chat.loadOlderMessages}
-              className="w-full flex items-center justify-center gap-1 text-[11px] text-slate-500 hover:text-slate-700 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 rounded"
             >
               <ChevronUp className="w-3 h-3" aria-hidden="true" />
               Load older messages
-            </button>
+            </Button>
           )}
 
           {chat.messages.length === 0 && !chat.isHydratingSession && (
@@ -260,18 +263,16 @@ export function TutorChatPage({
               >
                 <Paperclip className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
-              <button
+              <Button
+                variant="primary"
+                size="sm"
                 onClick={handleSend}
                 disabled={!input.trim() || chat.isSending}
                 aria-label="Send message"
-                className="editorial-button-primary disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ padding: '9px 18px', fontSize: 12 }}
               >
-                <span className="inline-flex items-center gap-1.5">
-                  <Send className="w-3.5 h-3.5" aria-hidden="true" />
-                  Send
-                </span>
-              </button>
+                <Send className="w-3.5 h-3.5" aria-hidden="true" />
+                Send
+              </Button>
             </div>
           </div>
           <p className="text-[10px] text-slate-500 mt-2 text-center">

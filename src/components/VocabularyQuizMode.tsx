@@ -26,6 +26,7 @@ import {
   type VocabQuizItem,
   type QuizType,
 } from '../utils/vocabQuizGenerator';
+import { Button } from './ui';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -228,12 +229,9 @@ export default function VocabularyQuizMode({ userTerms }: VocabularyQuizModeProp
           </div>
 
           {/* Start */}
-          <button
-            onClick={startQuiz}
-            className="w-full py-3 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 active:scale-[0.98] transition shadow-sm"
-          >
+          <Button variant="primary" fullWidth onClick={startQuiz}>
             Start Quiz
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -366,10 +364,7 @@ export default function VocabularyQuizMode({ userTerms }: VocabularyQuizModeProp
               {isCorrect ? 'Correct!' : `The answer is: ${item.correctTerm}`}
             </div>
 
-            <button
-              onClick={nextQuestion}
-              className="w-full py-3 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 active:scale-[0.98] transition flex items-center justify-center gap-2"
-            >
+            <Button variant="primary" fullWidth onClick={nextQuestion}>
               {isLast ? (
                 <>
                   <Trophy size={16} /> See Results
@@ -379,7 +374,7 @@ export default function VocabularyQuizMode({ userTerms }: VocabularyQuizModeProp
                   Next <ArrowRight size={16} />
                 </>
               )}
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -451,21 +446,19 @@ export default function VocabularyQuizMode({ userTerms }: VocabularyQuizModeProp
 
         {/* Actions */}
         <div className="flex gap-3">
-          <button
+          <Button
+            variant="neutral"
+            className="flex-1"
             onClick={() => {
               setQuizState('config');
               setSession(null);
             }}
-            className="flex-1 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition flex items-center justify-center gap-2"
           >
             <RotateCcw size={14} /> New Quiz
-          </button>
-          <button
-            onClick={startQuiz}
-            className="flex-1 py-3 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 active:scale-[0.98] transition flex items-center justify-center gap-2"
-          >
+          </Button>
+          <Button variant="primary" className="flex-1" onClick={startQuiz}>
             <Zap size={14} /> Retry Same Settings
-          </button>
+          </Button>
         </div>
       </div>
     );

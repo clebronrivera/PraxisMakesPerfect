@@ -45,6 +45,7 @@ import {
 } from '../data/learningModules';
 import SkillHelpDrawer from './SkillHelpDrawer';
 import ModulesBrowser from './ModulesBrowser';
+import { Button } from './ui';
 import { useLearningPathSupabase } from '../hooks/useLearningPathSupabase';
 import type { UserProfile } from '../hooks/useProgressTracking';
 
@@ -211,12 +212,9 @@ function DomainPanel({
           </p>
         </div>
         {onStartDiagnostic && (
-          <button
-            onClick={onStartDiagnostic}
-            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
-          >
+          <Button onClick={onStartDiagnostic}>
             Take the adaptive diagnostic
-          </button>
+          </Button>
         )}
       </div>
     );
@@ -248,12 +246,14 @@ function DomainPanel({
                   <p className="text-base font-semibold leading-tight text-slate-900">{stat.domain.name}</p>
                   <p className="mt-0.5 text-[11px] text-slate-500">{stat.totalSkills} skills</p>
                 </div>
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => onDomainSelect(stat.domain.id)}
-                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
+                  className="shrink-0"
                 >
                   Practice
-                </button>
+                </Button>
               </div>
               <div className="relative h-1.5 mb-2" style={{ overflow: 'visible' }}>
                 <div className="absolute inset-0 overflow-hidden rounded-full bg-slate-100">
@@ -335,12 +335,9 @@ function SkillPanel({
           </p>
         </div>
         {onStartDiagnostic && (
-          <button
-            onClick={onStartDiagnostic}
-            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
-          >
+          <Button onClick={onStartDiagnostic}>
             Take the adaptive diagnostic
-          </button>
+          </Button>
         )}
       </div>
     );
@@ -488,12 +485,14 @@ function SkillPanel({
                 </button>
 
                 {/* Practice button — launches question practice */}
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => onStartSkillPractice(row.skillId)}
-                  className="editorial-button-secondary shrink-0 px-3 py-1.5 text-sm"
+                  className="shrink-0"
                 >
                   Practice
-                </button>
+                </Button>
               </div>
             );
           })
@@ -537,12 +536,9 @@ function LearningPathPanel({
           </p>
         </div>
         {onStartDiagnostic && (
-          <button
-            onClick={onStartDiagnostic}
-            className="editorial-button-primary flex items-center gap-2 px-4 py-2 text-sm"
-          >
+          <Button onClick={onStartDiagnostic}>
             Take the adaptive diagnostic
-          </button>
+          </Button>
         )}
       </div>
     );

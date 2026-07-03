@@ -9,6 +9,7 @@ import type { UserProfile } from '../hooks/useProgressTracking';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
 import type { SkillPerformance } from '../brain/learning-state';
+import { Button, Surface } from './ui';
 import { PROFICIENCY_META, TOTAL_SKILLS, READINESS_TARGET } from '../utils/skillProficiency';
 import { buildConceptAnalytics, type ConceptAnalyticsReport } from '../utils/conceptAnalytics';
 import { computeTimeStats, computeConfidenceStats } from '../utils/diagnosticSelectors';
@@ -336,7 +337,7 @@ export default function ResultsDashboard({
       </header>
 
       {/* ── Journey timeline ─────────────────────────────────────────── */}
-      <section className="editorial-surface p-6">
+      <Surface as="section" padding="md">
         <div className="flex items-baseline justify-between mb-5">
           <div>
             <p className="eyebrow">Your journey</p>
@@ -347,7 +348,7 @@ export default function ResultsDashboard({
           </span>
         </div>
         <JourneyTimeline steps={timelineSteps} />
-      </section>
+      </Surface>
 
       {/* ── Stat cards ───────────────────────────────────────────────── */}
       <section>
@@ -389,14 +390,14 @@ export default function ResultsDashboard({
 
       {/* ── Screener report link ─────────────────────────────────────── */}
       {hasScreenerReport && !userProfile.fullAssessmentComplete && onViewScreenerReport && (
-        <button onClick={onViewScreenerReport} className="editorial-button-secondary">
+        <Button variant="secondary" onClick={onViewScreenerReport}>
           View screener report →
-        </button>
+        </Button>
       )}
 
       {/* ── Growth since baseline ────────────────────────────────────── */}
       {hasBaseline && growthMetrics && (
-        <section className="editorial-surface p-6">
+        <Surface as="section" padding="md">
           <p className="eyebrow mb-4">Growth since diagnostic</p>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <div
@@ -434,7 +435,7 @@ export default function ResultsDashboard({
               <p className="text-[11px] text-slate-500 mt-1">Baseline Demonstrating</p>
             </div>
           </div>
-        </section>
+        </Surface>
       )}
 
       {/* ── Four domains ────────────────────────────────────────────── */}

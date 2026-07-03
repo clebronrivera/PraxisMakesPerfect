@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import { StudyPlanDocumentV2 } from '../services/studyPlanService';
 import { getSkillProficiency } from '../utils/skillProficiency';
+import { Button } from './ui';
 
 interface LauncherProps {
   /** Start adaptive practice for a domain (Practice button). */
@@ -141,9 +142,9 @@ export default function StagedStudyGuide({
           </button>
         </div>
         {onOpenDetailed && (
-          <button onClick={onOpenDetailed} className="text-xs font-semibold text-slate-400 hover:text-indigo-600 transition">
+          <Button variant="ghost" size="sm" onClick={onOpenDetailed}>
             Detailed view →
-          </button>
+          </Button>
         )}
       </div>
 

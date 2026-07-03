@@ -7,6 +7,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { DiagnosticFeedback as DiagnosticFeedbackType } from '../brain/diagnostic-feedback';
+import { Button } from './ui';
 
 interface DiagnosticFeedbackProps {
   feedback: DiagnosticFeedbackType;
@@ -47,12 +48,15 @@ export default function DiagnosticFeedback({
           </ul>
         )}
         {onDismiss && (
-          <button
+          <Button
+            variant="neutral"
+            size="sm"
+            fullWidth
+            className="mt-4"
             onClick={onDismiss}
-            className="mt-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:border-[color:#d97706]/40 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
           >
             Dismiss
-          </button>
+          </Button>
         )}
       </div>
     );
@@ -175,12 +179,14 @@ export default function DiagnosticFeedback({
 
       {onDismiss && (
         <div className="mt-4 border-t border-slate-200 pt-4">
-          <button
+          <Button
+            variant="neutral"
+            size="sm"
+            fullWidth
             onClick={onDismiss}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:border-[color:#d97706]/40 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
           >
             Dismiss
-          </button>
+          </Button>
         </div>
       )}
     </div>

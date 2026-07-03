@@ -12,6 +12,7 @@
 // rings; segmented toggles use aria-pressed.
 
 import { useEffect, useState } from 'react';
+import { Button } from './ui';
 import { useModuleCatalog } from '../hooks/useModuleCatalog';
 import {
   selectPriorityModules,
@@ -191,7 +192,7 @@ export default function ModulesBrowser({ profile, lpProgress, onNodeClick }: {
             </div>
             <span className="shrink-0 text-[12px] font-bold tabular-nums text-slate-600">{rec.reviewed} / {rec.total} · {rec.pct}%</span>
           </div>
-          <button type="button" className="mt-2 text-[13px] font-bold text-indigo-700 hover:text-indigo-900" onClick={() => setView('regular')}>Show all {entries.length} →</button>
+          <Button variant="ghost" size="sm" className="mt-2 px-0" onClick={() => setView('regular')}>Show all {entries.length} →</Button>
         </div>
       )}
 

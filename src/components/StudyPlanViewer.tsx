@@ -20,6 +20,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { StudyPlanDocumentV2 } from '../services/studyPlanService';
+import { Button } from './ui';
 import type {
   ClusterUrgency,
   SessionType,
@@ -771,14 +772,16 @@ export default function StudyPlanViewer({ plan }: StudyPlanViewerProps) {
           Generated {generatedDate} · {plan.sourceSummary.assessmentResponseCount} responses ·{' '}
           {plan.sourceSummary.deficitSkillCount} deficit skill{plan.sourceSummary.deficitSkillCount !== 1 ? 's' : ''}
         </div>
-        <button
+        <Button
           type="button"
+          variant="neutral"
+          size="sm"
           onClick={() => window.print()}
-          className="study-plan-print-button flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-indigo-300 text-slate-600 hover:text-slate-900 rounded-xl text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60"
+          className="study-plan-print-button"
         >
           <Printer className="w-3.5 h-3.5" />
           Print
-        </button>
+        </Button>
       </div>
 
       {/* Two-column layout: main + side rail */}

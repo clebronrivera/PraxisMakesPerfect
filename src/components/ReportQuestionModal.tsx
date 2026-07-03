@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import { useQuestionReports } from '../hooks/useQuestionReports';
+import { Button } from './ui';
 
 import { AnalyzedQuestion } from '../brain/question-analyzer';
 
@@ -193,13 +194,14 @@ export default function ReportQuestionModal({
                 </label>
               ))}
             </div>
-            <button
+            <Button
+              variant="primary"
+              fullWidth
               onClick={() => targets.length > 0 && setStep(2)}
               disabled={targets.length === 0}
-              className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               Next
-            </button>
+            </Button>
           </div>
         )}
 
@@ -221,19 +223,21 @@ export default function ReportQuestionModal({
               ))}
             </div>
             <div className="flex gap-3">
-              <button
+              <Button
+                variant="neutral"
+                className="flex-1"
                 onClick={() => setStep(1)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               >
                 Back
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
+                className="flex-1"
                 onClick={() => issueTypes.length > 0 && setStep(3)}
                 disabled={issueTypes.length === 0}
-                className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -261,18 +265,20 @@ export default function ReportQuestionModal({
               ))}
             </div>
             <div className="flex gap-3">
-              <button
+              <Button
+                variant="neutral"
+                className="flex-1"
                 onClick={() => setStep(2)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               >
                 Back
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
+                className="flex-1"
                 onClick={() => setStep(4)}
-                className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -290,19 +296,21 @@ export default function ReportQuestionModal({
               rows={6}
             />
             <div className="flex gap-3">
-              <button
+              <Button
+                variant="neutral"
+                className="flex-1"
                 onClick={() => setStep(3)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-600 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               >
                 Back
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
+                className="flex-1"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 bg-rose-50 hover:bg-rose-100 disabled:bg-slate-100 disabled:cursor-not-allowed text-rose-700 border border-rose-200 rounded-lg transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Report'}
-              </button>
+              </Button>
             </div>
           </div>
         )}

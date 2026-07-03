@@ -1,5 +1,6 @@
 import { AlertTriangle, BarChart3, BookOpen, CheckCircle2, ChevronRight, Layers, Target } from 'lucide-react';
 import { useMemo } from 'react';
+import { Button } from './ui';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import type { UserResponse } from '../brain/weakness-detector';
 import { useEngine } from '../hooks/useEngine';
@@ -73,14 +74,15 @@ export default function ScreenerResults({
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
           {onStartPractice && (
-            <button
+            <Button
+              variant="primary"
               onClick={() => onStartPractice()}
-              className="editorial-button-primary"
             >
               Start Domain Review
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="secondary"
             onClick={() => {
               if (onGoHome) {
                 onGoHome();
@@ -89,10 +91,9 @@ export default function ScreenerResults({
 
               window.location.reload();
             }}
-            className="editorial-button-secondary"
           >
             Return Home
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -363,12 +364,13 @@ export default function ScreenerResults({
                         </div>
                       ))}
                     </div>
-                    <button
+                    <Button
+                      variant="secondary"
+                      className="mt-4"
                       onClick={() => onStartPractice?.(domain.id)}
-                      className="editorial-button-secondary mt-4"
                     >
                       Practice This Domain
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -379,22 +381,25 @@ export default function ScreenerResults({
 
       <div className="flex flex-col gap-3 sm:flex-row">
         {onStartPractice && (
-          <button
+          <Button
+            variant="primary"
+            className="flex-1"
             onClick={() => onStartPractice(primaryDomain?.id)}
-            className="editorial-button-primary flex-1"
           >
             Start Domain Review
-          </button>
+          </Button>
         )}
         {onTakeFullAssessment && (
-          <button
+          <Button
+            variant="dark"
+            className="flex-1"
             onClick={onTakeFullAssessment}
-            className="editorial-button-dark flex-1"
           >
             Take the Adaptive Diagnostic
-          </button>
+          </Button>
         )}
-        <button
+        <Button
+          variant="secondary"
           onClick={() => {
             if (onGoHome) {
               onGoHome();
@@ -403,10 +408,9 @@ export default function ScreenerResults({
 
             window.location.reload();
           }}
-          className="editorial-button-secondary"
         >
           Return Home
-        </button>
+        </Button>
       </div>
 
       <div className="editorial-surface-soft p-4 text-sm text-slate-500">

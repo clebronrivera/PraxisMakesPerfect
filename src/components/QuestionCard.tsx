@@ -1,5 +1,6 @@
 import { CheckCircle, XCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from './ui';
 import ReportQuestionModal from './ReportQuestionModal';
 import { AnalyzedQuestion, getQuestionPrompt } from '../brain/question-analyzer';
 import {
@@ -103,8 +104,6 @@ export default function QuestionCard({
   const confidenceLabel = 'text-sm font-semibold text-slate-700';
   const confidenceActive = 'border-slate-900 bg-slate-900 text-white';
   const confidenceIdle = 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900';
-  const submitBtn = 'editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50';
-  const nextBtn = 'editorial-button-dark min-w-[12rem]';
 
   return (
     <>
@@ -216,21 +215,23 @@ export default function QuestionCard({
       {!hideFooterControls && (
         <div className={`flex justify-center ${isConfidenceVisible ? 'mt-6' : 'mt-4'}`}>
           {!showFeedback ? (
-            <button
+            <Button
+              variant="primary"
               onClick={onSubmit}
               disabled={selectedAnswers.length === 0 || isSubmitting}
-              className={submitBtn}
+              className="min-w-[12rem]"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Answer'}
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="dark"
               onClick={onNext}
-              className={nextBtn}
+              className="min-w-[12rem]"
             >
               Next Question
               <ArrowRight className="w-5 h-5" />
-            </button>
+            </Button>
           )}
         </div>
       )}

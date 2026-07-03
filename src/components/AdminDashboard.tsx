@@ -37,6 +37,7 @@ import StudentDetailDrawer from './StudentDetailDrawer';
 import ItemAnalysisTab from './ItemAnalysisTab';
 import QuestionBankTab from './QuestionBankTab';
 import { SentryTestButton } from './SentryTestButton';
+import { Button } from './ui';
 
 type AdminTab = 'overview' | 'audit' | 'feedback' | 'reports' | 'users' | 'item-analysis' | 'question-bank' | 'chat-activity';
 
@@ -789,27 +790,27 @@ export default function AdminDashboard({
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                      <button
+                      <Button
+                        variant="neutral"
                         onClick={() => downloadBlob(`feedback-audit-${auditBundle.generatedAt}.json`, JSON.stringify(auditBundle, null, 2), 'application/json')}
-                        className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
                       >
                         <Download className="h-4 w-4" />
                         Download JSON
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="neutral"
                         onClick={() => downloadBlob(`feedback-audit-${auditBundle.generatedAt}.csv`, buildAuditCsv(auditBundle.consolidatedIssues), 'text/csv;charset=utf-8')}
-                        className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 px-4 py-2 text-sm font-medium text-slate-950 transition-colors hover:bg-emerald-300"
                       >
                         <Download className="h-4 w-4" />
                         Download CSV
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="neutral"
                         onClick={() => downloadBlob(`feedback-audit-summary-${auditBundle.generatedAt}.md`, buildAuditSummaryMarkdown(auditBundle), 'text/markdown;charset=utf-8')}
-                        className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
                       >
                         <Download className="h-4 w-4" />
                         Download Summary
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -1242,31 +1243,35 @@ export default function AdminDashboard({
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-col gap-2">
-                            <button
+                            <Button
                               type="button"
+                              variant="neutral"
+                              size="sm"
                               disabled={resettingUserId === entry.id}
                               aria-busy={resettingUserId === entry.id}
                               aria-label={`Reset baseline assessment for ${studentLabel} — archives then deletes their baseline screener responses`}
                               onClick={(event) => { event.stopPropagation(); void runAssessmentReset(entry.id, 'screener'); }}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
                               Reset baseline
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               type="button"
+                              variant="neutral"
+                              size="sm"
                               disabled={resettingUserId === entry.id}
                               aria-busy={resettingUserId === entry.id}
                               aria-label={`Reset adaptive diagnostic for ${studentLabel} — archives then deletes their diagnostic responses`}
                               onClick={(event) => { event.stopPropagation(); void runAssessmentReset(entry.id, 'full_diagnostic'); }}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:opacity-50"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />
                               Reset diagnostic
-                            </button>
+                            </Button>
                             <div className="mt-2 border-t border-slate-200 pt-2">
-                              <button
+                              <Button
                                 type="button"
+                                variant="destructive"
+                                size="sm"
                                 disabled={resettingUserId === entry.id}
                                 aria-busy={resettingUserId === entry.id}
                                 aria-label={`Permanently delete ALL data for ${studentLabel} — removes responses, progress, study plans, and reports; cannot be undone`}
@@ -1274,11 +1279,10 @@ export default function AdminDashboard({
                                   entry.id,
                                   entry.authMetrics?.email || entry.authMetrics?.displayName || entry.id
                                 ); }}
-                                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 disabled:opacity-50"
                               >
                                 <AlertTriangle className="h-3.5 w-3.5" />
                                 Delete all data
-                              </button>
+                              </Button>
                             </div>
                           </div>
                         </td>

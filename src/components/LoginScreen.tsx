@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { PROGRESS_DOMAINS, getProgressSkillsForDomain } from '../utils/progressTaxonomy';
+import { Button } from './ui';
 import LandingPage from './landing/LandingPage';
 
 // ─── Entry flow phase ────────────────────────────────────────────────────────
@@ -118,12 +119,9 @@ function BootSequence({ onComplete, onSkip }: { onComplete: () => void; onSkip: 
   return (
     <div className="min-h-screen bg-[#f7f6f2] text-slate-300 p-6 flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div className="flex justify-end mb-4">
-        <button
-          onClick={onSkip}
-          className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 bg-white hover:border-slate-400 transition-colors"
-        >
+        <Button variant="neutral" size="sm" onClick={onSkip}>
           Skip →
-        </button>
+        </Button>
       </div>
 
       <div className="flex-1 flex gap-6 max-w-6xl mx-auto w-full">
