@@ -16,6 +16,7 @@
 import { useCallback } from 'react';
 import type React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { notifyError } from '../utils/toast';
 import { SkillId } from '../brain/skill-map';
 import {
   LearningState,
@@ -148,6 +149,7 @@ export function useScoreRecalculation({
       return result;
     } catch (error) {
       console.error('[GlobalScores] Error recalculating:', error);
+      notifyError("Couldn't update your readiness score. Check your connection and try again.");
       return null;
     }
   }, [user]);

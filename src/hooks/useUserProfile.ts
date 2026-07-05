@@ -280,6 +280,8 @@ export function useUserProfile() {
       }
     } catch (e) {
       console.error(e);
+      Sentry.captureException(e, { extra: { context: 'loadProfile' } });
+      notifyError("Couldn't load your saved progress. Check your connection and try refreshing.");
       setProfileState(defaultProfile);
     } finally {
       setIsLoaded(true);
@@ -351,6 +353,8 @@ export function useUserProfile() {
 
     } catch (error) {
       console.error('Error saving Supabase profile:', error);
+      Sentry.captureException(error, { extra: { context: 'saveProfile' } });
+      notifyError("Couldn't save your progress. Check your connection — recent activity may not be saved.");
     }
   }, [user]);
 

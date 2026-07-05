@@ -1,9 +1,10 @@
 // src/components/ReportQuestionModal.tsx
 // Modal for reporting question issues
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import { useQuestionReports } from '../hooks/useQuestionReports';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import { Button, IconButton } from './ui';
 
 import { AnalyzedQuestion } from '../brain/question-analyzer';
@@ -61,27 +62,17 @@ export default function ReportQuestionModal({
   const [severity, setSeverity] = useState<'minor' | 'major' | 'critical'>('minor');
   const [notes, setNotes] = useState('');
 
-  // Body scroll-lock while the modal is open
-  useEffect(() => {
-    if (!isOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
+  const handleCancel = () => {
+    setStep(1);
+    setTargets([]);
+    setIssueTypes([]);
+    setSeverity('minor');
+    setNotes('');
+    onClose();
+  };
 
-  // Escape-to-close
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialogRef, isOpen, handleCancel);
 
   if (!isOpen) return null;
 
@@ -139,15 +130,6 @@ export default function ReportQuestionModal({
     }
   };
 
-  const handleCancel = () => {
-    setStep(1);
-    setTargets([]);
-    setIssueTypes([]);
-    setSeverity('minor');
-    setNotes('');
-    onClose();
-  };
-
   return (
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
@@ -155,11 +137,13 @@ export default function ReportQuestionModal({
       role="presentation"
     >
       <div
-        className="bg-slate-100 border border-slate-200 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+        ref={dialogRef}
+        className="bg-slate-100 border border-slate-200 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto focus:outline-none"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="report-question-title"
+        tabIndex={-1}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

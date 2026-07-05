@@ -313,6 +313,8 @@ export function useProgressLogging({ updateProfile }: UseProgressLoggingOptions)
       }
     } catch (error) {
       console.error('[saveScreenerResponse] Error logging screener response:', error);
+      Sentry.captureException(error, { extra: { context: 'saveScreenerResponse' } });
+      notifyError('Answer not saved. Check your connection.');
     }
   }, [user, updateProfile]);
 

@@ -6,11 +6,12 @@
  * export) · Danger zone (request account deletion). Light indigo/violet theme.
  */
 
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { KeyRound, CheckCircle, LogOut, Download, ShieldAlert, AlertTriangle, Pencil } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import type { UserProfile } from '../hooks/useProgressTracking';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import { Button, Surface } from './ui';
 
 export interface AccountPageProps {
@@ -277,16 +278,11 @@ function DeleteAccountModal({
   const [status, setStatus] = useState<'idle' | 'working' | 'error'>('idle');
   const armed = confirmText.trim().toUpperCase() === 'DELETE';
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel(); };
-    window.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onCancel]);
+  // This component is only ever mounted by its parent while it should be open
+  // (`{deleteOpen && <DeleteAccountModal .../>}`), so there is no local `isOpen`
+  // prop — the hook is passed a literal `true`.
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialogRef, true, onCancel);
 
   async function handleConfirm() {
     if (!armed || !userId) return;
@@ -309,7 +305,14 @@ function DeleteAccountModal({
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
       <button type="button" className="absolute inset-0" aria-label="Close" onClick={onCancel} />
-      <div className="editorial-surface relative w-full max-w-md p-6" role="dialog" aria-modal="true" aria-labelledby="delete-account-title">
+      <div
+        ref={dialogRef}
+        className="editorial-surface relative w-full max-w-md p-6 focus:outline-none"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-account-title"
+        tabIndex={-1}
+      >
         <div className="flex items-center gap-3 mb-3">
           <span className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
             <AlertTriangle size={18} aria-hidden="true" />

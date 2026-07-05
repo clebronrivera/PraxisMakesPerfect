@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { X, Mail, KeyRound, CheckCircle } from 'lucide-react';
 import OnboardingFlow from './OnboardingFlow';
 import type { UserProfileData } from './OnboardingFlow';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import { Button, IconButton } from './ui';
 
 /**
@@ -31,17 +32,12 @@ export default function ProfileEditorPanel({
     setResetStatus(error ? 'error' : 'sent');
   };
 
-  // Escape-to-close + body scroll-lock while the panel is open.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [onClose]);
+  // Escape-to-close, focus trap, body scroll-lock while the panel is open.
+  // This component is only ever mounted by its parent while it should be open
+  // (`{profileEditorOpen && profileEditorInitial && <ProfileEditorPanel .../>}`),
+  // so there is no local `isOpen` prop — the hook is passed a literal `true`.
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialogRef, true, onClose);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-stretch justify-end">
@@ -52,10 +48,12 @@ export default function ProfileEditorPanel({
         aria-label="Close"
       />
       <div
-        className="relative flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-slate-200 bg-white shadow-2xl"
+        ref={dialogRef}
+        className="relative flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-slate-200 bg-white shadow-2xl focus:outline-none"
         role="dialog"
         aria-modal="true"
         aria-labelledby="profile-editor-title"
+        tabIndex={-1}
       >
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X, RefreshCw, BarChart3, Clock, TrendingUp, AlertTriangle, BookOpen } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { PROGRESS_DOMAINS, PROGRESS_SKILL_LOOKUP } from '../utils/progressTaxonomy';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import DiagnosticStoryPanel from './DiagnosticStoryPanel';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import { IconButton } from './ui';
 
 interface UserInfo {
@@ -149,19 +150,12 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
     return () => { active = false; };
   }, [user.id]);
 
-  // ── Modal a11y: Escape-to-close + body scroll-lock ─────────────────────────
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [onClose]);
+  // ── Modal a11y: Escape-to-close, focus trap, body scroll-lock ──────────────
+  // This component is only ever mounted by its parent while it should be open
+  // (`{selectedStudent && <StudentDetailDrawer .../>}`), so there is no local
+  // `isOpen` prop — the hook is passed a literal `true`.
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialogRef, true, onClose);
 
   // ── Domain Stats ──────────────────────────────────────────────────────────
   const domainStats: DomainStat[] = PROGRESS_DOMAINS.map((domain) => {
@@ -250,10 +244,12 @@ export default function StudentDetailDrawer({ user, onClose }: StudentDetailDraw
   return (
     <div className="fixed inset-0 z-50 flex items-stretch justify-end" onClick={onClose}>
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="student-detail-title"
-        className="relative flex h-full w-full max-w-3xl flex-col overflow-y-auto bg-white shadow-2xl"
+        tabIndex={-1}
+        className="relative flex h-full w-full max-w-3xl flex-col overflow-y-auto bg-white shadow-2xl focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

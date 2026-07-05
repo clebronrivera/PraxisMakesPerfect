@@ -22,6 +22,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
+import { notifyError } from '../utils/toast';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -185,6 +186,7 @@ export function useLearningPathSupabase(
       if (err) {
         setError(err.message);
         console.error('[useLearningPathSupabase] upsert error:', err);
+        notifyError("Couldn't save your learning path progress. Check your connection and try again.");
       }
     },
     [userId]

@@ -4,6 +4,7 @@
 // Used by GlossaryPage.tsx and the wrong-answer trigger in PracticeSession.tsx.
 
 import { supabase } from '../config/supabase';
+import { notifyError } from '../utils/toast';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -130,5 +131,9 @@ export async function removeGlossaryTerm(
 
   if (error) {
     console.error('[glossaryService] removeGlossaryTerm error:', error);
+    // The caller (GlossaryPage.handleRemove) removes the row from local state
+    // unconditionally and doesn't check a return value here, so without this
+    // the user sees the term disappear from the UI even when the delete failed.
+    notifyError('Couldn’t remove that term — check your connection and try again.');
   }
 }

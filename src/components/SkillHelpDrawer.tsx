@@ -18,7 +18,7 @@
 //   userId           — for progress tracking
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { X, BookOpen, ChevronLeft } from 'lucide-react';
 import {
   getAllModulesForSkill,
@@ -31,6 +31,7 @@ import { useModuleVisitTracking } from '../hooks/useModuleVisitTracking';
 import { useSectionObserver } from '../hooks/useSectionObserver';
 import type { InteractiveResult } from '../hooks/useModuleVisitTracking';
 import ModuleLessonViewer from './ModuleLessonViewer';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 interface SkillHelpDrawerProps {
   skillId: string | null;
@@ -137,6 +138,9 @@ export default function SkillHelpDrawer({
     visitTracking.reportScrollDepth(maxScrollDepth);
   }, [maxScrollDepth, visitTracking]);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialogRef, isOpen, onClose);
+
   if (!isOpen) return null;
 
   return (
@@ -147,7 +151,12 @@ export default function SkillHelpDrawer({
       />
 
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[85vh] flex-col rounded-t-[2rem] border-t border-slate-200 bg-[#ffffff] backdrop-blur-[14px]"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="skill-help-drawer-title"
+        tabIndex={-1}
+        className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[85vh] flex-col rounded-t-[2rem] border-t border-slate-200 bg-[#ffffff] backdrop-blur-[14px] focus:outline-none"
         style={{ boxShadow: '0 -12px 40px -8px rgba(0,0,0,0.6)' }}
       >
 
@@ -173,7 +182,7 @@ export default function SkillHelpDrawer({
             )}
             <BookOpen className="h-4 w-4 shrink-0" style={{ color: '#d97706' }} />
             <div className="min-w-0">
-              <p className="truncate text-xs font-bold text-slate-900">
+              <p id="skill-help-drawer-title" className="truncate text-xs font-bold text-slate-900">
                 {skillLabel ?? 'Skill Help'}
               </p>
               <p className="truncate text-[10px] text-slate-400">

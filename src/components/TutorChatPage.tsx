@@ -231,8 +231,11 @@ export function TutorChatPage({
           )}
 
           {chat.error && (
-            <div role="alert" className="text-[11px] text-rose-600 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2">
-              {chat.error}
+            <div role="alert" className="flex items-center gap-3 text-[11px] text-rose-600 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2">
+              <span className="flex-1">{chat.error}</span>
+              <Button variant="neutral" size="sm" onClick={chat.retryLastMessage}>
+                Retry
+              </Button>
             </div>
           )}
 
