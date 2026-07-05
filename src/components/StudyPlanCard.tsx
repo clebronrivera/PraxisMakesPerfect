@@ -132,7 +132,7 @@ export default function StudyPlanCard({
         {isGenerating && (
           <div className="mt-3 flex items-center gap-2 text-xs text-accent">
             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-            Generating your study plan — this takes about a minute…
+            Generating your study plan — this usually takes a few minutes…
           </div>
         )}
       </div>

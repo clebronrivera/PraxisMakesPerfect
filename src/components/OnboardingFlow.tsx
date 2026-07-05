@@ -844,8 +844,8 @@ export default function OnboardingFlow({
 
   const rootShell =
     variant === 'embedded'
-      ? 'flex min-h-full flex-col bg-slate-50 p-4'
-      : 'min-h-screen bg-slate-50 flex items-center justify-center p-4';
+      ? 'flex min-h-full flex-col bg-[#f7f6f8] p-4'
+      : 'min-h-screen bg-[#f7f6f8] flex items-center justify-center p-4';
 
   const innerWrap = variant === 'embedded' ? 'flex w-full min-h-0 flex-1 flex-col' : 'w-full max-w-xl';
 

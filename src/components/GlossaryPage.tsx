@@ -32,6 +32,7 @@ import {
   removeGlossaryTerm,
   type GlossaryTerm,
 } from '../services/glossaryService';
+import { notifyError } from '../utils/toast';
 import { Button } from './ui';
 import glossaryData from '../data/master-glossary.json';
 
@@ -88,19 +89,27 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
   const handleBlur = useCallback(async () => {
     if (localText === prevText.current) return;
     setSaving(true);
-    await saveUserDefinition(userId, entry.term, localText);
+    const ok = await saveUserDefinition(userId, entry.term, localText);
+    setSaving(false);
+    if (!ok) {
+      notifyError('Couldn’t save your definition — check your connection and try again.');
+      return;
+    }
     prevText.current = localText;
     onDefinitionSaved(entry.term, localText);
-    setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
   }, [localText, userId, entry.term, onDefinitionSaved]);
 
   const handleReveal = useCallback(async () => {
     setRevealing(true);
-    await revealDefinition(userId, entry.term);
-    onReveal(entry.term);
+    const ok = await revealDefinition(userId, entry.term);
     setRevealing(false);
+    if (!ok) {
+      notifyError('Couldn’t reveal the definition — check your connection and try again.');
+      return;
+    }
+    onReveal(entry.term);
   }, [userId, entry.term, onReveal]);
 
   const isRevealed = entry.revealed;
@@ -233,10 +242,15 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
   // Load on mount
   useEffect(() => {
     if (!userId) { setLoading(false); return; }
-    loadGlossaryTerms(userId).then((rows) => {
-      setEntries(rows);
-      setLoading(false);
-    });
+    loadGlossaryTerms(userId)
+      .then((rows) => {
+        setEntries(rows);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        notifyError('Couldn’t load your glossary — check your connection and try again.');
+      });
   }, [userId]);
 
   // ── Callbacks ────────────────────────────────────────────────────────────

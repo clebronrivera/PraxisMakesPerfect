@@ -13,6 +13,7 @@ import FluencyDrillSession, { type DrillDirection, type TermResult } from './Flu
 import { buildDrillScopes, type DrillScope, type SkillScoreLike } from '../utils/drillScopes';
 import { termsForSkills } from '../utils/vocabSkillIndex';
 import { recordDrillResults } from '../services/vocabDrillService';
+import { notifyError } from '../utils/toast';
 
 export interface FluencyDrillPageProps {
   userId: string;
@@ -80,6 +81,7 @@ export default function FluencyDrillPage({
       if (res.nudgeSkillIds.length && onApplyNudges) onApplyNudges(res.nudgeSkillIds);
     } catch (err) {
       console.error('[FluencyDrillPage] recordDrillResults failed:', err);
+      notifyError('Your drill results couldn’t be saved — this round may not count toward your progress.');
     }
     setSummary({ correct: score.correct, total: score.total, flagged, nudged });
     setView('results');

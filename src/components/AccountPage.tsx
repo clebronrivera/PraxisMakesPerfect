@@ -103,7 +103,7 @@ export default function AccountPage({ profile, displayName, onEditAnswers, onSig
   }
 
   return (
-    <div className="mx-auto max-w-[860px] px-2 sm:px-4 py-8">
+    <div className="mx-auto max-w-3xl px-2 sm:px-4 py-8">
       <p className="editorial-overline text-indigo-600 mb-1">Account</p>
       <h1 className="text-3xl font-extrabold text-slate-900 mb-1">
         Your <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">account.</span>

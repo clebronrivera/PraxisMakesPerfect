@@ -340,14 +340,14 @@ export default function DashboardHome({
               <button
                 type="button"
                 onClick={() => onNavigate('practice-hub')}
-                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-indigo-700 bg-white hover:bg-indigo-50 shadow-lg"
+                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-indigo-700 bg-white hover:bg-indigo-50 shadow-lg transition-colors"
               >
                 Start Practice →
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('results')}
-                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-white bg-white/15 border border-white/30 hover:bg-white/25"
+                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-white bg-white/20 border border-white/30 hover:bg-white/30 transition-colors"
               >
                 View full report
               </button>
@@ -417,7 +417,7 @@ export default function DashboardHome({
               </div>
               <button
                 onClick={() => onStartSkillPractice(weakestSkill.skillId)}
-                className="shrink-0 rounded-xl px-4 py-2 text-sm font-semibold text-slate-900 bg-white hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="shrink-0 rounded-xl px-4 py-2 text-sm font-semibold text-slate-900 bg-white hover:bg-white/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 Practice →
               </button>

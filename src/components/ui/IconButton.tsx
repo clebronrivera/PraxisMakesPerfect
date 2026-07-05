@@ -33,7 +33,7 @@ const SIZE: Record<IconButtonSize, string> = {
 };
 
 const VARIANT: Record<IconButtonVariant, string> = {
-  ghost: 'text-slate-400 hover:text-slate-600 hover:bg-slate-100',
+  ghost: 'text-slate-500 hover:text-slate-700 hover:bg-slate-100',
   neutral: 'border border-slate-200 text-slate-500 hover:bg-slate-50',
   dark: 'bg-slate-900 text-white hover:bg-slate-800',
 };

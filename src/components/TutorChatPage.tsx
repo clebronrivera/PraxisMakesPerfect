@@ -4,7 +4,7 @@
 // Requires diagnosticComplete (enforced in App.tsx gating).
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Plus, Send, ChevronUp, Paperclip } from 'lucide-react';
+import { Plus, Send, ChevronUp } from 'lucide-react';
 import { Button, IconButton } from './ui';
 import { useTutorChat } from '../hooks/useTutorChat';
 import { TutorMessageBubble } from './TutorMessageBubble';
@@ -255,14 +255,6 @@ export function TutorChatPage({
               style={{ maxHeight: '180px', overflowY: 'auto' }}
             />
             <div className="flex items-center gap-2">
-              <IconButton
-                variant="neutral"
-                size="sm"
-                title="Attach context"
-                aria-label="Attach context"
-              >
-                <Paperclip className="w-3.5 h-3.5" aria-hidden="true" />
-              </IconButton>
               <Button
                 variant="primary"
                 size="sm"

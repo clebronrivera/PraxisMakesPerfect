@@ -7,6 +7,7 @@ import {
   CONFIDENCE_DISPLAY_ORDER,
   getConfidenceDisplayLabel
 } from '../utils/confidenceLabels';
+import { notifyToast } from '../utils/toast';
 
 // Local AnalyzedQuestion interface removed
 
@@ -243,7 +244,7 @@ export default function QuestionCard({
         isOpen={showReportModal}
         onClose={() => setShowReportModal(false)}
         onSuccess={() => {
-          // Report submitted — surface a toast notification here if desired
+          notifyToast('Thanks — your report was submitted.');
         }}
       />
     </>
