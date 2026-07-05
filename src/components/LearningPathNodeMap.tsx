@@ -433,7 +433,7 @@ export default function LearningPathNodeMap({
     <div className="space-y-4">
       {/* Sort toggle */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Sort</span>
+        <span className="editorial-overline text-slate-400">Sort</span>
         <div className="flex gap-0.5 bg-slate-50 border border-slate-200 rounded-lg p-0.5">
           {([
             { id: 'weakest' as const, label: 'Weakest First' },

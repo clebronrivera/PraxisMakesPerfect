@@ -97,8 +97,8 @@ export default function ScenarioSorter({
     ? 'rounded-xl border border-slate-200 bg-slate-50 p-4'
     : 'rounded-xl border border-slate-200 bg-slate-50 p-4';
   const unassignedLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 mb-3'
-    : 'text-[10px] font-bold uppercase text-slate-600 mb-3';
+    ? 'editorial-overline mb-3'
+    : 'editorial-overline text-slate-600 mb-3';
   const allPlacedText = isA ? 'text-xs text-slate-500 italic' : 'text-xs text-slate-500 italic';
   const scenarioItemCls = isA
     ? 'flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50 cursor-move transition-colors'

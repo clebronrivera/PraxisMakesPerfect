@@ -1067,7 +1067,7 @@ function PraxisStudyAppContent() {
                   <button
                     key={tab.label}
                     onClick={tab.onClick}
-                    className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all ${
+                    className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-[0.2em] transition-all ${
                       tab.active
                         ? 'grad-chrome text-white'
                         : 'border border-slate-200 bg-white text-slate-500'

@@ -90,8 +90,8 @@ function SectionRenderer({
     : 'rounded-r-xl border-l-4 border-indigo-400 bg-indigo-50 px-4 py-3 space-y-1';
   const anchorIcon = isA ? 'w-3.5 h-3.5 shrink-0 text-[color:#d97706]' : 'w-3.5 h-3.5 text-indigo-600 shrink-0';
   const anchorLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:#d97706]'
-    : 'text-xs font-black uppercase tracking-wider text-indigo-700';
+    ? 'editorial-overline text-[color:#d97706]'
+    : 'editorial-overline text-indigo-700';
 
   const listLabel = anchorLabel;
   const listBullet = isA ? 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:#d97706]' : 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500';
@@ -103,8 +103,8 @@ function SectionRenderer({
     ? 'bg-slate-50 px-4 py-2 border-b border-slate-200'
     : 'bg-slate-100 px-4 py-2 border-b border-slate-200';
   const compLeftLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-600'
-    : 'text-xs font-black uppercase tracking-wider text-slate-600';
+    ? 'editorial-overline text-slate-600'
+    : 'editorial-overline text-slate-600';
   const compLeftDot = isA ? 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-50' : 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400';
   const compLeftText = isA ? 'text-sm text-slate-700 leading-relaxed' : 'text-sm text-slate-700 leading-relaxed';
 
@@ -115,8 +115,8 @@ function SectionRenderer({
     ? 'bg-[color:#d97706]/15 px-4 py-2 border-b border-[color:#d97706]/30'
     : 'bg-indigo-100 px-4 py-2 border-b border-indigo-200';
   const compRightLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:#d97706]'
-    : 'text-xs font-black uppercase tracking-wider text-indigo-700';
+    ? 'editorial-overline text-[color:#d97706]'
+    : 'editorial-overline text-indigo-700';
   const compRightDot = isA ? 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:#d97706]' : 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400';
   const compRightText = isA ? 'text-sm text-slate-700 leading-relaxed' : 'text-sm text-slate-700 leading-relaxed';
 
@@ -228,8 +228,8 @@ function SectionRenderer({
       ) : null;
 
       const interactiveLabel = isA
-        ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:#d97706] mb-3'
-        : 'text-xs font-black uppercase tracking-wider text-indigo-700 mb-3';
+        ? 'editorial-overline text-[color:#d97706] mb-3'
+        : 'editorial-overline text-indigo-700 mb-3';
 
       const interactiveWrapper = (label: string | undefined, children: React.ReactNode) => (
         <div>
@@ -436,8 +436,8 @@ export default function ModuleLessonViewer({
     : `font-black text-slate-900 tracking-tight leading-snug ${titleSize}`;
   const relatedBorder = isA ? 'pt-3 border-t border-slate-200 space-y-2' : 'pt-3 border-t border-slate-100 space-y-2';
   const seeAlsoLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400'
-    : 'text-xs font-black uppercase tracking-wider text-slate-400';
+    ? 'editorial-overline text-slate-400'
+    : 'editorial-overline text-slate-400';
   const relatedBtn = isA
     ? 'w-full text-left px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-[color:#d97706]/40 hover:bg-slate-50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]'
     : 'w-full text-left px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-colors';

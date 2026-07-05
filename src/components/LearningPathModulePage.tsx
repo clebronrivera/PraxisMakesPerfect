@@ -513,7 +513,7 @@ export default function LearningPathModulePage({
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">Learning Path</p>
+          <p className="editorial-overline text-slate-400">Learning Path</p>
           <h2 className="truncate text-lg font-bold leading-tight text-slate-900">
             {skillDef?.fullLabel ?? skillId}
           </h2>
@@ -592,7 +592,7 @@ export default function LearningPathModulePage({
       {/* ── Prerequisites ────────────────────────────────────────────────── */}
       {phaseD?.skill_prerequisites && (
         <div className="editorial-surface-soft px-4 py-3 no-print">
-          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-1.5">Prerequisites</p>
+          <p className="editorial-overline text-slate-400 mb-1.5">Prerequisites</p>
           <p className="text-xs text-slate-600 whitespace-pre-line leading-relaxed">{phaseD.skill_prerequisites}</p>
         </div>
       )}

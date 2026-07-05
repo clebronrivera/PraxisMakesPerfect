@@ -217,7 +217,7 @@ export default function FluencyDrillPage({
             <p className="editorial-overline">3 · Pace</p>
             <p className="text-[11px] text-slate-400">seconds per card · def→term / term→def</p>
           </div>
-          <div className="grid grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
             {Object.entries(PACES).map(([id, p]) => {
               const selected = id === paceId;
               return (

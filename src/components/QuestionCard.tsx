@@ -97,7 +97,7 @@ export default function QuestionCard({
   const sourcePill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700';
   const flagButton = 'rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700';
   const caseShell = 'rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5';
-  const caseHeading = 'mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700';
+  const caseHeading = 'editorial-overline mb-2 text-amber-700';
   const caseBody = 'text-sm leading-relaxed italic text-slate-700';
   const stemText = 'text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]';
   const multiSelectPill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700';

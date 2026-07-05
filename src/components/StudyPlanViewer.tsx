@@ -123,7 +123,7 @@ function SideRail({ plan }: { plan: StudyPlanDocumentV2 }) {
       {/* Readiness card */}
       <div className={`p-4 rounded-2xl border ${rc.bg} space-y-3`}>
         <div className="flex items-center justify-between gap-2">
-          <p className="overline">Readiness</p>
+          <p className="editorial-overline">Readiness</p>
           <span className={`text-sm font-bold uppercase tracking-wide ${rc.color}`}>
             {snap.readinessLevel.replace('_', ' ')}
           </span>
@@ -142,20 +142,20 @@ function SideRail({ plan }: { plan: StudyPlanDocumentV2 }) {
 
       {/* Strongest area */}
       <div className="p-3 bg-[color:#059669]/10 border border-[color:#059669]/30 rounded-xl space-y-1">
-        <p className="overline text-[color:#059669]">Strongest area</p>
+        <p className="editorial-overline text-[color:#059669]">Strongest area</p>
         <p className="text-xs font-semibold text-[color:#059669]">{snap.strongestArea}</p>
       </div>
 
       {/* Next best move */}
       <div className="p-3 bg-[color:#0284c7]/10 border border-[color:#0284c7]/30 rounded-xl space-y-1">
-        <p className="overline text-[color:#0284c7]">Next best move</p>
+        <p className="editorial-overline text-[color:#0284c7]">Next best move</p>
         <p className="text-xs font-semibold text-[color:#0284c7]">{snap.nextBestMove}</p>
       </div>
 
       {/* Blockers */}
       {snap.majorBlockers.length > 0 && (
         <div className="p-3 bg-[color:#e11d48]/10 border border-[color:#e11d48]/30 rounded-xl space-y-2">
-          <p className="overline text-[color:#e11d48] flex items-center gap-1">
+          <p className="editorial-overline text-[color:#e11d48] flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" /> Blockers
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -170,7 +170,7 @@ function SideRail({ plan }: { plan: StudyPlanDocumentV2 }) {
 
       {/* Quick stats */}
       <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-        <p className="overline">Plan summary</p>
+        <p className="editorial-overline">Plan summary</p>
         <div className="space-y-1.5 text-xs text-slate-500">
           <div className="flex justify-between">
             <span>Responses analyzed</span>
@@ -207,7 +207,7 @@ function TabOverview({ plan }: { plan: StudyPlanDocumentV2 }) {
       <div className={`p-5 rounded-2xl border ${rc.bg}`}>
         <div className="flex items-start gap-4">
           <div className="flex-1">
-            <p className="text-xs font-semibold text-slate-500 mb-2">Readiness overview</p>
+            <h2 className="text-xs font-semibold text-slate-500 mb-2">Readiness overview</h2>
             <p className="text-sm text-slate-700 leading-relaxed">{snap.summary}</p>
           </div>
           <span className={`shrink-0 text-sm font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border ${rc.bg} ${rc.color}`}>
@@ -222,7 +222,7 @@ function TabOverview({ plan }: { plan: StudyPlanDocumentV2 }) {
       {/* 3 insight cards */}
       {interp.urgentInsights.length > 0 && (
         <div className="space-y-2.5">
-          <p className="overline">Key insights</p>
+          <p className="editorial-overline">Key insights</p>
           <div className="grid sm:grid-cols-3 gap-3">
             {interp.urgentInsights.slice(0, 3).map((insight, i) => (
               <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
@@ -239,7 +239,7 @@ function TabOverview({ plan }: { plan: StudyPlanDocumentV2 }) {
       {/* Patterns accordion */}
       {interp.patterns.length > 0 && (
         <div className="space-y-2">
-          <p className="overline">Observed patterns</p>
+          <p className="editorial-overline">Observed patterns</p>
           <div className="space-y-2">
             {interp.patterns.map((pattern, i) => (
               <div key={i} className="flex items-start gap-2.5 p-3 bg-slate-50 border border-slate-200 rounded-xl">
@@ -263,7 +263,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
     <div className="space-y-6">
       {/* Priority board */}
       <div className="space-y-2.5">
-        <p className="overline">Learning priorities</p>
+        <p className="editorial-overline">Learning priorities</p>
         <div className="space-y-3">
           {plan.priorityClusters.map(cluster => {
             const uc = urgencyConfig(cluster.urgency);
@@ -273,7 +273,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
                 <div className="p-4 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-slate-900">{cluster.clusterName}</p>
+                      <h3 className="text-sm font-semibold text-slate-900">{cluster.clusterName}</h3>
                       {cluster.allocatedMinutes > 0 && (
                         <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -320,7 +320,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
 
       {/* Action plan — 3 accent cards */}
       <div className="space-y-2.5">
-        <p className="overline">Action plan</p>
+        <p className="editorial-overline">Action plan</p>
         <div className="grid sm:grid-cols-3 gap-3">
           {/* Do Right Now */}
           <div className="p-4 bg-[color:#e11d48]/10 border border-[color:#e11d48]/30 rounded-2xl space-y-3">
@@ -328,7 +328,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
               <div className="w-7 h-7 bg-[color:#e11d48]/20 rounded-lg flex items-center justify-center">
                 <Zap className="w-3.5 h-3.5 text-[color:#e11d48]" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[color:#e11d48]">Do right now</p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[color:#e11d48]">Do right now</h3>
             </div>
             <ul className="space-y-2">
               {tactical.immediateActions.map(action => (
@@ -346,7 +346,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
               <div className="w-7 h-7 bg-[color:#0284c7]/20 rounded-lg flex items-center justify-center">
                 <CalendarDays className="w-3.5 h-3.5 text-[color:#0284c7]" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[color:#0284c7]">This week</p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[color:#0284c7]">This week</h3>
             </div>
             <ul className="space-y-2">
               {tactical.thisWeekGoals.map(goal => (
@@ -364,7 +364,7 @@ function TabPriorities({ plan }: { plan: StudyPlanDocumentV2 }) {
               <div className="w-7 h-7 bg-[color:#d97706]/20 rounded-lg flex items-center justify-center">
                 <AlertTriangle className="w-3.5 h-3.5 text-[color:#d97706]" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[color:#d97706]">Avoid</p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[color:#d97706]">Avoid</h3>
             </div>
             <ul className="space-y-2">
               {tactical.avoidList.map(item => (
@@ -429,9 +429,9 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
       <div className="grid sm:grid-cols-2 gap-4">
         {/* Snapshot */}
         <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-          <p className="overline">Domain snapshot</p>
+          <p className="editorial-overline">Domain snapshot</p>
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-slate-900">{domain.domainName}</p>
+            <h3 className="text-sm font-semibold text-slate-900">{domain.domainName}</h3>
             <span className={`text-lg font-bold tabular-nums ${scoreColor}`}>
               {domain.domainScore !== null ? `${domain.domainScore}%` : 'N/A'}
             </span>
@@ -442,7 +442,7 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
         {/* Must know */}
         {domain.contentToKnow.length > 0 && (
           <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-            <p className="overline text-[color:#0284c7]">Must know</p>
+            <p className="editorial-overline text-[color:#0284c7]">Must know</p>
             <ul className="space-y-1.5">
               {domain.contentToKnow.slice(0, 5).map(item => (
                 <li key={item} className="flex items-start gap-2">
@@ -457,7 +457,7 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
         {/* Common traps */}
         {domain.commonTraps.length > 0 && (
           <div className="p-4 bg-[color:#e11d48]/10 border border-[color:#e11d48]/30 rounded-2xl space-y-2">
-            <p className="overline text-[color:#e11d48]">Common traps</p>
+            <p className="editorial-overline text-[color:#e11d48]">Common traps</p>
             <ul className="space-y-1.5">
               {domain.commonTraps.map(trap => (
                 <li key={trap} className="flex items-start gap-2">
@@ -473,7 +473,7 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
         <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
           {domain.caseTypesToRecognize.length > 0 && (
             <div className="space-y-1.5">
-              <p className="overline text-[color:#d97706]">Case types</p>
+              <p className="editorial-overline text-[color:#d97706]">Case types</p>
               <ul className="space-y-1">
                 {domain.caseTypesToRecognize.map(c => (
                   <li key={c} className="flex items-start gap-1.5">
@@ -486,7 +486,7 @@ function TabDomains({ plan }: { plan: StudyPlanDocumentV2 }) {
           )}
           {domain.keyVocabulary.length > 0 && (
             <div className="space-y-1.5">
-              <p className="overline text-[color:#7c3aed]">Key vocabulary</p>
+              <p className="editorial-overline text-[color:#7c3aed]">Key vocabulary</p>
               <div className="flex flex-wrap gap-1">
                 {domain.keyVocabulary.map(term => (
                   <span key={term} className="badge badge-violet text-[10px]">{term}</span>
@@ -574,12 +574,12 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
               <div className="w-full h-0.5 bg-cyan-600" />
               <div className="p-4 space-y-3">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">{pattern.patternName}</p>
+                  <h3 className="text-sm font-semibold text-slate-900">{pattern.patternName}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{pattern.domainContext}</p>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <p className="overline text-[color:#0284c7]">Clues in scenario</p>
+                    <p className="editorial-overline text-[color:#0284c7]">Clues in scenario</p>
                     <ul className="space-y-1">
                       {pattern.cluesInScenario.map(clue => (
                         <li key={clue} className="flex items-start gap-1.5">
@@ -591,11 +591,11 @@ function TabConcepts({ plan }: { plan: StudyPlanDocumentV2 }) {
                   </div>
                   <div className="space-y-2.5">
                     <div>
-                      <p className="overline text-[color:#d97706]">Likely question angle</p>
+                      <p className="editorial-overline text-[color:#d97706]">Likely question angle</p>
                       <p className="text-xs text-slate-600 mt-1 leading-relaxed">{pattern.likelyQuestionAngle}</p>
                     </div>
                     <div>
-                      <p className="overline text-[color:#e11d48]">Common mistake</p>
+                      <p className="editorial-overline text-[color:#e11d48]">Common mistake</p>
                       <p className="text-xs text-slate-600 mt-1 leading-relaxed">{pattern.commonMistake}</p>
                     </div>
                   </div>
@@ -642,10 +642,10 @@ function TabWeekly({ plan }: { plan: StudyPlanDocumentV2 }) {
       <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-bold text-slate-900">
+            <h3 className="text-sm font-bold text-slate-900">
               Week {week.weekNumber}
               {week.datesLabel && <span className="text-slate-500 font-normal"> · {week.datesLabel}</span>}
-            </p>
+            </h3>
             <p className="text-xs text-[color:#0284c7] mt-0.5">{week.clusterFocus}</p>
           </div>
           <div className="text-right shrink-0">
@@ -720,7 +720,7 @@ function TabMilestones({ plan }: { plan: StudyPlanDocumentV2 }) {
 
   return (
     <div className="space-y-4">
-      <p className="overline">Progress checkpoints</p>
+      <p className="editorial-overline">Progress checkpoints</p>
       <div className="relative">
         {/* Timeline line */}
         <div className="absolute left-5 top-8 bottom-8 w-px bg-slate-200" />
@@ -733,7 +733,7 @@ function TabMilestones({ plan }: { plan: StudyPlanDocumentV2 }) {
               </div>
               <div className={`flex-1 p-4 rounded-2xl border ${colorMap[m.color]} space-y-1.5`}>
                 <div className={`w-16 h-0.5 rounded-full ${lineMap[m.color]}`} />
-                <p className="overline">{m.label}</p>
+                <p className="editorial-overline">{m.label}</p>
                 <p className="text-sm text-slate-700 leading-relaxed">{m.content}</p>
               </div>
             </div>

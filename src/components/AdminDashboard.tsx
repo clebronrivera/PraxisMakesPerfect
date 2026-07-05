@@ -607,7 +607,7 @@ export default function AdminDashboard({
       <div className="editorial-surface-soft rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-700">Testing Shortcuts</p>
+            <p className="editorial-overline text-indigo-700">Testing Shortcuts</p>
             <p className="mt-2 text-sm text-slate-600">
               Jump back into the app instantly while staying signed in as admin.
             </p>
@@ -1344,7 +1344,7 @@ function MetricCard({
 function StatLine({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-[#fbfaf7] px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="editorial-overline">{label}</p>
       <p className="mt-2 text-2xl font-semibold text-slate-900">{value}</p>
     </div>
   );

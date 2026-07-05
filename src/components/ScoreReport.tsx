@@ -9,7 +9,7 @@ import { useProgressTracking } from '../hooks/useProgressTracking';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
 import { loadSession, clearSession } from '../utils/sessionStorage';
-import { Button } from './ui';
+import { Button, Surface } from './ui';
 import type { DiagnosticSummary } from '../types/diagnosticSummary';
 
 interface ScoreReportProps {
@@ -228,7 +228,7 @@ export default function ScoreReport({
         <div className="space-y-4">
           <div>
             <p className="mb-2 text-sm text-slate-600">Overall Score</p>
-            <p className={`text-6xl font-bold ${scoreStyle.text}`}>
+            <p className={`stat-hero ${scoreStyle.text}`}>
               {scorePercentage}%
             </p>
           </div>
@@ -300,7 +300,7 @@ export default function ScoreReport({
 
       {/* Longest Questions */}
       {longestQuestions.length > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
             <Timer className="w-5 h-5 text-indigo-700" />
             Questions That Took the Longest
@@ -340,11 +340,11 @@ export default function ScoreReport({
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Domain Scores */}
-      <div className="editorial-surface p-6">
+      <Surface padding="md">
         <h3 className="mb-6 flex items-center gap-2 font-semibold text-slate-900">
           <BarChart3 className="w-5 h-5 text-indigo-700" />
           Performance by Domain
@@ -381,11 +381,11 @@ export default function ScoreReport({
             );
           })}
         </div>
-      </div>
+      </Surface>
 
       {/* Weakest Areas */}
       {weakestDomains.length > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-indigo-700">
             <AlertTriangle className="w-5 h-5" />
             Areas for Improvement
@@ -409,12 +409,12 @@ export default function ScoreReport({
               );
             })}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Key Concepts to Review */}
       {(diagnosticSummary?.missedConcepts?.length ?? 0) > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
             <Lightbulb className="w-5 h-5 text-indigo-700" />
             Key Concepts to Review
@@ -435,12 +435,12 @@ export default function ScoreReport({
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Foundational Gaps */}
       {(diagnosticSummary?.foundationalGaps?.length ?? 0) > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-indigo-700">
             <AlertTriangle className="w-5 h-5" />
             Foundational Gaps
@@ -458,7 +458,7 @@ export default function ScoreReport({
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Action Buttons */}

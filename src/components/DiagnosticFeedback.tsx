@@ -107,7 +107,7 @@ export default function DiagnosticFeedback({
         <div className={hasFramework ? 'mb-4' : ''}>
           <div className="flex items-center gap-2 mb-2">
             <Lightbulb className="h-4 w-4" style={{ color: '#d97706' }} />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">What to do next</span>
+            <span className="editorial-overline text-slate-400">What to do next</span>
           </div>
           <ul className="space-y-1.5">
             {meaningfulTips.map((tip, i) => (
@@ -147,7 +147,7 @@ export default function DiagnosticFeedback({
 
           {frameworkOpen && (
             <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">How this relates to the framework</p>
+              <p className="editorial-overline mb-1 text-slate-400">How this relates to the framework</p>
               <p className="mb-3 text-sm leading-relaxed text-slate-600">
                 {feedback.frameworkGuidance!.relationship}
               </p>

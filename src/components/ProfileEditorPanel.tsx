@@ -60,7 +60,7 @@ export default function ProfileEditorPanel({
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
           <div>
-            <p id="profile-editor-title" className="text-[11px] font-black uppercase tracking-[0.1em] text-indigo-600">
+            <p id="profile-editor-title" className="editorial-overline text-indigo-600">
               Account
             </p>
             <p className="text-sm font-semibold text-slate-900">Profile &amp; onboarding</p>
@@ -76,7 +76,7 @@ export default function ProfileEditorPanel({
 
         {/* Account info strip */}
         <div className="shrink-0 border-b border-slate-200 px-4 py-4 space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Signed-in account</p>
+          <p className="editorial-overline">Signed-in account</p>
 
           <div className="flex items-center gap-2.5">
             <Mail className="h-4 w-4 shrink-0 text-slate-500" />

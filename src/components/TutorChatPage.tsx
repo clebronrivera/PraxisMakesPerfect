@@ -85,7 +85,7 @@ export function TutorChatPage({
       {/* ══════ LEFT: sessions ══════ */}
       <aside className="w-64 shrink-0 border-r border-slate-200 flex flex-col bg-[#ffffff] backdrop-blur-md">
         <div className="p-4 flex items-center justify-between">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400">Sessions</p>
+          <p className="editorial-overline text-slate-400">Sessions</p>
           <IconButton
             variant="neutral"
             size="sm"
@@ -168,9 +168,9 @@ export function TutorChatPage({
             aria-hidden="true"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-semibold text-slate-900">
+            <h2 className="text-[13px] font-semibold text-slate-900">
               {activeSession?.title || 'Ask anything, get quizzed'}
-            </p>
+            </h2>
             <p className="text-[11px] text-slate-500">
               AI Tutor · Praxis 5403 · {chat.mode === 'quiz' ? 'Quiz mode' : 'Chat mode'}
             </p>
@@ -277,7 +277,7 @@ export function TutorChatPage({
       <aside className="hidden xl:flex w-[300px] shrink-0 border-l border-slate-200 flex-col overflow-y-auto p-3 gap-3 bg-[#ffffff]">
 
         <div className="rounded-xl p-4 bg-[#ffffff] border border-slate-200">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400 mb-2">Grounded in</p>
+          <p className="editorial-overline text-slate-400 mb-2">Grounded in</p>
           {activeSession ? (
             <>
               <p className="text-[13px] text-slate-900 font-medium leading-tight truncate">{activeSession.title || 'Current chat'}</p>
@@ -291,7 +291,7 @@ export function TutorChatPage({
         </div>
 
         <div className="rounded-xl p-4 bg-[#ffffff] border border-slate-200">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400 mb-2">This session</p>
+          <p className="editorial-overline text-slate-400 mb-2">This session</p>
           <div className="space-y-1.5 text-[11px]">
             <div className="flex justify-between">
               <span className="text-slate-500">Messages</span>
@@ -313,7 +313,7 @@ export function TutorChatPage({
         </div>
 
         <div className="rounded-xl p-4 bg-[#ffffff] border border-slate-200">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400 mb-2">Artifacts · this chat</p>
+          <p className="editorial-overline text-slate-400 mb-2">Artifacts · this chat</p>
           {artifactsInSession.length === 0 ? (
             <p className="text-[11px] text-slate-500 italic">None yet — ask the tutor to break something down or quiz you.</p>
           ) : (
@@ -337,7 +337,7 @@ export function TutorChatPage({
         </div>
 
         <div className="rounded-xl p-4 border" style={{ borderColor: 'rgba(139,92,246,0.22)', background: 'rgba(139,92,246,0.05)' }}>
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold mb-2 text-accent">Suggestion</p>
+          <p className="editorial-overline mb-2 text-accent">Suggestion</p>
           <p className="text-[12px] text-slate-600 leading-relaxed">
             When this chat ends, ask the tutor to <span className="text-slate-900 font-semibold">add a 10-minute spaced review</span> to lock in what you learned.
           </p>

@@ -127,7 +127,7 @@ function DomainCard({
       <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white mb-3`}>
         {DOMAIN_GLYPH[domainId] ?? '◆'}
       </div>
-      <p className={`text-[10px] font-black uppercase tracking-wide ${text}`}>{name}</p>
+      <p className={`editorial-overline ${text}`}>{name}</p>
       <p className="text-xs text-slate-500 mt-1">{pct}% · {profLabelFor(pct)}</p>
       <div className="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden">
         <div className={`h-full rounded-full bg-gradient-to-r ${grad}`} style={{ width: `${pct}%` }} />
@@ -167,7 +167,7 @@ function RedemptionCard({
 
   return (
     <div className="rounded-2xl p-5 bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/20">
-      <p className="text-[10px] font-black uppercase tracking-[0.12em] text-indigo-100 mb-2">Quarantine · Redemption</p>
+      <p className="editorial-overline text-indigo-100 mb-2">Quarantine · Redemption</p>
       <p className="text-[32px] font-semibold leading-none">
         {bankCount} <span className="text-base text-indigo-100 font-normal">in orbit</span>
       </p>
@@ -299,7 +299,7 @@ export default function DashboardHome({
     <div className="space-y-6 pb-14">
       {/* ── Welcome + readiness hero ──────────────────────────────────── */}
       <section>
-        <p className="eyebrow text-indigo-600 mb-1">Welcome back</p>
+        <p className="editorial-overline text-indigo-600 mb-1">Welcome back</p>
         <h1 className="text-3xl font-extrabold text-slate-900 mb-6">
           Hi, <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">{greetingName}.</span>
         </h1>
@@ -309,7 +309,7 @@ export default function DashboardHome({
             <ReadinessRing pct={readinessPct} phase={readinessPhase} />
 
             <div className="flex-1 min-w-0">
-              <p className="eyebrow text-indigo-100 mb-1">Exam readiness</p>
+              <p className="editorial-overline text-indigo-100 mb-1">Exam readiness</p>
               <h2 className="text-2xl font-bold leading-snug">
                 <span className="text-white">{demonstratingCount}</span> of {TOTAL_SKILLS} skills<br className="hidden sm:block" />
                 at {PROFICIENCY_META.proficient.label}.
@@ -322,15 +322,15 @@ export default function DashboardHome({
 
               <div className="flex flex-wrap gap-6 mt-4 pt-3 border-t border-white/20">
                 <div>
-                  <p className="text-[10px] uppercase tracking-wide text-indigo-200">Readiness phase</p>
+                  <p className="editorial-overline text-indigo-200">Readiness phase</p>
                   <p className="text-sm font-bold capitalize">{readinessPhase}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wide text-indigo-200">Target</p>
+                  <p className="editorial-overline text-indigo-200">Target</p>
                   <p className="text-sm font-bold">{readinessTarget} skills</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wide text-indigo-200">Accuracy</p>
+                  <p className="editorial-overline text-indigo-200">Accuracy</p>
                   <p className="text-sm font-bold">{weeklyAccuracy != null ? `${weeklyAccuracy}%` : '—'}</p>
                 </div>
               </div>
@@ -397,7 +397,7 @@ export default function DashboardHome({
         <Surface padding="md" className="lg:col-span-2">
           <div className="flex items-baseline justify-between mb-4">
             <h3 className="text-[13px] font-bold text-slate-900 tracking-[0.02em]">Today's Focus</h3>
-            <span className="eyebrow text-slate-400">Chained by priority</span>
+            <span className="editorial-overline text-slate-400">Chained by priority</span>
           </div>
 
           {/* Priority hero (weakest-domain gradient) */}
@@ -407,10 +407,10 @@ export default function DashboardHome({
                 <Target className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-black tracking-wide uppercase text-white/80">
+                <p className="editorial-overline text-white/80">
                   Priority · {PROFICIENCY_META.emerging.label} · {weakestSkill.domain}
                 </p>
-                <p className="font-semibold leading-tight">{weakestSkill.name}</p>
+                <p className="font-semibold leading-tight truncate">{weakestSkill.name}</p>
                 <p className="text-xs text-white/80 mt-0.5">
                   {weakestSkill.emergingCount} skill{weakestSkill.emergingCount !== 1 ? 's' : ''} below 60% in this domain — start here.
                 </p>

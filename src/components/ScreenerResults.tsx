@@ -1,6 +1,6 @@
 import { AlertTriangle, BarChart3, BookOpen, CheckCircle2, ChevronRight, Layers, Target } from 'lucide-react';
 import { useMemo } from 'react';
-import { Button } from './ui';
+import { Button, Surface } from './ui';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import type { UserResponse } from '../brain/weakness-detector';
 import { useEngine } from '../hooks/useEngine';
@@ -64,7 +64,7 @@ export default function ScreenerResults({
 
   if (report.totalQuestions === 0 || report.domainSummaries.length === 0) {
     return (
-      <div className="editorial-surface flex min-h-[400px] flex-col items-center justify-center space-y-4 p-10 text-center">
+      <Surface padding="lg" className="flex min-h-[400px] flex-col items-center justify-center space-y-4 text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50">
           <AlertTriangle className="h-7 w-7 text-indigo-700" />
         </div>
@@ -95,7 +95,7 @@ export default function ScreenerResults({
             Return Home
           </Button>
         </div>
-      </div>
+      </Surface>
     );
   }
 
@@ -127,19 +127,19 @@ export default function ScreenerResults({
               </span>
             </div>
             <div className="space-y-2">
-              <p className="text-5xl font-bold text-slate-900">{formatPercent(report.overallScore)}</p>
+              <p className="stat-hero text-slate-900">{formatPercent(report.overallScore)}</p>
               <p className="text-slate-700">{report.readiness.description}</p>
               <p className="text-sm text-slate-500">{TONE_OVERALL_MEANING[report.readiness.tone]}</p>
             </div>
-            <div className="rounded-[1.5rem] border border-indigo-200 bg-indigo-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-indigo-700">Best Next Step</p>
+            <div className="rounded-3xl border border-indigo-200 bg-indigo-50 p-4">
+              <p className="editorial-overline text-indigo-700">Best Next Step</p>
               <p className="mt-2 text-sm text-slate-900">{report.readiness.nextAction}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Highest-Need Domains</p>
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <p className="editorial-overline">Highest-Need Domains</p>
               <div className="mt-4 space-y-3">
                 {report.highestNeedDomains.map((domain) => (
                   <div key={domain.id} className="rounded-xl border border-slate-200 bg-white p-3">
@@ -155,8 +155,8 @@ export default function ScreenerResults({
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Foundational Concepts To Review</p>
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <p className="editorial-overline">Foundational Concepts To Review</p>
               <div className="mt-4 space-y-3">
                 {report.foundationalGaps.length > 0 ? (
                   report.foundationalGaps.map((gap) => (
@@ -179,7 +179,7 @@ export default function ScreenerResults({
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <div className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-indigo-700" />
             <h3 className="text-lg font-semibold text-slate-900">Performance by Domain</h3>
@@ -216,10 +216,10 @@ export default function ScreenerResults({
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
 
         <div className="space-y-6">
-          <div className="editorial-surface p-6">
+          <Surface padding="md">
             <div className="flex items-center gap-2">
               <Target className="h-5 w-5 text-indigo-700" />
               <h3 className="text-lg font-semibold text-slate-900">Study Next</h3>
@@ -243,9 +243,9 @@ export default function ScreenerResults({
                 </button>
               ))}
             </div>
-          </div>
+          </Surface>
 
-          <div className="editorial-surface p-6">
+          <Surface padding="md">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-emerald-600" />
               <h3 className="text-lg font-semibold text-slate-900">Current Strengths</h3>
@@ -266,11 +266,11 @@ export default function ScreenerResults({
                 </p>
               )}
             </div>
-          </div>
+          </Surface>
         </div>
       </section>
 
-      <section className="editorial-surface p-6">
+      <Surface as="section" padding="md">
         <div className="flex items-center gap-2">
           <Layers className="h-5 w-5 text-indigo-700" />
           <h3 className="text-lg font-semibold text-slate-900">Domain Drilldown</h3>
@@ -283,7 +283,7 @@ export default function ScreenerResults({
             <details
               key={domain.id}
               open={index === 0}
-              className="group rounded-[1.5rem] border border-slate-200 bg-[#fbfaf7] p-4"
+              className="group rounded-3xl border border-slate-200 bg-[#fbfaf7] p-4"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
                 <div>
@@ -300,7 +300,7 @@ export default function ScreenerResults({
               <div className="mt-5 grid gap-5 lg:grid-cols-2">
                 <div className="space-y-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Strengths</p>
+                    <p className="editorial-overline">Strengths</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {domain.strengths.length > 0 ? (
                         domain.strengths.map((skill) => (
@@ -318,7 +318,7 @@ export default function ScreenerResults({
                   </div>
 
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Weaknesses</p>
+                    <p className="editorial-overline">Weaknesses</p>
                     <div className="mt-3 space-y-2">
                       {domain.weaknesses.length > 0 ? (
                         domain.weaknesses.map((skill) => (
@@ -338,7 +338,7 @@ export default function ScreenerResults({
 
                 <div className="space-y-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Foundational Refresh</p>
+                    <p className="editorial-overline">Foundational Refresh</p>
                     <div className="mt-3 space-y-2">
                       {domain.foundationalGaps.length > 0 ? (
                         domain.foundationalGaps.map((gap) => (
@@ -356,7 +356,7 @@ export default function ScreenerResults({
                   </div>
 
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Recommended Focus</p>
+                    <p className="editorial-overline">Recommended Focus</p>
                     <div className="mt-3 space-y-2">
                       {domain.recommendations.map((recommendation) => (
                         <div key={recommendation} className="rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
@@ -377,7 +377,7 @@ export default function ScreenerResults({
             </details>
           ))}
         </div>
-      </section>
+      </Surface>
 
       <div className="flex flex-col gap-3 sm:flex-row">
         {onStartPractice && (

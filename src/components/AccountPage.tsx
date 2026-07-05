@@ -11,7 +11,7 @@ import { KeyRound, CheckCircle, LogOut, Download, ShieldAlert, AlertTriangle, Pe
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import type { UserProfile } from '../hooks/useProgressTracking';
-import { Button } from './ui';
+import { Button, Surface } from './ui';
 
 export interface AccountPageProps {
   profile: UserProfile;
@@ -111,14 +111,14 @@ export default function AccountPage({ profile, displayName, onEditAnswers, onSig
       <p className="text-sm text-slate-500 mb-8">Manage your profile, security, and data.</p>
 
       {/* PROFILE */}
-      <section className="editorial-surface p-6 mb-5">
+      <Surface as="section" padding="md" className="mb-5">
         <div className="flex items-start gap-4">
           <div className="w-16 h-16 rounded-2xl grad-chrome flex items-center justify-center text-white text-xl font-black shrink-0">
             {initialsOf(displayName, email)}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-black uppercase tracking-wide text-slate-400">Profile</p>
+              <p className="editorial-overline">Profile</p>
               <Button variant="ghost" size="sm" onClick={onEditAnswers}>
                 <Pencil size={12} aria-hidden="true" /> Edit
               </Button>
@@ -133,13 +133,13 @@ export default function AccountPage({ profile, displayName, onEditAnswers, onSig
             <p className="text-[12px] text-slate-400 mt-2">Member since {memberSince} · {role}</p>
           </div>
         </div>
-      </section>
+      </Surface>
 
       {/* STUDY PROFILE */}
-      <section className="editorial-surface p-6 mb-5">
+      <Surface as="section" padding="md" className="mb-5">
         <div className="flex items-center justify-between mb-4 gap-3">
           <div>
-            <p className="text-sm font-bold text-slate-900">Study profile</p>
+            <h2 className="text-sm font-bold text-slate-900">Study profile</h2>
             <p className="text-[12px] text-slate-400">How we personalize your plan and practice.</p>
           </div>
           <Button variant="secondary" size="sm" onClick={onEditAnswers} className="shrink-0">
@@ -157,16 +157,16 @@ export default function AccountPage({ profile, displayName, onEditAnswers, onSig
             { k: 'Goal', v: goals },
           ].map((f) => (
             <div key={f.k}>
-              <dt className="text-[10px] font-black uppercase tracking-wide text-slate-400">{f.k}</dt>
+              <dt className="editorial-overline">{f.k}</dt>
               <dd className="text-sm font-semibold text-slate-800 mt-0.5 break-words">{f.v}</dd>
             </div>
           ))}
         </dl>
-      </section>
+      </Surface>
 
       {/* SECURITY */}
-      <section className="editorial-surface p-6 mb-5">
-        <p className="text-sm font-bold text-slate-900 mb-4">Security</p>
+      <Surface as="section" padding="md" className="mb-5">
+        <h2 className="text-sm font-bold text-slate-900 mb-4">Security</h2>
         <div className="divide-y divide-slate-100">
           <div className="flex items-center justify-between gap-3 py-3">
             <div>
@@ -198,11 +198,11 @@ export default function AccountPage({ profile, displayName, onEditAnswers, onSig
             </Button>
           </div>
         </div>
-      </section>
+      </Surface>
 
       {/* PRIVACY & DATA */}
-      <section className="editorial-surface p-6 mb-5">
-        <p className="text-sm font-bold text-slate-900 mb-4">Privacy &amp; data</p>
+      <Surface as="section" padding="md" className="mb-5">
+        <h2 className="text-sm font-bold text-slate-900 mb-4">Privacy &amp; data</h2>
         <div className="divide-y divide-slate-100">
           <div className="flex items-center justify-between gap-3 py-3">
             <div>
@@ -234,13 +234,13 @@ export default function AccountPage({ profile, displayName, onEditAnswers, onSig
             </div>
           </div>
         </div>
-      </section>
+      </Surface>
 
       {/* DANGER ZONE */}
-      <section className="rounded-[1.5rem] border border-rose-200 bg-rose-50/40 p-6 mb-10">
-        <p className="flex items-center gap-1.5 text-sm font-bold text-rose-700 mb-1">
+      <section className="rounded-3xl border border-rose-200 bg-rose-50/40 p-6 mb-10">
+        <h2 className="flex items-center gap-1.5 text-sm font-bold text-rose-700 mb-1">
           <ShieldAlert size={15} aria-hidden="true" /> Danger zone
-        </p>
+        </h2>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <p className="text-[13px] text-slate-600 max-w-md">
             Request permanent deletion of your account and all study data — diagnostics, practice history, study plans, and glossary. This <span className="font-bold">cannot be undone.</span>

@@ -11,7 +11,7 @@
 import { useState } from 'react';
 import { StudyPlanDocumentV2 } from '../services/studyPlanService';
 import { getSkillProficiency } from '../utils/skillProficiency';
-import { Button } from './ui';
+import { Button, Surface } from './ui';
 
 interface LauncherProps {
   /** Start adaptive practice for a domain (Practice button). */
@@ -91,7 +91,7 @@ export default function StagedStudyGuide({
 
       {/* ── Header ── */}
       <div>
-        <p className="text-[11px] font-extrabold tracking-[0.14em] uppercase text-indigo-600">Your study guide</p>
+        <p className="editorial-overline text-indigo-600">Your study guide</p>
         <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-slate-900">
           Where you stand, <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">and what to do next.</span>
         </h2>
@@ -112,7 +112,7 @@ export default function StagedStudyGuide({
             </div>
           </div>
           <div className="flex-1">
-            <p className="text-[11px] font-extrabold tracking-[0.14em] uppercase text-indigo-100 mb-1">Readiness · {rt.label}</p>
+            <p className="editorial-overline text-indigo-100 mb-1">Readiness · {rt.label}</p>
             <p className="text-lg font-bold leading-snug">{snap.summary}</p>
             <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3 pt-3 border-t border-white/20 text-sm">
               {snap.testTimeline && (
@@ -165,12 +165,12 @@ export default function StagedStudyGuide({
               const isWeakest = d.domainId === weakestId;
               const isStrongest = d.domainId === strongestId && !isWeakest;
               return (
-                <div key={d.domainId} className={`bg-white border border-slate-200 rounded-3xl shadow-[0_18px_50px_rgba(15,23,42,0.07)] p-5 ${isWeakest ? `ring-2 ${t.ring}` : ''}`}>
+                <Surface key={d.domainId} padding="sm" className={isWeakest ? `ring-2 ${t.ring}` : ''}>
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
                       <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${t.grad} shrink-0`} aria-hidden />
                       <div>
-                        <p className={`text-[10px] font-black uppercase tracking-wide ${t.chip.split(' ')[1]}`}>{d.domainName}</p>
+                        <p className={`editorial-overline ${t.chip.split(' ')[1]}`}>{d.domainName}</p>
                         <p className="text-sm font-semibold text-slate-900">{d.masteryIndicator}</p>
                       </div>
                     </div>
@@ -192,12 +192,12 @@ export default function StagedStudyGuide({
 
                   {watch && (
                     <div className="rounded-xl bg-slate-50 border border-slate-100 p-3 mb-4">
-                      <p className="text-[10px] font-black uppercase tracking-wide text-slate-400 mb-1">One thing to watch</p>
+                      <p className="editorial-overline mb-1">One thing to watch</p>
                       <p className="text-[13px] text-slate-700 leading-snug">{watch}</p>
                     </div>
                   )}
 
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <button
                       onClick={() => onPractice?.(d.domainId)}
                       className={`rounded-xl px-3 py-2.5 text-sm font-bold text-white bg-gradient-to-br ${t.grad} hover:opacity-90 transition`}
@@ -217,7 +217,7 @@ export default function StagedStudyGuide({
                       Test
                     </button>
                   </div>
-                </div>
+                </Surface>
               );
             })}
           </div>
@@ -256,10 +256,10 @@ export default function StagedStudyGuide({
           {/* Bare minimum */}
           {mode === 'bare' && (
             <div className="space-y-5">
-              <div className="bg-white border border-slate-200 rounded-3xl shadow-[0_18px_50px_rgba(15,23,42,0.07)] p-6">
+              <Surface padding="md">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">✓</span>
-                  <p className="font-bold text-slate-900">If you only do the essentials</p>
+                  <h3 className="font-bold text-slate-900">If you only do the essentials</h3>
                 </div>
                 <p className="text-sm text-slate-500 mb-5">The shortest path that still moves your readiness.</p>
                 <ol className="space-y-3">
@@ -270,17 +270,17 @@ export default function StagedStudyGuide({
                     </li>
                   ))}
                 </ol>
-              </div>
+              </Surface>
 
               {plan.tacticalInstructions.avoidList.length > 0 && (
-                <div className="bg-white border border-slate-200 rounded-3xl shadow-[0_18px_50px_rgba(15,23,42,0.07)] p-5">
-                  <p className="text-[10px] font-black uppercase tracking-wide text-slate-400 mb-2">Don't waste time on</p>
+                <Surface padding="sm">
+                  <p className="editorial-overline mb-2">Don't waste time on</p>
                   <div className="flex flex-wrap gap-2">
                     {plan.tacticalInstructions.avoidList.map((item, i) => (
                       <span key={i} className="rounded-full bg-slate-100 text-slate-500 px-3 py-1 text-xs">{item}</span>
                     ))}
                   </div>
-                </div>
+                </Surface>
               )}
             </div>
           )}
@@ -295,7 +295,7 @@ export default function StagedStudyGuide({
                 </div>
               )}
               {plan.weeklyStudyPlan.map(week => (
-                <div key={week.weekNumber} className="bg-white border border-slate-200 rounded-3xl shadow-[0_18px_50px_rgba(15,23,42,0.07)] p-5">
+                <Surface key={week.weekNumber} padding="sm">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white font-black flex items-center justify-center">{week.weekNumber}</span>
@@ -316,7 +316,7 @@ export default function StagedStudyGuide({
                       <span className="font-bold text-slate-600">Checkpoint:</span> {week.checkpointQuestion}
                     </div>
                   )}
-                </div>
+                </Surface>
               ))}
             </div>
           )}

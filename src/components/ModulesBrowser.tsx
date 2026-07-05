@@ -151,7 +151,7 @@ export default function ModulesBrowser({ profile, lpProgress, onNodeClick }: {
           </p>
         </div>
         <div className="shrink-0 rounded-2xl border border-slate-200 bg-white px-5 py-3">
-          <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">
+          <p className="editorial-overline">
             {adaptive ? 'Recommended · gap-closing' : 'Overall · all modules'}
           </p>
           <div className="mt-1 flex items-center gap-3">
@@ -182,7 +182,7 @@ export default function ModulesBrowser({ profile, lpProgress, onNodeClick }: {
       {/* Adaptive summary strip */}
       {adaptive && (
         <div className="mb-6 rounded-2xl border border-indigo-200 bg-white p-5">
-          <p className="text-[11px] font-black uppercase tracking-[0.1em] text-indigo-500">Adaptive view · closing your gaps</p>
+          <p className="editorial-overline text-indigo-500">Adaptive view · closing your gaps</p>
           <p className="mt-0.5 text-[15px] font-bold text-slate-900">
             {rec.total} module{rec.total === 1 ? '' : 's'} recommended for you — {masteredHidden} mastered hidden
           </p>
@@ -217,7 +217,7 @@ export default function ModulesBrowser({ profile, lpProgress, onNodeClick }: {
         ))
       ) : (
         <section>
-          <p className="mb-3 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">Ranked by weakness · weakest first</p>
+          <p className="editorial-overline mb-3">Ranked by weakness · weakest first</p>
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
             <ol className="divide-y divide-slate-100">
               {ranked.map((e, i) => {

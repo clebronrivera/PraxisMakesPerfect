@@ -121,7 +121,7 @@ export function TutorEmptyState({
 
       {top3.length > 0 && (
         <div className="editorial-surface p-4 space-y-2">
-          <p className="eyebrow">Skills needing the most work</p>
+          <p className="editorial-overline">Skills needing the most work</p>
           {top3.map(s => {
             const pct = s.accuracy !== null ? Math.round(s.accuracy * 100) : null;
             const pctColor = pct === null
@@ -157,7 +157,7 @@ export function TutorEmptyState({
       />
 
       <div className="pt-1">
-        <p className="eyebrow mb-2">Study activities</p>
+        <p className="editorial-overline mb-2">Study activities</p>
         <div className="flex flex-col gap-2">
           {STUDY_ACTIVITIES.map(({ icon: Icon, label, sublabel, message, accent }) => (
             <button

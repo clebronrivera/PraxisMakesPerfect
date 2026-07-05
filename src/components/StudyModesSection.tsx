@@ -224,7 +224,7 @@ function DomainPanel({
 
   return (
     <div className="space-y-3">
-      <p className="eyebrow text-indigo-600 flex items-center gap-1.5">
+      <p className="editorial-overline text-indigo-600 flex items-center gap-1.5">
         <TrendingUp className="w-3 h-3 text-indigo-600" />
         Domain overview — most concern first
       </p>
