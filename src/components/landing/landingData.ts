@@ -3,6 +3,8 @@
 // no psychometric claims, qualitative time framing) are intentional — see
 // docs/PASS_STORY.md and the landing-positioning memory.
 
+import { PROGRESS_DOMAINS } from '../../utils/progressTaxonomy';
+
 /** Auth modes the landing CTAs can open the modal into. */
 export type AuthMode = 'login' | 'signup' | 'reset';
 
@@ -77,6 +79,34 @@ export const METHOD_LOOP: string[] = ['Baseline', 'Diagnose', 'Target', 'Monitor
 export const METHOD_ROLES: string[] = [
   'Teacher', 'Interventionist', 'Instructional Coach', 'Behavior Specialist', 'Educational Assessor', 'Special Education Advocate',
 ];
+
+export type MasteryTier = 'strong' | 'developing' | 'critical';
+
+export interface MicroSkillDomainRow {
+  shortName: string;
+  tiers: MasteryTier[];
+}
+
+/**
+ * Illustrative content for the hero's "Your micro-skill map" panel — an example
+ * of what the post-diagnostic map looks like, not a real user's data (no one has
+ * signed up yet). Domain names/order come from PROGRESS_DOMAINS (the real 4
+ * domains, single source of truth) so this can't drift from the actual product.
+ * Tile *counts* per domain match PROGRESS_SKILLS' real per-domain totals
+ * (13 / 12 / 8 / 12) for visual honesty, but the tier pattern itself is
+ * hand-authored and illustrative. No counts or percentages are rendered from
+ * this data — see landingData.ts's own "no fixed counts" rule above and
+ * DashboardPreview.tsx's identical constraint.
+ */
+export const MICRO_SKILL_MAP: MicroSkillDomainRow[] = PROGRESS_DOMAINS.map((domain) => {
+  const tiersByDomain: Record<number, MasteryTier[]> = {
+    1: ['strong', 'strong', 'developing', 'strong', 'strong', 'critical', 'strong', 'developing', 'strong', 'strong', 'strong', 'developing', 'strong'],
+    2: ['strong', 'strong', 'strong', 'developing', 'strong', 'strong', 'critical', 'strong', 'strong', 'developing', 'strong', 'strong'],
+    3: ['developing', 'strong', 'critical', 'strong', 'developing', 'strong', 'strong', 'critical'],
+    4: ['strong', 'developing', 'strong', 'strong', 'critical', 'strong', 'developing', 'strong', 'strong', 'strong', 'developing', 'strong'],
+  };
+  return { shortName: domain.shortName, tiers: tiersByDomain[domain.id] ?? [] };
+});
 
 export interface PlanStat {
   value: string;
