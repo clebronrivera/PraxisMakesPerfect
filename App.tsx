@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useMemo, useCallback, useEffect } from 'react';
+import { lazy, Suspense, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Brain, ChevronRight, AlertTriangle, Zap, BarChart3, LogOut, Shield, MessageSquare, Flame, BookOpen, BookMarked, User, PanelLeftClose, PanelLeft, Trophy, HelpCircle, Bot } from 'lucide-react';
 import { useDailyQuestionCount, DAILY_GOAL } from './src/hooks/useDailyQuestionCount';
 import { analyzeQuestion, type Question as RawQuestion, type AnalyzedQuestion } from './src/brain/question-analyzer';
@@ -28,28 +28,22 @@ const FloatingTutorWidget = lazy(() => import('./src/components/FloatingTutorWid
 import { useProgressTracking } from './src/hooks/useProgressTracking';
 import { useAdaptiveLearning } from './src/hooks/useAdaptiveLearning';
 import { clearSession } from './src/utils/sessionStorage';
-import { getCurrentSession, loadUserSession } from './src/utils/userSessionStorage';
-import { isStoredScreenerSessionType } from './src/utils/sessionTypes';
+import { getCurrentSession } from './src/utils/userSessionStorage';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import ToastHost from './src/components/ToastHost';
 import { useContent } from './src/contexts/ContentContext';
 import type { UserProfileData } from './src/components/OnboardingFlow';
 import { useStudyPlanManager } from './src/hooks/useStudyPlanManager';
 import type { StudyPlanHistoryEntry } from './src/services/studyPlanService';
-import { useAssessmentFlow } from './src/hooks/useAssessmentFlow';
+import { useAssessmentOrchestration } from './src/hooks/useAssessmentOrchestration';
 import { usePracticeFlow } from './src/hooks/usePracticeFlow';
 const AdaptiveDiagnostic = lazy(() => import('./src/components/AdaptiveDiagnostic'));
-import {
-  isScreenerQuestionCount
-} from './src/utils/assessmentConstants';
-import { buildAdaptiveDiagnostic } from './src/utils/assessment-builder';
-import type { AdaptiveDiagnosticResult } from './src/utils/assessment-builder';
 import { getSkillById } from './src/brain/skill-map';
 import { PROGRESS_DOMAINS, getProgressSkillDefinition } from './src/utils/progressTaxonomy';
 
 import { isAdminEmail } from './src/config/admin';
-import { useRedemptionRounds, type MissedQuestion } from './src/hooks/useRedemptionRounds';
-import { useLeaderboard } from './src/hooks/useLeaderboard';
+import { useRedemptionFlow } from './src/hooks/useRedemptionFlow';
+import { useSocialHub } from './src/hooks/useSocialHub';
 import type { LbMode } from './src/hooks/useLeaderboard';
 const RedemptionRoundSession = lazy(() => import('./src/components/RedemptionRoundSession'));
 import { clearLegacyClientDataOnce } from './src/utils/legacyClientData';
@@ -58,8 +52,6 @@ import { useTutorialState } from './src/hooks/useTutorialState';
 const TutorialWalkthrough = lazy(() => import('./src/components/TutorialWalkthrough'));
 import { buildProgressSummary } from './src/utils/progressSummaries';
 import { PROFICIENCY_META, APPROACHING_THRESHOLD } from './src/utils/skillProficiency';
-import { buildAssessmentReportModel } from './src/utils/assessmentReport';
-import { buildDiagnosticSummary } from './src/utils/diagnosticSelectors';
 import { onboardingFormToSavePayload } from './src/utils/onboardingFormToSavePayload';
 import { userProfileToFormData } from './src/utils/onboardingProfileMapping';
 const LoginScreen = lazy(() => import('./src/components/LoginScreen'));
@@ -218,7 +210,15 @@ function PraxisStudyAppContent() {
   const { profile, updateProfile, saveOnboardingData, updateSkillProgress, resetProgress, logResponse, updateLastSession, getAssessmentResponses, getLatestAssessmentResponses, savePracticeResponse, saveScreenerResponse, recalculateGlobalScores, isLoaded } = useProgressTracking();
   const { selectNextQuestion } = useAdaptiveLearning();
   const [canonicalQuestions, setCanonicalQuestions] = useState<RawQuestion[]>([]);
-  const [canonicalLoading, setCanonicalLoading] = useState(true);
+  // The 6.3MB question bank is fetched LAZILY — only when the user enters an
+  // assessment/practice flow — not at startup. Login, onboarding, and the
+  // dashboard render without it. `canonicalLoading` is true only while an
+  // in-flight lazy fetch is running (false at startup and after it resolves).
+  const [canonicalLoading, setCanonicalLoading] = useState(false);
+  const [questionBankError, setQuestionBankError] = useState(false);
+  // Idempotent loader guard: holds the single in-flight/settled fetch promise so
+  // repeated triggers (multiple entry points, re-renders) share one download.
+  const bankPromiseRef = useRef<Promise<AnalyzedQuestion[]> | null>(null);
 
   // Hash routing for privacy/terms — must be declared before any early returns
   const [hashRoute, setHashRoute] = useState(window.location.hash.replace('#', ''));
@@ -236,11 +236,17 @@ function PraxisStudyAppContent() {
     [fetchedQuestions, canonicalQuestionIds]
   );
 
-  useEffect(() => {
-    let active = true;
-    const controller = new AbortController();
-
-    fetch(CANONICAL_QUESTION_BANK_URL, { signal: controller.signal })
+  // Lazy question-bank loader. Idempotent: the first call kicks off the fetch and
+  // caches its promise; later calls (other entry points, re-renders) await the
+  // same download. Resolves to the analyzed bank so callers that need questions
+  // synchronously-after-await (assessment/practice/redemption builders) don't
+  // depend on the `analyzedQuestions` memo having re-rendered yet. A failed load
+  // clears the cache so a later entry can retry.
+  const ensureQuestionBank = useCallback((): Promise<AnalyzedQuestion[]> => {
+    if (bankPromiseRef.current) return bankPromiseRef.current;
+    setCanonicalLoading(true);
+    setQuestionBankError(false);
+    const promise = fetch(CANONICAL_QUESTION_BANK_URL)
       .then(async response => {
         if (!response.ok) {
           throw new Error(`Failed to load question bank (${response.status})`);
@@ -248,27 +254,21 @@ function PraxisStudyAppContent() {
         return response.json() as Promise<RawQuestion[]>;
       })
       .then(loadedQuestions => {
-        if (!active) return;
         setCanonicalQuestions(loadedQuestions);
+        setCanonicalLoading(false);
+        return loadedQuestions.map(analyzeQuestion);
       })
       .catch(error => {
-        if (controller.signal.aborted) {
-          return;
-        }
         console.error('[QuestionBank] Failed to load canonical question bank:', error);
-      })
-      .finally(() => {
-        if (active) {
-          setCanonicalLoading(false);
-        }
+        setCanonicalLoading(false);
+        setQuestionBankError(true);
+        bankPromiseRef.current = null; // allow a later entry point to retry
+        return [] as AnalyzedQuestion[];
       });
-
-    return () => {
-      active = false;
-      controller.abort();
-    };
+    bankPromiseRef.current = promise;
+    return promise;
   }, []);
-  
+
   useEffect(() => {
     clearLegacyClientDataOnce();
   }, []);
@@ -276,7 +276,6 @@ function PraxisStudyAppContent() {
   // User management
   const currentUserName = user?.user_metadata?.full_name || user?.user_metadata?.displayName || user?.email || null;
   const savedSession = currentUserName ? getCurrentSession(currentUserName) : null;
-  const hasSession = Boolean(savedSession);
 
   // App-level navigation state (not owned by any sub-hook)
   const [mode, setMode] = useState<AppMode>('home');
@@ -284,64 +283,19 @@ function PraxisStudyAppContent() {
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // ── Users online + Leaderboard ─────────────────────────────────────────────
-  function getHourRange(h: number): [number, number] {
-    const map: [number, number][] = [
-      [0, 2],  // 12am
-      [0, 1],  // 1am
-      [0, 0],  // 2am
-      [0, 0],  // 3am
-      [0, 1],  // 4am
-      [0, 1],  // 5am
-      [1, 2],  // 6am
-      [1, 3],  // 7am
-      [2, 5],  // 8am
-      [3, 6],  // 9am
-      [3, 7],  // 10am
-      [3, 7],  // 11am
-      [2, 6],  // 12pm
-      [2, 5],  // 1pm
-      [2, 5],  // 2pm
-      [3, 7],  // 3pm
-      [4, 8],  // 4pm
-      [4, 8],  // 5pm
-      [5, 9],  // 6pm
-      [5, 10], // 7pm
-      [5, 10], // 8pm
-      [4, 8],  // 9pm
-      [2, 6],  // 10pm
-      [1, 4],  // 11pm
-    ];
-    return map[h] ?? [0, 0];
-  }
-
-  const [usersOnline, setUsersOnline] = useState(() => {
-    const [min, max] = getHourRange(new Date().getHours());
-    return min === max ? min : Math.floor(Math.random() * (max - min + 1)) + min;
-  });
-
+  // Prefetch the question bank on entry to any question-consuming mode. The
+  // assessment/practice/redemption START handlers already await ensureQuestionBank
+  // before building; this covers modes reached by plain navigation (practice-hub,
+  // results, learning-path-module) so the bank is ready by the time they render.
   useEffect(() => {
-    const scheduleNext = () => {
-      const delay = Math.floor(Math.random() * 60000) + 90000; // 90–150s
-      return setTimeout(() => {
-        const [min, max] = getHourRange(new Date().getHours());
-        setUsersOnline(prev => {
-          const roll = Math.random();
-          let drift;
-          if (roll < 0.60) drift = Math.random() < 0.5 ? 1 : -1;
-          else if (roll < 0.75) drift = 0;
-          else drift = Math.random() < 0.5 ? 2 : -2;
-          return Math.min(max, Math.max(min, prev + drift));
-        });
-        timerId = scheduleNext();
-      }, delay);
-    };
-    let timerId = scheduleNext();
-    return () => clearTimeout(timerId);
-  }, []);
+    const QUESTION_MODES: AppMode[] = ['practice-hub', 'practice', 'results', 'learning-path-module'];
+    if (QUESTION_MODES.includes(mode)) {
+      void ensureQuestionBank();
+    }
+  }, [mode, ensureQuestionBank]);
 
-  // Leaderboard — real data from /api/leaderboard
-  const { sortedEntries: lbEntries, callerUserId: lbCallerId, lbOpen, setLbOpen, lbMode, setLbMode, isLoading: lbLoading, error: lbError, getRank, formatLbTime } = useLeaderboard(user?.id ?? null);
+  // ── Users online + Leaderboard (social-proof header widgets) ───────────────
+  const { usersOnline, sortedEntries: lbEntries, callerUserId: lbCallerId, lbOpen, setLbOpen, lbMode, setLbMode, isLoading: lbLoading, error: lbError, getRank, formatLbTime } = useSocialHub(user?.id ?? null);
 
   // Tutorial walkthrough — auto-triggers after first onboarding completion
   const { showTutorial, dismissTutorial, replayTutorial } = useTutorialState(user?.id, !!profile.onboardingComplete);
@@ -383,10 +337,16 @@ function PraxisStudyAppContent() {
   } = usePracticeFlow({
     analyzedQuestions,
     userId: user?.id,
+    ensureQuestionBank,
     onNavigate: (m: string) => setMode(m as AppMode),
   });
 
-  // ── Assessment flow state & handlers ──────────────────────────────────────
+  const progressSummary = useMemo(
+    () => buildProgressSummary(profile.skillScores, fetchedSkills),
+    [fetchedSkills, profile.skillScores]
+  );
+
+  // ── Assessment orchestration (screener / full / adaptive / retake) ─────────
   const {
     screenerQuestions,
     fullAssessmentQuestions,
@@ -402,39 +362,53 @@ function PraxisStudyAppContent() {
     handleScreenerComplete,
     handleFullAssessmentComplete,
     handleAdaptiveDiagnosticComplete,
-    handleResumeAssessment,
-    handleDiscardSession,
     handleViewReport,
     adaptiveResumeError,
     clearAdaptiveResumeError,
     retryAdaptiveRemoteResume,
     abandonAdaptiveResumeRemoteAndStartFresh,
-  } = useAssessmentFlow({
+    retakeAssessmentData,
+    retakeJustCompleted,
+    retakePreSnapshot,
+    retakePostSnapshot,
+    hasRetakeUnlocked,
+    deficitSkillIds,
+    clearedDeficitCount,
+    startRetakeAssessment,
+    handleRetakeComplete,
+    exitRetake,
+    dismissRetakeResults,
+    hasOrphanedAdaptive,
+    hasAssessmentInProgress,
+    hasPracticeInProgress,
+    resumeFromLastSession,
+    canDiscardSession,
+    discardInProgressSession,
+    diagnosticSummary,
+  } = useAssessmentOrchestration({
     analyzedQuestions,
     profile,
     updateProfile,
+    recalculateGlobalScores,
     currentUserName,
     isLoaded,
     savedSession,
     getAssessmentResponses,
     getLatestAssessmentResponses,
+    ensureQuestionBank,
+    progressSummary,
+    fetchedDomains,
+    fetchedSkills,
     onNavigate: (m: string) => setMode(m as AppMode),
   });
   // ── Redemption Rounds ──────────────────────────────────────────────────────
-  const redemption = useRedemptionRounds({
+  const redemption = useRedemptionFlow({
     userId: user?.id ?? null,
     profile,
     updateProfile,
+    ensureQuestionBank,
+    onNavigate: (m: string) => setMode(m as AppMode),
   });
-  // Questions loaded for the active round (AnalyzedQuestion[])
-  const [redemptionQuestions, setRedemptionQuestions] = useState<AnalyzedQuestion[]>([]);
-  const [redemptionMissedRows, setRedemptionMissedRows] = useState<MissedQuestion[]>([]);
-
-  // ── Retake (third-assessment) state ──────────────────────────────────────────
-  const [retakeAssessmentData, setRetakeAssessmentData] = useState<AdaptiveDiagnosticResult | null>(null);
-  const [retakeJustCompleted, setRetakeJustCompleted] = useState(false);
-  const [retakePreSnapshot, setRetakePreSnapshot] = useState<{ readiness: number; demonstratingCount: number } | null>(null);
-  const [retakePostSnapshot, setRetakePostSnapshot] = useState<{ readiness: number; demonstratingCount: number } | null>(null);
 
   /** SkillId currently open in the Learning Path module page */
   const [learningPathSkillId, setLearningPathSkillId] = useState<string | null>(null);
@@ -461,80 +435,6 @@ function PraxisStudyAppContent() {
     (hasArchivedShortAssessment && profile.lastPreAssessmentSessionId)
   );
   
-  const progressSummary = useMemo(
-    () => buildProgressSummary(profile.skillScores, fetchedSkills),
-    [fetchedSkills, profile.skillScores]
-  );
-
-  // Build unified DiagnosticSummary for ScoreReport after a full/adaptive assessment.
-  // Omits conceptAnalytics (App.tsx does not compute it at this level — ResultsDashboard
-  // runs it independently). conceptGaps/crossSkillConceptGaps/conceptSummary will be null.
-  const diagnosticSummary = useMemo(() => {
-    if (
-      lastAssessmentType === 'screener' ||
-      lastAssessmentResponses.length === 0 ||
-      fullAssessmentQuestions.length === 0
-    ) {
-      return undefined;
-    }
-    const report = buildAssessmentReportModel(
-      lastAssessmentResponses,
-      fullAssessmentQuestions,
-      fetchedDomains,
-      fetchedSkills,
-    );
-    return buildDiagnosticSummary(report, profile);
-  }, [lastAssessmentResponses, fullAssessmentQuestions, fetchedDomains, fetchedSkills, profile, lastAssessmentType]);
-
-  // ── Retake unlock gate (A4/D8) ────────────────────────────────────────────────
-  // Deficit skills: those that scored < 60 in diagnosticSkillScores (screener+diagnostic only).
-  // Gate opens when every deficit skill has reached >= 60 in current blended skillScores.
-  const { hasRetakeUnlocked, deficitSkillIds, clearedDeficitCount } = useMemo(() => {
-    const diagScores = profile.globalScores?.diagnosticSkillScores;
-    if (!profile.adaptiveDiagnosticComplete || profile.retakeComplete || !diagScores) {
-      return { hasRetakeUnlocked: false, deficitSkillIds: [] as string[], clearedDeficitCount: 0 };
-    }
-    const deficit = Object.entries(diagScores)
-      .filter(([, score]) => score < 60)
-      .map(([id]) => id);
-    if (deficit.length === 0) {
-      return { hasRetakeUnlocked: false, deficitSkillIds: [] as string[], clearedDeficitCount: 0 };
-    }
-    // Use globalScores.skillScores (0-100 scale) for consistency with diagnosticSkillScores
-    const currentScores = profile.globalScores?.skillScores ?? {};
-    const cleared = deficit.filter(id => (currentScores[id] ?? 0) >= 60).length;
-    return { hasRetakeUnlocked: cleared === deficit.length, deficitSkillIds: deficit, clearedDeficitCount: cleared };
-  }, [profile.adaptiveDiagnosticComplete, profile.retakeComplete, profile.globalScores, profile.skillScores]);
-
-  const startRetakeAssessment = useCallback(() => {
-    if (!profile.adaptiveDiagnosticComplete || profile.retakeComplete) return;
-    // Capture pre-retake snapshot for the results card
-    const preDemonstrating = progressSummary.skills.filter(s => s.colorState === 'green').length;
-    setRetakePreSnapshot({ readiness: profile.globalScores?.globalReadiness ?? 0, demonstratingCount: preDemonstrating });
-    setRetakeJustCompleted(false);
-    setRetakePostSnapshot(null);
-    // All prior question IDs become the "prefer unseen" list (soft preference, fall back on thin pools)
-    const seenIds = [
-      ...(profile.preAssessmentQuestionIds ?? []),
-      ...(profile.screenerItemIds ?? []),
-      ...(profile.fullAssessmentQuestionIds ?? []),
-      ...(profile.diagnosticQuestionIds ?? []),
-    ];
-    const data = buildAdaptiveDiagnostic(analyzedQuestions, [], seenIds);
-    setRetakeAssessmentData(data);
-    setMode('retake-assessment');
-  }, [profile, analyzedQuestions, progressSummary.skills]);
-
-  const handleRetakeComplete = useCallback(async () => {
-    await updateProfile({ retakeComplete: true, retakeCompletedAt: new Date().toISOString(), lastSession: null });
-    const newGlobal = await recalculateGlobalScores();
-    const postDemonstrating = Object.values(newGlobal?.skillScores ?? {}).filter(s => s >= 80).length;
-    setRetakePostSnapshot({ readiness: newGlobal?.globalReadiness ?? 0, demonstratingCount: postDemonstrating });
-    setRetakeJustCompleted(true);
-    setRetakeAssessmentData(null);
-    setMode('home');
-  }, [updateProfile, recalculateGlobalScores]);
-
   // Tutor page context — passed to FloatingTutorWidget so it knows what the user is viewing
   const tutorPageContext = useMemo(() => ({
     page: mode,
@@ -634,20 +534,6 @@ function PraxisStudyAppContent() {
     return totalA > 0 ? Math.round((totalC / totalA) * 100) : null;
   }, [profile.skillScores]);
 
-  const handleStartRedemption = useCallback(async () => {
-    const rows = await redemption.startRound();
-    if (!rows || rows.length === 0) return;
-    const matched = rows
-      .map((row) => ({
-        q: analyzedQuestions.find(q => q.id === row.question_id),
-        row,
-      }))
-      .filter((item): item is { q: AnalyzedQuestion; row: MissedQuestion } => item.q != null);
-    setRedemptionQuestions(matched.map((item) => item.q));
-    setRedemptionMissedRows(matched.map((item) => item.row));
-    setMode('redemption-round');
-  }, [redemption, analyzedQuestions]);
-
   useEffect(() => {
     if (canonicalLoading || contentLoading || canonicalQuestions.length === 0 || fetchedQuestions.length === 0) {
       return;
@@ -718,8 +604,10 @@ function PraxisStudyAppContent() {
   // RENDER
   // ============================================
   
-  // Show loading while checking auth, loading profile, or fetching content
-  if (authLoading || !isLoaded || contentLoading || canonicalLoading || canonicalQuestions.length === 0) {
+  // Show loading while checking auth or loading profile. The question bank is
+  // NOT gated here — it loads lazily on first assessment/practice entry, so
+  // login, onboarding, and the dashboard render without waiting for 6.3MB.
+  if (authLoading || !isLoaded || contentLoading) {
     return (
       <div className="min-h-screen bg-[#f7f6f2] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
@@ -849,6 +737,37 @@ function PraxisStudyAppContent() {
       null
     );
   })();
+
+  // Question-bank readiness for modes reached by plain navigation (practice /
+  // results / learning-path-module). These render with the analyzed bank, which
+  // now loads lazily on entry — show a brief loading/error panel until it's ready
+  // instead of the components' own empty states.
+  const questionBankReady = canonicalQuestions.length > 0;
+  const renderQuestionBankStatus = () => (
+    <div className="editorial-surface mx-auto max-w-md p-12 text-center space-y-6">
+      {questionBankError ? (
+        <>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-rose-100">
+            <AlertTriangle className="h-8 w-8 text-rose-600" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-slate-900">Couldn&apos;t load questions</h3>
+            <p className="mt-2 text-slate-500">Check your connection and try again.</p>
+          </div>
+          <button onClick={() => { void ensureQuestionBank(); }} className="editorial-button-primary">
+            Retry
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.75rem] grad-chrome animate-pulse">
+            <Brain className="h-8 w-8 text-white" />
+          </div>
+          <p className="text-slate-500">Loading questions…</p>
+        </>
+      )}
+    </div>
+  );
 
   return (
     <div
@@ -1228,28 +1147,8 @@ function PraxisStudyAppContent() {
               ? PROGRESS_DOMAINS.find(domain => domain.id === progressSummary.weakestDomainId) ?? null
               : null;
 
-            // "Orphaned adaptive progress": user has saved answers in Supabase
-            // but no `last_session` pointer and no localStorage session. Happens
-            // when a user starts the diagnostic, clears cache / switches device,
-            // and returns later. The startAdaptiveDiagnostic() Supabase-fallback
-            // path will reconstruct their session — we just need to surface a
-            // Resume CTA instead of the default "Begin Adaptive Diagnostic" one.
-            const hasOrphanedAdaptive =
-              !profile.lastSession &&
-              !savedSession &&
-              !profile.adaptiveDiagnosticComplete &&
-              (profile.adaptiveResponseCount ?? 0) > 0;
-
-            const hasAssessmentInProgress =
-              (profile.lastSession?.mode === 'screener' && !profile.screenerComplete) ||
-              (profile.lastSession?.mode === 'full' && !profile.fullAssessmentComplete) ||
-              (profile.lastSession?.mode === 'diagnostic' && !profile.diagnosticComplete) ||
-              profile.lastSession?.mode === 'adaptive' ||
-              (!profile.lastSession && hasSession && savedSession &&
-                !profile.screenerComplete && !profile.fullAssessmentComplete) ||
-              hasOrphanedAdaptive;
-            const hasPracticeInProgress = profile.lastSession?.mode === 'practice';
-
+            // In-progress detection (hasAssessmentInProgress / hasPracticeInProgress /
+            // hasOrphanedAdaptive) lives in useAssessmentOrchestration.
             const sessionResumeCard = (() => {
               if (!hasAssessmentInProgress && !hasPracticeInProgress) return null;
 
@@ -1300,49 +1199,7 @@ function PraxisStudyAppContent() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => {
-                        if (profile.lastSession) {
-                          const ls = profile.lastSession;
-                          if (ls.mode === 'adaptive') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (!saved) {
-                              // localStorage was cleared or this is a different browser/device.
-                              // Fall back to Supabase-backed reconstruction (startAdaptiveDiagnostic
-                              // with no args queries Supabase for prior responses and rebuilds the
-                              // session synthetically — do NOT clear lastSession here or the
-                              // resume card would disappear before reconstruction completes).
-                              void startAdaptiveDiagnostic();
-                              return;
-                            }
-                            startAdaptiveDiagnostic(saved);
-                          } else if (ls.mode === 'screener') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
-                            startScreener(saved);
-                          } else if (ls.mode === 'diagnostic') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (saved && isStoredScreenerSessionType(saved.type) && (saved.assessmentFlow === 'screener' || isScreenerQuestionCount(saved.questionIds.length))) {
-                              void updateProfile({ lastSession: { ...ls, mode: 'screener' } });
-                              startScreener(saved); return;
-                            }
-                            updateProfile({ lastSession: null });
-                            alert('That session can no longer be resumed. Start a new screener.');
-                          } else if (ls.mode === 'full') {
-                            const saved = loadUserSession(ls.sessionId);
-                            if (!saved) { updateProfile({ lastSession: null }); alert('That session is no longer available.'); return; }
-                            startFullAssessment(saved);
-                          }
-                        } else if (savedSession) {
-                          handleResumeAssessment();
-                        } else if (hasOrphanedAdaptive) {
-                          // No lastSession, no localStorage — but Supabase has
-                          // saved adaptive responses for this user. Calling
-                          // startAdaptiveDiagnostic() with no args triggers the
-                          // Supabase reconstruction path which rebuilds a
-                          // synthetic session + writes lastSession.
-                          void startAdaptiveDiagnostic();
-                        }
-                      }}
+                      onClick={resumeFromLastSession}
                       className="editorial-button-primary"
                     >
                       Resume →
@@ -1351,12 +1208,9 @@ function PraxisStudyAppContent() {
                         no localStorage to clear and we never delete Supabase
                         responses. The Resume CTA already triggers Supabase
                         reconstruction; the user picks up where they left off. */}
-                    {(profile.lastSession || savedSession) && (
+                    {canDiscardSession && (
                       <button
-                        onClick={() => {
-                          if (profile.lastSession) updateProfile({ lastSession: null });
-                          if (savedSession) handleDiscardSession();
-                        }}
+                        onClick={discardInProgressSession}
                         className="editorial-button-secondary"
                       >
                         Discard
@@ -1366,9 +1220,6 @@ function PraxisStudyAppContent() {
                 </div>
               );
             })();
-
-            // Legacy session-in-progress checks (kept for backward compat)
-            void (profile.lastSession); // referenced above in hasAssessmentInProgress
 
             return (
               <div className="space-y-8 pb-12">
@@ -1566,7 +1417,7 @@ function PraxisStudyAppContent() {
                     </div>
                     <div className="mt-5 flex gap-3">
                       <button onClick={() => startPractice()} className="editorial-button-primary">Continue Practice →</button>
-                      <button onClick={() => setRetakeJustCompleted(false)} className="editorial-button-ghost">Dismiss</button>
+                      <button onClick={dismissRetakeResults} className="editorial-button-ghost">Dismiss</button>
                     </div>
                   </div>
                 )}
@@ -1654,7 +1505,7 @@ function PraxisStudyAppContent() {
                       onStartPractice={startPractice}
                       onStartSkillPractice={startSkillPractice}
                       onOpenLearningPathModule={openLearningPathModule}
-                      onStartRedemption={handleStartRedemption}
+                      onStartRedemption={redemption.handleStartRedemption}
                       onNavigate={setMode as (mode: string) => void}
                     />
                   </Suspense>
@@ -1697,7 +1548,8 @@ function PraxisStudyAppContent() {
         )}
 
         {/* LEARNING PATH MODULE PAGE */}
-        {mode === 'learning-path-module' && learningPathSkillId && (
+        {mode === 'learning-path-module' && learningPathSkillId && !questionBankReady && renderQuestionBankStatus()}
+        {mode === 'learning-path-module' && learningPathSkillId && questionBankReady && (
           <div className="space-y-6 pb-16">
             <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading module…</div>}>
               <LearningPathModulePage
@@ -1738,7 +1590,7 @@ function PraxisStudyAppContent() {
             handleGenerateStudyPlan={handleGenerateStudyPlan}
             onNavigateToGlossary={() => setMode('glossary')}
             onPracticeDomain={(domainId) => startPractice(domainId)}
-            onReviewDomain={() => handleStartRedemption()}
+            onReviewDomain={() => redemption.handleStartRedemption()}
             onTestDomain={(domainId) => startPractice(domainId)}
           />
         )}
@@ -1848,7 +1700,7 @@ function PraxisStudyAppContent() {
             followUpPool={retakeAssessmentData.followUpPool}
             assessmentTypeOverride="retake"
             onComplete={handleRetakeComplete}
-            onPauseExit={() => { setRetakeAssessmentData(null); setMode('home'); }}
+            onPauseExit={exitRetake}
             sessionId={undefined}
             currentUserName={currentUserName}
             logResponse={logResponse}
@@ -1919,7 +1771,8 @@ function PraxisStudyAppContent() {
         )}
         
         {/* PRACTICE MODE */}
-        {mode === 'practice' && (
+        {mode === 'practice' && !questionBankReady && renderQuestionBankStatus()}
+        {mode === 'practice' && questionBankReady && (
           <PracticeSession
             userProfile={profile}
             updateSkillProgress={updateSkillProgress}
@@ -1946,7 +1799,8 @@ function PraxisStudyAppContent() {
         )}
         
         {/* RESULTS SCREEN */}
-        {mode === 'results' && (
+        {mode === 'results' && !questionBankReady && renderQuestionBankStatus()}
+        {mode === 'results' && questionBankReady && (
           <ResultsDashboard
             userProfile={profile}
             skills={fetchedSkills}
@@ -1966,16 +1820,13 @@ function PraxisStudyAppContent() {
         )}
         
         {/* REDEMPTION ROUND */}
-        {mode === 'redemption-round' && redemptionQuestions.length > 0 && (
+        {mode === 'redemption-round' && redemption.redemptionQuestions.length > 0 && (
           <Suspense fallback={<div className="min-h-[240px] flex items-center justify-center text-slate-500 text-sm">Loading round…</div>}>
             <RedemptionRoundSession
-              questions={redemptionQuestions}
-              missedRows={redemptionMissedRows}
+              questions={redemption.redemptionQuestions}
+              missedRows={redemption.redemptionMissedRows}
               highScore={redemption.highScore}
-              onComplete={async (results) => {
-                await redemption.recordRoundResult(results);
-                setMode('home');
-              }}
+              onComplete={redemption.completeRound}
               onExit={() => setMode('home')}
             />
           </Suspense>

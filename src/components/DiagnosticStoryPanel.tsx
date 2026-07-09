@@ -19,6 +19,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BookOpen, ChevronDown, ChevronRight } from 'lucide-react';
 import { PROGRESS_SKILL_LOOKUP } from '../utils/progressTaxonomy';
+import { loadRawQuestionBank } from '../data/questionBankLoader';
 
 interface ResponseRow {
   question_id: string;
@@ -73,9 +74,9 @@ export default function DiagnosticStoryPanel({ responses }: DiagnosticStoryPanel
   useEffect(() => {
     if (adaptiveRows.length === 0 || questionIndex) return;
     setIsLoading(true);
-    import('../data/questions.json')
-      .then(mod => {
-        const list = (mod.default ?? mod) as QuestionMeta[];
+    loadRawQuestionBank()
+      .then(raw => {
+        const list = raw as QuestionMeta[];
         const map = new Map<string, QuestionMeta>();
         for (const q of list) {
           if (q?.UNIQUEID) map.set(q.UNIQUEID, q);

@@ -6,37 +6,15 @@
  * Body: { priceId: string }  — Stripe Price ID for monthly or yearly plan
  * Returns: { url: string }   — Stripe Checkout URL to redirect to
  */
-import { createClient } from '@supabase/supabase-js';
+import { authenticateUser, jsonResponder, preflightResponse } from './_shared';
 
-const JSON_HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function json(statusCode: number, body: unknown) {
-  return { statusCode, headers: JSON_HEADERS, body: JSON.stringify(body) };
-}
-
-function getAnonClient() {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) throw new Error('Supabase credentials not configured.');
-  return createClient(supabaseUrl, anonKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
-function getBearerToken(header?: string): string | null {
-  if (!header) return null;
-  const [scheme, token] = header.split(' ');
-  return scheme === 'Bearer' && token ? token : null;
-}
+const METHODS = 'POST, OPTIONS';
 
 export async function handler(event: { httpMethod: string; headers?: Record<string, string>; body?: string }) {
+  const json = jsonResponder(event, METHODS);
+
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: JSON_HEADERS, body: '' };
+    return preflightResponse(event, METHODS);
   }
 
   // Stripe checkout is dormant — return early without processing.
@@ -50,12 +28,9 @@ export async function handler(event: { httpMethod: string; headers?: Record<stri
     if (!stripeSecretKey) return json(500, { error: 'Stripe not configured' });
 
     // Auth
-    const token = getBearerToken(event.headers?.authorization || event.headers?.Authorization);
-    if (!token) return json(401, { error: 'Missing authorization' });
-
-    const anon = getAnonClient();
-    const { data: { user }, error: authErr } = await anon.auth.getUser(token);
-    if (authErr || !user) return json(401, { error: 'Invalid session' });
+    const auth = await authenticateUser(event);
+    if (!auth.ok) return json(auth.status, { error: auth.error });
+    const user = auth.user;
 
     // Parse request
     const { priceId } = JSON.parse(event.body || '{}');

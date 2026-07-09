@@ -1,6 +1,6 @@
 # PraxisMakesPerfect
 
-> **Repo status:** PMP is in maintenance; greenfield work is happening in PASS V1 elsewhere. See [HANDOFF_2026-04-27.md](HANDOFF_2026-04-27.md) for the three-track context.
+> **Repo status (updated 2026-07-02):** This is the **active codebase for PASS** — merges to `main` auto-deploy to production (Netlify). The April 2026 "maintenance / three-track" note is superseded; that context is archived at [archive/docs-cleanup-2026-07/HANDOFF_2026-04-27.md](archive/docs-cleanup-2026-07/HANDOFF_2026-04-27.md).
 
 PraxisMakesPerfect is a React + Vite study platform for the Praxis School Psychologist exam. The current app uses a taxonomy-driven question bank, Supabase-backed authentication and progress storage, adaptive practice flows, assessment builders, and question-generation tooling.
 
@@ -8,11 +8,11 @@ PraxisMakesPerfect is a React + Vite study platform for the Praxis School Psycho
 
 Use these files as the active documentation set:
 
-- [DOCUMENT_CONSOLIDATION_REPORT.md](/Users/lebron/Documents/PraxisMakesPerfect/DOCUMENT_CONSOLIDATION_REPORT.md)
-- [DOCUMENT_REGISTRY.md](/Users/lebron/Documents/PraxisMakesPerfect/DOCUMENT_REGISTRY.md)
-- [REWRITE_DEVELOPMENT_GUIDE.md](/Users/lebron/Documents/PraxisMakesPerfect/REWRITE_DEVELOPMENT_GUIDE.md)
-- [CODEBASE_OVERVIEW.md](/Users/lebron/Documents/PraxisMakesPerfect/CODEBASE_OVERVIEW.md)
-- [ASSESSMENT_DATA_FLOW_ANALYSIS.md](/Users/lebron/Documents/PraxisMakesPerfect/ASSESSMENT_DATA_FLOW_ANALYSIS.md)
+- [docs/DOCUMENT_CONSOLIDATION_REPORT.md](docs/DOCUMENT_CONSOLIDATION_REPORT.md)
+- [docs/DOCUMENT_REGISTRY.md](docs/DOCUMENT_REGISTRY.md)
+- [REWRITE_DEVELOPMENT_GUIDE.md](REWRITE_DEVELOPMENT_GUIDE.md) ⚠️ stale banner — principles hold, details drifted
+- [CODEBASE_OVERVIEW.md](CODEBASE_OVERVIEW.md) ⚠️ stale banner — defer to code
+- [ASSESSMENT_DATA_FLOW_ANALYSIS.md](ASSESSMENT_DATA_FLOW_ANALYSIS.md) ⚠️ stale banner — defer to code
 - [docs/ANALYTICS_DATA_INVENTORY.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/ANALYTICS_DATA_INVENTORY.md)
 - [docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md)
 

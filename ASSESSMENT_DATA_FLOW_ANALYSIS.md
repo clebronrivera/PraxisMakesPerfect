@@ -1,6 +1,6 @@
 # Assessment Data Flow Analysis
 
-> Status: Canonical source. Reviewed during documentation consolidation on 2026-03-14. Updated on 2026-03-18 to reflect the Supabase-backed assessment flow now used in the live app.
+> ⚠️ **Status: STALE — last verified 2026-03-18; predates the retake/A4 logic and other Phase 2 assessment changes (2026-06).** **Defer to code**, `CLAUDE.md`, and `docs/HOW_THE_APP_WORKS.md` for current assessment flow. Kept at root per `docs/DOCS_SYSTEM.md`; refresh-or-archive tracked in `docs/PLAN_2026-07-02_code-review-followups.md` [9].
 
 ## Current Setup Overview
 

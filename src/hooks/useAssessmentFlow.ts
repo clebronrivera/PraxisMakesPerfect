@@ -73,6 +73,14 @@ export interface UseAssessmentFlowOptions {
   currentUserName: string | null;
   isLoaded: boolean;
   savedSession: UserSession | null;
+  /**
+   * Lazily loads + analyzes the question bank (idempotent), resolving to the
+   * analyzed questions. Every assessment builder awaits this first so the bank
+   * downloads on assessment entry rather than at app startup. The returned array
+   * is used directly (not the `analyzedQuestions` prop) so a build triggered
+   * before the memo re-renders still sees a populated bank.
+   */
+  ensureQuestionBank: () => Promise<AnalyzedQuestion[]>;
   getAssessmentResponses: (
     sessionId: string,
     assessmentTypes: AssessmentReportType[],
@@ -134,6 +142,7 @@ export function useAssessmentFlow({
   savedSession,
   getAssessmentResponses,
   getLatestAssessmentResponses,
+  ensureQuestionBank,
   onNavigate,
 }: UseAssessmentFlowOptions): UseAssessmentFlowReturn {
   const [activeAssessmentType, setActiveAssessmentType] = useState<'screener' | null>(null);
@@ -175,7 +184,11 @@ export function useAssessmentFlow({
 
   // ── startScreener ───────────────────────────────────────────────────────────
   const startScreener = useCallback(
-    (resumeSession?: AssessmentSession | UserSession) => {
+    async (resumeSession?: AssessmentSession | UserSession) => {
+      // Lazily load the bank on entry (idempotent); use the resolved array so a
+      // build before the analyzedQuestions memo re-renders still sees questions.
+      const questions = await ensureQuestionBank();
+
       if (resumeSession && isStoredScreenerSessionType(resumeSession.type)) {
         const isScreenerSession =
           resumeSession.assessmentFlow === 'screener' ||
@@ -188,7 +201,7 @@ export function useAssessmentFlow({
           return;
         }
 
-        const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
+        const questionMap = new Map(questions.map(q => [q.id, q]));
         const restoredQuestions = resumeSession.questionIds
           .map(id => questionMap.get(id))
           .filter((q): q is AnalyzedQuestion => q !== undefined);
@@ -210,7 +223,7 @@ export function useAssessmentFlow({
         ...(profile.screenerItemIds || []),
       ];
 
-      const selected = buildScreener(analyzedQuestions, excludeIds);
+      const selected = buildScreener(questions, excludeIds);
 
       if (selected.length === 0) {
         alert('Not enough questions available to build a new screener.');
@@ -240,14 +253,16 @@ export function useAssessmentFlow({
         }
       }
     },
-    [analyzedQuestions, currentUserName, onNavigate, profile, updateProfile],
+    [ensureQuestionBank, currentUserName, onNavigate, profile, updateProfile],
   );
 
   // ── startFullAssessment ─────────────────────────────────────────────────────
   const startFullAssessment = useCallback(
-    (resumeSession?: AssessmentSession | UserSession) => {
+    async (resumeSession?: AssessmentSession | UserSession) => {
+      const questions = await ensureQuestionBank();
+
       if (resumeSession && resumeSession.type === 'full-assessment') {
-        const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
+        const questionMap = new Map(questions.map(q => [q.id, q]));
         const restoredQuestions = resumeSession.questionIds
           .map(id => questionMap.get(id))
           .filter((q): q is AnalyzedQuestion => q !== undefined);
@@ -265,7 +280,7 @@ export function useAssessmentFlow({
         ...(profile.screenerItemIds ?? []),
         ...(profile.preAssessmentQuestionIds ?? []),
       ];
-      const selected = buildFullAssessment(analyzedQuestions, 125, excludeIds);
+      const selected = buildFullAssessment(questions, 125, excludeIds);
 
       if (selected.length === 0) {
         console.error('[FullAssessment] Failed to build assessment - no questions selected');
@@ -296,17 +311,18 @@ export function useAssessmentFlow({
       setAssessmentStartTime(Date.now());
       onNavigate('fullassessment');
     },
-    [analyzedQuestions, currentUserName, onNavigate, profile],
+    [ensureQuestionBank, currentUserName, onNavigate, profile],
   );
 
   // ── beginFreshAdaptiveDiagnostic (shared tail for new adaptive sessions) ───
   const beginFreshAdaptiveDiagnostic = useCallback(async () => {
+    const questions = await ensureQuestionBank();
     const excludeIds = [
       ...(profile.preAssessmentQuestionIds || []),
       ...(profile.screenerItemIds || []),
       ...(profile.fullAssessmentQuestionIds || []),
     ];
-    const result = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
+    const result = buildAdaptiveDiagnostic(questions, excludeIds);
 
     if (result.initialQueue.length === 0) {
       alert('Not enough questions available to build a diagnostic.');
@@ -344,28 +360,32 @@ export function useAssessmentFlow({
         console.error('Error creating adaptive diagnostic session:', error);
       }
     }
-  }, [analyzedQuestions, currentUserName, onNavigate, profile, updateProfile]);
+  }, [ensureQuestionBank, currentUserName, onNavigate, profile, updateProfile]);
 
   // ── startAdaptiveDiagnostic ─────────────────────────────────────────────────
   const startAdaptiveDiagnostic = useCallback(
     async (resumeSession?: UserSession, options?: AdaptiveDiagnosticStartOptions) => {
       setAdaptiveResumeError(null);
+      // Lazily load the bank on entry (idempotent). Use the resolved array for all
+      // ID→question mapping and queue building so a start before the memo re-renders
+      // still sees a populated bank.
+      const questions = await ensureQuestionBank();
 
       if (resumeSession && resumeSession.type === 'adaptive-diagnostic') {
         setSelectedSessionId(resumeSession.sessionId);
         // Restore the exact questions from the saved session using the full bank.
         // Do NOT call buildAdaptiveDiagnostic here — it picks a new random set of
         // questions, so the saved question IDs won't be found and the queue shrinks.
-        const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
+        const questionMap = new Map(questions.map(q => [q.id, q]));
         const restoredQueue = resumeSession.questionIds
           .map(id => questionMap.get(id))
-          .filter((q): q is typeof analyzedQuestions[number] => q !== undefined);
-        const restoredFollowUpPool: Record<string, typeof analyzedQuestions> = {};
+          .filter((q): q is AnalyzedQuestion => q !== undefined);
+        const restoredFollowUpPool: Record<string, AnalyzedQuestion[]> = {};
         if (resumeSession.followUpPoolRemaining) {
           for (const [skillId, ids] of Object.entries(resumeSession.followUpPoolRemaining)) {
             restoredFollowUpPool[skillId] = (ids as string[])
               .map(id => questionMap.get(id))
-              .filter((q): q is typeof analyzedQuestions[number] => q !== undefined);
+              .filter((q): q is AnalyzedQuestion => q !== undefined);
           }
         }
         setAdaptiveDiagnosticData({ initialQueue: restoredQueue, followUpPool: restoredFollowUpPool });
@@ -390,12 +410,12 @@ export function useAssessmentFlow({
       // UserSession that preserves the user's history and pick up from there.
       if (currentUserName && !options?.skipRemoteResume) {
         try {
-          const bundle = await getLatestAssessmentResponses(['adaptive'], analyzedQuestions);
+          const bundle = await getLatestAssessmentResponses(['adaptive'], questions);
           if (bundle.responses.length > 0) {
             const priorResponses = bundle.responses; // already chronological ASC
             const answeredIds = priorResponses.map(r => r.questionId);
             const answeredSet = new Set(answeredIds);
-            const questionIndex = new Map(analyzedQuestions.map(q => [q.id, q]));
+            const questionIndex = new Map(questions.map(q => [q.id, q]));
             const answeredSkillIds = new Set(
               answeredIds
                 .map(id => questionIndex.get(id)?.skillId)
@@ -410,7 +430,7 @@ export function useAssessmentFlow({
               ...(profile.fullAssessmentQuestionIds || []),
               ...answeredIds,
             ];
-            const fresh = buildAdaptiveDiagnostic(analyzedQuestions, excludeIds);
+            const fresh = buildAdaptiveDiagnostic(questions, excludeIds);
 
             // Keep fresh initials only for skills the user has not yet seen.
             // For skills they've already touched, treat the existing answer(s)
@@ -508,7 +528,7 @@ export function useAssessmentFlow({
       await beginFreshAdaptiveDiagnostic();
     },
     [
-      analyzedQuestions,
+      ensureQuestionBank,
       beginFreshAdaptiveDiagnostic,
       currentUserName,
       getLatestAssessmentResponses,
@@ -749,20 +769,25 @@ export function useAssessmentFlow({
           : profile.lastFullAssessmentSessionId;
 
       try {
+        // Report loading needs the bank to map response IDs → questions. Ensure
+        // it's loaded (idempotent) rather than assuming a prior assessment/practice
+        // entry already triggered the fetch.
+        const bankQuestions = await ensureQuestionBank();
+
         let questionIds =
           assessmentType === 'screener'
             ? (isScreener ? profile.screenerItemIds : profile.preAssessmentQuestionIds) || []
             : profile.fullAssessmentQuestionIds || [];
 
-        const questionMap = new Map(analyzedQuestions.map(q => [q.id, q]));
+        const questionMap = new Map(bankQuestions.map(q => [q.id, q]));
 
         let responses = sessionId
-          ? await getAssessmentResponses(sessionId, responseTypes, analyzedQuestions)
+          ? await getAssessmentResponses(sessionId, responseTypes, bankQuestions)
           : [];
         let resolvedSessionId = sessionId ?? null;
 
         if (responses.length === 0) {
-          const fallback = await getLatestAssessmentResponses(responseTypes, analyzedQuestions);
+          const fallback = await getLatestAssessmentResponses(responseTypes, bankQuestions);
           responses = fallback.responses;
           resolvedSessionId = fallback.sessionId ?? resolvedSessionId;
 
@@ -842,7 +867,7 @@ export function useAssessmentFlow({
       }
     },
     [
-      analyzedQuestions,
+      ensureQuestionBank,
       getAssessmentResponses,
       getLatestAssessmentResponses,
       onNavigate,

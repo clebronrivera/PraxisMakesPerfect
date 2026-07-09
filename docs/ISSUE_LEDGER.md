@@ -36,12 +36,11 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ## 2026-06-16 - Dependabot #12: esbuild build-time RCE (dev dep; needs vite major upgrade)
 
-- Status: open
+- Status: **resolved 2026-07-02**
 - Area: build tooling / dependencies
 - Summary: Dependabot alert #12 (high) — esbuild < 0.28.1 "Missing binary integrity verification in Deno module enables RCE via NPM_CONFIG_REGISTRY". Dev-only, build-time; low real-world risk for the Netlify CI build (requires a malicious registry env during a Deno install). Not exploitable by app users.
 - Source of truth: GitHub Dependabot alert #12.
-- Blocker: esbuild is pinned transitively by vite@6.4.2 (`esbuild ^0.25.0`); even vite@7 only reaches `^0.27.0` — both below the patched 0.28.1. The fix needs a **vite 6 → 8 major upgrade** (build-config breaking-change risk), so it was deliberately NOT force-bumped during the 2026-06-16 deploy pass.
-- Resolution / next step: Dedicated vite-8 upgrade PR; verify `npm run build` + dev server before merging.
+- Resolution: Alert #12 no longer exists on GitHub (API returns 404 — advisory evidently withdrawn), and `npm audit` reports 0 vulnerabilities with esbuild 0.25.12 installed. The vite 6→8 major upgrade is **no longer a security requirement** (still available as a freshness upgrade if desired). Separately, newer alerts #13 (babel sourceMappingURL, low) / #14 (vite `fs.deny` Windows bypass, high) / #15 (launch-editor NTLMv2 Windows, medium) — all dev-server/build-time only, macOS dev + static Netlify prod unaffected — were cleared 2026-07-02 via `npm audit fix` (vite 6.4.2 → 6.4.3, `feat/api-hardening`). Audit clean: 0 vulnerabilities.
 
 ## 2026-04-01 - Phase B construct_actually_tested: 29 collapsed skills need regeneration
 

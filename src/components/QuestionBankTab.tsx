@@ -5,9 +5,10 @@
 // individual question: full stem + every choice + the feedback a student sees
 // per choice + the downstream triggers each answer fires + bank-health triage.
 //
-// Pure client-side: derives everything from src/data/questions.json (loaded
-// dynamically so it stays out of the main bundle) and the authoritative
-// skill→domain taxonomy in progressTaxonomy.ts. No API / service role needed.
+// Pure client-side: derives everything from src/data/questions.json (fetched
+// lazily via the shared loader so it stays out of the main bundle) and the
+// authoritative skill→domain taxonomy in progressTaxonomy.ts. No API / service
+// role needed.
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { RefreshCw } from 'lucide-react';
@@ -16,6 +17,7 @@ import {
   PROGRESS_SKILL_LOOKUP,
 } from '../utils/progressTaxonomy';
 import skillVocabMap from '../data/skill-vocabulary-map.json';
+import { loadRawQuestionBank } from '../data/questionBankLoader';
 
 /** Official Praxis 5403 exam content weights per domain (%). Mirrors ResultsDashboard. */
 const EXAM_WEIGHTS: Record<number, number> = { 1: 36, 2: 21, 3: 19, 4: 24 };
@@ -205,9 +207,9 @@ export default function QuestionBankTab() {
 
   useEffect(() => {
     let alive = true;
-    import('../data/questions.json')
-      .then((m) => {
-        if (alive) setRaw(((m as { default?: RawQ[] }).default ?? (m as unknown as RawQ[])) as RawQ[]);
+    loadRawQuestionBank()
+      .then((raw) => {
+        if (alive) setRaw(raw as RawQ[]);
       })
       .catch((e) => alive && setError(String(e)));
     return () => {

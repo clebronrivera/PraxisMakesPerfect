@@ -51,6 +51,7 @@ If you are not sure where something belongs:
 - Purpose: architecture-level authority
 - Use it for: enduring product and system constraints
 - Update when: architectural direction changes in a durable way
+- ⚠️ Staleness (2026-07-02): last verified 2026-03-15 — principles hold, implementation details drifted. Carries a stale banner; defer to code for current behavior.
 
 ### [docs/HOW_THE_APP_WORKS.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/HOW_THE_APP_WORKS.md)
 
@@ -69,12 +70,14 @@ If you are not sure where something belongs:
 - Purpose: high-level codebase map
 - Use it for: understanding major systems and current implementation structure
 - Update when: major structure or subsystem ownership changes
+- ⚠️ Staleness (2026-07-02): last verified 2026-03-14 — documents since-removed code paths. Carries a stale banner; defer to code.
 
 ### [ASSESSMENT_DATA_FLOW_ANALYSIS.md](/Users/lebron/Documents/PraxisMakesPerfect/ASSESSMENT_DATA_FLOW_ANALYSIS.md)
 
 - Purpose: deeper reference for assessment/reporting data flow
 - Use it for: tracing how assessment state and results move through the app
 - Update when: data flow materially changes and the analysis would otherwise become misleading
+- ⚠️ Staleness (2026-07-02): last verified 2026-03-18 — predates the retake/A4 assessment changes. Carries a stale banner; defer to code.
 
 ### [docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/SUPABASE_AND_DEPLOYMENT_AUDIT.md)
 

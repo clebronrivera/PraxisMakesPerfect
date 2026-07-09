@@ -190,9 +190,26 @@ The server-side check filters to **successful plans only** (`plan_document.error
 
 On block, the server returns HTTP `429` with a `Retry-After` header in seconds.
 
+**Failure cooldown:** because failure rows are excluded from the 7-day rule, they would otherwise be unthrottled (each failed attempt still spends Claude tokens). The server additionally requires a **15-minute gap after the most recent failure row** (`STUDY_PLAN_FAILURE_COOLDOWN_MS` in `api/_shared.ts`) before the next attempt.
+
 History:
 - Active as of 2026-03-23 (client only)
 - Server-side enforcement added 2026-04-15 (`hotfix/launch-gate-p0`)
+- Failure cooldown (15 min) added 2026-07-02
+
+---
+
+## AI Tutor — Rate Limit
+
+`api/tutor-chat.ts` enforces a per-user message budget before every Claude call: **40 user messages per hour, 200 per day** (all sessions combined; assistant replies don't count). Limits live in `TUTOR_RATE_LIMITS` in `api/_shared.ts`; window math is `tutorRateLimitVerdict()` (unit-tested in `tests/apiRateLimits.test.ts`). On block the server returns `429` + `Retry-After`. Added 2026-07-02.
+
+---
+
+## api/_shared.ts — Shared Endpoint Helpers
+
+All Netlify functions import their Supabase client factories (`getAnonClient` / `getServiceClient(scope)` / `getUserClient(jwt)`), auth guards (`authenticateUser` / `authenticateAdmin`), JSON+CORS responders (`jsonResponder(event, methods)` / `preflightResponse`), `fetchWithTimeout`, `UUID_RE`, and rate-limit window math from `api/_shared.ts`. It exports no handler, so Netlify does not expose it as an endpoint (same pattern as `api/parseClaude.ts`). Do not re-introduce per-file copies of this boilerplate.
+
+CORS: endpoints no longer send `Access-Control-Allow-Origin: *`. The app calls `/api/*` same-origin; the shared responder reflects the request origin only when it matches production/deploy-preview/branch-deploy Netlify domains or localhost. Supabase query errors are logged server-side and returned to clients as generic messages (`logAndGenericError`) — do not put `error.message` from Supabase into HTTP responses.
 
 ---
 
