@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Trophy, Clock, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, Zap, RotateCcw, Lightbulb } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
 import type { Domain } from '../types/content';
@@ -35,6 +36,33 @@ const getScoreColor = (score: number) => {
   if (score >= APPROACHING_THRESHOLD) return { text: 'text-indigo-700', bg: 'bg-indigo-50', border: 'border-indigo-200' };
   return { text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' };
 };
+
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+// Counts up to `value` over ~700ms on mount; collapses to an instant, static
+// number under prefers-reduced-motion.
+function AnimatedScorePercentage({ value, className }: { value: number; className: string }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(value);
+      return;
+    }
+    const duration = 700;
+    const start = performance.now();
+    let frame: number;
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      setDisplay(Math.round(easeOutCubic(progress) * value));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <p className={className}>{display}%</p>;
+}
 
 export default function ScoreReport({
   responses,
@@ -228,9 +256,7 @@ export default function ScoreReport({
         <div className="space-y-4">
           <div>
             <p className="mb-2 text-sm text-slate-600">Overall Score</p>
-            <p className={`stat-hero ${scoreStyle.text}`}>
-              {scorePercentage}%
-            </p>
+            <AnimatedScorePercentage value={scorePercentage} className={`stat-hero ${scoreStyle.text}`} />
           </div>
           <div className="flex items-center justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">

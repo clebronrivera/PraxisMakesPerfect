@@ -4,8 +4,8 @@
 //
 // Structure (top to bottom):
 //   1. Welcome + readiness hero            — full violet→indigo gradient panel
-//   2. The Four Domains                    — white surface cards, per-domain hue
-//   3. Today's Focus + This Week / Redemption
+//   2. Today's Focus + This Week / Redemption  — the one specific recommendation, ahead of browse-only content
+//   3. The Four Domains                    — white surface cards, per-domain hue
 //   4. The Toolshed (5 feature tiles)
 //
 // Props interface is preserved 1:1 with the old component so App.tsx needs no changes.
@@ -356,40 +356,6 @@ export default function DashboardHome({
         </div>
       </section>
 
-      {/* ── The Four Domains ──────────────────────────────────────────── */}
-      <section>
-        <div className="flex items-baseline justify-between mb-4">
-          <div>
-            <h3 className="text-[13px] font-bold text-slate-900 tracking-[0.02em]">The Four Domains</h3>
-            <p className="text-[11px] text-slate-500 mt-0.5">Click any domain to drill in</p>
-          </div>
-          <button
-            onClick={() => onNavigate('results')}
-            className="text-[11px] font-semibold text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 rounded"
-          >
-            Full report →
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {progressSummary.domains.map((domain) => {
-            const pct =
-              domain.activeSkillCount > 0
-                ? Math.round((domain.strongerSkillCount / domain.activeSkillCount) * 100)
-                : 0;
-            return (
-              <DomainCard
-                key={domain.domainId}
-                domainId={domain.domainId}
-                name={domain.domainName}
-                pct={pct}
-                onClick={() => onStartPractice(domain.domainId)}
-              />
-            );
-          })}
-        </div>
-      </section>
-
       {/* ── Today's Focus + This Week / Redemption ───────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
@@ -516,6 +482,40 @@ export default function DashboardHome({
               onStart={onStartRedemption}
             />
           )}
+        </div>
+      </section>
+
+      {/* ── The Four Domains ──────────────────────────────────────────── */}
+      <section>
+        <div className="flex items-baseline justify-between mb-4">
+          <div>
+            <h3 className="text-[13px] font-bold text-slate-900 tracking-[0.02em]">The Four Domains</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">Click any domain to drill in</p>
+          </div>
+          <button
+            onClick={() => onNavigate('results')}
+            className="text-[11px] font-semibold text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 rounded"
+          >
+            Full report →
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {progressSummary.domains.map((domain) => {
+            const pct =
+              domain.activeSkillCount > 0
+                ? Math.round((domain.strongerSkillCount / domain.activeSkillCount) * 100)
+                : 0;
+            return (
+              <DomainCard
+                key={domain.domainId}
+                domainId={domain.domainId}
+                name={domain.domainName}
+                pct={pct}
+                onClick={() => onStartPractice(domain.domainId)}
+              />
+            );
+          })}
         </div>
       </section>
 
