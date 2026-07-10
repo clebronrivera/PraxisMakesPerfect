@@ -22,13 +22,14 @@
 
 - **Branch:** `claude/intelligent-lumiere-13b41d`
 - **PR:** [#57 — "UI consistency: Button/IconButton/Surface primitives + app-wide button migration"](https://github.com/clebronrivera/PraxisMakesPerfect/pull/57) — **OPEN**, all work below is commits on this one PR (not split into separate PRs — see note under Phase A).
-- **5 commits on the branch, plus a pending 6th (Phase C, staged not yet committed as of this edit)**, oldest→newest:
+- **6 commits on the branch, all pushed**, oldest→newest:
   1. `bab6ed5` — Button/Surface primitives + app-wide button migration (~79 buttons, 29 files)
   2. `4419bae` — IconButton primitive + `scripts/check-buttons.mjs` regression guard
   3. `5287720` — design-audit quick wins (motion plugin, error toasts, contrast, copy fixes)
   4. `8a9be1c` — **Phase A**: tokens & consistency sweep (32 files)
   5. `d0f159c` — **Phase B**: robustness & accessibility (20 files + new `useDialogFocus` hook)
-  6. (pending) — **Phase C**: App.tsx / DashboardHome.tsx / ScoreReport.tsx, see below
+  6. `ac1553e` — **Phase C**: App.tsx / DashboardHome.tsx / ScoreReport.tsx, see below
+- Branch merged current `main` on 2026-07-10 (was 1 commit behind, #43 SEO/meta) — no longer `BEHIND` in GitHub's mergeability check.
 - **3 mockup files exist on disk at `public/mockup-*.html`, gitignored — worktree-local only.** If you're in a fresh checkout/worktree they will NOT be there. Carlos was sent the actual files via the chat's file-delivery mechanism and has copies; screenshots of all three are also in that session's transcript. If both are unavailable, regenerate from the descriptions in Phase C below — every one is specified precisely enough to rebuild.
 - **This doc itself was untracked for a while (2026-07-03→2026-07-08), sitting only in the main checkout's working directory, never committed anywhere.** Copied onto this branch and committed alongside Phase C so it isn't one stray file away from being lost.
 
@@ -48,7 +49,7 @@ New `src/hooks/useDialogFocus.ts` (Escape-to-close, scroll-lock, focus trap, foc
 
 ---
 
-## DONE — Phase C: IA & delight (implemented 2026-07-08, pending push + Carlos's visual check)
+## DONE — Phase C: IA & delight (implemented 2026-07-08, pushed; pending Carlos's visual check)
 
 Carlos reviewed all 3 mockups (rendered live via the mockup server) in the 2026-07-08 follow-up session and said to proceed. All 3 implemented directly into the named target files, full gate green (types/colors/buttons/lint/319 tests/build).
 
@@ -58,7 +59,7 @@ Carlos reviewed all 3 mockups (rendered live via the mockup server) in the 2026-
 | [C2] | **Dashboard — priority reorder.** "Today's Focus" (+ This Week/Redemption sidebar, kept as one unit — splitting them apart wasn't in the mockup and would've added unreviewed layout risk) moved from position 3 to position 2, directly under the status hero, ahead of the Four Domains grid. Pure `<section>` block relocation — zero JSX changed inside either section. Header comment block (top of file) updated to match the new order. | `public/mockup-dashboard-priority-reorder.html` | `src/components/DashboardHome.tsx` | ✅ |
 | [C3] | **Score reveal — count-up delight.** New `AnimatedScorePercentage` component (useState + rAF + easeOutCubic, ~700ms) replaces the static `{scorePercentage}%`. Respects `prefers-reduced-motion` (checked via `matchMedia`, sets the final value instantly). Scoped to the count-up only — the mockup's trophy-entrance/caption-fade flourishes were left out as unapproved scope creep beyond what this doc's target-file description called for. | `public/mockup-score-reveal-delight.html` | `src/components/ScoreReport.tsx` | ✅ |
 
-**Not yet done:** push to `origin/claude/intelligent-lumiere-13b41d` (updates PR #57), and Carlos's own visual check of these 3 in the deploy preview — the coding session cannot log in to confirm the authenticated screens render correctly; `tsc`/`lint`/319 tests/`vite build` all passed but that's mechanical verification only, not visual.
+**Status: ✅ implemented, gate-green, committed (`ac1553e`), and pushed to `origin/claude/intelligent-lumiere-13b41d` (PR #57 updated).** Re-verified 2026-07-10: C1/C2/C3 all confirmed present and wired in their target files, full gate re-run green (types/colors/buttons/lint/319 tests/build). **Not yet done:** Carlos's own visual check of these 3 in the deploy preview — the coding session cannot log in to confirm the authenticated screens render correctly; mechanical verification only, not visual.
 
 ---
 
