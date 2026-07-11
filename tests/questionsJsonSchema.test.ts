@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import questions from '../src/data/questions.json';
+import { deterministicOptionOrder } from '../src/utils/optionShuffle';
 
 // Approved error_cluster_tag values from content-authoring/TAG_GLOSSARY.md
 const APPROVED_TAGS = new Set([
@@ -117,5 +118,45 @@ describe('questions.json schema validation', () => {
       short,
       `cold-start skills with < 2 foundational items: ${short.map((c) => `${c.skill}:${c.n}`).join(', ')}`,
     ).toEqual([]);
+  });
+
+  // QA audit (2026-07-09) found the stored `correct_answers` field is ~70% "B"
+  // across the 991 PQ_-prefixed questions (see src/utils/optionShuffle.ts for the
+  // full history). Per decef8e (2026-06-10), the fix is deliberately render-only —
+  // NOT mutating this file — to avoid data-corruption risk. That means the RAW
+  // letter below stays skewed by design; what must never regress is the DISPLAYED
+  // position a test-taker actually sees, which every question-rendering surface
+  // computes via deterministicOptionOrder(). This test asserts the bank-wide
+  // effective distribution stays balanced. (Coverage — which components actually
+  // call the shuffle — is asserted separately in questionShuffleCoverage.test.ts.)
+  it('effective (post-shuffle) display position of the correct answer is balanced bank-wide', () => {
+    const slotCounts: Record<number, number> = {};
+    let total = 0;
+
+    for (const q of questions) {
+      const correct = (q.correct_answers || '').trim();
+      if (!correct || correct.includes(',')) continue; // single-select only
+
+      const letters = (['A', 'B', 'C', 'D', 'E', 'F'] as const).filter(
+        (l) => ((q as Record<string, string>)[l] || '').trim().length > 0,
+      );
+      if (letters.length < 2) continue;
+
+      const order = deterministicOptionOrder(q.UNIQUEID || '', letters);
+      const displayIndex = order.indexOf(correct);
+      if (displayIndex < 0) continue;
+
+      slotCounts[displayIndex] = (slotCounts[displayIndex] || 0) + 1;
+      total++;
+    }
+
+    expect(total).toBeGreaterThan(1000);
+
+    const maxShare = Math.max(...Object.values(slotCounts)) / total;
+    expect(
+      maxShare,
+      `A display slot holds ${(maxShare * 100).toFixed(1)}% of correct answers (max allowed 35%). ` +
+        `Slot counts: ${JSON.stringify(slotCounts)}`,
+    ).toBeLessThan(0.35);
   });
 });
