@@ -11,14 +11,13 @@
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
+import QUESTIONS_DATA from '../src/data/questions.json';
+import { analyzeQuestion, Question as RawQuestion } from '../src/brain/question-analyzer';
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 const CONFIG = {
-  questionsPath: './src/data/questions.json',
-  skillMapPath: './src/brain/skill-map.ts',
   outputPath: './DISTRACTOR_AUDIT_REPORT.md',
 };
 
@@ -33,10 +32,6 @@ interface Question {
   correct_answer: string | string[];
   rationale?: string;
   skillId?: string;
-  metadata?: {
-    templateId?: string;
-    source?: string;
-  };
 }
 
 interface DistractorIssue {
@@ -111,154 +106,100 @@ const DOMAIN_TERM_LIBRARIES = {
   ]
 };
 
-// Map skills to their expected domains
+// Map skills to their expected domains.
+//
+// Keyed by `current_skill_id` (the runtime skill ID stored on every question
+// in src/data/questions.json), NOT the retired `DBDM-S01`/`CC-S01`-style
+// content IDs used in src/brain/skill-map.ts. Domain assignments were derived
+// by resolving each current ID to its content/metadata ID via
+// src/data/skillIdMap.ts, then reading that ID's `vocabulary` array in
+// src/data/skill-metadata-v1.ts and matching it against the
+// DOMAIN_TERM_LIBRARIES categories above.
+//
+// A handful of skills (crisis/safety, implicit bias, bio-cultural influences,
+// single-subject design) have no genuine overlap with any of the 7 term
+// libraries — they're intentionally left as `[]` rather than forced into an
+// ill-fitting bucket, since a wrong domain assignment would suppress real
+// irrelevant-domain flags instead of just adding a bit of expected noise.
 const SKILL_TO_DOMAIN_MAP: Record<string, string[]> = {
-  // Domain 1 - Data-Based Decision Making
-  'DBDM-S01': ['psychometric'],
-  'DBDM-S02': ['psychometric'],
-  'DBDM-S03': ['psychometric'],
-  'DBDM-S04': ['psychometric'],
-  'DBDM-S05': ['assessment', 'psychometric'],
-  'DBDM-S06': ['assessment'],
-  'DBDM-S07': ['assessment'],
-  'DBDM-S08': ['assessment'],
-  'DBDM-S09': ['assessment'],
-  'DBDM-S10': ['assessment'],
-  'NEW-1-BackgroundInformation': ['assessment'],
-  'NEW-1-DynamicAssessment': ['assessment'],
-  'NEW-1-IQvsAchievement': ['psychometric', 'assessment'],
-  'NEW-1-LowIncidenceExceptionalities': ['assessment'],
-  'NEW-1-PerformanceAssessment': ['assessment'],
-  'NEW-1-ProblemSolvingFramework': ['intervention'],
+  // Professional Practices (assessment, psychometrics, consultation)
+  'CON-01': ['consultation'],                 // Consultation Models
+  'DBD-01': ['assessment'],                   // RIOT Framework / Multi-Method Data Review
+  'DBD-03': ['assessment', 'psychometric'],   // Cognitive Assessment (IQ vs. Achievement)
+  'DBD-05': ['psychometric'],                 // Diagnostic/Processing Measures (sensitivity/specificity)
+  'DBD-06': ['fba'],                          // Emotional/Behavioral Assessment (ABC)
+  'DBD-07': ['fba'],                          // Functional Behavioral Assessment
+  'DBD-08': ['assessment'],                   // Progress Monitoring (CBM, benchmark)
+  'DBD-09': ['assessment', 'psychometric'],   // Ecological Assessment / Universal Screening
+  'DBD-10': ['assessment'],                   // Records Review
+  'PSY-01': ['psychometric'],                 // Score Interpretation
+  'PSY-02': ['psychometric'],                 // Reliability & Validity
+  'PSY-03': ['intervention'],                 // MTSS in Assessment
+  'PSY-04': ['assessment'],                   // CLD Assessment (nonverbal, ELL)
 
-  // Domain 2 - Consultation & Collaboration
-  'CC-S01': ['consultation'],
-  'CC-S03': ['consultation'],
-  'NEW-2-ConsultationProcess': ['consultation'],
-  'NEW-2-ProblemSolvingSteps': ['consultation'],
-  'NEW-2-CommunicationStrategies': ['consultation'],
-  'NEW-2-FamilyCollaboration': ['consultation'],
-  'NEW-2-CommunityAgencies': ['consultation'],
+  // Student-Level Services (academic intervention, counseling/therapy)
+  'ACA-02': ['intervention'],                 // Accommodations & Modifications
+  'ACA-03': ['intervention'],                 // Study Skills / Metacognitive Strategies
+  'ACA-04': ['intervention'],                 // Instructional Strategies / Hierarchy
+  'ACA-06': ['intervention'],                 // Learning Theories (scaffolding, ZPD)
+  'ACA-07': ['intervention'],                 // Language & Literacy (reading interventions)
+  'ACA-08': ['intervention'],                 // Executive Function / Error Analysis
+  'ACA-09': ['intervention'],                 // Health Impact / Academic Progress Factors
+  'DEV-01': ['therapy'],                      // Development (Erikson, Piaget) → developmental interventions
+  'MBH-02': ['therapy'],                      // Individual and Group Counseling
+  'MBH-03': ['therapy'],                      // Intervention Models (CBT, SFBT, DBT)
+  'MBH-04': ['therapy'],                      // Psychopathology
+  'MBH-05': ['therapy'],                      // Biological Bases / Mental Health Impact
 
-  // Domain 3 - Academic Interventions
-  'ACAD-S01': ['intervention'],
-  'ACAD-S02': ['intervention'],
-  'ACAD-S03': ['intervention'],
-  'ACAD-S04': ['intervention'],
-  'ACAD-S05': ['assessment', 'intervention'],
-  'NEW-3-AccommodationsModifications': ['intervention'],
-  'NEW-3-AcademicProgressFactors': ['intervention'],
-  'NEW-3-BioCulturalInfluences': ['intervention'],
-  'NEW-3-InstructionalHierarchy': ['intervention'],
-  'NEW-3-MetacognitiveStrategies': ['intervention'],
+  // Systems-Level Services (family/community, safety, schoolwide practices)
+  'FAM-02': ['consultation'],                 // Family Involvement / Collaboration
+  'FAM-03': ['consultation'],                 // Interagency Collaboration
+  'SAF-01': ['intervention'],                 // Schoolwide Prevention (PBIS)
+  'SAF-03': [],                               // Threat Assessment — crisis/safety, no matching library
+  'SAF-04': [],                               // Crisis Response Role — crisis/safety, no matching library
+  'SWP-02': ['intervention'],                 // Policy and Practice (retention, tracking, EBP)
+  'SWP-03': ['intervention'],                 // Evidence-Based Schoolwide Practices
+  'SWP-04': ['intervention'],                 // Systems MTSS
 
-  // Domain 4 - Mental & Behavioral Health
-  'MBH-S01': ['fba'],
-  'MBH-S02': ['fba'],
-  'MBH-S03': ['fba'],
-  'MBH-S04': ['therapy'],
-  'MBH-S05': ['therapy'],
-  'MBH-S06': ['intervention', 'fba'],
-  'NEW-4-Psychopathology': ['therapy'],
-  'NEW-4-DevelopmentalInterventions': ['therapy'],
-  'NEW-4-MentalHealthImpact': ['therapy'],
-  'NEW-4-GroupCounseling': ['therapy'],
-
-  // Domain 5 - School-Wide Practices
-  'SWP-S01': ['intervention'],
-  'SWP-S02': ['intervention'],
-  'SWP-S03': ['intervention'],
-  'SWP-S04': ['intervention'],
-  'NEW-5-EducationalPolicies': ['legal', 'assessment'],
-  'NEW-5-EBPImportance': ['intervention'],
-  'NEW-5-SchoolClimate': ['intervention'],
-
-  // Domain 6-9 - Other domains would map here
-  'RES-S01': ['intervention'],
-  'RES-S02': ['intervention'],
-  'RES-S03': ['intervention'],
-  'RES-S04': ['intervention'],
-  'RES-S05': ['intervention'],
-  'RES-S06': ['intervention'],
-  'NEW-6-BullyingPrevention': ['intervention'],
-  'NEW-6-TraumaInformed': ['intervention'],
-  'NEW-6-SchoolClimateMeasurement': ['assessment', 'intervention'],
-
-  // Family/Community
-  'FSC-S01': ['consultation'],
-  'FSC-S02': ['consultation'],
-  'FSC-S03': ['therapy'],
-  'FSC-S04': ['consultation'],
-  'NEW-7-BarriersToEngagement': ['consultation'],
-  'NEW-7-FamilySystems': ['consultation'],
-  'NEW-7-InteragencyCollaboration': ['consultation'],
-  'NEW-7-ParentingInterventions': ['consultation', 'intervention'],
-
-  // Diversity
-  'DIV-S01': ['assessment'],
-  'DIV-S02': ['assessment'],
-  'DIV-S03': ['psychometric'],
-  'DIV-S04': ['assessment'],
-  'DIV-S05': ['assessment'],
-  'DIV-S06': ['assessment'],
-  'DIV-S07': ['intervention'],
-  'NEW-8-Acculturation': ['assessment'],
-  'NEW-8-LanguageAcquisition': ['assessment'],
-  'NEW-8-SocialJustice': ['legal'],
-
-  // Research/Statistics
-  'NEW-9-DescriptiveStats': ['psychometric'],
-  'NEW-9-ValidityThreats': ['psychometric'],
-  'NEW-9-StatisticalTests': ['psychometric'],
-  'NEW-9-Variables': ['psychometric'],
-  'NEW-9-ProgramEvaluation': ['assessment'],
-  'NEW-9-ImplementationFidelity': ['intervention'],
-
-  // Legal/Ethical
-  'LEG-S01': ['legal'],
-  'LEG-S02': ['legal'],
-  'LEG-S03': ['legal'],
-  'LEG-S04': ['legal'],
-  'LEG-S05': ['legal'],
-  'LEG-S06': ['legal'],
-  'LEG-S07': ['legal'],
-  'PC-S01': ['assessment'],
-  'PC-S02': ['assessment'],
-  'PC-S03': ['legal'],
-  'PC-S04': ['intervention'],
-  'PC-S05': ['legal'],
-  'NEW-10-EducationLaw': ['legal'],
-  'NEW-10-EthicalProblemSolving': ['legal'],
-  'NEW-10-RecordKeeping': ['legal'],
-  'NEW-10-TestSecurity': ['legal'],
-  'NEW-10-Supervision': ['legal'],
-  'NEW-10-ProfessionalGrowth': ['legal'],
+  // Foundations (diversity, legal/ethics, research)
+  'DIV-01': [],                               // Cultural Factors / Bio-cultural influences — no matching library
+  'DIV-03': [],                               // Implicit Bias — no matching library
+  'DIV-05': ['legal', 'assessment'],          // Special Ed Services & Diverse Needs (LRE, eligibility)
+  'ETH-01': ['legal'],                        // NASP Ethics / Ethical Problem-Solving
+  'ETH-02': ['legal'],                        // Professional Liability / Ethical Dilemmas
+  'ETH-03': ['legal'],                        // Advocacy, Lifelong Learning
+  'LEG-01': ['legal'],                        // FERPA
+  'LEG-02': ['legal'],                        // IDEA
+  'LEG-03': ['legal'],                        // Section 504 / ADA
+  'LEG-04': ['legal'],                        // Case Law (Tarasoff, Larry P., Rowley)
+  'RES-02': ['assessment'],                   // Applying Research to Practice (program evaluation)
+  'RES-03': [],                               // Research Design & Statistics (single-subject design) — no matching library
 };
 
 // ============================================================================
 // AUDIT FUNCTIONS
 // ============================================================================
 
-function loadQuestions(filePath: string): Question[] {
-  try {
-    const data = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error(`Error loading questions from ${filePath}:`, error);
-    return [];
-  }
+function loadQuestions(): Question[] {
+  return (QUESTIONS_DATA as RawQuestion[]).map((raw) => {
+    const analyzed = analyzeQuestion(raw);
+    return {
+      id: analyzed.id,
+      question: analyzed.question || '',
+      choices: analyzed.choices || {},
+      correct_answer: analyzed.correct_answer || [],
+      rationale: analyzed.rationale,
+      skillId: analyzed.skillId,
+    };
+  });
 }
 
 /**
- * Extract templateId from question metadata or question ID
- * Handles cases where metadata.templateId is missing but ID contains template info
+ * Extract templateId from the question ID, for generated questions only.
+ * The current bank (UNIQUEID like "PQ_CON-01_1") has no templates; this only
+ * matches the older GEN-{templateId}-{hash} generated-question ID format.
  */
 function extractTemplateId(question: Question): string | null {
-  // First try metadata
-  if (question.metadata?.templateId) {
-    return question.metadata.templateId;
-  }
-  
   // Extract from ID if it's a generated question (GEN-{templateId}-{hash})
   // Examples: GEN-CC-T09-aivvcx -> CC-T09, GEN-ACAD-T10-5i35q1 -> ACAD-T10
   if (question.id.startsWith('GEN-')) {
@@ -724,7 +665,7 @@ async function main() {
   console.log('========================\n');
 
   // Load questions
-  const questions = loadQuestions(CONFIG.questionsPath);
+  const questions = loadQuestions();
   console.log(`Loaded ${questions.length} questions\n`);
 
   // Run audit
