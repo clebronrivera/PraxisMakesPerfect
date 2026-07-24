@@ -10,7 +10,6 @@ import MicroSkillSection from './sections/MicroSkillSection';
 import MethodSection from './sections/MethodSection';
 import WhyFasterSection from './sections/WhyFasterSection';
 import YourPlanSection from './sections/YourPlanSection';
-import FoundersNoteSection from './sections/FoundersNoteSection';
 import FinalCtaSection from './sections/FinalCtaSection';
 import LandingFooter from './sections/LandingFooter';
 
@@ -66,7 +65,6 @@ export default function LandingPage({ showAdminEntry }: LandingPageProps) {
         <MethodSection />
         <WhyFasterSection />
         <YourPlanSection />
-        <FoundersNoteSection />
         <FinalCtaSection onOpenAuth={openAuth} />
       </main>
       <LandingFooter />

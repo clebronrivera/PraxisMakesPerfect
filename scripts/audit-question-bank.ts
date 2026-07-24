@@ -2,19 +2,8 @@
 // Validates question bank structure and reports statistics
 
 import QUESTIONS_DATA from '../src/data/questions.json';
-import { analyzeQuestion } from '../src/brain/question-analyzer';
+import { analyzeQuestion, Question } from '../src/brain/question-analyzer';
 import { NASP_DOMAINS } from '../knowledge-base';
-
-interface Question {
-  id: string;
-  question: string;
-  choices: Record<string, string>;
-  correct_answer: string[];
-  rationale: string;
-  skillId?: string;
-  domainId?: number;
-  domains?: number[];
-}
 
 interface AuditResult {
   totalQuestions: number;
@@ -66,25 +55,26 @@ function auditQuestionBank(): AuditResult {
   const skillSet = new Set<string>();
   const skillCounts = new Map<string, number>();
   
-  // Validate each question
-  questions.forEach((q, index) => {
+  // Validate each question (using normalized fields from analyzeQuestion — the raw
+  // questions.json objects use UNIQUEID/question_stem/A-F/correct_answers, not these names)
+  analyzed.forEach((q, index) => {
     // Check required fields
     if (!q.id) result.missingFields.missingId.push(`Question ${index + 1}`);
     if (!q.question || q.question.trim() === '') result.missingFields.missingQuestion.push(q.id || `Question ${index + 1}`);
-    
+
     // Check choices (A-D)
     const choices = q.choices || {};
     const hasChoices = ['A', 'B', 'C', 'D'].some(letter => choices[letter] && choices[letter].trim() !== '');
     if (!hasChoices) result.missingFields.missingChoices.push(q.id || `Question ${index + 1}`);
-    
+
     if (!q.correct_answer || q.correct_answer.length === 0) {
       result.missingFields.missingCorrectAnswer.push(q.id || `Question ${index + 1}`);
     }
-    
+
     if (!q.rationale || q.rationale.trim() === '') {
       result.missingFields.missingRationale.push(q.id || `Question ${index + 1}`);
     }
-    
+
     // Check for duplicates
     if (q.id) {
       if (seenIds.has(q.id)) {
@@ -93,19 +83,18 @@ function auditQuestionBank(): AuditResult {
         seenIds.add(q.id);
       }
     }
-    
+
     // Track skills
-    const analyzedQ = analyzed[index];
-    if (analyzedQ.skillId) {
-      skillSet.add(analyzedQ.skillId);
-      skillCounts.set(analyzedQ.skillId, (skillCounts.get(analyzedQ.skillId) || 0) + 1);
+    if (q.skillId) {
+      skillSet.add(q.skillId);
+      skillCounts.set(q.skillId, (skillCounts.get(q.skillId) || 0) + 1);
     } else {
       result.missingFields.missingSkillId.push(q.id || `Question ${index + 1}`);
     }
-    
+
     // Count domains
-    if (analyzedQ.domains && analyzedQ.domains.length > 0) {
-      analyzedQ.domains.forEach(domain => {
+    if (q.domains && q.domains.length > 0) {
+      q.domains.forEach(domain => {
         if (domain >= 1 && domain <= 10) {
           result.questionsPerDomain[domain] = (result.questionsPerDomain[domain] || 0) + 1;
         } else {
