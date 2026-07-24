@@ -1,144 +1,269 @@
-# Study-Plan Generation Pipeline — Generic Spec
+# Study Plan Generation Pipeline — Generic Specification
 
-**Purpose.** This document specifies, in vendor-neutral terms, a three-stage pipeline that turns a learner's raw answer history into a structured, personalized study plan. It is extracted from a working single-exam reference implementation and rewritten with abstracted types (`Response[]`, `SkillState[]`, `StudyPlan`) so it can be reimplemented against a multi-exam platform. No product, exam, or domain names are assumed.
+**Status:** Spec extraction (pattern documentation for re-implementation).
+**Audience:** Engineers building AI-generated, per-user instructional guidance for a multi-exam platform.
+**Scope:** The three-stage study-plan pipeline — deterministic preprocessing, content retrieval, model synthesis — abstracted from a working single-exam reference implementation into pure, exam-agnostic rules. Covers what each stage consumes and produces, why the pipeline is split this way, the deterministic computations in Stage 1, and the shape of the Stage-3 prompt.
 
-The governing idea: **a deterministic code layer does all the analysis and structure; the language model does only synthesis** — interpretation, sequencing, and prose. The model never computes a score, never invents a fact, and never decides the plan's skeleton.
+This document is a **specification of behavior**, not a transplant of code. Every threshold below is a validated default; an adopting system may re-tune them, but the *shape* of the pipeline — three stages, one model call, everything else deterministic — is the contract. Signatures and payloads are given as pseudo-code with generic type names.
 
----
-
-## 1. The three stages
-
-The pipeline has three stages. Stages 1–2 and the prompt assembly run **client-side**; stage 3 runs **server-side** in a long-running background function. The boundary between client and server is *exactly the prompt string*: the client hands the server a fully-built prompt, and the server adds nothing analytical.
-
-### Stage 1 — Deterministic preprocessing
-- **In:** `Response[]` — the learner's raw answer history (per-item: skill id, correct/incorrect, self-reported confidence, chosen-distractor, timestamp).
-- **Out:** `SkillState[]` plus three side artifacts: `TimeBudget`, `DomainSummary[]`, and `ScheduleFrame[]`.
-- **Signature:** `Response[] → { SkillState[], TimeBudget, DomainSummary[], ScheduleFrame[] }`
-- Pure functions only; no I/O and no model call. Computes per-skill mastery, status labels, trend, urgency, clustering, time allocation, and the week-by-week session skeleton.
-
-### Stage 2 — Content retrieval
-- **In:** `SkillId[]` (the skills grouped into a priority cluster).
-- **Out:** `RetrievedContent` = `{ vocabulary[], misconceptions[], resolvedMisconceptionIds[], caseArchetypes[], lawsFrameworks[] }`, merged into each cluster.
-- **Signature:** `SkillId[] → RetrievedContent`
-- Reads only **static, pre-authored per-skill metadata** (a skill-metadata table, a misconception taxonomy, a distractor resolver, an item index). No network, no model. This grounds the model: it may only reference content that the retrieval layer surfaced.
-
-### Stage 3 — Model synthesis
-- **In:** a single `Prompt` string (skeleton + the JSON payload produced by stages 1–2).
-- **Out:** `StudyPlan` (a structured document with a fixed set of named sections).
-- **Signature:** `Prompt → StudyPlan`
-- The model fills text fields inside a pre-structured schema. It does not change cluster structure, session types, or durations — those are pre-set.
-
-### Client/server boundary
-- **Client** owns: gating + rate-limit checks, stages 1–2, prompt build, dispatch, and result polling.
-- **Server (background function)** owns: auth, an independent rate-limit check, the single model call, minimal structural validation, document assembly (it re-attaches the client's pre-computed structural data so it never re-fetches), and persistence under row-level security.
-
-### Implementation notes (divergences from the clean three-stage model)
-1. **Stage 2 is nested inside stage 1's clustering**, not a separate top-level call — content retrieval happens while priority clusters are being built. The mental model is three stages; the code has two passes (analysis+retrieval, then synthesis).
-2. **The time budget is computed twice** (a fast seed pass before clusters exist, then a real pass once cluster urgencies are known). A reimplementation can do this in one pass if cluster urgency is available up front.
-3. **A few "deterministic inputs" live in the orchestrator, not the preprocessing module** — specifically the aggregate confidence-signal counts and the "top at-risk vocabulary" list. Treat all of section 3 as the deterministic contract regardless of which file computes it.
+Capabilities served: primarily the **study-plan / instructional-guidance generation capability** — turning a user's response history into a personalized, structured study plan. It also touches readiness reporting, since Stage 1's domain and skill summaries are the same aggregates a readiness dashboard would consume.
 
 ---
 
-## 2. Why each stage exists
+## 1. The three stages: inputs and outputs
 
-**Determinism and predictability (stages 1–2).** Everything the model "should not have to reason about" is computed in code: status labels from hard thresholds, urgency ranking, cluster assignment, content retrieval, the time budget, and the weekly skeleton. The same history always yields the same structure. This makes the output auditable and testable, and it removes whole classes of model error (miscounting, inventing a score, misranking priorities).
+The pipeline runs in a strict sequence. Each stage's output is the next stage's input; nothing loops back.
 
-**Narrow the model's blast radius (stage 3).** Because the analysis is already done, the model's job is reduced to: interpret what the data *pattern* means (not re-narrate scores), write explanation and sequencing language, and fill the text fields of a pre-structured schema. Explicit guardrails forbid it from inventing external resources, changing the session structure, or duplicating content across sections. A smaller job means fewer failure modes and a smaller, cheaper, more reliable call.
+```
+Response[] + StudyConstraints
+   ▼  STAGE 1 — deterministic preprocessing
+SkillState[], TimeBudget, PriorityCluster[], ScheduleFrame[], DomainSummary[]
+   ▼  STAGE 2 — content retrieval
+PriorityCluster[] + ContentBundle (vocabulary, misconceptions, case archetypes, laws)
+   ▼  STAGE 3 — model synthesis
+StudyPlan (validated, versioned JSON document)
+```
 
-**Cost control.** The single expensive model call is rate-limited (reference: **one successful generation per 7 days**, enforced on *both* client and server so a direct authenticated call cannot bypass the client check and run up spend). The server counts only *successful* generations toward the limit, so failed attempts don't lock the learner out. Low temperature (reference: `0.2`) further reduces variance and retries.
+### 1.1 Stage 1 — Deterministic preprocessing
 
-**Long-running work off the request path.** Synthesis can take many seconds, so it runs as a background job (HTTP 202 + poll), never blocking a normal request (see § 5).
+**Consumes:** `Response[]` — full response history, ordered chronologically (order matters for trend, § 3.3), each carrying skill identifier, correctness, self-reported confidence, the wrong option selected (if any), and an optional stable question identifier — plus `StudyConstraints`: study days/week, minutes per session, weekend minutes, intensity, and either a target test date or a raw weeks-available count.
+
+**Produces:** `SkillState[]` (accuracy, attempts, half-window accuracies, trend, status label, diagnostic flags — § 3.1–3.2); `TimeBudget` (total minutes by week and by cluster urgency — § 3.6); `PriorityCluster[]` (skills grouped into content clusters, ranked by urgency — § 3.5); `ScheduleFrame[]` (one per calendar week, cluster focus + session slots, no narrative — § 3.7); `DomainSummary[]` (per-domain rollups, reused by a readiness view independent of the prompt).
+
+No network call, no model call. Every function here is pure and unit-testable against fixed inputs.
+
+### 1.2 Stage 2 — Content retrieval
+
+**Consumes:** the skill identifiers in each `PriorityCluster` from Stage 1.
+
+**Produces:** a `ContentBundle` per cluster — vocabulary, common-misconception descriptions (plus resolved IDs against a canonical misconception taxonomy, where one exists), case/scenario archetypes, and relevant laws or frameworks — pulled from a static, hand-authored content library keyed by skill identifier, deduplicated with per-field caps (reference: vocabulary 20, misconceptions 15, case archetypes 12, laws/frameworks 8).
+
+A lookup, not a generation step: the library is authored ahead of time by subject-matter review, not produced at request time. No model call.
+
+### 1.3 Stage 3 — Model synthesis
+
+**Consumes:** a single prompt string assembled from every Stage 1 and Stage 2 output (§ 4), sent as the entire user turn.
+
+**Produces:** `StudyPlan` — a schema-constrained JSON document with a fixed set of top-level sections (§ 4), persisted with an explicit schema version so old document shapes can be distinguished on read.
+
+This is the only stage that calls a model, and it runs as an asynchronous/background job rather than inline: the reference dispatches to a background function that can run several minutes, returns an immediate "accepted" response, and has the caller poll a datastore for the completed document. That asynchrony follows from the model call being slow and token-heavy, not from the pipeline design — a faster model or smaller schema could run Stage 3 inline.
 
 ---
 
-## 3. The deterministic inputs
+## 2. Why three stages — and why only one calls a model
 
-This is the full contract the preprocessing layer must compute before any model call.
+The split exists to make the expensive, non-deterministic part of the system as small and as replaceable as possible.
 
-### (a) Skill-state shape
-`SkillState` per skill. In the reference, **mastery is accuracy-based** — `round(correct / attempts × 100)`, `null` when there are no attempts — not a probabilistic estimate. Fields:
-- `currentAccuracy`, `attempts`
-- `firstHalfAccuracy`, `lastHalfAccuracy`, `trend`
-- `confidenceIssue` — at least one *high-confidence wrong* answer
-- `repeatedDistractorPattern` — the same wrong option chosen **≥ 2** times
-- `fragilityFlag` — requires **≥ 6** attempts; true when *low-confidence-correct* answers are **≥ 50%** of the last 6 (right answers the learner wasn't sure of)
-- `uncertainSkillFlag` — **shadow signal**: computed and stored but *not consumed* (≥ 6 attempts; high-confidence-rate ≥ 0.25 AND low-confidence-rate ≥ 0.25). Kept for future calibration, intentionally not wired in.
-- `missedQuestionIds`, `dominantMisconceptionKey?`, `dominantErrorClusterTag?`, `errorClusterTagCount?`
+- **Predictability.** Stages 1 and 2 are pure functions over structured data — same inputs in, byte-identical output out. That makes them exhaustively unit-testable, and "why was this student labeled X" is debuggable by reading code, not re-prompting a model. If clustering, urgency, or scheduling logic lived inside the prompt instead, those decisions would become non-reproducible.
 
-### (b) Status labels and exact thresholds
-Six statuses, assigned in **priority order (first match wins)**:
+- **Low AI cost.** Model calls are priced per token. Anything computed once and handed to the model as a finished fact is a fact it doesn't have to reason its way to — shorter prompt, less reasoning, less chance of inventing a number instead of using the real one. The reference prompt explicitly forbids the model from re-deriving scores, cluster membership, or session structure; it only writes narrative layered on pre-computed numbers.
 
-| Condition (checked in order) | Status |
+- **Narrow AI blast radius.** Because the model's only job is synthesis, a failure mode (hallucinated term, invented resource, wrong count) is contained to prose fields, not structural ones. A schema validator can catch a missing or empty *section*, but not a subtly wrong number inside prose. Keeping every number deterministic shrinks the worst-case hallucination to "an unhelpful sentence," never "an invented schedule that doesn't match reality."
+
+- **Reusability of Stage 1 outputs.** `SkillState[]` and `DomainSummary[]` are computed independently of the prompt, so a readiness dashboard or analytics view can consume them without duplicating model-facing logic. Only Stage 3's inputs are prompt-shaped.
+
+---
+
+## 3. Deterministic inputs computed in Stage 1
+
+### 3.1 Skill state
+
+For each skill with at least one response, Stage 1 computes:
+
+```
+SkillState {
+  skillId
+  attempts, correctCount, currentAccuracy   # accuracy = round(correct/attempts * 100), null if 0 attempts
+  firstHalfAccuracy, lastHalfAccuracy       # § 3.3
+  trend                                     # improving | declining | flat | insufficient_data
+  status                                    # hard-threshold label, § 3.2
+  confidenceIssue                           # any wrong answer given at high self-reported confidence
+  repeatedDistractorPattern                 # same wrong option chosen 2+ times
+  dominantMisconceptionKey                  # most-repeated wrong option + a representative missed question
+  missedQuestionIds
+  fragilityFlag                             # correct-but-low-confidence pattern
+  uncertainSkillFlag
+}
+```
+
+### 3.2 Status labels (hard thresholds, evaluated in order)
+
+Confirmed against source (not just the summary table elsewhere in this repo):
+
+| Rule | Condition | Label |
+|---|---|---|
+| 1 | `attempts < 3` | `unlearned` — insufficient engagement to classify |
+| 2 | accuracy `< 60%` **and** (`confidenceIssue` **or** `repeatedDistractorPattern`) | `misconception` — a diagnostic error pattern, not just low accuracy |
+| 3 | accuracy `≥ 80%` | `mastered` |
+| 4 | accuracy `≥ 60%` | `near_mastery` |
+| 5 | accuracy `≥ 40%` | `developing` |
+| 6 | none of the above | `unstable` |
+
+Rules are evaluated top to bottom, first match wins — critically, **Rule 2 is checked before the accuracy bands**, so a skill at 50% accuracy with a confidence red flag is labeled `misconception` rather than falling through to `developing`/`unstable` on accuracy alone.
+
+### 3.3 Trend
+
+```
+trend(outcomes: bool[]):                       # outcomes ordered chronologically, oldest first
+    if len(outcomes) < 6: return insufficient_data
+
+    firstHalf = outcomes[0 : ceil(n/2)]
+    lastHalf  = outcomes[n - floor(n/2) : n]    # overlaps by one item when n is odd
+    delta = avg(lastHalf) - avg(firstHalf)      # percentage points
+
+    if delta >= +15: return improving
+    if delta <= -15: return declining
+    return flat
+```
+
+Trend requires at least 6 attempts; below that it is explicitly `insufficient_data` rather than being forced into `flat`, so a low-N skill is never silently reported as stable.
+
+### 3.4 Urgency scoring
+
+A single skill's urgency is an additive score used to rank skills inside a cluster and to weight cluster-level urgency:
+
+```
+urgency(skill) =
+      statusWeight[skill.status]                 # misconception 100, unstable 80, developing 60,
+                                                   # unlearned 50, near_mastery 20, mastered 0
+    + trendPenalty[skill.trend]                   # declining 20, flat 10, insufficient_data 5, improving 0
+    + (confidenceIssue ? 15 : 0)
+    + (fragilityFlag ? 10 : 0)
+    + (accuracy != null ? (100 - accuracy) / 10 : 5)
+```
+
+A simple weighted sum, not a learned model — every term is legible and independently tunable. `misconception` outranks `unstable`, which outranks `unlearned`: a confirmed error pattern is treated as more urgent than low accuracy alone or lack of data.
+
+### 3.5 Clustering
+
+Skills are grouped by a **content cluster** — a cross-domain instructional grouping distinct from the exam's official domain/objective taxonomy, used purely to decide what to study together. (The reference ships roughly a dozen clusters for one exam, e.g. assessment-and-measurement, legal-and-ethics, crisis-response — the label set is exam-specific content, not part of this spec's contract; treat the cluster taxonomy as per-exam configuration.) Mastered skills are excluded from active clusters; `near_mastery` skills seed a "maintain"-urgency cluster if none is otherwise represented, so a plan doesn't go silent on strong areas.
+
+Cluster-level urgency is derived from its member skills' statuses, not recomputed independently:
+
+```
+clusterUrgency(memberStatuses):
+    if any(status in {misconception, unstable, unlearned}): return urgent_now
+    if any(status == developing) or not all(status in {near_mastery, mastered}): return important_next
+    return maintain
+```
+
+Clusters are sorted `urgent_now` → `important_next` → `maintain`, with ties broken by the sum of member skills' urgency scores (§ 3.4).
+
+### 3.6 Time budget
+
+```
+minutesPerWeek(constraints) =
+    (min(studyDays, 5) * minutesPerSession + (studyDays > 5 ? weekendMinutes : 0))
+    * intensityMultiplier[intensity]        # light 0.7, moderate 1.0, aggressive 1.3
+
+weeksAvailable = explicit weeksToTest, or derived from (testDate - today), or a default (8 weeks) if neither is given
+
+totalMinutes = minutesPerWeek * weeksAvailable
+```
+
+That total is split across clusters by urgency tier — `urgent_now` 50%, `important_next` 35%, `maintain` 15% — renormalized if a tier is empty (e.g., no `maintain` clusters redistributes its 15% to the other two). Within a tier, the share splits evenly across its clusters; each cluster's allocated weeks = allocated minutes ÷ minutes-per-week, rounded.
+
+### 3.7 Weekly schedule frame
+
+One frame per week, from week 1 to `weeksAvailable`. Each week gets a cluster focus pulled off an urgency-ordered queue, staying on a cluster for its allocated weeks before rotating; once the non-maintain queue is exhausted, the frame falls back to a "General Review" or maintain-tier focus. This is queue consumption, not per-week model reasoning — the whole multi-week arc is fixed before any prose is written.
+
+Each week's sessions are one slot per weekday (up to 5) plus an optional weekend slot, each with a duration (from constraints) and a **session type** from a small rule table:
+
+```
+sessionType(cluster, hasUnlearnedSkill, hasMisconceptionSkill, sessionIndexInWeek):
+    if hasMisconceptionSkill and sessionIndexInWeek == 0: wrong-answer-review
+    if hasUnlearnedSkill     and sessionIndexInWeek == 0: vocabulary
+    if sessionIndexInWeek % 3 == 2: mixed-retrieval
+    if cluster is vocabulary-heavy: alternate vocabulary / concept-review
+    if cluster is case-heavy:       alternate concept-review / case-practice
+    else:                           alternate concept-review / case-practice
+```
+
+Weekend sessions alternate `mixed-retrieval` / `case-practice` by week parity. If a test date is supplied, each week also gets a human-readable date range computed backward from it. The model receives session **labels, durations, and types** as fixed facts — its only job is to fill in a focus sentence and 2–3 tasks per slot; it cannot add, remove, or retype sessions.
+
+---
+
+## 4. The Stage-3 prompt skeleton
+
+The prompt is one assembled string with four parts, in order. Everything except the fixed instructional scaffolding is interpolated data from Stages 1–2 — nothing in the prompt is invented at request time beyond the scaffolding text itself.
+
+**1. Fixed role and constraint preamble.** States the model's role (interpretation and instructional sequencing, not analysis) and hard constraints: do not re-narrate raw scores, do not invent external resources not present in the retrieved content, do not alter session types/durations/cluster structure, use only Stage 2's vocabulary/misconceptions/case archetypes.
+
+**2. Per-output-section writing rules.** A short rule per output section describing what belongs in it and what must *not* be duplicated from another (e.g., "cluster narrative explains why it matters; domain narrative explains why the domain is weak; don't repeat the same explanation in both").
+
+**3. The interpolated data payload**, roughly:
+
+```
+{
+  assessmentState:     completion flags, total response count, flagged-skill count
+  studyConstraints:    the user's scheduling inputs (or a default)
+  confidenceSignals:   counts of skills per concerning state (misconception /
+                        confidenceIssue / repeatedDistractor / fragility) — precomputed
+                        so the model narrates confidence behavior, not re-derives it
+  topAtRiskVocabulary: deduplicated priority terms from the highest-urgency clusters
+  domainSummaries:     DomainSummary[] from Stage 1
+  priorityClusters:    PriorityCluster[] — name, urgency, minutes, member skills
+                        (id, name, status, accuracy, trend, dominant misconception),
+                        plus each cluster's Stage 2 ContentBundle
+  scheduleFrame:       ScheduleFrame[] — week number, date label, cluster focus,
+                        minutes, and session slots (label, duration, type)
+}
+```
+
+**4. The output schema and grounding rules.** A literal JSON schema the model must fill exactly (fields and types spelled out, e.g. `readinessLevel: 'early | developing | approaching | ready'`), plus grounding rules: output cluster names must match the provided names; vocabulary must come from the retrieved list, not be invented; every domain with a low score or nonzero deficit count gets a write-up; a resolved-misconception ID, where one exists, is cited alongside its description; a fixed schema-version string is required in the output.
+
+The reference implementation's nine top-level output sections:
+
+| Section | Holds |
 |---|---|
-| `attempts < 3` | `unlearned` |
-| `accuracy < 60` AND (`confidenceIssue` OR `repeatedDistractorPattern`) | `misconception` |
-| `accuracy ≥ 80` | `mastered` |
-| `accuracy ≥ 60` | `near_mastery` |
-| `accuracy ≥ 40` | `developing` |
-| otherwise | `unstable` |
+| Readiness snapshot | Level, timeline, blockers, one next move |
+| Data interpretation | Headline, 3–5 pattern inferences, 2–3 urgent insights |
+| Priority clusters (restated) | Why it matters, blocking note, recommended content types |
+| Domain study maps | Interpretation, content to know, vocabulary, case types, traps, mastery indicator |
+| Vocabulary | Term, definition, why it matters, where it shows up, confusable terms |
+| Case patterns | Scenario clues, likely question angle, common mistake |
+| Weekly plan (restated) | Week goal, per-session focus + 2–3 tasks, checkpoint question |
+| Tactical instructions | Immediate actions, this-week goals, an avoid-list |
+| Checkpoint logic | Midpoint check, shift signal, readiness signal |
 
-Thresholds: `MIN_ATTEMPTS_FOR_STATUS = 3`, `MISCONCEPTION_ACCURACY_CEILING = 60`, `MASTERED = 80`, `NEAR_MASTERY = 60`, `DEVELOPING = 40`.
+The section count and names are a content decision, not the structural contract — the contract is "the model receives a schema it must fill exactly, is told what not to duplicate across sections, and cannot invent facts outside the interpolated payload."
 
-**Trend** needs **≥ 6** attempts (else `insufficient_data`). Split history in half; `delta = secondHalfAvg − firstHalfAvg`; `delta ≥ +15 → improving`, `delta ≤ −15 → declining`, else `flat` (`TREND_THRESHOLD = 15`).
-
-### (c) Urgency / priority
-Per-skill `urgencyScore` (higher = more urgent) = `statusWeight + trendPenalty + confBoost + fragility + accFactor`, where:
-- `statusWeight`: misconception 100, unstable 80, developing 60, unlearned 50, near_mastery 20, mastered 0
-- `trendPenalty`: declining 20, flat 10, insufficient_data 5, improving 0
-- `confBoost`: 15 if `confidenceIssue` else 0
-- `fragility`: 10 if `fragilityFlag` else 0
-- `accFactor`: `(100 − accuracy) / 10`, or 5 if accuracy is null
-
-**Cluster urgency**: a cluster is `urgent_now` if any member is misconception/unstable/unlearned; else `important_next` if any is developing (or not all members are near/mastered); else `maintain`. Clusters sort `urgent_now → important_next → maintain`, tiebroken by summed member `urgencyScore`.
-
-### (d) Time budget
-Defaults: `studyDaysPerWeek = 5`, `minutesPerSession = 45`, `weekendMinutes = 60`, `intensity = moderate`. Intensity multiplier: light 0.7, moderate 1.0, aggressive 1.3.
-`minutesPerWeek = round((min(days, 5) × session + (days > 5 ? weekend : 0)) × multiplier)`.
-Weeks: use a provided `weeksToTest`, else derive from a test date (`max(1, round((testDate − now) / oneWeek))`), else default 8. `totalMinutes = minutesPerWeek × weeks`.
-**Allocation by cluster urgency share:** urgent_now 0.50, important_next 0.35, maintain 0.15. Empty buckets are dropped and the remaining shares **renormalized** to sum to 1; each bucket's minutes split evenly across its clusters; per-cluster `allocatedWeeks = round(clusterMinutes / minutesPerWeek)`.
-
-### (e) Weekly frame
-One `ScheduleFrame` per week (1…weeks). Weekday sessions = `min(days, 5)`, labeled Mon–Fri, each `minutesPerSession`; if `days > 5`, add a weekend session (`weekendMinutes`) whose type alternates by week parity. Each week's focus is pulled from a rotating queue of non-`maintain` clusters (rotated every `allocatedWeeks`; maintain clusters appended for review weeks; fallback "General Review"). Optional human-readable date labels are computed backward from the test date.
-**Session type** is assigned deterministically: cluster-with-misconception + first session → `wrong-answer-review`; cluster-with-unlearned + first session → `vocabulary`; every 3rd session → `mixed-retrieval`; vocabulary-heavy clusters alternate `vocabulary`/`concept-review`; otherwise alternate `concept-review`/`case-practice`. Session-type enum: `vocabulary | concept-review | case-practice | mixed-retrieval | wrong-answer-review`.
-
-### (f) Clustering, content caps, signals
-- **Clustering**: skills grouped by a `contentCluster` metadata field; `mastered` skills excluded; a `near_mastery` skill may seed an otherwise-absent cluster at `maintain`.
-- **Content retrieval caps** (dedup then slice): vocabulary ≤ 20, misconceptions ≤ 15, case archetypes ≤ 12, laws/frameworks ≤ 8. Free-text misconceptions resolve to canonical taxonomy IDs.
-- **Dominant misconception**: most-repeated wrong option (≥ 2) → representative item → distractor resolver → misconception + skill-deficit label.
-- **Error-cluster tags**: per skill, the top error tag across missed items if it appears ≥ 2 times; per cluster, tags appearing ≥ 3 times.
-- **Aggregate signals** (orchestrator): counts of skills that are misconception-status / have a confidence issue / repeated distractor / fragility flag, plus `topAtRiskVocabulary` = deduped vocabulary from the urgent + important clusters, first 20.
-- **Domain summaries**: per domain `score`, `skillCount`, and `deficitSkillCount` (skills with accuracy < 60), sorted ascending by score.
+Model parameters worth carrying forward as defaults: a low sampling temperature (reference: 0.2) favoring grounded, low-variance output, and a generous token ceiling (reference: ~12k) sized to the schema's breadth. On the response side, validate every required section is present **and non-empty** (not null/empty string/array/object) before persisting — a structurally incomplete response is a failure, not silently accepted with holes.
 
 ---
 
-## 4. The model prompt skeleton
+## 5. Constants reference (validated defaults)
 
-The prompt is assembled client-side and joined in this exact order:
-
-1. **Preamble (role + guardrails).** States the task, then: *the preprocessing layer has already done the analysis; write interpretation, explanation, sequencing, and concise synthesis; do NOT re-narrate scores; do NOT invent external links, books, or websites; do NOT change session types, durations, or cluster structure; only use the provided retrieved vocabulary, misconceptions, and case archetypes.*
-2. **Output section rules** — a literal `OUTPUT SECTION RULES — read before generating:` block with one line per output section describing exactly what goes there and what must NOT (no analysis here, no scores repeated, no duplication across sections). This is the primary anti-duplication control.
-3. **Output-format instruction** — `Return JSON only. No markdown fences. No commentary…`, followed by a literal example object (`JSON.stringify(schema, null, 2)`) enumerating every field of all required sections with inline type hints (e.g. `urgency: 'urgent_now | important_next | maintain'`).
-4. **Grounding rules** — ~18 bullets: cluster names must match the provided clusters; the weekly plan must use the provided week numbers / focus / session structure; vocabulary only from retrieved content; one case pattern per provided archetype (max 8); cover every domain below a score threshold or with any deficit skill; 3–6 items per array; conditional phrasing templates keyed on `fragilityFlag`, `dominantMisconception`, shared error-cluster tags, prerequisite chains; and the literal `schemaVersion` constant.
-5. **Payload** — `Assessment data (pre-processed):` then `JSON.stringify(payload)`. The payload carries: assessment state (completion flags, total responses, flagged-skill count); study constraints; the aggregate confidence signals; `topAtRiskVocabulary`; domain summaries; the priority clusters (name, urgency, allocated minutes, skills, and per-cluster retrieved vocabulary / misconceptions / resolved-ids / case archetypes / laws); and the weekly schedule frame.
-
-**Required output sections (all enforced).** The `StudyPlan` document must contain, non-empty: `readinessSnapshot`, `dataInterpretation`, `priorityClusters`, `domainStudyMaps`, `vocabulary`, `casePatterns`, `weeklyStudyPlan`, `tacticalInstructions`, `checkpointLogic`.
-
-**Model params (reference).** A mid-tier general LLM; `max_tokens ≈ 12000` (the structured schema is large); `temperature 0.2`; a single user message containing the whole prompt.
-
-**Output-format enforcement (no native schema/tool mode).** Enforcement is layered: (1) the "Return JSON only" instruction; (2) brace-extraction that strips code fences and slices from the first `{` to the last `}`; (3) server-side minimal validation — each required section present and non-empty; (4) client-side strict validation — per-field type coercion and enum checks, throwing on any malformed field. Documents that don't match the current schema version normalize to null, which forces regeneration.
+| Constant | Value |
+|---|---|
+| Min attempts before status label applies | `3` |
+| Misconception accuracy ceiling | `< 60%` + confidence-issue or repeated-distractor signal |
+| Mastered / near-mastery / developing thresholds | `≥80%` / `≥60%` / `≥40%` |
+| Min attempts before trend classifies | `6` |
+| Trend improving/declining threshold | `±15pp` between half-window accuracies |
+| Urgency status weights (misconception/unstable/developing/unlearned/near_mastery/mastered) | `100/80/60/50/20/0` |
+| Urgency trend penalties (declining/flat/insufficient/improving) | `20/10/5/0` |
+| Urgency confidence-issue / fragility boosts | `+15` / `+10` |
+| Cluster minute shares (urgent/important/maintain) | `50%/35%/15%`, renormalized on empty tiers |
+| Default study weeks (no date/weeks given) | `8` |
+| Intensity multipliers (light/moderate/aggressive) | `0.7/1.0/1.3` |
+| Content-bundle caps (vocab/misconceptions/cases/laws) | `20/15/12/8`, post-dedup |
+| Model temperature / token ceiling | `0.2` / `~12,000` |
+| Required output sections (present + non-empty) | `9` (§ 4) |
+| Generation rate limit (successful plans only) | `1 per 7 days` |
+| Failure-cooldown gap | `15 minutes` |
 
 ---
 
-## 5. Dispatch & polling (summary)
+## 6. Open items for the adopting platform
 
-The synthesis call runs as a background job: the client POSTs the prompt to the background endpoint, which returns **HTTP 202** immediately and keeps running. The reference returns **no job id** — the client polls the persistence layer for the newest row created after the request timestamp (interval 4s, timeout 4 min), correlating by user + time. A failure row (`{ error: true, … }`) is written on insert failure so the poller can surface it. Rate limiting is enforced on both client and server (1 successful plan / 7 days; server returns 429 + `Retry-After`). The full long-running-AI-call pattern is specified separately in **`PMP_NETLIFY_BACKGROUND_FN_PATTERN.md`**.
+1. **Content-cluster taxonomy is exam-specific and hand-authored.** Decide whether clusters are authored per exam, derived from each exam's official objective taxonomy, or a small shared set with per-exam relabeling — and who owns keeping the content library (§ 1.2) in sync.
+2. **Urgency weights and time-budget shares are untuned constants**, not derived from outcome data. Validate whether one weight table generalizes across exams with different question volumes and skill counts.
+3. **Rate-limit windows are cost-driven defaults from a single-model, single-exam cost model.** Re-derive them against the adopting platform's actual per-generation cost and regeneration cadence.
+4. **The nine-section output schema is a content decision, not a structural requirement** — the requirement is only "schema-constrained JSON, validated for presence and non-emptiness before persisting." Design a section set to match the target product surface.
+5. **Stage 2's content library has no freshness or versioning story** in the reference (static, hand-authored data). A multi-exam platform likely needs an authoring workflow and a way to track which library version a given plan was built from.
+6. **The background dispatch/poll pattern (§ 1.3) follows from model latency and output size, not architecture.** If the model call is fast enough to run inline, drop the async machinery; otherwise see the sibling background-function pattern spec.
 
 ---
 
-## 6. Notes for a multi-exam reimplementation
-
-- **Mastery input is pluggable.** The reference computes `SkillState.currentAccuracy` as raw percent accuracy. A platform with a probabilistic engine should map its own per-skill posterior mean to the same band thresholds (≥ 0.80 / ≥ 0.60 / ≥ 0.40 → mastered / near_mastery / developing), keep the `misconception` rule (low accuracy + a confidence/distractor signal), and feed posterior **variance** into the fragility/uncertainty flags instead of the raw confidence counts. The band cutoffs (0.80 / 0.60) should match the platform's proficiency definitions so the study plan and the adaptive engine agree (see `PMP_ADAPTIVE_ENGINE_MATH.md`).
-- **Skill granularity = the finest valid diagnostic unit per exam**, not a fixed level — `SkillState` should key on whatever leaf the platform's taxonomy resolves to per exam, so clustering and urgency generalize across exams with different depths.
-- **Clusters and domains are exam-scoped.** The `contentCluster` field and domain summaries must come from each exam's competency map, not a hard-coded list. Vocabulary-heavy vs. case-heavy cluster behavior should be derived from the exam's content, not enumerated cluster names.
-- **Keep the boundary.** The single most important property to preserve is that *all analysis is deterministic and the model only synthesizes prose into a fixed schema*. Everything in section 3 is testable without the model; only section 4's text fields require it.
-- **Content grounding requires authored metadata.** Stage 2 only works if per-skill vocabulary, misconceptions, and case archetypes exist in the content layer. On a platform where some exams are content-rich and others are thin, the retrieval step should degrade gracefully (empty arrays → the model simply omits those grounded sections) rather than invent content.
+*Extracted from a shipped single-exam study-plan pipeline (deterministic preprocessor, static content library, background-dispatched model synthesis) and cross-checked against its source. Real file/function names are intentionally omitted above; for implementation reference the pattern comes from `src/utils/studyPlanPreprocessor.ts` (Stage 1), `src/data/skill-metadata-v1.ts` (Stage 2), `src/services/studyPlanService.ts` (prompt assembly, dispatch, response parsing), and `api/study-plan-background.ts` (background dispatch, rate limiting, persistence). Values are validated defaults, not immutable constants — the pipeline shape is the contract.*

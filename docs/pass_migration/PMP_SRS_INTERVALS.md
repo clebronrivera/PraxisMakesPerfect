@@ -1,129 +1,129 @@
-# Spaced Repetition (Leitner) — Box Intervals & Rules (Generic Spec)
+# SRS Intervals — Leitner-Box Scheduler — Generic Specification
 
-**Purpose.** This document specifies, in vendor-neutral terms, the Leitner-box spaced-repetition (SRS) scheduler: how a reviewable unit moves between boxes, how long each box waits before the unit is due again, and the advance/reset conditions. It is extracted from a working reference implementation and abstracted so it can be reimplemented against a multi-exam platform. No product or exam names are assumed.
+**Status:** Spec extraction (pattern documentation for re-implementation).
+**Audience:** Engineers building a multi-skill spaced-repetition / retention scheduler for a multi-exam adaptive practice engine.
+**Scope:** The per-skill Leitner-box scheduler — box definitions, day-intervals, advance/reset rules, the pure clock-injected update function, and, most worth reading carefully, exactly how much the computed schedule is consumed by the wider engine today. This is a deeper treatment of the scheduler summarized in `PMP_ADAPTIVE_ENGINE_MATH.md` § 5 ("Decay model") and referenced in that doc's § 6 selection-priority model (Rule 3). Read the two together; this doc corrects one place where that summary undersold the current wiring.
 
-The mental model: each reviewable unit sits in a **box** (0…4). Answer it correctly and it moves up a box and waits **longer** before its next review; answer it wrong and it falls **all the way back to box 0** and is due again tomorrow. Higher boxes = better-known = seen less often.
+This document is a **specification of behavior**, not a transplant of code. Every value below is a validated default corroborated by the reference implementation's own unit-test suite; an adopting system may re-tune the numbers, but the *shape* of the rules is the contract. All math is given as pseudo-code.
 
----
-
-## 1. The box intervals
-
-Five boxes, `0…4`. The interval is how many days after a review the unit becomes due again.
-
-| Box | Interval (days until next review) |
-|----:|:----------------------------------|
-| 0   | 1  |
-| 1   | 3  |
-| 2   | 7  |
-| 3   | 14 |
-| 4   | 30 |
-
-`BOX_INTERVALS = [1, 3, 7, 14, 30]`, `MAX_BOX = 4`. A new (never-reviewed) unit is treated as **box 0** → due in 1 day after its first review. Box 4 is the ceiling: a unit at box 4 answered correctly stays at box 4 (waits another 30 days).
+Capabilities served: **C4 — Adaptive practice across supported modes**, which names "SRS box state" explicitly as required runtime data in `00_PRODUCT_CONTRACT.md` § 3. Secondarily **C2 — Multi-signal efficiency measurement**, since the overdue-review flag is one of the additive terms in the selection-priority function `PMP_ADAPTIVE_ENGINE_MATH.md` § 6 summarizes.
 
 ---
 
-## 2. Advance & reset conditions
+## 1. The Leitner-box model, in brief
 
-A single rule governs every review:
-
-- **Correct → advance one box** (`newBox = min(box + 1, 4)`). The unit waits the *new, longer* box interval.
-- **Wrong → reset to box 0** (`newBox = 0`). Not "drop one box" — a wrong answer sends the unit **all the way back** to box 0 and it is due again in 1 day. This is the classic, unforgiving Leitner reset.
-
-The next due date is always computed from the **new** box: `nextReviewDate = now + BOX_INTERVALS[newBox]`.
-
-### Worked examples
-| Current box | Answer | New box | Next due (days) |
-|---:|:--|---:|---:|
-| 0 | correct | 1 | +3 |
-| 1 | correct | 2 | +7 |
-| 3 | correct | 4 | +30 |
-| 4 | correct | 4 (cap) | +30 |
-| 2 | **wrong** | **0** | +1 |
-| 4 | **wrong** | **0** | +1 |
-| (new/unset) | correct | 1 | +3 |
-| (new/unset) | wrong | 0 | +1 |
-
-### Edge cases
-- **Unset box.** A `null`/`undefined` box is treated as `0` before the rule is applied.
-- **Out-of-range box.** The incoming box is clamped into `[0, 4]` before use, so corrupt or legacy values can't escape the ladder.
-- **No partial credit / no confidence weighting.** The only input is the boolean correct/incorrect. Confidence, response time, and hints are **not** inputs to the box move (contrast the mastery model, which does weight confidence).
-
-### A unit's trajectory over time
-Following one unit through a streak then a lapse, starting fresh at box 0:
-
-| Review # | Box before | Answer | Box after | Due in | Cumulative day |
-|---:|---:|:--|---:|---:|---:|
-| 1 | 0 | correct | 1 | +3 | day 0 |
-| 2 | 1 | correct | 2 | +7 | day 3 |
-| 3 | 2 | correct | 3 | +14 | day 10 |
-| 4 | 3 | **wrong** | **0** | +1 | day 24 |
-| 5 | 0 | correct | 1 | +3 | day 25 |
-
-After three correct reviews the unit has earned a two-week gap; a single lapse on review 4 collapses it back to daily and the climb restarts. The asymmetry — slow to earn long intervals, instant to lose them — is deliberate: it keeps anything the learner has recently failed in frequent rotation, and only releases a unit to rare review after a sustained correct streak.
+A Leitner box scheduler assigns every tracked skill a small integer "box" (its current review-confidence tier) and a "next review date" computed from that box. A correct answer promotes the skill to a higher box and pushes its next review further out; a wrong answer demotes it, shortening the interval before it is due again — a proxy for retention, where skills the learner keeps getting right are reviewed less often and skills that keep slipping are reviewed more often. This reference implementation uses **5 boxes (0–4)** with day-intervals **`[1, 3, 7, 14, 30]`**, indexed by box number.
 
 ---
 
-## 3. The engine contract
+## 2. State fields
 
-The scheduler is a **pure function** — this is the most important portability property:
-
-```
-calculateSrsUpdate(currentBox, isCorrect, now) → { newBox, nextReviewDate, lastReviewDate }
-```
-
-- **No clock reads.** "Today" is passed in as `now` (an ISO **date-only** string, `"YYYY-MM-DD"`); the engine never calls the system clock. This makes it deterministic and trivially testable (feed a fixed date, assert the result).
-- **Date-only granularity.** Intervals are whole days; `nextReviewDate` and `lastReviewDate` are date-only strings. Day arithmetic is done in UTC (`now + N days`) to avoid timezone drift across the date boundary.
-- **No side effects.** The function computes the next state; persisting it is the caller's job.
-
-Returned fields: `newBox` (the post-answer box), `nextReviewDate` (when it's due again), `lastReviewDate` (= `now`, when it was just reviewed).
-
----
-
-## 4. Application & stored state
-
-In the reference, the scheduler is applied **per skill** (the finest-grained progress unit), on **every answer**: the per-skill progress record carries three SRS fields, updated each time the user answers an item for that skill —
+The scheduler extends the per-skill mastery record already defined in `PMP_ADAPTIVE_ENGINE_MATH.md` § 1 — not a separate store. Three fields are added:
 
 | Field | Type | Meaning |
 |---|---|---|
-| `srsBox` | int `0…4` | current Leitner box |
-| `nextReviewDate` | ISO date-only | when the skill is due for review again |
-| `lastReviewDate` | ISO date-only | when it was last reviewed |
+| `srsBox` | int, 0–4 | Current Leitner box. Absent on a skill with no attempts yet. |
+| `nextReviewDate` | date, ISO date-only (`YYYY-MM-DD`) | When this skill is next due for spaced review. |
+| `lastReviewDate` | date, ISO date-only | The date of the most recent scored answer for this skill (always equal to "today" at the moment of that answer). |
 
-These live on the per-skill record inside the user profile (alongside the skill's other progress state). There is **one box per skill**, not one per item.
-
-### Shadow-mode status (important)
-In the reference, these three fields are currently a **shadow write**: they are computed and persisted on every answer, but **nothing reads them yet** — no selection path schedules reviews off `nextReviewDate`. The Leitner state is being *accumulated* so that a future "due for review" surface can switch on without a backfill. A reimplementation that wants live SRS must add the due-selection step (§ 5); the scheduling math is already specified and correct.
+A skill never answered has none of these three fields set. The update function (§ 4) treats an absent, `null`, or out-of-range box as box 0 the first time it runs — there is no separate "initialize" step.
 
 ---
 
-## 5. Due selection (the intended consumption)
+## 3. Box → interval table
 
-A unit is **due** when `now >= nextReviewDate`. The intended selection rule for an SRS practice surface:
+What happens to a skill's box and next-review date, starting from each possible box, depending on whether the answer was correct:
 
-- Eligible = units whose `nextReviewDate <= today` (overdue or due today). New/unreviewed units (box 0, no `nextReviewDate`) are due immediately.
-- Order by **most overdue first** (smallest `nextReviewDate`), so the longest-waiting reviews come up first.
-- Serve until a daily quota / time box is hit, or the due set is exhausted.
+| Box (before answer) | If answered **correctly** | If answered **incorrectly** |
+|---|---|---|
+| 0 | Advance → box 1; next review in **3 days** | Stay at box 0; next review in **1 day** |
+| 1 | Advance → box 2; next review in **7 days** | Hard reset → box 0; next review in **1 day** |
+| 2 | Advance → box 3; next review in **14 days** | Hard reset → box 0; next review in **1 day** |
+| 3 | Advance → box 4 (max); next review in **30 days** | Hard reset → box 0; next review in **1 day** |
+| 4 (max) | Stay at box 4 (capped); next review in **30 days** | Hard reset → box 0; next review in **1 day** |
 
-Because every correct answer pushes a unit into a longer interval and every wrong answer pulls it back to daily, the due set naturally concentrates on the units the learner is worst at, and well-known units resurface rarely (up to once a month at box 4).
-
----
-
-## 6. Relationship to the mastery model & decay
-
-The SRS scheduler is **separate from** the mastery estimate; they answer different questions:
-- The **mastery model** asks "how well does the learner know this?" — a confidence-weighted, probabilistic estimate used for diagnosis and selection scoring.
-- The **SRS scheduler** asks "when should this be seen again?" — a coarse, boolean-driven calendar.
-
-They are intentionally decoupled: SRS takes only correct/incorrect (no confidence, no partial credit), while the mastery model weights confidence and more. A platform should not collapse them into one number — a unit can be well-known (high estimate) yet still surface on its monthly box-4 review, and a unit can be due (box 0) without that, by itself, implying a low estimate.
-
-**No score decay.** Note what this scheduler does *not* do: it never lowers a mastery score for time elapsed. "Forgetting" is modeled only as *resurfacing for review* (the box interval), not as silently decaying a number. When the learner returns and misses, the box resets to 0 and the mastery model updates from that observed miss — but absent a review, neither the box nor the estimate drifts on its own. Spaced review **replaces** score-decay rather than supplementing it; this keeps the estimate honest (it only ever moves on real evidence) and pushes the "you haven't seen this in a while" signal entirely into the scheduler.
+Read this as: the interval applied is always the interval **of the box the skill lands in**, not the box it started in. A correct answer from box 0 lands the skill in box 1, so it is scheduled 3 days out (box 1's interval), not 1 day out (box 0's interval).
 
 ---
 
-## 7. Notes for a multi-exam reimplementation
+## 4. Advance / reset pseudocode
 
-- **Two viable box-source designs — pick deliberately.** The reference stores an **explicit incrementing box counter** per skill and moves it by the correct/wrong rule above. An alternative (well-suited to a platform with a probabilistic mastery estimate) is to **derive the box from the mastery mean at selection time** and skip the stored counter entirely — e.g. map mastery-mean bands to boxes and read the interval off the band. The two schemes differ in feel: the counter-based reset-to-0-on-wrong is sharp and memory-like; a mastery-derived box moves gradually with the estimate and never hard-resets. If a platform's SRS mode already derives boxes from mastery, treat that as an intentional divergence from this reference, not a defect — but record which scheme is canonical so the intervals live in one place.
-- **The interval ladder is a tunable, not a law.** `[1, 3, 7, 14, 30]` (≈ roughly tripling then doubling, capped at monthly) is one defensible schedule; a geometric `[1, 2, 4, 8, 16]` doubling ladder is another common choice. Keep the ladder a single named constant so it can be tuned (or A/B'd) without touching the move logic.
-- **Keep the engine pure and clock-injected.** The `now`-as-parameter, date-only, no-side-effects shape is what makes the scheduler testable and reusable across exams and surfaces. Preserve it; do day math in UTC.
-- **Decide the granularity.** The reference schedules **per skill**. A platform may instead schedule **per item** (per flashcard / per question) for finer control, at the cost of more state. Per-skill is cheaper and aligns with mastery tracking; per-item is truer to classic flashcard SRS. Pick one and key the stored box accordingly (per-skill → key on the finest valid diagnostic unit per exam; per-item → key on the item id, scoped by exam).
-- **Wire the due-selection step.** If lifting this into a live SRS mode, the missing piece is § 5 — selecting due units by `nextReviewDate`. The reference computes and stores the schedule but does not yet consume it; a live mode must add that read.
+```
+BOX_INTERVALS_DAYS = [1, 3, 7, 14, 30]     # index = box, 0..4
+MAX_BOX = 4
+
+computeNextReview(currentBox, isCorrect, today):
+    box    = clamp(currentBox ?? 0, 0, MAX_BOX)
+    newBox = isCorrect ? min(box + 1, MAX_BOX) : 0
+    nextReviewDate = today + BOX_INTERVALS_DAYS[newBox] days
+    return { newBox, nextReviewDate, lastReviewDate: today }
+```
+
+Design notes, each a deliberate choice worth preserving:
+
+- **Pure, clock-injected function.** `today` is passed in as an ISO date-only string; the function never reads the system clock — purely for testability. The reference's test suite exercises every transition and interval by injecting fixed dates, with no `Date.now()` mocking.
+- **Missing state defaults to box 0.** `undefined`/`null` currentBox is treated as 0, so a skill's first answer produces a valid schedule with no bootstrap step.
+- **Out-of-range input is clamped, not rejected.** A negative box or a box above 4 is clamped into `[0, 4]` before the transition applies, so corrupted or legacy data self-heals on the next answer.
+- **Any wrong answer is a hard reset to box 0** — no partial demotion (e.g., box 4 → box 3). A single miss after four consecutive correct answers costs the entire accumulated interval.
+- **Date-only granularity.** Multiple same-day answers all resolve `lastReviewDate` to that day; the scheduler never stores timestamps.
+
+---
+
+## 5. When the update runs, and where the state lives
+
+**Trigger.** The update runs on every scored answer that touches a skill's mastery record, regardless of origin — regular practice, a learning-module's embedded quiz, the legacy screener, or the adaptive diagnostic. There is no source-based exemption: the schedule advances even during a user's first diagnostic pass.
+
+**Persistence.** The three SRS fields live inline inside the same per-skill mastery record described in `PMP_ADAPTIVE_ENGINE_MATH.md` § 1 — no separate SRS table, review-queue collection, or discrete database columns. The whole mastery record is one entry in a JSON map persisted on the user's row. An adopting platform may normalize this into real columns, but should preserve "one scheduler record per `(user, exam, skill)`."
+
+**Granularity.** The scheduler operates at **skill grain, not item grain**. "Skill X is due" does not reserve the specific question the learner previously missed — it means the skill re-enters normal adaptive rotation with elevated priority (§ 6), and whichever item the selector would otherwise pick is served. Literal same-item resurfacing is handled, if at all, by a separate per-item mistake-quarantine mechanism documented elsewhere.
+
+---
+
+## 6. How it's wired into selection today — corrected from the brief
+
+Worth double-checking against any prior notes: **this scheduler is not shadow-mode.** It may have been at some earlier point, and that description still lingers in two places in the source — but the computed schedule is actively read in three independent places today.
+
+**Where the stale label survives.** The call site that writes `srsBox`/`nextReviewDate`/`lastReviewDate` is still annotated as a "shadow write — compute and persist, nothing reads these yet," and the type carrying the three fields still describes them as "shadow mode — written but not yet read by UI." Both comments are documentation debt; neither is true of the current codebase.
+
+**What actually consumes `nextReviewDate` today:**
+
+1. **Selection priority.** The shared additive priority function summarized in `PMP_ADAPTIVE_ENGINE_MATH.md` § 6 includes a rule: a skill whose `nextReviewDate` is on or before today gets a flat **+1.5** priority boost — the same function that ranks the weakest-skill focus set (top ~30% by priority) and biases in-session item draw (~70/30 focus/exploratory). An overdue skill genuinely gets served more often, not just flagged.
+2. **Dedicated UI surfacing.** The by-skill practice view exposes a filter tab with a live overdue count, a nudge banner ("Spaced Review — N skills due today") that routes into the overdue-filtered view, and a per-skill badge showing the review date.
+3. **AI Tutor context.** An "overdue for review" boolean is computed per skill and surfaced in the tutor's system context for the two weaker proficiency tiers, so its coaching can reference due-for-review state, not just accuracy.
+
+**Net assessment.** It is a **soft, additive nudge**, not a hard gate. Overdue status contributes +1.5 where the base accuracy-band term alone can contribute up to +3 — a never-reviewed, still-weak skill generally outranks an overdue-but-stronger one, and there is no "serve the SRS queue first" rule anywhere in the selector. This is real, live-read spaced-repetition signal woven into the general adaptive-selection and UI layers — just not a scheduler that overrides everything else.
+
+---
+
+## 7. Constants reference (validated defaults)
+
+| Constant | Value |
+|---|---|
+| Number of boxes | 5 (boxes 0–4) |
+| Box intervals (days), indexed by box | `[1, 3, 7, 14, 30]` |
+| Max box | 4 (capped) |
+| Advance rule | correct → `box + 1`, capped at max |
+| Reset rule | any wrong answer → hard reset to box 0 |
+| Undefined / missing / out-of-range box | clamped or defaulted to box 0 |
+| Date granularity | date-only (`YYYY-MM-DD`) |
+| Trigger scope | every scored answer, all attempt sources (practice, module quiz, screener, diagnostic) |
+| Storage grain | per `(user, exam, skill)` — not per item |
+| Selection-priority contribution when overdue | **+1.5**, additive, one term among ~5 |
+| Wiring status | **live** in selection priority, by-skill UI, and AI Tutor context — not shadow-mode |
+| Corroboration | every transition and interval covered by the reference's own unit-test suite |
+
+---
+
+## 8. Open items for the adopting platform
+
+1. **Retire the "shadow mode" language wherever it's ported.** If onboarding material, comments, or prior planning docs describe this scheduler as shadow-mode or "computed but unread," don't carry that forward — correct it against § 6.
+2. **Decide whether overdue-review should become a hard gate rather than a soft additive signal.** Today a weak-but-not-overdue skill's base accuracy-band term can outrank an overdue-but-stronger skill. A retention contract requiring guaranteed spaced-repetition ordering needs to specify that as new behavior.
+3. **Decide item-level vs. skill-level resurfacing.** This scheduler reschedules at skill grain only; it does not guarantee the exact missed item returns. Specify how item-level resurfacing, if required, composes with skill-level scheduling and any separate mistake-quarantine mechanism.
+4. **Multi-exam keying.** Key the scheduler record by `(user, exam, skill)` from the start — the reference is single-exam and never exercised cross-exam collisions here, unlike the mastery record's explicit multi-exam mapping in `PMP_ADAPTIVE_ENGINE_MATH.md` § 8.
+5. **Decide how far to extend SRS surfacing beyond one practice view.** Today the "due" filter, nudge banner, and badges live in a single view; other adaptive modes only feel the scheduler indirectly through the shared priority score.
+
+---
+
+**Source:** `src/utils/srsEngine.ts` (update function, box-interval constant); `src/hooks/useScoreRecalculation.ts` (per-answer call site; source of the stale "shadow write" comment); `src/brain/learning-state.ts` (mastery-record type carrying the SRS fields, incl. the stale "shadow mode" comment); `src/hooks/useAdaptiveLearning.ts` (priority function's overdue-review rule, and the weakest-skill/next-question selection it feeds); `src/components/StudyModesSection.tsx` (due-count filter, nudge banner, per-skill badges); `src/utils/tutorContextBuilder.ts` + `src/types/tutorChat.ts` (AI Tutor overdue-for-review flag); `tests/srsEngine.test.ts` (unit-test suite corroborating § 7); `supabase/migrations/0000_initial_schema.sql` (`skill_scores` JSONB column holding the whole record — no dedicated SRS columns exist).
+
+*Extracted from a shipped single-exam adaptive engine and its test suite; all thresholds are corroborated by that suite. Values are validated defaults, not immutable constants — the rule shapes are the contract; re-tune the numbers against your own cohort.*
