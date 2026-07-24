@@ -1,171 +1,360 @@
-# User Data Inventory — Source Schema for the Migration Script
+# PMP User Data Inventory — Concrete Schema Extraction
 
-**Purpose.** This is the input to the platform-migration script: a complete inventory of the reference application's database — every table, its columns (type + nullability), foreign keys, indexes, row-level-security (RLS) policies, and a per-table row-count slot. Unlike the other `pass_migration` docs (which are vendor-neutral *pattern* specs), this one is **concrete by necessity** — a migration script needs the real table and column names, so they are kept verbatim.
+**Status:** Spec extraction — concrete schema snapshot for direct reuse, not a behavior-pattern abstraction.
+**Audience:** Whoever writes the PMP → PASS data-migration script.
+**Scope:** Every table, column, constraint, RLS policy, index, RPC, and trigger defined by `supabase/migrations/0000`–`0028` in PraxisMakesPerfect, read on 2026-07-11. Unlike sibling spec-extraction docs (e.g. `PMP_ADAPTIVE_ENGINE_MATH.md`), this one keeps PMP's real table/column names — it's meant to sit next to an actual migration script, not be re-abstracted into exam-agnostic terms first.
 
-**Provenance & accuracy caveat.** Reconstructed from the 26 sequential SQL migrations (`0000_initial_schema.sql` … `0025_account_deletion_request.sql`), composing each table's final state by folding in later `ALTER … ADD COLUMN`. **The migration sequence is NOT a clean linear history** (placeholders, double-defined tables, drift), so the schema below is the *replay* result — it must be reconciled against a **live dump** before the migration runs (see §6, §7). Row counts are deliberately left **TBD** — they are volatile and only needed at migration time. The reference DB has on the order of a handful of real users (classmates), so volumes are tiny.
+This is a **static read of the 29 migration files**, not a live database introspection — no live Supabase project was queried. Row counts, current sequence state, and any drift applied outside the migrations folder (dashboard edits, hotfixes) are not captured; see Hazard 7. Hazard 3 documents a case where the migration-file history and the live database have already disagreed once — diff this document against a live schema snapshot before trusting either blindly.
 
----
+All tables live in `public`. All but `assessment_reset_archive` enforce per-row ownership via RLS keyed to `auth.uid() = user_id`. `questions` and `skills` are reference/content tables, not user data, included for completeness.
 
-## 1. Overview
+## Cross-cutting: the admin-access helper
 
-- **22 tables**, all in schema `public`. **20 are per-user** (keyed by a `user_id` UUID → `auth.users`); **2 are shared content** (`questions`, `skills` — global, no `user_id`).
-- **The per-user partition key is uniform:** `user_id` (UUID) everywhere except `assessment_reset_archive` (`target_user_id`). `user_progress.user_id` is *both* the PK and the FK to `auth.users`, making it the 1:1 profile-extension row per auth user.
-- **No FK constraints from user tables to content tables.** `question_id` / `skill_id` are carried as plain TEXT columns (app-validated references, not DB-enforced) — so content can be migrated/seeded independently of user data.
-- **RLS is enabled on every table.** Owner policies key on `auth.uid() = user_id`; admin reads key on an `is_admin_email(...)` allowlist function (the allowlist is a hard-coded email set — omitted here as PII).
-- **ID generation is mixed:** `uuid_generate_v4()` (uuid-ossp, 0000-era tables) and `gen_random_uuid()` (pgcrypto, 0004-onward). A fresh DB must have both extensions.
+`is_admin_email(email TEXT) RETURNS BOOLEAN` — defined `0000`, re-`CREATE OR REPLACE`'d identically in `0007` (no schema change). Hardcodes one allow-listed address in a Postgres array literal (email omitted here as PII). `SECURITY DEFINER` → search_path pinned to `''` (`0027`) → `SECURITY INVOKER` (`0028`, safe — touches no tables). Referenced as `USING (is_admin_email(auth.jwt() ->> 'email'))` in every admin-read policy below.
 
 ---
 
-## 2. User-data vs. content classification (the key cut for migration)
+## 1. `user_progress` (0000; extended by 0001, 0002, 0009, 0011, 0012, 0016, 0019, 0020, 0021, 0025, 0026)
 
-| Class | Tables |
-|---|---|
-| **Shared content** (copy/seed once, not per-user) | `questions`, `skills` |
-| **Per-user, CASCADE on user delete** | `user_progress`, `responses`, `practice_responses`, `study_plans`, `learning_path_progress`, `module_visit_sessions`, `section_interactions`, `module_notes`, `focus_item_checks`, `focus_item_seen_at`, `user_glossary_terms`, `practice_missed_questions`, `redemption_sessions`, `chat_sessions`, `chat_messages`, `user_subscriptions`, `vocab_attempts` |
-| **Per-user, SET NULL on user delete** (row survives de-identified) | `question_reports`, `beta_feedback`, `assessment_reset_archive` (`target_user_id`) |
+One row per user — the aggregate profile/progress record that replaced the Firestore `users/{uid}` document. PK doubles as the FK to `auth.users`.
 
-A per-user migration iterates users and copies their rows from the CASCADE + SET-NULL groups; the content group is migrated once. `user_progress` is the anchor (1 row/user); everything else is 0..N rows/user joined on `user_id`.
+| Column | Type | Null? | Default | Added |
+|---|---|---|---|---|
+| user_id | UUID | NOT NULL (PK) | — | 0000 |
+| email | TEXT | NULL | — | 0000 |
+| display_name | TEXT | NULL | — | 0000 |
+| login_count | INTEGER | NULL | 0 | 0000 |
+| last_login_at | TIMESTAMPTZ | NULL | — | 0000 |
+| last_active_at | TIMESTAMPTZ | NULL | — | 0000 |
+| screener_complete | BOOLEAN | NULL | false | 0000 |
+| diagnostic_complete | BOOLEAN | NULL | false | 0000 |
+| full_assessment_complete | BOOLEAN | NULL | false | 0000 |
+| domain_scores | JSONB | NULL | `{}` | 0000 |
+| skill_scores | JSONB | NULL | `{}` | 0000 |
+| weakest_domains | JSONB | NULL | `[]` | 0000 |
+| factual_gaps | JSONB | NULL | `[]` | 0000 |
+| error_patterns | JSONB | NULL | `[]` | 0000 |
+| flagged_questions | JSONB | NULL | `{}` | 0000 |
+| distractor_errors | JSONB | NULL | `{}` | 0000 |
+| skill_distractor_errors | JSONB | NULL | `{}` | 0000 |
+| screener_results | JSONB | NULL | `{}` | 0000 |
+| pre_assessment_question_ids | JSONB | NULL | `[]` | 0000 |
+| full_assessment_question_ids | JSONB | NULL | `[]` | 0000 |
+| recent_practice_question_ids | JSONB | NULL | `[]` | 0000 |
+| screener_item_ids | JSONB | NULL | `[]` | 0000 |
+| total_questions_seen | INTEGER | NULL | 0 | 0000 |
+| practice_response_count | INTEGER | NULL | 0 | 0000 |
+| streak | INTEGER | NULL | 0 | 0000 |
+| last_session | JSONB | NULL | — | 0000 |
+| migration_version | INTEGER | NULL | 1 | 0000 |
+| global_scores | JSONB | NULL | — | 0000, re-added 0011 (Hazard 3) |
+| created_at | TIMESTAMPTZ | NULL | NOW() | 0000 |
+| updated_at | TIMESTAMPTZ | NULL | NOW() | 0000 (app-managed, no trigger) |
+| last_full_assessment_session_id | TEXT | NULL | — | 0001 |
+| last_screener_session_id | TEXT | NULL | — | 0001 |
+| account_role | TEXT | NULL | — | 0002 |
+| full_name | TEXT | NULL | — | 0002 |
+| preferred_display_name | TEXT | NULL | — | 0002 |
+| university | TEXT | NULL | — | 0002 |
+| program_type | TEXT | NULL | — | 0002 |
+| program_state | TEXT | NULL | — | 0002 |
+| delivery_mode | TEXT | NULL | — | 0002 |
+| training_stage | TEXT | NULL | — | 0002 |
+| certification_state | TEXT | NULL | — | 0002 |
+| `"current_role"` | TEXT | NULL | — | 0002 (quoted, reserved word) |
+| certification_route | TEXT | NULL | — | 0002 |
+| primary_exam | TEXT | NULL | — | 0002 |
+| planned_test_date | DATE | NULL | — | 0002 |
+| retake_status | TEXT | NULL | — | 0002 |
+| number_of_prior_attempts | INTEGER | NULL | — | 0002 |
+| target_score | INTEGER | NULL | — | 0002 |
+| study_goals | JSONB | NULL | `[]` | 0002 |
+| weekly_study_hours | TEXT | NULL | — | 0002 |
+| biggest_challenge | JSONB | NULL | `[]` | 0002 |
+| used_other_resources | BOOLEAN | NULL | — | 0002 |
+| other_resources_list | JSONB | NULL | `[]` | 0002 |
+| what_was_missing | TEXT | NULL | — | 0002 |
+| onboarding_complete | BOOLEAN | NULL | false | 0002 |
+| redemption_credits | INTEGER | NOT NULL | 0 | 0009 |
+| practice_questions_since_credit | INTEGER | NOT NULL | 0 | 0009 |
+| redemption_high_score | NUMERIC(5,2) | NOT NULL | 0 | 0009 |
+| adaptive_diagnostic_complete | BOOLEAN | NOT NULL | FALSE | 0012 |
+| diagnostic_question_ids | TEXT[] | NOT NULL | `{}` | 0012 |
+| last_diagnostic_session_id | TEXT | NULL | — | 0012 |
+| baseline_snapshot | JSONB | NULL | — | 0016 |
+| consent_accepted_at | TIMESTAMPTZ | NULL | — | 0019 |
+| first_name | TEXT | NULL | — | 0020 |
+| last_name | TEXT | NULL | — | 0020 |
+| zip_code | TEXT | NULL | — | 0020 |
+| school_attending | TEXT | NULL | — | 0020 |
+| purpose | TEXT | NULL | — | 0020 |
+| how_did_you_hear | TEXT | NULL | — | 0020 |
+| post_assessment_snapshot | JSONB | NULL | — | 0021 |
+| post_assessment_completed_at | TIMESTAMPTZ | NULL | — | 0021 |
+| deletion_requested_at | TIMESTAMPTZ | NULL | — | 0025 |
+| retake_complete | BOOLEAN | NULL | FALSE | 0026 |
+| retake_completed_at | TIMESTAMPTZ | NULL | — | 0026 |
 
----
-
-## 3. Per-table inventory
-
-Compact form. `PK` = primary key; `FK` = foreign key + on-delete; `IX` = indexes; `RLS` = policy summary; `CK` = check constraints. Columns are `name (type, NULL?)`; types shortened (TS = TIMESTAMPTZ).
-
-### 3.1 `user_progress` — the profile/progress anchor (created 0000; +many)
-1 row per user; PK **`user_id`** = FK `auth.users(id) ON DELETE CASCADE`. ~70 columns added across 0000/0001/0002/0009/0011/0012/0016/0019/0020/0021/0025. Grouped:
-- **Identity/session:** `email`, `display_name`, `login_count` (int), `last_login_at`/`last_active_at` (TS), `streak` (int), `last_session` (JSONB), `migration_version` (int), `created_at`/`updated_at`.
-- **Assessment flags + state:** `screener_complete`, `diagnostic_complete`, `full_assessment_complete`, `adaptive_diagnostic_complete` (bool NOT NULL, 0012); session-id pointers `last_full_assessment_session_id`, `last_screener_session_id` (0001), `last_diagnostic_session_id` (0012); question-id arrays (JSONB/`TEXT[]`): `pre_/full_assessment_question_ids`, `recent_practice_question_ids`, `screener_item_ids`, `diagnostic_question_ids` (0012).
-- **Scoring (JSONB):** `domain_scores`, `skill_scores`, `weakest_domains`, `factual_gaps`, `error_patterns`, `flagged_questions`, `distractor_errors`, `skill_distractor_errors`, `screener_results`, `global_scores` (see §6 — drift), `baseline_snapshot` (0016), `post_assessment_snapshot` (0021), `total_questions_seen`/`practice_response_count` (int).
-- **Onboarding/profile (0002, 0020):** `account_role`, `full_name`/`first_name`/`last_name`, `preferred_display_name`, `university`/`school_attending`, `program_type`/`program_state`/`delivery_mode`/`training_stage`, `certification_state`/`certification_route`, `"current_role"` (quoted — reserved word), `primary_exam`, `planned_test_date` (DATE), `retake_status`, `number_of_prior_attempts`/`target_score` (int), `study_goals`/`biggest_challenge`/`other_resources_list` (JSONB), `weekly_study_hours`, `used_other_resources` (bool), `what_was_missing`, `onboarding_complete` (bool), `zip_code`, `purpose`, `how_did_you_hear`.
-- **Redemption counters (0009, NOT NULL):** `redemption_credits` (int), `practice_questions_since_credit` (int), `redemption_high_score` (NUMERIC(5,2)).
-- **Compliance:** `consent_accepted_at` (TS, 0019), `deletion_requested_at` (TS, 0025).
-- **IX:** `idx_user_progress_deletion_requested (deletion_requested_at) WHERE deletion_requested_at IS NOT NULL` (partial). **RLS:** owner FOR ALL `auth.uid() = user_id`; admin SELECT. **Backfill:** 0020 splits `full_name`→`first_name`/`last_name`.
-
-### 3.2 Answer logs
-- **`responses`** (0000; +0015 `is_followup`,`cognitive_complexity`,`skill_question_index`; +0023 `selected_answer`) — assessment answers. Cols: `id` (PK uuid), `user_id` (FK CASCADE), `session_id` (NOT NULL), `question_id` (NOT NULL), `skill_id`, `domain_id` (int), `domain_ids` (JSONB), `assessment_type` (NOT NULL — app-enum, no DB CHECK), `is_correct` (bool NOT NULL), `confidence`, `time_spent`/`time_on_item_seconds` (int), `selected_answers`/`correct_answers` (JSONB), `selected_answer` (TEXT, comma-joined for multi-select), `distractor_pattern_id`, `created_at`. **IX:** `(user_id, session_id)`. **RLS:** owner FOR ALL; admin SELECT.
-- **`practice_responses`** (0000) — practice-mode answers. Cols: `id` (PK), `user_id` (FK CASCADE), `session_id` (NOT NULL), `question_id` (NOT NULL), `skill_id`, `domain_id`, `selected_answer`, `correct_answer`, `is_correct` (NOT NULL), `confidence`, `time_on_item_seconds`, `shuffled_order` (JSONB), `created_at`. **IX:** `(user_id, session_id)`. **RLS:** owner FOR ALL.
-
-### 3.3 Learning-path & module engagement
-- **`learning_path_progress`** ⚠️ **double-defined (0003 skill-scoped vs 0005 module-scoped) — see §6.** FK CASCADE. Replay yields the 0003 shape (`skill_id`, `lesson_viewed`, `questions_correct/total`, `accuracy` FLOAT, `status` CK ∈ not_started/emerging/approaching/demonstrating/mastered, UNIQUE `(user_id, skill_id)`); production likely has the 0005 shape (`module_id`, `progress_pct`, `visit_count`, interactive-exercise cols, UNIQUE `(user_id, module_id)`). **Introspect the live DB.**
-- **`module_visit_sessions`** (0005) — per-visit engagement. `id` (PK), `user_id` (FK CASCADE), `module_id`/`skill_id` (NOT NULL), `visit_number` (int), `started_at`/`ended_at`, `duration_seconds`, `scroll_depth_pct` (FLOAT, CK 0..1), `sections_visible` (`TEXT[]`), `source` (CK ∈ learning_path/skill_help_drawer). **IX:** `(user_id, module_id)`, `(user_id, skill_id)`. **RLS:** owner + admin SELECT.
-- **`section_interactions`** (0005) — per-section engagement. `id` (PK), `user_id` (FK CASCADE), `visit_session_id` (FK `module_visit_sessions` CASCADE), `module_id`, `section_index` (int), `section_type` (CK ∈ paragraph/anchor/list/comparison/interactive/visual), `interactive_type` (CK ∈ 5 values or NULL), `became_visible`, `visible_seconds`, `exercise_completed`/`exercise_score` (CK 0..1)/`exercise_attempts`/`exercise_data` (JSONB). **UNIQUE** `(visit_session_id, section_index)`. **IX:** 3 incl. partial `WHERE section_type='interactive'`. **RLS:** owner + admin SELECT.
-- **`module_notes`** (0006) — `id` (PK), `user_id` (FK CASCADE), `module_id`/`skill_id` (NOT NULL), `note_text` (NOT NULL default `''`), timestamps. **UNIQUE** `(user_id, module_id)`. **RLS:** owner + admin SELECT.
-
-### 3.4 Focus items (study-plan follow-through)
-- **`focus_item_checks`** (0006) — `id` (PK), `user_id` (FK CASCADE), `study_plan_id` (FK `study_plans` CASCADE), `item_type` (CK ∈ vocabulary/misconception/trap), `item_key`, `checked` (bool), `checked_at`. **UNIQUE** `(user_id, study_plan_id, item_type, item_key)`. **RLS:** owner only.
-- **`focus_item_seen_at`** (0006) — "New" badge tracking. `id` (PK), `user_id` (FK CASCADE), `skill_id`, `last_seen_at`. **UNIQUE** `(user_id, skill_id)`. **RLS:** owner only.
-
-### 3.5 Study plans
-- **`study_plans`** (0000, re-`IF NOT EXISTS` 0001) — `id` (PK), `user_id` (FK CASCADE; **nullable on replay**, see §6), `plan_document` (JSONB NOT NULL — the full generated plan), timestamps. **IX:** `(user_id, created_at DESC)`. **RLS:** owner SELECT/INSERT + admin SELECT.
-
-### 3.6 Redemption (quarantine) — see `PMP_REDEMPTION_V2_RULES.md`
-- **`practice_missed_questions`** (0009; +0013 `wrong_count`,`entry_reason`,`in_redemption`) — `id` (PK), `user_id` (FK CASCADE), `question_id` (NOT NULL), `skill_id`, `missed_at`, `correct_count` (int), `redeemed` (bool), `redeemed_at`, `wrong_count` (int NOT NULL), `entry_reason` (hint|miss_threshold), `in_redemption` (bool NOT NULL). **UNIQUE** `(user_id, question_id)` (upsert target). **IX:** `(user_id)`, partial `(user_id, redeemed) WHERE redeemed=false`. **RLS:** owner. **0013 backfills** flags.
-- **`redemption_sessions`** (0009) — round history. `id` (PK), `user_id` (FK CASCADE), `played_at`, `questions_attempted`/`questions_correct` (int), `score_pct` (NUMERIC(5,2)). **IX:** `(user_id)`. **RLS:** owner SELECT/INSERT (append-only).
-
-### 3.7 Glossary & vocab — see `PMP_SRS_INTERVALS.md`
-- **`user_glossary_terms`** (0008; +0024 `miss_count`) — `id` (PK), `user_id` (FK CASCADE), `term` (NOT NULL), `user_definition`, `revealed` (bool), `revealed_at`, `added_from_skill_id`, `miss_count` (int NOT NULL), timestamps. **UNIQUE** `(user_id, term)`. **Trigger** `update…updated_at` (the only DB `updated_at` trigger). **RLS:** owner incl. **DELETE**.
-- **`vocab_attempts`** (0024) — drill audit log. `id` (PK), `user_id` (FK CASCADE), `term`, `skill_id`, `direction` (term|definition), `is_correct` (bool), `timed_out` (bool), `created_at`. **IX:** `(user_id)`, `(user_id, skill_id)`. **RLS:** owner SELECT/INSERT.
-
-### 3.8 AI tutor chat
-- **`chat_sessions`** (0010) — `id` (PK), `user_id` (FK CASCADE), `title`, `session_type` (CK ∈ page-tutor/floating), `message_count` (int), timestamps, `metadata` (JSONB). **IX:** `(user_id)`, `(user_id, updated_at DESC)`. **RLS:** owner.
-- **`chat_messages`** (0010) — `id` (PK), `session_id` (FK `chat_sessions` CASCADE), `user_id` (FK CASCADE), `role` (CK ∈ user/assistant), `content` (NOT NULL), `created_at`, `assistant_intent`, `quiz_question_id`/`quiz_skill_id`/`quiz_answered`, `artifact_type`/`artifact_payload` (JSONB), `page_context` (JSONB), `metadata` (JSONB). **IX:** `(session_id, created_at)`, `(user_id, created_at)`, partial `(quiz_question_id) WHERE NOT NULL`. **RLS:** owner.
-
-### 3.9 Subscriptions (paywall)
-- **`user_subscriptions`** (0014, schema-qualified `public.user_subscriptions`) — `id` (PK), `user_id` (FK CASCADE), `stripe_customer_id`, `stripe_subscription_id` (UNIQUE col), `plan` (CK ∈ free/premium_monthly/premium_yearly, default free), `status` (CK ∈ active/canceled/past_due/trialing/incomplete), `current_period_end`, timestamps. **UNIQUE** `(user_id)`. **IX:** on stripe customer + sub. **RLS:** owner SELECT; a service-role "manage" policy `USING(true) WITH CHECK(true)` (see §6 flag).
-
-### 3.10 Feedback / reports (SET NULL on delete)
-- **`question_reports`** (0000) — `id` (PK), `user_id` (FK **SET NULL**), `question_id` (NOT NULL), denormalized `user_email`/`user_display_name`, `assessment_type`, `targets`/`issue_types` (JSONB), `severity`, `notes`, `status` (default open), `question_snapshot` (JSONB), `app_version`, timestamps. **RLS:** owner INSERT/SELECT + admin SELECT/UPDATE.
-- **`beta_feedback`** (0000) — `id` (PK), `user_id` (FK **SET NULL**), denormalized email/name, `category` (NOT NULL), `context_type`/`feature_area`, `message` (NOT NULL), `page`/`session_id`/`app_version`/`browser_info`, `status` (default new), timestamps. **RLS:** owner INSERT/SELECT + admin SELECT/UPDATE.
-
-### 3.11 Admin archive (service-role only)
-- **`assessment_reset_archive`** (0004) — `id` (PK), `target_user_id` (FK **SET NULL**), `actor_email` (NOT NULL), `scope` (CK ∈ screener/full_diagnostic), `created_at`, `user_progress_snapshot`/`responses_archived` (JSONB), `response_count` (int). **IX:** `(target_user_id, created_at DESC)`, `(created_at DESC)`. **RLS:** enabled with **zero policies** → service-role only (intentional).
-
-### 3.12 Shared content (no `user_id`)
-- **`questions`** (0000) — PK `id` (TEXT business id). ~24 cols incl. `item_format`, `is_multi_select`, `correct_answer_count`/`option_count_expected` (int), `has_case_vignette`/`case_text`, `question_stem` (NOT NULL), `options`/`correct_answers`/`distractors` (JSONB), `correct_explanation`, `core_concept`, `domain` (int)/`domain_name`, `skill_id`/`skill_name`, `cognitive_complexity`/`complexity_rationale`, `rationale`, `is_foundational` (bool). **IX:** `(skill_id)`, `(domain)`. **RLS:** authenticated SELECT; admin manage.
-- **`skills`** (0000) — PK `id` (TEXT). `name` (NOT NULL), `domain_id` (TEXT), `concept_label`, `prerequisites` (JSONB), `prerequisite_reasoning`, timestamps. **RLS:** authenticated SELECT; admin manage.
-
----
-
-## 4. Identity & deletion model
-
-- **Identity** = the `auth.users(id)` UUID (the auth provider's user id). Every per-user row stores it in `user_id`/`target_user_id`. RLS keys on `auth.uid()`. `user_progress` is the 1:1 profile row.
-- **Cascade map:** deleting an `auth.users` row destroys all CASCADE rows (§2 row 2) and de-identifies the SET-NULL rows (§2 row 3, user link → NULL, row retained).
-- **Soft deletion (0025):** there is **no hard self-delete**. `deletion_requested_at` records intent (owner sets it via RLS update); an admin purges later. The migration `0025` notes the auth-user delete API was unavailable with the current key format, so only the request flag is wired. Admin triage: `WHERE deletion_requested_at IS NOT NULL`.
-- **Consent (0019):** `consent_accepted_at` (NULL = not accepted) stores ToS/privacy acceptance time.
-
----
-
-## 5. Functions / RPCs / triggers
-
-| Object | Migration | Purpose |
-|---|---|---|
-| `is_admin_email(email) → bool` | 0000 (re-defined 0007) | Admin allowlist check backing every admin RLS policy. |
-| `update_user_glossary_terms_updated_at()` + trigger | 0008 | The only DB-maintained `updated_at` (glossary). All other `updated_at` are app-set. |
-| `increment_wrong_count(user, question, skill) → (new_wrong_count, now_in_redemption)` | 0013 | Atomic practice-miss upsert; quarantines at the 3rd wrong. |
-| `record_diagnostic_miss(user, question, skill) → (…)` | 0022 | Diagnostic-miss sibling: bumps `wrong_count` but never quarantines. |
-| `increment_glossary_miss(user, term, skill) → int` | 0024 | Atomic vocab-miss bump; re-flags `revealed=false`. The only RPC with a self-guard (`p_user_id = auth.uid()` else RAISE). |
+FK: `user_id` → `auth.users(id)` ON DELETE CASCADE. Index: `idx_user_progress_deletion_requested`, partial on `(deletion_requested_at)` WHERE not null (0025). RLS: owner FOR ALL (0000); admin SELECT via `is_admin_email` (0007). No RPC/trigger targets this table.
 
 ---
 
-## 6. Migration hazards — reconcile against a live dump before trusting replay
+## 2. `responses` (0000; extended 0015, 0023)
 
-The migration history is **not** a clean linear replay. A migration-script author must verify these against the live DB:
+Core scoring event log — one row per screener/full-assessment/diagnostic question response.
 
-1. **`learning_path_progress` defined twice (0003 skill-scoped vs 0005 module-scoped), both `IF NOT EXISTS`.** Clean replay = the 0003 shape; production (app uses `module_id`) almost certainly = the 0005 shape (± 0003 leftovers), with duplicate-named RLS policies. **Highest-risk table — introspect live columns.**
-2. **`study_plans` created twice (0000 nullable `user_id` vs 0001 NOT NULL).** Replay keeps nullable; legacy NULL rows possible.
-3. **`global_scores` re-added by 0011** ("restore the column declared in the initial schema but missing from the live database") — **direct evidence the live DB drifted from 0000**. Treat 0000 as aspirational.
-4. **0017 & 0018 are placeholders (`SELECT 1;`).** They exist only to align local filenames with remote migration-version rows whose original SQL was lost. Their intended work (`simplified_onboarding`, `post_assessment_snapshot`) was re-authored at **0020** and **0021**. So filename order ≠ production order.
-5. **`user_subscriptions` "service role can manage" policy is `USING(true) WITH CHECK(true)`** — permissive at the SQL layer; security rests on the app only writing via the service key. Note for any RLS audit.
-6. **`assessment_reset_archive` has RLS enabled with no policies** — intentional service-role-only; not a misconfiguration.
-7. **App-enum-only columns:** many TEXT columns documented as enums (`assessment_type`, `account_role`, `program_type`, `retake_status`, `direction`, `entry_reason`, …) have **no DB CHECK** — they're app-enforced. Real DB CHECKs exist only on the columns noted in §3.
-8. **Data backfills run in 0013 (redemption flags) and 0020 (name split)** — no-ops on an empty DB, but relevant when migrating onto existing data.
+| Column | Type | Null? | Default | Added |
+|---|---|---|---|---|
+| id | UUID | NOT NULL (PK) | `uuid_generate_v4()` | 0000 |
+| user_id | UUID | NULL | — | 0000 |
+| session_id | TEXT | NOT NULL | — | 0000 |
+| question_id | TEXT | NOT NULL | — | 0000 |
+| skill_id | TEXT | NULL | — | 0000 |
+| domain_id | INTEGER | NULL | — | 0000 |
+| domain_ids | JSONB | NULL | `[]` | 0000 |
+| assessment_type | TEXT | NOT NULL | — | 0000 |
+| is_correct | BOOLEAN | NOT NULL | — | 0000 |
+| confidence | TEXT | NULL | — | 0000 |
+| time_spent | INTEGER | NULL | — | 0000 |
+| time_on_item_seconds | INTEGER | NULL | — | 0000 |
+| selected_answers | JSONB | NULL | `[]` | 0000 |
+| correct_answers | JSONB | NULL | `[]` | 0000 |
+| distractor_pattern_id | TEXT | NULL | — | 0000 |
+| created_at | TIMESTAMPTZ | NULL | NOW() | 0000 |
+| is_followup | BOOLEAN | NULL | false | 0015 |
+| cognitive_complexity | TEXT | NULL | — | 0015 |
+| skill_question_index | INTEGER | NULL | — | 0015 |
+| selected_answer | TEXT | NULL | — | 0023, plain-string letter, comma-joined for multi-select |
 
----
-
-## 7. Row-count snapshot (fill at migration time)
-
-Left **TBD** — row counts are volatile and only needed when the migration runs. Generate a live snapshot then (the build plan, `02_BUILD_PLAN_DETAILED.md § 3.3`, gives the canonical dump command; a quick count is below):
-
-```sql
--- Per-table live row counts (run against the source DB at migration time)
-SELECT relname AS table, n_live_tup AS approx_rows
-FROM pg_stat_user_tables
-WHERE schemaname = 'public'
-ORDER BY relname;
-```
-
-| Table | Class | Approx rows |
-|---|---|---|
-| user_progress | per-user (anchor) | TBD |
-| responses | per-user | TBD |
-| practice_responses | per-user | TBD |
-| learning_path_progress | per-user ⚠️ | TBD |
-| module_visit_sessions | per-user | TBD |
-| section_interactions | per-user | TBD |
-| module_notes | per-user | TBD |
-| focus_item_checks | per-user | TBD |
-| focus_item_seen_at | per-user | TBD |
-| study_plans | per-user | TBD |
-| practice_missed_questions | per-user | TBD |
-| redemption_sessions | per-user | TBD |
-| user_glossary_terms | per-user | TBD |
-| vocab_attempts | per-user | TBD |
-| chat_sessions | per-user | TBD |
-| chat_messages | per-user | TBD |
-| user_subscriptions | per-user | TBD |
-| question_reports | per-user (SET NULL) | TBD |
-| beta_feedback | per-user (SET NULL) | TBD |
-| assessment_reset_archive | admin archive | TBD |
-| questions | content | TBD |
-| skills | content | TBD |
+FK: `user_id` → `auth.users(id)` CASCADE. Index: `idx_responses_user_session(user_id, session_id)`. RLS: owner FOR ALL (0000); admin SELECT (0007).
 
 ---
 
-## 8. Notes for the migration script (Phase 11)
+## 3. `practice_responses` (0000)
 
-- **Migration is small.** The source has on the order of a handful of real users; the build plan's chosen approach (per `DECISIONS.md` #16) is "no migration script — export emails, notify users to re-register." This inventory exists so that decision can be revisited with full knowledge, and so a targeted export (e.g. a user's study plans / progress) is buildable if wanted.
-- **Iterate users; copy by `user_id`.** Pull each user's rows from the per-user tables (§2). Content (`questions`, `skills`) is seeded once, not per-user, and the target platform is multi-exam — so source content maps to **one** exam's bank on the target, not the target's whole catalog.
-- **Resolve the §6 hazards first** by dumping the **live** schema (not replaying migrations) — especially `learning_path_progress`.
-- **Carry the diagnostic evidence, not just scores.** Several JSONB columns (`skill_scores`, `distractor_errors`, `baseline_snapshot`, the `plan_document`) hold the misconception/diagnostic signal the target platform values; map them rather than flattening to a single score (cf. the platform's diagnostic-tier model).
-- **Re-key to the target's identity + taxonomy.** `user_id` becomes the target auth id; loose `skill_id`/`question_id` TEXT references must be remapped to the target exam's microskill/item ids (the finest valid diagnostic unit per exam).
+Legacy free-practice log, separate from `responses` (mirrors old Firestore `practiceResponses`).
+
+`id` UUID PK `uuid_generate_v4()`; `user_id` UUID null, FK CASCADE; `session_id` TEXT NOT NULL; `question_id` TEXT NOT NULL; `skill_id` TEXT null; `domain_id` INTEGER null; `selected_answer` TEXT null; `correct_answer` TEXT null; `is_correct` BOOLEAN NOT NULL; `confidence` TEXT null; `time_on_item_seconds` INTEGER null; `shuffled_order` JSONB null; `created_at` TIMESTAMPTZ default NOW().
+
+FK user_id→auth.users(id) CASCADE. Index: `idx_practice_user_session(user_id, session_id)`. RLS: owner FOR ALL. No admin-read policy exists for this table (0007 covers seven others, skips this one).
+
+---
+
+## 4. `question_reports` (0000)
+
+Per-question issue reports (admin "Question Reports" tab).
+
+`id` UUID PK; `user_id` UUID null, FK SET NULL; `question_id` TEXT NOT NULL; `user_email` TEXT null; `user_display_name` TEXT null; `assessment_type` TEXT null; `targets` JSONB null default `[]`; `issue_types` JSONB null default `[]`; `severity` TEXT null; `notes` TEXT null; `status` TEXT null default `'open'`; `question_snapshot` JSONB null; `app_version` TEXT null; `created_at`/`updated_at` TIMESTAMPTZ null default NOW() (app-managed).
+
+FK user_id→auth.users(id) SET NULL — denormalizes email/name so a report stays attributable after account deletion. RLS: insert own, select own, admin SELECT, admin UPDATE — all four defined directly in 0000.
+
+---
+
+## 5. `beta_feedback` (0000)
+
+General in-app feedback (admin "Beta Feedback" tab).
+
+`id` UUID PK; `user_id` UUID null, FK SET NULL; `user_email` TEXT; `user_display_name` TEXT; `category` TEXT NOT NULL; `context_type` TEXT; `feature_area` TEXT; `message` TEXT NOT NULL; `page` TEXT; `session_id` TEXT; `app_version` TEXT; `browser_info` TEXT; `status` TEXT default `'new'`; `created_at`/`updated_at` TIMESTAMPTZ default NOW().
+
+FK user_id→auth.users(id) SET NULL. RLS: insert own, select own, admin SELECT, admin UPDATE — all in 0000.
+
+---
+
+## 6. `study_plans` (0000 **and** 0001 — see Hazard 4)
+
+Latest AI-generated study plan per user; v1/v2 both live in `plan_document`, discriminated by `plan_document->>'schemaVersion'`.
+
+`id` UUID PK `uuid_generate_v4()`; `user_id` UUID FK CASCADE — nullable per 0000, `NOT NULL` per 0001 (0000 runs first and wins, see Hazard 4); `plan_document` JSONB NOT NULL; `created_at`/`updated_at` TIMESTAMPTZ default NOW().
+
+Index: `idx_study_plans_user(user_id, created_at DESC)`. RLS: insert/select own, defined identically twice (0000 + 0001, Hazard 4); admin SELECT added 0007. Downstream FK: `focus_item_checks.study_plan_id` → this table's `id`.
+
+---
+
+## 7. `questions` (0000) — content/reference table
+
+Canonical question bank; app falls back to bundled JSON if empty or missing rows.
+
+`id` TEXT PK; `item_format` TEXT; `is_multi_select` BOOLEAN default false; `correct_answer_count` INTEGER default 1; `option_count_expected` INTEGER default 4; `has_case_vignette` BOOLEAN default false; `case_text` TEXT; `question_stem` TEXT NOT NULL; `options` JSONB default `[]`; `correct_answers` JSONB default `[]`; `correct_explanation` TEXT; `core_concept` TEXT; `content_limit` TEXT; `domain` INTEGER; `domain_name` TEXT; `skill_id` TEXT; `skill_name` TEXT; `cognitive_complexity` TEXT; `complexity_rationale` TEXT; `rationale` TEXT; `distractors` JSONB default `[]`; `is_foundational` BOOLEAN default false; `created_at`/`updated_at` default NOW().
+
+Indexes: `idx_questions_skill(skill_id)`, `idx_questions_domain(domain)`. RLS: authenticated SELECT; admin ALL. No FKs — `skill_id`/`domain` are unenforced references.
+
+---
+
+## 8. `skills` (0000) — content/reference table
+
+Skill metadata (name, domain, prerequisites).
+
+`id` TEXT PK; `name` TEXT NOT NULL; `domain_id` TEXT; `concept_label` TEXT; `prerequisites` JSONB default `[]`; `prerequisite_reasoning` TEXT; `created_at`/`updated_at` default NOW().
+
+RLS: authenticated SELECT; admin ALL. No FKs.
+
+---
+
+## 9. `learning_path_progress` (0003 **and** 0005 — CONFIRMED double-definition, see Hazard 1)
+
+Per-user, per-skill Learning Path progress. Both migrations `CREATE TABLE IF NOT EXISTS` with different shapes; 0003 runs first and wins.
+
+0003 schema (what's actually live): `id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `skill_id` TEXT NOT NULL; `lesson_viewed` BOOLEAN NOT NULL default false; `time_spent_seconds` INTEGER NOT NULL default 0; `lesson_completed_at` TIMESTAMPTZ; `questions_submitted` BOOLEAN NOT NULL default false; `questions_correct`/`questions_total` INTEGER NOT NULL default 0; `accuracy` FLOAT (CHECK 0–1); `status` TEXT NOT NULL default `'not_started'` (CHECK IN not_started/emerging/approaching/demonstrating/mastered); `created_at`/`updated_at` NOT NULL default NOW(). UNIQUE(user_id, skill_id).
+
+0005's inert columns (absent from the live table): `module_id` TEXT NOT NULL, `progress_pct` FLOAT, `visit_count` INTEGER, `total_interactive_score` FLOAT, `interactive_exercises_completed`/`total` INTEGER, `last_visited_at` TIMESTAMPTZ; UNIQUE(user_id, module_id); no CHECK on status.
+
+Indexes: `idx_lpp_user_id` (0003), `idx_lpp_user` (0005) — both created, redundant. RLS: 6 total owner policies (3 per migration, differently named, functionally identical); admin SELECT added 0007.
+
+---
+
+## 10. `assessment_reset_archive` (0004)
+
+Snapshot of `user_progress` + deleted `responses` rows, written by the admin `admin-reset-assessment` function before it wipes a user's screener/diagnostic data.
+
+`id` UUID PK; `target_user_id` UUID FK SET NULL; `actor_email` TEXT NOT NULL; `scope` TEXT NOT NULL (CHECK IN screener/full_diagnostic); `created_at` TIMESTAMPTZ NOT NULL default NOW(); `user_progress_snapshot` JSONB NOT NULL default `{}`; `responses_archived` JSONB NOT NULL default `[]`; `response_count` INTEGER NOT NULL default 0.
+
+Indexes: `idx_assessment_reset_archive_target(target_user_id, created_at DESC)`, `idx_assessment_reset_archive_created(created_at DESC)`. RLS: enabled, **zero policies** — deliberate; only the service-role key can read or write this table.
+
+---
+
+## 11. `module_visit_sessions` (0005)
+
+One row per open/close visit of a Learning Path module.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `module_id`/`skill_id` TEXT NOT NULL; `visit_number` INTEGER NOT NULL default 1; `started_at` TIMESTAMPTZ NOT NULL default NOW(); `ended_at` TIMESTAMPTZ; `duration_seconds` INTEGER default 0; `scroll_depth_pct` FLOAT default 0 (CHECK 0–1); `sections_visible` TEXT[] default `{}`; `source` TEXT default `'learning_path'` (CHECK IN learning_path/skill_help_drawer); `created_at` TIMESTAMPTZ NOT NULL default NOW().
+
+Indexes: `idx_mvs_user_module(user_id, module_id)`, `idx_mvs_user_skill(user_id, skill_id)`. RLS: owner SELECT/INSERT/UPDATE; admin SELECT (0007).
+
+---
+
+## 12. `section_interactions` (0005)
+
+Per-section engagement within a module visit.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `visit_session_id` UUID null, FK CASCADE → `module_visit_sessions.id`; `module_id` TEXT NOT NULL; `section_index` INTEGER NOT NULL; `section_type` TEXT NOT NULL (CHECK IN paragraph/anchor/list/comparison/interactive/visual); `interactive_type` TEXT null (CHECK null or scenario-sorter/drag-to-order/term-matcher/click-selector/card-flip); `became_visible` BOOLEAN default false; `visible_seconds` FLOAT default 0; `exercise_completed` BOOLEAN null; `exercise_score` FLOAT null (CHECK 0–1); `exercise_attempts` INTEGER default 0; `exercise_data` JSONB null; `created_at`/`updated_at` NOT NULL default NOW(). UNIQUE(visit_session_id, section_index).
+
+Indexes: `idx_si_visit(visit_session_id)`, `idx_si_user_module(user_id, module_id)`, `idx_si_interactive` (partial, section_type='interactive'). RLS: owner SELECT/INSERT/UPDATE; admin SELECT (0007).
+
+---
+
+## 13. `module_notes` (0006)
+
+Free-text notes per module.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `module_id`/`skill_id` TEXT NOT NULL; `note_text` TEXT NOT NULL default `''`; `created_at`/`updated_at` NOT NULL default NOW(). UNIQUE(user_id, module_id).
+
+Index: `idx_mn_user(user_id)`. RLS: owner SELECT/INSERT/UPDATE; admin SELECT (0007).
+
+---
+
+## 14. `focus_item_checks` (0006)
+
+Checkoff state for study-plan-generated focus items.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `study_plan_id` UUID NOT NULL FK CASCADE → `study_plans.id`; `item_type` TEXT NOT NULL (CHECK IN vocabulary/misconception/trap); `item_key` TEXT NOT NULL; `checked` BOOLEAN NOT NULL default false; `checked_at` TIMESTAMPTZ; `created_at` TIMESTAMPTZ NOT NULL default NOW(). UNIQUE(user_id, study_plan_id, item_type, item_key).
+
+Index: `idx_fic_user_plan(user_id, study_plan_id)`. RLS: owner SELECT/INSERT/UPDATE. No admin-read policy.
+
+---
+
+## 15. `focus_item_seen_at` (0006)
+
+Last time a user opened the Focus Items panel per skill (drives "New" badges).
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `skill_id` TEXT NOT NULL; `last_seen_at` TIMESTAMPTZ NOT NULL default NOW(); `created_at` TIMESTAMPTZ NOT NULL default NOW(). UNIQUE(user_id, skill_id).
+
+Index: `idx_fisa_user(user_id)`. RLS: owner SELECT/INSERT/UPDATE. No admin-read policy.
+
+---
+
+## 16. `user_glossary_terms` (0008; extended 0024)
+
+Per-(user, term) glossary — user's own definition, reveal state, drill-miss frequency.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `term` TEXT NOT NULL; `user_definition` TEXT null; `revealed` BOOLEAN NOT NULL default false; `revealed_at` TIMESTAMPTZ null; `added_from_skill_id` TEXT null; `created_at`/`updated_at` NOT NULL default now(); `miss_count` INTEGER NOT NULL default 0 (0024). UNIQUE(user_id, term).
+
+Index: `idx_user_glossary_terms_user_id(user_id)`. RLS: owner SELECT/INSERT/UPDATE/**DELETE** — the only table with an owner DELETE policy.
+
+Trigger `user_glossary_terms_updated_at` BEFORE UPDATE → `update_user_glossary_terms_updated_at()` (0008), sets `NEW.updated_at = now()` — the only DB-enforced `updated_at` trigger in the schema (Hazard 8).
+
+RPC `increment_glossary_miss(p_user_id, p_term, p_skill_id) RETURNS INT` (0024) — upserts, increments `miss_count`, force-clears `revealed`, raises if `p_user_id ≠ auth.uid()`. `SECURITY DEFINER` → search_path pinned `pg_catalog,public` (0027) → `SECURITY INVOKER` (0028).
+
+---
+
+## 17. `practice_missed_questions` (0009; extended 0013)
+
+Redemption Rounds quarantine bank — one row per (user, question) ever missed in practice.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `question_id` TEXT NOT NULL; `skill_id` TEXT null; `missed_at` TIMESTAMPTZ NOT NULL default now(); `correct_count` INTEGER NOT NULL default 0; `redeemed` BOOLEAN NOT NULL default false; `redeemed_at` TIMESTAMPTZ null; `wrong_count` INTEGER NOT NULL default 0 (0013); `entry_reason` TEXT null (`'hint'|'miss_threshold'`, 0013); `in_redemption` BOOLEAN NOT NULL default false (0013). UNIQUE(user_id, question_id).
+
+Indexes: `idx_practice_missed_questions_user_id(user_id)`, `idx_practice_missed_questions_unredeemed` (partial, redeemed=false). RLS: owner SELECT/INSERT/UPDATE.
+
+RPCs: `increment_wrong_count(p_user_id, p_question_id, p_skill_id) RETURNS TABLE(new_wrong_count INT, now_in_redemption BOOLEAN)` (0013) — quarantines at wrong_count≥3, preserves true once set. `record_diagnostic_miss(...)` (0022), same signature — increments the counter but never itself sets `in_redemption` true. Both: `SECURITY DEFINER` → search_path pinned `pg_catalog,public` (0027) → `SECURITY INVOKER` (0028), closing an IDOR since ownership is now enforced by RLS on the write.
+
+---
+
+## 18. `redemption_sessions` (0009)
+
+One row per completed Redemption Round; feeds personal-best score.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `played_at` TIMESTAMPTZ NOT NULL default now(); `questions_attempted`/`questions_correct` INTEGER NOT NULL default 0; `score_pct` NUMERIC(5,2) NOT NULL default 0.
+
+Index: `idx_redemption_sessions_user_id(user_id)`. RLS: owner SELECT/INSERT only — no UPDATE/DELETE, rounds are write-once.
+
+---
+
+## 19. `chat_sessions` (0010)
+
+One row per AI Tutor conversation. CLAUDE.md's migration index names this feature's tables `tutor_sessions`/`tutor_messages`/`tutor_artifacts`; the actual tables are `chat_sessions`/`chat_messages`, no separate artifacts table (Hazard 5).
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `title` TEXT null; `session_type` TEXT NOT NULL (CHECK IN page-tutor/floating); `message_count` INTEGER NOT NULL default 0; `created_at`/`updated_at` NOT NULL default now(); `metadata` JSONB null.
+
+Indexes: `idx_chat_sessions_user_id(user_id)`, `idx_chat_sessions_user_updated(user_id, updated_at DESC)`. RLS: owner SELECT/INSERT/UPDATE.
+
+---
+
+## 20. `chat_messages` (0010)
+
+Every message in every session, plus inline quiz/artifact metadata.
+
+`id` UUID PK; `session_id` UUID NOT NULL FK CASCADE → `chat_sessions`; `user_id` UUID NOT NULL FK CASCADE; `role` TEXT NOT NULL (CHECK IN user/assistant); `content` TEXT NOT NULL; `created_at` TIMESTAMPTZ NOT NULL default now(); `assistant_intent` TEXT null (`quiz`/`vocabulary`/`weak-areas`/`app-guide`/`general`); `quiz_question_id`/`quiz_skill_id` TEXT null; `quiz_answered` BOOLEAN null; `artifact_type` TEXT null (`vocabulary-list`/`weak-areas-summary`/null); `artifact_payload`/`page_context`/`metadata` JSONB null.
+
+Indexes: `idx_chat_messages_session_created(session_id, created_at)`, `idx_chat_messages_user_created(user_id, created_at)`, `idx_chat_messages_quiz_question` (partial, quiz_question_id not null). RLS: owner SELECT/INSERT/UPDATE.
+
+---
+
+## 21. `user_subscriptions` (0014, `public.user_subscriptions`)
+
+Stripe subscription state per user (paywall).
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE, UNIQUE; `stripe_customer_id` TEXT null; `stripe_subscription_id` TEXT null, UNIQUE; `plan` TEXT NOT NULL default `'free'` (CHECK IN free/premium_monthly/premium_yearly); `status` TEXT NOT NULL default `'active'` (CHECK IN active/canceled/past_due/trialing/incomplete); `current_period_end` TIMESTAMPTZ null; `created_at`/`updated_at` NOT NULL default now().
+
+Indexes: `idx_user_subscriptions_stripe_customer`, `idx_user_subscriptions_stripe_sub`. RLS: owner SELECT; **`"Service role can manage subscriptions" FOR ALL USING(true) WITH CHECK(true)`** — no `TO service_role` clause, so it's PUBLIC-scoped, not actually role-restricted (Hazard 6).
+
+---
+
+## 22. `vocab_attempts` (0024)
+
+Raw attempt log for the Vocabulary Fluency Drill, distinct from `user_glossary_terms`'s aggregate state.
+
+`id` UUID PK; `user_id` UUID NOT NULL FK CASCADE; `term` TEXT NOT NULL; `skill_id` TEXT null; `direction` TEXT NOT NULL (`'term'|'definition'`); `is_correct` BOOLEAN NOT NULL; `timed_out` BOOLEAN NOT NULL default false; `created_at` TIMESTAMPTZ NOT NULL default now().
+
+Indexes: `idx_vocab_attempts_user(user_id)`, `idx_vocab_attempts_user_skill(user_id, skill_id)`. RLS: owner SELECT/INSERT — the only migration using defensive `DROP POLICY IF EXISTS` before `CREATE POLICY`.
+
+---
+
+## RPCs & triggers — index
+
+All five functions and the one trigger are documented in full where they're introduced: `is_admin_email` under "Cross-cutting" above; `update_user_glossary_terms_updated_at()` + the `user_glossary_terms_updated_at` trigger + `increment_glossary_miss` under table 16 (`user_glossary_terms`); `increment_wrong_count` + `record_diagnostic_miss` under table 17 (`practice_missed_questions`). Security-mode timeline for all four non-trigger functions is identical: `SECURITY DEFINER` at creation → `search_path` pinned in `0027` → flipped to `SECURITY INVOKER` in `0028`. One nit: `0027`'s comment claims it pins search_path on "every SECURITY DEFINER function" and lists `update_user_glossary_terms_updated_at` among them, but `0008` never actually declares that function `SECURITY DEFINER` (plain `plpgsql`, default INVOKER) — harmless, but the comment overstates its own scope.
+
+---
+
+## Known hazards for a migration script
+
+1. **`learning_path_progress` double-definition — CONFIRMED.** `0003` and `0005` both `CREATE TABLE IF NOT EXISTS learning_path_progress` with different shapes (0003: keyed `(user_id, skill_id)`, lesson/quiz tracking, `status` CHECK; 0005: keyed `(user_id, module_id)`, visit/interactive-exercise tracking, no `status` CHECK). `IF NOT EXISTS` + filename-order execution means **0003 wins**: every 0005-only column (`module_id`, `progress_pct`, `visit_count`, `total_interactive_score`, `interactive_exercises_*`, `last_visited_at`) is silently absent from the live table, though 0005's index and its 3 differently-named RLS policies still get created (harmless duplication). This document can't confirm which schema is actually live — an out-of-band `ALTER TABLE` could have added 0005's columns invisibly. Verify against a live schema before writing migration code here.
+2. **`0017`/`0018` placeholders — CONFIRMED no-ops.** Both are just `SELECT 1;` behind a comment explaining they exist to keep local filenames in sync with a remote database that already had those version numbers recorded. Nothing is missing: the content meant for those slots was authored on branch `audit-fixes-april-2026` (commit `0667ec8`, 2026-04-08) as `0017_simplified_onboarding.sql` / `0018_post_assessment_snapshot.sql`, then re-slotted as `0020`/`0021` once the placeholder numbers were taken (both migrations narrate this in their own headers). Trust migration *content*, not *filename number*, for sequencing.
+3. **`global_scores` drift on `user_progress` — CONFIRMED, evidence of untracked schema drift.** `0000` declares `global_scores JSONB` in the initial schema; `0011` re-adds the identical column, commented "Restore ... column ... missing from the live database." Production's real table once lacked a column `0000` says it created — file history and live history have already diverged at least once. `0011`'s `IF NOT EXISTS` makes this case safe, but treat the migrations folder as a possibly-incomplete record of what's live.
+4. **`study_plans` double `CREATE TABLE`** (found in this pass, not one of the three originally flagged). `0000` and `0001` both create the table and both issue identically-named `CREATE POLICY` statements with no guard. Postgres has no `CREATE POLICY IF NOT EXISTS` — replaying 0000 then 0001 raises a duplicate-policy error on 0001. (0000 also leaves `user_id` nullable; 0001 declares `NOT NULL` — 0000 wins, so it's nullable in practice.)
+5. **CLAUDE.md's migration index doesn't match `0010`'s SQL.** CLAUDE.md describes it as adding `tutor_sessions, tutor_messages, tutor_artifacts`; the file actually creates `chat_sessions`/`chat_messages` only, with artifacts as `artifact_type`/`artifact_payload` columns. Confirms the working assumption for this doc: `.sql` files, not CLAUDE.md prose, are ground truth.
+6. **`user_subscriptions`'s "service role" policy isn't role-scoped.** `FOR ALL USING (true) WITH CHECK (true)` has no `TO service_role` clause, so per Postgres RLS semantics it applies to `PUBLIC`, not only the service-role key. Don't reproduce this pattern in PASS.
+7. **Row counts are unavailable.** This is a static read of 29 files; no live project was queried. **TODO:** pull a live schema + row-count snapshot from production and diff against Hazards 1 and 3 before migrating.
+8. **Only one DB-enforced `updated_at` trigger exists** (`user_glossary_terms_updated_at`, 0008) — every other table's `updated_at` is app-managed, not database-enforced.
+
+---
+
+*Extracted from `supabase/migrations/0000`–`0028` in the PraxisMakesPerfect repo, read in full on 2026-07-11. No live database was queried; see Hazard 7.*

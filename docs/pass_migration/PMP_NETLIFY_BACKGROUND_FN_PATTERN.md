@@ -1,116 +1,103 @@
-# Long-Running AI Call — Background Function + Poll Pattern (Generic Spec)
+# Netlify Background Function Pattern — Generic Specification
 
-**Purpose.** This document specifies, in vendor-neutral terms, the pattern used to run AI calls that take longer than a normal serverless request allows (roughly anything over ~10 seconds). It is extracted from a working reference implementation and abstracted so it can be reimplemented on any host. The pattern: **a dispatcher accepts the request and returns immediately (HTTP 202); a background worker does the slow work and writes the result to a durable store out-of-band; the client polls that store for the result.**
+**Status:** Spec extraction (pattern documentation for re-implementation).
+**Audience:** Engineers building any feature that calls a large language model for work exceeding a normal synchronous HTTP request budget (roughly 10 seconds).
+**Scope:** The three-actor async job pattern for long-running AI synthesis calls — dispatcher, background worker, client poll loop — abstracted from a working single-exam reference into pure, platform-agnostic rules. Includes the correlation mechanism the reference uses to match a poll to its result, and the timing/correlation gaps a re-implementer should design around rather than reproduce.
 
-This is the companion infrastructure to `PMP_STUDY_PLAN_V2_PIPELINE.md` (whose stage 3 runs on exactly this pattern) and is the call shape a future AI-tutor / on-demand-synthesis feature should reuse.
+This is a **specification of behavior**, not a transplant of code. Every number below is a validated default from a shipped implementation; an adopting system may re-tune them, but the *shape* of the contract — acknowledge fast, work out-of-band, hand off through a durable store, poll with a bounded deadline — is what should transfer.
 
----
-
-## 1. The problem
-
-Standard serverless functions have a short wall-clock budget (commonly ~10 s synchronous, ~26 s hard cap on the host this reference targets). A single large LLM synthesis call routinely exceeds that: the reference allows the model up to `max_tokens ≈ 12000` and observes generations that run tens of seconds to a couple of minutes. A synchronous request would time out at the edge, the client would see a 504, and the (expensive) model call would be wasted.
-
-The naive fixes are all bad: raising the synchronous timeout doesn't exist on most hosts; streaming keeps a connection open but couples the client's lifetime to the whole generation and complicates retries; doing the call client-side leaks the API key. The pattern below decouples "request accepted" from "result ready."
+**Pattern classification.** Cross-cutting infrastructure, not a numbered PASS product capability — the request/response shape any capability requiring a long AI call must sit on. In the reference it underlies a study-guide generation feature; on a multi-exam platform the same shape applies to any synthesis job whose duration exceeds a normal request budget.
 
 ---
 
-## 2. The pattern (three parts)
+## 1. Why this pattern exists
 
-1. **Dispatcher → 202.** The client POSTs the job to an endpoint. The endpoint returns **HTTP 202 Accepted** essentially immediately, signalling "the work has started, the result is not in this response." Nothing of value rides on the dispatch response body.
-2. **Background worker.** A worker process (granted a much longer runtime budget) does the slow work: the AI call, validation, and **persisting the result to a durable store** (a database row). The worker's own return value is for logs only — the client never sees it.
-3. **Out-of-band result + poll.** Because the answer is not in the HTTP response, the result is delivered through the store. The client **polls** the store until the result row appears (or a deadline passes). The store row is the completion channel.
+A normal serverless/HTTP function has a short execution ceiling — commonly ~10 seconds — inherited from browser connection expectations, load-balancer idle timeouts, and default function-tier limits. A large, multi-section structured document from a model routinely takes minutes, not seconds, and that doesn't fit.
 
-Sequence:
+Three constraints must hold at once: the client can't hold a connection open for minutes (tabs background, mobile networks drop idle connections, proxies kill long requests); the compute can't run inside the platform's short-lived function tier; and the client still needs to learn "done" without a persistent connection, ideally without a websocket broker or public callback endpoint for one feature.
 
-```
-client ──POST job──▶ dispatcher ──202──▶ client
-                         │
-                         ▼ (async, long budget)
-                     worker: AI call → validate → INSERT result row
-                                                        │
-client ◀──poll store every N s, until row or timeout──┘
-```
+The pattern splits one request/response cycle into three roles: a **dispatcher** that does the minimum synchronous work (auth, validation, pre-flight checks) and returns immediately; a **background worker** that does the long-running call and persists its result to a durable, shared store instead of returning it over the original (already-closed) connection; and a **client poll loop** that re-checks that store on a fixed interval until it finds a result or gives up. The store, not a live connection, is the hand-off point.
+
+**A hosting shortcut worth naming.** Some hosts offer a function variant the platform itself invokes asynchronously: it returns an HTTP 202 before the function's code finishes, then keeps that instance running server-side well beyond the normal ceiling. The reference uses exactly this — one file plays both dispatcher and worker, distinguished only by a filename convention the host recognizes. A platform without an equivalent primitive should implement the two roles as genuinely separate services (dispatcher enqueues; a queue consumer or polled task runner executes) — the contract below holds either way, only the topology differs.
 
 ---
 
-## 3. The reference implementation
+## 2. The dispatcher contract
 
-### 3.1 Platform mechanism
-On the reference host, a function file whose name ends in `-background` is treated as a **background function**: the platform auto-returns **202** to the caller and lets the function run for up to **15 minutes** (versus the ~10–26 s synchronous limit). Host config (`netlify.toml`): functions live in one directory (`[functions] directory = "api"`), and a rewrite maps a friendly path to the function path:
+**Input:** an authenticated request carrying the requester's identity (verified against their own session — no elevated credential needed), the fully-assembled synthesis input (in the reference, a complete prompt string — retrieval/pre-processing already done client-side), provenance metadata to echo into the eventual result, and optionally a client-recorded dispatch timestamp.
 
-```
-[[redirects]]
-  from = "/api/*"
-  to   = "/.netlify/functions/:splat"
-  status = 200
-```
+**Pre-flight validation, synchronous, before work is deferred:** verify the token and resolve identity; validate the body against a strict schema, rejecting malformed payloads immediately; confirm identity matches the subject the request claims to act for; apply reject-before-spending-budget rules — a rate limit (success already exists in a rolling window) and a cooldown after a recent failure. These run against the result store and are gates, not part of the async hand-off itself.
 
-A reimplementation on a different host gets the same shape from a queue + worker, a durable task runner, or any "accept now, run later" primitive — the only requirements are (a) the dispatch returns fast and (b) the worker has a long budget.
-
-### 3.2 Dispatch (client)
-The dispatch function POSTs the request body (with a bearer token) and treats **`status === 202 || res.ok`** as "triggered." It walks a small **endpoint fallback list** (`/api/<fn>` then `/.netlify/functions/<fn>`) so it works whether or not the friendly rewrite is active (e.g. local dev vs. production):
-
-```
-for (const endpoint of CANDIDATE_PATHS) {
-  let res; try { res = await fetch(endpoint, { method:'POST', headers:{…, Authorization:`Bearer ${token}` }, body }); }
-            catch { continue; }                       // network error → try next
-  if (res.status === 202 || res.ok) { triggered = true; break; }
-  const body = await res.text();
-  if (res.status === 404 || res.status === 405 || body.startsWith('<!doctype')) continue;  // route absent → try next
-  throw new Error(parse(body)?.error ?? 'request failed');   // real error → surface it
-}
-if (!triggered) throw new Error('API route unavailable …');
-```
-
-Note the discrimination: a `404/405` or an HTML doctype body means "this route isn't a function here, try the other path"; any other non-OK is a genuine failure and is thrown.
-
-### 3.3 Worker (server)
-The worker (the `-background` function) does, in order:
-1. **Auth** — verify the bearer token; resolve the user.
-2. **Independent rate-limit check** (see § 5) — return **429 + `Retry-After`** if the user already has a recent successful result. This is enforced server-side specifically so a direct token-authed call can't bypass the client check and run up AI spend.
-3. **The slow AI call** — a single request to the upstream AI API (reference: a mid-tier model, `temperature 0.2`, `max_tokens ≈ 12000`).
-4. **Validate** — minimal structural validation of the model's output (required sections present and non-empty) before persisting.
-5. **Persist the result** — INSERT a row into the results table under the user's own credentials (row-level security: `row.user_id = auth.uid()`). The worker re-attaches any client-supplied precomputed structural data so it doesn't re-fetch.
-6. **On insert failure, write a failure row** — `{ error: true, errorMessage, failedAt }` — so the poller can detect and surface the error instead of hanging until timeout.
-
-The worker's HTTP return (200/500/502/…) goes only to the platform's logs; the client already has its 202.
-
-### 3.4 Poll (client)
-After a successful dispatch, the client polls the results table on a fixed cadence until a deadline:
-- `POLL_INTERVAL = 4000 ms`, `POLL_TIMEOUT = 240_000 ms` (4 minutes).
-- Each tick: query the **newest** row for this user with `created_at > requestedAt`, `limit 1`.
-- No row yet → keep waiting. A row that fails schema normalization (e.g. a failure row) → throw a "could not be parsed / please retry" error. A valid row → return it.
-- Deadline reached with no row → throw "generation timed out."
-
-### 3.5 The hook (client orchestration)
-A thin UI hook wraps dispatch+poll with local state (`generating`, `error`, `history`): fetch the current access token (clear, specific message if the session expired rather than a raw 401), call the combined dispatch-then-poll function, then reload history so the new result appears at the top. Generation eligibility is gated separately (the user must have enough assessment data to generate).
+**Output:** the platform-level acknowledgment (202, or the host's async-function equivalent) returns essentially immediately, sometimes before the handler has reached the long call. **This acknowledges "a job was accepted," not a receipt for a specific job.** The generically correct contract is: *request in, `202 Accepted` plus an explicit, server-issued correlation identifier out* — a token the client can use, unambiguously, to ask "is *this* job done yet?" later. The reference skips the second half; see § 5.1.
 
 ---
 
-## 4. Result correlation: jobId vs. timestamp
+## 3. The background worker contract
 
-The canonical version of this pattern returns a **jobId** from the dispatcher and polls a status endpoint or table keyed by that id. **The reference implementation does NOT use a jobId** — it returns nothing identifying from dispatch and correlates the result by **`(user_id, created_at > requestedAt)`**, taking the newest row created after the request timestamp.
+Once accepted, the worker does the actual synthesis out-of-band:
 
-This is simpler but has a real weakness to flag for any reimplementation:
-- **Race / ambiguity.** If two generations for the same user overlap, or an unrelated row lands in the same table after `requestedAt`, the poller can pick up the wrong row. The reference mitigates this with the rate limit (only one generation per user per window, see § 5) and by validating the row's schema, but it is not airtight.
-- **Recommendation for a clean reimplementation:** have the dispatcher mint and return an explicit `jobId`, write it onto the result/failure row, and poll by `jobId`. This removes the timestamp race, makes "which call produced this row" unambiguous, and lets you support concurrent jobs per user if ever needed. Keep the timestamp as a secondary guard.
+1. **Re-verify auth and pre-flight state.** Dispatcher and worker share a code path in the reference, so this is automatic — a platform that truly splits the two roles must not skip re-validation after a queue hop.
+2. **Call the model** under a timeout materially shorter than the worker's own overall ceiling, leaving headroom for parsing/persistence and preventing a hung upstream call from pinning the worker for its entire budget.
+3. **Validate the model's output** — parseable, every required section present *and non-empty*. Parses-but-missing-a-section is a failure, not a partial success.
+4. **Assemble the persisted result**, stamping the validated output with metadata the client cannot forge: a completion timestamp, the model identifier actually used, a schema-version marker, and the echoed provenance summary from dispatch.
+5. **Persist to the durable, shared result store** — the sole hand-off to the client, since the worker's own return value (once the platform has sent its 202) is never delivered anywhere visible. The write should use the *requesting user's own* scoped credential where the store allows it, so ordinary row-level authorization applies without over-granting the worker.
+6. **On failure, still write something.** If the model call, validation, or store write fails, write a distinguishable failure record — error flag, message, timestamp — rather than nothing. This lets a poller and the dispatcher's cooldown check tell "failed" apart from "no attempt yet" and "still running."
 
----
-
-## 5. Reliability & cost details
-
-- **Client timeout < worker budget — a deliberate but lossy mismatch.** The client gives up polling at **4 minutes**; the worker may run up to **15**. A generation that finishes between minute 4 and minute 15 still **succeeds and is persisted** — the client just surfaced a timeout error and will show the result on the next history load. A reimplementation should either raise the client deadline toward the worker budget or, better, make the persisted result the source of truth in the UI (show "still working…" and let history reconcile) so a slow-but-successful job is never reported as a failure.
-- **Failure rows as a completion signal.** Writing an explicit failure row on the unhappy path is what lets the poller distinguish "failed, stop waiting" from "not done yet, keep waiting." Without it, every failure degrades into a full poll-timeout.
-- **Rate limiting, enforced twice.** The client checks before dispatch; the worker checks independently and returns **429 + `Retry-After`** (reference window: one *successful* generation per 7 days). Critically the server counts **successful** results only (a failure row must not lock the user out), and the server check is the real guard — it exists precisely so a direct token-authed POST can't bypass the client and run up AI spend. For a metered AI feature, the rate limit / quota check belongs in the worker, not just the client.
-- **Auth model.** Dispatch and worker both run under the **user's** token (RLS-scoped writes), not a service-role key — verification uses the user endpoint and the insert satisfies `user_id = auth.uid()`. No elevated key is needed for either step.
+**What "done" means.** There's no explicit status field (`pending`/`running`/`succeeded`/`failed`) — status is inferred from whether a row exists and, if so, its payload shape. Critically, **no row exists at all while the job is in flight**, so a poller cannot tell "still running" from "silently dropped, never started" — both look identical. An "in progress" placeholder row at dispatch time would make these visibly different states.
 
 ---
 
-## 6. Notes for a reimplementation (PASS Phase 5+)
+## 4. The client poll contract
 
-- **Reuse this for any AI call that can exceed the synchronous budget** — on-demand tutoring/explanation, study-plan synthesis, batch grading. The decision rule is simply "can this call exceed ~10 s?"; if yes, use accept-202 + background + poll rather than a synchronous request.
-- **Prefer an explicit `jobId`** (§ 4) over timestamp correlation from day one — it is a small addition that removes a class of bugs and unlocks concurrent jobs.
-- **Treat the result store as the completion channel, not the HTTP response.** The dispatch response carries no payload of value; design the client around "watch the store," and make the persisted row (success or failure) the single source of truth so the client-timeout/worker-budget gap can't misreport a successful job.
-- **Put the cost guard in the worker.** Any per-user quota, rate limit, or spend cap must be enforced server-side in the worker, counting only successful results, returning `429 + Retry-After`. Client-side checks are UX only.
-- **Lock down egress.** The reference's content-security policy restricts `connect-src` to exactly the persistence, AI, payments, and error-reporting origins it needs; a reimplementation should keep the AI provider origin out of the browser entirely (the key lives only in the worker) and allow only the persistence origin in `connect-src` for the polling client.
-- **Portability.** Nothing here is intrinsically tied to one host's `-background` naming convention — the same three-part shape (fast-accept dispatcher, long-budget worker, polled durable result) maps onto a job queue + worker, a managed task runner, or a durable-execution service. Keep the application logic (dispatch contract, result schema, poll loop) independent of the host primitive so the host can change without touching the feature.
+1. **Wait a fixed interval**, then query the result store for a row matching the client's own identity, most-recent first.
+2. **If no row is found**, sleep and retry, up to a wall-clock deadline measured from dispatch — not from when the worker actually started, which the client can't observe.
+3. **If a row is found**, re-validate it against the same output schema the worker used before persisting. A **success shape** (schema-version marker, no error flag) means done — surface it, stop. A **failure shape** or **schema mismatch** is a **terminal failure**, not "still working" — stop immediately; a malformed or failed row will not improve by waiting.
+4. **If the deadline elapses with no row**, surface a timeout. This is *not* a failure row — the client stopped looking, not the worker working. The worker's ceiling may materially exceed the poll deadline, so the job can still be legitimately in flight — and can still succeed — after the client already shows an error (§ 5.2).
+
+Interval and deadline are a pure UX tuning knob; neither is derived from the worker's execution ceiling in the reference — exactly the problem below.
+
+---
+
+## 5. Known gaps in the reference — design around these, don't reproduce them
+
+### 5.1 No server-issued correlation identifier — timestamp-based correlation races
+
+**Confirmed present in current source.** The dispatcher never mints or returns an explicit job identifier. The client's only per-request "handle" is a timestamp it generates itself, locally, before dispatching; it sends that value in the request body, but the worker never reads, stores, or echoes it into the persisted row — effectively write-only. Correlation on poll reduces to: *"for my identity, give me the single most-recently-created row whose creation time is after the timestamp I locally remembered before dispatching."* That is correlation by identity plus a loose time cursor plus "assume the newest one is mine," not correlation by an explicit, unambiguous identifier.
+
+Three weaknesses follow. **It cannot disambiguate two jobs in flight for the same identity at once** — nothing on the dispatcher blocks a second dispatch while a first is still running, since the only pre-flight rejections are "a success already exists" and "a failure happened too recently," neither of which fires while a first attempt is genuinely in progress with no row written yet. Two browser tabs, two devices, or a retry racing a merely-slow (not failed) earlier attempt are realistic triggers. **"Most recent wins" can silently deliver the wrong job's output** — with two jobs in flight carrying different inputs, whichever worker persists last is what *both* pollers observe; a client can be shown a result that doesn't match what it submitted, with no error signal. **It depends on wall-clock ordering across two systems** (client's local clock at dispatch vs. the store's server-generated timestamp) — weaker than an identifier passed through unchanged. Fix: § 7.
+
+### 5.2 Worker execution budget materially exceeds the client's poll deadline
+
+**Confirmed present in current source; both numbers verified.** Three budgets are configured independently, not derived from one another: the **worker's overall execution ceiling** (a host limit) is **~15 minutes**; the **model call's internal timeout**, so a hung upstream call can't pin the worker for its whole budget, is **10 minutes** — deliberately under the ceiling, leaving headroom for parsing/persistence afterward; the **client's poll deadline** is **4 minutes**, polling every **4 seconds** (~60 attempts).
+
+The client reports a hard timeout at four minutes in scenarios where the worker is fully entitled, by its own contract, to keep working for up to fifteen. A job taking six or eight minutes — well within the worker's budget, nowhere near the model-call sub-timeout — looks identical to a genuinely stuck one.
+
+The confusing downstream consequence: the worker keeps running after the client stops polling, so a job already reported as timed out can still **succeed** and write a result minutes later. If the user, believing it failed, retries, the dispatcher's own rate limit ("a success already exists in the window") now fires — they're told they *already generated this*, right after being told it *failed*. Nothing proactively surfaces the late success; the only way to discover it is reloading whatever view lists past results, or retrying and getting blocked by the rate limit that proves the first attempt worked. Fix: § 7.
+
+---
+
+## 6. Constants reference (validated defaults)
+
+| Constant | Value |
+|---|---|
+| Background worker execution ceiling (host limit) | ~15 minutes |
+| Model-call sub-timeout (worker-internal, inside the ceiling) | 10 minutes |
+| Client poll interval | 4 seconds |
+| Client poll deadline | 4 minutes (~60 attempts) |
+| Successful-result rate-limit window | 1 per 7 days, per identity |
+| Post-failure cooldown window | 15 minutes after the most recent failure row (independent constant — coincidentally the same number as the worker ceiling, not related to it) |
+| Correlation mechanism in the reference | identity + "most recent row after locally-remembered dispatch timestamp" (no server-issued job ID) |
+
+---
+
+## 7. Open items for the adopting platform
+
+1. **Mint and thread an explicit correlation identifier** through dispatch → worker → persisted row → poll query (a token returned in the 202, or a client-supplied idempotency key); filter the poll query on it directly, not "newest row for this identity." Highest-leverage fix vs. the reference (§ 5.1).
+2. **Reconcile the three timing budgets** so client patience is never shorter than the worker's actual contract, or design the UI to keep checking past the poll window instead of showing a bare failure (§ 5.2).
+3. **Add a status field or an "in progress" placeholder row** at dispatch time, so a poller can distinguish not-yet-started, running, succeeded, and failed instead of inferring status from row presence alone (§ 3) — the same correlation ID from item 1 makes this cheap.
+4. **Decide whether dispatcher and worker are one deployable unit or two.** The reference's single-file convenience (§ 1) is a hosting shortcut, not load-bearing; choose based on what the target infrastructure offers for long-running execution.
+5. **Decide deliberately how a client-reported timeout interacts with rate limiting**, rather than inheriting the reference's "already generated" collision as an accident of untuned constants (§ 5.2).
+
+---
+
+*Extracted from a shipped single-exam AI-synthesis pipeline. Source: `api/study-plan-background.ts` (dispatcher + worker, collapsed via a host-managed async function), `src/services/studyPlanService.ts` (`requestStudyPlanBackground`, prompt assembly, result normalization), `src/hooks/useStudyPlanManager.ts` (dispatch → poll → result orchestration), `api/_shared.ts` (rate-limit window math, timeout-wrapped fetch), `netlify.toml` (the `/api/*` rewrite fronting the dispatcher). Values are validated defaults, not immutable constants — the contract shape is what should transfer; re-tune the numbers, and close the correlation and timeout gaps, against your own infrastructure.*
