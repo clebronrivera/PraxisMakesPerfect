@@ -51,6 +51,7 @@ import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import { getSkillPhaseDEntry } from '../data/skillPhaseDLookup';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
+import { withShuffledOptions } from '../utils/optionShuffle';
 import type { UserProfile } from '../hooks/useProgressTracking';
 import type { StudyPlanDocumentV2 } from '../types/studyPlanTypes';
 import { useFocusItems } from '../hooks/useFocusItems';
@@ -169,6 +170,15 @@ function MiniQuiz({
   const [showFeedback, setShowFeedback] = useState(false);
   const [results, setResults] = useState<MiniQuizResult[]>([]);
 
+  // Display-only: shuffle option order deterministically to defeat the bank's
+  // stored-correct-answer letter skew. Scoring below keeps using the raw
+  // `current` question (canonical letters) — only the rendered order changes.
+  const current = questions[currentIdx];
+  const displayQuestion = useMemo(
+    () => (current ? withShuffledOptions(current) : current),
+    [current]
+  );
+
   if (questions.length === 0) {
     return (
       <div className="py-8 text-center">
@@ -180,7 +190,6 @@ function MiniQuiz({
     );
   }
 
-  const current = questions[currentIdx];
   const isLast = currentIdx === questions.length - 1;
 
   function handleSubmit() {
@@ -229,7 +238,7 @@ function MiniQuiz({
       </div>
 
       <QuestionCard
-        question={current}
+        question={displayQuestion}
         selectedAnswers={selectedAnswers}
         onSelectAnswer={(letter) => {
           if (showFeedback) return;

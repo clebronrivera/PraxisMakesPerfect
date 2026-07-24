@@ -8,11 +8,12 @@
 //   - 3 correct answers to clear a question. No confidence shortcuts.
 //   - End screen shows X/Y correct + personal best.
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Timer, RotateCcw, Home, ChevronRight, Trophy } from 'lucide-react';
 import { Button } from './ui';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
+import { withShuffledOptions } from '../utils/optionShuffle';
 import type { MissedQuestion, RoundResult } from '../hooks/useRedemptionRounds';
 
 const SECONDS_PER_QUESTION = 90;
@@ -46,6 +47,14 @@ export default function RedemptionRoundSession({
 
   const currentQ = questions[index];
   const currentRow = missedRows[index];
+
+  // Display-only: shuffle option order deterministically to defeat the bank's
+  // stored-correct-answer letter skew. Scoring/persistence below keeps using
+  // currentQ (canonical letters) — only the rendered choice order changes.
+  const displayQ = useMemo(
+    () => (currentQ ? withShuffledOptions(currentQ) : currentQ),
+    [currentQ]
+  );
 
   // ── Advance to next question (or finish) ─────────────────────────────────
   const advance = useCallback((answer: string | null) => {
@@ -162,7 +171,7 @@ export default function RedemptionRoundSession({
   // ── Round in progress ─────────────────────────────────────────────────────
   if (!currentQ) return null;
 
-  const letters = Object.keys(currentQ.choices || {});
+  const displayOptions = displayQ?.options ?? Object.entries(currentQ.choices || {}).map(([letter, text]) => ({ letter, text }));
   const timerPct = (timeLeft / SECONDS_PER_QUESTION) * 100;
   const timerWarning = timeLeft <= 15;
   const canSubmit = selectedAnswer !== null;
@@ -204,8 +213,7 @@ export default function RedemptionRoundSession({
 
         {/* ── Answer choices ── */}
         <div className="space-y-2">
-          {letters.map(letter => {
-            const choiceText = (currentQ.choices as Record<string, string>)[letter] ?? '';
+          {displayOptions.map(({ letter, text: choiceText }) => {
             const isSelected = selectedAnswer === letter;
             return (
               <button
