@@ -1,4 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
+import { Button } from './ui';
 
 interface TermsOfServiceProps {
   onBack: () => void;
@@ -8,13 +9,15 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <button
+        <Button
+          variant="subtle"
+          size="sm"
           onClick={onBack}
-          className="mb-8 flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-amber-700"
+          className="mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
-        </button>
+        </Button>
 
         <article className="prose prose-slate max-w-none prose-headings:font-serif prose-h1:text-3xl prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-p:text-sm prose-p:leading-relaxed prose-li:text-sm">
           <h1>Terms of Service</h1>

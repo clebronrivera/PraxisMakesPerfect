@@ -5,6 +5,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
+import { notifyError } from '../utils/toast';
 
 export interface QuestionReport {
   id?: string;
@@ -132,6 +133,10 @@ export function useQuestionReports() {
       }));
     } catch (error) {
       console.error('[useQuestionReports] Error fetching all reports:', error);
+      // Same admin-dashboard gap as useBetaFeedback.getAllFeedback: loadAdminData()
+      // (mount + Refresh button) has no dedicated error state for this fetch, so a
+      // failure here silently renders as "no reports" in the admin table.
+      notifyError('Couldn’t load question reports — try refreshing the dashboard.');
       return [];
     }
   }, [user]);

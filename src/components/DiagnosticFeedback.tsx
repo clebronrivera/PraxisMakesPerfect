@@ -7,6 +7,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { DiagnosticFeedback as DiagnosticFeedbackType } from '../brain/diagnostic-feedback';
+import { Button } from './ui';
 
 interface DiagnosticFeedbackProps {
   feedback: DiagnosticFeedbackType;
@@ -47,12 +48,15 @@ export default function DiagnosticFeedback({
           </ul>
         )}
         {onDismiss && (
-          <button
+          <Button
+            variant="neutral"
+            size="sm"
+            fullWidth
+            className="mt-4"
             onClick={onDismiss}
-            className="mt-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:border-[color:#d97706]/40 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
           >
             Dismiss
-          </button>
+          </Button>
         )}
       </div>
     );
@@ -103,7 +107,7 @@ export default function DiagnosticFeedback({
         <div className={hasFramework ? 'mb-4' : ''}>
           <div className="flex items-center gap-2 mb-2">
             <Lightbulb className="h-4 w-4" style={{ color: '#d97706' }} />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">What to do next</span>
+            <span className="editorial-overline text-slate-400">What to do next</span>
           </div>
           <ul className="space-y-1.5">
             {meaningfulTips.map((tip, i) => (
@@ -143,7 +147,7 @@ export default function DiagnosticFeedback({
 
           {frameworkOpen && (
             <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">How this relates to the framework</p>
+              <p className="editorial-overline mb-1 text-slate-400">How this relates to the framework</p>
               <p className="mb-3 text-sm leading-relaxed text-slate-600">
                 {feedback.frameworkGuidance!.relationship}
               </p>
@@ -175,12 +179,14 @@ export default function DiagnosticFeedback({
 
       {onDismiss && (
         <div className="mt-4 border-t border-slate-200 pt-4">
-          <button
+          <Button
+            variant="neutral"
+            size="sm"
+            fullWidth
             onClick={onDismiss}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:border-[color:#d97706]/40 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:#d97706]"
           >
             Dismiss
-          </button>
+          </Button>
         </div>
       )}
     </div>

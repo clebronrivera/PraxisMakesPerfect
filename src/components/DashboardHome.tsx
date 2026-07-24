@@ -4,8 +4,8 @@
 //
 // Structure (top to bottom):
 //   1. Welcome + readiness hero            — full violet→indigo gradient panel
-//   2. The Four Domains                    — white surface cards, per-domain hue
-//   3. Today's Focus + This Week / Redemption
+//   2. Today's Focus + This Week / Redemption  — the one specific recommendation, ahead of browse-only content
+//   3. The Four Domains                    — white surface cards, per-domain hue
 //   4. The Toolshed (5 feature tiles)
 //
 // Props interface is preserved 1:1 with the old component so App.tsx needs no changes.
@@ -16,6 +16,7 @@ import { PROGRESS_SKILLS, PROGRESS_DOMAINS } from '../utils/progressTaxonomy';
 import { formatStudyTime } from '../hooks/useDailyStudyTime';
 import { PROFICIENCY_META, TOTAL_SKILLS } from '../utils/skillProficiency';
 import type { ProgressSummary } from '../utils/progressSummaries';
+import { Surface } from './ui';
 
 // ─── Props ──────────────────────────────────────────────────────────────────
 
@@ -126,7 +127,7 @@ function DomainCard({
       <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white mb-3`}>
         {DOMAIN_GLYPH[domainId] ?? '◆'}
       </div>
-      <p className={`text-[10px] font-black uppercase tracking-wide ${text}`}>{name}</p>
+      <p className={`editorial-overline ${text}`}>{name}</p>
       <p className="text-xs text-slate-500 mt-1">{pct}% · {profLabelFor(pct)}</p>
       <div className="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden">
         <div className={`h-full rounded-full bg-gradient-to-r ${grad}`} style={{ width: `${pct}%` }} />
@@ -166,7 +167,7 @@ function RedemptionCard({
 
   return (
     <div className="rounded-2xl p-5 bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/20">
-      <p className="text-[10px] font-black uppercase tracking-[0.12em] text-indigo-100 mb-2">Quarantine · Redemption</p>
+      <p className="editorial-overline text-indigo-100 mb-2">Quarantine · Redemption</p>
       <p className="text-[32px] font-semibold leading-none">
         {bankCount} <span className="text-base text-indigo-100 font-normal">in orbit</span>
       </p>
@@ -298,7 +299,7 @@ export default function DashboardHome({
     <div className="space-y-6 pb-14">
       {/* ── Welcome + readiness hero ──────────────────────────────────── */}
       <section>
-        <p className="eyebrow text-indigo-600 mb-1">Welcome back</p>
+        <p className="editorial-overline text-indigo-600 mb-1">Welcome back</p>
         <h1 className="text-3xl font-extrabold text-slate-900 mb-6">
           Hi, <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">{greetingName}.</span>
         </h1>
@@ -308,7 +309,7 @@ export default function DashboardHome({
             <ReadinessRing pct={readinessPct} phase={readinessPhase} />
 
             <div className="flex-1 min-w-0">
-              <p className="eyebrow text-indigo-100 mb-1">Exam readiness</p>
+              <p className="editorial-overline text-indigo-100 mb-1">Exam readiness</p>
               <h2 className="text-2xl font-bold leading-snug">
                 <span className="text-white">{demonstratingCount}</span> of {TOTAL_SKILLS} skills<br className="hidden sm:block" />
                 at {PROFICIENCY_META.proficient.label}.
@@ -321,15 +322,15 @@ export default function DashboardHome({
 
               <div className="flex flex-wrap gap-6 mt-4 pt-3 border-t border-white/20">
                 <div>
-                  <p className="text-[10px] uppercase tracking-wide text-indigo-200">Readiness phase</p>
+                  <p className="editorial-overline text-indigo-200">Readiness phase</p>
                   <p className="text-sm font-bold capitalize">{readinessPhase}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wide text-indigo-200">Target</p>
+                  <p className="editorial-overline text-indigo-200">Target</p>
                   <p className="text-sm font-bold">{readinessTarget} skills</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wide text-indigo-200">Accuracy</p>
+                  <p className="editorial-overline text-indigo-200">Accuracy</p>
                   <p className="text-sm font-bold">{weeklyAccuracy != null ? `${weeklyAccuracy}%` : '—'}</p>
                 </div>
               </div>
@@ -339,14 +340,14 @@ export default function DashboardHome({
               <button
                 type="button"
                 onClick={() => onNavigate('practice-hub')}
-                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-indigo-700 bg-white hover:bg-indigo-50 shadow-lg"
+                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-indigo-700 bg-white hover:bg-indigo-50 shadow-lg transition-colors"
               >
                 Start Practice →
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('results')}
-                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-white bg-white/15 border border-white/30 hover:bg-white/25"
+                className="rounded-2xl px-5 py-2.5 text-sm font-semibold text-white bg-white/20 border border-white/30 hover:bg-white/30 transition-colors"
               >
                 View full report
               </button>
@@ -355,48 +356,14 @@ export default function DashboardHome({
         </div>
       </section>
 
-      {/* ── The Four Domains ──────────────────────────────────────────── */}
-      <section>
-        <div className="flex items-baseline justify-between mb-4">
-          <div>
-            <h3 className="text-[13px] font-bold text-slate-900 tracking-[0.02em]">The Four Domains</h3>
-            <p className="text-[11px] text-slate-500 mt-0.5">Click any domain to drill in</p>
-          </div>
-          <button
-            onClick={() => onNavigate('results')}
-            className="text-[11px] font-semibold text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 rounded"
-          >
-            Full report →
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {progressSummary.domains.map((domain) => {
-            const pct =
-              domain.activeSkillCount > 0
-                ? Math.round((domain.strongerSkillCount / domain.activeSkillCount) * 100)
-                : 0;
-            return (
-              <DomainCard
-                key={domain.domainId}
-                domainId={domain.domainId}
-                name={domain.domainName}
-                pct={pct}
-                onClick={() => onStartPractice(domain.domainId)}
-              />
-            );
-          })}
-        </div>
-      </section>
-
       {/* ── Today's Focus + This Week / Redemption ───────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
         {/* Today's Focus (2/3) */}
-        <div className="lg:col-span-2 editorial-surface p-6">
+        <Surface padding="md" className="lg:col-span-2">
           <div className="flex items-baseline justify-between mb-4">
             <h3 className="text-[13px] font-bold text-slate-900 tracking-[0.02em]">Today's Focus</h3>
-            <span className="eyebrow text-slate-400">Chained by priority</span>
+            <span className="editorial-overline text-slate-400">Chained by priority</span>
           </div>
 
           {/* Priority hero (weakest-domain gradient) */}
@@ -406,17 +373,17 @@ export default function DashboardHome({
                 <Target className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-black tracking-wide uppercase text-white/80">
+                <p className="editorial-overline text-white/80">
                   Priority · {PROFICIENCY_META.emerging.label} · {weakestSkill.domain}
                 </p>
-                <p className="font-semibold leading-tight">{weakestSkill.name}</p>
+                <p className="font-semibold leading-tight truncate">{weakestSkill.name}</p>
                 <p className="text-xs text-white/80 mt-0.5">
                   {weakestSkill.emergingCount} skill{weakestSkill.emergingCount !== 1 ? 's' : ''} below 60% in this domain — start here.
                 </p>
               </div>
               <button
                 onClick={() => onStartSkillPractice(weakestSkill.skillId)}
-                className="shrink-0 rounded-xl px-4 py-2 text-sm font-semibold text-slate-900 bg-white hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="shrink-0 rounded-xl px-4 py-2 text-sm font-semibold text-slate-900 bg-white hover:bg-white/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 Practice →
               </button>
@@ -466,11 +433,11 @@ export default function DashboardHome({
               <span className="text-slate-400 group-hover:text-indigo-600 text-sm">→</span>
             </button>
           </div>
-        </div>
+        </Surface>
 
         {/* This Week + Redemption (1/3) */}
         <div className="flex flex-col gap-5">
-          <div className="editorial-surface p-6">
+          <Surface padding="md">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-slate-900 tracking-wide">This Week</h3>
               <span className="text-[10px] text-slate-400">7D</span>
@@ -503,7 +470,7 @@ export default function DashboardHome({
                 />
               </div>
             </div>
-          </div>
+          </Surface>
 
           {redemptionBankCount > 0 && (
             <RedemptionCard
@@ -515,6 +482,40 @@ export default function DashboardHome({
               onStart={onStartRedemption}
             />
           )}
+        </div>
+      </section>
+
+      {/* ── The Four Domains ──────────────────────────────────────────── */}
+      <section>
+        <div className="flex items-baseline justify-between mb-4">
+          <div>
+            <h3 className="text-[13px] font-bold text-slate-900 tracking-[0.02em]">The Four Domains</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">Click any domain to drill in</p>
+          </div>
+          <button
+            onClick={() => onNavigate('results')}
+            className="text-[11px] font-semibold text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 rounded"
+          >
+            Full report →
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {progressSummary.domains.map((domain) => {
+            const pct =
+              domain.activeSkillCount > 0
+                ? Math.round((domain.strongerSkillCount / domain.activeSkillCount) * 100)
+                : 0;
+            return (
+              <DomainCard
+                key={domain.domainId}
+                domainId={domain.domainId}
+                name={domain.domainName}
+                pct={pct}
+                onClick={() => onStartPractice(domain.domainId)}
+              />
+            );
+          })}
         </div>
       </section>
 

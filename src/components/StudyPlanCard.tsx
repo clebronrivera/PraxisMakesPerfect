@@ -4,6 +4,7 @@ import { StudyPlanDocumentV2, StudyConstraints, StudyPlanHistoryEntry } from '..
 import StudyConstraintsForm from './StudyConstraintsForm';
 import StudyPlanViewer from './StudyPlanViewer';
 import StagedStudyGuide from './StagedStudyGuide';
+import { Button } from './ui';
 
 interface StudyPlanCardProps {
   history: StudyPlanHistoryEntry[];
@@ -87,32 +88,28 @@ export default function StudyPlanCard({
           <div className="flex items-center gap-2 sm:shrink-0">
             {/* Settings toggle */}
             {canGenerate && (
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => setSettingsOpen(o => !o)}
-                className="editorial-button-secondary px-3 py-2 text-xs"
               >
                 Settings
                 {settingsOpen
                   ? <ChevronUp className="w-3.5 h-3.5" />
                   : <ChevronDown className="w-3.5 h-3.5" />}
-              </button>
+              </Button>
             )}
 
             {/* Generate / Regenerate */}
-            <button
+            <Button
               onClick={() => onGenerate(constraints)}
               disabled={!canGenerate || isGenerating || isLoading}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                !canGenerate || isGenerating || isLoading
-                  ? 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400'
-                  : 'editorial-button-primary'
-              }`}
             >
               {isGenerating
                 ? <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                 : <BookOpen className="w-3.5 h-3.5" />}
               {buttonLabel}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -135,7 +132,7 @@ export default function StudyPlanCard({
         {isGenerating && (
           <div className="mt-3 flex items-center gap-2 text-xs text-accent">
             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-            Generating your study plan — this takes about a minute…
+            Generating your study plan — this usually takes a few minutes…
           </div>
         )}
       </div>
@@ -243,12 +240,14 @@ export default function StudyPlanCard({
               />
             ) : (
               <div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setPlanView('staged')}
-                  className="text-xs font-semibold text-slate-400 hover:text-indigo-600 transition mb-3"
+                  className="mb-3"
                 >
                   ← Back to simple view
-                </button>
+                </Button>
                 <StudyPlanViewer plan={activePlan} />
               </div>
             )

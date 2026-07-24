@@ -11,6 +11,7 @@ import {
   NASP_PROGRAM_STATE_OPTIONS,
   US_STATE_OPTIONS,
 } from '../data/naspSchoolPsychPrograms';
+import { Button } from './ui';
 
 const STATE_NAME_BY_CODE = Object.fromEntries(
   US_STATE_OPTIONS.map(({ code, name }) => [code, name])
@@ -87,9 +88,9 @@ interface OnboardingFlowProps {
 }
 
 // ─── Shared sub-components ──────────────────────────────────────────────────
-function FieldLabel({ children, optional }: { children: React.ReactNode; optional?: boolean }) {
+function FieldLabel({ children, optional, htmlFor }: { children: React.ReactNode; optional?: boolean; htmlFor?: string }) {
   return (
-    <label className="block text-sm font-medium text-slate-700 mb-2">
+    <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-700 mb-2">
       {children}
       {optional && <span className="ml-1.5 text-xs text-slate-500 font-normal">(optional)</span>}
     </label>
@@ -97,12 +98,13 @@ function FieldLabel({ children, optional }: { children: React.ReactNode; optiona
 }
 
 function TextInput({
-  value, onChange, placeholder, type = 'text'
+  id, value, onChange, placeholder, type = 'text'
 }: {
-  value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
+  id?: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
 }) {
   return (
     <input
+      id={id}
       type={type}
       value={value}
       onChange={e => onChange(e.target.value)}
@@ -113,12 +115,13 @@ function TextInput({
 }
 
 function TextAreaInput({
-  value, onChange, placeholder, rows = 3
+  id, value, onChange, placeholder, rows = 3
 }: {
-  value: string; onChange: (v: string) => void; placeholder?: string; rows?: number;
+  id?: string; value: string; onChange: (v: string) => void; placeholder?: string; rows?: number;
 }) {
   return (
     <textarea
+      id={id}
       rows={rows}
       value={value}
       onChange={e => onChange(e.target.value)}
@@ -129,12 +132,14 @@ function TextAreaInput({
 }
 
 function SelectInput({
+  id,
   value,
   onChange,
   options,
   placeholder,
   disabled = false,
 }: {
+  id?: string;
   value: string;
   onChange: (v: string) => void;
   options: Array<{ value: string; label: string }>;
@@ -143,6 +148,7 @@ function SelectInput({
 }) {
   return (
     <select
+      id={id}
       value={value}
       onChange={e => onChange(e.target.value)}
       disabled={disabled}
@@ -268,8 +274,9 @@ function StepGradDetails({ data, setData }: { data: UserProfileData; setData: (d
       <SectionDivider label="Your program" />
 
       <div>
-        <FieldLabel optional>Program state</FieldLabel>
+        <FieldLabel optional htmlFor="onboarding-program-state">Program state</FieldLabel>
         <SelectInput
+          id="onboarding-program-state"
           value={selectedProgramStateCode}
           onChange={stateCode => {
             const nextPrograms = stateCode ? (NASP_PROGRAMS_BY_STATE[stateCode] ?? []) : [];
@@ -288,8 +295,9 @@ function StepGradDetails({ data, setData }: { data: UserProfileData; setData: (d
       </div>
 
       <div>
-        <FieldLabel optional>School psychology program</FieldLabel>
+        <FieldLabel optional htmlFor="onboarding-university">School psychology program</FieldLabel>
         <SelectInput
+          id="onboarding-university"
           value={data.university ?? ''}
           onChange={value => setData({ university: value })}
           options={programsInState.map(program => ({
@@ -370,8 +378,9 @@ function StepCertDetails({ data, setData }: { data: UserProfileData; setData: (d
   return (
     <div className="space-y-5">
       <div>
-        <FieldLabel optional>Target certification state</FieldLabel>
+        <FieldLabel optional htmlFor="onboarding-cert-state">Target certification state</FieldLabel>
         <SelectInput
+          id="onboarding-cert-state"
           value={data.certification_state ?? ''}
           onChange={value => setData({ certification_state: value })}
           options={US_STATE_OPTIONS.map(state => ({
@@ -450,8 +459,9 @@ function StepExam({ data, setData }: { data: UserProfileData; setData: (d: Parti
       </div>
 
       <div>
-        <FieldLabel optional>Planned test date</FieldLabel>
+        <FieldLabel optional htmlFor="onboarding-test-date">Planned test date</FieldLabel>
         <TextInput
+          id="onboarding-test-date"
           type="date"
           value={data.planned_test_date ?? ''}
           onChange={v => setData({ planned_test_date: v })}
@@ -477,8 +487,9 @@ function StepExam({ data, setData }: { data: UserProfileData; setData: (d: Parti
 
       {isRetake && (
         <div>
-          <FieldLabel optional>Number of prior attempts</FieldLabel>
+          <FieldLabel optional htmlFor="onboarding-prior-attempts">Number of prior attempts</FieldLabel>
           <TextInput
+            id="onboarding-prior-attempts"
             type="number"
             value={data.number_of_prior_attempts ?? ''}
             onChange={v => setData({ number_of_prior_attempts: v })}
@@ -488,8 +499,9 @@ function StepExam({ data, setData }: { data: UserProfileData; setData: (d: Parti
       )}
 
       <div>
-        <FieldLabel optional>Target score</FieldLabel>
+        <FieldLabel optional htmlFor="onboarding-target-score">Target score</FieldLabel>
         <TextInput
+          id="onboarding-target-score"
           type="number"
           value={data.target_score ?? ''}
           onChange={v => setData({ target_score: v })}
@@ -627,8 +639,9 @@ function StepGoals({ data, setData }: { data: UserProfileData; setData: (d: Part
           </div>
 
           <div>
-            <FieldLabel optional>What was missing from those resources?</FieldLabel>
+            <FieldLabel optional htmlFor="onboarding-resources-missing">What was missing from those resources?</FieldLabel>
             <TextAreaInput
+              id="onboarding-resources-missing"
               value={data.what_was_missing ?? ''}
               onChange={v => setData({ what_was_missing: v })}
               placeholder="e.g. Not enough practice questions, explanations weren't clear, too expensive…"
@@ -843,8 +856,8 @@ export default function OnboardingFlow({
 
   const rootShell =
     variant === 'embedded'
-      ? 'flex min-h-full flex-col bg-slate-50 p-4'
-      : 'min-h-screen bg-slate-50 flex items-center justify-center p-4';
+      ? 'flex min-h-full flex-col bg-[#f7f6f8] p-4'
+      : 'min-h-screen bg-[#f7f6f8] flex items-center justify-center p-4';
 
   const innerWrap = variant === 'embedded' ? 'flex w-full min-h-0 flex-1 flex-col' : 'w-full max-w-xl';
 
@@ -924,7 +937,7 @@ export default function OnboardingFlow({
 
           {/* Error */}
           {saveError && (
-            <div className="mx-6 mb-3 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2 text-rose-700 text-sm">
+            <div role="alert" className="mx-6 mb-3 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2 text-rose-700 text-sm">
               <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
               <span>{saveError}</span>
             </div>
@@ -940,10 +953,11 @@ export default function OnboardingFlow({
 
           {/* Footer nav */}
           <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between gap-4">
-            <button
+            <Button
               type="button"
+              variant="subtle"
+              size="sm"
               onClick={handleSkipOrBack}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-500 transition-colors hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               {isFirst ? (
                 mode === 'edit' && onCancel ? (
@@ -956,15 +970,15 @@ export default function OnboardingFlow({
                   <ChevronLeft className="h-4 w-4" /> Back
                 </>
               )}
-            </button>
+            </Button>
 
             <ProgressDots total={steps.length} current={stepIndex} />
 
-            <button
+            <Button
               type="button"
+              variant="primary"
               onClick={handleNext}
               disabled={!canAdvance() || saving}
-              className="flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
             >
               {saving ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
@@ -973,7 +987,7 @@ export default function OnboardingFlow({
               ) : (
                 <>Next <ChevronRight className="w-4 h-4" /></>
               )}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

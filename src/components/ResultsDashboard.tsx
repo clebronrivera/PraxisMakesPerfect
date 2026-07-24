@@ -9,6 +9,7 @@ import type { UserProfile } from '../hooks/useProgressTracking';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { buildProgressSummary, type SkillColorState } from '../utils/progressSummaries';
 import type { SkillPerformance } from '../brain/learning-state';
+import { Button, Surface } from './ui';
 import { PROFICIENCY_META, TOTAL_SKILLS, READINESS_TARGET } from '../utils/skillProficiency';
 import { buildConceptAnalytics, type ConceptAnalyticsReport } from '../utils/conceptAnalytics';
 import { computeTimeStats, computeConfidenceStats } from '../utils/diagnosticSelectors';
@@ -180,7 +181,7 @@ function StatCard({
         className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl"
         style={{ background: accent }}
       />
-      <p className="eyebrow mb-2">{label}</p>
+      <p className="editorial-overline mb-2">{label}</p>
       <p
         className={`tabular-nums leading-none font-bold ${big ? 'text-[32px]' : 'text-[28px]'}`}
         style={{ color: accent }}
@@ -325,7 +326,7 @@ export default function ResultsDashboard({
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <header className="pt-4">
-        <p className="eyebrow text-indigo-600 mb-2">Your progress</p>
+        <p className="editorial-overline text-indigo-600 mb-2">Your progress</p>
         <h1 className="text-4xl font-extrabold tracking-tight leading-tight text-slate-900">
           A picture of <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-600 bg-clip-text text-transparent">where you stand.</span>
         </h1>
@@ -336,10 +337,10 @@ export default function ResultsDashboard({
       </header>
 
       {/* ── Journey timeline ─────────────────────────────────────────── */}
-      <section className="editorial-surface p-6">
+      <Surface as="section" padding="md">
         <div className="flex items-baseline justify-between mb-5">
           <div>
-            <p className="eyebrow">Your journey</p>
+            <p className="editorial-overline">Your journey</p>
             <p className="text-[13px] text-slate-500 mt-1">From first diagnostic question to exam-ready</p>
           </div>
           <span className="text-[11px] text-slate-500">
@@ -347,7 +348,7 @@ export default function ResultsDashboard({
           </span>
         </div>
         <JourneyTimeline steps={timelineSteps} />
-      </section>
+      </Surface>
 
       {/* ── Stat cards ───────────────────────────────────────────────── */}
       <section>
@@ -389,15 +390,15 @@ export default function ResultsDashboard({
 
       {/* ── Screener report link ─────────────────────────────────────── */}
       {hasScreenerReport && !userProfile.fullAssessmentComplete && onViewScreenerReport && (
-        <button onClick={onViewScreenerReport} className="editorial-button-secondary">
+        <Button variant="secondary" onClick={onViewScreenerReport}>
           View screener report →
-        </button>
+        </Button>
       )}
 
       {/* ── Growth since baseline ────────────────────────────────────── */}
       {hasBaseline && growthMetrics && (
-        <section className="editorial-surface p-6">
-          <p className="eyebrow mb-4">Growth since diagnostic</p>
+        <Surface as="section" padding="md">
+          <p className="editorial-overline mb-4">Growth since diagnostic</p>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <div
               className="rounded-xl p-4 text-center"
@@ -434,14 +435,14 @@ export default function ResultsDashboard({
               <p className="text-[11px] text-slate-500 mt-1">Baseline Demonstrating</p>
             </div>
           </div>
-        </section>
+        </Surface>
       )}
 
       {/* ── Four domains ────────────────────────────────────────────── */}
       <section className="space-y-3">
         <div className="flex items-baseline justify-between flex-wrap gap-2">
           <div>
-            <p className="eyebrow">The four domains</p>
+            <p className="editorial-overline">The four domains</p>
             <p className="text-[11px] text-slate-500 mt-0.5">
               Current fill · {hasBaseline ? 'baseline marker · ' : ''}80% goal marker
             </p>
@@ -749,7 +750,7 @@ export default function ResultsDashboard({
             ) : (
               <>
                 <div>
-                  <p className="eyebrow mb-1.5">Avg time per question</p>
+                  <p className="editorial-overline mb-1.5">Avg time per question</p>
                   <div className="flex items-baseline gap-2">
                     <span className="tabular-nums text-[26px] font-semibold" style={{ color: '#4f46e5' }}>
                       {formatTime(timeStats.avgOverall)}
@@ -760,7 +761,7 @@ export default function ResultsDashboard({
 
                 {Object.keys(timeStats.byDomain).length > 0 && (
                   <div>
-                    <p className="eyebrow mb-2.5">Avg time by domain — longer = harder</p>
+                    <p className="editorial-overline mb-2.5">Avg time by domain — longer = harder</p>
                     <div className="space-y-2">
                       {progress.domains
                         .filter((d) => timeStats.byDomain[d.domainId])
@@ -795,7 +796,7 @@ export default function ResultsDashboard({
 
                 {timeStats.topSlowQuestions.length > 0 && (
                   <div>
-                    <p className="eyebrow mb-2.5">Top 5 most time-consuming questions</p>
+                    <p className="editorial-overline mb-2.5">Top 5 most time-consuming questions</p>
                     <div className="space-y-1.5">
                       {timeStats.topSlowQuestions.map((q, i) => (
                         <div key={q.questionId} className="flex items-center justify-between gap-3">
@@ -818,7 +819,7 @@ export default function ResultsDashboard({
 
             {rawPct !== null && (
               <div>
-                <p className="eyebrow mb-1.5">Confidence-adjusted accuracy</p>
+                <p className="editorial-overline mb-1.5">Confidence-adjusted accuracy</p>
                 <p className="mb-2.5 text-[11.5px] text-slate-500 leading-snug">
                   High-confidence wrong answers get penalized. A gap between raw and adjusted suggests misconceptions.
                 </p>
@@ -876,7 +877,7 @@ export default function ResultsDashboard({
 
             {topErrors.length > 0 || (userProfile.errorPatterns ?? []).length > 0 ? (
               <div>
-                <p className="eyebrow mb-2.5">Repeated incorrect answers</p>
+                <p className="editorial-overline mb-2.5">Repeated incorrect answers</p>
                 {topErrors.length > 0 && (
                   <div className="space-y-1 mb-3">
                     {topErrors.map(([distractor, count]) => (
@@ -904,7 +905,7 @@ export default function ResultsDashboard({
               </div>
             ) : (
               <div>
-                <p className="eyebrow mb-1.5">Repeated incorrect answers</p>
+                <p className="editorial-overline mb-1.5">Repeated incorrect answers</p>
                 <p className="text-[11.5px] italic leading-relaxed text-slate-500">
                   No repeated incorrect patterns yet — this fills in once the same concepts are missed more than once.
                 </p>

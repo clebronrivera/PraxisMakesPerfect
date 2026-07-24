@@ -4,7 +4,8 @@
 // Requires diagnosticComplete (enforced in App.tsx gating).
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Plus, Send, ChevronUp, Paperclip } from 'lucide-react';
+import { Plus, Send, ChevronUp } from 'lucide-react';
+import { Button, IconButton } from './ui';
 import { useTutorChat } from '../hooks/useTutorChat';
 import { TutorMessageBubble } from './TutorMessageBubble';
 import { TutorEmptyState } from './TutorEmptyState';
@@ -84,15 +85,16 @@ export function TutorChatPage({
       {/* ══════ LEFT: sessions ══════ */}
       <aside className="w-64 shrink-0 border-r border-slate-200 flex flex-col bg-[#ffffff] backdrop-blur-md">
         <div className="p-4 flex items-center justify-between">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400">Sessions</p>
-          <button
+          <p className="editorial-overline text-slate-400">Sessions</p>
+          <IconButton
+            variant="neutral"
+            size="sm"
             onClick={chat.startNewSession}
             title="New chat"
             aria-label="Start new chat session"
-            className="w-7 h-7 rounded-full border border-slate-300 text-slate-900 flex items-center justify-center hover:border-indigo-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
           >
             <Plus className="w-3.5 h-3.5" aria-hidden="true" />
-          </button>
+          </IconButton>
         </div>
 
         {/* Mode toggle */}
@@ -166,9 +168,9 @@ export function TutorChatPage({
             aria-hidden="true"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-semibold text-slate-900">
+            <h2 className="text-[13px] font-semibold text-slate-900">
               {activeSession?.title || 'Ask anything, get quizzed'}
-            </p>
+            </h2>
             <p className="text-[11px] text-slate-500">
               AI Tutor · Praxis 5403 · {chat.mode === 'quiz' ? 'Quiz mode' : 'Chat mode'}
             </p>
@@ -184,13 +186,15 @@ export function TutorChatPage({
           )}
 
           {chat.hasOlderMessages && !chat.isHydratingSession && (
-            <button
+            <Button
+              variant="subtle"
+              size="sm"
+              fullWidth
               onClick={chat.loadOlderMessages}
-              className="w-full flex items-center justify-center gap-1 text-[11px] text-slate-500 hover:text-slate-700 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 rounded"
             >
               <ChevronUp className="w-3 h-3" aria-hidden="true" />
               Load older messages
-            </button>
+            </Button>
           )}
 
           {chat.messages.length === 0 && !chat.isHydratingSession && (
@@ -227,8 +231,11 @@ export function TutorChatPage({
           )}
 
           {chat.error && (
-            <div role="alert" className="text-[11px] text-rose-600 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2">
-              {chat.error}
+            <div role="alert" className="flex items-center gap-3 text-[11px] text-rose-600 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2">
+              <span className="flex-1">{chat.error}</span>
+              <Button variant="neutral" size="sm" onClick={chat.retryLastMessage}>
+                Retry
+              </Button>
             </div>
           )}
 
@@ -251,27 +258,16 @@ export function TutorChatPage({
               style={{ maxHeight: '180px', overflowY: 'auto' }}
             />
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                title="Attach context"
-                aria-label="Attach context"
-                className="editorial-button-secondary"
-                style={{ padding: '8px 10px' }}
-              >
-                <Paperclip className="w-3.5 h-3.5" aria-hidden="true" />
-              </button>
-              <button
+              <Button
+                variant="primary"
+                size="sm"
                 onClick={handleSend}
                 disabled={!input.trim() || chat.isSending}
                 aria-label="Send message"
-                className="editorial-button-primary disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ padding: '9px 18px', fontSize: 12 }}
               >
-                <span className="inline-flex items-center gap-1.5">
-                  <Send className="w-3.5 h-3.5" aria-hidden="true" />
-                  Send
-                </span>
-              </button>
+                <Send className="w-3.5 h-3.5" aria-hidden="true" />
+                Send
+              </Button>
             </div>
           </div>
           <p className="text-[10px] text-slate-500 mt-2 text-center">
@@ -284,7 +280,7 @@ export function TutorChatPage({
       <aside className="hidden xl:flex w-[300px] shrink-0 border-l border-slate-200 flex-col overflow-y-auto p-3 gap-3 bg-[#ffffff]">
 
         <div className="rounded-xl p-4 bg-[#ffffff] border border-slate-200">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400 mb-2">Grounded in</p>
+          <p className="editorial-overline text-slate-400 mb-2">Grounded in</p>
           {activeSession ? (
             <>
               <p className="text-[13px] text-slate-900 font-medium leading-tight truncate">{activeSession.title || 'Current chat'}</p>
@@ -298,7 +294,7 @@ export function TutorChatPage({
         </div>
 
         <div className="rounded-xl p-4 bg-[#ffffff] border border-slate-200">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400 mb-2">This session</p>
+          <p className="editorial-overline text-slate-400 mb-2">This session</p>
           <div className="space-y-1.5 text-[11px]">
             <div className="flex justify-between">
               <span className="text-slate-500">Messages</span>
@@ -320,7 +316,7 @@ export function TutorChatPage({
         </div>
 
         <div className="rounded-xl p-4 bg-[#ffffff] border border-slate-200">
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold text-slate-400 mb-2">Artifacts · this chat</p>
+          <p className="editorial-overline text-slate-400 mb-2">Artifacts · this chat</p>
           {artifactsInSession.length === 0 ? (
             <p className="text-[11px] text-slate-500 italic">None yet — ask the tutor to break something down or quiz you.</p>
           ) : (
@@ -344,7 +340,7 @@ export function TutorChatPage({
         </div>
 
         <div className="rounded-xl p-4 border" style={{ borderColor: 'rgba(139,92,246,0.22)', background: 'rgba(139,92,246,0.05)' }}>
-          <p className="text-[10px] tracking-[0.22em] uppercase font-semibold mb-2 text-accent">Suggestion</p>
+          <p className="editorial-overline mb-2 text-accent">Suggestion</p>
           <p className="text-[12px] text-slate-600 leading-relaxed">
             When this chat ends, ask the tutor to <span className="text-slate-900 font-semibold">add a 10-minute spaced review</span> to lock in what you learned.
           </p>

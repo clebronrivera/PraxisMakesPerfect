@@ -4,6 +4,7 @@
 // Used by GlossaryPage.tsx and the wrong-answer trigger in PracticeSession.tsx.
 
 import { supabase } from '../config/supabase';
+import { notifyError } from '../utils/toast';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -32,8 +33,10 @@ export async function loadGlossaryTerms(userId: string): Promise<GlossaryTerm[]>
     .order('created_at', { ascending: true });
 
   if (error) {
+    // Throw so callers can distinguish a load failure from a genuinely empty
+    // glossary (returning [] here made a failed fetch look like "no terms yet").
     console.error('[glossaryService] loadGlossaryTerms error:', error);
-    return [];
+    throw error;
   }
   return (data as GlossaryTerm[]) ?? [];
 }
@@ -74,7 +77,7 @@ export async function saveUserDefinition(
   userId: string,
   term: string,
   userDefinition: string
-): Promise<void> {
+): Promise<boolean> {
   const { error } = await supabase
     .from('user_glossary_terms')
     .update({ user_definition: userDefinition, updated_at: new Date().toISOString() })
@@ -83,7 +86,9 @@ export async function saveUserDefinition(
 
   if (error) {
     console.error('[glossaryService] saveUserDefinition error:', error);
+    return false;
   }
+  return true;
 }
 
 /**
@@ -93,7 +98,7 @@ export async function saveUserDefinition(
 export async function revealDefinition(
   userId: string,
   term: string
-): Promise<void> {
+): Promise<boolean> {
   const { error } = await supabase
     .from('user_glossary_terms')
     .update({
@@ -106,7 +111,9 @@ export async function revealDefinition(
 
   if (error) {
     console.error('[glossaryService] revealDefinition error:', error);
+    return false;
   }
+  return true;
 }
 
 /**
@@ -124,5 +131,9 @@ export async function removeGlossaryTerm(
 
   if (error) {
     console.error('[glossaryService] removeGlossaryTerm error:', error);
+    // The caller (GlossaryPage.handleRemove) removes the row from local state
+    // unconditionally and doesn't check a return value here, so without this
+    // the user sees the term disappear from the UI even when the delete failed.
+    notifyError('Couldn’t remove that term — check your connection and try again.');
   }
 }

@@ -79,7 +79,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Test date */}
           <div className="pt-4 space-y-2">
-            <label className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="editorial-overline flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5" />
               Test Date
             </label>
@@ -103,7 +103,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Study days per week */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="editorial-overline flex items-center gap-2">
               <Clock className="w-3.5 h-3.5" />
               Days per week
             </label>
@@ -125,7 +125,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Session duration */}
           <div className="space-y-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="editorial-overline">
               Minutes per session
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -146,7 +146,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Weekend block */}
           <div className="space-y-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="editorial-overline">
               Weekend study block
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -167,7 +167,7 @@ export default function StudyConstraintsForm({ value, onChange }: StudyConstrain
 
           {/* Intensity */}
           <div className="space-y-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <label className="editorial-overline">
               Study intensity
             </label>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">

@@ -127,28 +127,28 @@ export default function ExplanationPanel({
             {/* Extended Bank Fields (Static Questions) */}
             {displayCorrectExplanation && displayCorrectExplanation !== displayRationale && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Correct explanation</p>
+                <p className="editorial-overline mb-2 text-slate-400">Correct explanation</p>
                 <p className="text-sm leading-relaxed text-slate-600">{displayCorrectExplanation}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).contentLimit && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Content rule</p>
+                <p className="editorial-overline mb-2 text-slate-400">Content rule</p>
                 <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).contentLimit}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).complexityRationale && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Complexity</p>
+                <p className="editorial-overline mb-2 text-slate-400">Complexity</p>
                 <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).complexityRationale}</p>
               </div>
             )}
 
             {(question as unknown as Record<string, string>).construct_actually_tested && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">What this tests</p>
+                <p className="editorial-overline mb-2 text-slate-400">What this tests</p>
                 <p className="text-sm leading-relaxed text-slate-600">{(question as unknown as Record<string, string>).construct_actually_tested}</p>
               </div>
             )}
@@ -156,7 +156,7 @@ export default function ExplanationPanel({
             {/* Key Concepts */}
             {question.keyConcepts && question.keyConcepts.length > 0 && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Key concepts</p>
+                <p className="editorial-overline mb-2 text-slate-400">Key concepts</p>
                 <div className="flex flex-wrap gap-2">
                   {question.keyConcepts.map((concept, i) => (
                     <span
@@ -177,7 +177,7 @@ export default function ExplanationPanel({
                 style={{ borderColor: 'color-mix(in srgb, #e11d48 25%, transparent)' }}
               >
                 <p
-                  className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em]"
+                  className="editorial-overline mb-2"
                   style={{ color: 'color-mix(in srgb, #e11d48 80%, white)' }}
                 >
                   Why this was wrong

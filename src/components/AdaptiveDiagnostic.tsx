@@ -4,6 +4,7 @@ import QuestionCard from './QuestionCard';
 import { UserResponse } from '../brain/weakness-detector';
 import { clearSession } from '../utils/sessionStorage';
 import { deleteUserSession, loadUserSession, saveUserSession, UserSession } from '../utils/userSessionStorage';
+import { Button } from './ui';
 
 const TutorialWalkthrough = lazy(() => import('./TutorialWalkthrough'));
 import {
@@ -470,7 +471,7 @@ export default function AdaptiveDiagnostic({
       )}
       {/* Resume Notice */}
       {isResuming && (
-        <div className="rounded-[1.5rem] border border-sky-200 bg-sky-50 p-3">
+        <div className="rounded-3xl border border-sky-200 bg-sky-50 p-3">
           <p className="text-sm text-sky-800">
             Resumed from question {currentIndex + 1}. Your progress has been saved.
           </p>
@@ -495,7 +496,7 @@ export default function AdaptiveDiagnostic({
       <div className="editorial-surface-soft flex items-center justify-between gap-4 p-3">
         <div className="flex items-center gap-4">
           <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{timerLabel}</span>
+            <span className="editorial-overline text-slate-400">{timerLabel}</span>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-indigo-700" />
               <span className="text-xl font-mono text-slate-900">{formattedTime}</span>
@@ -503,23 +504,23 @@ export default function AdaptiveDiagnostic({
           </div>
           <div className="h-8 w-px bg-slate-200" />
           <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Pacing</span>
+            <span className="editorial-overline text-slate-400">Pacing</span>
             <span className="text-sm font-medium text-slate-700">{pacingMessage}</span>
           </div>
         </div>
 
-        <button
+        <Button
+          variant="secondary"
           onClick={handlePauseToggle}
-          className="editorial-button-secondary"
         >
           {isPaused ? <Play className="w-4 h-4 text-emerald-600" /> : <Pause className="w-4 h-4" />}
           <span>{isPaused ? 'Resume' : 'Pause'}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Inactivity Warning */}
       {showInactivityWarning && !isPaused && (
-        <div className="flex items-center gap-4 rounded-[1.5rem] border border-indigo-200 bg-indigo-50 p-4 animate-pulse">
+        <div className="flex items-center gap-4 rounded-3xl border border-indigo-200 bg-indigo-50 p-4 animate-pulse">
           <div className="rounded-xl bg-indigo-100 p-2">
             <Clock className="w-5 h-5 text-indigo-700" />
           </div>
@@ -549,19 +550,23 @@ export default function AdaptiveDiagnostic({
               </p>
             </div>
             <div className="space-y-3 pt-4">
-              <button
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
                 onClick={resume}
-                className="editorial-button-primary w-full justify-center px-6 py-4"
               >
                 <Play className="w-5 h-5" />
                 Resume Diagnostic
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                fullWidth
                 onClick={handlePauseExit}
-                className="editorial-button-secondary w-full justify-center px-6 py-4"
               >
                 Save & Exit to Dashboard
-              </button>
+              </Button>
             </div>
           </div>
         </div>

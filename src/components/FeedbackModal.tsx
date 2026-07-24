@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { MessageSquare, X } from 'lucide-react';
 import {
   BetaFeedbackCategory,
   useBetaFeedback
 } from '../hooks/useBetaFeedback';
 import { notifyToast } from '../utils/toast';
+import { useDialogFocus } from '../hooks/useDialogFocus';
+import { Button, IconButton } from './ui';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -51,25 +53,8 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     onClose();
   };
 
-  // Escape-to-close + body scroll-lock while the dialog is open.
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        handleClose();
-      }
-    };
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialogRef, isOpen, handleClose);
 
   if (!isOpen) {
     return null;
@@ -125,11 +110,13 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         className="absolute inset-0 cursor-default bg-slate-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="feedback-modal-title"
         aria-describedby="feedback-modal-description"
-        className="relative w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-2xl shadow-black/50"
+        tabIndex={-1}
+        className="relative w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-2xl shadow-black/50 focus:outline-none"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-6 flex items-start justify-between gap-4">
@@ -144,14 +131,13 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               </p>
             </div>
           </div>
-          <button
+          <IconButton
             onClick={handleClose}
-            className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             title="Close feedback form"
             aria-label="Close feedback form"
           >
             <X className="h-5 w-5" />
-          </button>
+          </IconButton>
         </div>
 
         <div className="space-y-6">
@@ -225,21 +211,21 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           </label>
 
           <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
-            <button
+            <Button
               type="button"
+              variant="neutral"
               onClick={handleClose}
-              className="rounded-xl border border-slate-200 px-4 py-2.5 text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="primary"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="rounded-xl bg-cyan-500 px-4 py-2.5 font-medium text-slate-950 transition-colors hover:bg-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
             >
               {isSubmitting ? 'Submitting...' : 'Send feedback'}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

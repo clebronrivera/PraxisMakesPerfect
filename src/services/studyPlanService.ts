@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabase';
+import { notifyError } from '../utils/toast';
 import { Domain, Skill } from '../types/content';
 import {
   GlobalScoreInputs,
@@ -730,7 +731,14 @@ export async function getStudyPlanHistory(userId: string, limit = 10): Promise<S
     .limit(limit);
 
   if (error || !data) {
-    if (error) console.error('[getStudyPlanHistory] Supabase error:', error);
+    if (error) {
+      console.error('[getStudyPlanHistory] Supabase error:', error);
+      // This returns [] (not a throw) on purpose — callers in useStudyPlanManager.ts
+      // use an empty result as "no plans yet" in one code path (post-generation
+      // reload) and can't distinguish that from "failed to load" here, so surface
+      // the failure directly rather than relying on the caller's error state.
+      notifyError('Couldn’t load your study guide history — check your connection and try again.');
+    }
     return [];
   }
 

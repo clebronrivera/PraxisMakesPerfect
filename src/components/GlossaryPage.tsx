@@ -32,6 +32,8 @@ import {
   removeGlossaryTerm,
   type GlossaryTerm,
 } from '../services/glossaryService';
+import { notifyError } from '../utils/toast';
+import { Button, Surface } from './ui';
 import glossaryData from '../data/master-glossary.json';
 
 const VocabularyQuizMode = lazy(() => import('./VocabularyQuizMode'));
@@ -87,19 +89,27 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
   const handleBlur = useCallback(async () => {
     if (localText === prevText.current) return;
     setSaving(true);
-    await saveUserDefinition(userId, entry.term, localText);
+    const ok = await saveUserDefinition(userId, entry.term, localText);
+    setSaving(false);
+    if (!ok) {
+      notifyError('Couldn’t save your definition — check your connection and try again.');
+      return;
+    }
     prevText.current = localText;
     onDefinitionSaved(entry.term, localText);
-    setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
   }, [localText, userId, entry.term, onDefinitionSaved]);
 
   const handleReveal = useCallback(async () => {
     setRevealing(true);
-    await revealDefinition(userId, entry.term);
-    onReveal(entry.term);
+    const ok = await revealDefinition(userId, entry.term);
     setRevealing(false);
+    if (!ok) {
+      notifyError('Couldn’t reveal the definition — check your connection and try again.');
+      return;
+    }
+    onReveal(entry.term);
   }, [userId, entry.term, onReveal]);
 
   const isRevealed = entry.revealed;
@@ -109,8 +119,10 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
   const statusColor = isRevealed ? '#059669' : hasDef ? '#4f46e5' : '#e2e8f0';
 
   return (
-    <div
-      className="editorial-surface relative overflow-hidden transition-colors hover:bg-slate-50"
+    <Surface
+      as="div"
+      padding="none"
+      className="relative overflow-hidden transition-colors hover:bg-slate-50"
     >
       {/* Left accent stripe */}
       <span
@@ -152,7 +164,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* User's definition */}
           <div>
-            <label htmlFor={definitionId} className="eyebrow mb-2 block">
+            <label htmlFor={definitionId} className="editorial-overline mb-2 block">
               Your definition of “{entry.term}”
             </label>
             <textarea
@@ -180,7 +192,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
 
           {/* Official definition */}
           <div>
-            <p className="eyebrow mb-2">Official definition</p>
+            <p className="editorial-overline mb-2">Official definition</p>
             {isRevealed ? (
               <div
                 className="text-[13px] text-slate-700 leading-relaxed rounded-lg px-3 py-2 min-h-[86px]"
@@ -197,19 +209,16 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
                   <EyeOff size={12} />
                   Hidden until you reveal it
                 </div>
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={handleReveal}
                   disabled={revealing}
-                  className="self-start inline-flex items-center gap-1.5 text-xs font-medium rounded-lg px-3 py-1.5 transition disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:#4f46e5]"
-                  style={{
-                    color: '#4f46e5',
-                    background: 'color-mix(in srgb, #4f46e5 10%, transparent)',
-                    border: '1px solid color-mix(in srgb, #4f46e5 30%, transparent)',
-                  }}
+                  className="self-start"
                 >
                   {revealing ? <Loader2 size={12} className="animate-spin" /> : <Eye size={12} />}
                   Reveal Definition
-                </button>
+                </Button>
                 {hasDef && (
                   <p className="text-[10px] text-slate-500">Compare it to yours once you're ready.</p>
                 )}
@@ -218,7 +227,7 @@ function GlossaryRow({ entry, userId, onDefinitionSaved, onReveal }: GlossaryRow
           </div>
         </div>
       </div>
-    </div>
+    </Surface>
   );
 }
 
@@ -235,10 +244,15 @@ export default function GlossaryPage({ userId }: GlossaryPageProps) {
   // Load on mount
   useEffect(() => {
     if (!userId) { setLoading(false); return; }
-    loadGlossaryTerms(userId).then((rows) => {
-      setEntries(rows);
-      setLoading(false);
-    });
+    loadGlossaryTerms(userId)
+      .then((rows) => {
+        setEntries(rows);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        notifyError('Couldn’t load your glossary — check your connection and try again.');
+      });
   }, [userId]);
 
   // ── Callbacks ────────────────────────────────────────────────────────────
@@ -499,7 +513,7 @@ function EmptyState() {
         </p>
       </div>
       <div className="mt-2 flex flex-col gap-2 text-left bg-slate-50 border border-slate-200 rounded-xl p-4 max-w-sm w-full">
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+        <p className="editorial-overline">
           How it works
         </p>
         <Step n={1} text="Answer a practice question incorrectly" />

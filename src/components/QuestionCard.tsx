@@ -1,11 +1,13 @@
 import { CheckCircle, XCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from './ui';
 import ReportQuestionModal from './ReportQuestionModal';
 import { AnalyzedQuestion, getQuestionPrompt } from '../brain/question-analyzer';
 import {
   CONFIDENCE_DISPLAY_ORDER,
   getConfidenceDisplayLabel
 } from '../utils/confidenceLabels';
+import { notifyToast } from '../utils/toast';
 
 // Local AnalyzedQuestion interface removed
 
@@ -95,7 +97,7 @@ export default function QuestionCard({
   const sourcePill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-700';
   const flagButton = 'rounded-xl border border-transparent bg-white p-2.5 text-slate-400 transition-all hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700';
   const caseShell = 'rounded-[1.75rem] border border-amber-200 bg-amber-50/70 p-5';
-  const caseHeading = 'mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-amber-700';
+  const caseHeading = 'editorial-overline mb-2 text-amber-700';
   const caseBody = 'text-sm leading-relaxed italic text-slate-700';
   const stemText = 'text-[1.1rem] font-semibold leading-8 text-slate-900 sm:text-[1.25rem]';
   const multiSelectPill = 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700';
@@ -103,8 +105,6 @@ export default function QuestionCard({
   const confidenceLabel = 'text-sm font-semibold text-slate-700';
   const confidenceActive = 'border-slate-900 bg-slate-900 text-white';
   const confidenceIdle = 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:text-slate-900';
-  const submitBtn = 'editorial-button-primary min-w-[12rem] disabled:cursor-not-allowed disabled:opacity-50';
-  const nextBtn = 'editorial-button-dark min-w-[12rem]';
 
   return (
     <>
@@ -216,21 +216,23 @@ export default function QuestionCard({
       {!hideFooterControls && (
         <div className={`flex justify-center ${isConfidenceVisible ? 'mt-6' : 'mt-4'}`}>
           {!showFeedback ? (
-            <button
+            <Button
+              variant="primary"
               onClick={onSubmit}
               disabled={selectedAnswers.length === 0 || isSubmitting}
-              className={submitBtn}
+              className="min-w-[12rem]"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Answer'}
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="dark"
               onClick={onNext}
-              className={nextBtn}
+              className="min-w-[12rem]"
             >
               Next Question
               <ArrowRight className="w-5 h-5" />
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -242,7 +244,7 @@ export default function QuestionCard({
         isOpen={showReportModal}
         onClose={() => setShowReportModal(false)}
         onSuccess={() => {
-          // Report submitted — surface a toast notification here if desired
+          notifyToast('Thanks — your report was submitted.');
         }}
       />
     </>

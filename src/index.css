@@ -62,7 +62,7 @@
   }
 
   .editorial-topbar-button {
-    @apply rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-200;
+    @apply rounded-full p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-500 transition-colors hover:bg-slate-200;
   }
 
   .editorial-pill {
@@ -72,8 +72,12 @@
     color: #6d28d9;
   }
 
+  /* Canonical label/overline — the single source of truth. Was 3 near-duplicate
+     classes (editorial-overline / .overline / .eyebrow) that disagreed on size,
+     weight, and tracking; consolidated 2026-07. font-semibold (not -black) per
+     the design audit: black weight at 11px reads as a muddy blob. */
   .editorial-overline {
-    @apply text-[11px] font-black uppercase tracking-[0.1em] text-slate-400;
+    @apply text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500;
   }
 
   .editorial-heading {
@@ -86,6 +90,14 @@
 
   .editorial-stat-card {
     @apply editorial-surface p-4 flex flex-col gap-3;
+  }
+
+  /* The single "your overall score" reveal — ScoreReport + ScreenerResults show
+     the same moment (adaptive vs legacy pathway) and were sized 6xl vs 5xl.
+     Standardized on the larger, more dramatic size. Does NOT apply to smaller
+     in-card stats (those are a legitimately different, space-constrained tier). */
+  .stat-hero {
+    @apply text-6xl font-bold tabular-nums;
   }
 
   .editorial-button-primary {
@@ -132,24 +144,6 @@
   .editorial-progress-fill {
     @apply h-full rounded-full;
     background: linear-gradient(90deg, var(--accent-from) 0%, var(--accent-to) 100%);
-  }
-
-  /* ── Buttons ──────────────────────────────────────────── */
-  .btn-primary {
-    @apply px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-xl transition-all active:scale-[0.98];
-  }
-
-  .btn-secondary {
-    @apply px-5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700/60 text-slate-200 font-medium rounded-xl transition-all;
-  }
-
-  .btn-ghost {
-    @apply px-4 py-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl transition-colors;
-  }
-
-  /* ── Section overline ─────────────────────────────────── */
-  .overline {
-    @apply text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400;
   }
 
   /* ── Tabs ─────────────────────────────────────────────── */
@@ -266,15 +260,6 @@
     0 0 36px rgba(216, 213, 252, 0.22);
   animation: orb-pulse 3.5s ease-in-out infinite;
   flex-shrink: 0;
-}
-
-/* ── Uppercase eyebrow ────────────────────────────────────── */
-.eyebrow {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  font-weight: 600;
-  color: #94a3b8;
 }
 
 /* Keyframes — orb-pulse drives .mini-orb; the rest back animate-* utilities. */

@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../config/supabase';
+import { notifyError } from '../utils/toast';
 
 interface UseModuleNotesReturn {
   noteText: string;
@@ -53,6 +54,9 @@ export function useModuleNotes(
       if (error) {
         console.error('[useModuleNotes] fetch error:', error.message);
         setNoteTextState('');
+        // Blank textarea after a failed fetch looks identical to "no notes yet" —
+        // without this the student may think a previously-written note was lost.
+        notifyError('Couldn’t load your notes for this module — check your connection and try again.');
       } else {
         const text = data?.note_text ?? '';
         setNoteTextState(text);
@@ -85,6 +89,10 @@ export function useModuleNotes(
 
     if (error) {
       console.error('[useModuleNotes] save error:', error.message);
+      // StudyCenterSidebar shows a "Saved" indicator whenever noteText is
+      // non-empty and not currently saving — with no failure signal, a failed
+      // autosave still reads as "Saved" to the student. Toast makes it visible.
+      notifyError('Couldn’t save your notes — check your connection and try again.');
     } else {
       lastSavedRef.current = text;
     }

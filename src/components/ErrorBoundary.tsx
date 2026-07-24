@@ -2,6 +2,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, Home, RotateCcw } from 'lucide-react';
 import { clearSession } from '../utils/sessionStorage';
 import { captureError } from '../utils/sentry';
+import { Button } from './ui';
 
 interface Props {
   children: ReactNode;
@@ -64,23 +65,22 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <div className="flex flex-col gap-3 pt-4">
-              <button
-                onClick={this.handleReset}
-                className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              >
+              <Button variant="primary" size="lg" fullWidth onClick={this.handleReset}>
                 <RotateCcw className="w-4 h-4" />
                 Try Again
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="dark"
+                size="lg"
+                fullWidth
                 onClick={() => {
                   clearSession();
                   window.location.href = '/';
                 }}
-                className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-700 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />
                 Go Home
-              </button>
+              </Button>
             </div>
           </div>
         </div>

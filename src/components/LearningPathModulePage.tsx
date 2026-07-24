@@ -38,6 +38,7 @@ import { getAllModulesForSkill } from '../data/learningModules';
 import skillVocabMap from '../data/skill-vocabulary-map.json';
 import ModuleLessonViewer from './ModuleLessonViewer';
 import AccordionModule from './AccordionModule';
+import { Button } from './ui';
 import BreadcrumbPillNav from './BreadcrumbPillNav';
 import QuestionCard from './QuestionCard';
 import StudyCenterSidebar from './StudyCenterSidebar';
@@ -172,12 +173,9 @@ function MiniQuiz({
     return (
       <div className="py-8 text-center">
         <p className="text-sm text-slate-500">No practice questions available for this skill yet.</p>
-        <button
-          onClick={() => onComplete([])}
-          className="editorial-button-secondary mt-4"
-        >
+        <Button variant="secondary" className="mt-4" onClick={() => onComplete([])}>
           Continue anyway
-        </button>
+        </Button>
       </div>
     );
   }
@@ -282,13 +280,10 @@ function QuizResults({
         <p className="mt-2 text-[11px] leading-relaxed text-slate-600">{tierConfig.msg}</p>
       </div>
 
-      <button
-        onClick={onReturnToPath}
-        className="editorial-button-secondary w-full justify-center"
-      >
+      <Button variant="secondary" fullWidth onClick={onReturnToPath}>
         <ArrowLeft className="w-4 h-4" />
         Return to Learning Path
-      </button>
+      </Button>
     </div>
   );
 }
@@ -518,7 +513,7 @@ export default function LearningPathModulePage({
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">Learning Path</p>
+          <p className="editorial-overline text-slate-400">Learning Path</p>
           <h2 className="truncate text-lg font-bold leading-tight text-slate-900">
             {skillDef?.fullLabel ?? skillId}
           </h2>
@@ -597,7 +592,7 @@ export default function LearningPathModulePage({
       {/* ── Prerequisites ────────────────────────────────────────────────── */}
       {phaseD?.skill_prerequisites && (
         <div className="editorial-surface-soft px-4 py-3 no-print">
-          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-1.5">Prerequisites</p>
+          <p className="editorial-overline text-slate-400 mb-1.5">Prerequisites</p>
           <p className="text-xs text-slate-600 whitespace-pre-line leading-relaxed">{phaseD.skill_prerequisites}</p>
         </div>
       )}
@@ -659,10 +654,7 @@ export default function LearningPathModulePage({
 
                       {/* Next Lesson / Continue button */}
                       <div className="flex justify-center pt-4 no-print">
-                        <button
-                          onClick={handleNextLesson}
-                          className="editorial-button-primary flex items-center gap-2 px-6 py-2.5 text-sm"
-                        >
+                        <Button variant="primary" onClick={handleNextLesson}>
                           {i < modules.length - 1 ? (
                             <>
                               Next Lesson
@@ -674,7 +666,7 @@ export default function LearningPathModulePage({
                               <ArrowRight className="w-4 h-4" />
                             </>
                           ) : null}
-                        </button>
+                        </Button>
                       </div>
                     </>
                   )}
@@ -693,13 +685,14 @@ export default function LearningPathModulePage({
                   Lesson complete
                 </div>
               ) : (
-                <button
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={handleMarkLessonComplete}
                   disabled={s1Submitting}
-                  className="editorial-button-primary px-4 py-2 text-xs disabled:opacity-60"
                 >
                   {s1Submitting ? 'Saving…' : 'Mark Lesson Complete →'}
-                </button>
+                </Button>
               )}
             </div>
           </div>

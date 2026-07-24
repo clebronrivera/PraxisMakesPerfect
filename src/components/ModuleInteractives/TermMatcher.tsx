@@ -67,8 +67,8 @@ export default function TermMatcher({
 
   const promptCls = isA ? 'text-sm text-slate-400 italic' : 'text-sm text-slate-600 italic';
   const colLabel = isA
-    ? 'text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 mb-3'
-    : 'text-[10px] font-bold uppercase text-slate-600 mb-3';
+    ? 'editorial-overline mb-3'
+    : 'editorial-overline text-slate-600 mb-3';
   const slotCorrect = isA
     ? 'border-[color:#059669]/50 bg-[color:#059669]/10'
     : 'border-emerald-300 bg-emerald-50';

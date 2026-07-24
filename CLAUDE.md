@@ -49,6 +49,33 @@ Do not treat this as optional. The document exists to keep marketing, onboarding
 
 ---
 
+## UI Primitives — Buttons, Icon Buttons, Surfaces
+
+Shared, typed primitives live in **`src/components/ui/`** (`import { Button, IconButton, Surface } from './ui'`). They exist so the same semantic action looks identical on every screen. **Reach for these before hand-rolling a `<button className="...">`.** Adding a new one-off styled button is the drift this system removes.
+
+### `<Button>` — text/labelled actions
+- Props: `variant` × `size` × `fullWidth`, plus all native button props (onClick, disabled, type, aria-*). Default `variant="primary"`, `size="md"`, `type="button"`.
+- Variants: `primary` (gradient CTA — one per view) · `secondary` (soft violet) · `neutral` (slate outline — cancel/sign out/export) · `ghost` (indigo text link) · `subtle` (muted-slate text link — back/skip/exit) · `destructive` (rose — irreversible) · `dark` (near-black).
+- Sizes: `sm` (compact) · `md` (default) · `lg` (hero/onboarding CTAs).
+
+### `<IconButton aria-label="…">` — icon-only controls
+- For controls whose whole label is an icon (modal close X, toolbar icons, kebabs). `aria-label` is **required by the type**. Variants: `ghost` (default) · `neutral` · `dark`; sizes `sm`/`md`.
+
+### `<Surface>` — card / panel container
+- Wraps `.editorial-surface` with an explicit `padding` prop (`none`/`sm`/`md`/`lg` → ``/`p-5`/`p-6`/`p-10`) and optional `as` (`div`/`section`/…). Inherits the eventual warm→cool border migration for free.
+
+### What intentionally stays a raw `<button>` (do NOT force into a primitive)
+Answer/selection tiles, nav tabs, segmented controls, filter/mode pills, invisible full-screen overlay dismissers (`absolute inset-0`), and the **landing/auth surface** (`src/components/landing/**` is a separate **dark** violet/navy theme — the light-theme primitives would regress there; it needs its own dark variants before migration).
+
+### Regression guard — `npm run scan:buttons`
+A debt ratchet (`scripts/check-buttons.mjs`) counts raw `<button` tags outside `src/components/ui/` and **fails if the count rises above `max` in `scripts/button-budget.json`**. It runs in pre-commit (alongside `scan:types`/`scan:colors`/`lint`) and in `npm run check`.
+- Added a legit raw button (new answer tile, etc.)? **Raise** `max` by that many, with a note.
+- Migrated more buttons onto `<Button>`? **Lower** `max` to the new count to keep ratcheting toward zero.
+
+The dead dark-theme `.btn-primary/.btn-secondary/.btn-ghost` CSS was removed — do not reintroduce it; the canonical `.editorial-button-*` classes still exist and back the `<Button>` variants.
+
+---
+
 ## Local Development
 
 ### Running the App Locally

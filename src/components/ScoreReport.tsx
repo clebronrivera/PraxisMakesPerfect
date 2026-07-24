@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Trophy, Clock, AlertTriangle, CheckCircle2, XCircle, BarChart3, Home, Timer, Zap, RotateCcw, Lightbulb } from 'lucide-react';
 import { useEngine } from '../hooks/useEngine';
 import type { Domain } from '../types/content';
@@ -9,6 +10,7 @@ import { useProgressTracking } from '../hooks/useProgressTracking';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
 import { loadSession, clearSession } from '../utils/sessionStorage';
+import { Button, Surface } from './ui';
 import type { DiagnosticSummary } from '../types/diagnosticSummary';
 
 interface ScoreReportProps {
@@ -34,6 +36,33 @@ const getScoreColor = (score: number) => {
   if (score >= APPROACHING_THRESHOLD) return { text: 'text-indigo-700', bg: 'bg-indigo-50', border: 'border-indigo-200' };
   return { text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' };
 };
+
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+// Counts up to `value` over ~700ms on mount; collapses to an instant, static
+// number under prefers-reduced-motion.
+function AnimatedScorePercentage({ value, className }: { value: number; className: string }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(value);
+      return;
+    }
+    const duration = 700;
+    const start = performance.now();
+    let frame: number;
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      setDisplay(Math.round(easeOutCubic(progress) * value));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <p className={className}>{display}%</p>;
+}
 
 export default function ScoreReport({
   responses,
@@ -85,23 +114,25 @@ export default function ScoreReport({
           </div>
 
           <div className="flex flex-col gap-3 pt-4">
-            <button
+            <Button
+              variant="primary"
+              fullWidth
               onClick={tryRecalculate}
-              className="editorial-button-primary w-full"
             >
               <RotateCcw className="w-4 h-4" />
               Try to Recalculate
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
+              fullWidth
               onClick={() => {
                 clearSession();
                 onGoHome();
               }}
-              className="editorial-button-secondary w-full"
             >
               <Home className="w-4 h-4" />
               Reset Attempt & Go Home
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -208,15 +239,16 @@ export default function ScoreReport({
         <p className="editorial-copy">
           {`You completed all ${totalQuestions} questions`}
         </p>
-        <button
+        <Button
+          variant="secondary"
+          className="mx-auto"
           onClick={() => {
             const { currentSkillScores } = detectWeaknesses(responses, questions);
             downloadScoreReport(responses, profile, currentSkillScores);
           }}
-          className="editorial-button-secondary mx-auto"
         >
           Download Detailed Report
-        </button>
+        </Button>
       </div>
 
       {/* Overall Score Card */}
@@ -224,9 +256,7 @@ export default function ScoreReport({
         <div className="space-y-4">
           <div>
             <p className="mb-2 text-sm text-slate-600">Overall Score</p>
-            <p className={`text-6xl font-bold ${scoreStyle.text}`}>
-              {scorePercentage}%
-            </p>
+            <AnimatedScorePercentage value={scorePercentage} className={`stat-hero ${scoreStyle.text}`} />
           </div>
           <div className="flex items-center justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">
@@ -296,7 +326,7 @@ export default function ScoreReport({
 
       {/* Longest Questions */}
       {longestQuestions.length > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
             <Timer className="w-5 h-5 text-indigo-700" />
             Questions That Took the Longest
@@ -336,11 +366,11 @@ export default function ScoreReport({
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Domain Scores */}
-      <div className="editorial-surface p-6">
+      <Surface padding="md">
         <h3 className="mb-6 flex items-center gap-2 font-semibold text-slate-900">
           <BarChart3 className="w-5 h-5 text-indigo-700" />
           Performance by Domain
@@ -377,11 +407,11 @@ export default function ScoreReport({
             );
           })}
         </div>
-      </div>
+      </Surface>
 
       {/* Weakest Areas */}
       {weakestDomains.length > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-indigo-700">
             <AlertTriangle className="w-5 h-5" />
             Areas for Improvement
@@ -405,12 +435,12 @@ export default function ScoreReport({
               );
             })}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Key Concepts to Review */}
       {(diagnosticSummary?.missedConcepts?.length ?? 0) > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
             <Lightbulb className="w-5 h-5 text-indigo-700" />
             Key Concepts to Review
@@ -431,12 +461,12 @@ export default function ScoreReport({
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Foundational Gaps */}
       {(diagnosticSummary?.foundationalGaps?.length ?? 0) > 0 && (
-        <div className="editorial-surface p-6">
+        <Surface padding="md">
           <h3 className="mb-4 flex items-center gap-2 font-semibold text-indigo-700">
             <AlertTriangle className="w-5 h-5" />
             Foundational Gaps
@@ -454,37 +484,40 @@ export default function ScoreReport({
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Action Buttons */}
       <div className="space-y-4">
         <div className="space-y-3">
-          <button
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
             onClick={() => onStartPractice(weakestDomains[0])}
-            className="editorial-button-primary w-full p-6"
           >
             <Zap className="w-5 h-5" />
             Start Domain Review in Weakest Domain
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           {!hideRetake && (
-            <button
+            <Button
+              variant="dark"
               onClick={onRetakeAssessment}
-              className="editorial-button-dark p-4"
             >
               Retake Assessment
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="secondary"
+            className={hideRetake ? 'col-span-2' : ''}
             onClick={onGoHome}
-            className={`editorial-button-secondary p-4 ${hideRetake ? 'col-span-2' : ''}`}
           >
             <Home className="w-4 h-4" />
             Home
-          </button>
+          </Button>
         </div>
       </div>
     </div>

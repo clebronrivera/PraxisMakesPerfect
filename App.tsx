@@ -1067,7 +1067,7 @@ function PraxisStudyAppContent() {
                   <button
                     key={tab.label}
                     onClick={tab.onClick}
-                    className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all ${
+                    className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-[0.2em] transition-all ${
                       tab.active
                         ? 'grad-chrome text-white'
                         : 'border border-slate-200 bg-white text-slate-500'
@@ -1272,21 +1272,37 @@ function PraxisStudyAppContent() {
                         <p className="editorial-overline">Dashboard</p>
                         <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 lg:text-[2.4rem]">Welcome to PASS</h2>
                         <p className="mt-3 max-w-2xl text-[15px] font-medium leading-normal text-slate-500">
-                          Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.
+                          {!hasAssessmentInProgress && !profile.adaptiveDiagnosticComplete
+                            ? 'Start with the adaptive diagnostic — it establishes your baseline across all 45 skills in one sitting, then every recommendation PASS makes is built from real signal instead of a guess.'
+                            : 'Take the adaptive diagnostic to establish your baseline across all 45 skills. It adjusts to your performance — strong areas go fast, weaker areas get more attention. You can pause any time and start practicing immediately.'}
                         </p>
-                        <div className="mt-6 grid gap-3 md:grid-cols-2">
-                          {!hasAssessmentInProgress && !profile.adaptiveDiagnosticComplete && (
-                            <div className="editorial-surface-soft p-4">
-                              <p className="editorial-overline">Diagnostic</p>
-                              <p className="mt-2 text-base font-bold text-slate-900">Take the adaptive diagnostic</p>
-                              <p className="mt-2 text-sm text-slate-500">Starting with 45 questions (one per skill), it adapts based on your answers. Pause any time and come back without penalty.</p>
-                              <button onClick={() => startAdaptiveDiagnostic()} className="editorial-button-primary mt-4">
-                                <Zap className="h-4 w-4" />
-                                Start diagnostic
+                        {!hasAssessmentInProgress && !profile.adaptiveDiagnosticComplete ? (
+                          <>
+                            <div className="mt-8 flex flex-col items-center gap-6 rounded-[1.75rem] bg-gradient-to-br from-violet-500 to-indigo-600 p-6 text-white shadow-xl shadow-indigo-500/25 md:flex-row md:p-8">
+                              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15">
+                                <Zap className="h-7 w-7" />
+                              </div>
+                              <div className="min-w-0 flex-1 text-center md:text-left">
+                                <p className="mb-1 text-[11px] font-black uppercase tracking-[0.14em] text-indigo-100">Recommended first step</p>
+                                <p className="text-xl font-bold leading-tight">Take the adaptive diagnostic</p>
+                                <p className="mt-1.5 max-w-md text-sm text-indigo-100">45 questions (one per skill) that adapt to your answers. Pause any time — nothing is lost.</p>
+                              </div>
+                              <button
+                                onClick={() => startAdaptiveDiagnostic()}
+                                className="shrink-0 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-indigo-700 shadow-lg transition-colors hover:bg-indigo-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                              >
+                                Start diagnostic →
                               </button>
                             </div>
-                          )}
-                          <div className="editorial-surface-soft p-4">
+                            <div className="mt-5 flex items-center justify-center gap-1.5 text-sm">
+                              <span className="text-slate-500">Already know your gaps?</span>
+                              <button type="button" onClick={() => setMode('practice-hub')} className="editorial-button-ghost">
+                                Start practicing right away →
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="mt-6 editorial-surface-soft p-4">
                             <p className="editorial-overline">Practice</p>
                             <p className="mt-2 text-base font-bold text-slate-900">Start practicing right away</p>
                             <p className="mt-2 text-sm text-slate-500">No need to wait — jump into practice immediately. The diagnostic gives deeper insights, but you can practice any time.</p>
@@ -1305,7 +1321,7 @@ function PraxisStudyAppContent() {
                               </li>
                             </ul>
                           </div>
-                        </div>
+                        )}
                       </div>
                       <div className="editorial-surface-soft p-5 lg:p-6">
                         <p className="editorial-overline">Quick start</p>

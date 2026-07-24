@@ -4,6 +4,7 @@ import { enqueueResponse, getQueuedResponses, clearQueue } from '../utils/respon
 import { captureError } from '../utils/sentry';
 import ModuleSnippetCard from './ModuleSnippetCard';
 import SkillHelpDrawer from './SkillHelpDrawer';
+import { Button, Surface } from './ui';
 import { getProgressSkillDefinition } from '../utils/progressTaxonomy';
 import { getSkillForModule } from '../data/learningModules';
 import QuestionCard from './QuestionCard';
@@ -615,13 +616,14 @@ export default function PracticeSession({
             <h3 className="text-xl font-bold text-slate-900">No Questions Found</h3>
             <p className="mt-2 text-slate-500">We couldn&apos;t find any questions matching your filters. Try choosing a different domain or skill.</p>
           </div>
-          <button
+          <Button
+            variant="secondary"
+            fullWidth
             onClick={onExitPractice}
-            className="editorial-button-secondary w-full"
           >
             <Home className="w-4 h-4" />
             Back to Home
-          </button>
+          </Button>
         </div>
       );
     }
@@ -672,7 +674,7 @@ export default function PracticeSession({
       )}
 
       {/* ── Session Header ────────────────────────────────────────────────────── */}
-      <div className="editorial-surface flex items-center justify-between gap-4 p-5">
+      <Surface padding="sm" className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-accent" />
@@ -698,7 +700,7 @@ export default function PracticeSession({
           {/* All-time cumulative % */}
           {allTimePct !== null && (
             <div className="hidden items-center gap-1.5 border-l border-slate-200 pl-4 sm:flex">
-              <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">All-time</span>
+              <span className="editorial-overline text-slate-400">All-time</span>
               <span className={`text-sm font-bold ${pctColor}`}>{allTimePct}%</span>
             </div>
           )}
@@ -706,7 +708,7 @@ export default function PracticeSession({
           {/* Retirement progress pill — only after first pass */}
           {firstPassComplete && retiredCount > 0 && (
             <div className="hidden items-center gap-1.5 border-l border-slate-200 pl-4 sm:flex">
-              <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Retired</span>
+              <span className="editorial-overline text-slate-400">Retired</span>
               <span className="text-xs font-semibold text-slate-500">{retiredCount}/{totalPool}</span>
             </div>
           )}
@@ -772,7 +774,7 @@ export default function PracticeSession({
             )}
           </button>
         </div>
-      </div>
+      </Surface>
 
       {/* ── Skill Help Drawer ─────────────────────────────────────────────────── */}
       {/* Rendered whenever a module link is clicked (skill or domain practice). */}
@@ -795,7 +797,7 @@ export default function PracticeSession({
         <div
           role="status"
           aria-live="polite"
-          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-sky-200 bg-sky-50 px-4 py-3 duration-300"
+          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-3xl border border-sky-200 bg-sky-50 px-4 py-3 duration-300"
         >
           <RotateCcw className="h-4 w-4 flex-shrink-0 text-sky-600" />
           <span className="text-sm text-sky-800">
@@ -808,7 +810,7 @@ export default function PracticeSession({
       {domainWarnings.size > 0 && (() => {
         const warnedDomainIds = Array.from(domainWarnings);
         return (
-          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-rose-300 bg-rose-50 px-4 py-3 duration-300">
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-3xl border border-rose-300 bg-rose-50 px-4 py-3 duration-300">
             <AlertTriangle className="h-4 w-4 flex-shrink-0 text-rose-600 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-slate-900">This domain needs extra attention.</p>
@@ -832,7 +834,7 @@ export default function PracticeSession({
           ? prevDistractorNoteRef.current
           : null;
         return (
-          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-indigo-200 bg-indigo-50 px-4 py-3 duration-300">
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-3xl border border-indigo-200 bg-indigo-50 px-4 py-3 duration-300">
             <Lightbulb className="h-4 w-4 flex-shrink-0 text-accent mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-slate-900">
@@ -859,7 +861,7 @@ export default function PracticeSession({
           alertModuleId;
         const alertSkillDef = getProgressSkillDefinition(alertSkillId);
         return (
-          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-[1.5rem] border border-rose-300 bg-rose-50 px-4 py-3 duration-300">
+          <div className="animate-in slide-in-from-top-2 flex items-start gap-3 rounded-3xl border border-rose-300 bg-rose-50 px-4 py-3 duration-300">
             <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-rose-600" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-900">This skill needs more attention</p>
@@ -887,7 +889,7 @@ export default function PracticeSession({
       {streakMessage && consecutiveCorrect >= 2 && (
         <div
           key={streakMessage}
-          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-[1.5rem] border border-indigo-200 bg-indigo-50 px-4 py-3 duration-300"
+          className="animate-in slide-in-from-top-2 flex items-center gap-2.5 rounded-3xl border border-indigo-200 bg-indigo-50 px-4 py-3 duration-300"
         >
           <Flame className="h-4 w-4 flex-shrink-0 text-accent" />
           <span className="text-sm font-semibold text-slate-900">{streakMessage}</span>
@@ -897,11 +899,11 @@ export default function PracticeSession({
 
       {/* ── Practice Context Box — always shows Domain + Skill ───────────────── */}
       {(domainInfo || skillInfo) && (
-        <div className="editorial-surface space-y-4 p-5">
+        <Surface padding="sm" className="space-y-4">
           {domainInfo && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Domain</p>
+                <p className="editorial-overline text-slate-400">Domain</p>
                 <span className="flex-shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-400">
                   {contextDomainId}
                 </span>
@@ -914,7 +916,7 @@ export default function PracticeSession({
           {skillInfo && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Skill</p>
+                <p className="editorial-overline text-slate-400">Skill</p>
                 <span className="flex-shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-400">
                   {contextSkillId}
                 </span>
@@ -929,7 +931,7 @@ export default function PracticeSession({
               )}
             </div>
           )}
-        </div>
+        </Surface>
       )}
 
       {/* ── Response save warning ──────────────────────────────────────────── */}
@@ -1035,7 +1037,7 @@ export default function PracticeSession({
               />
             )}
 
-            <div className="editorial-surface rounded-[1.5rem] border px-4 py-4 text-center">
+            <div className="editorial-surface rounded-3xl border px-4 py-4 text-center">
               <p className="text-sm italic text-slate-500">You will see this feedback again in your report</p>
             </div>
           </div>
@@ -1051,12 +1053,13 @@ export default function PracticeSession({
               <h3 className="text-xl font-bold text-slate-900">Session Paused</h3>
               <p className="mt-2 text-sm text-slate-500">Your progress is safely stored. Resume when you&apos;re ready.</p>
             </div>
-            <button
+            <Button
+              variant="primary"
+              fullWidth
               onClick={resume}
-              className="editorial-button-primary w-full"
             >
               Resume Session
-            </button>
+            </Button>
           </div>
         </div>
       )}

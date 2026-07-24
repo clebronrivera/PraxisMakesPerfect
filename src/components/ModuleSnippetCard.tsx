@@ -62,7 +62,7 @@ export default function ModuleSnippetCard({
             <BookOpen className="h-4 w-4 flex-shrink-0" style={{ color: accentVar }} />
           )}
           <span
-            className="text-[10px] font-semibold uppercase tracking-[0.22em]"
+            className="editorial-overline"
             style={{ color: accentVar }}
           >
             {isHint ? 'Hint — Module Reference' : 'What the module says'}
@@ -82,7 +82,7 @@ export default function ModuleSnippetCard({
       {/* ── Module name ── */}
       {moduleTitle && (
         <p
-          className="text-[11px] font-semibold uppercase tracking-wide"
+          className="editorial-overline"
           style={{ color: `color-mix(in srgb, ${accentVar} 80%, white)` }}
         >
           {moduleId} — {moduleTitle}
@@ -102,7 +102,7 @@ export default function ModuleSnippetCard({
       {/* ── Secondary module snippets (multi-module questions) ── */}
       {secondaryRefs.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-slate-200">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+          <p className="editorial-overline text-slate-400">
             Also covered in
           </p>
           {secondaryRefs.slice(0, 2).map(ref => (

@@ -8,10 +8,12 @@
 
 import { useRef, useState } from 'react';
 import { Zap, ArrowRight, BookMarked } from 'lucide-react';
+import { Button } from './ui';
 import FluencyDrillSession, { type DrillDirection, type TermResult } from './FluencyDrillSession';
 import { buildDrillScopes, type DrillScope, type SkillScoreLike } from '../utils/drillScopes';
 import { termsForSkills } from '../utils/vocabSkillIndex';
 import { recordDrillResults } from '../services/vocabDrillService';
+import { notifyError } from '../utils/toast';
 
 export interface FluencyDrillPageProps {
   userId: string;
@@ -79,6 +81,7 @@ export default function FluencyDrillPage({
       if (res.nudgeSkillIds.length && onApplyNudges) onApplyNudges(res.nudgeSkillIds);
     } catch (err) {
       console.error('[FluencyDrillPage] recordDrillResults failed:', err);
+      notifyError('Your drill results couldn’t be saved — this round may not count toward your progress.');
     }
     setSummary({ correct: score.correct, total: score.total, flagged, nudged });
     setView('results');
@@ -133,18 +136,18 @@ export default function FluencyDrillPage({
               <p className="text-[11px] text-slate-500">Flagged for review — clear the flags by revealing them.</p>
             </div>
             {onNavigateToGlossary && (
-              <button onClick={onNavigateToGlossary} className="editorial-button-ghost text-[12px]">
+              <Button variant="ghost" onClick={onNavigateToGlossary} className="text-[12px]">
                 Review →
-              </button>
+              </Button>
             )}
           </div>
         )}
 
         <div className="flex justify-center gap-3">
-          <button onClick={startDrill} className="editorial-button-primary">Drill again</button>
-          <button onClick={() => setView('setup')} className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+          <Button variant="primary" onClick={startDrill}>Drill again</Button>
+          <Button variant="neutral" onClick={() => setView('setup')}>
             Change scope
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -166,7 +169,7 @@ export default function FluencyDrillPage({
       {scopes.length === 0 ? (
         <div className="editorial-surface p-6 text-center">
           <p className="text-sm text-slate-500">No drillable vocabulary is available yet.</p>
-          <button onClick={onExit} className="editorial-button-primary mt-4">Back</button>
+          <Button variant="primary" onClick={onExit} className="mt-4">Back</Button>
         </div>
       ) : (
         <>
@@ -214,7 +217,7 @@ export default function FluencyDrillPage({
             <p className="editorial-overline">3 · Pace</p>
             <p className="text-[11px] text-slate-400">seconds per card · def→term / term→def</p>
           </div>
-          <div className="grid grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
             {Object.entries(PACES).map(([id, p]) => {
               const selected = id === paceId;
               return (
@@ -237,9 +240,9 @@ export default function FluencyDrillPage({
               <p className="text-sm font-bold text-slate-900">{scope?.label} · {DIRECTIONS.find((d) => d.id === direction)?.label} · {pace.label}</p>
               <p className="text-[11px] text-slate-500 mt-0.5">{scope?.termCount ?? 0} terms in scope · up to {MAX_CARDS} cards</p>
             </div>
-            <button onClick={startDrill} disabled={!canStart} className="editorial-button-primary disabled:opacity-40">
+            <Button variant="primary" onClick={startDrill} disabled={!canStart}>
               <Zap size={15} /> Start drill
-            </button>
+            </Button>
           </div>
 
           <p className="text-[11px] text-slate-500 mt-4 leading-relaxed flex items-start gap-1.5">
@@ -248,9 +251,9 @@ export default function FluencyDrillPage({
           </p>
 
           <div className="flex justify-center mt-6">
-            <button onClick={onExit} className="text-xs text-slate-400 underline underline-offset-2 hover:text-slate-600">
+            <Button variant="subtle" size="sm" onClick={onExit}>
               Back
-            </button>
+            </Button>
           </div>
         </>
       )}

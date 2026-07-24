@@ -15,6 +15,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { CheckCircle2, XCircle, Timer, Pause, Play } from 'lucide-react';
+import { Button } from './ui';
 import { generateVocabQuiz, type VocabQuizItem, type QuizType } from '../utils/vocabQuizGenerator';
 import { skillsForTerm } from '../utils/vocabSkillIndex';
 
@@ -205,7 +206,7 @@ export default function FluencyDrillSession({
     return (
       <div className="flex min-h-[300px] flex-col items-center justify-center gap-4 px-6 text-center">
         <p className="text-sm text-slate-500">Not enough terms in this scope to build a drill (need at least 4).</p>
-        <button onClick={onExit} className="editorial-button-primary">Back</button>
+        <Button variant="primary" onClick={onExit}>Back</Button>
       </div>
     );
   }
@@ -339,13 +340,9 @@ export default function FluencyDrillSession({
 
       {/* Exit */}
       <div className="flex justify-center">
-        <button
-          onClick={onExit}
-          aria-label="Exit drill"
-          className="rounded text-xs text-slate-400 underline underline-offset-2 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-        >
+        <Button variant="subtle" size="sm" onClick={onExit} aria-label="Exit drill">
           Exit drill
-        </button>
+        </Button>
       </div>
     </div>
   );

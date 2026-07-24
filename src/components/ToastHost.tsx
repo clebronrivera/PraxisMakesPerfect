@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { TOAST_EVENT, type ToastDetail } from '../utils/toast';
+import { IconButton } from './ui';
 
 interface ActiveToast extends ToastDetail {
   id: number;
@@ -54,13 +55,14 @@ export default function ToastHost() {
             aria-live={isError ? 'assertive' : 'polite'}
           >
             <span className="flex-1">{t.message}</span>
-            <button
+            <IconButton
+              size="sm"
               onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}
-              className="shrink-0 rounded opacity-60 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               aria-label="Dismiss notification"
+              className="shrink-0"
             >
               <X className="h-4 w-4" />
-            </button>
+            </IconButton>
           </div>
         );
       })}

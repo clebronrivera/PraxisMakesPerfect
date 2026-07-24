@@ -10,6 +10,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Timer, RotateCcw, Home, ChevronRight, Trophy } from 'lucide-react';
+import { Button } from './ui';
 import type { AnalyzedQuestion } from '../brain/question-analyzer';
 import { getQuestionCorrectAnswers } from '../brain/question-analyzer';
 import type { MissedQuestion, RoundResult } from '../hooks/useRedemptionRounds';
@@ -144,15 +145,15 @@ export default function RedemptionRoundSession({
             </div>
           ) : (
             <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400">Personal best</p>
+              <p className="editorial-overline text-slate-400">Personal best</p>
               <p className="mt-1 text-lg font-black italic text-slate-700">{Math.round(Math.max(highScore, scorePct))}%</p>
             </div>
           )}
 
-          <button onClick={onExit} className="editorial-button-primary w-full">
+          <Button variant="primary" fullWidth onClick={onExit}>
             <Home className="w-4 h-4" />
             Back to dashboard
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -192,7 +193,7 @@ export default function RedemptionRoundSession({
       {/* ── Redemption badge ── */}
       <div className="flex items-center gap-2">
         <RotateCcw className="h-3.5 w-3.5 text-indigo-600" />
-        <span className="text-[11px] font-black uppercase tracking-[0.1em] text-indigo-700">Redemption Round</span>
+        <span className="editorial-overline text-indigo-700">Redemption Round</span>
       </div>
 
       {/* ── Question card ── */}
@@ -230,21 +231,22 @@ export default function RedemptionRoundSession({
         </div>
 
         {/* ── Submit ── */}
-        <button
+        <Button
+          variant="primary"
+          fullWidth
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`editorial-button-primary w-full ${!canSubmit ? 'opacity-40 cursor-not-allowed' : ''}`}
         >
           Next
           <ChevronRight className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
 
       {/* ── Exit link ── */}
       <div className="text-center">
-        <button onClick={onExit} className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
+        <Button variant="subtle" size="sm" onClick={onExit}>
           Exit round (credit already used)
-        </button>
+        </Button>
       </div>
     </div>
   );

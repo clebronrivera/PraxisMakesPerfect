@@ -15,6 +15,7 @@
  */
 
 import { supabase } from '../config/supabase';
+import { notifyError } from '../utils/toast';
 
 /**
  * One drill card's outcome. Structurally compatible with the drill component's
@@ -61,7 +62,7 @@ interface VocabAttemptInsert {
 }
 
 /** Persist every card as raw events (one row per term × skill; one null-skill row if unmapped). */
-async function saveVocabAttempts(userId: string, results: VocabDrillResult[]): Promise<void> {
+async function saveVocabAttempts(userId: string, results: VocabDrillResult[]): Promise<boolean> {
   const rows = results.flatMap((r): VocabAttemptInsert[] => {
     const base = {
       user_id: userId,
@@ -73,16 +74,18 @@ async function saveVocabAttempts(userId: string, results: VocabDrillResult[]): P
     if (r.skillIds.length === 0) return [{ ...base, skill_id: null }];
     return r.skillIds.map((skillId) => ({ ...base, skill_id: skillId }));
   });
-  if (rows.length === 0) return;
+  if (rows.length === 0) return true;
 
   const { error } = await supabase.from('vocab_attempts').insert(rows);
   if (error) {
     console.error('[vocabDrillService] saveVocabAttempts error:', error);
+    return false;
   }
+  return true;
 }
 
 /** Flag a missed term in the glossary (adds if absent, bumps miss_count). */
-async function flagGlossaryMiss(userId: string, term: string, skillId: string | null): Promise<void> {
+async function flagGlossaryMiss(userId: string, term: string, skillId: string | null): Promise<boolean> {
   const { error } = await supabase.rpc('increment_glossary_miss', {
     p_user_id: userId,
     p_term: term,
@@ -90,7 +93,9 @@ async function flagGlossaryMiss(userId: string, term: string, skillId: string | 
   });
   if (error) {
     console.error('[vocabDrillService] increment_glossary_miss error:', error);
+    return false;
   }
+  return true;
 }
 
 /**
@@ -105,7 +110,10 @@ export async function recordDrillResults(
     return { nudgeSkillIds: [], flaggedTermCount: 0 };
   }
 
-  await saveVocabAttempts(userId, results);
+  let anyWriteFailed = false;
+
+  const attemptsSaved = await saveVocabAttempts(userId, results);
+  if (!attemptsSaved) anyWriteFailed = true;
 
   const seen = new Set<string>();
   let flagged = 0;
@@ -114,8 +122,17 @@ export async function recordDrillResults(
     const key = r.term.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
-    await flagGlossaryMiss(userId, r.term, r.skillIds[0] ?? null);
+    const flaggedOk = await flagGlossaryMiss(userId, r.term, r.skillIds[0] ?? null);
+    if (!flaggedOk) anyWriteFailed = true;
     flagged += 1;
+  }
+
+  // Neither helper throws on a Supabase error (both log and return false), so
+  // without this the caller's try/catch around recordDrillResults() never
+  // fires and the drill silently "succeeds" from the user's point of view.
+  // Surface once here rather than per-helper to avoid a toast per missed term.
+  if (anyWriteFailed) {
+    notifyError('Some of your drill results couldn’t be saved — this round may not fully count toward your progress.');
   }
 
   return { nudgeSkillIds: computeSkillNudges(results), flaggedTermCount: flagged };

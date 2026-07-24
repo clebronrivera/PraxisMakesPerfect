@@ -36,6 +36,9 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [mode, setMode] = useState<'chat' | 'quiz'>('chat');
   const [error, setError] = useState<string | null>(null);
+  // Captures the args of the most recent send attempt so a failed send can be retried
+  // without the user retyping it (the text is already gone from the input by then).
+  const lastAttemptRef = useRef<{ text: string; quizAnswerFor?: TutorChatRequest['quizAnswerFor'] } | null>(null);
   const [hasOlderMessages, setHasOlderMessages] = useState(false);
   const [messagesOffset, setMessagesOffset] = useState(0);
 
@@ -151,6 +154,7 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
   ) => {
     if (!userId || !text.trim()) return;
 
+    lastAttemptRef.current = { text, quizAnswerFor };
     setError(null);
 
     // Optimistic local append for user message
@@ -330,6 +334,12 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
     );
   }, [sendMessage]);
 
+  // ── Retry last failed send ────────────────────────────────────────────────
+  const retryLastMessage = useCallback(() => {
+    const last = lastAttemptRef.current;
+    if (last) sendMessage(last.text, last.quizAnswerFor);
+  }, [sendMessage]);
+
   return {
     sessions,
     activeSessionId,
@@ -346,6 +356,7 @@ export function useTutorChat({ userId, sessionType, pageContext }: UseTutorChatO
     loadOlderMessages,
     hasOlderMessages,
     error,
+    retryLastMessage,
     pendingQuiz: pendingQuizRef.current,
   };
 }

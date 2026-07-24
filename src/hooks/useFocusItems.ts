@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../config/supabase';
 import type { StudyPlanDocumentV2 } from '../types/studyPlanTypes';
 import { extractFocusItems, type FocusItem } from '../utils/focusItemExtractor';
+import { notifyError } from '../utils/toast';
 
 interface UseFocusItemsReturn {
   items: FocusItem[];
@@ -130,7 +131,10 @@ export function useFocusItems(
         { onConflict: 'user_id,study_plan_id,item_type,item_key' }
       )
       .then(({ error }) => {
-        if (error) console.error('[useFocusItems] toggleCheck error:', error.message);
+        if (error) {
+          console.error('[useFocusItems] toggleCheck error:', error.message);
+          notifyError("Couldn't save that checkbox — it may not stick after you refresh.");
+        }
       });
   }, [userId, studyPlan?.id, items, checkedIds]);
 

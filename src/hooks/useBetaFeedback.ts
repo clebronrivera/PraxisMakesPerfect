@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminEmail } from '../config/admin';
+import { notifyError } from '../utils/toast';
 
 export type BetaFeedbackCategory =
   | 'bug'
@@ -104,6 +105,11 @@ export function useBetaFeedback() {
       }));
     } catch (error) {
       console.error('[useBetaFeedback] Error fetching feedback:', error);
+      // AdminDashboard's loadAdminData() (triggered on mount and via the Refresh
+      // button) has no separate error state for this — a swallowed failure here
+      // renders as "no feedback" in the admin table, indistinguishable from a
+      // genuinely empty inbox.
+      notifyError('Couldn’t load beta feedback — try refreshing the dashboard.');
       return [];
     }
   }, [user]);
