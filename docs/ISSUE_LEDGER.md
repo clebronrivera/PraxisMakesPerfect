@@ -34,6 +34,27 @@ Use this file to track discovered issues, reporting mismatches, and unresolved i
 
 ---
 
+## 2026-07-26 - 229 legacy `item_*` explanations are truncated mid-sentence
+
+- Status: `open` (detection shipped; content fix pending)
+- Area: question bank / content quality
+- Summary: 229 of the 250 legacy `item_*` questions (**91.6%**) ship `CORRECT_Explanation`
+  text that stops mid-clause — e.g. `item_002` ends *"…known for concepts related to language
+  development and language"*. Zero of the 991 modern `PQ_*` questions are affected, so this is
+  a clean, isolated legacy-batch defect covering ~18% of the 1,241-question bank. The text is
+  what a learner reads immediately after answering, so it is the pedagogical payload of a miss.
+- **The originals do not exist.** `git log --follow` back to the first commit containing
+  `item_002` shows `CORRECT_Explanation` has been 79 characters since the day it landed, and
+  `rationale` is truncated identically — there is no fallback field and nothing to restore from.
+  Regeneration is the only path that preserves the content (decision D2 in `docs/MASTER_PLAN.md`).
+- Code anchors: `scripts/audit-explanations.ts`, `scripts/explanation-truncation-allowlist.json`
+- Resolution / next step: `npm run audit:explanations` now ratchets this — the 229 are
+  allowlisted so it passes today and fails on any **new** truncation. Regenerate the 229 with
+  Claude (stem + options + correct answer + surviving prefix as seed), then delete the fixed ids
+  from the allowlist; the script prints which ids are safe to remove.
+
+---
+
 ## 2026-06-16 - Dependabot #12: esbuild build-time RCE (dev dep; needs vite major upgrade)
 
 - Status: **resolved 2026-07-02**

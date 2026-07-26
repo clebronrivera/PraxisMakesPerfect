@@ -27,6 +27,7 @@
     "test:banned-terms": "npx tsx scripts/banned-terms-check.ts",
     "audit:bank": "npx tsx scripts/audit-question-bank.ts",
     "audit:answers": "npx tsx scripts/audit-answer-distribution.ts",
+    "audit:explanations": "npx tsx scripts/audit-explanations.ts",
     "lint": "eslint . --max-warnings 0",
     "lint:security": "eslint . --config eslint.security.config.js",
     "check": "npm run scan:types && npm run scan:colors && npm run scan:buttons && npm run lint && npm run test",
