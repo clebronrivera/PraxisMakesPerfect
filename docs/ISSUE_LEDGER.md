@@ -590,7 +590,7 @@ All four were diagnosed in one session using live Supabase data for Carlos River
 - Code anchors:
   [src/hooks/useAdaptiveLearning.ts](/Users/lebron/Documents/PraxisMakesPerfect/src/hooks/useAdaptiveLearning.ts)
   [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
-- Resolution: RESOLVED (2026-06-16). Formalized via Track B/B3 + A4: assessments and practice prefer UNSEEN items, falling back to reuse (reframed) only when a thin skill's pool is exhausted, with dedupe preventing score inflation. Documented in `docs/HANDOFF_2026-06-11_phase2-finalization.md` §2.
+- Resolution: RESOLVED (2026-06-16). Formalized via Track B/B3 + A4: assessments and practice prefer UNSEEN items, falling back to reuse (reframed) only when a thin skill's pool is exhausted, with dedupe preventing score inflation. Documented in `archive/docs-plans-2026-07/HANDOFF_2026-06-11_phase2-finalization.md` §2.
 
 ## 2026-03-14 - Screener report is current-attempt based, while home readiness is not yet clearly scoped
 

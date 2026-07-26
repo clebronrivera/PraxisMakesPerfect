@@ -1,11 +1,12 @@
 # Decision & Review Register — 2026-06-10
 
-> ✅ **DECISIONS FINALIZED 2026-06-11.** All §A/§B calls are stamped and phased for execution in
-> **[HANDOFF_2026-06-11_phase2-finalization.md](HANDOFF_2026-06-11_phase2-finalization.md)** — the live
-> execution plan (two parallel tracks: Engineering + Coworker). This register is now the *record of why*;
-> work the handoff for *what to do next*. Notable: A3 → durable descriptive copy (not "1,150"); A4 →
-> replace/latest-wins + prefer-unseen (averaging parked as a future thought); A11 → retire (0 MS items);
-> bank-expansion of the thinnest skills added as a Phase-3 Coworker task.
+> ✅ **DECISIONS FINALIZED 2026-06-11.** All §A/§B calls were stamped and phased for execution in
+> `HANDOFF_2026-06-11_phase2-finalization.md`, which shipped via PRs #37/#38 and was
+> **[archived 2026-07-26](../archive/docs-plans-2026-07/HANDOFF_2026-06-11_phase2-finalization.md)**.
+> This register remains the *record of why*; for *what to do next* read
+> **[docs/MASTER_PLAN.md](MASTER_PLAN.md)**, the only live plan document. Notable: A3 → durable descriptive
+> copy (not "1,150"); A4 → replace/latest-wins + prefer-unseen (averaging parked as a future thought);
+> A11 → retire (0 MS items); bank-expansion of the thinnest skills added as a Phase-3 Coworker task.
 
 **Purpose:** one consolidated list of everything that needs a **decision**, a **review/sign-off**, or
 **routing to Claude Coworker** — pulled from `PHASE2_REVIEW_BACKLOG.md`, `PENDING_IDEAS.md`,

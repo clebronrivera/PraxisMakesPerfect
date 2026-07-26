@@ -1,3 +1,8 @@
+> ⛔ **ARCHIVED 2026-07-26. Superseded by [docs/MASTER_PLAN.md](../../docs/MASTER_PLAN.md).**
+> Open items were extracted there; do not work from this file. Kept for history only.
+
+---
+
 # Phase 2 Finalization — Execution Handoff (2026-06-11)
 
 Branch: `claude/hopeful-benz-866a30` · Repo: `/Users/lebron/Documents/PMP-hopeful-benz`

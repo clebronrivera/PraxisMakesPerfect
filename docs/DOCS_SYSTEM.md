@@ -16,6 +16,13 @@ If you are not sure where something belongs:
 
 ## 2. What Each File Is For
 
+### [docs/MASTER_PLAN.md](MASTER_PLAN.md)
+
+- Purpose: **the only plan document in this repo** — the definition of done (launch gates), the sequenced PR queue, the migration-number registry, open product work, and the decision register
+- Use it for: what is committed and in what order, whether a launch gate is cleared, which migration number to claim, why a past decision went the way it did
+- Update when: work is sequenced or completed (update the Status cell in the same commit), a launch gate moves, a decision is made, or a migration number is claimed
+- ⛔ Do not create `PLAN_<date>_*.md` or `HANDOFF_<date>_*.md` files. Four such docs each declared themselves "the single source of truth," none indexed the others, and two went stale. Add a phase to this file instead.
+
 ### [README.md](/Users/lebron/Documents/PraxisMakesPerfect/README.md)
 
 - Purpose: root entrypoint to the current active documentation set
@@ -39,6 +46,18 @@ If you are not sure where something belongs:
 - Purpose: active issue and mismatch tracking
 - Use it for: bugs, unresolved findings, reporting mismatches, watch items
 - Update when: a new issue is found, an issue status changes, or a resolution is completed
+
+### [docs/PENDING_IDEAS.md](PENDING_IDEAS.md)
+
+- Purpose: the backlog of **unsequenced** ideas — things worth building that do not yet have a slot
+- Use it for: capturing a product idea without committing to when it ships
+- Update when: an idea is captured, or an idea graduates *out* of here *into* [docs/MASTER_PLAN.md](MASTER_PLAN.md) §2 because it has been sequenced
+
+### [docs/PHASE2_REVIEW_BACKLOG.md](PHASE2_REVIEW_BACKLOG.md)
+
+- Purpose: content-architecture items awaiting subject-matter-expert or product sign-off
+- Use it for: prereq edges, ETS topic mappings, misconception links, exam weights — decisions that need a human with domain knowledge, not an engineer
+- Update when: an SME review is completed or a new review item is identified
 
 ### [CHANGELOG.md](/Users/lebron/Documents/PraxisMakesPerfect/CHANGELOG.md)
 
@@ -95,8 +114,11 @@ If you are not sure where something belongs:
 
 Put information in these places:
 
+- Sequenced work, launch gates, decisions, migration numbers: [docs/MASTER_PLAN.md](MASTER_PLAN.md)
+- An idea with no slot yet: [docs/PENDING_IDEAS.md](PENDING_IDEAS.md)
 - Durable rule or interpretation logic: [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md)
 - New bug, mismatch, or unresolved risk: [docs/ISSUE_LEDGER.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/ISSUE_LEDGER.md)
+- Something needing SME or product sign-off: [docs/PHASE2_REVIEW_BACKLOG.md](PHASE2_REVIEW_BACKLOG.md)
 - Meaningful implementation history: [CHANGELOG.md](/Users/lebron/Documents/PraxisMakesPerfect/CHANGELOG.md)
 - Repo or setup orientation: [README.md](/Users/lebron/Documents/PraxisMakesPerfect/README.md)
 - Architecture-level direction: [REWRITE_DEVELOPMENT_GUIDE.md](/Users/lebron/Documents/PraxisMakesPerfect/REWRITE_DEVELOPMENT_GUIDE.md)
@@ -105,6 +127,7 @@ Do not put durable rules only in chat, temporary notes, or scattered one-off mar
 
 ## 4. Maintenance Rules
 
+- **There is exactly one plan document: [docs/MASTER_PLAN.md](MASTER_PLAN.md). Do not create new `PLAN_*.md` or `HANDOFF_*.md` files — add a phase to it instead.** Between April and July 2026 four such docs each claimed to be the single source of truth; none was registered here, and two went stale enough to misreport shipped work as pending. Retired to `archive/docs-plans-2026-07/` on 2026-07-26.
 - If a new active documentation file is added, update this file in the same change.
 - If the purpose of an active documentation file changes, update this file in the same change.
 - If a new durable workflow/reporting rule is introduced, update [docs/WORKFLOW_GROUNDING.md](/Users/lebron/Documents/PraxisMakesPerfect/docs/WORKFLOW_GROUNDING.md).

@@ -1,6 +1,6 @@
 # PraxisMakesPerfect – Codebase Overview
 
-> ⚠️ **Status: STALE — last verified 2026-03-14; predates the Phase 2 landings (2026-06).** Known drift: documents since-removed code paths (e.g. `useAdaptiveLearning` fields that no longer exist) and labels utilities "unused" that now are. **Defer to code**, `CLAUDE.md`, and `docs/HOW_THE_APP_WORKS.md`. Kept at root per `docs/DOCS_SYSTEM.md`; refresh-or-archive tracked in `docs/PLAN_2026-07-02_code-review-followups.md` [9].
+> ⚠️ **Status: STALE — last verified 2026-03-14; predates the Phase 2 landings (2026-06).** Known drift: documents since-removed code paths (e.g. `useAdaptiveLearning` fields that no longer exist) and labels utilities "unused" that now are. **Defer to code**, `CLAUDE.md`, and `docs/HOW_THE_APP_WORKS.md`. Kept at root per `docs/DOCS_SYSTEM.md`; refresh-or-archive tracked in `docs/MASTER_PLAN.md` §4.
 
 This document summarizes all components, hooks, utilities, brain modules, and data flows after a full codebase read. Use it for rewrite planning and to avoid missing or duplicating behavior.
 

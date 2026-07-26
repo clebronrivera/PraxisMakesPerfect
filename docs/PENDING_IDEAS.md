@@ -1,22 +1,24 @@
-# PENDING IDEAS — Canonical Backlog
+# PENDING IDEAS — Unsequenced Backlog
 
-> **This is the durable "what's pending" list.** When the user asks "what's pending / what are we
-> building / continue," start here. Items move **Parked → Next → Active → (shipped, removed from this
-> doc + reflected in `docs/HOW_THE_APP_WORKS.md`)**.
+> **This is the list of ideas that do not yet have a slot.** When the user asks "what's pending / what are
+> we building / continue," start here for *ideas* — but read `docs/MASTER_PLAN.md` §2 first for *committed,
+> sequenced work*. An item graduates **out** of this file **into** MASTER_PLAN §2 when it gets a slot.
+> Items move **Parked → Next → (sequenced into MASTER_PLAN §2) → (shipped, removed from this doc +
+> reflected in `docs/HOW_THE_APP_WORKS.md`)**.
 >
 > Companion docs:
+> - `docs/MASTER_PLAN.md` — the only plan document: sequenced work, launch gates, migration registry,
+>   decision register. Anything with a date and an order lives there, not here.
 > - `docs/PRODUCT_ROADMAP_2026-06-02.md` — full capture of the 2026-06-02 direction-setting session
->   (glossary overhaul #1 priority, tutorial/dashboard/practice/progress/notebook workstreams, open
->   decisions). The detailed list behind several items below.
+>   (glossary overhaul #1 priority, tutorial/dashboard/practice/progress/notebook workstreams). ⚠️ Its four
+>   "open decisions" were all answered in `docs/DECISION_REGISTER_2026-06-10.md`; read that alongside it.
 > - `docs/product-ideas-from-cleanup-2026-04-16.md` — archived-branch research (incl. the Term Sprint
 >   origin at commit `35db028`). Read-only research material.
-> - `.claude/plans/mighty-conjuring-hummingbird.md` — the full execution handoff for the Active/Next items
->   below (data-reuse maps, phase breakdowns, baked-in decisions, verification lookover).
 >
 > **Mandatory workflow:** every UI screen is **mockup-first** (standalone HTML in `public/`, rendered in
 > preview, screenshot, explicit sign-off) before any React. See `CLAUDE.md`.
 
-Last updated: 2026-06-01 · Branch: `explore/dashboard-redesign`
+Last updated: 2026-07-26 (consolidation into `docs/MASTER_PLAN.md`)
 
 ---
 
@@ -45,11 +47,14 @@ Full 396-term, filterable, searchable glossary from the start, backed by a per-t
 and a `getWeakTermsForTutor()` seam for AI flashcards. **Removes** the write-your-definition/reveal flow
 and the embedded Quiz Mode tab (Fluency Drill becomes the single vocab path — closes the item below).
 **Absorbs** the PARKED "Glossary → pure-reference refactor." Data layer first, then mockup-first UI.
-- Full design + build order: `docs/PRODUCT_ROADMAP_2026-06-02.md` §B and
-  `.claude/plans/okay-currently-uh-currently-reactive-lantern.md`.
-- ⚠ **Migration number:** the glossary overhaul's new migration must be **`0029`**, NOT `0026`. As of
-  2026-06-16 `0026` = `retake_complete` and `0027`/`0028` = search_path hardening (in PR #38). `0024_vocab_attempts`
-  is already applied (it's the base this extends).
+- Full design + build order: `docs/PRODUCT_ROADMAP_2026-06-02.md` §B. ⚠️ A second reference — to
+  `.claude/plans/okay-currently-uh-currently-reactive-lantern.md`, described as "the approved plan" — pointed
+  at a file that does not exist and never survived (`.claude/` is gitignored). It is not recoverable. **The
+  requirements captured in this entry are the surviving spec; treat them as authoritative.**
+- ⚠ **Migration number `0029` is reserved for this work** in `docs/MASTER_PLAN.md` §3, which is now the
+  registry — claim numbers there before writing a migration file. This reservation predates and outranks the
+  `0029` on the unmerged `feat/item-analysis-snapshots` branch, which renumbers to `0030`.
+  `0024_vocab_attempts` is already applied (it's the base this extends).
 
 ### Retire the embedded glossary vocab quiz (partial) — *folded into the Glossary overhaul above*
 `VocabularyQuizMode.tsx` (the "Quiz Mode" tab inside `GlossaryPage`) still exists. The Dashboard vocab
