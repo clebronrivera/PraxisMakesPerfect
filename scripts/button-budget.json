@@ -1,4 +1,5 @@
 {
   "_note": "Debt ratchet for raw <button> tags outside src/components/ui/ (see scripts/check-buttons.mjs). Prefer <Button>/<IconButton>. Raise max ONLY for intentional raw buttons (answer tiles, nav, segmented controls, dark landing surface), with a reason. Lower max as more buttons migrate onto the primitives.",
-  "max": 166
+  "max": 167,
+  "_last_raise": "2026-07-26 (+1): 'Back to sign in' on the new signup-confirmation panel in src/components/landing/AuthModal.tsx. Landing is the dark violet/navy surface deliberately excluded from the primitive migration per CLAUDE.md — it uses the file-local PRIMARY_BTN, not <Button>."
 }

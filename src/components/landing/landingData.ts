@@ -8,6 +8,19 @@ import { PROGRESS_DOMAINS } from '../../utils/progressTaxonomy';
 /** Auth modes the landing CTAs can open the modal into. */
 export type AuthMode = 'login' | 'signup' | 'reset';
 
+/**
+ * sessionStorage key holding the email address of a signup that completed but
+ * still needs email confirmation.
+ *
+ * This has to outlive the component. Submitting any auth form flips AuthContext
+ * `loading`, which makes App.tsx swap to its global loading screen and unmount
+ * the entire landing tree — including AuthModal and any local state it holds.
+ * A plain `useState` flag saying "we sent the confirmation email" is destroyed
+ * before it can ever render. Persisting it here lets LandingPage reopen the
+ * modal on remount and lets AuthModal rehydrate the confirmation panel.
+ */
+export const SIGNUP_SENT_KEY = 'pass-auth-signup-sent';
+
 /** Callback every CTA uses to open the auth modal. */
 export interface LandingAuthProps {
   onOpenAuth: (mode: AuthMode) => void;
