@@ -9,6 +9,7 @@ import { getDomainLabel } from '../utils/domainLabels';
 import { useProgressTracking } from '../hooks/useProgressTracking';
 import { DEMONSTRATING_THRESHOLD, APPROACHING_THRESHOLD } from '../utils/skillProficiency';
 import { downloadScoreReport } from '../utils/scoreReportGenerator';
+import { captureError } from '../utils/sentry';
 import { loadSession, clearSession } from '../utils/sessionStorage';
 import { Button, Surface } from './ui';
 import type { DiagnosticSummary } from '../types/diagnosticSummary';
@@ -73,6 +74,7 @@ export default function ScoreReport({
   onGoHome,
   diagnosticSummary,
 }: ScoreReportProps) {
+  const [isDownloading, setIsDownloading] = useState(false);
   const engine = useEngine();
   type DomainWithExtras = Domain & { keyConcepts?: string[] };
   const NASP_DOMAINS = engine.domains.reduce<Record<number, DomainWithExtras>>((acc, d) => ({ ...acc, [Number(d.id)]: d }), {});
@@ -242,12 +244,22 @@ export default function ScoreReport({
         <Button
           variant="secondary"
           className="mx-auto"
-          onClick={() => {
-            const { currentSkillScores } = detectWeaknesses(responses, questions);
-            downloadScoreReport(responses, profile, currentSkillScores);
+          disabled={isDownloading}
+          onClick={async () => {
+            // The .docx builder is a lazy chunk, so there is a real pause on the
+            // first click. Without this state the button looks inert.
+            setIsDownloading(true);
+            try {
+              const { currentSkillScores } = detectWeaknesses(responses, questions);
+              await downloadScoreReport(responses, profile, currentSkillScores);
+            } catch (err) {
+              captureError(err, { tags: { source: 'scoreReport', action: 'download' } });
+            } finally {
+              setIsDownloading(false);
+            }
           }}
         >
-          Download Detailed Report
+          {isDownloading ? 'Preparing report…' : 'Download Detailed Report'}
         </Button>
       </div>
 

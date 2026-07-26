@@ -95,8 +95,7 @@ export interface MicroSkillDomainRow {
  * Tile *counts* per domain match PROGRESS_SKILLS' real per-domain totals
  * (13 / 12 / 8 / 12) for visual honesty, but the tier pattern itself is
  * hand-authored and illustrative. No counts or percentages are rendered from
- * this data — see landingData.ts's own "no fixed counts" rule above and
- * DashboardPreview.tsx's identical constraint.
+ * this data — see landingData.ts's own "no fixed counts" rule above.
  */
 export const MICRO_SKILL_MAP: MicroSkillDomainRow[] = PROGRESS_DOMAINS.map((domain) => {
   const tiersByDomain: Record<number, MasteryTier[]> = {
