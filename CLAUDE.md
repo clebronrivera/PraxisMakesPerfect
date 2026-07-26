@@ -115,11 +115,11 @@ All admin API endpoints live in `api/`. They require a valid admin session JWT (
 
 | Tab | What It Shows |
 |---|---|
-| Overview | User counts, active users, avg Q time (global), in-progress assessments, potential drops |
+| Overview | User counts, active users, avg Q time (global), in-progress assessments, potential drops, **account deletion requests** |
 | Audit | Consolidated feedback + question report audit with download |
 | Beta Feedback | All user feedback with status management |
 | Question Reports | Per-question issue reports with severity triage |
-| Users | Full user table with avg Q time, in-progress/dropped badges; click any row for Student Detail Drawer |
+| Users | Full user table with avg Q time, in-progress/dropped/deletion-requested badges; click any row for Student Detail Drawer. Users who requested account deletion sort to the **top**, ahead of recency |
 | Item Analysis | Psychometric quality metrics for the 1,200+-question bank (p-value, discrimination, distractor analysis) |
 | AI Tutor | AI Tutor chat sessions — session list with user/type/message count/artifacts, drill into full conversation with intent badges and inline artifact cards, CSV export |
 
@@ -142,6 +142,20 @@ Triggered by clicking any row in the **Users** tab. Fetches responses via `api/a
 | Timing Outlier | avg time > global avg + 2× global stddev |
 
 Flags only applied when item has ≥ 5 attempts.
+
+### Admin — account deletion requests
+
+"Delete my account" in `AccountPage.tsx` does **not** delete anything. It writes
+`user_progress.deletion_requested_at` (migration `0025`) and signs the user out; the purge
+itself is manual. Until an admin acts, the request just sits in the table.
+
+Surfaced in the dashboard as a count on **Overview** and a rose badge in the **Users** tab,
+with those users sorted to the top of the list. `hasDeletionRequest()` in `AdminDashboard.tsx`
+is the predicate; `api/admin-list-users` already returns the column via `select('*')`.
+
+⚠️ There is still **no purge action in the UI** — fulfilling a request means deleting the
+user's data by hand (`api/admin-delete-user` covers app tables but cannot remove the
+`auth.users` row). Treat a non-zero count as an open compliance obligation.
 
 ### Admin — reset screener / full diagnostic
 

@@ -63,6 +63,13 @@ interface UserAnalyticsDoc {
   flaggedQuestions?: Record<string, string>;
   lastSession?: LastSession | null;
   avgTimePerQuestionSeconds?: number | null;
+  /**
+   * Set when the user asked to have their account deleted (AccountPage → the
+   * type-DELETE modal). The deletion itself is manual: the app only flags the
+   * row and signs them out, so nothing happens until an admin acts on it. That
+   * makes surfacing this a compliance requirement, not a nice-to-have.
+   */
+  deletionRequestedAt?: string | Date | null;
   authMetrics?: {
     email?: string | null;
     displayName?: string | null;
@@ -87,6 +94,8 @@ interface OverviewStats {
   potentialDrops: number;
   /** Users with saved adaptive responses but no last_session pointer. */
   orphanedAdaptive: number;
+  /** Users awaiting manual account deletion. Should normally be 0. */
+  deletionRequests: number;
   avgTimePerQuestion: number | null;
   feedbackOpen: number;
   reportsOpen: number;
@@ -159,6 +168,16 @@ function isOrphanedAdaptive(user: UserAnalyticsDoc): boolean {
   if (user.adaptiveDiagnosticComplete) return false;
   if (user.lastSession) return false;
   return true;
+}
+
+/**
+ * The user asked to have their account deleted. `AccountPage` writes the
+ * timestamp and signs them out; the purge itself is manual, so until an admin
+ * acts the request is simply sitting in the table. Anything that hides it turns
+ * a data-subject request into a silent no-op.
+ */
+function hasDeletionRequest(user: UserAnalyticsDoc): boolean {
+  return Boolean(user.deletionRequestedAt);
 }
 
 function isDropped(user: UserAnalyticsDoc): boolean {
@@ -251,6 +270,7 @@ export default function AdminDashboard({
         created_at?: string | Date | null;
         last_login_at?: string | Date | null;
         last_active_at?: string | Date | null;
+        deletion_requested_at?: string | Date | null;
       }
       let usersData: UserRow[] = [];
       let timingStats: Record<string, number> = {};
@@ -295,6 +315,7 @@ export default function AdminDashboard({
         flaggedQuestions: row.flagged_questions || {},
         lastSession: row.last_session ?? null,
         avgTimePerQuestionSeconds: timingStats[row.user_id] ?? null,
+        deletionRequestedAt: row.deletion_requested_at ?? null,
         authMetrics: {
           email: row.email,
           displayName: row.display_name,
@@ -305,7 +326,14 @@ export default function AdminDashboard({
         }
       }));
 
-      allUsers.sort((a, b) => (getActivityTimestamp(b) ?? 0) - (getActivityTimestamp(a) ?? 0));
+      // Deletion requests sort to the very top, ahead of recency. They are a
+      // compliance obligation with no in-app actor — nothing happens until an
+      // admin sees one — so they must not scroll off behind more active users.
+      allUsers.sort((a, b) => {
+        const pending = Number(hasDeletionRequest(b)) - Number(hasDeletionRequest(a));
+        if (pending !== 0) return pending;
+        return (getActivityTimestamp(b) ?? 0) - (getActivityTimestamp(a) ?? 0);
+      });
 
       setUsers(allUsers);
       setReports(allReports);
@@ -470,6 +498,7 @@ export default function AdminDashboard({
       inProgressSessions: users.filter(isInProgress).length,
       potentialDrops: users.filter(isDropped).length,
       orphanedAdaptive: users.filter(isOrphanedAdaptive).length,
+      deletionRequests: users.filter(hasDeletionRequest).length,
       avgTimePerQuestion,
       feedbackOpen: feedback.filter((item) => ['new', 'reviewing', 'planned'].includes(item.status)).length,
       reportsOpen: reports.filter((item) => ['open', 'triaged'].includes(item.status)).length,
@@ -714,6 +743,7 @@ export default function AdminDashboard({
                     <StatLine label="In-progress assessments" value={overview.inProgressSessions} />
                     <StatLine label="Potential drops (4h+)" value={overview.potentialDrops} />
                     <StatLine label="Orphaned adaptive progress" value={overview.orphanedAdaptive} />
+                    <StatLine label="Account deletion requests" value={overview.deletionRequests} />
                     <StatLine label="Open beta feedback" value={overview.feedbackOpen} />
                     <StatLine label="Open question reports" value={overview.reportsOpen} />
                     <StatLine label="Critical content reports" value={overview.criticalReports} />
@@ -1221,6 +1251,15 @@ export default function AdminDashboard({
                             {isDropped(entry) && entry.lastSession && (
                               <span className="rounded-full bg-rose-50 px-3 py-1 text-xs text-rose-700">
                                 Dropped Q{entry.lastSession.questionIndex} ({formatRelativeTime(entry.lastSession.updatedAt)})
+                              </span>
+                            )}
+                            {hasDeletionRequest(entry) && (
+                              <span
+                                className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-800"
+                                title={`Account deletion requested${entry.deletionRequestedAt ? ` on ${new Date(entry.deletionRequestedAt).toLocaleDateString()}` : ''}. Deletion is manual — purge this user's data to fulfil the request.`}
+                              >
+                                Deletion requested
+                                {entry.deletionRequestedAt && ` · ${formatRelativeTime(new Date(entry.deletionRequestedAt).toISOString())}`}
                               </span>
                             )}
                             {isOrphanedAdaptive(entry) && (
