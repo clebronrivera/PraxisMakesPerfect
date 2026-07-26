@@ -2,7 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, Loader2, Mail, Shield, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { PRIMARY_ADMIN_EMAIL } from '../../config/admin';
-import type { AuthMode } from './landingData';
+import { SIGNUP_SENT_KEY, type AuthMode } from './landingData';
+
+const readSignupSent = (): string | null =>
+  typeof window === 'undefined' ? null : window.sessionStorage.getItem(SIGNUP_SENT_KEY);
+
+const clearSignupSent = () => {
+  if (typeof window !== 'undefined') window.sessionStorage.removeItem(SIGNUP_SENT_KEY);
+};
 
 interface AuthModalProps {
   /** Which mode to open in (login / signup / reset). */
@@ -29,10 +36,14 @@ export default function AuthModal({ initialMode, onClose, showAdminEntry }: Auth
   const { signInWithEmail, signUpWithEmail, resetPassword, error, loading, clearError } = useAuth();
 
   const [mode, setMode] = useState<AuthMode>(initialMode);
-  const [email, setEmail] = useState('');
+  // Rehydrate from sessionStorage: a confirmation-pending signup unmounts this
+  // component (see SIGNUP_SENT_KEY), so both the flag and the address it echoes
+  // back have to be restored on remount rather than started fresh.
+  const [email, setEmail] = useState(() => readSignupSent() ?? '');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [signupEmailSent, setSignupEmailSent] = useState(() => readSignupSent() !== null);
   const [consentChecked, setConsentChecked] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -44,9 +55,19 @@ export default function AuthModal({ initialMode, onClose, showAdminEntry }: Auth
     clearError();
     try {
       if (mode === 'login') {
+        // On success the auth listener unmounts this modal — nothing to do here.
         await signInWithEmail(email, password);
       } else if (mode === 'signup') {
-        await signUpWithEmail(email, password, displayName);
+        const { needsEmailConfirmation } = await signUpWithEmail(email, password, displayName);
+        // Without a session nothing else will happen: the auth listener never
+        // fires, so the user would be dropped back on the landing page with no
+        // indication the account was created. Persist first — this component is
+        // unmounted and remounted around the request — then set local state for
+        // the case where we survive.
+        if (needsEmailConfirmation) {
+          if (typeof window !== 'undefined') window.sessionStorage.setItem(SIGNUP_SENT_KEY, email);
+          setSignupEmailSent(true);
+        }
       }
     } catch {
       // Auth context owns user-facing error state.
@@ -65,10 +86,12 @@ export default function AuthModal({ initialMode, onClose, showAdminEntry }: Auth
     }
   };
 
-  const switchToReset = () => { clearError(); setResetEmailSent(false); setMode('reset'); };
-  const switchToLogin = () => { clearError(); setResetEmailSent(false); setMode('login'); };
+  const dismissSignupSent = () => { clearSignupSent(); setSignupEmailSent(false); };
 
-  const handleClose = useCallback(() => { clearError(); onClose(); }, [clearError, onClose]);
+  const switchToReset = () => { clearError(); setResetEmailSent(false); dismissSignupSent(); setMode('reset'); };
+  const switchToLogin = () => { clearError(); setResetEmailSent(false); dismissSignupSent(); setMode('login'); };
+
+  const handleClose = useCallback(() => { clearError(); clearSignupSent(); onClose(); }, [clearError, onClose]);
 
   // ── ESC to close + body scroll lock ─────────────────────────────────────────
   useEffect(() => {
@@ -145,18 +168,24 @@ export default function AuthModal({ initialMode, onClose, showAdminEntry }: Auth
         </div>
         <div className="text-center mb-8">
           <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-fuchsia-300 mb-2">
-            {mode === 'signup' ? 'Welcome' : mode === 'reset' ? 'Reset password' : 'Welcome back'}
+            {signupEmailSent ? 'Almost there' : mode === 'signup' ? 'Welcome' : mode === 'reset' ? 'Reset password' : 'Welcome back'}
           </p>
           <h3 className="text-2xl font-extrabold text-white">
-            {mode === 'signup' && 'Create your account.'}
-            {mode === 'login' && 'Pick up where you left off.'}
-            {mode === 'reset' && 'We’ll send a secure link.'}
+            {signupEmailSent ? 'Confirm your email.' : (
+              <>
+                {mode === 'signup' && 'Create your account.'}
+                {mode === 'login' && 'Pick up where you left off.'}
+                {mode === 'reset' && 'We’ll send a secure link.'}
+              </>
+            )}
           </h3>
-          <p className="text-sm text-white/60 mt-2 leading-relaxed">
-            {mode === 'signup' && 'Save your diagnostic baseline, study plan, and redemption queue.'}
-            {mode === 'login' && 'Your diagnostic, study plan, and redemption queue are saved.'}
-            {mode === 'reset' && 'Enter your email and we’ll send a secure password reset link.'}
-          </p>
+          {!signupEmailSent && (
+            <p className="text-sm text-white/60 mt-2 leading-relaxed">
+              {mode === 'signup' && 'Save your diagnostic baseline, study plan, and redemption queue.'}
+              {mode === 'login' && 'Your diagnostic, study plan, and redemption queue are saved.'}
+              {mode === 'reset' && 'Enter your email and we’ll send a secure password reset link.'}
+            </p>
+          )}
         </div>
 
         {resetEmailSent && !error && (
@@ -189,7 +218,28 @@ export default function AuthModal({ initialMode, onClose, showAdminEntry }: Auth
           </div>
         )}
 
-        {mode === 'reset' ? (
+        {signupEmailSent ? (
+          <div className="space-y-5">
+            <div className="rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4">
+              <div className="flex items-start gap-3">
+                <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
+                <div>
+                  <p className="text-sm font-semibold text-emerald-200">Confirmation email sent</p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/70">
+                    We sent a confirmation link to <span className="font-semibold text-white/90">{email}</span>.
+                    Click it to activate your account, then come back and sign in.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs leading-relaxed text-white/45">
+              No email after a few minutes? Check your spam folder — and make sure {email} is spelled correctly.
+            </p>
+            <button type="button" onClick={switchToLogin} className={PRIMARY_BTN}>
+              <span>Back to sign in&nbsp;&nbsp;→</span>
+            </button>
+          </div>
+        ) : mode === 'reset' ? (
           <form onSubmit={handlePasswordReset} className="space-y-4">
             <div>
               <label htmlFor="reset-email" className="text-[11px] font-medium tracking-wider uppercase text-white/50 block mb-2">Email</label>
@@ -338,7 +388,7 @@ export default function AuthModal({ initialMode, onClose, showAdminEntry }: Auth
 
             <button
               type="button"
-              onClick={() => { clearError(); setMode(mode === 'login' ? 'signup' : 'login'); }}
+              onClick={() => { clearError(); dismissSignupSent(); setMode(mode === 'login' ? 'signup' : 'login'); }}
               className="w-full py-3 rounded-xl text-sm font-medium text-white/80 border border-white/15 hover:border-violet-400/50 hover:text-white transition"
             >
               {mode === 'login' ? 'Create an account' : 'Already have an account? Sign in'}

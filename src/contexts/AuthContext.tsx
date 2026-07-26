@@ -3,12 +3,22 @@ import { User } from '@supabase/supabase-js';
 import { supabase } from '../config/supabase';
 import { captureError } from '../utils/sentry';
 
+/**
+ * Outcome of a successful sign-up. When the Supabase project requires email
+ * confirmation, `signUp` resolves with a user but **no session** — the caller
+ * must tell the user to check their inbox, because nothing else will happen.
+ * When confirmation is off, a session exists and `onAuthStateChange` takes over.
+ */
+export interface SignUpResult {
+  needsEmailConfirmation: boolean;
+}
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, displayName?: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, displayName?: string) => Promise<SignUpResult>;
   resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
@@ -143,12 +153,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (signUpError) throw signUpError;
 
-      // Persist consent timestamp. The consent checkbox on the login screen
-      // gates the submit button, so reaching this point implies consent was
-      // given. Non-blocking: if the write fails (RLS, network, pre-confirm),
-      // log and continue — signup itself has succeeded.
+      // Persist consent timestamp. The consent checkbox gates the submit button,
+      // so reaching this point implies consent was given.
+      //
+      // Only attempt this when signUp returned a session. Without one there is no
+      // `auth.uid()`, so the `user_progress` RLS policy (`auth.uid() = user_id`)
+      // rejects the write — it cannot succeed, and retrying it would only produce
+      // console noise. In that case consent is captured after email confirmation
+      // by the post-onboarding gate in App.tsx, which checks `consentAcceptedAt`.
+      // Do not remove this guard: an unconditional upsert here looks correct and
+      // silently fails on every confirmation-required signup.
       const newUserId = data.user?.id;
-      if (newUserId) {
+      if (newUserId && data.session) {
         try {
           const { error: consentError } = await supabase
             .from('user_progress')
@@ -167,6 +183,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.warn('[Auth] Failed to persist consent_accepted_at:', consentWriteError);
         }
       }
+
+      return { needsEmailConfirmation: !data.session };
     } catch (err: unknown) {
       captureError(err, { tags: { source: 'auth', action: 'signUp' } });
       const message = err instanceof Error ? err.message : String(err);
