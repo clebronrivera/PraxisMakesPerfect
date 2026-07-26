@@ -2,9 +2,14 @@ import { describe, it, expect } from 'vitest';
 import { getPrereqDepth } from '../src/data/skillPrereqGraph';
 
 /**
- * Minimal reproduction of the sort logic from LearningPathNodeMap.tsx buildNodes().
- * The actual function is embedded inside a React component and cannot be imported
- * directly, so we re-implement the same comparator here for unit testing.
+ * Prereq-depth-then-deficit ordering: prerequisites must never sort after the
+ * skills that depend on them.
+ *
+ * Originally a reproduction of `LearningPathNodeMap.tsx buildNodes()`, which was
+ * retired 2026-07-26 in favour of `ModulesBrowser`. The comparator is kept and
+ * tested here because the invariant it encodes — ordering against
+ * `getPrereqDepth` — still governs how skills are sequenced; this pins that
+ * contract independently of whichever component renders it.
  */
 
 interface SortableSkill {

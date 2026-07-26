@@ -2,7 +2,7 @@
 //
 // Full-screen Learning Path module page.
 //
-// Opened when the user taps a non-mastered skill node in LearningPathNodeMap.
+// Opened when the user taps a non-mastered skill in ModulesBrowser.
 // The page has THREE sequential locked sections:
 //
 // ─── Section 1 — LESSON CONTENT ─────────────────────────────────────────────

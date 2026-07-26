@@ -91,9 +91,11 @@ Fold `vocab_attempts` into `globalScoreCalculator` so vocab nudges survive a glo
 ### Post-diagnostic skill-tile color map  ·  *captured 2026-06-11*
 A map of color tiles — one per test skill (45) — that, **after the diagnostic completes**, colors each
 tile by the learner's proficiency (Emerging / Approaching / Demonstrating) so the whole skill landscape
-is legible at a glance. **Check first what already exists before building:** `LearningPathNodeMap.tsx`
-already renders a snake-grid of skill tiles with proficiency color, and `ResultsDashboard` shows domain
-bars — this idea may be a *dedicated, more prominent post-diagnostic "map" view* rather than net-new.
+is legible at a glance. **Check first what already exists before building:** `ResultsDashboard` shows
+domain bars, and `ModulesBrowser` renders per-skill cards with proficiency state — this idea may be a
+*dedicated, more prominent post-diagnostic "map" view* rather than net-new. (The old `LearningPathNodeMap`
+snake-grid, previously cited here as the prior art, was deleted 2026-07-26 — it had been unreferenced
+since `ModulesBrowser` replaced it. Recover it from git history if you want the tile layout.)
 Mockup-first. Relates to [[project_modules_redesign]] (the student-friendly module browser that replaced
 the deficit snake-map) — confirm this isn't the same surface before scoping.
 

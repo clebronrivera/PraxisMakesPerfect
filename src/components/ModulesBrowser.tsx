@@ -1,6 +1,7 @@
 // src/components/ModulesBrowser.tsx
 //
-// Student-friendly module browser — replaces the deficit snake LearningPathNodeMap.
+// Student-friendly module browser — replaced the deficit "snake" node map, which
+// was retired 2026-07-26 once this reached parity.
 // Approved visual: public/mockup-modules-redesign-v2.html. Cool tokens only
 // (docs/DESIGN_TOKENS.md). Data via useModuleCatalog → buildModuleCatalog.
 //

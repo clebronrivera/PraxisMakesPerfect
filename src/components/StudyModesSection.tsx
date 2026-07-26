@@ -504,7 +504,7 @@ function SkillPanel({
 
 // ─── Learning Path Panel ──────────────────────────────────────────────────────
 //
-// Wraps LearningPathNodeMap with a locked state and Supabase progress loading.
+// Wraps ModulesBrowser with a locked state and Supabase progress loading.
 // Node clicks are forwarded to the parent via onNodeClick (→ opens module page).
 // ─────────────────────────────────────────────────────────────────────────────
 

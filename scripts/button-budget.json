@@ -1,4 +1,5 @@
 {
   "_note": "Debt ratchet for raw <button> tags outside src/components/ui/ (see scripts/check-buttons.mjs). Prefer <Button>/<IconButton>. Raise max ONLY for intentional raw buttons (answer tiles, nav, segmented controls, dark landing surface), with a reason. Lower max as more buttons migrate onto the primitives.",
-  "max": 166
+  "max": 162,
+  "_last_change": "2026-07-26 (-4): deleting the unreferenced LearningPathNodeMap.tsx and landing/DashboardPreview.tsx removed 4 raw buttons. Ratcheted down per the rule above. NOTE: if the signup-confirmation PR lands too it adds 1 intentional landing-surface button, making the true count 163."
 }
