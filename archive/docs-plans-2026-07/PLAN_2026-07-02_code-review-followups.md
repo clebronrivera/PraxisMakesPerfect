@@ -1,3 +1,8 @@
+> ⛔ **ARCHIVED 2026-07-26. Superseded by [docs/MASTER_PLAN.md](../../docs/MASTER_PLAN.md).**
+> Open items were extracted there; do not work from this file. Kept for history only.
+
+---
+
 # Code-Review Follow-Ups Plan — 2026-07-02
 
 > **Single source of truth for remediating the 2026-07-01 full-codebase review.**

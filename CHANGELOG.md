@@ -7,9 +7,21 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 
 ---
 
+## 2026-07-26
+
+### Plan consolidation — one plan document
+
+- **[Docs — MASTER_PLAN]** New `docs/MASTER_PLAN.md`, the only plan document in the repo: §0 grounding, §1 definition of done (the launch gates, re-verified against source), §2 the sequenced PR queue, §3 a migration-number registry, §4 open product work, §5 decision register, §6 what was retired. Undated and singular by design — the `PLAN_<date>_<topic>.md` convention was the reason four competing "single source of truth" docs accumulated.
+- **[Docs — Retired five plans]** `LAUNCH_READINESS.md`, `PLAN_2026-07-08_design-audit-remediation.md`, `PLAN_2026-07-02_code-review-followups.md`, `PLAN_2026-06-16_cleanup-and-backlog.md`, and `HANDOFF_2026-06-11_phase2-finalization.md` moved to `archive/docs-plans-2026-07/` with archived banners. Every open item was extracted into MASTER_PLAN in the same commit; two of the five were stale enough to report shipped work as pending (PR #57 merged at `1d70eb8`; design-audit Phase C is live in `App.tsx`/`DashboardHome.tsx`/`ScoreReport.tsx`).
+- **[Docs — Registration]** `DOCS_SYSTEM.md` §2/§3/§4 now list MASTER_PLAN, PENDING_IDEAS, and PHASE2_REVIEW_BACKLOG (none were registered before, in violation of its own §5), and carry the rule that stops the recurrence: exactly one plan document, no new `PLAN_*`/`HANDOFF_*` files. README's canonical list reordered — it previously led with two self-declared-historical docs. — `docs/DOCS_SYSTEM.md`, `README.md`
+- **[Docs — Dangling references]** Repointed live links to the five archived docs across `CHANGELOG.md`, `docs/ISSUE_LEDGER.md`, `docs/DECISION_REGISTER_2026-06-10.md`, and the three root stale-banner docs. Removed two `PENDING_IDEAS.md` pointers to `.claude/plans/*.md` files that never existed (`.claude/` is gitignored) — one of them was cited as "the approved plan" for the #1-priority glossary overhaul; noted the loss rather than papering over it.
+- **[Docs — Migration registry]** `0029` is recorded as reserved for the glossary overhaul; the unmerged `feat/item-analysis-snapshots` branch must renumber to `0030`. Second collision on this number — the registry is the fix.
+
+---
+
 ## 2026-07-02
 
-### Code-review remediation (Phases 1–3 of `docs/PLAN_2026-07-02_code-review-followups.md`)
+### Code-review remediation (Phases 1–3 of `archive/docs-plans-2026-07/PLAN_2026-07-02_code-review-followups.md`)
 
 - **[Fix — Stop shipping mockups]** Untracked all `public/mockup-*.html` design mockups and `public/mockup-previews/*.png` screenshots (committed before the gitignore rule existed; they shipped verbatim to production with pre-PASS branding and retracted claims). Files remain on disk for the mockup-first workflow; gitignore rule broadened to `public/mockup-*`. Production mockup URLs now fall back to the app shell. — PR #46
 - **[Feature — AI Tutor rate limit]** Per-user message budget enforced server-side before every Claude call (per-hour + per-day sliding windows); `429` + `Retry-After` with a friendly client message that skips Sentry. Closes the largest uncapped AI-spend surface. — `api/tutor-chat.ts`, `api/_shared.ts`, PR #47
@@ -34,7 +46,7 @@ Format: `[YYYY-MM-DD] Type: Description — File(s)`
 Decluttered `docs/` down to the canonical/active set defined by `docs/DOCS_SYSTEM.md` (plus current backlog/roadmap/brand/decisions/specs and the two newest handoffs). All moves via `git mv` (history preserved); nothing deleted except untracked `.DS_Store` junk. Full manifest: `archive/docs-cleanup-2026-06-02/README.md`.
 
 - **[Chore — Archive superseded docs]** Moved ~50 superseded/shipped/point-in-time docs out of `docs/` into `archive/docs-cleanup-2026-06-02/`: shipped handoffs (rename plan, indigo/violet retheme, landing honesty, dashboard redesign brief+handoff, bundle warnings, UI structure audit), older 2026-03/04 content+diagnostic planning, the two `_superseded_` plan trees, the `gap-closer-*` plans, all 7 `audits/`, and the stray `PraxisMakesPerfect_Alignment_Report_2026-03-23.docx` binary. — `docs/`, `archive/docs-cleanup-2026-06-02/`
-- **[Fix — Repoint references]** Updated links in kept docs to the new archive paths: `docs/ISSUE_LEDGER.md` (the .docx, ×2) and `docs/LAUNCH_READINESS.md` (bundle warnings, rename plan). — `docs/ISSUE_LEDGER.md`, `docs/LAUNCH_READINESS.md`
+- **[Fix — Repoint references]** Updated links in kept docs to the new archive paths: `docs/ISSUE_LEDGER.md` (the .docx, ×2) and `archive/docs-plans-2026-07/LAUNCH_READINESS.md` (bundle warnings, rename plan). — `docs/ISSUE_LEDGER.md`, `archive/docs-plans-2026-07/LAUNCH_READINESS.md`
 - **[Chore — Remove junk]** Deleted `docs/.DS_Store` and `docs/plans/.DS_Store` (untracked, gitignored). Empty `docs/plans/` and `docs/audits/` directories removed.
 - **[Note]** `docs/DOCUMENT_REGISTRY.md` flagged as stale (it catalogs only the 2026-03-14 root cleanup, not the current `docs/` set); scope note added.
 
@@ -42,7 +54,7 @@ Decluttered `docs/` down to the canonical/active set defined by `docs/DOCS_SYSTE
 
 ### Launch Gate P0 Hotfix — `hotfix/launch-gate-p0` (PR #6)
 
-Landed the four approved launch-gate P0 items from the 2026-04-15 launch-readiness audit. All changes small, bisectable, reversible. No redesign-chain revival; no unrelated scope expansion. See `docs/LAUNCH_READINESS.md` for the full audit and remaining work.
+Landed the four approved launch-gate P0 items from the 2026-04-15 launch-readiness audit. All changes small, bisectable, reversible. No redesign-chain revival; no unrelated scope expansion. See `archive/docs-plans-2026-07/LAUNCH_READINESS.md` for the full audit and remaining work.
 
 - **[Fix — CSP allows Sentry ingest]** Added `https://*.sentry.io` and `https://*.ingest.sentry.io` to the `connect-src` directive so `@sentry/react` can actually deliver events from the browser. Before this fix, production CSP silently blocked every XHR to the Sentry ingest endpoint; the SDK initialized but no events arrived. — `netlify.toml`
 

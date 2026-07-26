@@ -1,3 +1,8 @@
+> ⛔ **ARCHIVED 2026-07-26. Superseded by [docs/MASTER_PLAN.md](../../docs/MASTER_PLAN.md).**
+> Open items were extracted there; do not work from this file. Kept for history only.
+
+---
+
 # Cleanup & Backlog Master Plan — 2026-06-16
 
 > **This is the single source of truth for clearing the pending-work backlog and cleaning up the repo.**

@@ -1,3 +1,8 @@
+> ⛔ **ARCHIVED 2026-07-26. Superseded by [docs/MASTER_PLAN.md](../../docs/MASTER_PLAN.md).**
+> Open items were extracted there; do not work from this file. Kept for history only.
+
+---
+
 # Launch Readiness
 
 > Status: Active. Canonical source for where Praxis Makes Perfect stands against launch criteria and what is left to do before inviting real users, before advertising, and after launch.

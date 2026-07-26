@@ -1,3 +1,8 @@
+> ⛔ **ARCHIVED 2026-07-26. Superseded by [docs/MASTER_PLAN.md](../../docs/MASTER_PLAN.md).**
+> Open items were extracted there; do not work from this file. Kept for history only.
+
+---
+
 # Design-Audit Remediation Plan — 2026-07-08
 
 > **Single source of truth for finishing the 2026-07-08 design/UX audit remediation.**
